@@ -44,7 +44,7 @@
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Interviewer</font></span>
                     </button>
 
-                    @if (ViewBag.Profile == "Admin")
+                    @if (ViewBag.profile == "Admin")
                     {
                         <i type="submit" class="far fa-file-excel excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewwersExporttoExcel", "User")'"></i>
 

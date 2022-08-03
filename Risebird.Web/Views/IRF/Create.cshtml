@@ -420,7 +420,7 @@
 
                                                                             </td>
                                                                             <td style="display:@displayStatus">
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
@@ -493,7 +493,7 @@
 
                                                                                 </td>
                                                                                 <td style="display:@displayStatus">
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                     }

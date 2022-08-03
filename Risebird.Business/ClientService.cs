@@ -22,11 +22,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public List<Client> GetClients(string emailid, string profilename)
+        public List<Client> GetClients(string emailid, string profileName)
         {
             try
             {
-                return _clientRepository.GetClients(emailid, profilename).ToList();
+                return _clientRepository.GetClients(emailid, profileName).ToList();
             }
             catch (Exception)
             {

@@ -80,7 +80,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        ViewBag.Profile = profileName;
+                        ViewBag.profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
                         {
                             ViewBag.Message = TempData["MessageInterviewer"].ToString();
@@ -253,7 +253,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        ViewBag.Profile = profileName;
+                        ViewBag.profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
                         {
                             ViewBag.Message = TempData["MessageInterviewer"].ToString();
@@ -1803,10 +1803,10 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
-                        model.ProfileName = profileName;
+                        model.profileName = profileName;
                         GetStatusList(model, iscId);
                         model.BackUrl = backUrl;
                         return View(model);
@@ -1852,7 +1852,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         if (model.AudioFile != null)
                         {
@@ -2797,7 +2797,7 @@ namespace Risebird.Web.Controllers
                     {
                         emailid = _emailid;
                     }
-                    ViewBag.Profile = profileName;
+                    ViewBag.profile = profileName;
                     InterviewerTdsVM model = new InterviewerTdsVM();
                     List<string> _listyear = new List<string>();
                     var currentmonth = DateTime.Now.Month;

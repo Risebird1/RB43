@@ -18,7 +18,7 @@ AS
 Begin   
  Declare @Role varchar(150)
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid
-if(@Role='SeniorHR')
+if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN
 select (select Count(im.id) from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId
 left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus=1 and ulsh.Emailid= @Emailid) as ProxyCount,  

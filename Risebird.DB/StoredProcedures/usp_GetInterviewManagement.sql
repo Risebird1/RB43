@@ -26,7 +26,7 @@ set @startDateParam =@startdate
 set @endDateParam =@enddate  
 Declare @Role varchar(150)
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid
-if(@Role='SeniorHR')
+if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN  
 Select Distinct im.id,im.interviewDate,ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsRescheduleNotificationSent from InterviewMeetings im 
 join IRF on IRF.IRFId=im.IRFId

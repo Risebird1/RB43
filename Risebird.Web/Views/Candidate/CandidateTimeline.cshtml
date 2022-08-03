@@ -87,7 +87,7 @@
     var Header = "<a id='status_1'>Candidates Status</a>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<input type="hidden" value="@ViewBag.Profile" id="hidd_profile" />
+<input type="hidden" value="@ViewBag.profile" id="hidd_profile" />
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30 videocon">
@@ -110,7 +110,7 @@
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </span>
-                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "Client")
+                            @if (ViewBag.profile == "Admin" || ViewBag.profile == "Client")
                             {
                                 <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i></span>
                             }
@@ -191,7 +191,7 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                    @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                     {
                                                                         <div class="form-group">
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
@@ -322,7 +322,7 @@
                                                                         <th class="text-left">Client HR Email</th>
                                                                         <th id="status_5" class="text-left">Schedule Status</th>
                                                                         <th id="status_6">Meeting Status</th>
-                                                                        @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                        @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                         {
                                                                             <th id="status_7">Interview Status</th>
                                                                             <th id="status_8">Current Status</th>
@@ -339,7 +339,7 @@
                                                                         <th class="text-left">Client HR Email</th>
                                                                         <th class="text-left">Schedule Status</th>
                                                                         <th>Meeting Status</th>
-                                                                        @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                        @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                         {
                                                                             <th>Interview Status</th>
                                                                             <th>Current Status</th>
@@ -602,7 +602,7 @@
                                                                                 <td></td>
                                                                             }
 
-                                                                            @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                            @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                             {
                                                                                 @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
                                                                                 {
@@ -844,7 +844,7 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                    @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                     {
                                                                         <div class="form-group">
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
@@ -969,7 +969,7 @@
                                                                         <th class="text-left">Client HR Email</th>
                                                                         <th id="status_5" class="text-left">Schedule Status</th>
                                                                         <th id="status_6">Meeting Status</th>
-                                                                        @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                        @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                         {
                                                                             <th id="status_7">Interview Status</th>
                                                                             <th id="status_8">Current Status</th>
@@ -986,7 +986,7 @@
                                                                         <th class="text-left">Client HR Email</th>
                                                                         <th class="text-left">Schedule Status</th>
                                                                         <th>Meeting Status</th>
-                                                                        @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                        @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                         {
                                                                             <th>Interview Status</th>
                                                                             <th>Current Status</th>
@@ -1249,7 +1249,7 @@
                                                                                 <td></td>
                                                                             }
 
-                                                                            @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                            @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                             {
                                                                                 @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
                                                                                 {

@@ -211,7 +211,7 @@ namespace Risebird.Web.Controllers
                             modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
                         }
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
                             modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();
@@ -505,7 +505,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
 
 
                         NewModel.CandidateId = model.CandidateId;
@@ -631,7 +631,7 @@ namespace Risebird.Web.Controllers
                         }
                         NewModel.candidateName = namemodel1;
 
-                        ViewBag.ProfileName = "";
+                        ViewBag.profileName = "";
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
                         NewModel.imid = model.imid;
@@ -859,7 +859,7 @@ namespace Risebird.Web.Controllers
                             candidateName = model.candidateName
                         };
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
 
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
@@ -1218,7 +1218,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var email = HttpContext.Session.GetString("email")?.Trim();
                 email = email.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     List<MeetingVM> modelList = new List<MeetingVM>();
                     if (HttpContext.Session.GetString("CommonPoolSelectedCandidatefilters") != null)

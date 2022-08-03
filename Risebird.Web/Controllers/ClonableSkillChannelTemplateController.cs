@@ -43,7 +43,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                         model = await _clonableSkillChannelTemplateService.GetTemplateDataFromSourceSkillChannel(irfId, assessmentGroupId);
@@ -56,6 +56,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.InterviewerCollection = model.InterviewerCollection.Take(100).ToList();
                         }
+                        model.Profile = profileName;
                         model.UserId = _irfService.GetUserId(emailid);
                         return View(model);
                     }
@@ -89,7 +90,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    model.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         bool isTemplateInvalid = false;
                         if (!model.InterviewerCollection.Any(x => x.IsActive))
@@ -137,7 +139,6 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -162,7 +163,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                         model = await _clonableSkillChannelTemplateService.GetClonableSkillChannel(id);
@@ -175,7 +176,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.InterviewerCollection = model.InterviewerCollection.Take(100).ToList();
                         }
-
+                        model.Profile = profileName;
                         model.UserId = _irfService.GetUserId(emailid);
                         return View(model);
                     }
@@ -209,7 +210,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    model.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
 
                         bool isTemplateInvalid = false;
@@ -263,7 +265,6 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -304,7 +305,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var interviewers = _clonableSkillChannelTemplateService.GetClonableIRFTransInterviewer(id);
-                    ViewBag.Profile = profileName;
+                    ViewBag.profile = profileName;
                     return PartialView(interviewers);
                 }
                 else

@@ -7,7 +7,7 @@
         public int UserId { get; set; }
         public bool IsAdded { get; set; }
         public string EmailId { get; set; }
-        public string ProfileName { get; set; }
+        public string profileName { get; set; }
         public int ProfileId { get; set; }
     }
 }

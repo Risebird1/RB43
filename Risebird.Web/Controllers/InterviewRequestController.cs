@@ -61,10 +61,10 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.ProfileName = profileName;
+                    ViewBag.profileName = profileName;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new List<InterviewRequestVM>();
                         var irfList = _interviewRequestService.GetAllInterviewRequests(emailid, profileName);
@@ -117,8 +117,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new InterviewRequestVM();
                         model.RequestedBy = emailid;
@@ -172,8 +172,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -291,8 +291,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new InterviewRequestVM();
                         model = _interviewRequestService.FetchInterviewRequestById(id);
@@ -333,8 +333,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -831,7 +831,7 @@ namespace Risebird.Web.Controllers
             profileName = profileName?.Replace("\"", "");
             var list = new List<SelectListItem>();
             var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
-            if(isInstaInterviewRequest == true && !string.IsNullOrEmpty(profileName) && profileName == "SeniorHR" && assessmentGroups != null)
+            if(isInstaInterviewRequest == true && !string.IsNullOrEmpty(profileName) && profileName == "SeniorHR" || profileName == "SupportAdmin" && assessmentGroups != null)
             {
                 assessmentGroups = assessmentGroups.Where(x => x.Isinstaavailable == true);
             }

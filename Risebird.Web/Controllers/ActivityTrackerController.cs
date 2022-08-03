@@ -36,7 +36,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new List<ActivityTrackerVM>();
                         if (HttpContext.Session.GetString("ActivityTrackerFilters") == null)
@@ -61,7 +61,7 @@ namespace Risebird.Web.Controllers
 
                         }
 
-                        ViewBag.Profile = profileName;
+                        ViewBag.profile = profileName;
                         return View(model);
                     }
                     else
@@ -92,7 +92,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
 
                         if (filter != null)

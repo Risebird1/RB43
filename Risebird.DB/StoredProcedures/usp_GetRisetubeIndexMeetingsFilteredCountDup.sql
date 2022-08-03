@@ -39,7 +39,7 @@ declare @totalResults int, @searchValue varchar(max), @Emailid varchar(100), @cl
 if @clientid = 0    
  Begin    
  Select @Role=pr.Name from UserList ul join Profile pr on ul.idProfile=pr.id where ul.EmailId=@Emailid  
- if(@Role='SeniorHR')  
+ if(@Role='SeniorHR' or @Role='SupportAdmin')  
  Begin  
  if(@searchValue is not null)    
    Begin    

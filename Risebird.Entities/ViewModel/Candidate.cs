@@ -123,7 +123,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Is Proctor")]
         public bool IsProctor { get; set; }
 
-        public string ProfileName { get; set; }
+        public string profileName { get; set; }
         public int Candidateesumeid { get; set; }
     }
 }

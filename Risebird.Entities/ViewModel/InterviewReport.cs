@@ -295,7 +295,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Overall Interviewing Ability Score")]
         //[Required]
         public float? OverallInterviewingAbilityScore { get; set; }
-        public string ProfileName { get; set; }
+        public string profileName { get; set; }
         public string ISCId { get; set; }
         public string BackUrl { get; set; }
         //public string PerHourRateOutside { get; set; }

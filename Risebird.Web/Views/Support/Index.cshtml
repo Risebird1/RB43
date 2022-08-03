@@ -38,7 +38,7 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (ViewBag.Profile == "Admin")
+                        @if (ViewBag.profile == "Admin")
                         {
                             <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin:10px 0px;"> 
                                 <span class="fa fa-envelope" data-toggle="tooltip" data-placement="top" title="Mail" onclick="location.href='@Url.Action("Mail", "Mail")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Mail</font></span>
@@ -204,7 +204,7 @@
 
                                                 </td>
                                                 <td class="text-right action">
-                                                    @if (ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.profile == "Admin")
                                                     {
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
                                                             <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>

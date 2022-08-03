@@ -22,7 +22,7 @@
 
                 <div class="pull-right">
                     <div>
-                        @*@if (ViewBag.Profile != "Client")
+                        @*@if (ViewBag.profile != "Client")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Status." onclick="location.href='@Url.Action("AddStatus", "Candidate", new { candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate Status</font></span>

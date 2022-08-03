@@ -28,13 +28,13 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public IEnumerable<Client> GetClients(string emailid, string profilename)
+        public IEnumerable<Client> GetClients(string emailid, string profileName)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    if (profilename == "SeniorHR")
+                    if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         DynamicParameters dp = new DynamicParameters();
                         dp.Add("@Emailid", emailid);

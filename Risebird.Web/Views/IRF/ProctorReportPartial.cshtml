@@ -117,7 +117,7 @@
     })
 
 </script>
-<input type="hidden" value="@ViewBag.ProfileName" id="hidPagestatus" />
+<input type="hidden" value="@ViewBag.profileName" id="hidPagestatus" />
 <div class="main-panel" id="main-panel">
 
     <div class="mt50">
@@ -141,7 +141,7 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
-                        @if (ViewBag.ProfileName == "client" && (Model.InterviewStatus == 2 || Model.InterviewStatus == 4))
+                        @if (ViewBag.profileName == "client" && (Model.InterviewStatus == 2 || Model.InterviewStatus == 4))
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
                             <div class="clearfix text-right">

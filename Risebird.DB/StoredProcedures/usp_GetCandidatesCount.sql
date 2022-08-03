@@ -21,7 +21,7 @@ Begin
 declare @commonTable table (EmailId varchar(100),imid int, icid int, MeetingStatus int, InterviewStatus int);  
   Declare @Role varchar(150)
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@emailid
-if(@Role='SeniorHR')
+if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN
 insert into @commonTable   
   select ul.EmailId,im.id, ic.id,ic.MeetingStatus, ic.InterviewStatus   

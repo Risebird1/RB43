@@ -474,7 +474,7 @@ Else if(@Profile='HR')
   Client.[Name], tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings, tschm.ScheduledMeetings,  
   (irf.PerMintuteRate*tcm.ConfirmedMeetings), ul.EmailId, irf.CreatedFromTemplateId             
  End    
-Else if(@Profile='SeniorHR')          
+Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')          
  Begin          
        
  delete from @tbl_IRFSubset  

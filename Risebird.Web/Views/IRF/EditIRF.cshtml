@@ -256,29 +256,29 @@
                                                 </div>
                                                 @*<div class="col-md-3 col-sm-3 pull-left">
 
-                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
 
 
-                                                        <div class="mdc-checkbox">
-                                                            @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
+                                                            <div class="mdc-checkbox">
+                                                                @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
 
 
-                                                            <div class="mdc-checkbox__background">
-                                                                <svg class="mdc-checkbox__checkmark"
-                                                                     viewBox="0 0 24 24">
-                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                </svg>
-                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+
+
                                                             </div>
-                                                            <div class="mdc-checkbox__ripple"></div>
-
-
+                                                            @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                         </div>
-                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
-                                                    </div>
-                                                </div>*@
+                                                    </div>*@
                                                 <div class="col-md-3 col-sm-3 pull-left">
 
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
@@ -1168,7 +1168,7 @@
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                 }
@@ -1209,7 +1209,7 @@
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                     }
@@ -1282,7 +1282,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
 
                                                                                 {
                                                                                     @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
@@ -1325,10 +1325,9 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
-
                                                                                     }
                                                                                     else
                                                                                     {
@@ -1396,7 +1395,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                 {
                                                                                     @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                 }
@@ -1439,7 +1438,7 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                     }
