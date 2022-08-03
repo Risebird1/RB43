@@ -77,7 +77,7 @@
                     </div>
 
                     <div class="pull-left" style="margin-right:10px;">
-                        @if (ViewBag.Profile == "Admin")
+                        @if (ViewBag.profile == "Admin")
                         {
                             <span class="interviewer_3">
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -94,7 +94,7 @@
                         </span>
                     </div>
                     <div class="pull-left">
-                        @if (ViewBag.Profile != "Finance")
+                        @if (ViewBag.profile != "Finance")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddInterviewerProfile", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
@@ -502,7 +502,7 @@
                                                                 </button>
                                                             </span>
 
-                                                            @if (ViewBag.Profile != "Finance")
+                                                            @if (ViewBag.profile != "Finance")
                                                             {
                                                                 <span class="interviewer_12">
                                                                     <button class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
@@ -530,7 +530,7 @@
                                                                 <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
 
                                                             }
-                                                            @if (ViewBag.Profile != "Finance")
+                                                            @if (ViewBag.profile != "Finance")
                                                             {
                                                                 <span class="interviewer_15">
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">

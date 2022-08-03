@@ -535,7 +535,7 @@
 
                                                 @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
-                                                @if (ViewBag.Profile != "Client")
+                                                @if (ViewBag.profile != "Client")
                                                 {
                                                     @if (Model.IsEdited)
                                                     {

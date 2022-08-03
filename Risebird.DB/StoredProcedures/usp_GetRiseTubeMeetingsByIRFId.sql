@@ -36,7 +36,7 @@ Begin
 if @clientidParam = 0              
  BEGIN   
  Select @Role=pr.Name from UserList ul join Profile pr on ul.idProfile=pr.id where Emailid= @EmailIdParam 
-  if(@Role='SeniorHR')
+  if(@Role='SeniorHR' or @Role='SupportAdmin')
    begin
    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, im.ClientHrContact,              
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,              

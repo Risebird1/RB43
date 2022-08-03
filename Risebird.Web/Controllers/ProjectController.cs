@@ -735,7 +735,7 @@ namespace Risebird.Web.Controllers
 
                     ViewData["list"] = list;
                     ViewBag.ProjectName = irfList.FirstOrDefault().ProjectName;
-                    ViewBag.ProfileName = profileName.ToLower();
+                    ViewBag.profileName = profileName.ToLower();
 
 
 

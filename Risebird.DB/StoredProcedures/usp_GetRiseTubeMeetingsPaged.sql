@@ -120,7 +120,7 @@ if(@idProfile=2)--HR
    
  END  
  
-Else if(@idProfile=31)
+Else if(@idProfile=31 or @idProfile=32)
 Begin
 if(@searchValue is not null)  
   Begin  

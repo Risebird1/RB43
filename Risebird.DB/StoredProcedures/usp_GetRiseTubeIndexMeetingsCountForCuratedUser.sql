@@ -21,7 +21,7 @@ DECLARE @id int
 Declare @Role varchar(50)  
   Select @id=id from UserList where EmailId=@Emailid  
   Select @Role=pr.Name from UserList ul join Profile pr on ul.idProfile=pr.id where Emailid= @Emailid  
-if(@Role='SeniorHR') 
+if(@Role='SeniorHR' or @Role='SupportAdmin') 
 Begin
 if(@searchValue is not null)  
   Begin  

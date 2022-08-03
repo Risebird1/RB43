@@ -21,7 +21,7 @@ declare @commonTable table (VmId int, UserId int, IsAdded bit);
 		select VmId, UserId,  1 as IsAdded from TransVMUser where Vmid=@vmId
 
 
-select ul.id as UserId, EmailId, pr.[Name] as ProfileName, tvu.IsAdded, @vmId as VmId from UserList ul join [Profile] pr on ul.idProfile = pr.id
+select ul.id as UserId, EmailId, pr.[Name] as profileName, tvu.IsAdded, @vmId as VmId from UserList ul join [Profile] pr on ul.idProfile = pr.id
 left join @commonTable tvu on tvu.UserId = ul.id
 where idProfile = @profileId
 End

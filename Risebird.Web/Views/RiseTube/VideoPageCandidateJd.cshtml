@@ -209,7 +209,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @if (ViewBag.ProfileName != "CuratedUser")
+                                                @if (ViewBag.profileName != "CuratedUser")
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -2579,7 +2579,7 @@
 
         var selectedOption = $('.dropques').find("[selected]");
         $(selectedOption).unwrap();
-        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
+        if ('@ViewBag.profileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
             document.getElementsByClassName('minmaxCon')[0].style.display = "none";
         }
 

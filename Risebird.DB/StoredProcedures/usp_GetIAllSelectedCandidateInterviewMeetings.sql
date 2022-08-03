@@ -18,7 +18,7 @@ AS
 Begin              
 Declare @Role varchar(150)
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@email
-if(@Role='SeniorHR')
+if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN
 select distinct Meetings.*,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber from (select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,            
 im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,           

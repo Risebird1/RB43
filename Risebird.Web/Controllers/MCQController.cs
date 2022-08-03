@@ -58,7 +58,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     string clientname = string.Empty;
                     if (profileName == "Client")
@@ -229,7 +229,7 @@ namespace Risebird.Web.Controllers
                     //ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
                     //ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
-                    ViewBag.Profile = profileName;
+                    ViewBag.profile = profileName;
                     return View(resultset);
                 }
                 else
@@ -254,7 +254,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
                         if (filter != null)
                         {

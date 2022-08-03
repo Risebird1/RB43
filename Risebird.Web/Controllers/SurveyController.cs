@@ -118,10 +118,10 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var modelData = new List<SurveyVM>();
                 int Clientid = 0;
-                ViewBag.ProfileName = profileName;
+                ViewBag.profileName = profileName;
                 ViewBag.type = "Client";
                 ViewBag.PageName = "Interview";
-                if (profileName == "Client" || profileName == "SeniorHR" || profileName == "Admin")
+                if (profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Admin")
                 {
                     if (type == "Candidate")
                     {
@@ -163,7 +163,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        else if (profileName == "SeniorHR")
+                        else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                         {
                             var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
                             foreach (var item in result)
@@ -258,7 +258,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                ViewBag.ProfileName = profileName;
+                ViewBag.profileName = profileName;
                 int Clientid = 0;
                 var modelData = new List<SurveyVM>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -297,7 +297,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                else if (profileName == "SeniorHR")
+                else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
                     foreach (var item in result)
@@ -414,7 +414,7 @@ namespace Risebird.Web.Controllers
                 _resultlist = _resultlist.Distinct().ToList();
                 var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
                 var interviewerids = _meetingService.FetchAllInterviewidfromIrf(IRFId);
-                ViewBag.ProfileName = "";
+                ViewBag.profileName = "";
                 foreach (var item in result)
                 {
                     if (interviewerids.Any(x => x == item.interviewid))
@@ -756,7 +756,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                else if (profileName == "SeniorHR")
+                else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
                     foreach (var item in result)

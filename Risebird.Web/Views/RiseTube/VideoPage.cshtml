@@ -123,7 +123,7 @@
     <script src="~/Newassets/js/chardinjs.js"></script>
     <script src="~/Newassets/js/demo.js"></script>
 }
-<input type="hidden" value="@ViewBag.ProfileName" id="hidd_profile" />
+<input type="hidden" value="@ViewBag.profileName" id="hidd_profile" />
 <div class="main-panel bg-white" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"> </div>-->
@@ -269,7 +269,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
+                                                    @if (ViewBag.profileName != "CuratedUser")
                                                     {
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -531,11 +531,11 @@
                                                                         <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right mt-10" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
-                                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
+                                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.profileName != "CuratedUser" && Model.IsClientCurated == false)
                                                                         {
                                                                             <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
                                                                         }
-                                                                        @if (ViewBag.VideoStatus != "Public" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated == true) && Model.IsIntrested == "Interest Accepted")
+                                                                        @if (ViewBag.VideoStatus != "Public" && (ViewBag.profileName == "CuratedUser" || Model.IsClientCurated == true) && Model.IsIntrested == "Interest Accepted")
                                                                         {
                                                                             <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
                                                                         }
@@ -543,7 +543,7 @@
                                                                     </h1>
                                                                 }
                                                                 <div class="row counts-liks">
-                                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.profileName != "CuratedUser")
                                                                     {
                                                                         <div class="k col-md-2">
                                                                             @if (Model.IsLike == "Liked")
@@ -606,7 +606,7 @@
                                                                     {
                                                                         @if (ViewBag.VideoStatus != "Public")
                                                                         {
-                                                                            @if (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated)
+                                                                            @if (ViewBag.profileName == "CuratedUser" || Model.IsClientCurated)
                                                                             {
                                                                                 <div class="col-md-2 share">
                                                                                     <div class="btn-group">
@@ -651,7 +651,7 @@
                                                                         {
                                                                             @if (ViewBag.VideoStatus != "Public")
                                                                             {
-                                                                                @if (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated)
+                                                                                @if (ViewBag.profileName == "CuratedUser" || Model.IsClientCurated)
                                                                                 {
                                                                                     @if (Model.IsIntrested == "Interest Sent")
                                                                                     {
@@ -695,7 +695,7 @@
                                                                             }
                                                                         }
                                                                     </div>
-                                                                    @if (ViewBag.ProfileName == "Client" && ViewBag.VideoStatus != "Public")
+                                                                    @if (ViewBag.profileName == "Client" && ViewBag.VideoStatus != "Public")
                                                                     {
                                                                         <span class="col-md-4">
                                                                             <button class="rating-btn" aria-label="Rate Interviewer">
@@ -996,7 +996,7 @@
                                                                                     </div>
                                                                                     @if (ViewBag.VideoStatus != "Public")
                                                                                     {
-                                                                                        @if (ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
+                                                                                        @if (ViewBag.profileName != "CuratedUser" && Model.IsClientCurated == false)
                                                                                         {
                                                                                             <div class="row">
                                                                                                 <div class="col-md-6 col-sm-6">
@@ -1043,7 +1043,7 @@
                                                                                                 }
                                                                                             </div>
                                                                                         }
-                                                                                        @if ((ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
+                                                                                        @if ((ViewBag.profileName == "CuratedUser" || Model.IsClientCurated))
                                                                                         {
                                                                                             @if (Model.IsIntrested == "Interest Accepted")
                                                                                             {
@@ -1545,7 +1545,7 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.profileName != "CuratedUser")
                                                                         {
                                                                             <div>
                                                                                 <form>
@@ -2996,7 +2996,7 @@
         $('.dropques option').wrap('<span>');
         var selectedOption = $('.dropques').find("[selected]");
         $(selectedOption).unwrap();
-        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' == 'True') {
+        if ('@ViewBag.profileName' == "CuratedUser" || '@Model.IsClientCurated' == 'True') {
             document.getElementsByClassName('minmaxCon')[0].style.display = "none";
         }
         var weightageItems = $('[id$="WeightageActual"]');

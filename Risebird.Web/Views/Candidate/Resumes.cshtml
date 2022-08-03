@@ -28,7 +28,7 @@
                             {
                                 <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
                             }
-                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "Client")
+                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin" || Model.Profile == "Client")
                             {
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#uploadResumesModal">
                                     <span class="mdc-button__label"><span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
@@ -192,7 +192,7 @@
                                                                 </span>
                                                             </button>
                                                         }
-                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
+                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                         {
                                                             @if (!item.IsProcessed)
                                                             {

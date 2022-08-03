@@ -15,7 +15,7 @@
 </script>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
-<input type="hidden" value="@ViewBag.Profile" id="hidprofile" />
+<input type="hidden" value="@ViewBag.profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
 <div class="main-panel" id="main-panel">
@@ -57,7 +57,7 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
                         </button>
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                         {
                             @if (ViewBag.ClientRole != "HRs")
                             {
@@ -124,7 +124,7 @@
                                                             <th style="border-right: 0px !important;"></th>
 
                                                             <th>Candidate Email</th>
-                                                            @if (ViewBag.Profile != "Client")
+                                                            @if (ViewBag.profile != "Client")
                                                             {
                                                                 <th id="getstatus_2">RB Attempts</th>
                                                             }
@@ -133,7 +133,7 @@
                                                             <th id="getstatus_4">Invite Sent</th>
                                                             <th id="getstatus_5">Confirmation</th>
                                                             @*<th>Fitment Score</th>*@
-                                                            @if (ViewBag.Profile != "Client")
+                                                            @if (ViewBag.profile != "Client")
                                                             {
                                                                 <th id="getstatus_6">Joinability</th>
                                                                 <th id="getstatus_7">Selectability</th>
@@ -149,7 +149,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th>Candidate Email</th>
-                                                            @if (ViewBag.Profile != "Client")
+                                                            @if (ViewBag.profile != "Client")
                                                             {
                                                                 <th>RB Attempts</th>
                                                             }
@@ -158,7 +158,7 @@
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
                                                             @*<th>Fitment Score</th>*@
-                                                            @if (ViewBag.Profile != "Client")
+                                                            @if (ViewBag.profile != "Client")
                                                             {
                                                                 <th>Joinability</th>
                                                                 <th>Selectability </th>
@@ -230,7 +230,7 @@
                                                                     <td></td>
                                                                 }
 
-                                                                @if (ViewBag.Profile != "Client")
+                                                                @if (ViewBag.profile != "Client")
                                                                 {
                                                                     <td class="text-center">@item.AttemptsCount</td>
                                                                 }
@@ -257,7 +257,7 @@
                                                                 <td class="text-center">@item.TotalInvites</td>
                                                                 <td class="text-center">@item.InviteConfirmation</td>
                                                                 @*<td class="text-center">@((@item.JoinabilityScore+@item.SelectabilityScore)/2)</td>*@
-                                                                @if (ViewBag.Profile != "Client")
+                                                                @if (ViewBag.profile != "Client")
                                                                 {
                                                                     <td class="text-center" style="color:@joinabilityColor;">
                                                                         <b>@item.JoinabilityScore</b>
@@ -279,7 +279,7 @@
 
                                                                 <td class="text-left action">
 
-                                                                    @if (ViewBag.Profile != "Recruiter")
+                                                                    @if (ViewBag.profile != "Recruiter")
 
                                                                     {
 
@@ -346,7 +346,7 @@
                                                                     </button>
 
 
-                                                                    @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR"))
+                                                                    @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                             <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
@@ -364,7 +364,7 @@
                                                                             </button>
                                                                         }*@
 
-                                                                    @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
+                                                                    @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
                                                                         {
                                                                             <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">
                                                                                 <span onclick="location.href = '@Url.Action("FitmentReport", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Fitment Report" class="mdc-fab__icon material-icons">

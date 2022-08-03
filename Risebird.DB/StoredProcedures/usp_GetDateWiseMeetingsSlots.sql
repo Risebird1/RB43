@@ -39,7 +39,7 @@ select IRFId, count(id) from InterviewMeetings where  confirmationStatus=1 and c
         
 Declare @Role varchar(150)  
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid  
-if(@Role='SeniorHR')  
+if(@Role='SeniorHR' or @Role='SupportAdmin')  
 BEGIN        
 select distinct irf.IRFId, (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill,        
  (select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1) as Morning,        

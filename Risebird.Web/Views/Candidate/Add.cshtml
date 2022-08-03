@@ -52,7 +52,7 @@
                                         @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
                                     </div>
-                                    @if (Model.ProfileName != "Client")
+                                    @if (Model.profileName != "Client")
                                     {
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })

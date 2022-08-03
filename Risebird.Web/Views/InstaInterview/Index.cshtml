@@ -60,7 +60,7 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "Client")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client")
                         {
                             <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InstaInterviewsExporttoExcel", "InstaInterview", new { id = ViewBag.Requestid })'"></i></span>
                         }
@@ -291,12 +291,12 @@
                                                     <th>Candidate Name</th>
                                                     <th>Required Skill</th>
                                                     <th>Assessment Group</th>
-                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
                                                     <th>Zoom Link</th>
-                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                     {
                                                         <th>Zoom Id</th>
                                                     }
@@ -314,12 +314,12 @@
                                                     <th>Candidate Name</th>
                                                     <th>Required Skill</th>
                                                     <th>Assessment Group</th>
-                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
                                                     <th>Zoom Link</th>
-                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                     {
                                                         <th>Zoom Id</th>
                                                     }
@@ -392,7 +392,7 @@
                                                         </td>
 
                                                         <td> @item.AssessmentGroup</td>
-                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                         {
                                                             <td>@item.Interviewer</td>
                                                         }
@@ -404,7 +404,7 @@
                                                         {
                                                             <td><span style="color:red">No Zoom Link</span></td>
                                                         }
-                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                         {
                                                             <td>@item.AccountEmail</td>
                                                         }

@@ -66,7 +66,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new List<InstaMeetingVM>();
                         var irfList = _instaInterviewService.GetAllInstaRequests(emailid, profileName);
@@ -110,8 +110,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new InstaMeetingVM();
                         ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
@@ -155,8 +155,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -208,7 +208,7 @@ namespace Risebird.Web.Controllers
                                             {
                                                 ModelState.AddModelError(string.Empty, "File upload failed. Virus Detected!");
                                                 //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                                //if (profileName == "SeniorHR")
+                                                //if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                                                 //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                                 //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                                                 ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
@@ -249,7 +249,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                     //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                    //if (profileName == "SeniorHR")
+                                    //if (profileName == "SeniorHR" )
                                     //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                     //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                                     ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
@@ -283,7 +283,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            //if (profileName == "SeniorHR")
+                            //if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                             //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
@@ -318,8 +318,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
@@ -365,8 +365,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -491,7 +491,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            //if (profileName == "SeniorHR")
+                            //if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                             //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
@@ -528,7 +528,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -627,8 +627,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new InstaMeetingVM();
                         model.RequestId = Requestedid;
@@ -663,8 +663,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -769,7 +769,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         InstaMeetingVM meetingToUpdate = await _instaInterviewService.GetInstaMeeting(id);
                         TempData["ResumeLink"] = meetingToUpdate.ResumeLink;
@@ -806,7 +806,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (ModelState.IsValid)
                         {
@@ -1145,7 +1145,7 @@ namespace Risebird.Web.Controllers
                     bool isInterviewer = false;
                     ViewBag.actiontype = actiontype;
                     string profileName = HttpContext.Session.GetString("profileName");
-                    ViewBag.Profile = profileName.Replace("\"", "");
+                    ViewBag.profile = profileName.Replace("\"", "");
                     if (profileName != null)
                     {
                         profileName = profileName.Replace("\"", "");
@@ -1153,7 +1153,7 @@ namespace Risebird.Web.Controllers
                         {
                             isAdminHR = true;
                         }
-                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SeniorHR")
+                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                         {
                             isInterviewer = true;
                         }
@@ -1161,7 +1161,7 @@ namespace Risebird.Web.Controllers
                     var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
                     if (model == null)
                     {
-                        if (isAdminHR || profileName == "Admin" || profileName == "SeniorHR")
+                        if (isAdminHR || profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                         {
                             return RedirectToAction("Index", new { id = Requestedid });
                         }
@@ -1208,10 +1208,10 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.PageStatus = "Mainurl";
-                    ViewBag.Profile = profileName.Replace("\"", "");
+                    ViewBag.profile = profileName.Replace("\"", "");
                     bool isAdminHR = false;
                     bool isInterviewer = false;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (profileName != null)
                         {
@@ -1220,7 +1220,7 @@ namespace Risebird.Web.Controllers
                             {
                                 isAdminHR = true;
                             }
-                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SeniorHR")
+                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                             {
                                 isInterviewer = true;
                             }
@@ -1272,7 +1272,7 @@ namespace Risebird.Web.Controllers
                             }
                             TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
-                            if (profileName == "Admin" || profileName == "SeniorHR")
+                            if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                             {
                                 return RedirectToAction("Index", new { id = model.RequestId });
                             }
@@ -1440,8 +1440,8 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
-                profilename = profilename.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
                 List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
                 if (HttpContext.Session.GetString("InstaInterviewfilters") != null)
                 {
@@ -1487,7 +1487,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate Name";
                 Sheet.Cells[1, 3].Value = "Required Skill";
                 Sheet.Cells[1, 4].Value = "Assessment Group";
-                if (profilename == "Client")
+                if (profileName == "Client")
                 {
                     Sheet.Cells[1, 5].Value = "Confirmation Status";
                     Sheet.Cells[1, 6].Value = "Meeting Status";
@@ -1517,7 +1517,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 2].Value = item.CandidateName;
                         Sheet.Cells[i, 3].Value = item.RequiredSkill;
                         Sheet.Cells[i, 4].Value = item.AssessmentGroup;
-                        if (profilename == "Client")
+                        if (profileName == "Client")
                         {
                             Sheet.Cells[i, 5].Value = item.ConfirmationStatus;
                             if (item.MeetingStatusStatusDesc != "0")

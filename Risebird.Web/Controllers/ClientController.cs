@@ -63,26 +63,12 @@ namespace Risebird.Web.Controllers
                     }
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    var profilename = HttpContext.Session.GetString("profileName")?.Trim();
-                    profilename = profilename.Replace("\"", "");
-                    if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
-                    {
-                        OrginalProfileName = profilename;
-                        profilename = "Admin";
-                    }
-                    if (profilename == "Admin")
-                    {
-                        var model = _clientService.GetClients(emailid, profilename);
-                        ViewBag.LoggedEmail = emailid.ToLower();
-                        ViewBag.Profile = profilename;
-                        profilename = OrginalProfileName;
-                        return View(model);
-                    }
-                    else
-                    {
-                        return View(new List<Client>());
-                    }                     
-                   
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var model = _clientService.GetClients(emailid, profileName);
+                    ViewBag.LoggedEmail = emailid.ToLower();
+                    ViewBag.profile = profileName;
+                    return View(model);
                 }
                 else
                 {
@@ -1583,7 +1569,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                         }
                         ViewBag.IsClient = isClient;
-                        ViewBag.Profile = profileName;
+                        ViewBag.profile = profileName;
                         ViewBag.IsClientSelected = isClientSelected;
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";
@@ -3362,11 +3348,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
+                    ViewBag.profile = profileName;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -3448,7 +3434,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
                         {
@@ -3529,11 +3515,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
+                    ViewBag.profile = profileName;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {

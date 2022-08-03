@@ -210,7 +210,7 @@ Else if(@Profile='HR')
    
   
  End    
-Else if(@Profile='SeniorHR')          
+Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')          
  Begin          
        
  select irf.IRFId, TRIM(irf.ClientName) as EndClientName, Client.[Name] as ClientCompanyName,  

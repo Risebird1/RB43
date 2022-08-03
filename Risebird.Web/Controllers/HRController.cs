@@ -1035,7 +1035,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.type = "Candidate";
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -1084,7 +1084,7 @@ namespace Risebird.Web.Controllers
                             DateTime EndDate = DateTime.Now.Date.AddDays(1);
                             meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
                         }
-                        ViewBag.Profile = profileName;
+                        ViewBag.profile = profileName;
                         return View(meetings);
                     }
                     else
@@ -1116,8 +1116,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    ViewBag.profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (filter != null)
                         {
@@ -1179,7 +1179,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
 
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
