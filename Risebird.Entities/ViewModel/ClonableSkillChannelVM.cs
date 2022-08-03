@@ -41,6 +41,7 @@ namespace Risebird.Entities.ViewModel
         public int SkillChannelCounts { get; set; }
         public int InterviewCounts { get; set; }
         public string PrimarySkills { get; set; }
+        public string TaggedClients { get; set; }
     }
 }
 

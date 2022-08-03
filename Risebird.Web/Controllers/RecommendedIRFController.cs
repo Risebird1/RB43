@@ -102,6 +102,21 @@ namespace Risebird.Web.Controllers
                         model.ClonableTemplates = templatesFilteredByCategory;
                     }
 
+                    if (filter.PrimarySkills != null && filter.PrimarySkills.Count() > 0)
+                    {
+                        IEnumerable<ClonableSkillChannelVM> templatesFilteredByPrimarySkills = null;
+
+                        templatesFilteredByPrimarySkills = model.ClonableTemplates.Where(c => !string.IsNullOrEmpty(c.PrimarySkills) && filter.PrimarySkills.Intersect(c.PrimarySkills.Split(';'))?.Count() > 0);
+                        if (templatesFilteredByPrimarySkills != null && templatesFilteredByPrimarySkills.Count() > 0)
+                        {
+                            model.ClonableTemplates = templatesFilteredByPrimarySkills;
+                        }
+                        else
+                        {
+                            continueApplyingFilter = false;
+                        }
+                    }
+
                     if (!string.IsNullOrEmpty(filter.CountryType))
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByCountryType = null;
@@ -173,10 +188,10 @@ namespace Risebird.Web.Controllers
                 //&& (filter.CompanyType != null ? filter.CompanyType.Contains(c.CompanyTypeDesc) : c.CompanyTypeDesc == null)
                 //&& (filter.SeniorityLevel != null ? filter.SeniorityLevel.Contains(c.SeniorityLevelDesc) : c.SeniorityLevelDesc == null)).ToList();
             }
-            var assessmentGroupsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName))?.Distinct();
-            if (assessmentGroupsMappedToCurrentTemplates != null)
+            var asmtGrpsPrSkillsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName, x.PrimarySkills))?.Distinct();
+            if (asmtGrpsPrSkillsMappedToCurrentTemplates != null)
             {
-                model.AssessmentGroupsMappedToCurrentTemplates = JsonConvert.SerializeObject(assessmentGroupsMappedToCurrentTemplates);
+                model.AsmtGrpsPrSkillsMappedToCurrentTemplates = JsonConvert.SerializeObject(asmtGrpsPrSkillsMappedToCurrentTemplates);
             }
             if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
             {

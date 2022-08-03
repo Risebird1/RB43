@@ -1,11 +1,18 @@
-﻿function FilterAssessmentGroupDropDown(categorySelected, assessmentGroupCategoryMapArray) {
-    $("#AssessmentGroupTemplate option").remove();
+﻿function FilterAsmtGrpPrSkillDropDown(categorySelected, asgGrpPrSkillsCategoryMapArray) {
+    //$("#AssessmentGroupTemplate option").remove();
+    //var primarySkillsOptions = $("#PrimarySkills option");
+    //$("#PrimarySkills option").remove();
+    //$(".px-md-2.px-1").remove();
+    //$('#PrimarySkills').multiselect('refresh');
+    //$("#PrimarySkills").multiselect("destroy").multiselect({
+    //    // Your options...
+    //});
     if (categorySelected != null && categorySelected != '') {
 
-        if (assessmentGroupCategoryMapArray != null) {
-            const result = assessmentGroupCategoryMapArray.filter(checkForCorrespondingAssessmentGroup);
+        if (asgGrpPrSkillsCategoryMapArray != null) {
+            const result = asgGrpPrSkillsCategoryMapArray.filter(checkForCorrespondingAsmtGrpPrSkill);
 
-            function checkForCorrespondingAssessmentGroup(arrayItem) {
+            function checkForCorrespondingAsmtGrpPrSkill(arrayItem) {
                 if (arrayItem != null) {
                     if (arrayItem.Item2 != null && arrayItem.Item2.toLowerCase() == categorySelected.toLowerCase() && arrayItem.Item1 != null) {
                         return true;
@@ -14,22 +21,24 @@
                 return false;
             }
 
-            AppendOptionsToAssessmentGroupsFilterDropDown(result);
+            AppendOptionsToAsmtGrpPrSkillsFilterDropDown(result);
         }
 
 
     }
     else {
 
-        if (assessmentGroupCategoryMapArray != null) {
+        if (asgGrpPrSkillsCategoryMapArray != null) {
 
-            AppendOptionsToAssessmentGroupsFilterDropDown(assessmentGroupCategoryMapArray);
+            AppendOptionsToAsmtGrpPrSkillsFilterDropDown(asgGrpPrSkillsCategoryMapArray);
         }
     }
     return;
 }
 
-function AppendOptionsToAssessmentGroupsFilterDropDown(data) {
+function AppendOptionsToAsmtGrpPrSkillsFilterDropDown(data) {
+    $("#AssessmentGroupTemplate option").remove();
+    //$("#PrimarySkills option").remove();
     if (data != null) {
         var drpAssessmentGroups = $("#AssessmentGroupTemplate");
         var option = $("<option />");
@@ -47,6 +56,37 @@ function AppendOptionsToAssessmentGroupsFilterDropDown(data) {
 
             });
         }
+
+        //Functionality shelved for now.
+
+        //var isPrimarySkillAppended = false;
+        //var drpPrimarySkills = $("#PrimarySkills");
+        //var option = $("<option />");
+        //option.html("Select");
+        //option.val();
+        //drpPrimarySkills.append(option);
+        //if (data.length > 0) {
+        //    $(data).each(function () {
+        //        if (this.Item3 != null && this.Item3 != '') {
+        //            var skillArray = this.Item3.split(';');
+        //            $(skillArray).each(function () {
+        //                var option = $("<option />");
+        //                option.html(this);
+        //                option.val(this);
+        //                drpPrimarySkills.append(option);
+        //                if (!isPrimarySkillAppended) {
+        //                    isPrimarySkillAppended = true;
+        //                }
+        //            })
+                    
+        //        }
+
+        //    });
+        //}
+        //if (!isPrimarySkillAppended) {
+        //    $("#PrimarySkills option").remove();
+
+        //}
     }
     return;
 }
