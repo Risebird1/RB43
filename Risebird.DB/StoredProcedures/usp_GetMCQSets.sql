@@ -15,15 +15,21 @@ AS
 BEGIN
 if(@profileName='Client')  
 begin  
-Select ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt  
+Select ms.PartitionKey, ms.id, ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill, ms.Clients,
+ms.Timer, ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt, ms.EmploymentType, ms.SeniorityLevel, 
+ms.CompanyType, ms.CountryType
 From MCQSets ms left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.ApplyingCompany=@clientname left join MCQCandidates msc on msc.MCQId=ms.PartitionKey and msc.CandidateEmail=msl.EmailAddress  
-group by ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount  
+group by ms.PartitionKey, ms.id, ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,
+ms.Timer,ms.QuestionCount, ms.Clients, ms.EmploymentType, ms.SeniorityLevel, ms.CompanyType, ms.CountryType 
 end  
 else  
 begin  
-Select ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt  
+Select ms.PartitionKey, ms.id, ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer, ms.Clients,
+ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt,  ms.EmploymentType, ms.SeniorityLevel, 
+ms.CompanyType, ms.CountryType  
 From MCQSets ms left join MCQShareList msl on msl.MCQId=ms.PartitionKey left join MCQCandidates msc on msc.MCQId=ms.PartitionKey and msc.CandidateEmail=msl.EmailAddress  
-group by ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount  
+group by ms.PartitionKey, ms.id, ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,
+ms.Timer,ms.QuestionCount, ms.Clients, ms.EmploymentType, ms.SeniorityLevel, ms.CompanyType, ms.CountryType  
 end  
 END
 Go

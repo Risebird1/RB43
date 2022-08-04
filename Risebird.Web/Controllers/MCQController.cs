@@ -33,9 +33,14 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFRepository _iRFRepository;
         private readonly IIRFService _irfService;
+        private readonly IClientService _clientService;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, 
+            INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService,
+            IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper,
+            IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger,
+            IIRFRepository iRFRepository, IIRFService irfService, IClientService clientService)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -48,6 +53,7 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
             _iRFRepository = iRFRepository;
             _irfService = irfService;
+            _clientService = clientService;
         }
 
         [Authorize]
@@ -72,6 +78,22 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     var result = _mCQService.FetchAllMCQSets(clientname, profileName);
+                    if (profileName == "Client")
+                    {
+                        List<MCQVMset> filteredByClient = new List<MCQVMset>();
+                        foreach (var item in result)
+                        {
+                            if (!string.IsNullOrEmpty(item.Clients))
+                            {
+                                var clientsMapped = item.Clients.Split(",");
+                                if (clientsMapped != null && clientsMapped.Any(x => !string.IsNullOrEmpty(x) && x.ToLower() == clientname?.ToLower()))
+                                {
+                                    filteredByClient.Add(item);
+                                }
+                            }
+                        }
+                        result = filteredByClient;
+                    }
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -81,14 +103,18 @@ namespace Risebird.Web.Controllers
                     //var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                     //                  select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
+
                     var resultset = new MCQDropdowndetails();
 
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                     resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
                     resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
                     //resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
-
+                    
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
+
+                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
                         if (!string.IsNullOrEmpty(item.ProfileType))
@@ -361,6 +387,7 @@ namespace Risebird.Web.Controllers
             var EmploymentType = Request.Form["EmploymentType"].ToString();
             var CompanyType = Convert.ToInt32(Request.Form["CompanyType"].ToString());
             var CountryType = Convert.ToInt32(Request.Form["CountryType"].ToString());
+            var clients = Request.Form["Clients"].ToString();
             //var PerHourRate = Convert.ToInt32(Request.Form["PerHourRate"].ToString());
             //var id = Convert.ToInt32(Request.Form["id"].ToString());
             //var CompentencyLevel = Convert.ToInt32(Request.Form["CompentencyLevel"].ToString());
@@ -378,6 +405,7 @@ namespace Risebird.Web.Controllers
             _lstset.EmploymentType = EmploymentType;
             _lstset.CompanyType = CompanyType;
             _lstset.CountryType = CountryType;
+            _lstset.Clients = clients;
             //_lstset.PerHourRate = PerHourRate;
             if (status == "Edit")
             {

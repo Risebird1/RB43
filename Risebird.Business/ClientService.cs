@@ -333,5 +333,18 @@ namespace Risebird.Business
                 return 0;
             }
         }
+
+        public async Task<IEnumerable<Client>> GetAllClients()
+        {
+            try
+            {
+                return await _clientRepository.GetAllClients();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
