@@ -43,6 +43,7 @@ namespace Risebird.Repository
                     parameters.Add("@EmploymentType", _lstset.EmploymentType);
                     parameters.Add("@CountryType", _lstset.CountryType != 0 ? _lstset.CountryType : null);
                     parameters.Add("@CompanyType", _lstset.CompanyType != 0 ? _lstset.CompanyType : null);
+                    parameters.Add("@Clients", _lstset.Clients);
                     //parameters.Add("@PerHourRate", _lstset.PerHourRate);
                     parameters.Add("@mcqid", dbType: DbType.Int32, direction: ParameterDirection.Output);
                     await SqlMapper.QueryAsync(con, "usp_AddorUpdateMCQSet", parameters,

@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
         //public int PerHourRate { get; set; }
         public int TotalInvite { get; set; }
         public int CandidateAttempt { get; set; }
+        public string Clients { get; set; }
     }
     public class QuestionList
     {
@@ -125,6 +126,8 @@ namespace Risebird.Entities.ViewModel
         }
         public ProfileTypeSkills _ProfileTypeSkills { get; set; }
         public List<MCQVMset> _MCQVMset { get; set; }
+        public SelectList ClientList { get; set; }
+
 
     }
     public class CandidateDetailsForTestDuplicate

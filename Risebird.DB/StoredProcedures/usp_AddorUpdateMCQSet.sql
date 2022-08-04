@@ -21,6 +21,7 @@ CREATE Procedure usp_AddorUpdateMCQSet
 @EmploymentType varchar(20),
 @CountryType int = null, 
 @CompanyType int = null, 
+@Clients varchar(max) = null,
 @mcqid int output              
 AS  
 BEGIN  
@@ -29,16 +30,16 @@ begin
 Update MCQSets set Title=@Title,PrimarySkills=@PrimarySkills,  
 ProfileType=@ProfileType,SecondarySkill=@SecondarySkill,Timer=@Timer,QuestionCount=@QuestionCount,
 SeniorityLevel = @SeniorityLevel, EmploymentType =@EmploymentType,
-CompanyType = @CompanyType, CountryType = @CountryType
+CompanyType = @CompanyType, CountryType = @CountryType, Clients = @Clients
 where id=@id and PartitionKey=@PartitionKey   
 select @mcqid = @id   
 end  
 else   
 begin  
 Insert into MCQSets (PartitionKey,Title,PrimarySkills,ProfileType,SecondarySkill,Timer,QuestionCount,CreatedOn,
-SeniorityLevel, EmploymentType, CompanyType, CountryType)   
+SeniorityLevel, EmploymentType, CompanyType, CountryType, Clients)   
 values(@PartitionKey,@Title, @PrimarySkills,@ProfileType,@SecondarySkill,@Timer,@QuestionCount,GetDate(),
-@SeniorityLevel, @EmploymentType, @CompanyType, @CountryType)  
+@SeniorityLevel, @EmploymentType, @CompanyType, @CountryType, @Clients)  
 select @mcqid = SCOPE_IDENTITY()   
 end  
 END  
