@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[MCQSets](
 	[CompanyType] [int] NULL,
 	[CountryType] [int] NULL,
 	[PerHourRate] [int] NULL,
+	[Clients] [varchar](max) NULL,
 	
  CONSTRAINT [PK_MCQSets] PRIMARY KEY CLUSTERED 
 (
@@ -98,6 +99,16 @@ WHERE Name IN (N'PerHourRate')
 BEGIN
 	ALTER TABLE MCQSets
 	Add PerHourRate int NULL
+END
+
+IF NOT EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'Clients')
+    AND Object_ID = Object_ID(N'MCQSets'))
+BEGIN
+	ALTER TABLE MCQSets
+	Add Clients [varchar](max) NULL
 END
 
 END
