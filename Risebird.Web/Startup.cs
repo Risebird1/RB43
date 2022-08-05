@@ -371,6 +371,7 @@ namespace Risebird.Web
             services.AddScoped<IMCQRepository, MCQRepository>();
             services.AddScoped<IRBMeetHelper, RBMeetHelper>();
             services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
+            services.AddSingleton<ITrackPublicUrlAccessor, TrackPublicUrlAccessor>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

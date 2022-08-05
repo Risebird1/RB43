@@ -3,6 +3,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 
 namespace Risebird.CommonHelper
@@ -17,11 +18,33 @@ namespace Risebird.CommonHelper
         }
         public void Initialize(ITelemetry telemetry)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            if (httpContext != null && httpContext.User.Identity.IsAuthenticated == true && httpContext.User.Identity.Name != null)
+            try
             {
-                telemetry.Context.User.AuthenticatedUserId = httpContext.User.Identity.Name;
-                //telemetry.Context.User.AuthenticatedUserId = httpContext.Session.GetString("email");
+                var httpContext = _httpContextAccessor.HttpContext;
+                var userClaims = httpContext.User.Identity as ClaimsIdentity;
+
+                string emailId = userClaims?.FindFirst("emails")?.Value;
+
+                if (httpContext != null && httpContext.User.Identity.IsAuthenticated == true && (httpContext.User.Identity.Name != null || !string.IsNullOrEmpty(emailId)))
+                {
+                    if(!string.IsNullOrEmpty(emailId))
+                    {
+                        telemetry.Context.User.AuthenticatedUserId = emailId;
+                    }
+                    else
+                    {
+                        telemetry.Context.User.AuthenticatedUserId = httpContext.User.Identity.Name;
+                    }
+                }
+                return;
+                //else if (httpContext != null && httpContext.Session != null && httpContext.Session.GetString("PublicUrlAccessor") != null)
+                //{
+                //    telemetry.Context.User.AuthenticatedUserId = httpContext.Session.GetString("PublicUrlAccessor").ToString();
+                //}
+            }
+            catch (Exception)
+            {
+                return;
             }
         }
     }

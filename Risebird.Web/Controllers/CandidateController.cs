@@ -48,6 +48,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
+        private readonly ITrackPublicUrlAccessor _trackPublicUrlAccessor;
 
 
         //private static string Searchvalue;
@@ -56,7 +57,9 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration)
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, 
+            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository,
+            IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -76,6 +79,7 @@ namespace Risebird.Web.Controllers
             _interviewSchedulerRepository = interviewSchedulerRepository;
             _userRepository = userRepository;
             _configuration = configuration;
+            _trackPublicUrlAccessor = trackPublicUrlAccessor;
         }
 
         [HttpGet]
@@ -3667,6 +3671,9 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> PublicAllMeetings(string id, string Emailid)
         {
+            //HttpContext.Session.SetString("PublicUrlAccessor", JsonConvert.SerializeObject(Emailid));
+            var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+            _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
             var role = await _clientService.GetUniqueClientRoleByEmailId(Emailid, id);
             var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
