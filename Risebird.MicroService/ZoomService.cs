@@ -61,7 +61,7 @@ namespace Risebird.MicroService
 
                     try
                     {
-                       
+
                         if (!string.IsNullOrEmpty(meeting.zoomLink))
                         {
                             //long zoommeetingId = 0;
@@ -203,7 +203,7 @@ namespace Risebird.MicroService
                             rbMeetVideoDurationInMinutes = (rbMeetVideoDurationInSeconds.Value / 60);
                         }
 
-                        if(!string.IsNullOrEmpty(rbMeetVideoLink))
+                        if (!string.IsNullOrEmpty(rbMeetVideoLink))
                         {
                             _ = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, rbMeetVideoLink, rbMeetVideoDurationInMinutes).Result;
                             log.LogInformation($"RBMeet : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");

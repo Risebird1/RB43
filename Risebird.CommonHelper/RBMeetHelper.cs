@@ -4,8 +4,6 @@ using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper

@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, 
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository,
             IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor)
         {
@@ -2744,7 +2744,7 @@ namespace Risebird.Web.Controllers
                                                 }
                                                 catch (Exception ex)
                                                 {
-                                                    if(workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null
+                                                    if (workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null
                                                         || workSheet.Cells[rowIterator, 6] == null || workSheet.Cells[rowIterator, 6].Value == null)
                                                     {
                                                         result.Append("Failed! Candidate EmailId and Client HR EmailId are mandatory. Please check for the missing entries.");

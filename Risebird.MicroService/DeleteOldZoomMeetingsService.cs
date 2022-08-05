@@ -1,14 +1,13 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -18,7 +17,7 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
-        
+
         public DeleteOldZoomMeetingsService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
         {
             _configuration = configuration;
@@ -37,7 +36,7 @@ namespace Risebird.MicroService
                 var meetingsToBeDeleted = await _meetingRespository.GetZoomMeetingsToBeDeleted();
 
                 //get jwt authentication token 
-                
+
                 string token = _zoomHelper.ZoomToken();
 
                 // delete zoom meeting and its recording from Zoom

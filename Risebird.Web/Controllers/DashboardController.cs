@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -36,8 +35,8 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
 
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, 
-            IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, 
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
+            IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
             IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
@@ -352,7 +351,7 @@ namespace Risebird.Web.Controllers
                         return JsonConvert.SerializeObject(funnelData);
                     }
                     else
-                        return string.Empty; 
+                        return string.Empty;
                 }
                 else
                 {

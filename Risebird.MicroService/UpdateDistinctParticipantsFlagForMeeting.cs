@@ -1,12 +1,10 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using System;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -14,7 +12,7 @@ namespace Risebird.MicroService
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
-        
+
         public UpdateDistinctParticipantsFlagForMeeting(IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
         {
             _applicationErrorLogger = applicationErrorLogger;
@@ -22,7 +20,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("UpdateDistinctParticipantsFlagForMeeting")]
-        public async Task Run([TimerTrigger("0 */15 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
         {
             try
             {

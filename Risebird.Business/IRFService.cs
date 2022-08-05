@@ -2549,12 +2549,12 @@ namespace Risebird.Business
                 }
 
                 //get meeting platform from template by Id
-                if(string.IsNullOrEmpty(irfDetails.MeetingPlatform))
+                if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
                 {
                     var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(irfDetails.CreatedFromTemplateId);
                     irfDetails.MeetingPlatform = meetingPlatform;
                 }
-                
+
 
                 irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
                 irfDetails.CompanyDetails = string.Empty;

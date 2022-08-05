@@ -2,9 +2,7 @@
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 
 namespace Risebird.CommonHelper
 {
@@ -27,7 +25,7 @@ namespace Risebird.CommonHelper
 
                 if (httpContext != null && httpContext.User.Identity.IsAuthenticated == true && (httpContext.User.Identity.Name != null || !string.IsNullOrEmpty(emailId)))
                 {
-                    if(!string.IsNullOrEmpty(emailId))
+                    if (!string.IsNullOrEmpty(emailId))
                     {
                         telemetry.Context.User.AuthenticatedUserId = emailId;
                     }
