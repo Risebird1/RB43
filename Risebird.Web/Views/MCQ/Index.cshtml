@@ -264,37 +264,37 @@
                                                 {
                                                     @if (item.ProfileTypeName.Length > 25)
                                                     {
-                                                        <div class="client-field">Profile Level: </div> <div class="clientName" style="width:180px" title="@item.SecondarySkill"> @item.ProfileTypeName.Substring(0, 25)...</div>
+                                                        <div class="client-field">Profile Level: </div> <div class="client-name" style="width:180px" title="@item.SecondarySkill"> @item.ProfileTypeName.Substring(0, 25)...</div>
                                                     }
                                                     else
                                                     {
-                                                        <div class="client-field">Profile Level: </div> <div class="clientName" style="width:180px"> @item.ProfileTypeName</div>
+                                                        <div class="client-field">Profile Level: </div> <div class="client-name" style="width:180px"> @item.ProfileTypeName</div>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <div class="client-field">Profile Level: </div> <div class="clientName" style="width:180px"> @item.ProfileTypeName</div>
+                                                    <div class="client-field">Profile Level: </div> <div class="client-name" style="width:180px"> @item.ProfileTypeName</div>
                                                 }
                                             </div>
                                             @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                     <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
                                                 </div>*@
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Primary Skill:</div> <div class="clientName" style="width:180px !important"> @item.PrimarySkills </div>
+                                                <div class="client-field">Primary Skill:</div> <div class="client-name"> @item.PrimarySkills </div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Total Invite/ Attempt:</div> <div class="client-name" style="width:180px !important">@item.TotalInvite / @item.CandidateAttempt</div>
+                                                <div class="client-field">Total Invite/ Attempt:</div> <div class="client-name">@item.TotalInvite / @item.CandidateAttempt</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12">
                                                 @if (!String.IsNullOrEmpty(item.SecondarySkill))
                                                 {
                                                     @if (item.SecondarySkill.Length > 25)
                                                     {
-                                                        <div class="client-field">Secondary Skill: </div> <div class="clientName" style="width:180px" title="@item.SecondarySkill"> @item.SecondarySkill.Substring(0, 25)...</div>
+                                                        <div class="client-field">Secondary Skill: </div> <div class="client-name" title="@item.SecondarySkill"> @item.SecondarySkill.Substring(0, 25)...</div>
                                                     }
                                                     else
                                                     {
-                                                        <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
+                                                        <div class="client-field">Secondary Skill:</div> <div class="client-name"> @item.SecondarySkill</div>
                                                     }
                                                 }
                                                 else
@@ -316,7 +316,7 @@
                                                     @if (ViewBag.profile != "Client")
                                                     {
                                                         <button class="mdc-fab app-fab--absolute priority" aria-label="Edit" title="Edit">
-                                                            <span onclick="javascript:EditMcqSet('@item.PartitionKey', '@item.id', '@item.ProfileType', '@item.SeniorityLevel', '@item.EmploymentType', '@item.CompanyType', '@item.CountryType', '@item.Clients');" title="Edit" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            <span onclick="javascript:EditMcqSet('@item.PartitionKey', '@item.id', '@item.ProfileType', '@item.SeniorityLevel', '@item.EmploymentType', '@item.CompanyType', '@item.CountryType','@item.Clients','@item.AadhaarVerification');" title="Edit" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                         </button>
                                                     }
                                                     <button class="mdc-fab app-fab--absolute priority" aria-label="List" title="Candidate List">
@@ -472,6 +472,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6" style="padding-top:30px">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerification" style="margin-bottom:0px;">
+                                <input type="checkbox" id="chkAadhaarverification" /> Aadhaar Verification Required
+                            </label>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="Clients" style="margin-bottom:0px;">
@@ -488,8 +495,7 @@
                         </div>
                     </div>
 
-
-                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Interview Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
+                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Screen+ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     </div>
@@ -693,6 +699,7 @@
         $("#txtpartialid").val('');
         $("#txtMCQTitle").val('');
         $("#txtTime").val('');
+        document.getElementById("chkAadhaarverification").checked = false;
         //$("#txtPerHourRate").val('');
         //document.getElementById("ddlProfileType").value = 0;
         //document.getElementById("ddlCompentencyLevel").value = 0;
@@ -734,6 +741,7 @@
             form_data.append("Clients", $("#ddlClients").val());
             //form_data.append("PerHourRate", $("#txtPerHourRate").val());
             form_data.append("id", $("#idMcqTile").val());
+            form_data.append("AadhaarVerification", document.getElementById("chkAadhaarverification").checked);
             //form_data.append("CompentencyLevel", $("#ddlCompentencyLevel").val());
             if ($("#txtpartialid").val().trim() != "") {
                 form_data.append("status", "Edit");
@@ -762,7 +770,7 @@
         var url = '/MCQ/CandidateTestDetails?id=' + id;
         window.location.href = url;
     }
-    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType, clients) {
+    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType,clients,aadhaarVerification) {
         openCreatePopUp();
         $("#idMcqTile").val(idMcq);
         $("#txtpartialid").val(id);
@@ -798,6 +806,8 @@
         var clientList= (clients).split(",");
         $("#ddlClients").val(clientList);
         $("#ddlClients").select2().trigger('change');
+        var bool_value = aadhaarVerification == "true" ? true : false
+        document.getElementById("chkAadhaarverification").checked = bool_value;
     }
 
     function closeSharePopUp() {
@@ -847,7 +857,7 @@
                             data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val() },
                             success: function (data) {
                                 if (data == "success") {
-                                    alert("Successfully share the Phone Interview set.");
+                                    alert("Successfully share the Phone Screen+ set.");
                                     closeSharePopUp();
 
                                 } else {

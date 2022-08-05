@@ -862,7 +862,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to create Skills Channel!";
                         return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-                    } 
+                    }
                 }
                 else
                 {

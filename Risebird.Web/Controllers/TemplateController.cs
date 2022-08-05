@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -179,7 +178,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-                        
+
                         if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
@@ -206,7 +205,7 @@ namespace Risebird.Web.Controllers
                                 //        model.ClonableTemplates = templatesFilteredByAssessmentGroup;
                                 //    }
                                 //}
-                                
+
 
                                 if (!string.IsNullOrEmpty(filter.Category))
                                 {
@@ -338,7 +337,7 @@ namespace Risebird.Web.Controllers
                             model.ClonableTemplates = model.ClonableTemplates.OrderByDescending(x => x.SkillChannelCounts).ToList();
                         }
 
-                        if(profileName == "Client")
+                        if (profileName == "Client")
                         {
                             int index = 0;
                             foreach (var template in model.ClonableTemplates)
@@ -360,7 +359,7 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                        
+
                         return View(model);
                     }
                     else
@@ -439,7 +438,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [HttpPost]
+        //[HttpPost]
         public async Task<IActionResult> ResetClonableTemplateFilter()
         {
             try

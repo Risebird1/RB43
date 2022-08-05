@@ -39,7 +39,7 @@ namespace Risebird.MicroService
             }
             catch (Exception ex)
             {
-               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
     }

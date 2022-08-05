@@ -20,6 +20,7 @@ CREATE TABLE [dbo].[MCQSets](
 	[CountryType] [int] NULL,
 	[PerHourRate] [int] NULL,
 	[Clients] [varchar](max) NULL,
+	[AadhaarVerification] [bit] NULL
 	
  CONSTRAINT [PK_MCQSets] PRIMARY KEY CLUSTERED 
 (
@@ -109,6 +110,16 @@ WHERE Name IN (N'Clients')
 BEGIN
 	ALTER TABLE MCQSets
 	Add Clients [varchar](max) NULL
+END
+
+IF NOT EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'AadhaarVerification')
+    AND Object_ID = Object_ID(N'MCQSets'))
+BEGIN
+	ALTER TABLE MCQSets
+	Add AadhaarVerification bit
 END
 
 END

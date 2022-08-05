@@ -831,7 +831,7 @@ namespace Risebird.Web.Controllers
             profileName = profileName?.Replace("\"", "");
             var list = new List<SelectListItem>();
             var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
-            if(isInstaInterviewRequest == true && !string.IsNullOrEmpty(profileName) && profileName == "SeniorHR" || profileName == "SupportAdmin" && assessmentGroups != null)
+            if (isInstaInterviewRequest == true && !string.IsNullOrEmpty(profileName) && profileName == "SeniorHR" || profileName == "SupportAdmin" && assessmentGroups != null)
             {
                 assessmentGroups = assessmentGroups.Where(x => x.Isinstaavailable == true);
             }
@@ -844,7 +844,7 @@ namespace Risebird.Web.Controllers
 
                     assessmentGroupsFilteredByCountry = assessmentGroups.Where(x => x.Country == countryid).ToList();
                     assessmentGroups = assessmentGroupsFilteredByCountry;
-                    if(assessmentGroupsFilteredByCountry == null || assessmentGroupsFilteredByCountry.Count()==0)
+                    if (assessmentGroupsFilteredByCountry == null || assessmentGroupsFilteredByCountry.Count() == 0)
                     {
                         continueApplyingFilter = false;
                     }
@@ -853,7 +853,7 @@ namespace Risebird.Web.Controllers
                 {
                     var primarySkillsArray = primarySkills.Split(',');
                     IEnumerable<AssignmentVM> assessmentGroupsFilteredByPrimarySkills = null;
-                    assessmentGroupsFilteredByPrimarySkills = assessmentGroups.Where(x => !string.IsNullOrEmpty(x.PrimarySkills) && primarySkillsArray.Intersect(x.PrimarySkills.Split(","))?.Count()>0).ToList();
+                    assessmentGroupsFilteredByPrimarySkills = assessmentGroups.Where(x => !string.IsNullOrEmpty(x.PrimarySkills) && primarySkillsArray.Intersect(x.PrimarySkills.Split(","))?.Count() > 0).ToList();
 
                     if (assessmentGroupsFilteredByPrimarySkills != null && assessmentGroupsFilteredByPrimarySkills.Count() > 0)
                     {
@@ -869,8 +869,8 @@ namespace Risebird.Web.Controllers
                 {
                     IEnumerable<AssignmentVM> assessmentGroupsFilteredByCompany = null;
                     assessmentGroupsFilteredByCompany = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
-                    
-                    if(assessmentGroupsFilteredByCompany != null && assessmentGroupsFilteredByCompany.Count() > 0)
+
+                    if (assessmentGroupsFilteredByCompany != null && assessmentGroupsFilteredByCompany.Count() > 0)
                     {
                         assessmentGroups = assessmentGroupsFilteredByCompany;
                     }
@@ -879,7 +879,7 @@ namespace Risebird.Web.Controllers
                         continueApplyingFilter = false;
                     }
                 }
-                
+
                 if (jobLevelid != 0)
                 {
                     IEnumerable<AssignmentVM> assessmentGroupsFilteredByJobLevel = null;
@@ -897,7 +897,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (difficultyLevel != 0)
                 {
-                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByDifficultyLevel= null;
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByDifficultyLevel = null;
                     assessmentGroupsFilteredByDifficultyLevel = assessmentGroups.Where(x => x.ProfileType != null && x.ProfileType.Contains(difficultyLevel.ToString())).ToList();
                     //assessmentGroups = assessmentGroups.Where(x => x.ProfileType != null && x.ProfileType.Contains(difficultyLevel.ToString())).ToList();
 
@@ -922,7 +922,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                if ( assessmentGroups == null || assessmentGroups.Count() == 0)
+                if (assessmentGroups == null || assessmentGroups.Count() == 0)
                 {
                     //list.Add(new SelectListItem { Text = "No Assessment Groups for the selected combination above!", Value = "" });
                     //return new SelectList(list, "Value", "Text");

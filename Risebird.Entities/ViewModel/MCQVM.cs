@@ -53,6 +53,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalInvite { get; set; }
         public int CandidateAttempt { get; set; }
         public string Clients { get; set; }
+        public bool AadhaarVerification { get; set; }
     }
     public class QuestionList
     {
@@ -90,6 +91,14 @@ namespace Risebird.Entities.ViewModel
         public string FeedbackComment { get; set; }
         public string PartitionKey { get; set; }
         public int id { get; set; }
+
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string Gender { get; set; }
+        public string DOB { get; set; }
+        public string CandidateImage { get; set; }
+        public bool AadhaarVerification { get; set; }
+
     }
     public class MCQVMShare
     {

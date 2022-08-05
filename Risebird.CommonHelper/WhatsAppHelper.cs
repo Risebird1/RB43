@@ -40,7 +40,7 @@ namespace Risebird.CommonHelper
                 request.AddHeader("Content-Type", "application/json");
                 request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                 IRestResponse response = client.ExecuteAsync(request)?.Result;
-                if(response != null)
+                if (response != null)
                 {
                     var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     if (obj.result == "true")
@@ -56,7 +56,7 @@ namespace Risebird.CommonHelper
                 {
                     return "Failed to Add User. Please check all fields and try again.";
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -487,10 +487,10 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                if(_whatsAppVM != null)
+                if (_whatsAppVM != null)
                 {
                     var Emailid = _whatsAppVM.Emailid?.Split(";");
-                    if(Emailid != null)
+                    if (Emailid != null)
                     {
                         foreach (var item in Emailid)
                         {

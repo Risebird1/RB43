@@ -5805,7 +5805,7 @@ namespace Risebird.Web.Controllers
                 bool isInterviewer = false;
                 ViewBag.IRFID = irfId;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
-                if(model != null)
+                if (model != null)
                 {
                     if (model.QuestionsCollection == null)
                     {
@@ -5842,7 +5842,7 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("AllMeetings");
                 }
-                
+
             }
             catch (Exception ex)
             {

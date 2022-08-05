@@ -186,7 +186,7 @@ namespace Risebird.Entities.ViewModel
         public string OldJDTitle { get; set; }
         public string MeetingPlatform { get; set; }
         public string CategoryName { get; set; }
-        
+
     }
     public class InterviewerIds
     {

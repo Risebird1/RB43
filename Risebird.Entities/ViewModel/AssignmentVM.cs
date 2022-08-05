@@ -121,7 +121,7 @@ namespace Risebird.Entities.ViewModel
         public List<SelectListItem> SeniorityLevelList { get; set; }
 
         [DisplayName("Employment Type")]
-        public string EmploymentType { get; set; } 
+        public string EmploymentType { get; set; }
         public string[] EmploymentTypeArray { get; set; }
         public List<SelectListItem> EmploymentTypeList { get; set; }
 

@@ -135,6 +135,9 @@
         .confirm.btn, .multiselect.btn {
             line-height: normal !important
         }
+        .form-control[disabled], .form-control[readonly], select, option {
+            font-weight: bold !important;
+        }
     </style>
     @*<script>
             var importLocation = '@importLocation';
@@ -324,7 +327,7 @@
                             <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 7vw; padding-top: 1vw; ">
                                 @if (profileName == "Client")
                                 {
-                                    <c>For Support Tool Free Number - </c>
+                                    <c>For Support Toll Free Number - </c>
                                     <span class="fa fa-phone">
                                         18001207842
                                     </span>
@@ -332,7 +335,7 @@
                                 }
                                 else if (profileName == "Interviewer")
                                 {
-                                    <c>For Support Tool Free Number - </c>
+                                    <c>For Support Toll Free Number - </c>
                                     <span class="fa fa-phone">
                                         18001207846
                                     </span>
