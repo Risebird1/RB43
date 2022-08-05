@@ -233,7 +233,7 @@ namespace Risebird.Business
                     foreach (var skill in primarySkillArray)
                     {
                         var trimmedSkill = skill.Trim();
-                        if(trimmedSkill != string.Empty)
+                        if (trimmedSkill != string.Empty)
                         {
                             newList.Add(trimmedSkill);
                         }
@@ -510,7 +510,7 @@ namespace Risebird.Business
             {
                 model.DifficultyLevelArray = assessmentGroupData.ProfileType.Split(',');
             }
-            else if(!string.IsNullOrEmpty(model.DifficultyLevel))
+            else if (!string.IsNullOrEmpty(model.DifficultyLevel))
             {
                 model.DifficultyLevelArray = model.DifficultyLevel.Split(',');
             }
@@ -562,7 +562,7 @@ namespace Risebird.Business
                 model.EmploymentTypeArray = model.EmploymentType.Split(',');
             }
             var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
-                                   select new { ID = (int)s, Name = s.GetDescription() };
+                                  select new { ID = (int)s, Name = s.GetDescription() };
             var selectListforEmploymentTypes = new List<SelectListItem>();
             foreach (var item in employmentTypes)
             {

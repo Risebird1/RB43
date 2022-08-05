@@ -26,8 +26,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetails();
         Task<bool> SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
         Task<IEnumerable<SelectabilityEvaluatorReport>> FetchMCQReportDetailsByCMCQId(string CMCQId);
-        Task<IEnumerable<SelectabilityEvaluatorReport>> FetchMCQReportDetails(string MCQId,string ApplyingCompany);
+        Task<IEnumerable<SelectabilityEvaluatorReport>> FetchMCQReportDetails(string MCQId, string ApplyingCompany);
         Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetailsByCMCQId(string CMCQId);
-        Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetails(string MCQId,string ApplyingCompany);
+        Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetails(string MCQId, string ApplyingCompany);
     }
 }

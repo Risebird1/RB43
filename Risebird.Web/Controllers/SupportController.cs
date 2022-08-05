@@ -36,7 +36,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid?.Replace("\"", "");
                     if (HttpContext.Session.GetString("NavigationShow") == "true")
                     {
-                        
+
                         _userService.UpdateUserSigInDetails(emailid);
                         HttpContext.Session.SetString("NavigationShow", "false");
                     }
@@ -91,12 +91,12 @@ namespace Risebird.Web.Controllers
             try
             {
                 string emailId = null;
-                if(HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null)
                 {
                     emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId?.Replace("\"", "");
                 }
-                
+
                 var model = new SupportList();
                 model.Supports = _supportService.GetAllSupportHR(emailId);
                 return PartialView("SupportIndex", model);

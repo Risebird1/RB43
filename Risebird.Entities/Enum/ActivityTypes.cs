@@ -36,7 +36,7 @@ namespace Risebird.Entities.Enum
 
         [Description("Meeting Cancelled")]
         MeetingCancelled = 11,
-        
+
         [Description("QC Done")]
         QCDone = 12,
 

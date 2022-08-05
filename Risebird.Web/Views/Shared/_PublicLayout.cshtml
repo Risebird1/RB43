@@ -129,6 +129,9 @@
         .confirm.btn, .multiselect.btn {
             line-height: normal !important
         }
+        .form-control[disabled], .form-control[readonly], select, option {
+            font-weight: bold !important;
+        }
     </style>
 </head>
 <body class="sidebar-mini" style="padding-right:0px!important;">
@@ -166,7 +169,7 @@
                             profileName = profileName.Trim('"');
                             @if (profileName == "Client")
                             {
-                                <c>For Support Tool Free Number - </c>
+                                <c>For Support Toll Free Number - </c>
                                 <span class="fa fa-phone">
                                     18001207842
                                 </span>
@@ -174,7 +177,7 @@
                             }
                             else if (profileName == "Interviewer")
                             {
-                                <c>For Support Tool Free Number - </c>
+                                <c>For Support Toll Free Number - </c>
                                 <span class="fa fa-phone">
                                     18001207846
                                 </span>

@@ -50,7 +50,7 @@ namespace Risebird.Repository
                 parameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result  = SqlMapper.QueryAsync<Support>(con, "usp_GetSupportBasedOnProfile", parameters,
+                    var result = SqlMapper.QueryAsync<Support>(con, "usp_GetSupportBasedOnProfile", parameters,
                         commandType: CommandType.StoredProcedure).Result;
                     return result;
 

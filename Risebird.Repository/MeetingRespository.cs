@@ -6035,7 +6035,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid,int invoicerealization)
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization)
         {
             try
             {

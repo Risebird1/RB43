@@ -62,7 +62,7 @@
 
     <video id="vid2" hidden controls></video>
 
-    <div class="text-center" style="background-color: #363c43;padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
+    <div class="text-center" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%); padding: 15px 5px 5px 10px; width: 100%; display: inline-block; position: relative;">
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
         <div style="float:right">
             <div id="countdown">
@@ -315,7 +315,7 @@
         html += '        <input type="hidden" id="textcallno" value="' + Data._questionlist.length + '" />';
         for (var i = 0; i < Data._questionlist.length; i++) {
             if (Data._questionlist[i].questionAnswered == true) {
-                html += '       <div class="callbox" style="background-color: #ff5800; color: #fff;" onclick="QuestionSelect(' + Data._questionlist[i].questionNumber + ')">' + Data._questionlist[i].questionNumber + '</div>';
+                html += '       <div class="callbox" style="background-color: #42a5f5; color: #fff;" onclick="QuestionSelect(' + Data._questionlist[i].questionNumber + ')">' + Data._questionlist[i].questionNumber + '</div>';
             }
             else {
                 html += ' <div class="callbox" style = "background-color:white" onclick = "QuestionSelect(' + Data._questionlist[i].questionNumber + ')" >' + Data._questionlist[i].questionNumber + '</div> ';
@@ -328,7 +328,7 @@
         html += '           <div>';
         html += '               <input id="zquestion_QuestionType" name="_question.QuestionType" value="' + Data._question.questionType + '" type="hidden" />';
         html += '               <div>';
-        html += '                   <div>   <span style="color: #ff5800; font-weight: 600; font-size: 2.3rem; margin: 0 5px 0px 0px;"> ' + Data._question.questionNumber + '.</span > <span class="man"> ' + Data._question.question + '</span></div>';
+        html += '                   <div>   <span style="color: #42a5f5; font-weight: 600; font-size: 2.3rem; margin: 0 5px 0px 0px;"> ' + Data._question.questionNumber + '.</span > <span class="man"> ' + Data._question.question + '</span></div>';
         html += '               <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="' + Data._question.questionNumber + '" type="hidden" />';
         html += '                   <div>';
         if (Data._question.questionType == "Multiple") {

@@ -167,27 +167,27 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkills">Primary Skills</label>
                                                                 <div class="col-md-12 col-sm-12">
 
-                                                                    <select id="PrimarySkills" name="PrimarySkills" data-placeholder="None Selected"  class="form-select test" multiple="multiple" @*style="display: none;"*@ multiple>
+                                                                    <select id="PrimarySkills" name="PrimarySkills" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
-                                                                        @{
-                                                                            var primarySkills = new List<string>();
-                                                                            foreach (var item in Model.ClonableTemplates)
-                                                                            {
-                                                                                if (!string.IsNullOrEmpty(item.PrimarySkills))
+                                                                        @*@{
+                                                                                var primarySkills = new List<string>();
+                                                                                foreach (var item in Model.ClonableTemplates)
                                                                                 {
-                                                                                    var splitSkills = item.PrimarySkills.Split(";");
-                                                                                    if (splitSkills != null && splitSkills.Count() > 0)
+                                                                                    if (!string.IsNullOrEmpty(item.PrimarySkills))
                                                                                     {
-                                                                                        primarySkills.AddRange(splitSkills);
+                                                                                        var splitSkills = item.PrimarySkills.Split(";");
+                                                                                        if (splitSkills != null && splitSkills.Count() > 0)
+                                                                                        {
+                                                                                            primarySkills.AddRange(splitSkills);
+                                                                                        }
                                                                                     }
                                                                                 }
-                                                                            }
 
-                                                                        }
-                                                                        @foreach (var item in primarySkills)
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                            }
+                                                                            @foreach (var item in primarySkills)
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }*@
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -600,12 +600,12 @@
 }
 
 @*<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-        jQuery("#PrimarySkills").select2({ multiple: true });
-    });
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            jQuery("#PrimarySkills").select2({ multiple: true });
+        });
 
-</script>*@
+    </script>*@
 <script>
 
     function CloseIRFPopup() {

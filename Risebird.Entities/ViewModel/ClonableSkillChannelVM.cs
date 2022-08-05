@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
