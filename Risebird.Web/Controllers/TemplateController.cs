@@ -439,7 +439,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [HttpPost]
+        //[HttpPost]
         public async Task<IActionResult> ResetClonableTemplateFilter()
         {
             try
