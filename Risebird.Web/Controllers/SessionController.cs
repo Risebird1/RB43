@@ -159,7 +159,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignIn", "Account");
+                    return RedirectToAction("SignIn", "Session");
                 }
 
             }

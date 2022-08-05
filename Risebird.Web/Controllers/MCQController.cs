@@ -34,13 +34,10 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _iRFRepository;
         private readonly IIRFService _irfService;
         private readonly IClientService _clientService;
+        private readonly IAadhaarService _aadhaarService;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, 
-            INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService,
-            IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper,
-            IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger,
-            IIRFRepository iRFRepository, IIRFService irfService, IClientService clientService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService, IClientService clientService, IAadhaarService aadhaarService)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -53,6 +50,7 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
             _iRFRepository = iRFRepository;
             _irfService = irfService;
+            _aadhaarService = aadhaarService;
             _clientService = clientService;
         }
 
@@ -110,7 +108,7 @@ namespace Risebird.Web.Controllers
                     resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
                     resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
                     //resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
-                    
+
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
                     resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
@@ -387,6 +385,7 @@ namespace Risebird.Web.Controllers
             var EmploymentType = Request.Form["EmploymentType"].ToString();
             var CompanyType = Convert.ToInt32(Request.Form["CompanyType"].ToString());
             var CountryType = Convert.ToInt32(Request.Form["CountryType"].ToString());
+            var AadhaarVerification = Convert.ToBoolean(Request.Form["AadhaarVerification"]);
             var clients = Request.Form["Clients"].ToString();
             //var PerHourRate = Convert.ToInt32(Request.Form["PerHourRate"].ToString());
             //var id = Convert.ToInt32(Request.Form["id"].ToString());
@@ -405,6 +404,7 @@ namespace Risebird.Web.Controllers
             _lstset.EmploymentType = EmploymentType;
             _lstset.CompanyType = CompanyType;
             _lstset.CountryType = CountryType;
+            _lstset.AadhaarVerification = AadhaarVerification;
             _lstset.Clients = clients;
             //_lstset.PerHourRate = PerHourRate;
             if (status == "Edit")
@@ -555,8 +555,12 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public IActionResult SkillTest(string Id)
         {
+            var result = _mCQService.FetchMCQSetById(Id);
             ViewBag.Questionsetid = Id;
-            return View();
+            var model = new CandidateDetailsForTest();
+            model.MCQId = Id;
+            model.AadhaarVerification = result.FirstOrDefault().AadhaarVerification;
+            return View(model);
         }
         [HttpPost]
         public async Task<IActionResult> CandidateQuestionpage(CandidateDetailsForTest values)
@@ -625,7 +629,7 @@ namespace Risebird.Web.Controllers
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
 
             var questionvalue = Convert.ToInt32(id);
-            if (HttpContext.Session.GetString("TestCandidateQuestion") != null)
+            if (HttpContext.Session.GetString("TestCandidateQuestion") != null && questionvalue == 1)
             {
                 questionvalue = JsonConvert.DeserializeObject<int>(HttpContext.Session.GetString("TestCandidateQuestion"));
             }
@@ -826,6 +830,18 @@ namespace Risebird.Web.Controllers
                 //    }
                 //}
                 _mCQService.AddMCQCandidates(_list);
+
+                var aadhaarKYCmodel = new AadhaarData();
+                aadhaarKYCmodel.Name = values.Name;
+                aadhaarKYCmodel.Address = values.Address;
+                aadhaarKYCmodel.gender = values.Gender;
+                aadhaarKYCmodel.dob = values.DOB;
+                aadhaarKYCmodel.doc_face = values.CandidateImage;
+                aadhaarKYCmodel.email = values.CandidateEmail;
+                aadhaarKYCmodel.reference_id = values.MCQId;
+                aadhaarKYCmodel.verified_using = "MCQ";
+                await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+
                 foreach (var item in resultset)
                 {
                     var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
