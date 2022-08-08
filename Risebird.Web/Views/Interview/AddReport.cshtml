@@ -126,13 +126,22 @@
                                                     @Html.HiddenFor(m => m.CandidateEmail)
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
+                                            @*<div class="col-md-6 col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
                                         </div>
 
                                         @*<div class="col-md-6 col-sm-6">
@@ -145,7 +154,7 @@
                                                 </div>
 
                                             </div>*@
-                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                        @*@if (ViewBag.PageStatus != "PublicExternal")
                                         {
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
@@ -163,7 +172,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
+                                        }*@
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
@@ -185,7 +194,7 @@
 
                                                 </div>
                                             </div>
-                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                            @*@if (ViewBag.PageStatus != "PublicExternal")
                                             {
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
@@ -193,7 +202,7 @@
                                                         @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                     </div>
                                                 </div>
-                                            }
+                                            }*@
                                         </div>
                                     </div>
                                 </div>
@@ -251,7 +260,7 @@
                                                         <p class="card-text">Tech Skill Score: <span class="totScore" id="totTechScore"></span></p>
                                                         <div>
 
-                                                            <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                            <div id="scoreChart" style="height:200px;margin-left: 15px"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1574,7 +1583,60 @@
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
+<script>
+   
+    function SetTechReportChart() {
+        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+        var techSkillGraphObjectCollection = [];
+        var totalTechSkillScore = 0;
+        if (techItems != null) {
+            for (i = 0; i < techItems.length; i++) {
+                var weightage = document.getElementById("TechSkillReportCollection_" + i + "__WeightageActual").value;
+                if (weightage != null && weightage != '')
+                {
+                    totalTechSkillScore = totalTechSkillScore + parseFloat(weightage);
+                    weightage = parseFloat(weightage).toFixed(2);
+                }
+                var skill = document.getElementById("TechSkillReportCollection_" + i + "__SkillName").value;
+                var trimmedSkill = '';
+                if (skill != null && skill.length > 15) {
+                    trimmedSkill = skill.substring(0, 14) + '...';
+                }
+                else {
+                    trimmedSkill = skill;
+                }
+                var techSkillGraphObject = { y: weightage, label: skill, trimmedLabel: trimmedSkill};
+                techSkillGraphObjectCollection.push(techSkillGraphObject);
+            }
 
+            var chart = new CanvasJS.Chart("scoreChart", {
+                theme: "light2",
+                width: 500,//in pixels
+                height: 200,//in pixels
+                animationEnabled: true,
+                title: null,
+                data: [{
+                    type: "pie",
+                    startAngle: 60,
+                    innerRadius: 55,
+                    indexLabelFontSize: 15,
+                    indexLabelFontColor: "#9a9a9a",
+                    indexLabel: "{trimmedLabel}  {y}",
+                    toolTipContent: "<b>{label} </b>",
+
+                    dataPoints: techSkillGraphObjectCollection
+                }]
+            });
+            chart.render();
+
+            document.getElementById("totTechScore").innerHTML = parseFloat(totalTechSkillScore).toFixed(2);
+
+        }
+
+        
+
+    }
+</script>
 <script>
     function getPDF() {
 
@@ -1756,17 +1818,19 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
+
+        SetTechReportChart();
+
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
 
             average = totalCount / 4;
-            SetChart();
+            //SetChart();
         }
         else {
             average = totalCount / 2;
-            SetChartWithoutJoinabilitySelectability();
+            //SetChartWithoutJoinabilitySelectability();
         }
-
         $("#OverallScore").val(average);
 
     }
@@ -1820,14 +1884,17 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
+
+        SetTechReportChart();
+
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
             average = totalCount / 4;
-            SetChart();
+            //SetChart();
         }
         else {
             average = totalCount / 2;
-            SetChartWithoutJoinabilitySelectability();
+            //SetChartWithoutJoinabilitySelectability();
         }
         $("#OverallScore").val(average);
 

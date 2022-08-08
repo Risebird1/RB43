@@ -1,4 +1,8 @@
-﻿namespace Risebird.CommonHelper.Interface
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Risebird.CommonHelper.Interface
 {
     public interface ITrackPublicUrlAccessor
     {
