@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, 
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository,
             IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor)
         {
@@ -3382,6 +3382,8 @@ namespace Risebird.Web.Controllers
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                 }
+                var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+                _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
                 var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
                 if (String.IsNullOrEmpty(logovalue))
                 {
@@ -3701,6 +3703,8 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
             try
             {
+                var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+                _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(emailid), currentUrl);
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = new List<CandidateTimelineData>();
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
@@ -3942,6 +3946,8 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> PublicAllMeetingsAdmin(string Emailid)
         {
             var role = await _clientService.GetClientRoleByEmailId(Emailid);
+            //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+            //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
             if (role > 0)
             {
                 return Json("success");

@@ -5802,6 +5802,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+                //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
                 bool isInterviewer = false;
                 ViewBag.IRFID = irfId;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
