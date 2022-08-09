@@ -38,7 +38,6 @@
 
 function AppendOptionsToAsmtGrpPrSkillsFilterDropDown(data) {
     $("#AssessmentGroupTemplate option").remove();
-    $("#PrimarySkills option").remove();
     if (data != null) {
         var drpAssessmentGroups = $("#AssessmentGroupTemplate");
         var option = $("<option />");
@@ -57,9 +56,7 @@ function AppendOptionsToAsmtGrpPrSkillsFilterDropDown(data) {
             });
         }
 
-        //Functionality shelved for now.
-
-        var isPrimarySkillAppended = false;
+        $("#PrimarySkills option").remove();
         var drpPrimarySkills = $("#PrimarySkills");
         var option = $("<option />");
         option.html("Select");
@@ -68,24 +65,30 @@ function AppendOptionsToAsmtGrpPrSkillsFilterDropDown(data) {
         if (data.length > 0) {
             $(data).each(function () {
                 if (this.Item3 != null && this.Item3 != '') {
-                    var skillArray = this.Item3.split(';');
-                    $(skillArray).each(function () {
-                        var option = $("<option />");
-                        option.html(this);
-                        option.val(this);
-                        drpPrimarySkills.append(option);
-                        if (!isPrimarySkillAppended) {
-                            isPrimarySkillAppended = true;
-                        }
-                    })
 
+                    var option = $("<option />");
+                    option.html(this.Item3);
+                    option.val(this.Item3);
+                    drpPrimarySkills.append(option);
+                    if (!isPrimarySkillAppended) {
+                        isPrimarySkillAppended = true;
+                    }
+                    //var skillArray = this.Item3.split(';');
+                    //$(skillArray).each(function () {
+                    //    debugger;
+                    //    var option = $("<option />");
+                    //    option.html(this);
+                    //    option.val(this);
+                    //    drpPrimarySkills.append(option);
+                    //    if (!isPrimarySkillAppended) {
+                    //        isPrimarySkillAppended = true;
+                    //    }
+                    //})
                 }
 
             });
         }
-        //if (!isPrimarySkillAppended) {
-        //    $("#PrimarySkills option").remove();
-        //}
+        
     }
     return;
 }
