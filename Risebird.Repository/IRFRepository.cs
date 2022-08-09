@@ -6139,7 +6139,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate,string profile,string emailid)
         {
             try
             {
@@ -6149,6 +6149,8 @@ namespace Risebird.Repository
                     parameters.Add("@startDate", startDate);
                     parameters.Add("@endDate", endDate);
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@profile", profile);
+                    parameters.Add("@emailid", emailid);
                     return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStatsIRFCount", parameters,
                         commandType: CommandType.StoredProcedure);
                 }

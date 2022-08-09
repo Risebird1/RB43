@@ -8,7 +8,14 @@
 @{
     ViewData["Title"] = "Skill Channel Stats";
     ViewBag.PageHeader = "Skill Channel Stats";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.PageStatus == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
@@ -35,15 +42,18 @@
                     <div class="mobile-view"> <h4 class="card-title"> Skill Channel Stats</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.Type == "ChannelOwner")
+                    @if (ViewBag.profile != "Client")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('ChannelOwner')"><strong>Channel Owner</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
-                    }
-                    else
-                    {
-                        <div class="feedback-tab" onclick="Changeurldetails('ChannelOwner')"><strong>Channel Owner</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
+                        @if (ViewBag.Type == "ChannelOwner")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('ChannelOwner')"><strong>Channel Owner</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('ChannelOwner')"><strong>Channel Owner</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
+                        }
                     }
                 </div>
                 <div class="pull-right">
@@ -52,19 +62,37 @@
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
-                        @if (ViewBag.profile == "HR")
+                        @if (ViewBag.PageStatus == "Public")
                         {
+                            <input type="hidden" value="@ViewBag.emailid" id="hiddemail" />
+                            <input type="hidden" value="@ViewBag.uniqueid" id="hidduniqueid" />
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/HR/MyInterviews'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
                         else
                         {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/Dashboard'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
+                            @if (ViewBag.profile == "HR")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/HR/MyInterviews'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/Dashboard'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
                         }
-                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF",new { type=ViewBag.Type})'"></i></span>
+                        @if (ViewBag.PageStatus == "Public")
+                        {
+
+                        }
+                        else
+                        {
+                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF", new { type = ViewBag.Type })'"></i></span>
+                        }
                     </div>
                 </div>
             </div>
@@ -94,64 +122,92 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("SkillChannelDetails","IRF",new { type=ViewBag.Type})" method="post" id="form">
-
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                    Start Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                                </div>
-                                                            </div>
-
-
-
-
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                    End Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-12 col-sm-12">
-
-
-
-                                                            <div class="form-group">
-                                                                <div>
-                                                                    <div class="col-md-12 col-sm-12 pull-right">
-
-
-                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                            <font style="font-size:12px;"> Reset Filter</font>
-                                                                        </button>
-
-
-                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                            <font style="font-size:12px;"> Apply Filter</font>
-                                                                        </button>
-
-
+                                            @if (ViewBag.PageStatus == "Public")
+                                            {
+                                                <form action="@Url.Action("PublicSkillChannelDetails","IRF",new { emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })" method="post" id="form">
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                     </div>
-
                                                                 </div>
                                                             </div>
-
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12 pull-right">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-
-                                                </div>
-                                            </form>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form action="@Url.Action("SkillChannelDetails","IRF",new { type=ViewBag.Type})" method="post" id="form">
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12 pull-right">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            }
                                         </div>
                                     </div>
 
@@ -164,10 +220,16 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
-                                                        <th>Client</th>
+                                                        @if (ViewBag.profile != "Client")
+                                                        {
+                                                            <th>Client</th>
+                                                        }
                                                     }
-                                                    <th>Risebird Channel Owner</th>
-                                                    <th>Flags</th>
+                                                    @if (ViewBag.profile != "Client")
+                                                    {
+                                                        <th>Risebird Channel Owner</th>
+                                                        <th>Flags</th>
+                                                    }
                                                     @if (ViewBag.Type == "ChannelOwner")
                                                     {
                                                         <th>Skill Channels</th>
@@ -176,10 +238,17 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-                                                    <th>Report Pending</th>
+                                                    @if (ViewBag.profile != "Client")
+                                                    {
+                                                        <th>Report Pending</th>
+                                                    }
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
+                                                    @if (ViewBag.profile == "Client")
+                                                    {
+                                                        <th>Action</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -187,10 +256,16 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
-                                                        <th>Client</th>
+                                                        @if (ViewBag.profile != "Client")
+                                                        {
+                                                            <th>Client</th>
+                                                        }
                                                     }
-                                                    <th>Risebird Channel Owner</th>
-                                                    <th>Flags</th>
+                                                    @if (ViewBag.profile != "Client")
+                                                    {
+                                                        <th>Risebird Channel Owner</th>
+                                                        <th>Flags</th>
+                                                    }
                                                     @if (ViewBag.Type == "ChannelOwner")
                                                     {
                                                         <th>Skill Channels</th>
@@ -199,10 +274,17 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-                                                    <th>Report Pending</th>
+                                                    @if (ViewBag.profile != "Client")
+                                                    {
+                                                        <th>Report Pending</th>
+                                                    }
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
+                                                    @if (ViewBag.profile == "Client")
+                                                    {
+                                                        <th>Action</th>
+                                                    }
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -214,16 +296,22 @@
                                                             @if (ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>@item.IRFId</td>
-                                                                <td>@item.ClientCompName</td>
+                                                                @if (ViewBag.profile != "Client")
+                                                                {
+                                                                    <td>@item.ClientCompName</td>
+                                                                }
                                                             }
-                                                            <td> @item.RisebirdHREmail </td>
-                                                            @if (item.Flags > 0)
+                                                            @if (ViewBag.profile != "Client")
                                                             {
-                                                                <td style="color:blue!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>@item.Flags</td>
+                                                                <td> @item.RisebirdHREmail </td>
+                                                                @if (item.Flags > 0)
+                                                                {
+                                                                    <td style="color:blue!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>@item.Flags</td>
+                                                                }
                                                             }
                                                             @*<td style="color:blue!important;cursor:pointer" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>*@
                                                             @if (ViewBag.Type == "ChannelOwner")
@@ -234,10 +322,27 @@
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
                                                             <td> @item.RejectedMeetings </td>
-                                                            <td> @item.PendingCount </td>
+                                                            @if (ViewBag.profile != "Client")
+                                                            {
+                                                                <td> @item.PendingCount </td>
+                                                            }
                                                             <td> @item.NotScheduledCount </td>
                                                             <td> @item.ReScheduledCount </td>
                                                             <td> @item.FutureScheduledMeetings </td>
+                                                            <td>
+                                                                @if (item.IsPaused)
+                                                                {
+                                                                    <button id="skill_16" class="mdc-fab app-fab--absolute  " aria-label="Play">
+                                                                        <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
+                                                                        <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                    </button>
+                                                                }
+                                                            </td>
                                                         </tr>
                                                     }
                                                 }
@@ -314,9 +419,7 @@
         }
     });
 
-    function ResetFilter() {
-        window.location.href = "/IRF/ResetSkillChannelDetailsFilter";
-    }
+
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
         var endDte = '@endDte';
@@ -594,8 +697,135 @@
         window.location.href = "/IRF/SkillChannelDetails?type=" + type;
     }
 </script>
-
-
+<script>
+    function PlayIRF(irfId, irfName) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be enabled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, play it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        type: 'POST',
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error playing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Played!',
+                    type: 'success',
+                    html: '<p>IRF has been enabled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload();
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been enabled! :)',
+                    'error'
+                )
+            }
+        })
+        changeColor("yellow");
+    }
+    function PauseIRF(irfId, irfName) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be paused!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pause it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        type: 'POST',
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error pausing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Paused!',
+                    type: 'success',
+                    html: '<p>IRF has been paused.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload();
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been paused!',
+                    'error'
+                )
+            }
+        })
+        changeColor('red');
+    }
+    function changeColor(tileColor) {
+        localStorage.removeItem("localStorageforColorName");
+        localStorage.setItem('localStorageforColorName', 'localStorageforColor');
+        let value = localStorage.getItem('localStorageforColorName');
+        if (value) {
+            $(document).ready(function () {
+                $("#divTile").css({ "backgroundColor": tileColor });
+            });
+        }
+    }
+</script>
+@if (ViewBag.PageStatus == "Public")
+{
+    <script>
+        $(document).ready(function () {
+            document.getElementById("main-panel").classList.remove("main-panel");
+        });
+        function ResetFilter() {
+            var email = $("#hiddemail").val();
+            var uniqueid = $("#hidduniqueid").val();
+            window.location.href = "/IRF/ResetPublicSkillChannelDetailsFilter?emailid=" + email + "&uniqueid=" + uniqueid;
+        }
+    </script>
+}
+else
+{
+    <script>
+        function ResetFilter() {
+            window.location.href = "/IRF/ResetSkillChannelDetailsFilter";
+        }
+    </script>
+}
 
 
 @*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
