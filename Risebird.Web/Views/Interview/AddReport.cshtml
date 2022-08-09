@@ -257,10 +257,10 @@
                                                 <div class="chart-box">
                                                     <div>
                                                         @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
-                                                        <p class="card-text">Tech Skill Score: <span class="totScore" id="totTechScore"></span></p>
+                                                        <p class="card-text">Tech Skill Score: <span class="totScore" ><strong id="totTechScore"></strong></span></p>
                                                         <div>
 
-                                                            <div id="scoreChart" style="height:200px;margin-left: 15px"></div>
+                                                            <div id="scoreChart" style="height:200px;margin-left: 60px"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1584,60 +1584,6 @@
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 <script>
-   
-    function SetTechReportChart() {
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techSkillGraphObjectCollection = [];
-        var totalTechSkillScore = 0;
-        if (techItems != null) {
-            for (i = 0; i < techItems.length; i++) {
-                var weightage = document.getElementById("TechSkillReportCollection_" + i + "__WeightageActual").value;
-                if (weightage != null && weightage != '')
-                {
-                    totalTechSkillScore = totalTechSkillScore + parseFloat(weightage);
-                    weightage = parseFloat(weightage).toFixed(2);
-                }
-                var skill = document.getElementById("TechSkillReportCollection_" + i + "__SkillName").value;
-                var trimmedSkill = '';
-                if (skill != null && skill.length > 15) {
-                    trimmedSkill = skill.substring(0, 14) + '...';
-                }
-                else {
-                    trimmedSkill = skill;
-                }
-                var techSkillGraphObject = { y: weightage, label: skill, trimmedLabel: trimmedSkill};
-                techSkillGraphObjectCollection.push(techSkillGraphObject);
-            }
-
-            var chart = new CanvasJS.Chart("scoreChart", {
-                theme: "light2",
-                width: 500,//in pixels
-                height: 200,//in pixels
-                animationEnabled: true,
-                title: null,
-                data: [{
-                    type: "pie",
-                    startAngle: 60,
-                    innerRadius: 55,
-                    indexLabelFontSize: 15,
-                    indexLabelFontColor: "#9a9a9a",
-                    indexLabel: "{trimmedLabel}  {y}",
-                    toolTipContent: "<b>{label} </b>",
-
-                    dataPoints: techSkillGraphObjectCollection
-                }]
-            });
-            chart.render();
-
-            document.getElementById("totTechScore").innerHTML = parseFloat(totalTechSkillScore).toFixed(2);
-
-        }
-
-        
-
-    }
-</script>
-<script>
     function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
@@ -1819,7 +1765,7 @@
             totalCount += parseInt(items[i].value);
         }
 
-        SetTechReportChart();
+        SetTechReportChart('TechSkillReportCollection');
 
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
@@ -1885,7 +1831,7 @@
             totalCount += parseInt(items[i].value);
         }
 
-        SetTechReportChart();
+        SetTechReportChart('TechSkillReportCollection');
 
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {

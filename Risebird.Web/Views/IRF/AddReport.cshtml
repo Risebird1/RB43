@@ -206,9 +206,9 @@
                                             <div class="chart-box">
                                                 <div class="card-body">
                                                     @*<p class="card-text">Overall Average Score: <span id="totScore"></span></p>*@
-                                                    <p class="card-text">Tech Skill Score: <span id="totTechScore"></span></p>
+                                                    <p class="card-text">Tech Skill Score: <span ><strong id="totTechScore"></strong></span></p>
                                                     <div class="col-lg-6 col-md-6 col-sm-6">
-                                                        <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                        <div id="scoreChart" style="height:200px; margin-left:60px"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1284,7 +1284,11 @@
 
         var average = totalCount / 4;
         $("#OverallScore").val(average);
-        SetChart();
+        //SetChart();
+        if (id.includes("Tech")) {
+            SetTechReportChart();
+        }
+        
     }
 
     $(document).ready(function () {
