@@ -289,11 +289,10 @@
                                                 <div class="chart-box">
                                                     <div>
                                                         @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
-                                                        <p class="card-text">Tech Skill Score: <span id="totTechScore"></span></p>
+                                                        <p class="card-text">Tech Skill Score: <span><strong id="totTechScore"></strong></span></p>
 
                                                         <div>
-
-                                                            <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                            <div id="scoreChart" style="height:200px;margin-left: 60px"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1775,15 +1774,16 @@
         //items.forEach(function (item) {
         //    totalCount = totalCount + item.val();
         //});
+        SetTechReportChart('TechSkillReportCollection');
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
 
             average = totalCount / 4;
-            SetChart();
+            //SetChart();
         }
         else {
             average = totalCount / 2;
-            SetChartWithoutJoinabilitySelectability();
+            //SetChartWithoutJoinabilitySelectability();
         }
 
         $("#OverallScore").val(average);
@@ -1839,15 +1839,16 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
+        SetTechReportChart('TechSkillReportCollection');
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
 
             average = totalCount / 4;
-            SetChart();
+            //SetChart();
         }
         else {
             average = totalCount / 2;
-            SetChartWithoutJoinabilitySelectability();
+            //SetChartWithoutJoinabilitySelectability();
         }
         $("#OverallScore").val(average);
 
