@@ -70,9 +70,8 @@ function AppendOptionsToAsmtGrpPrSkillsFilterDropDown(data) {
                     option.html(this.Item3);
                     option.val(this.Item3);
                     drpPrimarySkills.append(option);
-                    if (!isPrimarySkillAppended) {
-                        isPrimarySkillAppended = true;
-                    }
+
+
                     //var skillArray = this.Item3.split(';');
                     //$(skillArray).each(function () {
                     //    debugger;
