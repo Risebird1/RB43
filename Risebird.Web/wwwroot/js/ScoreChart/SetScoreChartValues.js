@@ -742,3 +742,67 @@ function SetChartMCQReport() {
         });
     });
 }
+
+function SetTechReportChart(techCollectionIdStartsWith) {
+
+    var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+    //var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+    var techItems = $(idSelector);
+    var techSkillGraphObjectCollection = [];
+    var totalTechSkillScore = 0;
+    if (techItems != null) {
+        var techItemsLength = 0;
+        if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
+            techItemsLength = techItems.length / 2;
+        }
+        else {
+            techItemsLength = techItems.length;
+        }
+        for (i = 0; i < techItemsLength; i++) {
+
+            //var weightage = document.getElementById("TechSkillReportCollection_" + i + "__WeightageActual").value;
+            var weightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+            if (weightage != null && weightage != '') {
+                totalTechSkillScore = totalTechSkillScore + parseFloat(weightage);
+                weightage = parseFloat(weightage).toFixed(2);
+            }
+            //var skill = document.getElementById("TechSkillReportCollection_" + i + "__SkillName").value;
+            var skill = document.getElementById(techCollectionIdStartsWith + "_" + i + "__SkillName").value;
+            var trimmedSkill = '';
+            if (skill != null && skill.length > 15) {
+                trimmedSkill = skill.substring(0, 14) + '...';
+            }
+            else {
+                trimmedSkill = skill;
+            }
+            var techSkillGraphObject = { y: weightage, label: skill, trimmedLabel: trimmedSkill };
+            techSkillGraphObjectCollection.push(techSkillGraphObject);
+        }
+
+        var chart = new CanvasJS.Chart("scoreChart", {
+            theme: "light2",
+            width: 375,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: null,
+            data: [{
+                type: "pie",
+                startAngle: 60,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
+                indexLabelFontColor: "#9a9a9a",
+                indexLabel: "{trimmedLabel}  {y}",
+                toolTipContent: "<b>{label} </b>",
+
+                dataPoints: techSkillGraphObjectCollection
+            }]
+        });
+        chart.render();
+
+        document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+
+    }
+
+
+
+}

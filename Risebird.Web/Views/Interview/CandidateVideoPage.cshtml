@@ -462,7 +462,7 @@
 
                                                                     <div class="chart-box itemchart">
                                                                         @*<p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>*@
-                                                                        <p class="card-text">Overall Tech Score: <span class="toscore" id="totTechScore"></span></p>
+                                                                        <p class="card-text">Overall Tech Score: <span class="toscore"><strong id="totTechScore"></strong></span></p>
                                                                         <div class="col-lg-12 col-md-12 col-sm-12">
                                                                             <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                             <div class="transparent-chart">&nbsp;</div>
@@ -1466,7 +1466,8 @@
 
 <script>
     window.onload = function () {
-        SetChartForVideoPage();
+        //SetChartForVideoPage();
+        SetTechReportChart('IreportModel_TechSkillReportCollection');
     }
 </script>
 

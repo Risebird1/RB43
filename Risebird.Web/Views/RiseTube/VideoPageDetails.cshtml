@@ -1623,14 +1623,15 @@
         else {
             closeThMode();
         }
-        if ('@Model.IsJoinabilitySelectabilityRequired' == "True")
+        @*if ('@Model.IsJoinabilitySelectabilityRequired' == "True")
         {
             SetChartForVideoPage();
         }
         else
         {
             SetChartForVideoPageWithoutJoinabilitySelectability();
-        }
+        }*@
+        SetTechReportChart('IreportModel_TechSkillReportCollection');
         
         if (isTheaterMode === true) {
             getThMode();
