@@ -792,7 +792,7 @@ function SetTechReportChart(techCollectionIdStartsWith) {
                 indexLabelFontSize: 15,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{trimmedLabel}  {y}",
-                toolTipContent: "<b>{label} </b>",
+                toolTipContent: "<b>{label} ({y}) </b> ",
 
                 dataPoints: techSkillGraphObjectCollection
             }]

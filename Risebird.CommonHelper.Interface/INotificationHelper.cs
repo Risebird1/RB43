@@ -84,5 +84,6 @@ namespace Risebird.CommonHelper.Interface
         string SendUnassignedInterviewsNotifications(List<string> interviwers, string meetingDate);
         string SendResumeUploadCounts(Mail model, DataTable dt, string Name);
         string SendQCFormDetails(Mail model, DataTable dt);
+        string SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt);
     }
 }

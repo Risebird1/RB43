@@ -2670,11 +2670,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid)
         {
             try
             {
-                var irfList = await _irfRepository.GetAllIRFDetailsIRF(startDate, endDate);
+                var irfList = await _irfRepository.GetAllIRFDetailsIRF(startDate, endDate, profile, emailid);
                 foreach (var irf in irfList)
                 {
                     if (irf.CandidateCount > 0)
