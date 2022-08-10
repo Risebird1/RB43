@@ -26,13 +26,13 @@ left join UserList ulc on ulc.EmailId=im.candidateEmail left join CandidatesMast
 left join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=irf.id     
 where interviewDate>=dateadd(minute,-810,GetDate()) and interviewDate<dateadd(minute,-750,GetDate()) and im.confirmationStatus=1 and ic.MeetingStatus=2 and IsNull(ca.IsProctor,0)=0)    
 
-Delete ip from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id   
+Delete from InterviewPoints where interviewid in(Select Interviewid From InterviewPoints where interviewid in(Select ip.Interviewid from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id   
 join Userlist ul on ul.EmailId=im.interviewer  
 join InterviewPoints ip on ip.Interviewid=im.id and ip.userid=ul.id  
 where im.interviewDate>=dateadd(minute,-2670,GetDate()) and im.interviewDate<dateadd(minute,-2550,GetDate())   
-and ic.MeetingStatus=5 and ip.Type='Penalty' and ip.Comment like '%Late Report%'  
+and ic.MeetingStatus=5 and ip.Type='Penalty' and ip.Comment like '%Late Report%')
+and Type='Interview')and Type='Penalty' and Comment like '%Late Report%'  
     
 END
-
 
 GO

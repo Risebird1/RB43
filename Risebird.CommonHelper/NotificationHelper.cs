@@ -2329,5 +2329,49 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public string SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
+                sb.Append("<tr>");
+                foreach (DataColumn column in dt.Columns)
+                {
+                    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
+                }
+                sb.Append("</tr>");
+                foreach (DataRow row in dt.Rows)
+                {
+                    sb.Append("<tr>");
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
+                    }
+                    sb.Append("</tr>");
+                }
+                sb.Append("</table>");
+
+                object[] parameters = new object[] { Name, sb };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientSkillChannelStatsNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }

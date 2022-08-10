@@ -122,6 +122,9 @@
                     <div class="pull-right">
                         <div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
                             </button>
                             @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
@@ -131,8 +134,8 @@
                                 <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                             </button>
                             @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
-                            </button>*@
+                                    <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
+                                </button>*@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
                             </button>

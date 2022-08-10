@@ -6082,9 +6082,14 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profile = profileName;
-                //var emailid = HttpContext.Session.GetString("email")?.Trim();
-                //emailid = emailid.Replace("\"", "");
+                ViewBag.PageStatus = "Main";
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
                 ViewBag.Type = "ChannelOwner";
+                if (profileName == "Client")
+                {
+                    type = "IRF";
+                }
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     var irfList = new List<IRF>();
@@ -6093,7 +6098,7 @@ namespace Risebird.Web.Controllers
                         if (type == "IRF")
                         {
                             ViewBag.Type = "IRF";
-                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
                         }
                         else
                         {
@@ -6108,7 +6113,7 @@ namespace Risebird.Web.Controllers
                             if (type == "IRF")
                             {
                                 ViewBag.Type = "IRF";
-                                irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                                irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
                             }
                             else
                             {
@@ -6120,7 +6125,7 @@ namespace Risebird.Web.Controllers
                             if (type == "IRF")
                             {
                                 ViewBag.Type = "IRF";
-                                irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                                irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
                             }
                             else
                             {
@@ -6153,7 +6158,10 @@ namespace Risebird.Web.Controllers
                 }
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
                 ViewBag.profile = profileName;
+                ViewBag.PageStatus = "Main";
                 ViewBag.Type = "ChannelOwner";
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
@@ -6163,7 +6171,7 @@ namespace Risebird.Web.Controllers
                         if (type == "IRF")
                         {
                             ViewBag.Type = "IRF";
-                            irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
                         }
                         else
                         {
@@ -6175,7 +6183,7 @@ namespace Risebird.Web.Controllers
                         if (type == "IRF")
                         {
                             ViewBag.Type = "IRF";
-                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
                         }
                         else
                         {
@@ -6337,13 +6345,15 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
                 ViewBag.profile = profileName;
                 var irfList = new List<IRF>();
                 if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                 {
                     if (type == "IRF")
                     {
-                        irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
                     }
                     else
                     {
@@ -6357,7 +6367,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (type == "IRF")
                         {
-                            irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
                         }
                         else
                         {
@@ -6368,7 +6378,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (type == "IRF")
                         {
-                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
                         }
                         else
                         {
@@ -6414,7 +6424,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 9].Value = item.FutureScheduledMeetings;
                         if (type == "IRF")
                         {
-                            Sheet.Cells[1, 10].Value = item.ClientCompName;
+                            Sheet.Cells[i, 10].Value = item.ClientCompName;
                         }
                         i++;
                     }
@@ -7086,7 +7096,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
         //[Authorize]
         //[HttpPost]
         //public async Task<JsonResult> SkillChannelDetailsIRFCount(string HrEmail)
@@ -7110,5 +7119,73 @@ namespace Risebird.Web.Controllers
         //    }
         //    return Json(irfList);
         //}
+
+        [HttpGet]
+        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, string uniqueid)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.Type = "IRF";
+            ViewBag.PageStatus = "Public";
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            var irfList = new List<IRF>();
+            if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
+            {
+                irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                }
+            }
+            return View("SkillChannelDetails", irfList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> PublicSkillChannelDetails(SkillChannelDetailsFilter filter, string emailid, string uniqueid)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("SkillChannelDetailsFilters", JsonConvert.SerializeObject(filter));
+            }
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            ViewBag.Type = "IRF";
+            ViewBag.PageStatus = "Public";
+            var irfList = new List<IRF>();
+            if (filter.StartDate != null && filter.EndDate != null)
+            {
+                irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+            }
+            else
+            {
+                irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            return View("SkillChannelDetails", irfList);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, string uniqueid)
+        {
+            try
+            {
+                HttpContext.Session.Remove("SkillChannelDetailsFilters");
+                return RedirectToAction("PublicSkillChannelDetails", new { emailid = emailid, uniqueid = uniqueid });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
