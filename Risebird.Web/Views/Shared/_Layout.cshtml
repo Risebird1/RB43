@@ -331,23 +331,27 @@
                         }
                         else
                         {
-                            <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 7vw; padding-top: 1vw; ">
-                                @if (profileName == "Client")
-                                {
-                                    <c>For Support Toll Free Number - </c>
-                                    <span class="fa fa-phone">
-                                        18001207842
-                                    </span>
-                                    <c style="font-size:18px"> | </c>
-                                }
-                                else if (profileName == "Interviewer")
-                                {
-                                    <c>For Support Toll Free Number - </c>
-                                    <span class="fa fa-phone">
-                                        18001207846
-                                    </span>
-                                    <c style="font-size:18px"> | </c>
-                                }
+                            <div class="pull-left" title="Customer Service Number" style="padding-right: 5vw; padding-left: 2vw; ">
+                                <div class="pull-left">
+                                    <div class="desktop-view topbar-item">
+                                        @if (profileName == "Client")
+                                        {
+                                            <c>For Support Toll Free Number - </c>
+                                            <span class="fa fa-phone">
+                                                18001207842
+                                            </span>
+                                            <c> | </c>
+                                        }
+                                        else if (profileName == "Interviewer")
+                                        {
+                                            <c>For Support Toll Free Number - </c>
+                                            <span class="fa fa-phone">
+                                                18001207846
+                                            </span>
+                                            <c> | </c>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                             <div class="user pull-left">
                                 <h6 class="main-notification-title">
