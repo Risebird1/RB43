@@ -1,4 +1,6 @@
-﻿function SetChart() {
+﻿
+
+function SetChart() {
     var arr = [];
     var obj = { y: "", legendText: "", label: "" }
     //TechSkills actual weightage total
@@ -743,13 +745,85 @@ function SetChartMCQReport() {
     });
 }
 
+//function SetTechReportChart(techCollectionIdStartsWith) {
+
+//    var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+//    //var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+//    var techItems = $(idSelector);
+//    var techSkillGraphObjectCollection = [];
+//    var totalTechSkillScore = 0;
+//    if (techItems != null) {
+//        var techItemsLength = 0;
+//        if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
+//            techItemsLength = techItems.length / 2;
+//        }
+//        else {
+//            techItemsLength = techItems.length;
+//        }
+//        for (i = 0; i < techItemsLength; i++) {
+
+//            //var weightage = document.getElementById("TechSkillReportCollection_" + i + "__WeightageActual").value;
+//            var weightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+//            if (weightage != null && weightage != '') {
+//                totalTechSkillScore = totalTechSkillScore + parseFloat(weightage);
+//                weightage = parseFloat(weightage).toFixed(2);
+//            }
+//            //var skill = document.getElementById("TechSkillReportCollection_" + i + "__SkillName").value;
+//            var skill = document.getElementById(techCollectionIdStartsWith + "_" + i + "__SkillName").value;
+//            var trimmedSkill = '';
+//            if (skill != null && skill.length > 15) {
+//                trimmedSkill = skill.substring(0, 14) + '...';
+//            }
+//            else {
+//                trimmedSkill = skill;
+//            }
+//            var techSkillGraphObject = { y: weightage, label: skill, trimmedLabel: trimmedSkill };
+//            techSkillGraphObjectCollection.push(techSkillGraphObject);
+//        }
+
+//        var chart = new CanvasJS.Chart("scoreChart", {
+//            theme: "light2",
+//            width: 375,//in pixels
+//            height: 200,//in pixels
+//            animationEnabled: true,
+//            title: null,
+//            data: [{
+//                type: "pie",
+//                startAngle: 60,
+//                innerRadius: 55,
+//                indexLabelFontSize: 15,
+//                indexLabelFontColor: "#9a9a9a",
+//                indexLabel: "{trimmedLabel}  {y}",
+//                toolTipContent: "<b>{label} ({y}) </b> ",
+
+//                dataPoints: techSkillGraphObjectCollection
+//            }]
+//        });
+//        chart.render();
+
+//        document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+
+//    }
+
+
+
+//}
 function SetTechReportChart(techCollectionIdStartsWith) {
 
     var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
-    //var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
     var techItems = $(idSelector);
-    var techSkillGraphObjectCollection = [];
     var totalTechSkillScore = 0;
+
+    const labels = [];
+
+    const requiredWeightageData = [];
+    const requiredWeightageBackgroundColour = [];
+    const requiredWeightageBorderColour = [];
+
+    const actualWeightageData = [];
+    const actualWeightageBackgroundColour = [];
+    const actualWeightageBorderColour = [];
+
     if (techItems != null) {
         var techItemsLength = 0;
         if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
@@ -760,44 +834,90 @@ function SetTechReportChart(techCollectionIdStartsWith) {
         }
         for (i = 0; i < techItemsLength; i++) {
 
-            //var weightage = document.getElementById("TechSkillReportCollection_" + i + "__WeightageActual").value;
-            var weightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
-            if (weightage != null && weightage != '') {
-                totalTechSkillScore = totalTechSkillScore + parseFloat(weightage);
-                weightage = parseFloat(weightage).toFixed(2);
-            }
-            //var skill = document.getElementById("TechSkillReportCollection_" + i + "__SkillName").value;
             var skill = document.getElementById(techCollectionIdStartsWith + "_" + i + "__SkillName").value;
-            var trimmedSkill = '';
-            if (skill != null && skill.length > 15) {
-                trimmedSkill = skill.substring(0, 14) + '...';
+            var formattedSkill = formatLabel(skill, 10);
+            labels.push(formattedSkill);
+
+            var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+            requiredWeightageData.push(requiredWeightage);
+            requiredWeightageBackgroundColour.push('rgba(255, 26, 104, 0.2)');
+            requiredWeightageBorderColour.push('rgba(255, 26, 104, 1)');
+
+
+            var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+            actualWeightageData.push(actualWeightage);
+            actualWeightageBackgroundColour.push('rgba(34, 139, 34, 0.2)');
+            actualWeightageBorderColour.push('rgba(34, 139, 34, 1)');
+
+            if (actualWeightage != null && actualWeightage != '') {
+                totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
             }
-            else {
-                trimmedSkill = skill;
-            }
-            var techSkillGraphObject = { y: weightage, label: skill, trimmedLabel: trimmedSkill };
-            techSkillGraphObjectCollection.push(techSkillGraphObject);
+
         }
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2",
-            width: 375,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: null,
-            data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
-                indexLabelFontColor: "#9a9a9a",
-                indexLabel: "{trimmedLabel}  {y}",
-                toolTipContent: "<b>{label} ({y}) </b> ",
-
-                dataPoints: techSkillGraphObjectCollection
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Required',
+                data: requiredWeightageData,
+                backgroundColor: requiredWeightageBackgroundColour,
+                borderColor: requiredWeightageBorderColour,
+                borderWidth: 1
+            },
+            {
+                label: 'Actual',
+                data: actualWeightageData,
+                backgroundColor: actualWeightageBackgroundColour,
+                borderColor: actualWeightageBorderColour,
+                borderWidth: 1
             }]
-        });
-        chart.render();
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    xAxes: [{
+                        ticks: {
+                            fontSize: 12
+                        }
+                    }]
+                },
+                responsive:false
+            },
+        };
+
+
+        const scoreChart = document.getElementById("scoreChart");
+        let width = scoreChart.style.width;
+        if (width == null || width == "") {
+            width = scoreChart.getAttribute("width");
+        }
+        let height = scoreChart.style.height;
+        if (height == null || height == "") {
+            height = scoreChart.getAttribute("height");
+        }
+        scoreChart.remove();
+
+
+        const canvasElement = document.createElement("canvas");
+        canvasElement.setAttribute("id", "scoreChart");
+        canvasElement.setAttribute("height", height);
+        canvasElement.setAttribute("width", width);
+        document.getElementById("canvasDiv").appendChild(canvasElement);
+        
+
+        var canvas = document.getElementById("scoreChart");
+        var ctx = canvas.getContext('2d');
+
+        const myChart = new Chart(
+            ctx,
+            config
+        );
 
         document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
 
@@ -805,4 +925,46 @@ function SetTechReportChart(techCollectionIdStartsWith) {
 
 
 
+}
+
+function formatLabel(str, maxwidth) {
+    var sections = [];
+    var words = str.split(" ");
+    var temp = "";
+
+    words.forEach(function (item, index) {
+        if (temp.length > 0) {
+            var concat = temp + ' ' + item;
+
+            if (concat.length > maxwidth) {
+                sections.push(temp);
+                temp = "";
+            }
+            else {
+                if (index == (words.length - 1)) {
+                    sections.push(concat);
+                    return;
+                }
+                else {
+                    temp = concat;
+                    return;
+                }
+            }
+        }
+
+        if (index == (words.length - 1)) {
+            sections.push(item);
+            return;
+        }
+
+        if (item.length < maxwidth) {
+            temp = item;
+        }
+        else {
+            sections.push(item);
+        }
+
+    });
+
+    return sections;
 }
