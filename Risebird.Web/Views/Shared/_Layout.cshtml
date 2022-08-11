@@ -87,6 +87,7 @@
 
     <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js?v=7" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .swal2-popup .swal2-styled {
             box-shadow: none !important
@@ -331,23 +332,27 @@
                         }
                         else
                         {
-                            <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 7vw; padding-top: 1vw; ">
-                                @if (profileName == "Client")
-                                {
-                                    <c>For Support Toll Free Number - </c>
-                                    <span class="fa fa-phone">
-                                        18001207842
-                                    </span>
-                                    <c style="font-size:18px"> | </c>
-                                }
-                                else if (profileName == "Interviewer")
-                                {
-                                    <c>For Support Toll Free Number - </c>
-                                    <span class="fa fa-phone">
-                                        18001207846
-                                    </span>
-                                    <c style="font-size:18px"> | </c>
-                                }
+                            <div class="pull-left" title="Customer Service Number" style="padding-right: 5vw; padding-left: 2vw; ">
+                                <div class="pull-left">
+                                    <div class="desktop-view topbar-item">
+                                        @if (profileName == "Client")
+                                        {
+                                            <c>For Support Toll Free Number - </c>
+                                            <span class="fa fa-phone">
+                                                18001207842
+                                            </span>
+                                            <c> | </c>
+                                        }
+                                        else if (profileName == "Interviewer")
+                                        {
+                                            <c>For Support Toll Free Number - </c>
+                                            <span class="fa fa-phone">
+                                                18001207846
+                                            </span>
+                                            <c> | </c>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                             <div class="user pull-left">
                                 <h6 class="main-notification-title">

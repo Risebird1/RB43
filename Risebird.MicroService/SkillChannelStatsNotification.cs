@@ -42,23 +42,26 @@ namespace Risebird.MicroService
                     try
                     {
                         var irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), "Client", item.EmailId))?.ToList();
-                        DataTable dt = new DataTable();
-                        dt.Columns.AddRange(new DataColumn[5] { new DataColumn("Skill Channel", typeof(string)),
+                        if (irfList != null || irfList.Count() > 0)
+                        {
+                            DataTable dt = new DataTable();
+                            dt.Columns.AddRange(new DataColumn[5] { new DataColumn("Skill Channel", typeof(string)),
                             new DataColumn("Candidates", typeof(int)),
                             new DataColumn("Completed",typeof(int)),
                             new DataColumn("Selected",typeof(int)),
                             new DataColumn("Rejected",typeof(int))});
-                        foreach (var _irfitem in irfList)
-                        {
-                            dt.Rows.Add(_irfitem.IRFId, _irfitem.CandidateCount, _irfitem.CompletedInterviews, _irfitem.SelectedMeetings, _irfitem.RejectedMeetings);
+                            foreach (var _irfitem in irfList)
+                            {
+                                dt.Rows.Add(_irfitem.IRFId, _irfitem.CandidateCount, _irfitem.CompletedInterviews, _irfitem.SelectedMeetings, _irfitem.RejectedMeetings);
+                            }
+                            Mail _mail1 = new Mail
+                            {
+                                TO = item.EmailId,
+                                CC = "talent@risebird.io",
+                                Subject = "Skill Channel Stats Details :" + DateTime.Now.AddDays(-30).ToShortDateString() + " to " + DateTime.Now.AddDays(7).ToShortDateString()
+                            };
+                            var emailsend = _notificationHelper.SendSkillChannelStatsDetails(_mail1, item.FirstName, dt);
                         }
-                        Mail _mail1 = new Mail
-                        {
-                            TO = item.EmailId,
-                            CC = "talent@risebird.io",
-                            Subject = "Skill Channel Stats Details :" + DateTime.Now.AddDays(-30).ToShortDateString() + " to " + DateTime.Now.AddDays(7).ToShortDateString()
-                        };
-                        var emailsend = _notificationHelper.SendSkillChannelStatsDetails(_mail1, item.FirstName, dt);
                     }
                     catch (Exception e)
                     {
