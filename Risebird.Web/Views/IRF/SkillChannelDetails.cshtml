@@ -329,20 +329,23 @@
                                                             <td> @item.NotScheduledCount </td>
                                                             <td> @item.ReScheduledCount </td>
                                                             <td> @item.FutureScheduledMeetings </td>
-                                                            <td>
-                                                                @if (item.IsPaused)
-                                                                {
-                                                                    <button id="skill_16" class="mdc-fab app-fab--absolute  " aria-label="Play">
-                                                                        <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
-                                                                        <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                                    </button>
-                                                                }
-                                                            </td>
+                                                            @if (ViewBag.profile == "Client")
+                                                            {
+                                                                <td>
+                                                                    @if (item.IsPaused)
+                                                                    {
+                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute  " aria-label="Play">
+                                                                            <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                        </button>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
+                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                        </button>
+                                                                    }
+                                                                </td>
+                                                            }
                                                         </tr>
                                                     }
                                                 }
