@@ -26,6 +26,10 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[Isinstaavailable] [bit] NOT NULL,
 	[Isavailable] [int] NULL DEFAULT 0,
     [IsNotificationAccepted] [bit] NOT NULL,
+    [CreatedOn] [datetime] NULL,
+	[ModifiedOn] [datetime] NULL,
+	[CreatedBy] [varchar](100) NULL,
+	[ModifiedBy] [varchar](100) NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -234,6 +238,45 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add IsNotificationAccepted bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedOn')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add CreatedOn datetime
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedOn')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add ModifiedOn datetime
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedBy')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add CreatedBy varchar(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedBy')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add ModifiedBy varchar(100)
 END
 
 

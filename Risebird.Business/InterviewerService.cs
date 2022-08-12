@@ -44,7 +44,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Risebird.Business
                 }
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser).Result;
             }
             catch (Exception e)
             {
@@ -85,7 +85,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace Risebird.Business
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser).Result;
             }
             catch (Exception e)
             {
