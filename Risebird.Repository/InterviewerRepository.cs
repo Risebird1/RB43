@@ -53,13 +53,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
         {
             try
             {
                 int ProfileId;
 
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
+                parameters.Add("@loggedInUser", loggedInUser);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 

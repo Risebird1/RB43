@@ -47,7 +47,8 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IndiaServiceRate int,  
 @IndiaProductRate int,  
 @OutsideIndiaServiceRate int,  
-@OutsideIndiaProductRate int
+@OutsideIndiaProductRate int,
+@loggedInUser varchar(50)
             
 AS            
             
@@ -89,7 +90,9 @@ Declare @v_ProfileId int;
    [IsLeadInterviewer] = @IsLeadInterviewer,            
    [IsApproved] = @IsApproved,            
    [AssessmentGroupId]=@AssessmentGroupId,  
-   [Isinstaavailable]=@Isinstaavailable  
+   [Isinstaavailable]=@Isinstaavailable,
+   [ModifiedBy] = @loggedInUser,
+   [ModifiedOn] = dateadd(MINUTE, 330, getdate())
    --[IsServiceDomain] =@IsServiceDomain,  
    --[IsProductDomain] = @IsProductDomain,  
    --[IndiaServiceRate] = @IndiaServiceRate,  
@@ -189,7 +192,9 @@ Declare @v_User_Id int;
    [IsLeadInterviewer],            
    [IsApproved],            
    [AssessmentGroupId],  
-   [Isinstaavailable])  
+   [Isinstaavailable],
+   [CreatedBy],
+   [CreatedOn])  
    --[IsServiceDomain],  
    --[IsProductDomain],  
    --[IndiaServiceRate],  
@@ -218,7 +223,9 @@ Declare @v_User_Id int;
    @IsLeadInterviewer,            
    @IsApproved,            
    @AssessmentGroupId,  
-   @Isinstaavailable)  
+   @Isinstaavailable,
+   @loggedInUser,
+   dateadd(MINUTE, 330, getdate()))  
    --@IsServiceDomain,  
    --@IsProductDomain,  
    --@IndiaServiceRate,  
