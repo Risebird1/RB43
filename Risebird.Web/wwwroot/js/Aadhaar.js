@@ -36,7 +36,7 @@ function validateAadhaarnumber() {
         url: "/Aadhaar/SendAadhaarNumber",
         data: { uuid: $("#aadhaaruuid").val(), aadharnumber: $("#aadhaarnumber").val().trim(), aadharcaptcha: $("#aadhaarcaptcha").val().trim(), datenow: Date.now() },
         success: function (data) {
-            if (data.toLowerCase().includes("OTP")) {
+            if (data.toLowerCase().includes("otp")) {
                 document.getElementById("divotpvalidation").style.display = "block";
                 document.getElementById("divSubmit").style.display = "inline-block";
                 document.getElementById("divValidate").style.display = "none";

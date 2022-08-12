@@ -723,7 +723,16 @@
         modal.style.display = "block";
     }
     function CreateMCQ() {
-        if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
+        var flag = true;
+        if ($("#txtpartialid").val().trim() == "") {
+            if (document.getElementById("Mcqfile").files.length > 0) {
+                flag = true;
+            } else {
+                flag = false;
+            }
+        }
+        //if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
+        if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && flag && $("#ddlPrimarySkills").val() != null) {
             $(".loader").show();
             var file_data = $("#Mcqfile").prop("files")[0];
             var form_data = new FormData();
@@ -762,7 +771,8 @@
                     window.location.href = 'Index';
                 }
             });
-        } else {
+            }
+            else {
             alert("Please fill all the fields.");
         }
     }
@@ -806,7 +816,7 @@
         var clientList= (clients).split(",");
         $("#ddlClients").val(clientList);
         $("#ddlClients").select2().trigger('change');
-        var bool_value = aadhaarVerification == "true" ? true : false
+        var bool_value = aadhaarVerification == "True" ? true : false
         document.getElementById("chkAadhaarverification").checked = bool_value;
     }
 
