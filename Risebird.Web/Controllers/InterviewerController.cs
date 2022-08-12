@@ -472,6 +472,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         string uploadedFileURL = string.Empty;
@@ -533,7 +535,7 @@ namespace Risebird.Web.Controllers
                             interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
                         }
 
-                        if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
+                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId).Result)
                         {
                             TempData["MessageInterviewer"] = "Interviewer Profile has been added Successfully!";
                             return RedirectToAction("Index");
@@ -606,6 +608,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         string uploadedFileURL = string.Empty;
@@ -647,7 +651,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
+                        if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId).Result)
                         {
                             TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
                             return RedirectToAction("Index");

@@ -30,7 +30,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsManuallyDeletable { get; set; }
 
         public int? InterviewId { get; set; }
-
+        public int? MeetingStatus { get; set; }
+        public int? confirmationStatus { get; set; }
 
     }
 }
