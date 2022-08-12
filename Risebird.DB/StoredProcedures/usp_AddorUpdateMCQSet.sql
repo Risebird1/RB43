@@ -25,9 +25,13 @@ CREATE Procedure usp_AddorUpdateMCQSet
 @AadhaarVerification bit,
 @mcqid int output                
 AS    
-BEGIN    
+BEGIN  
 if(@id>0)    
 begin    
+if(@QuestionCount=0)
+BEGIN
+Select @QuestionCount=QuestionCount From MCQSets where id=@id and PartitionKey=@PartitionKey     
+END
 Update MCQSets set Title=@Title,PrimarySkills=@PrimarySkills,    
 ProfileType=@ProfileType,SecondarySkill=@SecondarySkill,Timer=@Timer,QuestionCount=@QuestionCount,  
 SeniorityLevel = @SeniorityLevel, EmploymentType =@EmploymentType,  
