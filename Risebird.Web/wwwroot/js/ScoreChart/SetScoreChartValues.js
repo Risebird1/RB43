@@ -879,7 +879,12 @@ function SetTechReportChart(techCollectionIdStartsWith) {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        min:0,
+                        //stepSize: 5,
+                        ticks: {
+                            stepSize: 5
+                        }
                     },
                     xAxes: [{
                         ticks: {

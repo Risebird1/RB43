@@ -333,18 +333,36 @@
 
                                                                 @foreach (var item in Model)
                                                                 {
-                                                                    <tr>
+                                                                    var backcolor = "";
+                                                                    @*@if (item.reportcount > 1)
+                                                                    {
+                                                                        backcolor = "#ea8611e3";
+                                                                    }*@
+                                                                    <tr style="background-color:@backcolor">
                                                                         <td class="cadName text-left pl15">
                                                                             @if (item.CandidateName != null && item.CandidateName != "")
                                                                             {
                                                                                 @if (item.CandidateName.Length > 20)
                                                                                 {
-
-                                                                                    <p style="font-size:11px" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ...</p>
+                                                                                    @if (item.reportcount > 1)
+                                                                                    {
+                                                                                        <p style="font-size:11px" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ... <span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:18px;color:red"></span></p>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <p style="font-size:11px" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ... </p>
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <p style="font-size:11px"> @item.CandidateName </p>
+                                                                                    @if (item.reportcount > 1)
+                                                                                    {
+                                                                                        <p style="font-size:11px"> @item.CandidateName <span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:18px;color:red"></span></p>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <p style="font-size:11px"> @item.CandidateName </p>
+                                                                                    }
                                                                                 }
                                                                             }
                                                                             @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
@@ -616,6 +634,7 @@
                                         <th>Date</th>
                                         <th>Status</th>
                                         <th>Comments</th>
+                                        <th>Report</th>
                                     </tr>
                                 </thead>
                                 <tbody id="divStatusListlink">
@@ -1073,9 +1092,21 @@
                 html += ' <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">' + data[i].comments + '</textarea>';
             }
             html += '</div></td>';
-            html += '</tr>';
+            html += '<td>';
+            if (data[i].statusValue == "Meeting Status") {
+                if ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8) && (data[i].confirmationStatus == 1)) {
+                    html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&isClient=true&actiontype=Candidate" title="Feedback Report">Report</a>';
+                }
+                else {
+                    html += '<p></p>';
+                }
+            }
+            html += '</td></tr>';
         }
         $("#divStatusListlink").empty().html(html);
+    }
+    function openReport(interviewid, IRFid) {
+
     }
     function closemyRaitingPopup() {
         var modal = document.getElementById("myRaitingPopup");

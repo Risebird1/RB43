@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, 
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository,
             IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor)
         {
@@ -3414,6 +3414,7 @@ namespace Risebird.Web.Controllers
                     {
                         firstData = data.FirstOrDefault();
                     }
+                    var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                     var candidateTimeline = new CandidateTimelineVM();
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
@@ -3436,6 +3437,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
                     candidateTimeline.NickName = firstData.InterviewerNickName;
+                    candidateTimeline.reportcount = _datavalue;
                     //candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3547,7 +3549,7 @@ namespace Risebird.Web.Controllers
                     //{
                     //    firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
                     //}
-
+                    var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -3571,6 +3573,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
                     candidateTimeline.NickName = firstData.InterviewerNickName;
+                    candidateTimeline.reportcount = _datavalue;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
