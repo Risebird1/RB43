@@ -8,6 +8,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int ClonableSkillChannelId { get; set; }
         public string Name { get; set; }
+        public string NameWithoutHtml { get; set; }
         public int CreatedFromIRFId { get; set; }
         public bool IsTemplateJoinSelectGenskillsRequired { get; set; }
         public SelectList SeniorityLevelList { get; set; }
