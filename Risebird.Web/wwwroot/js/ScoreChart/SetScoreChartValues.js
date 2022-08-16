@@ -973,3 +973,15 @@ function formatLabel(str, maxwidth) {
 
     return sections;
 }
+
+function CalculateOverAllScore(requiredLevel, actualLevel, requiredWeightage) {
+    var actualWeightage;
+    if (requiredLevel <= actualLevel) {
+        actualWeightage = requiredWeightage;
+        
+    }
+    else {
+        actualWeightage = ((5 - (requiredLevel - actualLevel)) / 5) * (requiredWeightage);
+    }
+    return actualWeightage;
+}

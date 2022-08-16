@@ -3010,17 +3010,30 @@
             var skillName = weightageItems[i].id.substring(0, index);
             var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
             var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            //if (reqLevel <= actLevel) {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            //}
+            //else {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+            //    $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
+            //}
+            var actualWeightage;
+            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
             if (reqLevel <= actLevel) {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+
             }
             else {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
-                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-
             }
 
         }
