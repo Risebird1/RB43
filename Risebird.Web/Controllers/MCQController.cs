@@ -410,9 +410,12 @@ namespace Risebird.Web.Controllers
             if (status == "Edit")
             {
                 var id = Convert.ToInt32(Request.Form["id"].ToString());
-
                 _lstset.PartitionKey = partialid;
                 _lstset.id = id;
+                if (Request.Form.Files.Count() == 0)
+                {
+                    var MCQId = _mCQService.AddorUpdateMCQSet(_lstset);
+                }
             }
             if (Request.Form.Files.Count() > 0)
             {

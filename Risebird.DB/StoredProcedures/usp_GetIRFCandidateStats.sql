@@ -8,7 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-            
 CREATE PROCEDURE usp_GetIRFCandidateStats
 @startDate datetime,
 @endDate datetime,        
@@ -74,13 +73,10 @@ where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.Vid
  join Client cl on cl.id = irf.ClientId        
  join UserList ul on ul.id = irf.RisebirdHr        
  left join UserList ulb on ulb.id = irf.BillingOwner)
- Select RisebirdHrEmail,Count(IRFId) IRFId,Sum(CandidateCount) CandidateCount,Sum(FutureScheduledMeetings) FutureScheduledMeetings,Sum(CompletedInterviews) CompletedInterviews,Sum(SelectedMeetings) SelectedMeetings,Sum(RejectedMeetings) RejectedMeetings,Sum(NotScheduledCount) NotScheduledCount,
+ Select JDTiltle,RisebirdHrEmail,Count(IRFId) IRFId,Sum(CandidateCount) CandidateCount,Sum(FutureScheduledMeetings) FutureScheduledMeetings,Sum(CompletedInterviews) CompletedInterviews,Sum(SelectedMeetings) SelectedMeetings,Sum(RejectedMeetings) RejectedMeetings,Sum(NotScheduledCount) NotScheduledCount,
  Sum(ReScheduledCount) ReScheduledCount,Sum(PendingCount) PendingCount,Sum(UnassignedInterviewsCount) UnassignedInterviewsCount,Sum(UnfilledMeetingStatusCount) UnfilledMeetingStatusCount,Sum(UnfilledInterviewStatusCount) UnfilledInterviewStatusCount,
  Sum(UnfilledCommentsCount) UnfilledCommentsCount,Sum(MissingZoomLink) MissingZoomLink,Sum(MissingVideoLink) MissingVideoLink from CTE
- group by RisebirdHrEmail
+ group by RisebirdHrEmail,JDTiltle
 END        
-          
-         
-    
 GO
 
