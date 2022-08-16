@@ -172,6 +172,7 @@ namespace Risebird.Entities.ViewModel
         public string RecruiterComment { get; set; }
         public SelectList JoinabilityTypeList { get; set; }
         public SelectList SelectabilityTypeList { get; set; }
+        public bool AadhaarVerification { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {
