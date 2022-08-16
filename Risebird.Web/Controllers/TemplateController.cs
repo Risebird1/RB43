@@ -342,6 +342,7 @@ namespace Risebird.Web.Controllers
                             int index = 0;
                             foreach (var template in model.ClonableTemplates)
                             {
+                                template.NameWithoutHtml = template.Name;
                                 if (!string.IsNullOrEmpty(template.TaggedClients))
                                 {
                                     var clientsMapped = template.TaggedClients.Split(",");
