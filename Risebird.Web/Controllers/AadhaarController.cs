@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
 using System;
@@ -16,12 +17,13 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IAadhaarService _aadhaarService;
         private readonly string apiendpoint;
         private readonly string client_code;
         private readonly string api_key;
         private readonly string salt;
 
-        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IApplicationErrorLogger applicationErrorLogger)
+        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -30,6 +32,7 @@ namespace Risebird.Web.Controllers
             client_code = _configuration["AadhaarApiDetails:client_code"];
             api_key = _configuration["AadhaarApiDetails:api_key"];
             salt = _configuration["AadhaarApiDetails:salt"];
+            _aadhaarService = aadhaarService;
         }
 
         public IActionResult Index()
@@ -147,6 +150,16 @@ namespace Risebird.Web.Controllers
                 }
                 return builder.ToString();
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> FetchAadhaarDetails(string MCQID, string candidateEmail)
+        {
+            var model = await _aadhaarService.FetchAadhaarDetails(MCQID, candidateEmail);
+            if (model == null)
+            {
+                model = new AadhaarData();
+            }
+            return Json(model);
         }
     }
 }
