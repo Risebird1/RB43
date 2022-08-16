@@ -1516,16 +1516,30 @@
         }
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
+        //if (required <= value) {
+        //    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        //    $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+        //    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+
+        //}
+        //else {
+        //    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        //    var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
+        //    $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
+        //    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+        //}
+
+        var actualWeightage;
+        var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        actualWeightage = CalculateOverAllScore(required, value, reqWeightage);
         if (required <= value) {
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+
+            $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
             $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
 
         }
         else {
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
-            $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
+            $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
             $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
         }
 
@@ -1587,18 +1601,32 @@
             var skillName = weightageItems[i].id.substring(0, index);
             var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
             var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            //if (reqLevel <= actLevel) {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            //}
+            //else {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+            //    $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+            //    //$("#" + skillName + digit + "__WeightageActual").val("0");
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
+            //}
+
+            var actualWeightage;
+            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
             if (reqLevel <= actLevel) {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+
             }
             else {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
-                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
-                //$("#" + skillName + digit + "__WeightageActual").val("0");
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-
             }
 
         }

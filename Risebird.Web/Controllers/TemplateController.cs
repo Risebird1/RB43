@@ -349,7 +349,7 @@ namespace Risebird.Web.Controllers
                                     if (clientsMapped != null && clientsMapped.Any(x => !string.IsNullOrEmpty(x) && x.ToLower() == model.ClientCompanyName?.ToLower()))
                                     {
                                         var item = model.ClonableTemplates.ToList()[index];
-
+                                        
                                         item.Name = item.Name + " <span style=\"color:green;\"> (Recommended)<span>";
                                         model.ClonableTemplates.ToList().RemoveAt(index);
                                         model.ClonableTemplates.ToList().Insert(0, item);
