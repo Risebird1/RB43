@@ -61,6 +61,7 @@ function submitOtpnumber() {
                 data: { uuid: $("#aadhaaruuid").val(), datenow: Date.now() },
                 success: function (dataKYC) {
                     openAadhaarKYCpopup();
+                    closeAadhaarpopup();
                     BindKYCData(dataKYC);
                     BindData(dataKYC);
                     hideloader();
@@ -83,7 +84,6 @@ function BindKYCData(data) {
 function openAadhaarKYCpopup() {
     var modal = document.getElementById("AadhaarKYCpopup");
     modal.style.display = "block";
-    closeAadhaarpopup();
 }
 function closeAadhaarKYCpopup() {
     var model = document.getElementById("AadhaarKYCpopup");
@@ -94,4 +94,30 @@ function showloader() {
 }
 function hideloader() {
     $(".loader").hide();
+}
+function FetchAadhaarDetails(MCQID, candidateEmail) {
+    $.ajax({
+        type: "POST",
+        url: "/Aadhaar/FetchAadhaarDetails",
+        data: { MCQID: MCQID, candidateEmail: candidateEmail },
+        success: function (data) {
+            openAadhaarKYCpopup();
+            BindAadhaarKYCData(data);
+        }
+    });
+}
+function BindAadhaarKYCData(data) {
+    var html = '';
+    if (data.email != null) {
+        html += '<table style="overflow:auto" width="100%">';
+        html += '<tr><td rowspan="4"><img src="data:image/png;base64,' + data.doc_face + '" alt="Red dot" /></td><td>Name</td><td>' + data.name + '</td></tr>';
+        html += '<tr style="word-wrap: break-word"><td>Address</td><td style="word-wrap: break-word">' + data.address + '</td></tr>';
+        html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
+        html += '<tr><td>DOB</td><td>' + data.dob + '</td></tr>';
+        html += '</table>';
+    }
+    if (data.email == null) {
+        html = 'Not yet Aadhaar verified for this candidate';
+    }
+    $("#divAadhaarKYC").empty().html(html);
 }
