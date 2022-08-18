@@ -1478,7 +1478,7 @@
             html += '<a style="color:#fff;" href = "/Candidate/Edit?id=' + data[i].id + '&irfName=' + irfname + '&irfId=' + irfid + '" title="Edit" class="mdc-fab__icon material-icons">';
             html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>';
             html += '   </a></button>';
-            if (profile != "Client") {
+            if (data[i].confirmationStatus != 1 && (profile == "Admin" || profile == "SupportAdmin")) {
                 html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
                 html += ' <span onclick="javascript:DeleteCandidate(' + data[i].id + ',' + "'" + data[i].emailId + "'" + ');" title="Delete" class="mdc-fab__icon material-icons">';
                 html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>';
