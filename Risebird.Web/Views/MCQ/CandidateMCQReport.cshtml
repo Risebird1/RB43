@@ -223,7 +223,7 @@
                                             <div class="col-md-6 col-sm-6 border-rv pull-left">
                                                 <div class="chart-box">
                                                     <div>
-                                                        <p class="card-text">Fitment Score: <span class="totScore" id="totFitMentScore"></span></p>
+                                                        <p class="card-text">HR Screen: <span class="totScore" id="totFitMentScore"></span></p>
                                                         <div>
                                                             <div id="scoreChart" style="height: 200px; width:100%;"></div>
                                                         </div>
@@ -231,6 +231,17 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="col-md-12 col-sm-12 border-rv pull-left">
+                                                    <div class="form-group" style="margin-bottom:0px;margin-top:10px">
+                                                        <strong>@Html.Label("Test Score", "Test Score", "Test Score")</strong>
+                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                            <div class="talktext">
+                                                                <input type="text" class="form-control text-box" readonly value="@(Model.CandidateScore*100/Model.TotalQuestions) %" />
+                                                                <div id="words"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-12 col-sm-12 border-rv pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;margin-top:10px">
                                                         <strong>@Html.LabelFor(model => model.RecruiterComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>

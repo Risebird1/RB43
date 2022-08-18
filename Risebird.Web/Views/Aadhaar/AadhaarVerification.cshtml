@@ -1,0 +1,132 @@
+﻿@model Risebird.Entities.ViewModel.AadhaarData
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
+    @*<link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/blue-theme.css" />*@
+    <title>Aadhaar Verification</title>
+</head>
+<body>
+    <div class="text-center" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
+        <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="loader text-center">
+                    <img src="~/Newassets/img/lazyload.gif" />
+                </div>
+                <div class="filheader callno">
+                    <div class="filavatar">
+                        <span class="mdc-fab__icon material-icons">
+                            <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" style="width:45px" />
+                        </span>
+                    </div>
+                    <h2 style="margin-bottom:10px;">Aadhaar Verification</h2>
+                </div>
+                @Html.HiddenFor(m => m.Name)
+                @Html.HiddenFor(m => m.Address)
+                @Html.HiddenFor(m => m.gender)
+                @Html.HiddenFor(m => m.dob)
+                @Html.HiddenFor(m => m.doc_face)
+                @Html.HiddenFor(m => m.email)
+                <div class="row" style="padding:10px" id="divcandidateskills">
+                    <div class="col-md-12 col-lg-12">
+                        <input type="hidden" id="aadhaaruuid" />
+                        <input type="text" placeholder="Aadhaar Number" id="aadhaarnumber" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                        <img alt="Captcha" id="aadharimagecaptcha" />
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                        <input type="text" placeholder="Captcha" id="aadhaarcaptcha" class="form-control" />
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-sm-12" style="padding: 10px;display:none" id="divotpvalidation">
+                        <input type="number" placeholder="Enter OTP" id="txtAadhaarOtp" class="form-control" />
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div id="divValidate" style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="validateAadhaarnumber()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Validate"></div>
+                            <div id="divSubmit" style="display: none;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="submitOtpnumber()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Submit"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<div id="Aadhaarpopup" class="modal modal-bg" style="z-index:3">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" style="width:45px" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Aadhaar Verified Data</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            @*<div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeAadhaarKYCpopup()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
+<script src="~/js/Aadhaar.js"></script>
+<script>
+    function BindData(data) {
+        $("#Name").val(data.name);
+        $("#Address").val(data.address);
+        $("#gender").val(data.gender);
+        $("#dob").val(data.dob);
+        $("#doc_face").val(data.doc_face);
+        SaveAadhaarDetails();
+        location.reload();
+    }
+    $(document).ready(function () {
+        generateCaptcha();
+    });
+    function SaveAadhaarDetails() {
+        $.ajax({
+            type: "POST",
+            url: "/Aadhaar/SaveAadhaarDetails",
+            data: { Name: $("#Name").val(), Address: $("#Address").val(), gender: $("#gender").val(), dob: $("#dob").val(), email: $("#email").val(), doc_face: $("#doc_face").val() },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+</script>

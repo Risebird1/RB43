@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetClonableSkillChannelMeetingPlatformById]
 AS  
 Begin
 
-	select MeetingPlatform from ClonableSkillChannel where id = @id
+	select MeetingPlatform,IsAadhaarVerificationRequired from ClonableSkillChannel where id = @id
 
 End
 GO
