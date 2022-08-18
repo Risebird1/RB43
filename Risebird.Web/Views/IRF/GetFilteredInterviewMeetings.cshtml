@@ -59,14 +59,9 @@
                     <a onclick=""><span class="dot"></span> @item.candidateName </a>
                 </td>
             }
-            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 &&item.QCStatus ==1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-            {
+            
                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-            }
-            else
-            {
-                <td>No Report</td>
-            }
+            
             @if (item.resumeLink != null && item.resumeLink != "")
             {
                 <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -116,14 +111,9 @@
                 <td>No Interview Link</td>
             }
             <td> @item.MeetingStatusStatusDesc </td>
-            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus ==1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-            {
+          
                 <td> @item.intervieweStatusStatDesc </td>
-            }
-            else
-            {
-                <td>  </td>
-            }
+            
             <td> @item.currentEmployerName </td>
             <td> @item.expectedPerHourRate </td>
             <td> @item.joiningTime </td>

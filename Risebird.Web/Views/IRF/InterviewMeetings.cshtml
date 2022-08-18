@@ -351,22 +351,9 @@
                                                                     }
 
                                                                 }
-                                                                @if (!item.IsQCRequired)
-                                                                {
-                                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                    {
+                                                               
                                                                         <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>No Report</td>
-                                                                    }
-                                                                }
+                                                                    
 
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
@@ -413,31 +400,9 @@
 
                                                                 <td> @item.MeetingStatusStatusDesc </td>
 
-                                                                @if (item.IsQCRequired)
-                                                                {
-                                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                    {
+                                                               
                                                                         <td> @item.intervieweStatusStatDesc </td>
-                                                                    }
-                                                                    else if ((item.QCStatus == 2 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                    {
-                                                                        <td> QC Failed(@item.intervieweStatusStatDesc)  </td>
-                                                                    }
-                                                                    else if (((item.QCStatus == null || item.QCStatus == 0) && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                    {
-                                                                        <td> QC Pending(@item.intervieweStatusStatDesc)  </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td></td>
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>@item.intervieweStatusStatDesc</td>
-
-                                                                }
-
+                                                                    
 
 
                                                             </tr>
@@ -747,19 +712,10 @@
             else {
                 html += '<td></td>';
             }
-            if (!data[i].isQCRequired) {
+            
                 html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + '">Report</a></td>';
 
-            }
-            else {
-
-                if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                    html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + '">Report</a></td>';
-                }
-                else {
-                    html += '<td>No Report</td>';
-                }
-            }
+           
 
 
 
@@ -810,24 +766,9 @@
             else {
                 html += '<td></td>';
             }
-            if (data[i].isQCRequired) {
-                if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                    if (data[i].intervieweStatusStatDesc != null) {
-
-                        html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
-                    }
-                    else {
-                        html += '<td></td>';
-                    }
-                }
-
-                else {
-                    html += '<td></td>';
-                }
-            }
-            else {
+            
                 html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
-            }
+            
 
 
             html += '</tr>';

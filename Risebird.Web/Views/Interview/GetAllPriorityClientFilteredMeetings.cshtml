@@ -111,23 +111,13 @@
                                                     <td> @item.JDTiltle.Split("|")[0] </td>
                                                     <td> @item.confirmationStatus</td>
                                                     <td> @item.MeetingStatusStatusDesc</td>
-                                                    @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
-                                                    {
-                                                        <td> @item.intervieweStatusStatDesc</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                    @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
-                                                    {
-                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Report</td>
-                                                    }
-                                                    @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                    
+                                                     <td> @item.intervieweStatusStatDesc</td>
+                                                    
+                                                    
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                   
+                                                    @if (item.VideoLink != null && item.VideoLink != "")
                                                     {
                                                         <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
                                                     }

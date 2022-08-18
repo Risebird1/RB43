@@ -5975,6 +5975,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PublicOpenInterviewInvite(string id)
         {
+            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
             var model = new List<Meeting>();
             ViewBag.Id = id;
             ViewBag.PageType = "Public";
@@ -6932,7 +6933,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                if (String.IsNullOrEmpty(VideoURL))
+                if (string.IsNullOrEmpty(VideoURL))
                 {
                     VideoURL = "";
                 }

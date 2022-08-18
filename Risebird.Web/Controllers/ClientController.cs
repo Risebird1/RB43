@@ -55,6 +55,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    string OrginalProfileName = string.Empty;
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
