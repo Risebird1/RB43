@@ -346,7 +346,7 @@
                                                                     </button>
 
 
-                                                                    @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" @*|| ViewBag.profile == "SeniorHR"*@ || ViewBag.profile == "SupportAdmin"))
+                                                                    @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" || @*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                             <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
