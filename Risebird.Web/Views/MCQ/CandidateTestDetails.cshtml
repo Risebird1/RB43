@@ -249,13 +249,13 @@
                                                         }
                                                         @if (!String.IsNullOrEmpty(item.TotalExprience))
                                                         {
-                                                            <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, EmailId = item.CandidateEmail })'>
+                                                            <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, CMCQId = item.Id })'>
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                     <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 </button>
                                                             </a>
                                                             <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
-                                                                <span title="Generate URL" onclick="javascript:GeneratePublicUrl('@item.SameID','@item.CandidateEmail');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                <span title="Generate URL" onclick="javascript:GeneratePublicUrl('@item.SameID','@item.Id');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                             </button>
                                                             @if (item.AadhaarVerification)
                                                             {
@@ -591,13 +591,13 @@
             $("#SelectionStatus").val(levelset);
             $("#ClientHR").val(skillsset);
     }
-    function GeneratePublicUrl(mcqid,candidateemail) {
+    function GeneratePublicUrl(mcqid,CMCQID) {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";
         var urlcurrent = window.location.href;
         urlcurrent = urlcurrent.replace("CandidateTestDetails", "CandidateMCQReport");
         urlcurrent = urlcurrent.replace("?id", "?MCQId");
-        urlcurrent = urlcurrent + "&EmailId=" + candidateemail;
+        urlcurrent = urlcurrent + "&CMCQId=" + CMCQID;
         $("#txtvideoUrls").text(urlcurrent);
     }
     function closePublicUrlShareModel() {

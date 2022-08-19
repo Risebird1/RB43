@@ -1,0 +1,34 @@
+﻿
+@*@model Risebird.Entities.ViewModel.IRFVm*@
+
+@Html.AntiForgeryToken()
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="mb-3 mt-3">
+    <label for="JDTiltle" class="form-label">Job Title:</label>
+    <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
+    @*<label id="error_JDTiltle" class="text-danger"></label>*@
+</div>
+<div class="mb-3">
+    <label for="JDFile" class="form-label">Job Description:</label>
+    <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+    @*<label id="error_JDFile" class="text-danger"></label>*@
+</div>
+
+<div class="mb-3">
+    <label for="BillingOwner" class="form-label">Billing Owner:</label>
+    @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
+    @*<label id="error_BillingOwner" class="text-danger"></label>*@
+</div>
+
+<div class="mb-3 mt-3">
+    <label for="ClientName" class="form-label">Project Name:</label>
+    <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
+    <label id="error_ClientName" class="text-danger"></label>
+</div>
+
+<input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
+<input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
+<input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
+<input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
+<input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
+

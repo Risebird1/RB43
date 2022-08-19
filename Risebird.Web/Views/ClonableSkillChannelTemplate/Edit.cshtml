@@ -64,14 +64,20 @@
                                                 <br />
                                                 <h5>Meeting Platform</h5>
                                                 <div class="row">
-                                                    <div class="form-group">
-                                                        @foreach (var platform in Model.MeetingPlatformOptions)
-                                                        {
-                                                            <label class="radio-inline">
-                                                                <input type="radio" asp-for="MeetingPlatform" value="@platform" style="position: relative; top: 3px; margin: 0px 5px;" disabled />@platform<br />
-                                                            </label>
-                                                        }
-
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            @foreach (var platform in Model.MeetingPlatformOptions)
+                                                            {
+                                                                <label class="radio-inline">
+                                                                    <input type="radio" asp-for="MeetingPlatform" value="@platform" style="position: relative; top: 3px; margin: 0px 5px;" disabled />@platform<br />
+                                                                </label>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            @Html.CheckBoxFor(model => model.IsAadhaarVerificationRequired) @Html.LabelFor(model => model.IsAadhaarVerificationRequired)
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <h5>Recommendation Details</h5>
@@ -192,7 +198,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        
+
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
@@ -851,14 +857,14 @@
 
                             @Html.HiddenFor(m => m.UserId)
                             @*@Html.HiddenFor(m => m.IRFRecommendations.AssessmentGroupId)
-        @Html.HiddenFor(m => m.IRFRecommendations.CategoryId)*@
+                                @Html.HiddenFor(m => m.IRFRecommendations.CategoryId)*@
                             @Html.HiddenFor(m => m.ClonableSkillChannelId)
                             @*@Html.HiddenFor(m => m.CreatedFromIRFId)*@
                             @Html.HiddenFor(m => m.IsTemplateJoinSelectGenskillsRequired)
 
                         </form>
 
-                            
+
                     </div>
 
                 </div>

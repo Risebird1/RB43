@@ -10,6 +10,6 @@ namespace Risebird.Repository.Interface
         Task<ClonableSkillChannelVM> GetClonableSkillChannelById(int id);
         Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
         Task<bool> UpdateClonableSkillChannel(ClonableSkillChannelVM templateDetails);
-        Task<string> GetClonableSkillChannelMeetingPlatformById(int id);
+        Task<ClonableSkillChannelVM> GetClonableSkillChannelMeetingPlatformById(int id);
     }
 }
