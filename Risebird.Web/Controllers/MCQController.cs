@@ -1050,7 +1050,8 @@ namespace Risebird.Web.Controllers
                                 Subject = "Invitation for " + details.Title + " : " + ClientName
                             };
                             var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
-                            string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&EmailId=" + item;
+                            var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
+                            string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&CMCQId=" + uniqueid;
                             Mail _mail1 = new Mail
                             {
                                 TO = ClientEmail,

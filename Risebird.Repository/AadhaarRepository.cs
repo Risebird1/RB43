@@ -87,7 +87,30 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var uniques = SqlMapper.Query<string>(
-                        con, "Select * From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
+                        con, "Select EmailId From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
+                    return uniques.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public async Task<string> FetchUniqueIdByEmailid(string emailid)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var uniques = SqlMapper.Query<string>(
+                        con, "Select uniqueid From UserList where EmailId=@emailid ", parameters, commandType: System.Data.CommandType.Text);
                     return uniques.FirstOrDefault();
                 }
             }
