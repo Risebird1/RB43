@@ -833,18 +833,19 @@ namespace Risebird.Web.Controllers
                 //    }
                 //}
                 _mCQService.AddMCQCandidates(_list);
-
-                var aadhaarKYCmodel = new AadhaarData();
-                aadhaarKYCmodel.Name = values.Name;
-                aadhaarKYCmodel.Address = values.Address;
-                aadhaarKYCmodel.gender = values.Gender;
-                aadhaarKYCmodel.dob = values.DOB;
-                aadhaarKYCmodel.doc_face = values.CandidateImage;
-                aadhaarKYCmodel.email = values.CandidateEmail;
-                aadhaarKYCmodel.reference_id = values.MCQId;
-                aadhaarKYCmodel.verified_using = "MCQ";
-                await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
-
+                if (String.IsNullOrWhiteSpace(values.Name))
+                {
+                    var aadhaarKYCmodel = new AadhaarData();
+                    aadhaarKYCmodel.Name = values.Name;
+                    aadhaarKYCmodel.Address = values.Address;
+                    aadhaarKYCmodel.gender = values.Gender;
+                    aadhaarKYCmodel.dob = values.DOB;
+                    aadhaarKYCmodel.doc_face = values.CandidateImage;
+                    aadhaarKYCmodel.email = values.CandidateEmail;
+                    aadhaarKYCmodel.reference_id = values.MCQId;
+                    aadhaarKYCmodel.verified_using = "MCQ";
+                    await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+                }
                 foreach (var item in resultset)
                 {
                     var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
