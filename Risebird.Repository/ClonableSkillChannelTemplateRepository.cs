@@ -245,6 +245,8 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@QuestionsBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@QuestionsBulkData"].Value = questionsDt;
                     }
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = templateDetails.IsAadhaarVerificationRequired;
                     con.Open();
 
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
@@ -489,14 +491,13 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@QuestionsBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@QuestionsBulkData"].Value = questionsDt;
                     }
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Structured));
+                    cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = templateDetails.IsAadhaarVerificationRequired;
                     con.Open();
-
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
-
-
                     return true;
                 }
 
@@ -514,7 +515,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<string> GetClonableSkillChannelMeetingPlatformById(int id)
+        public async Task<ClonableSkillChannelVM> GetClonableSkillChannelMeetingPlatformById(int id)
         {
             try
             {
@@ -522,7 +523,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QuerySingleAsync<string>(con, "usp_GetClonableSkillChannelMeetingPlatformById", dynamicParameters,
+                    var result = await SqlMapper.QuerySingleAsync<ClonableSkillChannelVM>(con, "usp_GetClonableSkillChannelMeetingPlatformById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result;
                 }

@@ -833,18 +833,19 @@ namespace Risebird.Web.Controllers
                 //    }
                 //}
                 _mCQService.AddMCQCandidates(_list);
-
-                var aadhaarKYCmodel = new AadhaarData();
-                aadhaarKYCmodel.Name = values.Name;
-                aadhaarKYCmodel.Address = values.Address;
-                aadhaarKYCmodel.gender = values.Gender;
-                aadhaarKYCmodel.dob = values.DOB;
-                aadhaarKYCmodel.doc_face = values.CandidateImage;
-                aadhaarKYCmodel.email = values.CandidateEmail;
-                aadhaarKYCmodel.reference_id = values.MCQId;
-                aadhaarKYCmodel.verified_using = "MCQ";
-                await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
-
+                if (!String.IsNullOrWhiteSpace(values.Name))
+                {
+                    var aadhaarKYCmodel = new AadhaarData();
+                    aadhaarKYCmodel.Name = values.Name;
+                    aadhaarKYCmodel.Address = values.Address;
+                    aadhaarKYCmodel.gender = values.Gender;
+                    aadhaarKYCmodel.dob = values.DOB;
+                    aadhaarKYCmodel.doc_face = values.CandidateImage;
+                    aadhaarKYCmodel.email = values.CandidateEmail;
+                    aadhaarKYCmodel.reference_id = values.MCQId;
+                    aadhaarKYCmodel.verified_using = "MCQ";
+                    await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+                }
                 foreach (var item in resultset)
                 {
                     var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -1105,7 +1106,7 @@ namespace Risebird.Web.Controllers
             }
             return new ShareMCQRisebirdMeetingResponse();
         }
-        public async Task<IActionResult> CandidateMCQReport(string MCQId, string EmailId)
+        public async Task<IActionResult> CandidateMCQReport(string MCQId, string CMCQId)
         {
             try
             {
@@ -1119,8 +1120,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("Logo", "");
                 }
                 var candidateset = _mCQService.GetMCQCandidateDetailsByMCQId(MCQId);
-                EmailId = EmailId.ToUpper();
-                var _candidate = candidateset.Where(x => x.CandidateEmail.ToUpper() == EmailId).FirstOrDefault();
+                var _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
                 var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
                 _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
                 _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
@@ -1205,16 +1205,6 @@ namespace Risebird.Web.Controllers
         {
             var _selectabilitycount = _candidate.SelectabilityEvaluatorReportCollection.Count();
             var _joinabilitycount = _candidate.JoinabilityHRReportCollection.Count();
-            foreach (var item in _candidate.SelectabilityEvaluatorReportCollection)
-            {
-                item.Value = "";
-                item.LevelId = "0";
-            }
-            foreach (var item in _candidate.JoinabilityHRReportCollection)
-            {
-                item.Value = "";
-                item.LevelId = "0";
-            }
             for (int i = 0; i < (5 - _selectabilitycount); i++)
             {
                 var _selectability = new SelectabilityEvaluatorReport();

@@ -411,7 +411,8 @@ namespace Risebird.Business
                 //var templateDetails = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelById(id);
                 var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(id);
 
-                model.MeetingPlatform = meetingPlatform;
+                model.MeetingPlatform = meetingPlatform.MeetingPlatform;
+                model.IsAadhaarVerificationRequired = meetingPlatform.IsAadhaarVerificationRequired;
 
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
@@ -584,7 +585,7 @@ namespace Risebird.Business
             return model;
         }
 
-        public async Task<string> GetClonableSkillChannelMeetingPlatformById(int id)
+        public async Task<ClonableSkillChannelVM> GetClonableSkillChannelMeetingPlatformById(int id)
         {
             try
             {
