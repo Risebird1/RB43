@@ -1851,6 +1851,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.isNotificationAccepted = isNotificationAccepted;
                         ViewBag.CodedName = codedname;
                         ViewBag.isCodedResumePresent = isCodedResumePresent;
+                        ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {

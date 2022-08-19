@@ -257,6 +257,11 @@ namespace Risebird.Business
                     var Selectvalue = selectibity2.Select(x => x.CMCQId).FirstOrDefault();
                     selectibity2 = selectibity2.Where(x => x.CMCQId == Selectvalue).ToList();
                     _candidate.SelectabilityEvaluatorReportCollection = (List<SelectabilityEvaluatorReport>)selectibity2;
+                    foreach (var item in _candidate.SelectabilityEvaluatorReportCollection)
+                    {
+                        item.LevelId = "0";
+                        item.Value = "";
+                    }
                 }
                 else
                 {
@@ -269,6 +274,11 @@ namespace Risebird.Business
                     var joinvalue = joinability2.Select(x => x.CMCQId).FirstOrDefault();
                     joinability2 = joinability2.Where(x => x.CMCQId == joinvalue).ToList();
                     _candidate.JoinabilityHRReportCollection = (List<JoinabilityHRReport>)joinability2;
+                    foreach (var item in _candidate.JoinabilityHRReportCollection)
+                    {
+                        item.LevelId = "0";
+                        item.Value = "";
+                    }
                 }
                 else
                 {
