@@ -74,7 +74,7 @@
                         {
                             var profileName = @HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim();
                             profileName = profileName.Replace("\"", "");
-                            if (profileName == "Admin" || profileName == "HR")
+                            if (profileName == "Admin" || profileName == "SupportAdmin")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Recruiter Interview</font></span>
