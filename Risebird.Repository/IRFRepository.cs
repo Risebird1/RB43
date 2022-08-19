@@ -5740,6 +5740,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoom";
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
 
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
@@ -5970,6 +5972,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsGeneralSkillRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromTemplateId", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@CreatedFromTemplateId"].Value = irfDetails.CreatedFromTemplateId;
 

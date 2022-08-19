@@ -161,5 +161,26 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+        public async Task<IActionResult> AadhaarVerification(string uniqueid)
+        {
+            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            var model = new AadhaarData();
+            model.email = candidateEmailid;
+            return View(model);
+        }
+        public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
+        {
+            var aadhaarKYCmodel = new AadhaarData();
+            aadhaarKYCmodel.Name = Name;
+            aadhaarKYCmodel.Address = Address;
+            aadhaarKYCmodel.gender = gender;
+            aadhaarKYCmodel.dob = dob;
+            aadhaarKYCmodel.doc_face = doc_face;
+            aadhaarKYCmodel.email = email;
+            aadhaarKYCmodel.reference_id = "0";
+            aadhaarKYCmodel.verified_using = "Interview";
+            await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+            return Json("Aadhaar Details are verified successfully.");
+        }
     }
 }
