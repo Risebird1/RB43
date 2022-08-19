@@ -186,6 +186,8 @@ namespace Risebird.Entities.ViewModel
         public string OldJDTitle { get; set; }
         public string MeetingPlatform { get; set; }
         public string CategoryName { get; set; }
+        [Display(Name = "Aadhaar Verification Required")]
+        public bool IsAadhaarVerificationRequired { get; set; }
 
     }
     public class InterviewerIds

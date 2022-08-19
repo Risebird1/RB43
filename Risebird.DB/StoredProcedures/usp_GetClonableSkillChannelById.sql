@@ -8,15 +8,12 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE PROCEDURE [dbo].[usp_GetClonableSkillChannelById]  
-@id int
-AS  
-Begin
-
-	select csc.id as ClonableSkillChannelId, csc.[Name] as TemplateName, csc.CreatedFromIRFId, csc.IsJoinSelectGenskillsRequired as IsTemplateJoinSelectGenskillsRequired, csc.MeetingPlatform   
-	from ClonableSkillChannel csc where id = @id
-
+CREATE PROCEDURE [dbo].[usp_GetClonableSkillChannelById]    
+@id int  
+AS    
+Begin  
+ select csc.id as ClonableSkillChannelId, csc.[Name] as TemplateName, csc.CreatedFromIRFId, csc.IsJoinSelectGenskillsRequired as IsTemplateJoinSelectGenskillsRequired, csc.MeetingPlatform,csc.IsAadhaarVerificationRequired     
+ from ClonableSkillChannel csc where id = @id  
 End
 GO
 

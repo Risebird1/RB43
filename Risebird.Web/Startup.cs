@@ -179,6 +179,7 @@ namespace Risebird.Web
                        .Allow("https://js.monitor.azure.com/scripts/b/ai.2.min.js")
                        .Allow("https://centralindia-0.in.applicationinsights.azure.com//v2/track")
                        .Allow("blob:")
+                       .Allow("'unsafe-eval'")
                        .Allow("'unsafe-inline'");
 
                 builder.Styles

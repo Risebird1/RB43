@@ -2552,7 +2552,8 @@ namespace Risebird.Business
                 if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
                 {
                     var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(irfDetails.CreatedFromTemplateId);
-                    irfDetails.MeetingPlatform = meetingPlatform;
+                    irfDetails.MeetingPlatform = meetingPlatform.MeetingPlatform;
+                    irfDetails.IsAadhaarVerificationRequired = meetingPlatform.IsAadhaarVerificationRequired;
                 }
 
 

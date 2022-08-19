@@ -78,5 +78,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> FetchCandidateEmailidByUniqueId(string uniqueid)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var uniques = SqlMapper.Query<string>(
+                        con, "Select * From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
+                    return uniques.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
     }
 }
