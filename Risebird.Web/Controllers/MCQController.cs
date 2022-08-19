@@ -833,7 +833,7 @@ namespace Risebird.Web.Controllers
                 //    }
                 //}
                 _mCQService.AddMCQCandidates(_list);
-                if (String.IsNullOrWhiteSpace(values.Name))
+                if (!String.IsNullOrWhiteSpace(values.Name))
                 {
                     var aadhaarKYCmodel = new AadhaarData();
                     aadhaarKYCmodel.Name = values.Name;
