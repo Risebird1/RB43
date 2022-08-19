@@ -71,8 +71,8 @@
                                                         @Html.HiddenFor(m => m.Id)
                                                         @Html.HiddenFor(m => m.SameID)
                                                         @Html.HiddenFor(m => m.ApplyingCompany)
-                                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
@@ -96,6 +96,16 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @if (!String.IsNullOrWhiteSpace(Model.AadhaarVerificationDone))
+                                            {
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                        <div class="form-group" style="padding-left:10px">
+                                                            <a href="#" onclick="javascript:FetchAadhaarDetails('@Model.SameID','@Model.CandidateEmail');">Click Here For Aadhaar Verified Data</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                     <div class="report-full-wrap">
@@ -325,6 +335,35 @@
         </div>
     </div>
 </div>
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Aadhaar Verified Data</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -346,6 +385,7 @@
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script src="~/js/Aadhaar.js"></script>
 <script>
     $(document).ready(function () {
         SetChartMCQReport();

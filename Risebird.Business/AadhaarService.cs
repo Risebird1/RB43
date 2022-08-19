@@ -1,4 +1,4 @@
-﻿using Risebird.Business.Interface;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -47,6 +47,18 @@ namespace Risebird.Business
             try
             {
                 return await _aadhaarRepository.FetchCandidateEmailidByUniqueId(uniqueid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public async Task<string> FetchUniqueIdByEmailid(string emailid)
+        {
+            try
+            {
+                return await _aadhaarRepository.FetchUniqueIdByEmailid(emailid);
             }
             catch (Exception ex)
             {
