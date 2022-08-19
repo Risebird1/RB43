@@ -54,5 +54,17 @@ namespace Risebird.Business
             }
             return "";
         }
+        public async Task<string> FetchUniqueIdByEmailid(string emailid)
+        {
+            try
+            {
+                return await _aadhaarRepository.FetchUniqueIdByEmailid(emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
     }
 }
