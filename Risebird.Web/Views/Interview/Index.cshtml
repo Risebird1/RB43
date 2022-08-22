@@ -416,7 +416,7 @@
                                                     <th>Candidate Email</th>
                                                     <th>Type</th>
                                                     <th>JD Title</th>
-                                                    <th>Zoom Link</th>
+                                                    <th>Meeting Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
@@ -465,7 +465,7 @@
                                                     <th>Candidate Email</th>
                                                     <th>Type</th>
                                                     <th>JD Title</th>
-                                                    <th>Zoom Link</th>
+                                                    <th>Meeting Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
@@ -627,12 +627,12 @@
 
                                                         @if (item.zoomLink != null && item.zoomLink != "")
                                                         {
-                                                            <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
+                                                            <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Meeting Link</a> </td>
                                                         }
                                                         else
                                                         {
 
-                                                            <td><span style="color:red">No Zoom Link</span></td>
+                                                            <td><span style="color:red">No Meeting Link</span></td>
                                                         }
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {

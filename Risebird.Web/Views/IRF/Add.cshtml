@@ -1243,7 +1243,7 @@
 </div>
 <script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-
+<script src="~/js/SkillChannelAddEdit.js"></script>
 @*<script>
         jQuery(document).ready(function ($) {
 
@@ -2474,30 +2474,6 @@
             $("#" + rateElementId).val(rate);
 
         }
-    }
-
-    function CheckDuplicate(idInitials, searchFor, value, currentIndex) {
-        var users = $(searchFor);
-        if (users != null) {
-            for (i = 0; i < users.length; i++) {
-
-
-                if (i != parseInt(currentIndex)) {
-                    var elementId = idInitials + '_' + i + '__UserId';
-                    userId = document.getElementById(elementId).value;
-                    if (parseInt(userId) == parseInt(value)) {
-                        //duplicate
-                        alert("This user is already added to this list! Kindly choose another user.");
-                        document.getElementById(idInitials + '_' + currentIndex + '__UserId').value = "";
-                        document.getElementById(idInitials + '_' + currentIndex + '__PrimarySkill').value = "";
-                        document.getElementById(idInitials + '_' + currentIndex + '__PerSuccessRate').value = "";
-                        return true;
-                    }
-                }
-
-            }
-        }
-        return false;
     }
 
     function InterviewerChanged(val, id) {
