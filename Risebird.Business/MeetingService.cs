@@ -1224,6 +1224,7 @@ namespace Risebird.Business
                 }
                 reportModel.IsGeneralSkillRequired = irfDetails.IsGeneralSkillRequired;
                 reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
+                reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 return reportModel;
             }
             catch (Exception e)

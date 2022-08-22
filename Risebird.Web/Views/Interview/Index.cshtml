@@ -24,7 +24,7 @@
     string[] Client = new string[] { };
     bool[] IsCandidateResponsed = new bool[] { };
     string[] TemplateName = new string[] { };
-
+    bool[] AadhaarVerified = new bool[] { };
 }
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
@@ -43,6 +43,7 @@
     Client = filter.Client != null ? filter.Client : new string[] { };
     IsCandidateResponsed = filter.IsCandidateResponsed != null ? filter.IsCandidateResponsed : new bool[] { };
     TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
+    AadhaarVerified = filter.AadhaarVerified != null ? filter.AadhaarVerified : new bool[] { };
 }
 <script>
     var Header = "Interviews";
@@ -362,7 +363,17 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerified">
+                                                                    Aadhaar Verified
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="AadhaarVerified" data-placeholder="None Selected" name="AadhaarVerified" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="true">Verified</option>
+                                                                        <option value="false">Not Verified</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                             <div class="form-group">
                                                                 <div>
                                                                     <div class="col-md-12 col-sm-12">
@@ -567,7 +578,14 @@
                                                                     <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview", new { interviewId = item.imid, candidateEmail=item.candidateEmail, irfName = item.IRFId, interviewDate=item.interviewDate, candidateName= item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
                                                                 </button>
                                                             }
-
+                                                            @if (item.IsAadhaarVerificationRequired)
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Aadhaar Verified Data">
+                                                                    <span title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
+                                                                        <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/aadhaar-logo-png.jpg" title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
+                                                                    </span>
+                                                                </button>
+                                                            }
 
                                                         </td>
                                                         <td title=@item.IRFId> @item.IRFId </td>
@@ -1266,7 +1284,37 @@
         </div>
     </div>
 </div>
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Aadhaar Verified Data</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script src="~/js/Aadhaar.js"></script>
 
 <script>
     var closeMember = document.getElementById("membersPopUp");
@@ -1413,6 +1461,7 @@
         var client =  @Html.Raw(Json.Serialize(Client));
         var isCandidateResponsed =  @Html.Raw(Json.Serialize(IsCandidateResponsed));
         var templateName =  @Html.Raw(Json.Serialize(TemplateName));
+        var aadhaarVerified =  @Html.Raw(Json.Serialize(AadhaarVerified));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -1426,6 +1475,7 @@
         $("#ClientName").val(clientName);
         $("#Client").val(client);
         $("#TemplateName").val(templateName);
+        $("#AadhaarVerified").val(aadhaarVerified);
         //var form = $("#form").serialize();
 
     }
