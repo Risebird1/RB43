@@ -1201,7 +1201,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new {@class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
 
                                                                                 </td>
@@ -1635,6 +1635,8 @@
 
 <script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script src="~/js/SkillChannelAddEdit.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $(".selectpicker").select2();
@@ -3614,6 +3616,11 @@
 
     function InterviewerChanged(val, id) {
         var index = id.split('_')[1];
+        var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
+        if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
+            return;
+        }
+
         //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
@@ -3645,6 +3652,13 @@
 
         //var index = id.charAt(31);
         var index = id.split('_')[1];
+
+        var searchFor = '[id^="EmergencyInterviewerCollection"][id$="UserId"]';
+
+        if (CheckDuplicate('EmergencyInterviewerCollection', searchFor, val, index)) {
+            return;
+        }
+
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'EmergencyInterviewerCollection_' + index + '__PerSuccessRate';
         var companyType = $("#CompanyType").val();
