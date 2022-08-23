@@ -1429,6 +1429,7 @@ namespace Risebird.Web.Controllers
                         model.CodedName = codedname;
                         //var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         ViewBag.isCodedResumePresent = false;
+                        ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         //Boradcastmessage
                         return View(model);
                     }

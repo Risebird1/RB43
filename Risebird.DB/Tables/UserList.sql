@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[UserList](
 			[WhatsappNumber] [varchar](15) NULL,
 			[PasswordCreation] [Datetime] NULL,
             [uniqueid] [varchar](50) NULL,
+            [AadhaarVerified] [bit] NULL,	
 			CONSTRAINT [FK_User_Group] FOREIGN KEY (idProfile) REFERENCES Profile(id),
  CONSTRAINT [PK_UserList] PRIMARY KEY CLUSTERED 					
 (					
@@ -72,6 +73,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE UserList
     Add [uniqueid] [varchar](50) NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AadhaarVerified')
+      AND Object_ID = Object_ID(N'UserList'))
+BEGIN
+    ALTER TABLE UserList
+    Add [AadhaarVerified] [bit] NULL
 END
 END
 

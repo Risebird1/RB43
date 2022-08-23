@@ -182,5 +182,15 @@ namespace Risebird.Web.Controllers
             await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
             return Json("Aadhaar Details are verified successfully.");
         }
+        [HttpPost]
+        public async Task<JsonResult> FetchInterviewAadhaarDetails(string candidateEmail)
+        {
+            var model = await _aadhaarService.FetchInterviewAadhaarDetails(candidateEmail);
+            if (model == null)
+            {
+                model = new AadhaarData();
+            }
+            return Json(model);
+        }
     }
 }
