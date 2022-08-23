@@ -23,7 +23,7 @@ Update InterviewComments set MeetingStatus=5 where interviewid in(Select im.id f
 left join Userlist ul on ul.EmailId=im.interviewer      
 left join UserList ulc on ulc.EmailId=im.candidateEmail left join CandidatesMaster cm on cm.UserId=ulc.id       
 left join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=irf.id       
-where interviewDate>=dateadd(minute,-1470,GetDate()) and interviewDate<dateadd(minute,-1410,GetDate()) and im.confirmationStatus=1 and ic.MeetingStatus=2 and IsNull(ca.IsProctor,0)=0)      
+where interviewDate>=dateadd(minute,-9750,GetDate()) and interviewDate<dateadd(minute,-9690,GetDate()) and im.confirmationStatus=1 and ic.MeetingStatus=2 and IsNull(ca.IsProctor,0)=0)      
   
 Delete from InterviewPoints where interviewid in(Select Interviewid From InterviewPoints where interviewid in(Select ip.Interviewid from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id     
 join Userlist ul on ul.EmailId=im.interviewer    
