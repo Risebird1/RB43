@@ -19,7 +19,7 @@ CREATE PROCEDURE [dbo].[usp_AddUpdateInterviewReport]
 @confirmationStatus nvarchar(30),
 @OverallScore float,
 @TechSkillComments nvarchar(300),
-@SkillGeneralComments nvarchar(300),
+--@SkillGeneralComments nvarchar(300),
 @SelectabilityComments nvarchar(300),
 @JoinabilityComments nvarchar(300),
 @ProctoringCount int,
@@ -36,7 +36,7 @@ BEGIN
 	[confirmationStatus]=@confirmationStatus
 	,[OverallScore]=@OverallScore
 	,[TechSkillComments]=@TechSkillComments
-	,[SkillGeneralComments]=@SkillGeneralComments
+	--,[SkillGeneralComments]=@SkillGeneralComments
 	,[SelectabilityComments]=@SelectabilityComments
 	,[JoinabilityComments]=@JoinabilityComments
 	,[ProctoringCount]=   @ProctoringCount    
@@ -47,7 +47,7 @@ BEGIN
 
 	delete from QuestionsDiscussed where InterviewId=@InterviewId
 	delete from TechSkillReport where InterviewId=@InterviewId
-	delete from SkillGeneralReport where InterviewId=@InterviewId
+	--delete from SkillGeneralReport where InterviewId=@InterviewId
 	delete from ProctoringReport where InterviewId=@InterviewId
 END
 
@@ -56,12 +56,12 @@ BEGIN
 
  Insert into InterviewReport 
 
- (IRFId, InterviewId, CandidateName, confirmationStatus, OverallScore, TechSkillComments, SkillGeneralComments, 
+ (IRFId, InterviewId, CandidateName, confirmationStatus, OverallScore, TechSkillComments, 
   SelectabilityComments, JoinabilityComments, ProctoringCount, CreatedBy, CreatedOn)
 
   values
 
-  (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @TechSkillComments, @SkillGeneralComments,
+  (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @TechSkillComments, 
   @SelectabilityComments, @JoinabilityComments, @ProctoringCount, @PerformedBy, @PerformedAt)
 
 END

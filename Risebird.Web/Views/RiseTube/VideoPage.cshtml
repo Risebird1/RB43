@@ -836,7 +836,7 @@
                                                                                 {
                                                                                     <li id="risetubevideo_13" class="nav-link item3" rel="link3"> Tech Skill Report</li>
                                                                                     <li id="risetubevideo_14" class="nav-link item4" rel="link4"> Questions Discussed</li>
-                                                                                    <li id="risetubevideo_15" class="nav-link item5" rel="link5">General Skill Report</li>
+                                                                                    @*<li id="risetubevideo_15" class="nav-link item5" rel="link5">General Skill Report</li>*@
                                                                                     @if (Model.IsJoinabilitySelectabilityRequired)
                                                                                     {
                                                                                         <li id="risetubevideo_16" class="nav-link item6" rel="link6"> Joinability Report</li>
@@ -1271,8 +1271,8 @@
                                                                                     </div>
                                                                                 </div>
 
-                                                                                <h3 class="tab_drawer_heading" rel="link5">General Skill Report</h3>
-                                                                                <div id="link5" class="tab_content">
+                                                                                @*<h3 class="tab_drawer_heading" rel="link5">General Skill Report</h3>*@
+                                                                                @*<div id="link5" class="tab_content">
                                                                                     <div>
                                                                                         <div class="table-responsive-sm">
                                                                                             <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SkillGeneralTable">
@@ -1341,7 +1341,7 @@
 
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
+                                                                                </div>*@
                                                                                 @if (Model.IsJoinabilitySelectabilityRequired)
                                                                                 {
                                                                                     <h3 class="tab_drawer_heading" rel="link6"> Joinability Report</h3>
@@ -5062,24 +5062,24 @@
                     },
 
 
-                    {
-                        title: "General Skill Report",
-                        content: "View the General Skill Report",
-                        target: "risetubevideo_15",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        placement: "bottom",
-                        xOffset: 'center',
-                        arrowOffset: 'center',
-                        onNext: function () {
-                            $('#risetubevideo_15').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#risetubevideo_15').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
+                    //{
+                    //    title: "General Skill Report",
+                    //    content: "View the General Skill Report",
+                    //    target: "risetubevideo_15",
+                    //    showPrevButton: true,
+                    //    zindex: 999999,
+                    //    placement: "bottom",
+                    //    xOffset: 'center',
+                    //    arrowOffset: 'center',
+                    //    onNext: function () {
+                    //        $('#risetubevideo_15').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    },
+                    //    onPrev: function () {
+                    //        $('#risetubevideo_15').removeClass('overlay-relative');
+                    //        $('.helper').remove();
+                    //    }
+                    //},
 
 
 
@@ -5241,12 +5241,12 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                //{
+                //    'next .item5': 'General Skill Report',
+                //    'nextButton': { className: "myNext", text: "Next" },
+                //    'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
+                //},
                 {
                     'next .item6': 'Joinability Report',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -5367,12 +5367,12 @@
 
                 },
 
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                //{
+                //    'next .item5': 'General Skill Report',
+                //    'nextButton': { className: "myNext", text: "Next" },
+                //    'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
+                //},
                 {
                     'next .item6': 'Joinability Report',
                     'nextButton': { className: "myNext", text: "Next" },
