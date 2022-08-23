@@ -208,6 +208,16 @@
                                                 </div>
                                             }
                                         </div>
+                                        @if (Model.AadhaarVerified)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group" style="padding-left:10px">
+                                                        <a href="#" onclick="javascript:FetchInterviewAadhaarDetails('@Model.CandidateEmail');">Click Here For Aadhaar Verified Data</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 <div class="row">
@@ -243,7 +253,7 @@
                                     </div>
 
                                 </div>
-                                
+
                                 @if (ViewBag.PageReport != "Insta")
                                 {
                                     <div class="row">
@@ -564,6 +574,35 @@
         </div>
     </div>
 </div>
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Aadhaar Verified Data</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -763,7 +802,7 @@
 
     function CheckInterviewerComments() {
         var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+        if (interviewStatusElem.value == 2 || interviewStatusElem.value == 4) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
@@ -772,7 +811,7 @@
             else {
                 //interviewerComment_Error
                 document.getElementById("InterviewerComment").focus();
-                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
             }
         }
@@ -821,6 +860,7 @@
 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
+<script src="~/js/Aadhaar.js"></script>
 <script>
     ; (function () {
 

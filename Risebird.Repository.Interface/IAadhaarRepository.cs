@@ -9,5 +9,7 @@ namespace Risebird.Repository.Interface
         Task<AadhaarData> FetchAadhaarDetails(string MCQId, string candidateEmail);
         Task<string> FetchCandidateEmailidByUniqueId(string uniqueid);
         Task<string> FetchUniqueIdByEmailid(string emailid);
+        Task<AadhaarData> FetchInterviewAadhaarDetails(string candidateEmail);
+
     }
 }

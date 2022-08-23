@@ -66,5 +66,17 @@ namespace Risebird.Business
             }
             return "";
         }
+        public async Task<AadhaarData> FetchInterviewAadhaarDetails(string candidateEmail)
+        {
+            try
+            {
+                return await _aadhaarRepository.FetchInterviewAadhaarDetails(candidateEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

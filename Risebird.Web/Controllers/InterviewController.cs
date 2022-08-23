@@ -157,6 +157,7 @@ namespace Risebird.Web.Controllers
                             filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
                             filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
                             filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName;
+                            filter.AadhaarVerified = filter.AadhaarVerified == null ? filter.AadhaarVerified = modelList.Select(x => x.AadhaarVerified).ToArray() : filter.AadhaarVerified = filter.AadhaarVerified;
 
                             modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && filter.RFID.Contains(c.IRFId)
@@ -168,7 +169,8 @@ namespace Risebird.Web.Controllers
                             && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                             && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
                             && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)
-                            && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)).ToList();
+                            && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)
+                            && ((filter.AadhaarVerified != null && filter.AadhaarVerified.Count() > 0) ? filter.AadhaarVerified.Contains(c.AadhaarVerified) : c.AadhaarVerified == false)).ToList();
 
                         }
                         else
@@ -880,6 +882,7 @@ namespace Risebird.Web.Controllers
                         filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
                         filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
                         filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName;
+                        filter.AadhaarVerified = filter.AadhaarVerified == null ? filter.AadhaarVerified = modelList.Select(x => x.AadhaarVerified).ToArray() : filter.AadhaarVerified = filter.AadhaarVerified;
 
                         modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
@@ -891,7 +894,8 @@ namespace Risebird.Web.Controllers
                         && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                         && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
                         && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)
-                        && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)).ToList();
+                        && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)
+                        && ((filter.AadhaarVerified != null && filter.AadhaarVerified.Count() > 0) ? filter.AadhaarVerified.Contains(c.AadhaarVerified) : c.AadhaarVerified == false)).ToList();
 
 
                         return View(modelList);
