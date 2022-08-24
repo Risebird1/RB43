@@ -6087,5 +6087,26 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<IEnumerable<CommonInterviewDetailsVM>> GetUpcomingInterviewsCandidates()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<CommonInterviewDetailsVM>(con, "usp_GetUpcomingInterviewsCandidates", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
