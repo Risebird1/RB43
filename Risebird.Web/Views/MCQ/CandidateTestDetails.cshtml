@@ -234,11 +234,34 @@
 
                                                     <td>@item.Feedbackreating out of 5</td>
                                                     <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in">
-                                                            <div class="talktext">
-                                                                <textarea> @item.FeedbackComment</textarea>
-                                                            </div>
-                                                        </div>
+                                                        @*<div class="talk-bubble tri-right border-bubble right-in">
+                                                                <div class="talktext">
+                                                                    <textarea> @item.FeedbackComment</textarea>
+                                                                </div>
+                                                            </div>*@
+                                                        @if (item.FeedbackComment != null && item.FeedbackComment != "")
+                                                        {
+                                                            @if (item.FeedbackComment.Length > 40)
+                                                            {
+                                                                <div class="article">
+                                                                    <p style="margin-bottom:0px;">
+                                                                        @item.FeedbackComment.Substring(0, 40)
+                                                                    </p>
+                                                                    <p class="moretext_@item.Id moretext">
+                                                                        @item.FeedbackComment.Substring(40, @item.FeedbackComment.Length - 40)
+                                                                    </p>
+                                                                </div>
+                                                                <a onclick="moreless(@item.Id)" class="moreless-button" value="Readmore" id="read_@item.Id" href="#">Read more</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="article">
+                                                                    <p>
+                                                                        @item.FeedbackComment.Substring(0, @item.FeedbackComment.Length)
+                                                                    </p>
+                                                                </div>
+                                                            }
+                                                        }
                                                     </td>
                                                     <td class="text-right" style="padding-right:30px;">
                                                         @if (ViewBag.Isclient == false)
@@ -611,5 +634,15 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
     }
 </script>
