@@ -646,7 +646,7 @@
                                                                             {
                                                                                 <li id="commonpoolvideo_12" class="nav-link item3" rel="link3"> Tech Skill Report</li>
                                                                                 <li id="commonpoolvideo_13" class="nav-link item4" rel="link4"> Questions Discussed</li>
-                                                                                <li id="commonpoolvideo_14" class="nav-link item5" rel="link5">General Skill Report</li>
+                                                                                @*<li id="commonpoolvideo_14" class="nav-link item5" rel="link5">General Skill Report</li>*@
                                                                                 @if (Model.IsJoinabilitySelectabilityRequired)
                                                                                 {
                                                                                     <li id="commonpoolvideo_15" class="nav-link item6" rel="link6"> Joinability Report</li>
@@ -1028,7 +1028,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <h3 class="tab_drawer_heading" rel="link5">General Skill Report</h3>
+                                                                            @*<h3 class="tab_drawer_heading" rel="link5">General Skill Report</h3>
                                                                             <div id="link5" class="tab_content">
                                                                                 <div>
                                                                                     <div class="table-responsive-sm">
@@ -1098,7 +1098,7 @@
 
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div>*@
                                                                             @if (Model.IsJoinabilitySelectabilityRequired)
                                                                             {
                                                                                 <h3 class="tab_drawer_heading" rel="link6"> Joinability Report</h3>
@@ -4475,12 +4475,12 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
+                //{
+                //    'next .item5': 'General Skill Report',
+                //    'nextButton': { className: "myNext", text: "Next" },
+                //    'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
+                //},
                 {
                     'next .item6': 'Joinability Report',
                     'nextButton': { className: "myNext", text: "Next" },

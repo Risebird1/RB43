@@ -281,7 +281,8 @@ namespace Risebird.Entities.ViewModel
         public int Redflags { get; set; }
         public bool HasDistinctParticipants { get; set; }
         public string TemplateName { get; set; }
-
+        public bool AadhaarVerified { get; set; }
+        public bool IsAadhaarVerificationRequired { get; set; }
     }
     public class VedioComments
     {

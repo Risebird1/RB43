@@ -121,3 +121,14 @@ function BindAadhaarKYCData(data) {
     }
     $("#divAadhaarKYC").empty().html(html);
 }
+function FetchInterviewAadhaarDetails(candidateEmail) {
+    $.ajax({
+        type: "POST",
+        url: "/Aadhaar/FetchInterviewAadhaarDetails",
+        data: { candidateEmail: candidateEmail },
+        success: function (data) {
+            openAadhaarKYCpopup();
+            BindAadhaarKYCData(data);
+        }
+    });
+}

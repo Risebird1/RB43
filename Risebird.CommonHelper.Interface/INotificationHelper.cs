@@ -85,5 +85,6 @@ namespace Risebird.CommonHelper.Interface
         string SendResumeUploadCounts(Mail model, DataTable dt, string Name);
         string SendQCFormDetails(Mail model, DataTable dt);
         string SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt);
+        string SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name);
     }
 }
