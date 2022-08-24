@@ -1282,7 +1282,7 @@ namespace Risebird.Repository
                     paramx.Add("@PerformedAt", DateTime.Now);
                     //paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
-                    paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
+                    //paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     paramx.Add("@ProctoringCount", reportDetails.ProctoringCount);
@@ -1363,35 +1363,35 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    if (reportDetails.SkillGeneralReportCollection != null && reportDetails.IsGeneralSkillRequired)
-                    {
-                        DataTable skillGeneralReportDt = new DataTable();
-                        skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
-                        skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
-                        skillGeneralReportDt.Columns.Add("Type", typeof(string));
-                        skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
-                        skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
-                        skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
-                        skillGeneralReportDt.Columns.Add("Value", typeof(string));
+                    //if (reportDetails.SkillGeneralReportCollection != null && reportDetails.IsGeneralSkillRequired)
+                    //{
+                    //    DataTable skillGeneralReportDt = new DataTable();
+                    //    skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
+                    //    skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    //    skillGeneralReportDt.Columns.Add("Type", typeof(string));
+                    //    skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    //    skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    //    skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
+                    //    skillGeneralReportDt.Columns.Add("Value", typeof(string));
 
 
-                        foreach (var item in reportDetails.SkillGeneralReportCollection)
-                        {
-                            skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
-                        }
+                    //    foreach (var item in reportDetails.SkillGeneralReportCollection)
+                    //    {
+                    //        skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
+                    //    }
 
-                        SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con)
-                        {
-                            CommandType = CommandType.StoredProcedure
-                        };
-                        cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
-                        cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
-                        con.Open();
-                        if (cmdSkillGeneralReport.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
-                        }
-                    }
+                    //    SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con)
+                    //    {
+                    //        CommandType = CommandType.StoredProcedure
+                    //    };
+                    //    cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
+                    //    cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
+                    //    con.Open();
+                    //    if (cmdSkillGeneralReport.ExecuteNonQuery() != 0)
+                    //    {
+                    //        con.Close();
+                    //    }
+                    //}
                     if (reportDetails.QuestionsCollection != null)
                     {
                         DataTable questionsDt = new DataTable();
@@ -6086,6 +6086,27 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<IEnumerable<CommonInterviewDetailsVM>> GetUpcomingInterviewsCandidates()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<CommonInterviewDetailsVM>(con, "usp_GetUpcomingInterviewsCandidates", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -512,7 +512,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     var questions = _mCQService.GetMCQquestionsByMCQId(Id);
                     var model = questions.Where(x => x.MCQId == Id).OrderBy(x => x.QuestionNumber).ToList();
@@ -896,7 +896,7 @@ namespace Risebird.Web.Controllers
                 var candidateset = new List<CandidateDetailsForTestDuplicate>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id);
                     if (candidateset != null)
@@ -951,7 +951,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     if (filter != null)
                     {
@@ -1233,7 +1233,7 @@ namespace Risebird.Web.Controllers
                 var candidateset = new List<CandidateDetailsForTestDuplicate>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetails();
                     if (candidateset != null)
@@ -1286,7 +1286,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
                     if (filter != null)
                     {

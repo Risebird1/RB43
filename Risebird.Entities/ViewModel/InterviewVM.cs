@@ -21,5 +21,7 @@ namespace Risebird.Entities.ViewModel
         public string uniqueid { get; set; }
         public string IRFId { get; set; }
         public string PrimarySkill { get; set; }
+        public string Name { get; set; }
+        public string ClientName { get; set; }
     }
 }
