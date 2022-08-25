@@ -78,7 +78,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<string> FetchCandidateEmailidByUniqueId(string uniqueid)
+        public async Task<AadhaarDetails> FetchCandidateEmailidByUniqueId(string uniqueid)
         {
             try
             {
@@ -86,8 +86,8 @@ namespace Risebird.Repository
                 parameters.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var uniques = SqlMapper.Query<string>(
-                        con, "Select EmailId From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
+                    var uniques = SqlMapper.Query<AadhaarDetails>(
+                        con, "Select EmailId,AadhaarVerified From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
                     return uniques.FirstOrDefault();
                 }
             }
@@ -99,7 +99,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return "";
+            return null;
         }
         public async Task<string> FetchUniqueIdByEmailid(string emailid)
         {
