@@ -42,7 +42,7 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<string> FetchCandidateEmailidByUniqueId(string uniqueid)
+        public async Task<AadhaarDetails> FetchCandidateEmailidByUniqueId(string uniqueid)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return "";
+            return null;
         }
         public async Task<string> FetchUniqueIdByEmailid(string emailid)
         {

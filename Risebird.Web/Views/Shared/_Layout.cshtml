@@ -434,7 +434,7 @@
                     {
                         var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                         profileName = profileName.Trim('"');
-                        @if (profileName != "Admin")
+                        @if (profileName != "Admin" && profileName != "SupportAdmin")
                         {
                             <div class="support">
                                 <div class="desktop-view" style="float:left">
@@ -734,7 +734,7 @@
 {
     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     profileName = profileName.Trim('"');
-    @if (profileName != "Admin")
+    @if (profileName != "Admin" && profileName != "SupportAdmin")
     {
         <script>
             var closeStatusList = document.getElementById("supportModalPopUp");

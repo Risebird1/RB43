@@ -297,7 +297,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsRecruiterActive { get; set; }
         public int UserId { get; set; }
         public int? CreatedFromTemplateId { get; set; }
-
+        public bool IsAadhaarVerificationRequired { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {
