@@ -1936,6 +1936,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsGeneralSkillRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@idRecommendation", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@idRecommendation"].Value = irfDetails.IRFRecommendations.id;
 
@@ -2783,6 +2786,7 @@ namespace Risebird.Repository
             //parameters.Add("@IsQCRequired", entity.IsQCRequired);
             parameters.Add("@IsJoinabilitySelectabilityRequired", entity.IsJoinabilitySelectabilityRequired);
             parameters.Add("@IsGeneralSkillRequired", entity.IsGeneralSkillRequired);
+            parameters.Add("@IsAadhaarVerificationRequired", entity.IsAadhaarVerificationRequired);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
