@@ -279,54 +279,52 @@
                                                             @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                         </div>
                                                     </div>*@
-                                                <div class="col-md-3 col-sm-3 pull-left">
-
+                                                <div class="col-md-3 col-sm-3 pull-left" style="display:none">
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
-
-
                                                         <div class="mdc-checkbox">
                                                             @Html.CheckBoxFor(m => m.IsJoinabilitySelectabilityRequired, new { @class = "mdc-checkbox__native-control" })
-
-
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark"
                                                                      viewBox="0 0 24 24">
-                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                 </svg>
                                                                 <div class="mdc-checkbox__mixedmark"></div>
                                                             </div>
                                                             <div class="mdc-checkbox__ripple"></div>
-
-
                                                         </div>
                                                         @Html.LabelFor(model => model.IsJoinabilitySelectabilityRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3 col-sm-3 pull-left">
-
+                                                <div class="col-md-3 col-sm-3 pull-left" style="display:none">
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
-
-
                                                         <div class="mdc-checkbox">
                                                             @Html.CheckBoxFor(m => m.IsGeneralSkillRequired, new { @class = "mdc-checkbox__native-control" })
-
-
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark"
                                                                      viewBox="0 0 24 24">
-                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                 </svg>
                                                                 <div class="mdc-checkbox__mixedmark"></div>
                                                             </div>
                                                             <div class="mdc-checkbox__ripple"></div>
-
-
                                                         </div>
                                                         @Html.LabelFor(model => model.IsGeneralSkillRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-3 pull-left">
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.IsAadhaarVerificationRequired, new { @class = "mdc-checkbox__native-control" })
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+                                                        </div>
+                                                        @Html.LabelFor(model => model.IsAadhaarVerificationRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
                                                 </div>
                                             </div>
@@ -1201,7 +1199,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new {@class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
 
                                                                                 </td>
