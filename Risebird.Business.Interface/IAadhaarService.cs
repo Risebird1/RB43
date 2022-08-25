@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
     {
         Task<bool> SaveAadhaarDetails(AadhaarData model);
         Task<AadhaarData> FetchAadhaarDetails(string MCQId, string candidateEmail);
-        Task<string> FetchCandidateEmailidByUniqueId(string uniqueid);
+        Task<AadhaarDetails> FetchCandidateEmailidByUniqueId(string uniqueid);
         Task<string> FetchUniqueIdByEmailid(string emailid);
         Task<AadhaarData> FetchInterviewAadhaarDetails(string candidateEmail);
     }

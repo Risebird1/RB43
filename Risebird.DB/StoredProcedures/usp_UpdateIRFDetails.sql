@@ -40,6 +40,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	--@IsQCRequired bit,
 	@IsJoinabilitySelectabilityRequired bit,
 	@IsGeneralSkillRequired bit,
+	@IsAadhaarVerificationRequired bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -101,6 +102,7 @@ BEGIN
 	--,[IsQCRequired] = @IsQCRequired
 	,[IsJoinabilitySelectabilityRequired] = @IsJoinabilitySelectabilityRequired
 	,[IsGeneralSkillRequired] = @IsGeneralSkillRequired
+	,[IsAadhaarVerificationRequired]=@IsAadhaarVerificationRequired
 	Where id =@id        
     
 	
