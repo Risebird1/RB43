@@ -16,10 +16,13 @@ using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using VirusTotalNet;
+using VirusTotalNet.ResponseCodes;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -6880,6 +6883,47 @@ namespace Risebird.Web.Controllers
                             model.ClientId = await _clientService.GetClientByEmailId(emailId);
                         if (model.JDFile != null)
                         {
+
+                           
+                            int virusScanResult = 0;
+                            if (profileName == "Client")
+                            {
+                                using (var ms = new MemoryStream())
+                                {
+                                    model.JDFile.CopyTo(ms);
+
+                                    //VirusTotal virusTotal = new VirusTotal("30368672cc1d7fa0497a0d2c640544ade03ad455600d24c220bfd41c83b5e6d5");
+                                    VirusTotal virusTotal = new VirusTotal(_configuration["VirusTotal:ApiKey"]);
+
+                                    //Use HTTPS instead of HTTP
+                                    virusTotal.UseTLS = true;
+
+                                    //byte[] eicar = Encoding.ASCII.GetBytes(@"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+                                    //VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(eicar);//ms
+
+                                    VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(ms);
+                                    bool hasFileBeenScannedBefore = fileReport.ResponseCode == FileReportResponseCode.Present;
+
+                                    if (hasFileBeenScannedBefore)
+                                    {
+                                        virusScanResult = fileReport.Positives;
+                                    }
+                                    else
+                                    {
+                                        //var fileResults = await virusTotal.ScanFileAsync(eicar, fileName);//ms
+                                        var fileResults = await virusTotal.ScanFileAsync(ms, model.JDFile.FileName);
+                                        virusScanResult = fileReport.Positives;
+                                    }
+
+                                    if (virusScanResult > 0)
+                                    {
+                                        TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
+                                        return RedirectToAction("Index", "Template");
+                                    }
+
+                                }
+                            }
+
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
