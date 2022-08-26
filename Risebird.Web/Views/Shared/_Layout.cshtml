@@ -254,7 +254,7 @@
                     {
                         var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                         profileName = profileName.Trim('"');
-                        @if (profileName == "Admin")
+                        @if (profileName == "Admin" || profileName == "SupportAdmin")
                         {
                             <div class="user user-r pull-left">
                                 <h6 class="main-notification-title">
