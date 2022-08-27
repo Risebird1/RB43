@@ -245,10 +245,13 @@
                                                     <div class="form-group" style="margin-bottom:0px;margin-top:10px">
                                                         <strong>@Html.Label("Test Score", "Test Score", "Test Score")</strong>
                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                            <div class="talktext">
-                                                                <input type="text" class="form-control text-box" readonly value="@(Model.CandidateScore*100/Model.TotalQuestions) %" />
+                                                            @if (Model.TotalQuestions > 0)
+                                                            {
+                                                                <div class="talktext">
+                                                                <input type="text" class="form-control text-box" readonly value="@(Model.CandidateScore * 100 / Model.TotalQuestions) %" />
                                                                 <div id="words"></div>
-                                                            </div>
+                                                                </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
