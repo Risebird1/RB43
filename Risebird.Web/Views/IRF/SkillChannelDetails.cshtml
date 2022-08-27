@@ -85,11 +85,7 @@
                                 </button>
                             }
                         }
-                        @if (ViewBag.PageStatus == "Public")
-                        {
-
-                        }
-                        else
+                        @if (ViewBag.PageStatus != "Public")
                         {
                             <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF", new { type = ViewBag.Type })'"></i></span>
                         }
@@ -228,8 +224,8 @@
                                                     @if (ViewBag.profile != "Client")
                                                     {
                                                         <th>Risebird Channel Owner</th>
-                                                        <th>Flags</th>
                                                     }
+                                                    <th>Flags</th>
                                                     @if (ViewBag.Type == "ChannelOwner")
                                                     {
                                                         <th>Skill Channels</th>
@@ -265,8 +261,8 @@
                                                     @if (ViewBag.profile != "Client")
                                                     {
                                                         <th>Risebird Channel Owner</th>
-                                                        <th>Flags</th>
                                                     }
+                                                    <th>Flags</th>
                                                     @if (ViewBag.Type == "ChannelOwner")
                                                     {
                                                         <th>Skill Channels</th>
@@ -306,14 +302,14 @@
                                                             @if (ViewBag.profile != "Client")
                                                             {
                                                                 <td> @item.RisebirdHREmail </td>
-                                                                @if (item.Flags > 0)
-                                                                {
-                                                                    <td style="color:blue!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>@item.Flags</td>
-                                                                }
+                                                            }
+                                                            @if (item.Flags > 0)
+                                                            {
+                                                                <td style="color:blue!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.Flags</td>
                                                             }
                                                             @*<td style="color:blue!important;cursor:pointer" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>*@
                                                             @if (ViewBag.Type == "ChannelOwner")
