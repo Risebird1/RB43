@@ -41,6 +41,7 @@ GO
 --@IsQCRequired bit,
 @IsJoinabilitySelectabilityRequired bit,
 @IsGeneralSkillRequired bit,
+@IsAadhaarVerificationRequired bit,
 @idIrf int output            
             
 AS            
@@ -75,7 +76,8 @@ Begin
    ,[AssessmentGroupId]
    --,[IsQCRequired]
    ,[IsJoinabilitySelectabilityRequired]
-   ,[IsGeneralSkillRequired])            
+   ,[IsGeneralSkillRequired]
+   ,[IsAadhaarVerificationRequired])            
        VALUES            
            (@IRFId,            
    @clientName,            
@@ -104,7 +106,8 @@ Begin
    @AssessmentGroupId,
    --@IsQCRequired,
    @IsJoinabilitySelectabilityRequired,
-   @IsGeneralSkillRequired)      
+   @IsGeneralSkillRequired,
+   @IsAadhaarVerificationRequired)      
        
     
 select @idIrf = SCOPE_IDENTITY()    

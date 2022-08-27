@@ -72,4 +72,9 @@
         public string message { get; set; }
         public string status { get; set; }
     }
+    public class AadhaarDetails
+    {
+        public string EmailId { get; set; }
+        public bool AadhaarVerified { get; set; }
+    }
 }

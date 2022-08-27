@@ -1,5 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.IRFVm
-@using Risebird.Entities.Enum; 
+@using Risebird.Entities.Enum;
 
 @{
     ViewData["Title"] = "Add Skills Channel";
@@ -191,85 +191,78 @@
                                                 </div>
                                                 @*<div class="col-md-3 col-sm-3 pull-left">
 
+            <div class="mdc-form-field" style="margin-bottom: 10px;">
+
+
+                <div class="mdc-checkbox">
+                    @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
+
+
+                    <div class="mdc-checkbox__background">
+                        <svg class="mdc-checkbox__checkmark"
+                             viewBox="0 0 24 24">
+                            <path class="mdc-checkbox__checkmark-path"
+                                  fill="none"
+                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                        </svg>
+                        <div class="mdc-checkbox__mixedmark"></div>
+                    </div>
+                    <div class="mdc-checkbox__ripple"></div>
+
+
+                </div>
+                @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+            </div>
+
+        </div>*@
+
+                                                <div class="col-md-3 col-sm-3 pull-left" style="display:none">
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
-
-
-                                                        <div class="mdc-checkbox">
-                                                            @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
-
-
-                                                            <div class="mdc-checkbox__background">
-                                                                <svg class="mdc-checkbox__checkmark"
-                                                                     viewBox="0 0 24 24">
-                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                </svg>
-                                                                <div class="mdc-checkbox__mixedmark"></div>
-                                                            </div>
-                                                            <div class="mdc-checkbox__ripple"></div>
-
-
-                                                        </div>
-                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
-                                                    </div>
-
-                                                </div>*@
-
-                                                <div class="col-md-3 col-sm-3 pull-left">
-
-                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
-
-
                                                         <div class="mdc-checkbox">
                                                             @Html.CheckBoxFor(m => m.IsJoinabilitySelectabilityRequired, new { @class = "mdc-checkbox__native-control" })
-
-
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark"
                                                                      viewBox="0 0 24 24">
-                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                 </svg>
                                                                 <div class="mdc-checkbox__mixedmark"></div>
                                                             </div>
                                                             <div class="mdc-checkbox__ripple"></div>
-
-
                                                         </div>
                                                         @Html.LabelFor(model => model.IsJoinabilitySelectabilityRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
-
-
                                                 </div>
-
-                                                <div class="col-md-3 col-sm-3 pull-left">
-
+                                                <div class="col-md-3 col-sm-3 pull-left" style="display:none">
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
-
-
                                                         <div class="mdc-checkbox">
                                                             @Html.CheckBoxFor(m => m.IsGeneralSkillRequired, new { @class = "mdc-checkbox__native-control" })
-
-
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark"
                                                                      viewBox="0 0 24 24">
-                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                 </svg>
                                                                 <div class="mdc-checkbox__mixedmark"></div>
                                                             </div>
                                                             <div class="mdc-checkbox__ripple"></div>
-
-
                                                         </div>
                                                         @Html.LabelFor(model => model.IsGeneralSkillRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
-
-
+                                                </div>
+                                                <div class="col-md-3 col-sm-3 pull-left">
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.IsAadhaarVerificationRequired, new { @class = "mdc-checkbox__native-control" })
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+                                                        </div>
+                                                        @Html.LabelFor(model => model.IsAadhaarVerificationRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -459,31 +452,31 @@
                                                     <div class="col-md-4 col-sm-4 pl-1">
                                                         @Html.HiddenFor(m => m.PerMintuteRate)
                                                         @*<div class="form-group">
-                            <div class="mandate">
-                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                            </div>
-                            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
-                            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-                            <div class="spinner">
-                                <button type="button" class="up-2 button">&rsaquo;</button>
-                                <button type="button" class="down-2 button">&lsaquo;</button>
-                            </div>
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
+                                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-2 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-2 button">&lsaquo;</button>
+                                                                </div>
 
 
-                        </div>*@
+                                                            </div>*@
 
                                                         @Html.HiddenFor(m => m.TotalBudget)
                                                         @*<div class="form-group">
-                            <div class="mandate">
-                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                            </div>
-                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-                            <div class="spinner">
-                                <button type="button" class="up-3 button">&rsaquo;</button>
-                                <button type="button" class="down-3 button">&lsaquo;</button>
-                            </div>
-                        </div>*@
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-3 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-3 button">&lsaquo;</button>
+                                                                </div>
+                                                            </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -504,9 +497,9 @@
                                                         </div>
                                                         @Html.HiddenFor(m => m.Type)
                                                         @*<div class="form-group">
-                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-                        </div>*@
+                                                                @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                                                @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+                                                            </div>*@
 
                                                     </div>
                                                 </div>
@@ -1106,43 +1099,43 @@
                                             </div>
                                         </div>
                                         <!--<h3 class="tab_drawer_heading" rel="tab-11">Resume Evaluator</h3>
-    <div class="tab-box" id="tab-11">
-        <div class="tab-main-box">
-            <div class="row">
+                                        <div class="tab-box" id="tab-11">
+                                            <div class="tab-main-box">
+                                                <div class="row">
 
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="table-responsive-sm">
-                        <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
-                            <thead>
-                                <tr>
-                                    <th class="table_heading">User</th>
-                                    <th width="10%" class="table_heading text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="table_heading">User</th>
+                                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
 
-                                <tr>
-                                    <td>
-                                        @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
-                                    </td>
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
+                                                                        </td>
 
-                                    <td class="action text-center">
+                                                                        <td class="action text-center">
 
-                                        <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                        <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>-->
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>-->
                                         @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
 
                                         <!--</div>
-                </div>
-            </div>
-        </div>
-    </div>-->
-                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>-->
+
                                         <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
@@ -1300,34 +1293,34 @@
 </script>
 
 @*<script>
-    function AssessmentGroupCategoryChanged(categoryId) {
+        function AssessmentGroupCategoryChanged(categoryId) {
 
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetAssessmentGroupsByCategory",
-            data: { 'categoryId': categoryId },
-            success: function (data) {
-                var drpdwnId = $("#IRFRecommendations_AssessmentGroupId");
-                if (data.length > 0) {
-                    $("#IRFRecommendations_AssessmentGroupId option").remove();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetAssessmentGroupsByCategory",
+                data: { 'categoryId': categoryId },
+                success: function (data) {
+                    var drpdwnId = $("#IRFRecommendations_AssessmentGroupId");
+                    if (data.length > 0) {
+                        $("#IRFRecommendations_AssessmentGroupId option").remove();
 
-                    $(data).each(function () {
-                        var option = $("<option />");
-                        //Set Text part.
-                        option.html(this.text);
-                        //Set Value part.
-                        option.val(this.value);
-                        //Add the Option element to DropDownList.
-                        drpdwnId.append(option);
-                    });
+                        $(data).each(function () {
+                            var option = $("<option />");
+                            //Set Text part.
+                            option.html(this.text);
+                            //Set Value part.
+                            option.val(this.value);
+                            //Add the Option element to DropDownList.
+                            drpdwnId.append(option);
+                        });
+                    }
+
                 }
-                
-            }
-        });
+            });
 
-    }
+        }
 
-</script>*@
+    </script>*@
 <script>
 
     $('#IsJoinabilitySelectabilityRequired').on('change', function () {
@@ -1437,7 +1430,7 @@
     //function RecommendationStatusChanged(val) {
     //    if (val == 'true') {
     //        document.getElementById("recommendationFields").style.display = "block";
-            
+
     //    }
     //    else {
     //        //document.getElementById("IRFRecommendations_CategoryId").value = "";
@@ -3043,7 +3036,7 @@
                         $("#rtab-3").addClass("active");
                         document.getElementById("tab-3").style.display = "block";
                     }
-                    
+
                 }
                 document.getElementById("tab-7").style.display = "none";
             }
@@ -3161,7 +3154,7 @@
                 //    $('#error_JDTiltle').text("");
                 //}
 
-                
+
                 flag = IsJobProfileNameInvalid(); //Check JDTiltle
 
                 if ($('#ClientName').val() == "") {
@@ -3296,7 +3289,7 @@
                             $("#rtab-7").addClass("active");
                             document.getElementById("tab-7").style.display = "block";
                         }
-                        
+
                     }
                     document.getElementById("tab-3").style.display = "none";
 
@@ -3325,7 +3318,7 @@
                         $("#rtab-7").addClass("active");
                         document.getElementById("tab-7").style.display = "block";
                     }
-                    
+
                     document.getElementById("tab-5").style.display = "none";
                 }
             }
