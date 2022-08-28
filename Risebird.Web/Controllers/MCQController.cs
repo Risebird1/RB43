@@ -1188,12 +1188,12 @@ namespace Risebird.Web.Controllers
                 if (_mCQService.SaveMCQReportDetails(_candidate))
                 {
                     TempData["SuccessErrorMCQMessage"] = "Report has been saved Successfully!";
-                    return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, EmailId = _candidate.CandidateEmail });
+                    return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, CMCQId = _candidate.Id });
                 }
                 else
                 {
                     TempData["SuccessErrorMCQMessage"] = "Fail to save the report!";
-                    return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, EmailId = _candidate.CandidateEmail });
+                    return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, CMCQId = _candidate.Id });
                 }
             }
             catch (Exception ex)

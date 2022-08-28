@@ -245,13 +245,17 @@
                                                     <div class="form-group" style="margin-bottom:0px;margin-top:10px">
                                                         <strong>@Html.Label("Test Score", "Test Score", "Test Score")</strong>
                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                            @if (Model.TotalQuestions > 0)
-                                                            {
-                                                                <div class="talktext">
-                                                                <input type="text" class="form-control text-box" readonly value="@(Model.CandidateScore * 100 / Model.TotalQuestions) %" />
+                                                            <div class="talktext">
+                                                                @if (Model.TotalQuestions > 0)
+                                                                {
+                                                                    <input type="text" class="form-control text-box" readonly value="@(Model.CandidateScore * 100 / Model.TotalQuestions) %" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="text" class="form-control text-box" readonly value="0 %" />
+                                                                }
                                                                 <div id="words"></div>
-                                                                </div>
-                                                            }
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
