@@ -123,7 +123,8 @@ namespace Risebird.MicroService
                                 {
                                     var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
                                     var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
-
+                                    long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                    fileName = fileName + "_" + unixTime.ToString();
                                     try
                                     {
                                         uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
