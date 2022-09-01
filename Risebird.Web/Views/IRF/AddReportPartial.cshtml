@@ -87,14 +87,19 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="p15">
+                    <div class="pull-left mt-20">
+
+                        <button style="margin-bottom: 4px; margin-left: 8px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                            Comments
+                        </button>
+
+                    </div>
                     @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
                     @if (ViewBag.PageStatus == "Mainurl")
                     {
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Insta Public Url" onclick="GeneratePublicUrl(3)"></div>
                         <div class="pull-right mt-20">
-                            <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="        margin-bottom: 0px;
-        margin-right: 5px;
-" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)">
+                            <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 0px;margin-right: 5px;" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)">
                         </div>
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;margin-right:5px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                     }
@@ -1162,6 +1167,10 @@
         </div>
     </footer>
 </div>
+
+<div id="modal_clientComment_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script>
+
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>

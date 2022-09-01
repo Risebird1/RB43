@@ -1,0 +1,50 @@
+﻿@model Risebird.Entities.ViewModel.ClientCommentsForReport
+
+<!-- Modal -->
+<div class="modal fade" style="height:1000px" id="addComment" tabindex="-1" role="dialog" aria-labelledby="addCommentLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCommentLabel">Comment</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="comments_modal_body">
+                <form asp-action="AddUpdateClientCommentsForReport">
+
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+
+                    <div class="form-group">
+                        <label asp-for="Comment"></label>
+                        @if (Model.Profile == "Client")
+                        {
+                            <textarea asp-for="Comment" class="form-control" style="height: 200px"></textarea>
+                            @*<input asp-for="Comment" class="form-control" />*@
+
+                        }
+                        else
+                        {
+                            <textarea asp-for="Comment" class="form-control" style="height: 200px" readonly></textarea>
+                            @*<input asp-for="Comment" class="form-control" readonly/>*@
+
+                        }
+                        <span asp-validation-for="Comment" class="text-danger"></span>
+                    </div>
+
+                    <input type="hidden" asp-for="id" />
+                    <input type="hidden" asp-for="InterviewId" />
+                    <input type="hidden" asp-for="Profile" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                @if (Model.Profile == "Client")
+                {
+                    <button type="button" class="btn btn-primary" data-save="modal">Save</button>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
