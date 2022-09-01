@@ -33,5 +33,7 @@ namespace Risebird.Business.Interface
         Task<int> GetClientByEmailId(string emailId);
         Task<int> GetClientBillingType(int Clientid);
         Task<IEnumerable<Client>> GetAllClients();
+        Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId);
+        Task<bool> AddUpdateClientCommentsForReport(ClientCommentsForReport model);
     }
 }
