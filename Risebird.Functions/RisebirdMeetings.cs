@@ -31,7 +31,7 @@ namespace Risebird.Functions
 
             string jsonContent = await req.Content.ReadAsStringAsync();
             log.Info(jsonContent);
-            //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
+           // string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
             //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
@@ -272,6 +272,41 @@ namespace Risebird.Functions
             }
             if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "1")
             {
+              
+                using (SqlConnection con = new SqlConnection(str))
+                {
+                    var query = "select* from[dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid where candidateEmail = @candidateEmail and intc.MeetingStatus = 4 and IRFId= @IRFId";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@candidateEmail", candidateEmail);
+                    dynamicParameters.Add("@IRFId", IRFID);
+                    var results = con.Query(query, dynamicParameters);
+                    var dynamicParameters1 = new DynamicParameters();
+                    dynamicParameters1.Add("@meetingid", interviewId);
+                    if (results.Count() > 0)
+                    {
+                        //Cancel Interview
+                        var query1 = "Update InterviewMeetings set isAutoCancelled=1,confirmationStatus=2,Cancellationsource='Already Completed Interview' where id=@meetingid";
+                         results = con.Query(query1, dynamicParameters1);                  
+
+                        var masg = new SendGridMessage();
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
+                        masg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHrContact, null));
+                        masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+
+                        StringBuilder msgBody = new StringBuilder("Dear Candidate,");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Your interview has been cancelled on interview date " + interviewDate + ". As you have already completed interview for this particular requirement.");
+                        msgBody.AppendLine("Please contact to your HR or Recruiter about your interview.");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Thank You, Team Risebird");
+
+                        masg.PlainTextContent = msgBody.ToString();
+                        CommonSendMail _common = new CommonSendMail();
+                        _common.SendMail(masg);
+                    }
+                }
                 //try
                 //{
                 //    var masg = new SendGridMessage();
@@ -568,11 +603,11 @@ namespace Risebird.Functions
                 var query1 = string.Empty;
                 if (!isActive)
                 {
-                    query1 = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
+                    query1 = "Update InterviewMeetings set isAutoCancelled=1,confirmationStatus=2,Cancellationsource='Recruiter Disabled' where id=@meetingid";
                 }
                 else if (isPaused)
                 {
-                    query1 = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Skill Channel Paused' where id=@meetingid and confirmationStatus=2";
+                    query1 = "Update InterviewMeetings set isAutoCancelled=1,confirmationStatus=2,Cancellationsource='Skill Channel Paused' where id=@meetingid";
                 }
                 var dynamicParameters1 = new DynamicParameters();
                 dynamicParameters1.Add("@meetingid", interviewid);
@@ -592,11 +627,12 @@ namespace Risebird.Functions
                 }
                 var irfid = 0;
                 var queryirf = "Select id from IRF where IRFId=@IRFId";
-                var dynamicParametersirf = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", IRFName);
+               
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(queryirf, dynamicParametersirf);
+                    var dynamicParametersirf1 = new DynamicParameters();
+                    dynamicParametersirf1.Add("@IRFId", IRFName);
+                    var results = con.Query<int>(queryirf, dynamicParametersirf1);
                     irfid = results.FirstOrDefault();
                 }
                 //Start:add Candidte Status
@@ -629,8 +665,8 @@ namespace Risebird.Functions
                 StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
-                msgBody.AppendLine("Please contact to your HR contact or Recruiter to schedule the interview.");
+                msgBody.AppendLine("Your interview has been cancelled on interview date " + interviewDate + " .");
+                msgBody.AppendLine("Please contact to your HR or Recruiter to schedule the interview.");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
