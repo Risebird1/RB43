@@ -346,5 +346,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientCommentsForReport(interviewId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddUpdateClientCommentsForReport(ClientCommentsForReport model)
+        {
+            try
+            {
+                return await _clientRepository.AddUpdateClientCommentsForReport(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
