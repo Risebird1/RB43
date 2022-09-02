@@ -4392,25 +4392,34 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SendRemovalRequest(string message, int interviewerid, int totalinterview, int selectedinterview, int rejectedinterview, int irfid, string interviewer)
         {
-            var _details = await _irfService.FetchIRFInterviewerDetailsById(irfid);
-            var _supportadminlist = await _irfService.FetchSupportAdminEmailid();
-            if (String.IsNullOrWhiteSpace(_details.ClientHRAttemptContact))
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                _supportadminlist.Add(_details.ClientHRAttemptContact);
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var _details = await _irfService.FetchIRFInterviewerDetailsById(irfid);
+                var _supportadminlist = await _irfService.FetchSupportAdminEmailid();
+                if (String.IsNullOrWhiteSpace(_details.ClientHRAttemptContact))
+                {
+                    _supportadminlist.Add(_details.ClientHRAttemptContact);
+                }
+                string Emailids = String.Join(";", _supportadminlist);
+                Mail _mail = new Mail
+                {
+                    TO = Emailids,
+                    CC = "talent@risebird.io",
+                    Subject = "Interviewer Removal Request : " + _details.IRFId
+                };
+                var emailsend = _notificationHelper.SendInteviewerRemovalNotification(_mail, totalinterview, selectedinterview, rejectedinterview, interviewer, _details.ClientName, _details.IRFId, emailid);
+                if (emailsend.Contains("success"))
+                {
+                    return Json("Removal request succesfully sent.");
+                }
+                return Json("Removal request failed, please try again.");
             }
-            string Emailids = String.Join(";", _supportadminlist);
-            Mail _mail = new Mail
+            else
             {
-                TO = Emailids,
-                CC = "talent@risebird.io",
-                Subject = "Interviewer Removal Request : " + _details.IRFId
-            };
-            var emailsend = _notificationHelper.SendInteviewerRemovalNotification(_mail, totalinterview, selectedinterview, rejectedinterview, interviewer, _details.ClientName, _details.IRFId);
-            if (emailsend.Contains("success"))
-            {
-                return Json("Removal request succesfully sent.");
+                return Json("Removal request failed, please try again.");
             }
-            return Json("Removal request failed, please try again.");
         }
         [HttpPost]
         public async Task<JsonResult> Notification()

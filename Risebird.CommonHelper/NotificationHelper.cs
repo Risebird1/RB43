@@ -2412,7 +2412,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId)
+        public string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail)
         {
             try
             {
@@ -2429,7 +2429,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { Client, IRFId, interviewer, totalinterview, selectedinterview, rejectedinterview };
+                object[] parameters = new object[] { Client, IRFId, interviewer, totalinterview, selectedinterview, rejectedinterview, clientemail };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerRemovalNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
