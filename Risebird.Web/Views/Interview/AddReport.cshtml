@@ -2089,7 +2089,7 @@
         //var interviewStatusElem = document.getElementById("InterviewStatus");
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
         var interviewStatusValue = document.getElementById("InterviewStatus").value;
-        if (meetingStatusValue == 4) {
+        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
@@ -2102,23 +2102,22 @@
                 return false;
             }
         }
+        else           
+            if (meetingStatusValue == 4) {
+            var comments = document.getElementById("InterviewerComment").value;
+                if (comments.length <= 50) {
+                    document.getElementById("InterviewerComment").focus();
+                    document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 50 characters.";
+                    return false;
+                }
+                else {
+                    document.getElementById("interviewerComment_Error").innerHTML = "";
+                    return true;
+                }
+            
+        }
         else
             return true;
-        //if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
-        //    var comments = document.getElementById("InterviewerComment").value;
-        //    if (comments.length >= 250) {
-        //        document.getElementById("interviewerComment_Error").innerHTML = "";
-        //        return true;
-        //    }
-        //    else {
-        //        //interviewerComment_Error
-        //        document.getElementById("InterviewerComment").focus();
-        //        document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
-        //        return false;
-        //    }
-        //}
-        //else
-        //    return true;
     }
 
     function CheckQuestionsTiming() {
