@@ -526,7 +526,7 @@
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped">
                                                                         <tr>
-                                                                            <th>Duration</th>
+                                                                            <th>Max Interview Duration</th>
                                                                             <th>Slot</th>
                                                                             <th>Candidate Email</th>
                                                                             <th>Call HR</th>
@@ -538,7 +538,7 @@
                                                                         </tr>
 
                                                                         <tr>
-                                                                            <td> @item.interviewDuration </td>
+                                                                            <td> 45 </td>
                                                                             @if (@item.interviewSlot == "Morning")
                                                                             {
                                                                                 <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
@@ -1377,7 +1377,7 @@
                 html += '   <td></td>';
             }
 
-            html += '  <td> ' + data[i].interviewDuration + ' </td>';
+            html += '  <td> ' + 45 + ' </td>';
             //if (data[i].jdLink != null && data[i].jdLink != "") {
             //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
             //}
@@ -1443,7 +1443,7 @@
             html += '   <td colspan="999" class="child-section">';
             html += '  <table class="table table-striped">';
             html += '  <tr>';
-            html += '   <th>Duration</th>';
+            html += '   <th>Max Interview Duration</th>';
             html += '   <th>Slot</th>';
             html += '  <th>Candidate Email</th>';
             html += '  <th>Call HR</th>';
@@ -1455,7 +1455,7 @@
 
             html += '  </tr>';
             html += '  <tr>';
-            html += ' <td>' + data[i].interviewDuration + ' </td>';
+            html += ' <td>' + 45 + ' </td>';
             if (data[i].interviewSlot == "Morning") {
                 html += '   <td><a style="color:darkorange;font-weight: bold">' + data[i].interviewSlot + '</a></td>';
             }
