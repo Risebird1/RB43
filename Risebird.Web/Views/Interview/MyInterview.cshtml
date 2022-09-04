@@ -328,7 +328,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;">Date </th>
-                                                            <th style="text-align:left">Job Level</th>
+                                                            <th style="text-align:left">Max Interview Duration</th> 
                                                             <th style="text-align:left">JD-Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Client</th>
@@ -346,7 +346,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;width:12%">Date</th>
-                                                            <th>Job Level</th>
+                                                            <th style="text-align:left">Max Interview Duration</th>                                                          
                                                             <th>JD-Skills</th>
                                                             <th>Candidate Name</th>
                                                             <th>Client</th>
@@ -381,7 +381,7 @@
                                                                         <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
                                                                     }
                                                                 </td>
-                                                                <td> @item.JobLevelDesc </td>
+                                                                <td> 45 </td>
                                                                 <td>
                                                                     <button type="button" class="clickhere_btn pull-left">
                                                                         <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
@@ -526,7 +526,7 @@
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped">
                                                                         <tr>
-                                                                            <th>Max Interview Duration</th>
+                                                                            <th style="text-align:left">Job Level</th>
                                                                             <th>Slot</th>
                                                                             <th>Candidate Email</th>
                                                                             <th>Call HR</th>
@@ -538,7 +538,7 @@
                                                                         </tr>
 
                                                                         <tr>
-                                                                            <td> 45 </td>
+                                                                            <td> @item.JobLevelDesc </td>
                                                                             @if (@item.interviewSlot == "Morning")
                                                                             {
                                                                                 <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
@@ -1341,7 +1341,7 @@
                 html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>';
             }
             html += '  </td>';
-            html += ' <td> ' + data[i].jobLevelDesc + ' </td>';
+            html += ' <td> ' + 45 + ' </td>';
 
             html += ' <td class="callcandidatebtn" style="text-align:center">';
             var oldDateObj = new Date();
@@ -1443,7 +1443,7 @@
             html += '   <td colspan="999" class="child-section">';
             html += '  <table class="table table-striped">';
             html += '  <tr>';
-            html += '   <th>Max Interview Duration</th>';
+            html += '   <th>Job Level</th>';
             html += '   <th>Slot</th>';
             html += '  <th>Candidate Email</th>';
             html += '  <th>Call HR</th>';
@@ -1455,7 +1455,7 @@
 
             html += '  </tr>';
             html += '  <tr>';
-            html += ' <td>' + 45 + ' </td>';
+            html += ' <td>' + "" + ' </td>';
             if (data[i].interviewSlot == "Morning") {
                 html += '   <td><a style="color:darkorange;font-weight: bold">' + data[i].interviewSlot + '</a></td>';
             }
