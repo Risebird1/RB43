@@ -731,7 +731,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId)
+        public async Task<IEnumerable<ClientCommentsForReport>> GetClientCommentsForReport(int interviewId)
         {
             try
             {
@@ -742,7 +742,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<ClientCommentsForReport>(con, "[usp_GetClientCommentsForReport]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
+                    return result;
                 }
             }
             catch (SqlException e)
@@ -766,8 +766,8 @@ namespace Risebird.Repository
                 parameters.Add("@id", model.id);
                 parameters.Add("@InterviewId", model.InterviewId);
                 parameters.Add("@CreatedBy", model.CreatedBy);
-                parameters.Add("@ModifiedBy", model.ModifiedBy);
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@Rating", model.Rating);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "[usp_AddUpdateClientCommentsForReport]", parameters,

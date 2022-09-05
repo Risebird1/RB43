@@ -15,5 +15,8 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
+        public int Rating { get; set; }
+        public IEnumerable<ClientCommentsForReport> ClientCommentsList { get; set; }
+
     }
 }
