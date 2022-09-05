@@ -1,5 +1,15 @@
 ﻿@model Risebird.Entities.ViewModel.ClientCommentsForReport
+    <style>
+        .fillStar {
+            color: orange;
+        }
 
+        table.fixedSize {
+            table-layout: fixed;
+            width: 100%;
+        }
+    </style>
+    
 <!-- Modal -->
 <div class="modal fade" style="height:1000px" id="addComment" tabindex="-1" role="dialog" aria-labelledby="addCommentLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -11,37 +21,108 @@
                 </button>
             </div>
             <div class="modal-body" id="comments_modal_body">
-                <form asp-action="AddUpdateClientCommentsForReport">
-
-                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
-
-                    <div class="form-group">
-                        <label asp-for="Comment"></label>
-                        @if (Model.Profile == "Client")
-                        {
-                            <textarea asp-for="Comment" class="form-control" style="height: 200px"></textarea>
-                            @*<input asp-for="Comment" class="form-control" />*@
-
-                        }
-                        else
-                        {
-                            <textarea asp-for="Comment" class="form-control" style="height: 200px" readonly></textarea>
-                            @*<input asp-for="Comment" class="form-control" readonly/>*@
-
-                        }
-                        <span asp-validation-for="Comment" class="text-danger"></span>
-                    </div>
-
-                    <input type="hidden" asp-for="id" />
-                    <input type="hidden" asp-for="InterviewId" />
-                    <input type="hidden" asp-for="Profile" />
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 @if (Model.Profile == "Client")
                 {
-                    <button type="button" class="btn btn-primary" data-save="modal">Save</button>
+                    <form asp-action="AddUpdateClientCommentsForReport">
+
+                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    
+                        <div class="star-rating">
+                            <input type="radio" id="Q2_5" name="rating2" value="5" onclick="ChangeClientFeedbackRating(this.value)" @*onmouseover="setRatingOnHover(5)"*@ />
+                            <label for="Q2_5" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_4" name="rating2" value="4" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_4" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_3" name="rating2" value="3" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_3" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_2" name="rating2" value="2" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_2" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_1" name="rating2" value="1" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_1" class="star">&#9733;</label>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Comment"></label>
+                            @if (Model.Profile == "Client")
+                            {
+                                <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%"></textarea>
+
+                            }
+                            else
+                            {
+                                <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%" readonly></textarea>
+
+                            }
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <input type="hidden" asp-for="id" />
+                        <input type="hidden" asp-for="InterviewId" />
+                        <input type="hidden" asp-for="Profile" />
+                        <input type="hidden" asp-for="CreatedBy" />
+                        <input type="hidden" asp-for="Rating" />
+
+                    </form>
+                }
+
+
+                @if (Model.ClientCommentsList != null && Model.ClientCommentsList.Count() > 0)
+                {
+                    <table class="table table-bordered fixedSize">
+                        <thead>
+                            <tr>
+                                @if (Model.Profile != "Interviewer")
+                                {
+                                    <th>User</th>
+                                }
+                                <th>Rating</th>
+                                <th style="width:45%">Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody style="overflow-y:scroll">
+                            @foreach (var item in Model.ClientCommentsList)
+                            {
+                            <tr>
+                                @if (Model.Profile != "Interviewer")
+                                {
+                                    <td>@item.CreatedBy</td>
+                                }
+                                
+                                <td>
+                                   
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        string fillStarClass = string.Empty;
+                                        if (item.Rating >= i)
+                                        {
+                                            fillStarClass = "fillStar";
+                                        }
+                                        <span class="fa fa-star @fillStarClass"></span>
+                                    }
+                                </td>
+                                <td>@item.Comment</td>
+                            </tr>
+                            }
+                        </tbody>
+                        @*<tfoot>
+                            <tr>
+                                @if (Model.Profile != "Interviewer")
+                                {
+                                    <th>User</th>
+                                }
+                                <th>Rating</th>
+                                <th>Comment</th>
+                            </tr>
+                        </tfoot>*@
+                    </table>
+                }
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>*@
+                @if (Model.Profile == "Client")
+                {
+                    <div class="col-md-12 text-right clearfix">
+                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save">
+                    </div>
+                    @*<button type="button" class="btn btn-primary btn-round pull-right" data-save="modal">Save</button>*@
 
                 }
             </div>

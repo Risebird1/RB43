@@ -55,7 +55,6 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    string OrginalProfileName = string.Empty;
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -4279,12 +4278,17 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
 
-                    ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId);
+                    ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId, emailId, profileName);
+                    //ClientFeedbackCommentVM model = await _clientService.GetClientCommentsList(interviewId, emailId);
+
                     if(model == null)
                     {
                         model = new ClientCommentsForReport();
                     }
+
                     model.Profile = profileName;
                     return PartialView("GetClientCommentsForReport", model);
                 }

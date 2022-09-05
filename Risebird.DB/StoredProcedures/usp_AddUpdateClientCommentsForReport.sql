@@ -16,9 +16,9 @@ Create PROCEDURE [dbo].[usp_AddUpdateClientCommentsForReport]
 @Comment varchar(max),
 @id int,
 @InterviewId int,
-@ModifiedBy varchar(50),
 @CreatedBy varchar(50),
-@timeNow datetime
+@timeNow datetime,
+@Rating int
       
 AS      
 Begin      
@@ -26,8 +26,8 @@ Begin
 If Not Exists (Select 1 from ClientCommentsForReport where id = @id and InterviewId = @InterviewId)    
 Begin
 
-Insert into ClientCommentsForReport(Comment, InterviewId, CreatedBy, CreatedAt) 
-values (@Comment, @InterviewId, @CreatedBy, @timeNow)  
+Insert into ClientCommentsForReport(Comment, InterviewId, CreatedBy, CreatedAt, Rating) 
+values (@Comment, @InterviewId, @CreatedBy, @timeNow, @Rating)  
 
 End
 
@@ -36,9 +36,9 @@ Begin
 
 update ClientCommentsForReport set 
 Comment = @Comment,
-ModifiedBy = @ModifiedBy,
-ModifiedAt = @timeNow
-where id = @id and InterviewId = @InterviewId
+ModifiedAt = @timeNow,
+Rating = @Rating
+where id = @id 
 
 End
 
