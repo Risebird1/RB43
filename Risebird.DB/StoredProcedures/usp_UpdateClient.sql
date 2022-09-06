@@ -9,7 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[usp_UpdateClient]          
-          
 @id int,          
 @clientName varchar(150),          
 @clientDescr varchar(250),          
@@ -23,7 +22,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateClient]
 @IsCandidateavailability bit,    
 @IsMeetingNotificationSend bit,  
 @PerInterviewRate int,
-@BillingType int
+@BillingType int,
+@InterviewDuration int
 AS          
 Begin          
       
@@ -44,13 +44,9 @@ SET
   ,[IsMeetingNotificationSend]=@IsMeetingNotificationSend  
   ,[PerInterviewRate]=@PerInterviewRate
   ,[BillingType]=@BillingType
+  ,[InterviewDuration]=@InterviewDuration
 WHERE          
       Id = @id          
-      
-      
-End            
-               
-         
-         
-    GO
+End     
+GO
   

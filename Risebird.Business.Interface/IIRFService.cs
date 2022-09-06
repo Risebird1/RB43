@@ -116,5 +116,8 @@ namespace Risebird.Business.Interface
         Task<bool> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<bool> UpdateIntervieweravailbilityDetails(int irfId);
+        Task<List<InterviewDetailsVM>> FetchIRFCompletedInterviewDetails(int id, int type, DateTime startDate, DateTime endDate);
+        Task<InterviewDetailsVM> FetchIRFInterviewerDetailsById(int id);
+        Task<List<string>> FetchSupportAdminEmailid();
     }
 }

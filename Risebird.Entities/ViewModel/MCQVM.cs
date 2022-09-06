@@ -176,6 +176,7 @@ namespace Risebird.Entities.ViewModel
         public string AadhaarVerificationDone { get; set; }
         [Display(Name = "Candidate Name")]
         public string Name { get; set; }
+        public string SMCQId { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {

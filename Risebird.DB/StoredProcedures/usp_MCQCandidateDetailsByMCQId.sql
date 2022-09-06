@@ -17,7 +17,8 @@ ca.CandidateScore,ca.TotalQuestions,sl.PartitionKey,sl.MCQId as SameID,ca.VideoL
 Case When Sum(Case When mts.RequiredLevelId<=mts.LevelId then 100 when mts.RequiredLevelId>=mts.LevelId then (100-((mts.RequiredLevelId-mts.LevelId)*100/mts.RequiredLevelId)) else 0 end)>0 then Sum(Case When mts.RequiredLevelId<=mts.LevelId then 100 when   
 mts.RequiredLevelId>=mts.LevelId then (100-((mts.RequiredLevelId-mts.LevelId)*100/mts.RequiredLevelId)) else 0 end)/Count(mts.id) else 0 end as Selectability,      
 Case When Sum(Case When mtj.RequiredLevelId<=mtj.LevelId then 100 when mtj.RequiredLevelId>=mtj.LevelId then (100-((mtj.RequiredLevelId-mtj.LevelId)*100/mtj.RequiredLevelId)) else 0 end)>0 then Sum(Case When mtj.RequiredLevelId<=mtj.LevelId then 100 when 
-mtj.RequiredLevelId>=mtj.LevelId then (100-((mtj.RequiredLevelId-mtj.LevelId)*100/mtj.RequiredLevelId)) else 0 end)/Count(mtj.id) else 0 end as Joinability,ms.AadhaarVerification,(IsNull(ul.FirstName,'') +SPACE(1)+ ISNULL(ul.LastName,'')) as Name,ad.Name as AadhaarVerificationDone     
+mtj.RequiredLevelId>=mtj.LevelId then (100-((mtj.RequiredLevelId-mtj.LevelId)*100/mtj.RequiredLevelId)) else 0 end)/Count(mtj.id) else 0 end as Joinability,ms.AadhaarVerification,(IsNull(ul.FirstName,'') +SPACE(1)+ ISNULL(ul.LastName,'')) as Name,
+ad.Name as AadhaarVerificationDone,sl.PartitionKey as SMCQId     
 from MCQShareList sl left join MCQCandidates ca on sl.EmailAddress=ca.CandidateEmail and sl.MCQID=ca.MCQId       
 left join MCQ_TransSelectability mts on mts.MCQID=sl.MCQID and mts.CandidateEmail=sl.EmailAddress      
 left join MCQ_TransJoinability mtj on mtj.MCQID=sl.MCQID and mtj.CandidateEmail=sl.EmailAddress      

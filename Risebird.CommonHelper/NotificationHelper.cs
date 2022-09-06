@@ -1956,7 +1956,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                if(!string.IsNullOrWhiteSpace(HRCoordinator))
+                if (!string.IsNullOrWhiteSpace(HRCoordinator))
                 {
                     var hrEmail = HRCoordinator.Split("@");
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
@@ -2405,6 +2405,34 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { Client, IRFId, interviewer, totalinterview, selectedinterview, rejectedinterview, clientemail };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerRemovalNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;
             }
             catch (Exception)

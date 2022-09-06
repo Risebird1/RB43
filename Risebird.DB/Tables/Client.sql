@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[Client](
             [IsCandidateavailability] [bit] NULL,
             [IsMeetingNotificationSend] [bit] NULL,
             [PerInterviewRate] [int] NULL,
-            [BillingType] [int] NULL
+            [BillingType] [int] NULL,
+            [InterviewDuration] [int] NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -145,6 +146,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [BillingType] int	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewDuration')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [InterviewDuration] int	
 END
 END
 

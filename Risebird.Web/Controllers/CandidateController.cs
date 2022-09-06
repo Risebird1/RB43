@@ -4321,5 +4321,122 @@ namespace Risebird.Web.Controllers
                 return Json("IRF play Failed");
             }
         }
+        [HttpGet]
+        public async Task<ActionResult> IRFFlagDetails(int id, int type, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        ViewBag.IRFName = irfName;
+                        ViewBag.IRFId = id;
+                        ViewBag.profile = profileName;
+                        ViewBag.type = type;
+                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
+                        ClientRole = ClientRole.Replace("\"", "");
+                        ViewBag.ClientRole = ClientRole;
+                        DateTime startDate = DateTime.Now.AddDays(-30);
+                        DateTime endDate = DateTime.Now.AddDays(7);
+                        if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                            startDate = filter.StartDate.Value;
+                            endDate = filter.EndDate.Value;
+                        }
+                        var meetings = new List<InterviewDetailsVM>();
+                        if (type == 27538 || type == 73532)
+                        {
+                            meetings = (await _irfService.FetchIRFCompletedInterviewDetails(id, type, startDate, endDate))?.ToList();
+                        }
+                        else if (type == 34657)
+                        {
+                            //Reschedule Interview
+                            meetings = (await _irfService.FetchIRFCompletedInterviewDetails(id, type, startDate, endDate))?.ToList();
+                        }
+                        else if (type == 64868)
+                        {
+                            //Not Schedue Interview
+                            meetings = (await _irfService.FetchIRFCompletedInterviewDetails(id, type, startDate, endDate))?.ToList();
+                        }
+                        meetings = meetings.Select(x =>
+                        {
+                            x.confirmationStatusStatusDesc = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> SendRemovalRequest(string message, int interviewerid, int totalinterview, int selectedinterview, int rejectedinterview, int irfid, string interviewer)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var _details = await _irfService.FetchIRFInterviewerDetailsById(irfid);
+                var _supportadminlist = await _irfService.FetchSupportAdminEmailid();
+                if (String.IsNullOrWhiteSpace(_details.ClientHRAttemptContact))
+                {
+                    _supportadminlist.Add(_details.ClientHRAttemptContact);
+                }
+                string Emailids = String.Join(";", _supportadminlist);
+                Mail _mail = new Mail
+                {
+                    TO = Emailids,
+                    CC = "talent@risebird.io",
+                    Subject = "Interviewer Removal Request : " + _details.IRFId
+                };
+                var emailsend = _notificationHelper.SendInteviewerRemovalNotification(_mail, totalinterview, selectedinterview, rejectedinterview, interviewer, _details.ClientName, _details.IRFId, emailid);
+                if (emailsend.Contains("success"))
+                {
+                    return Json("Removal request succesfully sent.");
+                }
+                return Json("Removal request failed, please try again.");
+            }
+            else
+            {
+                return Json("Removal request failed, please try again.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> Notification()
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), "Client", emailid))?.ToList();
+            var flags = 0;
+            if (irfList != null)
+            {
+                flags = irfList.Select(x => x.Flags).Sum();
+            }
+            if (flags > 0)
+            {
+                flags = 1;
+            }
+            return Json(flags);
+        }
     }
 }

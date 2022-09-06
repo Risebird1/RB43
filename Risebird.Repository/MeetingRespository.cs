@@ -1301,39 +1301,39 @@ namespace Risebird.Repository
 
                     DynamicParameters parametersPoints = new DynamicParameters();
 
-                    if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
-                    {
-                        var duration = reportDetails.VideoDuration;
-                        int baseValue = 6;
-                        float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
-                        parametersPoints.Add("@Points", pointPercent);
-                    }
-                    else if (reportDetails.MeetingStatus == 5)
-                    {
-                        parametersPoints.Add("@Points", 0);
-                        //parametersPoints.Add("@Points", -200);
-                        //parametersPoints.Add("@Points", -350);
-                    }
-                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
-                    {
-                        int duration = reportDetails.VideoDuration;
-                        if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
-                        {
-                            int baseValue = 30;
+                    //if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
+                    //{
+                    //    var duration = reportDetails.VideoDuration;
+                    //    int baseValue = 6;
+                    //    float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
+                    //    parametersPoints.Add("@Points", pointPercent);
+                    //}
+                    //else if (reportDetails.MeetingStatus == 5)
+                    //{
+                    //    parametersPoints.Add("@Points", 0);
+                    //    //parametersPoints.Add("@Points", -200);
+                    //    //parametersPoints.Add("@Points", -350);
+                    //}
+                    //else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
+                    //{
+                    //    int duration = reportDetails.VideoDuration;
+                    //    if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
+                    //    {
+                    //        int baseValue = 30;
 
-                            float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
-                            parametersPoints.Add("@Points", pointPercent);
-                        }
-                        else
-                        {
-                            float pointPercent = duration >= 60 ? 100 : ((duration * 100) / 60);
-                            parametersPoints.Add("@Points", pointPercent);
-                        }
-                    }
+                    //        float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
+                    //        parametersPoints.Add("@Points", pointPercent);
+                    //    }
+                    //    else
+                    //    {
+                    //        float pointPercent = duration >= 60 ? 100 : ((duration * 100) / 60);
+                    //        parametersPoints.Add("@Points", pointPercent);
+                    //    }
+                    //}
 
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
-                    parametersPoints.Add("@Type", "Interview");
+                    //parametersPoints.Add("@Type", "Interview");
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
                     if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
@@ -1458,7 +1458,9 @@ namespace Risebird.Repository
                     {
                         try
                         {
-                            SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
+                            //SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
+                            //        commandType: CommandType.StoredProcedure);
+                            SqlMapper.Query(con, "usp_InsertOrUpdateInterviewPoints", parametersPoints,
                                     commandType: CommandType.StoredProcedure);
                         }
 
@@ -1862,7 +1864,6 @@ namespace Risebird.Repository
                         SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
                                         commandType: CommandType.StoredProcedure);
                     }
-
                 }
                 return true;
             }
@@ -4135,7 +4136,8 @@ namespace Risebird.Repository
                                          Rate = c.Rate,
                                          PrimarySkillInvite = c.PrimarySkillInvite,
                                          IRFId = c.IRFId,
-                                         IsEmergency = c.IsEmergency
+                                         IsEmergency = c.IsEmergency,
+                                         MaxVideoDuration=c.MaxVideoDuration
                                      }).ToList();
                     return resultset.ToList();
                 }
@@ -4193,7 +4195,8 @@ namespace Risebird.Repository
                                              Rate = c.Rate,
                                              PrimarySkillInvite = c.PrimarySkillInvite,
                                              IRFId = c.IRFId,
-                                             IsEmergency = c.IsEmergency
+                                             IsEmergency = c.IsEmergency,
+                                             MaxVideoDuration=c.MaxVideoDuration
                                          }).ToList();
                         return resultset.ToList();
                     }
