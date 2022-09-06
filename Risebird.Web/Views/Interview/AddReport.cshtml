@@ -87,6 +87,13 @@
         <img src="~/Newassets/img/lazyload.gif" />
     </div>
     <div class="mt50 col-md-12">
+        <div class="pull-left mt-20">
+
+            <button style="margin-bottom: 4px; margin-left: 30px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                Comments
+            </button>
+
+        </div>
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
@@ -97,7 +104,13 @@
     <div class="content dataloading client">
         <div class="row bl-bg">
             <div class="col-md-12">
+                @*<div class="pull-left mt-20">
 
+                    <button style="margin-bottom: 4px; margin-left: 17px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport", new { interviewId = Model.InterviewId})">
+                        Comments
+                    </button>
+
+                </div>*@
             </div>
         </div>
         <div class="row bl-bg">
@@ -1447,6 +1460,7 @@
     </div>
 
 </div>
+<div id="modal_clientComment_placeholder"></div>
 <div id="PublicUrlShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -1511,6 +1525,9 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/ModalFormServerValidation.js"></script>
+
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -1520,10 +1537,6 @@
             id.title = id.value;
         }
     }
-
-
-
-
 
 </script>
 <script type="text/javascript">

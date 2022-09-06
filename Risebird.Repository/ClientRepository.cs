@@ -731,5 +731,61 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<ClientCommentsForReport>> GetClientCommentsForReport(int interviewId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ClientCommentsForReport>(con, "[usp_GetClientCommentsForReport]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddUpdateClientCommentsForReport(ClientCommentsForReport model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Comment", model.Comment);
+                parameters.Add("@id", model.id);
+                parameters.Add("@InterviewId", model.InterviewId);
+                parameters.Add("@CreatedBy", model.CreatedBy);
+                parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@Rating", model.Rating);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "[usp_AddUpdateClientCommentsForReport]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

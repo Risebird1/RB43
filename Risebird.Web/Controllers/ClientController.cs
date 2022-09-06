@@ -55,7 +55,6 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    string OrginalProfileName = string.Empty;
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -4270,5 +4269,85 @@ namespace Risebird.Web.Controllers
             _list.Add(selectItem2);
             model.BillingTypeDrop = _list;
         }
+
+        public async Task<IActionResult> GetClientCommentsForReport(int interviewId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+
+                    ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId, emailId, profileName);
+                    //ClientFeedbackCommentVM model = await _clientService.GetClientCommentsList(interviewId, emailId);
+
+                    if(model == null)
+                    {
+                        model = new ClientCommentsForReport();
+                    }
+
+                    model.Profile = profileName;
+                    return PartialView("GetClientCommentsForReport", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUpdateClientCommentsForReport(ClientCommentsForReport model) 
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
+
+                        if (ModelState.IsValid)
+                        {
+                            if(string.IsNullOrEmpty(model.CreatedBy))
+                            {
+                                model.CreatedBy = emailId;
+                            }
+                            
+                            await _clientService.AddUpdateClientCommentsForReport(model);
+                            
+                        }
+                        return PartialView("GetClientCommentsForReport", model);
+
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
     }
 }
