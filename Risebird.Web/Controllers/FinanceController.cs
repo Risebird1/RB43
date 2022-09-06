@@ -834,6 +834,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 16].Value = "Amount";
                         Sheet.Cells[1, 17].Value = "Channel Owner";
                         Sheet.Cells[1, 18].Value = "Emergency";
+                        Sheet.Cells[1, 19].Value = "Max Video Duration";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -911,6 +912,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     Sheet.Cells[i, 17].Value = item.ChannelOwner;
                                     Sheet.Cells[i, 18].Value = item.IsEmergency == true ? "Y" : "N";
+                                    Sheet.Cells[i, 19].Value = (item.MaxVideoDuration.HasValue && item.MaxVideoDuration.Value > 0) ? item.MaxVideoDuration.Value.ToString() : string.Empty;
                                     i++;
                                 }
                                 Sheet.Cells[i, 15].Value = "Sub Total";
@@ -1011,6 +1013,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 16].Value = "Amount";
                         Sheet.Cells[1, 17].Value = "Channel Owner";
                         Sheet.Cells[1, 18].Value = "Emergency";
+                        Sheet.Cells[1, 19].Value = "Max Video Duration";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -1090,6 +1093,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     Sheet.Cells[i, 17].Value = item.ChannelOwner;
                                     Sheet.Cells[i, 18].Value = item.IsEmergency == true ? "Y" : "N";
+                                    Sheet.Cells[i, 19].Value = (item.MaxVideoDuration.HasValue && item.MaxVideoDuration.Value > 0) ? item.MaxVideoDuration.Value.ToString() : string.Empty;
                                     i++;
                                 }
                                 Sheet.Cells[i, 15].Value = "Sub Total";

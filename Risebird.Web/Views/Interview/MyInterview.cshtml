@@ -337,6 +337,7 @@
                                                             <th>Instructions</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
+                                                            <th>Maximum Duration</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
 
                                                         </tr>
@@ -355,6 +356,7 @@
                                                             <th>Instructions</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Link</th>
+                                                            <th>Maximum Duration</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
 
                                                         </tr>
@@ -474,7 +476,7 @@
                                                                     <td></td>
                                                                 }
 
-
+                                                                <td>@item.interviewDuration</td>
                                                                 <td class="text-left">
                                                                     @{
                                                                         var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
@@ -526,7 +528,6 @@
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped">
                                                                         <tr>
-                                                                            <th>Duration</th>
                                                                             <th>Slot</th>
                                                                             <th>Candidate Email</th>
                                                                             <th>Call HR</th>
@@ -536,9 +537,7 @@
                                                                             <th>Skill Channel</th>
 
                                                                         </tr>
-
                                                                         <tr>
-                                                                            <td> @item.interviewDuration </td>
                                                                             @if (@item.interviewSlot == "Morning")
                                                                             {
                                                                                 <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
@@ -1404,7 +1403,7 @@
             else {
                 html += ' <td></td>';
             }
-
+            html += ' <td>' + data[i].interviewDuration +'</td>';
 
             html += '   <td class="text-left">';
             if (new Date(data[i].interviewDate) <= new Date('@DateTime.Now') && new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-750)')) {
@@ -1443,7 +1442,6 @@
             html += '   <td colspan="999" class="child-section">';
             html += '  <table class="table table-striped">';
             html += '  <tr>';
-            html += '   <th>Duration</th>';
             html += '   <th>Slot</th>';
             html += '  <th>Candidate Email</th>';
             html += '  <th>Call HR</th>';
@@ -1455,7 +1453,6 @@
 
             html += '  </tr>';
             html += '  <tr>';
-            html += ' <td>' + data[i].interviewDuration + ' </td>';
             if (data[i].interviewSlot == "Morning") {
                 html += '   <td><a style="color:darkorange;font-weight: bold">' + data[i].interviewSlot + '</a></td>';
             }

@@ -4268,6 +4268,9 @@ namespace Risebird.Web.Controllers
             var selectItem2 = new SelectListItem { Text = "Client", Value = Convert.ToString(3) };
             _list.Add(selectItem2);
             model.BillingTypeDrop = _list;
+            var interviewduration = from InterviewDurationEnum s in Enum.GetValues(typeof(InterviewDurationEnum))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
         }
 
         public async Task<IActionResult> GetClientCommentsForReport(int interviewId)
@@ -4280,7 +4283,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
 
                     ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId);
-                    if(model == null)
+                    if (model == null)
                     {
                         model = new ClientCommentsForReport();
                     }
@@ -4300,7 +4303,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUpdateClientCommentsForReport(ClientCommentsForReport model) 
+        public async Task<IActionResult> AddUpdateClientCommentsForReport(ClientCommentsForReport model)
         {
             try
             {
@@ -4325,7 +4328,7 @@ namespace Risebird.Web.Controllers
                             }
 
                             await _clientService.AddUpdateClientCommentsForReport(model);
-                            
+
                         }
                         return PartialView("GetClientCommentsForReport", model);
 

@@ -55,28 +55,23 @@
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
                         <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(2,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
+                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(3,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
+                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(4,1)">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-history" data-toggle="tooltip" data-placement="top" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
-                            <font style="        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        padding-left: 3px;
-">Payment History</font>
+                            <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;">Payment History</font>
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
-                            <font style="        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        padding-left: 3px;">Generate Invoice</font>
+                            <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;">Generate Invoice</font>
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -85,10 +80,7 @@
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                         @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
                         <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
-                            <font style="        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        padding-left: 3px;
-"> Export Excel</font>
+                            <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;"> Export Excel</font>
                         </span>
                     </button>
                     <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
@@ -116,10 +108,7 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-
-
                             <div>
-
                                 <div id="tableID">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
@@ -132,7 +121,7 @@
                                             <label id="txtinterviewamount" style="padding:0 0 0 0">Interview Amount: 0</label> |
                                             <label id="txtnoshowamount" style="padding:0 0 0 0">No Show Amount: 0</label> |
                                             <label id="txtdroppedamount" style="padding:0 0 0 0">Dropped Amount: 0</label> |
-                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label> 
+                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label>
                                         </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
@@ -662,6 +651,7 @@
         html += '   <th>Rate</th>';
         html += '   <th>Amnt</th>';
         html += '   <th>Video Duration<span class="durtime">(in mins)</span></th>';
+        html += '   <th>Max Video Duration<span class="durtime">(in mins)</span></th>';
         html += '   <th>Meeting Status</th>';
         html += '   <th>Interview Status</th>';
         html += '</tr>';
@@ -686,7 +676,12 @@
             else {
                 html += '                               <td>' + data[i].videoDuration + '</td>';
             }
-
+            if (data[i].maxVideoDuration == null) {
+                html += '                               <td></td>';
+            }
+            else {
+                html += '                               <td>' + data[i].maxVideoDuration + '</td>';
+            }
             if (data[i].meetingStatusDetails == null) {
                 html += '                               <td></td>';
             } else {
