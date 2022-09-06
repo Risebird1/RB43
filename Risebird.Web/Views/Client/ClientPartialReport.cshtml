@@ -1577,6 +1577,10 @@
 
     $(document).ready(function () {
 
+        setTimeout(function () {
+            $('button[data-toggle="ajax-modal"]').click();
+        }, 1);
+
         var meetingStatus = document.getElementById('MeetingStatus').value;
         if (meetingStatus == null || meetingStatus == '') {
             document.getElementById('InterviewerComment').disabled = true;
@@ -2174,7 +2178,6 @@
     });
 
 </script>
-
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>

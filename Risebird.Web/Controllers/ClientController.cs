@@ -4320,15 +4320,11 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            if (model.id != 0)
+                            if(string.IsNullOrEmpty(model.CreatedBy))
                             {
                                 model.CreatedBy = emailId;
                             }
-                            else
-                            {
-                                model.ModifiedBy = emailId;
-                            }
-
+                            
                             await _clientService.AddUpdateClientCommentsForReport(model);
                             
                         }

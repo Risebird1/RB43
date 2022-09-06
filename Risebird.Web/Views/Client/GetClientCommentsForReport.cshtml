@@ -20,7 +20,7 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body" id="comments_modal_body">
+            <div class="modal-body" id="comments_modal_body" style="max-height:400px; overflow:auto">
                 @if (Model.Profile == "Client")
                 {
                     <form asp-action="AddUpdateClientCommentsForReport">
@@ -85,9 +85,9 @@
                                 {
                                     <td>@item.CreatedBy</td>
                                 }
-                                
+
                                 <td>
-                                   
+
                                     @for (int i = 1; i <= 5; i++)
                                     {
                                         string fillStarClass = string.Empty;
@@ -98,7 +98,42 @@
                                         <span class="fa fa-star @fillStarClass"></span>
                                     }
                                 </td>
-                                <td>@item.Comment</td>
+                                
+                                <td class="interview-com" style="word-break: break-word">
+
+
+                                    <div id="section_@item.id">
+                                        @if (item.Comment != null && item.Comment != "")
+                                        {
+                                            @if (item.Comment.Length > 22)
+                                            {
+                                                <div class="article">
+                                                    <p style="margin-bottom:0px;">
+                                                        @item.Comment.Substring(0, 22)
+                                                    </p>
+                                                    <p class="moretext_@item.id moretext">
+                                                        @item.Comment.Substring(22, @item.Comment.Length - 22)
+                                                    </p>
+                                                </div>
+                                                <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                            }
+                                            else
+                                            {
+                                                <div class="article">
+
+                                                    <p>
+                                                        @item.Comment.Substring(0, @item.Comment.Length)
+                                                    </p>
+                                                </div>
+                                            }
+                                        }
+                                        
+                                    </div>
+
+
+
+
+                                </td>
                             </tr>
                             }
                         </tbody>
