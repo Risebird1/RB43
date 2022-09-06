@@ -62,3 +62,15 @@ function applyRating(rating) {
         }
     }
 }
+
+function moreless(id) {
+
+    $('.moretext_' + id).slideToggle();
+    if ($('#read_' + id).val() == 'Readmore') {
+        $('#read_' + id).empty().html('Read more');
+        $('#read_' + id).val('Readless');
+    } else {
+        $('#read_' + id).empty().html('Read less');
+        $('#read_' + id).val('Readmore');
+    }
+}

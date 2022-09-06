@@ -407,7 +407,10 @@ namespace Risebird.Business
                     if (profile == ProfileEnum.Client.GetDescription())
                     {
                         model = clientCommentsList.Where(x => !string.IsNullOrEmpty(x.CreatedBy) && x.CreatedBy.ToLower() == emailId.ToLower())?.FirstOrDefault();
-                        model.ClientCommentsList = clientCommentsList.Where(x => string.IsNullOrEmpty(x.CreatedBy) || x.CreatedBy.ToLower() != emailId.ToLower());
+                        if(model != null)
+                        {
+                            model.ClientCommentsList = clientCommentsList?.Where(x => string.IsNullOrEmpty(x.CreatedBy) || x.CreatedBy.ToLower() != emailId.ToLower());
+                        }
                     }
                     //if (profile != ProfileEnum.Interviewer.GetDescription())
                     //{
