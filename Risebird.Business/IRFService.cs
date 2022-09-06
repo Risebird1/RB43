@@ -2687,10 +2687,6 @@ namespace Risebird.Business
                     {
                         irf.SelectionRate = irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CompletedInterviews : 0;
                     }
-                    if (irf.ScheduledPercentage < 75)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
                     if (irf.CompletionRate < 60)
                     {
                         irf.Flags = irf.Flags + 1;
@@ -2699,25 +2695,43 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.UnassignedInterviewsCount > 0)
+                    if (profile != "Client")
                     {
-                        irf.Flags = irf.Flags + 1;
+                        if (irf.ScheduledPercentage < 75)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
+                        if (irf.UnassignedInterviewsCount > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
+                        if (irf.UnfilledMeetingStatusCount > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
+                        if (irf.UnfilledCommentsCount > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
+                        if (irf.MissingZoomLink > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
+                        if (irf.MissingVideoLink > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
                     }
-                    if (irf.UnfilledMeetingStatusCount > 0)
+                    else
                     {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.UnfilledCommentsCount > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.MissingZoomLink > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.MissingVideoLink > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
+                        if (irf.NotScheduledCount > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
+                        if (irf.ReScheduledCount > 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
                     }
                 }
                 return irfList;
@@ -2739,6 +2753,45 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<List<InterviewDetailsVM>> FetchIRFCompletedInterviewDetails(int id, int type, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var result = (await _irfRepository.FetchIRFCompletedInterviewDetails(id, type, startDate, endDate)).ToList();
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<InterviewDetailsVM> FetchIRFInterviewerDetailsById(int id)
+        {
+            try
+            {
+                var result = await _irfRepository.FetchIRFInterviewerDetailsById(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<string>> FetchSupportAdminEmailid()
+        {
+            try
+            {
+                var result = (await _irfRepository.FetchSupportAdminEmailid()).ToList();
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }
