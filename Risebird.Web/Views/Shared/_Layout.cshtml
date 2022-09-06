@@ -140,6 +140,20 @@
         .form-control[disabled], .form-control[readonly], select, option {
             font-weight: bold !important;
         }
+
+        .notification {
+            position: relative;
+            display: inline-block;
+        }
+
+            .notification .badge {
+                position: absolute;
+                top: -8px;
+                left: -10px;
+                border-radius: 50%;
+                background-color: red !important;
+                color: white !important;
+            }
     </style>
     @*<script>
             var importLocation = '@importLocation';
@@ -354,6 +368,22 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (profileName == "Client")
+                            {
+                                <div class="main-img-user" style="right:80px;top:12px;float:left">
+                                    <button class="mdc-fab app-fab--absolute notification" aria-label="StatsFlag">
+                                        <span id="_clientflagcount" class="badge"></span>
+                                        <span onclick="javascript:ClientNotification();" title="StatsFlag" class="mdc-fab__icon material-icons">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </div>
+                            }
+                            @*<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-contact" data-url="@Url.Action("/Candidate/Notification")">
+                                    Add contact
+                                </button>*@
                             <div class="user pull-left">
                                 <h6 class="main-notification-title">
                                     @if (User.Identity.IsAuthenticated)
@@ -451,11 +481,10 @@
                                         <span class="sidemenu-icon no-mlr">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
                                         </span>
-                                        @*<p>Support</p>*@
+                                        <p>Support</p>
                                     </a>
                                 </div>
                             </div>
-
                             <div id="supportModal" class="modal modal-bg">
                                 <!-- Modal content -->
                                 <div class="modal-dialog modal-lg" role="document">
@@ -794,7 +823,9 @@
                     swal.fire("All fields are required fields");
                 }
             }
-
+            function ClientNotification() {
+                window.location.href = "/IRF/SkillChannelDetails";
+            }
         </script>
     }
 }
@@ -821,4 +852,24 @@
         }, false);
     </script>
 }
-
+@if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+{
+    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    profileName = profileName.Trim('"');
+    if (profileName == "Client")
+    {
+        <script>
+            $(document).ready(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/Candidate/Notification",
+                    success: function (data) {
+                        if (data > 0) {
+                            $("#_clientflagcount").text(data);
+                        }
+                    }
+                });
+            });
+        </script>
+    }
+}
