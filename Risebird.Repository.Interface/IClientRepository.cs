@@ -33,7 +33,7 @@ namespace Risebird.Repository.Interface
         bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
         Task<int> GetClientBillingType(int Clientid);
         Task<IEnumerable<Client>> GetAllClients();
-        Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId);
+        Task<IEnumerable<ClientCommentsForReport>> GetClientCommentsForReport(int interviewId);
         Task<bool> AddUpdateClientCommentsForReport(ClientCommentsForReport model);
     }
 }

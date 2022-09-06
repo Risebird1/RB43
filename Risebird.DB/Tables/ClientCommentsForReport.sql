@@ -9,7 +9,7 @@ Begin
 	[CreatedAt][datetime] NULL,
 	[ModifiedAt][datetime] NULL,
 	[CreatedBy][varchar](50) NULL,
-	[ModifiedBy][varchar](50) NULL,
+	[Rating][int] NULL,
 	CONSTRAINT [FK_ClientCommentsForReport_InterviewId] FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
 	CONSTRAINT [PK_ClientCommentsForReport] PRIMARY KEY CLUSTERED 
 	(
@@ -18,3 +18,29 @@ Begin
 	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 End
 
+Else
+Begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Rating')
+      AND Object_ID = Object_ID(N'ClientCommentsForReport'))
+BEGIN
+    ALTER TABLE ClientCommentsForReport
+    Add Rating INT 
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedBy')
+      AND Object_ID = Object_ID(N'ClientCommentsForReport'))
+BEGIN
+    ALTER TABLE ClientCommentsForReport
+    drop column ModifiedBy  
+END
+
+
+End
+
+Go

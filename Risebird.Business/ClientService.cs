@@ -1,4 +1,5 @@
 ﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -347,18 +348,19 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId)
-        {
-            try
-            {
-                return await _clientRepository.GetClientCommentsForReport(interviewId);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
+        //public async Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId)
+        //{
+        //    try
+        //    {
+
+        //        return await _clientRepository.GetClientCommentsForReport(interviewId);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
 
         public async Task<bool> AddUpdateClientCommentsForReport(ClientCommentsForReport model)
         {
@@ -370,6 +372,62 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        //public async Task<ClientFeedbackCommentVM> GetClientCommentsList(int interviewId, string emailId)
+        //{
+        //    try
+        //    {
+        //        var clientCommentsList = await _clientRepository.GetClientCommentsForReport(interviewId);
+        //        var model = new ClientFeedbackCommentVM();
+        //        if(clientCommentsList != null)
+        //        {
+        //            model.ClientComments = clientCommentsList.Where(x => !string.IsNullOrEmpty(x.CreatedBy) && x.CreatedBy.ToLower() == emailId.ToLower())?.FirstOrDefault();
+        //            model.ClientCommentsList = clientCommentsList.Where(x => string.IsNullOrEmpty(x.CreatedBy) || x.CreatedBy.ToLower() != emailId.ToLower());
+        //        }
+        //        return model;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+
+        public async Task<ClientCommentsForReport> GetClientCommentsForReport(int interviewId, string emailId, string profile)
+        {
+            try
+            {
+                var model = new ClientCommentsForReport();
+                var clientCommentsList = await _clientRepository.GetClientCommentsForReport(interviewId);
+
+                if (clientCommentsList != null)
+                {
+                    if (profile == ProfileEnum.Client.GetDescription())
+                    {
+                        model = clientCommentsList.Where(x => !string.IsNullOrEmpty(x.CreatedBy) && x.CreatedBy.ToLower() == emailId.ToLower())?.FirstOrDefault();
+                        if(model != null)
+                        {
+                            model.ClientCommentsList = clientCommentsList?.Where(x => string.IsNullOrEmpty(x.CreatedBy) || x.CreatedBy.ToLower() != emailId.ToLower());
+                        }
+                    }
+                    //if (profile != ProfileEnum.Interviewer.GetDescription())
+                    //{
+                    //    model = clientCommentsList.Where(x => !string.IsNullOrEmpty(x.CreatedBy) && x.CreatedBy.ToLower() == emailId.ToLower())?.FirstOrDefault();
+                    //    model.ClientCommentsList = clientCommentsList.Where(x => string.IsNullOrEmpty(x.CreatedBy) || x.CreatedBy.ToLower() != emailId.ToLower());
+                    //}
+                    else
+                    {
+                        model.ClientCommentsList = clientCommentsList;
+                    }
+                }
+                return model;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

@@ -4281,12 +4281,17 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
 
-                    ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId);
-                    if (model == null)
+                    ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId, emailId, profileName);
+                    //ClientFeedbackCommentVM model = await _clientService.GetClientCommentsList(interviewId, emailId);
+
+                    if(model == null)
                     {
                         model = new ClientCommentsForReport();
                     }
+
                     model.Profile = profileName;
                     return PartialView("GetClientCommentsForReport", model);
                 }
@@ -4318,15 +4323,11 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            if (model.id != 0)
+                            if(string.IsNullOrEmpty(model.CreatedBy))
                             {
                                 model.CreatedBy = emailId;
                             }
-                            else
-                            {
-                                model.ModifiedBy = emailId;
-                            }
-
+                            
                             await _clientService.AddUpdateClientCommentsForReport(model);
 
                         }

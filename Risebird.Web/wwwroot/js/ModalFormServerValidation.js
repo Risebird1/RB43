@@ -4,6 +4,7 @@
         var url = $(this).data('url');
         $.get(url).done(function (data) {
             placeholderElement.html(data);
+            setClientFeedbackRating();
             placeholderElement.find('.modal').modal('show');
         });
     });
@@ -38,3 +39,38 @@
         }
     });
 });
+
+function ChangeClientFeedbackRating(value) {
+    $("#Rating").val(value);
+}
+
+function setClientFeedbackRating() {
+    var ratingElement = document.getElementById('Rating');
+    if (ratingElement != null) {
+        rating = $("#Rating").val();
+        applyRating(rating);
+    }
+}
+
+function applyRating(rating) {
+    if (rating != '' && parseInt(rating) > 0) {
+        document.getElementById("Q2_" + rating).checked = true;
+    }
+    else {
+        for (i = 1; i <= 5; i++) {
+            document.getElementById("Q2_" + i).checked = false;
+        }
+    }
+}
+
+function moreless(id) {
+
+    $('.moretext_' + id).slideToggle();
+    if ($('#read_' + id).val() == 'Readmore') {
+        $('#read_' + id).empty().html('Read more');
+        $('#read_' + id).val('Readless');
+    } else {
+        $('#read_' + id).empty().html('Read less');
+        $('#read_' + id).val('Readmore');
+    }
+}
