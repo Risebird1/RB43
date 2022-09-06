@@ -220,7 +220,21 @@
                                                         {
                                                             <td><a style="color:blue;cursor:pointer" onclick="openOnlineMeetingModel('@item.VideoLink')">Click Here</a></td>
                                                         }*@
-                                                    <td>@item.Skills</td>
+                                                    @if (item.Skills != null && item.Skills != "")
+                                                    {
+                                                        @if (item.Skills.Length > 25)
+                                                        {
+                                                            <td title="@item.Skills">@item.Skills.Substring(0, 25) ...</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td title="@item.Skills">@item.Skills</td>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
                                                     @if (Convert.ToInt32(item.TotalQuestions) == 0)
                                                     {
                                                         <td>0</td>

@@ -53,5 +53,8 @@ namespace Risebird.Entities.Data
         public string BillingType { get; set; }
         public List<SelectListItem> BillingTypeDrop { get; set; }
         public string LoggedEmail { get; set; }
+        [Display(Name = "Interview Duration")]
+        public int InterviewDuration { get; set; }
+        public SelectList InterviewDurationList { get; set; }
     }
 }

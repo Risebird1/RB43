@@ -144,11 +144,11 @@
                                         </div>
                                     </div>
                                     @*<div class="col-md-6 col-sm-6 pl-1 pull-left">
-            <div class="form-group">
-                @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
-            </div>
-        </div>*@
+                                            <div class="form-group">
+                                                @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
+                                            </div>
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                         <div class="form-group">
                                             @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -172,6 +172,13 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.BillingType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.DropDownListFor(model => model.BillingType, Model.BillingTypeDrop, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>

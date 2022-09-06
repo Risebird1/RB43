@@ -380,6 +380,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalAmount { get; set; }
         public string ExpectedDate { get; set; }
         public string CrossCheckvalue { get; set; }
+        public int? MaxVideoDuration { get; set; }
     }
     public class SchedulingLinkVM
     {

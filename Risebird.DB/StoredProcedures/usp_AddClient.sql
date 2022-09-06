@@ -23,7 +23,8 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @IsCandidateavailability bit,    
 @IsMeetingNotificationSend bit,    
 @PerInterviewRate int,
-@BillingType int
+@BillingType int,
+@InterviewDuration int
 AS          
 Begin          
  Declare @Clientid int        
@@ -41,7 +42,8 @@ Begin
     ,[IsCandidateavailability]    
     ,[IsMeetingNotificationSend]   
  ,[PerInterviewRate]
- ,[BillingType])        
+ ,[BillingType]
+ ,[InterviewDuration])        
      VALUES          
      (@clientName          
      ,@clientDescr          
@@ -54,7 +56,8 @@ Begin
   ,@IsCandidateavailability    
   ,@IsMeetingNotificationSend  
   ,@PerInterviewRate
-  ,@BillingType)          
+  ,@BillingType
+  ,@InterviewDuration)          
       
 set @Clientid=SCOPE_IDENTITY()
 Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32

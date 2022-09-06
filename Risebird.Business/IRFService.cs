@@ -560,6 +560,7 @@ namespace Risebird.Business
                 model.IsQCRequired = IRF.IsQCRequired;
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
                 model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
+                model.IsAadhaarVerificationRequired = IRF.IsAadhaarVerificationRequired;
                 return model;
             }
             catch (Exception e)

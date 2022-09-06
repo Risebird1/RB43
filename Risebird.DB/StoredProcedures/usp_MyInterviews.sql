@@ -9,8 +9,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
- CREATE PROCEDURE [dbo].[usp_MyInterviews]               
+CREATE PROCEDURE [dbo].[usp_MyInterviews]               
 @emailID varchar(200)                  
 AS                
 BEGIN          
@@ -18,7 +17,7 @@ BEGIN
 declare @emailIDParam varchar(200)      
 set @emailIDParam=@emailID      
       
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail,       
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, cl.interviewDuration, ul.EmailId as candidateEmail,       
 ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,              
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,              
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,        
@@ -29,7 +28,8 @@ end as candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, im.HRCoordinatorEmailId,              
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink ,irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CompanyDetails,               
 ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, ulh.MobileNumber as HRMobileNumber,              
-cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration, irf.JDTiltle,ca.IsProctor,IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent from InterviewMeetings im                 
+cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration, irf.JDTiltle,ca.IsProctor,IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent
+from InterviewMeetings im                 
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId   
 left join Client cl on cl.id=IRF.ClientId  
 left join UserList ul on ul.EmailId = im.candidateEmail              
