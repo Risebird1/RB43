@@ -106,11 +106,11 @@
             <div class="col-md-12">
                 @*<div class="pull-left mt-20">
 
-                    <button style="margin-bottom: 4px; margin-left: 17px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport", new { interviewId = Model.InterviewId})">
-                        Comments
-                    </button>
+                        <button style="margin-bottom: 4px; margin-left: 17px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport", new { interviewId = Model.InterviewId})">
+                            Comments
+                        </button>
 
-                </div>*@
+                    </div>*@
             </div>
         </div>
         <div class="row bl-bg">
@@ -795,10 +795,10 @@
                                                                 </td>
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
-
-
                                                             </tr>
-
+                                                            <tr>
+                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75" })</td>
+                                                            </tr>
                                                         }
                                                     }
 
@@ -831,7 +831,7 @@
                                 @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                                 @if (ViewBag.PageStatus != "PublicExternal")
                                 {
-                                    
+
                                     @if (!Model.IsInterviewer && Model.IsJoinabilitySelectabilityRequired)
                                     {
                                         <div class="row">
@@ -2233,26 +2233,15 @@
             var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-                if (temp == null || temp == '') {
-                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
+                if (temp == null || temp == '' || techcomment == null || techcomment == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level and comments for all the added rows."
                     document.getElementById('TechSkills_CommentError').focus();
                     return false;
                 }
-            }
-        }
-        document.getElementById('TechSkills_CommentError').innerHTML = "";
-        return true;
-    }
-    function CheckTechSkills() {
-        var meetingStatusValue = document.getElementById("MeetingStatus").value;
-        var interviewStatusValue = document.getElementById("InterviewStatus").value;
-        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
-            var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
-            for (i = 0; i < questionItems.length; i++) {
-                var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-                if (temp == null || temp == '') {
-                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
-                    document.getElementById('TechSkills_CommentError').focus();
+                if (techcomment.length < 25) {
+                    document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
+                    document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
                     return false;
                 }
             }
