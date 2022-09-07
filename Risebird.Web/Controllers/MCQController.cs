@@ -1043,6 +1043,7 @@ namespace Risebird.Web.Controllers
                     {
                         try
                         {
+                            var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                             var _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
                             Mail _mail = new Mail
                             {
@@ -1050,8 +1051,8 @@ namespace Risebird.Web.Controllers
                                 Subject = "Invitation for " + details.Title + " : " + ClientName
                             };
                             var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
-                            var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
-                            string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&CMCQId=" + uniqueid;
+                            //var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
+                            string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&SMCQId=" + date1;
                             Mail _mail1 = new Mail
                             {
                                 TO = ClientEmail,
@@ -1060,7 +1061,6 @@ namespace Risebird.Web.Controllers
                             _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
                             if (result.Contains("Mail sent successfully"))
                             {
-                                var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                                 _list.PartitionKey = date1;
                                 _list.MCQId = Id;
                                 _list.EmailAddress = item.Trim();
@@ -1107,7 +1107,7 @@ namespace Risebird.Web.Controllers
             }
             return new ShareMCQRisebirdMeetingResponse();
         }
-        public async Task<IActionResult> CandidateMCQReport(string MCQId, string CMCQId)
+        public async Task<IActionResult> CandidateMCQReport(string MCQId, string CMCQId, string SMCQId)
         {
             try
             {
@@ -1120,8 +1120,16 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("Logo", "");
                 }
+                var _candidate = new CandidateDetailsForTestDuplicate();
                 var candidateset = _mCQService.GetMCQCandidateDetailsByMCQId(MCQId);
-                var _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
+                if (!String.IsNullOrWhiteSpace(CMCQId))
+                {
+                    _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
+                }
+                else
+                {
+                    _candidate = candidateset.Where(x => x.SMCQId == SMCQId).FirstOrDefault();
+                }
                 var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
                 _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
                 _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");

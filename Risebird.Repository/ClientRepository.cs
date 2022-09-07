@@ -214,6 +214,7 @@ namespace Risebird.Repository
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
             parameters.Add("@PerInterviewRate", entity.PerInterviewRate);
             parameters.Add("@BillingType", entity.BillingType);
+            parameters.Add("@InterviewDuration", entity.InterviewDuration);
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)

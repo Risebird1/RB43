@@ -328,7 +328,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;">Date </th>
-                                                            <th style="text-align:left">Max Interview Duration</th> 
+                                                            <th style="text-align:left">Job Level</th>
                                                             <th style="text-align:left">JD-Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Client</th>
@@ -337,6 +337,7 @@
                                                             <th>Instructions</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
+                                                            <th>Max Interview Duration</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
 
                                                         </tr>
@@ -346,7 +347,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;width:12%">Date</th>
-                                                            <th style="text-align:left">Max Interview Duration</th>                                                          
+                                                            <th>Job Level</th>
                                                             <th>JD-Skills</th>
                                                             <th>Candidate Name</th>
                                                             <th>Client</th>
@@ -355,6 +356,7 @@
                                                             <th>Instructions</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Link</th>
+                                                            <th>Max Interview Duration</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
 
                                                         </tr>
@@ -381,7 +383,7 @@
                                                                         <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
                                                                     }
                                                                 </td>
-                                                                <td> 45 </td>
+                                                                <td> @item.JobLevelDesc </td>
                                                                 <td>
                                                                     <button type="button" class="clickhere_btn pull-left">
                                                                         <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
@@ -428,13 +430,13 @@
                                                                     <td> @item.JobCountry </td>
                                                                 }
                                                                 @*@if (item.JDLink != null && item.JDLink != "")
-                                                            {
-                                                                <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No JD</td>
-                                                            }*@
+                                                                    {
+                                                                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No JD</td>
+                                                                    }*@
                                                                 @if (!String.IsNullOrEmpty(item.AudioComment))
                                                                 {
                                                                     <td><a href='@item.AudioComment' asp-append-version="true" download>@item.AudioComment.Split('/').Last()</a></td>
@@ -474,7 +476,7 @@
                                                                     <td></td>
                                                                 }
 
-
+                                                                <td><strong>@item.interviewDuration Mins</strong></td>
                                                                 <td class="text-left">
                                                                     @{
                                                                         var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
@@ -498,8 +500,8 @@
                                                                         <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId, irf= item.IRFID })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
                                                                     </button>
                                                                     @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
-                                                                    <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg fill=" rgb(255,255,255)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                                </button>*@
+                                                                            <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg fill=" rgb(255,255,255)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                        </button>*@
                                                                     <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey" style="position:relative;top:-1px;left:2px;">
                                                                         <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="far fa-comments"></i></span>
                                                                     </button>
@@ -529,7 +531,6 @@
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped">
                                                                         <tr>
-                                                                            <th style="text-align:left">Job Level</th>
                                                                             <th>Slot</th>
                                                                             <th>Candidate Email</th>
                                                                             <th>Call HR</th>
@@ -539,9 +540,7 @@
                                                                             <th>Skill Channel</th>
 
                                                                         </tr>
-
                                                                         <tr>
-                                                                            <td> @item.JobLevelDesc </td>
                                                                             @if (@item.interviewSlot == "Morning")
                                                                             {
                                                                                 <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
@@ -1347,7 +1346,7 @@
                 html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>';
             }
             html += '  </td>';
-            html += ' <td> ' + 45 + ' </td>';
+            html += ' <td> ' + data[i].jobLevelDesc + ' </td>';
 
             html += ' <td class="callcandidatebtn" style="text-align:center">';
             var oldDateObj = new Date();
@@ -1383,7 +1382,7 @@
                 html += '   <td></td>';
             }
 
-            html += '  <td> ' + 45 + ' </td>';
+            html += '  <td> ' + data[i].interviewDuration + ' </td>';
             //if (data[i].jdLink != null && data[i].jdLink != "") {
             //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
             //}
@@ -1410,7 +1409,7 @@
             else {
                 html += ' <td></td>';
             }
-
+            html += ' <td>' + data[i].interviewDuration +'</td>';
 
             html += '   <td class="text-left">';
             if (new Date(data[i].interviewDate) <= new Date('@DateTime.Now') && new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-750)')) {
@@ -1449,7 +1448,6 @@
             html += '   <td colspan="999" class="child-section">';
             html += '  <table class="table table-striped">';
             html += '  <tr>';
-            html += '   <th>Job Level</th>';
             html += '   <th>Slot</th>';
             html += '  <th>Candidate Email</th>';
             html += '  <th>Call HR</th>';
@@ -1461,7 +1459,6 @@
 
             html += '  </tr>';
             html += '  <tr>';
-            html += ' <td>' + "" + ' </td>';
             if (data[i].interviewSlot == "Morning") {
                 html += '   <td><a style="color:darkorange;font-weight: bold">' + data[i].interviewSlot + '</a></td>';
             }
@@ -1964,6 +1961,6 @@
 @if (!ViewBag.isCodedResumePresent)
 {
     @*<script>
-        openCodedResumeNotificationModel();
-    </script>*@
+            openCodedResumeNotificationModel();
+        </script>*@
 }

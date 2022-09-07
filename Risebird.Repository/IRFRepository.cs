@@ -6147,7 +6147,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate,string profile,string emailid)
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid)
         {
             try
             {
@@ -6214,6 +6214,80 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<IEnumerable<InterviewDetailsVM>> FetchIRFCompletedInterviewDetails(int id, int type, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@id", id);
+                parameters.Add("@type", type);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<InterviewDetailsVM>(con, "usp_GetIRFCompletedInterviewDetails", parameters,
+                          commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<InterviewDetailsVM> FetchIRFInterviewerDetailsById(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<InterviewDetailsVM>(
+                        con, "Select IRF.IRFId,cl.Name as ClientName,ul.EmailId as ClientHRAttemptContact From IRF join Client cl on IRF.ClientId=cl.id join UserList ul on ul.id=IRF.RisebirdHr where IRF.id=@id", parameters, commandType: Text);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<string>> FetchSupportAdminEmailid()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(
+                        con, "Select EmailId From UserList where idProfile=32", null, commandType: Text);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }
