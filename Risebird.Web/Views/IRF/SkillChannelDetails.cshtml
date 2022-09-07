@@ -230,7 +230,10 @@
                                                         <th>Skill Channels</th>
                                                     }
                                                     <th>Red Flags</th>
-                                                    <th>JD Title</th>
+                                                    @if (ViewBag.Type != "ChannelOwner")
+                                                    {
+                                                        <th>JD Title</th>
+                                                    }
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -267,7 +270,10 @@
                                                         <th>Skill Channels</th>
                                                     }
                                                     <th>Red Flags</th>
-                                                    <th>JD Title</th>
+                                                    @if (ViewBag.Type != "ChannelOwner")
+                                                    {
+                                                        <th>JD Title</th>
+                                                    }
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -299,13 +305,17 @@
                                                                     <td>@item.ClientCompName</td>
                                                                 }
                                                             }
+                                                            @if (ViewBag.profile != "Client")
+                                                            {
+                                                                <td> @item.RisebirdHREmail </td>
+                                                            }
                                                             @if (ViewBag.Type == "ChannelOwner")
                                                             {
                                                                 <td> @item.IRFId</td>
                                                             }
+
                                                             @if (ViewBag.profile != "Client")
                                                             {
-                                                                <td> @item.RisebirdHREmail </td>
                                                                 @if (item.Flags > 0)
                                                                 {
                                                                     <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
@@ -327,7 +337,10 @@
                                                                 }
                                                             }
                                                             @*<td style="color:blue!important;cursor:pointer" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>*@
-                                                            <td> @item.JDTiltle </td>
+                                                            @if (ViewBag.Type != "ChannelOwner")
+                                                            {
+                                                                <td> @item.JDTiltle </td>
+                                                            }
                                                             <td> @item.CandidateCount </td>
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
@@ -380,11 +393,8 @@
                                             </button>
 
                                             <div class="modal-body" id="flagsModalBody">
-
                                             </div>
                                             <div class="modal-body" id="flagsModalBodyCount" style="overflow:auto">
-
-
                                             </div>
                                         </div>
                                     </div>
@@ -414,8 +424,6 @@
                 <span aria-hidden="true" id="IRfModalClose" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" id="IRFModalBodyCount" style="overflow:auto;max-height:350px">
-
-
             </div>
         </div>
 
@@ -857,7 +865,7 @@ else
         html += '<thead><tr><td>Type</td><td>Count</td><td>Action</td></tr></thead>';
         html += '<tbody>';
         if (notScheduledCount != 0) {
-            html += '<tr><td style="border: 1px solid black">Not Scheduled Candidate</td><td style="border: 1px solid black">' + notScheduledCount + '</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=64868&' + irfName + '=irfName" target="_blank">Not-Schedule</a></td></tr>';
+            html += '<tr><td style="border: 1px solid black">Not Scheduled Candidate<i class="fa fa-info-circle"></i></td><td style="border: 1px solid black">' + notScheduledCount + '</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=64868&' + irfName + '=irfName" target="_blank">Not-Schedule</a></td></tr>';
         }
         if (reScheduledCount != 0) {
             html += '<tr><td style="border: 1px solid black">ReScheduled Candidate</td><td style="border: 1px solid black">' + reScheduledCount + '</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=34657&irfName=' + irfName + '" target="_blank">Re-Schedule</a></td></tr>';
