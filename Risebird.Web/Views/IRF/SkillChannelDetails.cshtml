@@ -865,16 +865,16 @@ else
         html += '<thead><tr><td>Type</td><td>Count</td><td>Action</td></tr></thead>';
         html += '<tbody>';
         if (notScheduledCount != 0) {
-            html += '<tr><td style="border: 1px solid black">Not Scheduled Candidate<i class="fa fa-info-circle"></i></td><td style="border: 1px solid black">' + notScheduledCount + '</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=64868&' + irfName + '=irfName" target="_blank">Not-Schedule</a></td></tr>';
+            html += '<tr><td style="border: 1px solid black">Not Scheduled Candidate</td><td style="border: 1px solid black">' + notScheduledCount + '</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=64868&' + irfName + '=irfName" target="_blank">Not-Schedule</a></td></tr>';
         }
         if (reScheduledCount != 0) {
             html += '<tr><td style="border: 1px solid black">ReScheduled Candidate</td><td style="border: 1px solid black">' + reScheduledCount + '</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=34657&irfName=' + irfName + '" target="_blank">Re-Schedule</a></td></tr>';
         }
         if (selectionRate < 20) {
-            html += '<tr><td style = "border:1px solid black"> Selected Candidate</td><td style="border: 1px solid black">' + selectionRate + '%</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=73532&irfName=' + irfName + '" target="_blank">Selected</a></td></tr>';
+            html += '<tr><td style = "border:1px solid black"> Selected Candidate<i title="Selected Candidate is less then 20%" class="fa fa-info-circle"></i></td><td style="border: 1px solid black">' + selectionRate + '%</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=73532&irfName=' + irfName + '" target="_blank">Selected</a></td></tr>';
         }
         if (completionRate < 60) {
-            html += '<tr><td style = "border:1px solid black"> Completed Interview</td><td style="border: 1px solid black">' + completionRate + '%</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=27538&irfName=' + irfName + '" target="_blank">Completed</a></td></tr>';
+            html += '<tr><td style = "border:1px solid black"> Completed Interview<i title="Completed Interview is less then 60%" class="fa fa-info-circle"></i></td><td style="border: 1px solid black">' + completionRate + '%</td><td><a href="/Candidate/IRFFlagDetails?id=' + irfid + '&type=27538&irfName=' + irfName + '" target="_blank">Completed</a></td></tr>';
         }
 
         html += '</tbody>';
