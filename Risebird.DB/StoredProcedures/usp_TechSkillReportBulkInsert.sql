@@ -27,7 +27,8 @@ INSERT INTO [dbo].[TechSkillReport](
 	[SkillId],
 	[ActualLevelId],
 	[WeightageRequired],
-	[WeightageActual])
+	[WeightageActual],
+	[TechComments])
 
 SELECT * FROM @TechSkillReportBulkData
 

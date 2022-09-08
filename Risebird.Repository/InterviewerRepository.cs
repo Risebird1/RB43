@@ -1433,11 +1433,16 @@ namespace Risebird.Repository
                     techReportDt.Columns.Add("ActualLevelId", typeof(int));
                     techReportDt.Columns.Add("WeightageRequired", typeof(int));
                     techReportDt.Columns.Add("WeightageActual", typeof(int));
+                    techReportDt.Columns.Add("TechComments", typeof(string));
 
 
                     foreach (var item in reportDetails.TechSkillReportCollection)
                     {
-                        techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
+                        if (String.IsNullOrWhiteSpace(item.TechComments))
+                        {
+                            item.TechComments = "";
+                        }
+                        techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.TechComments);
                     }
                     SqlCommand cmdTechReport = new SqlCommand("usp_InterviewerTechSkillReportBulkInsert", con);
                     cmdTechReport.CommandType = CommandType.StoredProcedure;

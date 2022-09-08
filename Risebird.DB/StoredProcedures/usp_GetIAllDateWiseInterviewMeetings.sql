@@ -23,7 +23,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
  Begin              
            
           
- select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,               
+ select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, cl.interviewDuration, ulc.EmailId as candidateEmail,               
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                         
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,             
   case when ulc.LastName is null then ulc.FirstName            
@@ -56,7 +56,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
   where interviewDate >= @startDate AND interviewDate < @endDate and ulhr.EmailId=@EmailId                
   Union              
-  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,               
+  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, cl.interviewDuration, ulc.EmailId as candidateEmail,               
               
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                         
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,             
@@ -94,7 +94,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
                 
 else if(@EmailId is not null and ((select idProfile from UserList where EmailId=@EmailId)=31))                       
  Begin                
-  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,               
+  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, cl.interviewDuration, ulc.EmailId as candidateEmail,               
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                         
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,             
   case             
@@ -130,7 +130,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
  End                
 else                
  Begin                
-  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,               
+  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, cl.interviewDuration, ulc.EmailId as candidateEmail,               
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                         
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,             
   case             
@@ -163,7 +163,7 @@ else
   where interviewDate >= @startDate AND interviewDate < @endDate                 
  End                          
                            
-End        
+End            
            
 GO
 

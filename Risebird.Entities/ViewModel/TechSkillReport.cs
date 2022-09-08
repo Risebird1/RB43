@@ -12,6 +12,6 @@
         public int ActualLevelId { get; set; }
         public float WeightageRequired { get; set; }
         public float WeightageActual { get; set; }
-
+        public string TechComments { get; set; }
     }
 }
