@@ -58,5 +58,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRFInterviewerMembers>> GetAllInterviewerMembers();
         bool UpdateAllIntervieweravailbilityStatus(int status, string uniqueid);
         Task<List<CommonInterviewDetailsVM>> FetchAllStaffingAgencyAndClientHRwithTime(DateTime stdt, DateTime etdt);
+        Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate);
     }
 }
