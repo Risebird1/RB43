@@ -4432,10 +4432,6 @@ namespace Risebird.Web.Controllers
             {
                 flags = irfList.Select(x => x.Flags).Sum();
             }
-            if (flags > 0)
-            {
-                flags = 1;
-            }
             return Json(flags);
         }
     }
