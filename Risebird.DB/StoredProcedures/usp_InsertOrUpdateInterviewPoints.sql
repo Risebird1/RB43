@@ -64,9 +64,9 @@ Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and u
  --Start:Meeting Status 1 or 3   
  if(@MeetingStatus=1 or @MeetingStatus=3)  
  BEGIN  
- if(@VideoDuration>6)  
+ if(@VideoDuration>3)  
  begin  
- set @AddPoint=Round(((ISNULL(@AddPoint,0)*6)/60),0)                      
+ set @AddPoint=Round(((ISNULL(@AddPoint,0)*3)/60),0)                      
  end  
  else  
  begin  
