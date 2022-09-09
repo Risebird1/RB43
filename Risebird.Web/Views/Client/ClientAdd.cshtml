@@ -40,12 +40,9 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                             </div>
-
                                             @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
                                         </div>
-
                                     </div>
 
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left">
@@ -53,66 +50,45 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                             </div>
-
                                             @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-
                                         </div>
                                     </div>
 
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
                                             @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
-
                                         </div>
                                     </div>
-
-
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
                                             @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
-
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
                                         <div class="form-group">
-                                            <div class="pull-left">
-                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo" style="padding:0px 25px;">Upload Company Logo</label>
-                                                <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
-                                            </div>
-                                            <div class="pull-left">
-                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL" style="padding:0px 25px;">
-                                                    Provide Logo URL
-                                                </label>
-                                                <input name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
-                                            </div>
+                                            Upload Company Logo
+                                            <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                            Provide Logo URL
+                                            <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)">
                                         </div>
                                         <div class="form-group" style="display:none" id="linkDiv">
                                             @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                             @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
-
                                         </div>
                                         <div class="" style="display:none" id="uploadDiv">
                                             @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg, .gif"@*, @onchange = "Filevalidation()"*@ })
-
                                         </div>
                                         <p id="size_0" class="text-danger"></p>
-
                                     </div>
 
-
-
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
                                         <div class="form-group">
                                             Upload Company Video(GIF)
                                             <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" value="Upload" type="radio" onclick="RadioVideo(this.value)">
@@ -121,29 +97,20 @@
                                         </div>
                                         <div class="form-group" style="display:none" id="linkVideoDiv">
                                             @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.EditorFor(model => model.CompanyVideoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                             @Html.ValidationMessageFor(model => model.CompanyVideoLink, "", new { @class = "text-danger" })
-
                                         </div>
                                         <div class="" style="display:none" id="uploadVideoDiv">
                                             @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control", @accept = ".gif"@*, @onchange = "Filevalidation()"*@ })
-
                                         </div>
                                         <p id="size_1" class="text-danger"></p>
-
                                     </div>
 
-
-
-                                    <div class="col-md-12 col-sm-12 pull-left">
-                                        <div class="form-group col-md-6 nopad">
-                                            @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
-                                        </div>
+                                    <div class="col-md-12 col-sm-12 pull-left rightpad">
+                                        @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                        @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left">
                                         <div class="form-group">
@@ -151,6 +118,7 @@
                                             @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
                                         </div>
                                     </div>
+
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                         <div class="form-group">
                                             @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -161,6 +129,12 @@
                                         <div class="form-group">
                                             @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.CheckBoxFor(model => model.IsMeetingNotificationSend) Risebird Meeting waiting Notification.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsMeetingAutoCancelled) Auto cancel candidate interview.<i title="Candidate does not confirm availability" class="fa fa-info-circle"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
@@ -214,32 +188,37 @@
             document.getElementById("uploadDiv").style.display = "block";
             document.getElementById("linkDiv").style.display = "none";
             //document.getElementById("LogoLink").value = '';
-
         }
         else {
             document.getElementById("uploadDiv").style.display = "none";
             document.getElementById("linkDiv").style.display = "block";
             document.getElementById("LogoFile").value = '';
-
         }
-
     }
-
 
     function RadioVideo(val) {
         if (val == 'Upload') {
             document.getElementById("uploadVideoDiv").style.display = "block";
             document.getElementById("linkVideoDiv").style.display = "none";
             //document.getElementById("LogoLink").value = '';
-
         }
         else {
             document.getElementById("uploadVideoDiv").style.display = "none";
             document.getElementById("linkVideoDiv").style.display = "block";
             document.getElementById("VideoFile").value = '';
-
         }
-
+    }
+    $('#IsCandidateavailability').on('change', function () {
+        CheckCandidateavailabilityDetails()
+    });
+    function CheckCandidateavailabilityDetails() {
+        var value = document.getElementById('IsCandidateavailability').checked;
+        if (value) {
+            document.getElementById('IsMeetingAutoCancelled').disabled = false;
+        } else {
+            document.getElementById('IsMeetingAutoCancelled').checked = false;
+            document.getElementById('IsMeetingAutoCancelled').disabled = true;
+        }
     }
 </script>
 
