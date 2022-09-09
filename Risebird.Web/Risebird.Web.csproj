@@ -278,7 +278,9 @@
 
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="wwwroot\css\SidePanel\" />
     <Folder Include="wwwroot\Files\" />
+    <Folder Include="wwwroot\js\SidePanelJS\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
