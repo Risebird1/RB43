@@ -4818,7 +4818,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         var model = new BroadcastModel
                         {
