@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ClientFeedDataVM>
+@using Risebird.CommonHelper
+@using Risebird.Entities.Enum
+
+
+<!-- Modal -->
+@if (Model != null)
+{
+    @foreach (var feed in Model)
+    {
+        @if (feed.FeedType == ClientFeedbackType.Audio.GetDescription())
+        {
+            @if (feed.FeedDate != null)
+            {
+                <p>@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+            }
+            <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th width="30%">Skill Channel</th>
+                        <th width="30%">Audio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@feed.SkillChannelName</td>
+                        <td>
+                            <audio src="@feed.FeedUrl" asp-append-version="true" controls></audio>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+
+}
+

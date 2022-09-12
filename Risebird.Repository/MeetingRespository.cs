@@ -6117,5 +6117,22 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_FetchCandidateMeetingsIdForCancellation", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

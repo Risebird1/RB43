@@ -56,5 +56,6 @@ namespace Risebird.Entities.Data
         [Display(Name = "Interview Duration")]
         public int InterviewDuration { get; set; }
         public SelectList InterviewDurationList { get; set; }
+        public bool IsMeetingAutoCancelled { get; set; }
     }
 }

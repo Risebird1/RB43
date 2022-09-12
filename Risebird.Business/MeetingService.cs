@@ -3576,6 +3576,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel()
+        {
+            try
+            {
+                return await _meetingRespository.FetchCandidateZoomMeetingsIdForCancel();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
