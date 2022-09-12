@@ -4806,18 +4806,19 @@ namespace Risebird.Web.Controllers
             return uploadedfbaudioFileURL;
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult Broadcast(string message, string subject, string receiver, int irfid)
+        [HttpPost]
+        public async Task<JsonResult> Broadcast()
         {
-
             try
             {
-                if (HttpContext.Session.GetString("email") != null &&
-                    HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var subject = Request.Form["subject"].ToString();
+                    var message = Request.Form["message"].ToString();
+                    var receiver = Request.Form["receiver"].ToString();
+                    var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
                     {
                         var model = new BroadcastModel
@@ -4846,19 +4847,19 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        return Json("SignOut");
                     }
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    return Json("SignOut");
                 }
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Broadcast has been Failed.";
-                return RedirectToAction("Index");
+                return Json("Index");
             }
         }
 
