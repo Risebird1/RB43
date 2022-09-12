@@ -25,7 +25,9 @@ namespace Risebird.CommonHelper
             var _model = new RBMeetCreateMeetingObject();
             _model.agentname = agentname;
             _model.visitorName = visitorName;
-            _model.datetime = datetime.ToString();
+            DateTime currentTime = TimeZoneInfo.ConvertTime(datetime, TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"));
+            var datetime1 = currentTime.ToString("yyyy-MM-dd'T'HH:mm:ss.000Z");
+            _model.datetime = datetime1;
             var _meeting = new RestClient("https://meet.risebird.io/api/v1/room");
             var request = new RestRequest(Method.POST);
             request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);//"v7sy3J8cAFdEJp5S"

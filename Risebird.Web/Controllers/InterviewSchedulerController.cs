@@ -390,7 +390,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    zoomLink.accountemail = "host@risebird.io";
                         //}
-                        string accountEmail = "host@risebird.io";
+                        string accountEmail = "hire@risebird.io";
                         //Send Mail Notification
                         Mail _mail = new Mail
                         {
