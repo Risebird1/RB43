@@ -23,7 +23,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateClient]
 @IsMeetingNotificationSend bit,  
 @PerInterviewRate int,
 @BillingType int,
-@InterviewDuration int
+@InterviewDuration int,
+@IsMeetingAutoCancelled bit
 AS          
 Begin          
       
@@ -45,6 +46,7 @@ SET
   ,[PerInterviewRate]=@PerInterviewRate
   ,[BillingType]=@BillingType
   ,[InterviewDuration]=@InterviewDuration
+  ,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 WHERE          
       Id = @id          
 End     
