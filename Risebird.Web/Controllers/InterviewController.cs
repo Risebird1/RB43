@@ -78,7 +78,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string type)
         {
             try
             {
@@ -213,6 +213,21 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+                        }
+                        if (type == "RedoInterviews")
+                        {                           
+                            ViewBag.Type = "RedoInterviews";
+                            modelList = new List<MeetingVM> ();
+                        }
+                        else if (type == "TemplateInterviews")
+                        {
+                            ViewBag.Type = "TemplateInterviews";
+                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "Interviews";
+                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
                         }
                         return View(modelList);
                     }
@@ -800,7 +815,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Index(InterviewFilter filter)
+        public async Task<IActionResult> Index(InterviewFilter filter, string type)
         {
             try
             {
@@ -897,6 +912,21 @@ namespace Risebird.Web.Controllers
                         && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)
                         && ((filter.AadhaarVerified != null && filter.AadhaarVerified.Count() > 0) ? filter.AadhaarVerified.Contains(c.AadhaarVerified) : c.AadhaarVerified == false)).ToList();
 
+                        if (type == "RedoInterviews")
+                        {
+                            ViewBag.Type = "RedoInterviews";
+                            modelList = new List<MeetingVM>();
+                        }
+                        else if (type == "TemplateInterviews")
+                        {
+                            ViewBag.Type = "TemplateInterviews";
+                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "Interviews";
+                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                        }
 
                         return View(modelList);
                     }
@@ -920,14 +950,14 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ResetInterviewFilter()
+        public async Task<IActionResult> ResetInterviewFilter(string type)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    HttpContext.Session.Remove("Interviewfilters");
-                    return RedirectToAction("Index");
+                    HttpContext.Session.Remove("Interviewfilters");                  
+                    return RedirectToAction("Index",new { type = type });
                 }
                 else
                 {
