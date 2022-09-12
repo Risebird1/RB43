@@ -33,20 +33,7 @@
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-    .tabletech{
-        border-right:1px solid #dee2e6 !important;
-        border-left:0px solid #dee2e6 !important;
-        border-top :0px solid #dee2e6 !important;
-        border-bottom:1px solid #dee2e6 !important;
-    }
-    .tabletechcomment{
-        border-right:1px solid #dee2e6 !important;
-        border-left:0px solid #dee2e6 !important;
-        border-top :0px solid #dee2e6 !important;
-        border-bottom:1px solid red !important;
-    }
-</style>
+
 
 @if (ViewBag.PageStatus == "Public")
 {
@@ -764,100 +751,78 @@
                                             <h3 class="mb-0"><span>Tech Skill Report</span></h3>
                                         </div><!--end of multiple location-->
                                     </div><!--end of col-md-12-->
+
+
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="table-responsive-sm">
-                                            @if (ViewBag.profile == "Interviewer")
-                                            {
-                                                <table class="table mbn" id="SkillTable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="10%" class="tabletech">Required Level</th>
-                                                            <th width="40%" class="tabletech">Skill Name</th>
-                                                            <th width="20%" class="tabletech">Actual Level</th>
-                                                            <th width="15%" class="tabletech">Required Weightage</th>
-                                                            <th width="15%" class="tabletech">Actual Weightage</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if (Model.TechSkillReportCollection != null)
-                                                        {
-                                                            @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                            {
-                                                                <tr>
-                                                                    <td class="tabletech">
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td class="tabletech">
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td class="tabletech">
-                                                                        @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-                                                                    </td>
-                                                                    <td class="tabletech">
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td class="tabletech">
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="5" class="tabletechcomment">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "100",@style="font-weight: bold !important;" })</td>
-                                                                </tr>
-                                                            }
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            }
-                                            else
-                                            {
-                                                <table class="table table-bordered mbn" id="SkillTable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="10%">Required Level</th>
-                                                            <th width="40%">Skill Name</th>
-                                                            <th width="20%">Actual Level</th>
-                                                            <th width="15%">Required Weightage</th>
-                                                            <th width="15%">Actual Weightage</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if (Model.TechSkillReportCollection != null)
-                                                        {
-                                                            @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "100",@style="font-weight: bold !important;" })</td>
-                                                                </tr>
-                                                            }
-                                                        }
-                                                    </tbody>
-                                                </table>
+                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="10%">Required Level</th>
+                                                        <th width="40%">Skill Name</th>
+                                                        <th width="20%">Actual Level</th>
+                                                        <th width="15%">Required Weightage</th>
+                                                        <th width="15%">Actual Weightage</th>
+                                                    </tr>
+                                                </thead>
 
-                                            }
+
+                                                <tbody>
+                                                    @if (Model.TechSkillReportCollection != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75",@style="font-weight: bold !important;" })</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
                                             <label class="text-danger" id="TechSkills_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                         </div>
-                                    </div>
+                                        @if (ViewBag.PageReport != "Insta" && ViewBag.PageStatus != "PublicExternal")
+                                        {
+                                            @*<div class="form-group">
+                                        @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+
+                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                        <div class="talktext">
+
+                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line scrollbar" }, @style = "width:100%", @spellcheck = "true", @onpaste = "return false" })
+                                        <div id="words"></div>
+                                        </div>
+                                        </div>
+                                        </div>*@
+                                        }
+
+
+
+                                    </div><!--end of col-md-12-->
+
                                 </div>
                                 @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                                 @if (ViewBag.PageStatus != "PublicExternal")
@@ -1966,11 +1931,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                // Check document for changes
-                                //$.validator.unobtrusive.parse(document);
+                //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                // Check document for changes
+                //$.validator.unobtrusive.parse(document);
 
-                            }
+            }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2070,7 +2035,7 @@
             });*@
 
 
-                            }
+            }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2146,21 +2111,22 @@
             }
         }
         else
-            if (meetingStatusValue == 4) {
-                var comments = document.getElementById("InterviewerComment").value;
-                if (comments.length <= 50) {
-                    document.getElementById("InterviewerComment").focus();
-                    document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 50 characters.";
-                    return false;
-                }
-                else {
-                    document.getElementById("interviewerComment_Error").innerHTML = "";
-                    return true;
-                }
-
-            }
-            else
-                return true;
+            return true;
+        //if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+        //    var comments = document.getElementById("InterviewerComment").value;
+        //    if (comments.length >= 250) {
+        //        document.getElementById("interviewerComment_Error").innerHTML = "";
+        //        return true;
+        //    }
+        //    else {
+        //        //interviewerComment_Error
+        //        document.getElementById("InterviewerComment").focus();
+        //        document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+        //        return false;
+        //    }
+        //}
+        //else
+        //    return true;
     }
 
     function CheckQuestionsTiming() {
@@ -2261,8 +2227,8 @@
             var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-    @*var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();*@
-                                    if (temp == null || temp == '') {
+                var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
+                if (temp == null || temp == '') {
                     document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
                     document.getElementById('TechSkills_CommentError').focus();
                     return false;
@@ -2299,7 +2265,7 @@
                 }
                 });*@
 
-                                }
+                }
 
 
     });
