@@ -1931,11 +1931,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-            // Check document for changes
-            //$.validator.unobtrusive.parse(document);
+                //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                // Check document for changes
+                //$.validator.unobtrusive.parse(document);
 
-        }
+            }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2035,7 +2035,7 @@
             });*@
 
 
-        }
+            }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2233,12 +2233,12 @@
                     document.getElementById('TechSkills_CommentError').focus();
                     return false;
                 }
-                if(techcomment!=null && techcomment!=''){
-                if (techcomment.length < 25) {
-                    document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
-                    document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
-                    return false;
-                }
+                if (techcomment != null && techcomment != '') {
+                    if (techcomment.length < 25) {
+                        document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
+                        document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
+                        return false;
+                    }
                 }
             }
         }
@@ -2265,7 +2265,7 @@
                 }
                 });*@
 
-            }
+                }
 
 
     });
