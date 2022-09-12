@@ -2228,15 +2228,17 @@
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
                 var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
-                if (temp == null || temp == '' || techcomment == null || techcomment == '') {
-                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level and comments for all the added rows."
+                if (temp == null || temp == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
                     document.getElementById('TechSkills_CommentError').focus();
                     return false;
                 }
+                if(techcomment!=null && techcomment!=''){
                 if (techcomment.length < 25) {
                     document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
                     document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
                     return false;
+                }
                 }
             }
         }
