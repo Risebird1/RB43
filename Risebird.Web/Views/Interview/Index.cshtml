@@ -118,11 +118,6 @@
                 </button>
 
                 <div class="modal-body" id="memberTableBody">
-
-
-
-
-
                 </div>
             </div>
 
@@ -435,7 +430,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                        <th>QC Status</th>*@
+                                                    <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -484,7 +479,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                        <th>QC Status</th>*@
+                                                    <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -546,10 +541,10 @@
                                                                 </span>
                                                             }
                                                             @*<span class="interview_8">
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Comment">
-                                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
-                                                                    </button>
-                                                                </span>*@
+                                                        <button class="mdc-fab app-fab--absolute " aria-label="Comment">
+                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                        </button>
+                                                        </span>*@
                                                             @if (item.interviewDate < DateTime.Now && (string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1)))
                                                             {
                                                                 <span class="interview_8">
@@ -693,23 +688,23 @@
                                                             <td></td>
                                                         }
                                                         @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
-                                                            {
-                                                                @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                                                                {
-                                                                    <td class="text-center">
-                                                                        <a style="color:hotpink; font-weight: bold">Status Pending</a>
-                                                                    </td>
+                                                    {
+                                                    @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                                    {
+                                                    <td class="text-center">
+                                                    <a style="color:hotpink; font-weight: bold">Status Pending</a>
+                                                    </td>
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }*@
+                                                    }
+                                                    else
+                                                    {
+                                                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
+                                                    }
+                                                    }
+                                                    else
+                                                    {
+                                                    <td></td>
+                                                    }*@
                                                         @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
                                                             <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
@@ -818,16 +813,16 @@
                                                         }
                                                         <td>@item.interviewSlot</td>
                                                         @*<td>@item.QCInterviewer</td>
-                                                            @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
-                                                            {
-                                                                <td>@item.QCStatusStatusDesc</td>
+                                                    @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
+                                                    {
+                                                    <td>@item.QCStatusStatusDesc</td>
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
+                                                    }
+                                                    else
+                                                    {
+                                                    <td></td>
 
-                                                            }*@
+                                                    }*@
                                                         <td>@item.HRCoordinatorEmailId</td>
 
                                                         <td class="interview-com">
@@ -855,10 +850,13 @@
                                                                             <p>
                                                                                 @item.HRComment.Substring(0, @item.HRComment.Length)
                                                                             </p>
-                                                                        </div>}
+                                                                        </div>
+                                                                    }
                                                                 }
                                                                 else
-                                                                { <div></div>}
+                                                                {
+                                                                    <div></div>
+                                                                }
 
 
                                                             </div>
@@ -1187,7 +1185,6 @@
             <div class="modal-body">
                 <div class="col-md-12 sb-container scroller">
                     <div id="divvideodetailsmodel" class="pdr-20">
-
                     </div>
                 </div>
 
@@ -1223,7 +1220,6 @@
             <input type="text" hidden id="txtinterviewid" />
             <div class="modal-body" style="padding: 2px 16px;">
                 <div style="padding:10px" id="divcandidatefeedback">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right nopad">
@@ -1231,7 +1227,9 @@
                             <div style="display: inline-block!important;margin-bottom:10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback"></div>
                             <div style="        display: inline-block !important;
         margin-bottom: 10px;
-"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeCandidateFeedbackModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="closeCandidateFeedbackModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1301,12 +1299,10 @@
             </button>
             <div class="modal-body">
                 <div style="padding:10px" id="divAadhaarKYC">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
-
                         </div>
                     </div>
                 </div>
@@ -1365,12 +1361,12 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
 
         //    $("#PrimarySkill").multiselect({
         //            includeSelectAllOption: true,
@@ -1452,17 +1448,17 @@
         var strtDte = '@strtDte';
         var endDte = '@endDte';
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var rFID =  @Html.Raw(Json.Serialize(RFID));
-        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-        var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
-        var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
-        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-        var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
-        var clientName =  @Html.Raw(Json.Serialize(ClientName));
-        var client =  @Html.Raw(Json.Serialize(Client));
-        var isCandidateResponsed =  @Html.Raw(Json.Serialize(IsCandidateResponsed));
-        var templateName =  @Html.Raw(Json.Serialize(TemplateName));
-        var aadhaarVerified =  @Html.Raw(Json.Serialize(AadhaarVerified));
+        var rFID = @Html.Raw(Json.Serialize(RFID));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var client = @Html.Raw(Json.Serialize(Client));
+        var isCandidateResponsed = @Html.Raw(Json.Serialize(IsCandidateResponsed));
+        var templateName = @Html.Raw(Json.Serialize(TemplateName));
+        var aadhaarVerified = @Html.Raw(Json.Serialize(AadhaarVerified));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -1494,7 +1490,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("successful",'@ViewBag.Message', "success");
+                swal.fire("successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
@@ -1787,7 +1783,6 @@
     }
 
     function SendBroadcast() {
-
         var message = document.getElementById("bcMessage").value;
         var subject = document.getElementById("bcSubject").value;
         var irfid = document.getElementById("irflist").value;
@@ -1797,12 +1792,18 @@
                 var receiver = ele[i].value;
             }
         }
+        var form_data = new FormData();
+        form_data.append("message", message);
+        form_data.append("subject", subject);
+        form_data.append("receiver", receiver);
+        form_data.append("irfid", irfid);
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/Interview/Broadcast",
-            data: {
-                'message': message, 'subject': subject, 'receiver': receiver, 'irfid': irfid
-            },
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
             success: function (data) {
                 window.location.href = '/Interview/Index';
 

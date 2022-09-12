@@ -40,6 +40,12 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+
+
+<link href="~/css/SidePanel/reset.css" rel="stylesheet" /><!-- CSS reset -->
+<link href="~/css/SidePanel/style.css" rel="stylesheet" /><!-- Resource style -->
+<link href="~/css/SidePanel/panelMain.css" rel="stylesheet" /><!-- Panel style -->
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -82,8 +88,20 @@
                         <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
                     </div>
                 </div>
+                <div class="pull-left">
+                    <div class="pull-left filtercon">
+                        <div id="myinterview_3">
+                            <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="col-md-4 pull-right">
+                <div class="col-md-6 pull-right">
                     <div class="pull-right">
                         <div class="pull-right">
                             <div class="pull-left">
@@ -98,18 +116,13 @@
                                     <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Update your availability" onclick="location.href='@Url.Action("IRFInterviewerMapping", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update your availability</font></span>
                                 </button>
                             </div>
-                            <div class="pull-left filtercon">
-                                <div id="myinterview_3">
-                                    <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
-                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                            <div class="mdc-button__ripple"></div>
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
-
-
+                            
+                            <!--<div class="pull-left">-->
+                                @*<a href="#0" class="cd-btn js-cd-panel-trigger" data-panel="main">Client Feed</a>*@
+                                <!--<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space @*cd-btn*@ js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
+                                    <span--> @*class="fa fa-life-ring"*@ <!--data-toggle="tooltip" data-placement="top" title="Client Feed" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feed</font></span>
+                                </button>
+                            </div>-->
 
                         </div>
 
@@ -725,7 +738,7 @@
             </button>
 
             <input type="text" hidden id="txtinterviewid" />
-            <div class="modal-body">
+            <div class="modal-body" style="color:black">
                 Dear Partner,<br />
 
                 Risebird is committed to provide safe and secure interviewing experience for all interviewees. Our interviews are designed to assess the skills of candidates irrespective of gender, attire, appearance, race, religion, caste etc. As our esteemed partners, we expect you to follow the guidelines in a way that represents our values. It is required that you conduct an interview in a professional manner.
@@ -762,6 +775,21 @@
 </div>
 
 <script src="~/js/ModalFormServerValidation.js"></script>
+
+
+<div class="cd-panel cd-panel--from-right js-cd-panel-main">
+    <header class="cd-panel__header">
+        <h1>Client Feed</h1>
+        <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+    </header>
+
+    <div class="cd-panel__container" style="background-color:lightyellow">
+        <div class="cd-panel__content" id="sidePanel_clientFeed_placeholder">
+            
+        </div> <!-- cd-panel__content -->
+    </div> <!-- cd-panel__container -->
+</div> <!-- cd-panel -->
+<script src="~/js/SidePanelJS/sidePanelMain.js"></script><!-- Side Panel Resource JavaScript -->
 @*<div id="CodedResumeNotificationModel" class="modal modal-bg" style="z-index:3;padding-top:5vw !important">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -788,6 +816,11 @@
 <script>
     var interviewUnassignedMinutes;
     $(document).ready(function () {
+        //setTimeout(function () {
+        //    $('button[data-panel="main"]').click();
+        //}, 1);
+
+
         $.ajax({
             type: "GET",
             url: "/Interview/GetInterviewUnassignedMinutes",
