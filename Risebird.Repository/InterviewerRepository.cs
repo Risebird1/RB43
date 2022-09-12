@@ -2211,5 +2211,36 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        #region Client Feed
+        public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewerEmail", interviewerEmail);
+                parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@postWhichDate", postWhichDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ClientFeedDataVM>(con, "[usp_GetClientFeedForInterviewer]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        #endregion
     }
 }

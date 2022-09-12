@@ -998,5 +998,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate)
+        {
+            try
+            {
+                return await _interviewerRepository.GetClientFeedForInterviewer(interviewerEmail, postWhichDate);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
