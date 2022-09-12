@@ -1,12 +1,9 @@
 ﻿$(document).ready(function () {
     var placeholderElement = $('#modal_clientComment_placeholder');
     $('button[data-toggle="ajax-modal"]').click(function (event) {
-        var url = $(this).data('url');
-        $.get(url).done(function (data) {
-            placeholderElement.html(data);
-            setClientFeedbackRating();
-            placeholderElement.find('.modal').modal('show');
-        });
+        OpenPopUp(event, placeholderElement, true);
+        //var url = $(this).data('url');
+        
     });
 
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
@@ -38,6 +35,15 @@
             event.preventDefault();
         }
     });
+
+    var audio_placeholderElement = $('#modal_clientAudio_placeholder');
+
+
+    $('button[data-toggle="ajax-modal-audio"]').click(function (event) {
+        OpenPopUp(event, audio_placeholderElement);
+
+    });
+
 });
 
 function ChangeClientFeedbackRating(value) {
@@ -73,4 +79,17 @@ function moreless(id) {
         $('#read_' + id).empty().html('Read less');
         $('#read_' + id).val('Readmore');
     }
+}
+
+function OpenPopUp(event, placeholderElement, setRating = false) {
+
+    //var url = $(this).data('url');
+    var url = event.delegateTarget.dataset.url;
+    $.get(url).done(function (data) {
+        placeholderElement.html(data);
+        if (setRating == true) {
+            setClientFeedbackRating();
+        }
+        placeholderElement.find('.modal').modal('show');
+    });
 }
