@@ -4352,5 +4352,33 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var model = new ClientAudioInstructionsWrapper();
+                    model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+
+                    model.Profile = profileName;
+                    return PartialView("GetClientAudioInstructionsFeedbacks", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+
     }
 }
