@@ -234,5 +234,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateSingleParticipantFlagForMeeting();
         Task<IEnumerable<CommonInterviewDetailsVM>> GetUpcomingInterviewsCandidates();
         Task<List<string>> FetchCandidateZoomMeetingsIdForCancel();
+        Task<RedoInterviewVM> GetInterviewDetailsById(int id);
+        Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model);
     }
 }

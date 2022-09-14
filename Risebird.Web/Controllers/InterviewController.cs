@@ -1469,9 +1469,8 @@ namespace Risebird.Web.Controllers
                         {
                             try
                             {
-                                zoomMeetingId = meetingUpdated.zoomLink.Split('/').Last();
                                 //meetingUpdated.ZoomMeetingId = Convert.ToInt64(zoomMeetingId);
-                                meetingUpdated.ZoomMeetingId = zoomMeetingId;
+                                meetingUpdated.ZoomMeetingId = (meetingUpdated.zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
                             }
                             catch (Exception)
                             {
@@ -6956,6 +6955,42 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Failed to update video details, please try again.");
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus)
+        {
+            var interviewdetails = await _meetingService.GetInterviewDetailsById(interviewid);
+            var model = new RedoInterviewVM();
+            model.interviewid = interviewid;
+            model.RequiredDuration = interviewdetails.RequiredDuration;
+            model.ActualDuration = interviewdetails.ActualDuration;
+            if (interviewstatus.ToLower() == "Selected")
+            {
+                model.Inappropriate = "Selection";
+            }
+            else
+            {
+                model.Inappropriate = "Rejection";
+            }
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> RedoInterviewDetails(RedoInterviewVM model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                model.ModifiedBy = emailId;
+                var result = await _meetingService.SaveRedoInterviewDetails(model);
+                if (result)
+                {
+                    TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is successfully.";
+                    return RedirectToAction("CompletedInterviews");
+                }
+            }
+            TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is failed.";
+            return RedirectToAction("CompletedInterviews");
         }
     }
 }

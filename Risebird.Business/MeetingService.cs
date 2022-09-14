@@ -3595,6 +3595,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<RedoInterviewVM> GetInterviewDetailsById(int id)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetInterviewDetailsById(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveRedoInterviewDetails(model);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 

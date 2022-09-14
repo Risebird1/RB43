@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -6134,5 +6135,51 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<RedoInterviewVM> GetInterviewDetailsById(int id)
+        {
+            try
+            {
+                var query = "Select cl.InterviewDuration as RequiredDuration,ic.VideoDuration as ActualDuration from  InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@id";
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<RedoInterviewVM>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", model.interviewid);
+                dynamicParameters.Add("@CandidateFace", model.CandidateFace);
+                dynamicParameters.Add("@RequiredDuration", model.RequiredDuration);
+                dynamicParameters.Add("@ActualDuration", model.ActualDuration);
+                dynamicParameters.Add("@Inappropriate", model.Inappropriate);
+                dynamicParameters.Add("@HandsOfCoding", model.HandsOfCoding);
+                dynamicParameters.Add("@Comments", model.Comments);
+                dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_AddRedoInterviewDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
     }
 }
