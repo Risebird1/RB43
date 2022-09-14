@@ -10,6 +10,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? FeedDate { get; set; }
         public string FeedType { get; set; }
         public string FeedText { get; set; }
+        public string FeedSubject { get; set; } //this is only relevant if the feedType is a broadcast email 
         public string FeedUrl { get; set; }
     }
 }

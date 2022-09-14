@@ -2,6 +2,23 @@
 @using Risebird.CommonHelper
 @using Risebird.Entities.Enum
 
+<style>
+    .box {
+        background-color: transparent;
+        width: 100%;
+        border: 3px solid black;
+        padding: 30px;
+        margin: 20px;
+    }
+    .broadcastContent {
+        font-family:auto;
+        font-size:18px;
+    }
+    .date{
+        font-style:italic
+    }
+</style>
+
 
 <!-- Modal -->
 @if (Model != null)
@@ -12,7 +29,7 @@
         {
             @if (feed.FeedDate != null)
             {
-                <p>@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+                <p class="date">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
             }
             <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                 <thead>
@@ -30,6 +47,20 @@
                     </tr>
                 </tbody>
             </table>
+        }
+        @if (feed.FeedType == ClientFeedbackType.Broadcast.GetDescription())
+        {
+            @if (feed.FeedDate != null)
+            {
+                <p class="date">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+            }
+            <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
+            <div class="box">
+                <p class="broadcastContent">@feed.FeedSubject</p>
+                <p class="broadcastContent">@feed.FeedText</p>
+            </div>
+            
+            
         }
     }
 

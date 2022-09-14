@@ -6591,20 +6591,26 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    
+
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
                         var model = new BroadcastModel
                         {
                             Message = message,
                             Subject = subject
                         };
                         model.IRFId = irfid;
+                        model.SentBy = emailId;
+                        model.Profile = profileName;
                         var result = _meetingService.BroadcastIRFmembers(model);
                         return Json(result.Result);
                     }
                     else
                     {
-                        return Json("You are not authorize to send broadcast.");
+                        return Json("You are not authorized to broadcast.");
                     }
                 }
                 else
