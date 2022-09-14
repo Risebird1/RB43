@@ -541,7 +541,7 @@
                                                                 @if (item.IsBiometricEnabled)
                                                                 {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span onclick="location.href = '@Url.Action(" VerifyAudio", "Interview" , new { candidateId=item.CandidateId, irfId=item.irfIntId, meetingId=item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                    <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview" , new { candidateId=item.CandidateId, irfId=item.irfIntId, meetingId=item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
                                                                 </button>
 
                                                                 }
@@ -555,7 +555,7 @@
                                                                 {
                                                                 <span class="interview_7">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                        <span onclick="location.href = '@Url.Action(" Edit", "Interview" , new { id=item.imid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "Interview" , new { id=item.imid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                     </button>
                                                                 </span>
                                                             }
@@ -590,7 +590,7 @@
                                                                 </button>
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Audio to Text">
-                                                                    <span onclick="location.href = '@Url.Action(" UploadInterviewAudio", "Interview" , new { interviewId=item.imid, candidateEmail=item.candidateEmail, irfName=item.IRFId, interviewDate=item.interviewDate, candidateName=item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
+                                                                    <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview" , new { interviewId=item.imid, candidateEmail=item.candidateEmail, irfName=item.IRFId, interviewDate=item.interviewDate, candidateName=item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
                                                                 </button>
                                                                 }
                                                                 @if (item.IsAadhaarVerificationRequired)
