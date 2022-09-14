@@ -1822,24 +1822,31 @@ namespace Risebird.Business
         {
             try
             {
-
+                string result = string.Empty;
                 //check the receiver and get all their emails from the db
                 var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
 
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
-
-                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                if (receiverEmails.Count() > 900)
+                {
+                    var flafcounts = receiverEmails.Count() / 900;
+                    for (int i = 0; i < flafcounts; i++)
+                    {
+                        var receiverEmailslist = receiverEmails.ToList().Skip(i * 900).Take(900).ToList();
+                        result = _notificationHelper.SendBroadcastMail(receiverEmailslist, supportEmails.ToList(), model);
+                    }
+                }
+                else
+                {
+                    result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                }
                 return result;
-
-
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Broadcast failed.";
             }
-
         }
 
         public async Task<string> BroadcastIRFmembers(BroadcastModel model)
@@ -1850,6 +1857,10 @@ namespace Risebird.Business
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
                 model.BroadcastReciever = "Interviewers";
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                if(model.Profile == ProfileEnum.Client.GetDescription() && !string.IsNullOrEmpty(result) && result.ToLower().Contains("success"))
+                {
+                    await _meetingRespository.StoreClientBroadcastMessage(model);
+                }
                 return result;
             }
             catch (Exception e)
@@ -3574,6 +3585,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<List<string>> FetchCandidateZoomMeetingsIdForCancel()
+        {
+            try
+            {
+                return await _meetingRespository.FetchCandidateZoomMeetingsIdForCancel();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

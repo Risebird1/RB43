@@ -560,8 +560,10 @@ namespace Risebird.CommonHelper
 
                 foreach (var supportEmail in supportEmails)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(supportEmail, null));
-
+                    if (!String.IsNullOrEmpty(supportEmail))
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(supportEmail, null));
+                    }
                 }
                 foreach (var email in receivers)
                 {

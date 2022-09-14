@@ -5166,7 +5166,6 @@ namespace Risebird.Web.Controllers
                     {
                         firstData = data.FirstOrDefault();
                     }
-
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -5204,15 +5203,7 @@ namespace Risebird.Web.Controllers
                         var lastStatus = scheduleStatusData.LastOrDefault();
                         if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                         {
-                            if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments == InterviewStatus.BorderLine.GetDescription()) /*&& candidateTimeline.QCStatus != 1*/)
-                            {
-                                candidateTimeline.CurrentStatus = string.Empty;
-                            }
-                            else
-                            {
-                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
-                            }
-
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
                         }
                         else
                         {
@@ -5256,10 +5247,6 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in interviewStatusData)
                         {
-                            if ((item.InterviewStatus == InterviewStatus.Selected.GetDescription() || item.InterviewStatus == InterviewStatus.BorderLine.GetDescription()) /*&& candidateTimeline.QCStatus != 1*/)
-                            {
-                                continue;
-                            }
                             var interviewStatusObj = new TimelineStatus();
 
                             interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");
@@ -6604,20 +6591,26 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    
+
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
                         var model = new BroadcastModel
                         {
                             Message = message,
                             Subject = subject
                         };
                         model.IRFId = irfid;
+                        model.SentBy = emailId;
+                        model.Profile = profileName;
                         var result = _meetingService.BroadcastIRFmembers(model);
                         return Json(result.Result);
                     }
                     else
                     {
-                        return Json("You are not authorize to send broadcast.");
+                        return Json("You are not authorized to broadcast.");
                     }
                 }
                 else
@@ -6884,7 +6877,7 @@ namespace Risebird.Web.Controllers
                         if (model.JDFile != null)
                         {
 
-                           
+
                             int virusScanResult = 0;
                             if (profileName == "Client")
                             {
