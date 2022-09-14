@@ -236,5 +236,6 @@ namespace Risebird.Repository.Interface
         Task<List<string>> FetchCandidateZoomMeetingsIdForCancel();
         Task<RedoInterviewVM> GetInterviewDetailsById(int id);
         Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model);
+        Task<bool> StoreClientBroadcastMessage(BroadcastModel model);
     }
 }

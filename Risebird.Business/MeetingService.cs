@@ -1857,6 +1857,10 @@ namespace Risebird.Business
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
                 model.BroadcastReciever = "Interviewers";
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                if(model.Profile == ProfileEnum.Client.GetDescription() && !string.IsNullOrEmpty(result) && result.ToLower().Contains("success"))
+                {
+                    await _meetingRespository.StoreClientBroadcastMessage(model);
+                }
                 return result;
             }
             catch (Exception e)

@@ -29,6 +29,7 @@ DECLARE @tbl_AllFeed TABLE (
 	[FeedDate] datetime,
 	[FeedType] varchar(25),
 	[FeedText] varchar(max),
+	[FeedSubject] varchar(500) null,
 	[FeedUrl] varchar(1000)
 ) 
 
@@ -44,8 +45,13 @@ where ti.UserId = @interviewerUserId and (irf.IsDeleted is null or irf.IsDeleted
 and cast(irf.EndDate as date) >= cast(@timeNow as date)
 
 insert into @tbl_AllFeed
-select irf.IRFId, irf.CreatedOn, 'Audio', null, AudioComment from IRF
+select irf.IRFId, irf.CreatedOn, 'Audio', null, null, AudioComment from IRF
 join @tbl_RelevantSkillChannels rsc on rsc.IRFId = irf.id
+
+insert into @tbl_AllFeed
+select irf.IRFId, cbm.SentAt, 'Broadcast', cbm.[Message], cbm.[Subject], null from ClientBroadcastMessages cbm
+join @tbl_RelevantSkillChannels rsc on rsc.IRFId = cbm.IRFId
+join IRF on IRF.id = cbm.IRFId
 
 
 select * from @tbl_AllFeed order by FeedDate desc
