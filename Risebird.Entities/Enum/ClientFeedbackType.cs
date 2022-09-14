@@ -9,5 +9,7 @@ namespace Risebird.Entities.Enum
     {
         [Description("Audio")]
         Audio = 1,
+        [Description("Broadcast")]
+        Broadcast = 2
     }
 }
