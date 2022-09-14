@@ -61,8 +61,8 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
         public string confirmationStatus { get; set; }
 
-        [Display(Name = "Zoom Meeting Link")]
-        [Required(ErrorMessage = "Please enter Zoom Meeting Link.")]
+        [Display(Name = "Meeting Link")]
+        [Required(ErrorMessage = "Please enter Meeting Link.")]
         public string zoomLink { get; set; }
 
         //[Display(Name = "Zoom Login Details")]

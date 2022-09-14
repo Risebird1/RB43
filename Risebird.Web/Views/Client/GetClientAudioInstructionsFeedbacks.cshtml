@@ -1,0 +1,49 @@
+﻿@model Risebird.Entities.ViewModel.ClientAudioInstructionsWrapper
+<!-- Modal -->
+@if (Model != null && Model.ClientAudioInstructionsList != null)
+{
+
+    <div class="modal fade" style="height:1000px" id="audioInstructions" tabindex="-1" role="dialog" aria-labelledby="audioLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="audioLabel">Audio Instructions/Feedback</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="audioInstructions_modal_body" style="max-height:400px; overflow:auto">
+
+
+
+                    @if (Model.ClientAudioInstructionsList != null && Model.ClientAudioInstructionsList.Count() > 0)
+                    {
+
+                        <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th width="100%" style="text-align:center">Audio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ClientAudioInstructionsList)
+                                {
+                                    <tr>
+                                        <td style="text-align:center">
+                                            <audio src="@item.AudioUrl" asp-append-version="true" controls></audio>
+                                        </td>
+                                    </tr>
+                                }
+                                
+                            </tbody>
+                        </table>
+                        
+                    }
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+}
+

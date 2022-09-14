@@ -7,5 +7,7 @@
         public string Message { get; set; }
 
         public int IRFId { get; set; }
+        public string SentBy { get; set; }
+        public string Profile { get; set; }
     }
 }
