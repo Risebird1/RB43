@@ -215,19 +215,19 @@ namespace Risebird.Web.Controllers
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         }
                         if (type == "RedoInterviews")
-                        {                           
+                        {
                             ViewBag.Type = "RedoInterviews";
-                            modelList = new List<MeetingVM> ();
+                            modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                         }
                         else if (type == "TemplateInterviews")
                         {
                             ViewBag.Type = "TemplateInterviews";
-                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                         }
                         else
                         {
                             ViewBag.Type = "Interviews";
-                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                         }
                         return View(modelList);
                     }
@@ -915,19 +915,18 @@ namespace Risebird.Web.Controllers
                         if (type == "RedoInterviews")
                         {
                             ViewBag.Type = "RedoInterviews";
-                            modelList = new List<MeetingVM>();
+                            modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                         }
                         else if (type == "TemplateInterviews")
                         {
                             ViewBag.Type = "TemplateInterviews";
-                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                         }
                         else
                         {
                             ViewBag.Type = "Interviews";
-                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName)).ToList();
+                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                         }
-
                         return View(modelList);
                     }
                     else
@@ -956,8 +955,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    HttpContext.Session.Remove("Interviewfilters");                  
-                    return RedirectToAction("Index",new { type = type });
+                    HttpContext.Session.Remove("Interviewfilters");
+                    return RedirectToAction("Index", new { type = type });
                 }
                 else
                 {
@@ -6117,35 +6116,42 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
-            if (results == "Success")
+            if (_meetingService.CheckInterviewCancellable(meetingid))
             {
-                if (status == 2)
+                var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
+                if (results == "Success")
                 {
-                    //send mail scheduling link
-                    var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
-                    var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
-                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
-                    List<string> interviewers = new List<string>();
-                    if (!String.IsNullOrEmpty(result.interviewer))
+                    if (status == 2)
                     {
-                        interviewers.Add(result.interviewer);
+                        //send mail scheduling link
+                        var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
+                        var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                        List<string> interviewers = new List<string>();
+                        if (!String.IsNullOrEmpty(result.interviewer))
+                        {
+                            interviewers.Add(result.interviewer);
+                        }
+                        if (!String.IsNullOrEmpty(result.EmailId))
+                        {
+                            interviewers.Add(result.EmailId);
+                        }
+                        var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                        var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                        var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                        DeleteMeetingLink(result.ZoomMeetingId);
+                        return Json("Successfully status updated, NO");
                     }
-                    if (!String.IsNullOrEmpty(result.EmailId))
-                    {
-                        interviewers.Add(result.EmailId);
-                    }
-                    var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                    var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                    var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
-                    DeleteMeetingLink(result.ZoomMeetingId);
-                    return Json("Successfully status updated, NO");
+                    return Json("Successfully status updated, Yes");
                 }
-                return Json("Successfully status updated, Yes");
-            }
-            else if (results == "Already Present")
-            {
-                return Json("Your interview is already cancelled,Kindly reschedule your interview or contact to HR/Admin.");
+                else if (results == "Already Present")
+                {
+                    return Json("Your interview is already cancelled,Kindly reschedule your interview or contact to HR/Admin.");
+                }
+                else
+                {
+                    return Json("Fail to Update Status, Please try again");
+                }
             }
             else
             {
@@ -6986,6 +6992,7 @@ namespace Risebird.Web.Controllers
                 return Json("Failed to update video details, please try again.");
             }
         }
+        #region Redo Interviews
         [HttpGet]
         public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus)
         {
@@ -7022,5 +7029,71 @@ namespace Risebird.Web.Controllers
             TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is failed.";
             return RedirectToAction("CompletedInterviews");
         }
+        [HttpGet]
+        public async Task<IActionResult> RejectRedoInterviewDetails(int interviewid)
+        {
+            var interviewdetails = await _meetingService.GetRedoInterviewDetailsById(interviewid);
+            return PartialView(interviewdetails);
+        }
+        [HttpPost]
+        public async Task<IActionResult> RejectRedoInterviewDetails(RedoInterviewVM model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                model.ModifiedBy = emailId;
+                var result = await _meetingService.UpdateRejectRedoInterviewDetails(model);
+                if (result)
+                {
+                    TempData["SuccessErrorMessageInterview"] = "Interview request for redo is successfully.";
+                    return RedirectToAction("Index", new { type = "RedoInterviews" });
+                }
+            }
+            TempData["SuccessErrorMessageInterview"] = "Interview request for redo is failed.";
+            return RedirectToAction("Index", new { type = "RedoInterviews" });
+        }
+        public async Task<IActionResult> SendRescheduleInvite(int irfId, string CandidateemailId, int interviewid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                    loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail))
+                        {
+                            var result = await _meetingService.ResetInterviewPayment(interviewid);
+                            TempData["SuccessErrorMessageInterview"] = "Invitation has been sent Successfully!";
+                            return RedirectToAction("Index", new { type = "RedoInterviews" });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Sorry! Could not send invite!";
+                            return RedirectToAction("Index", new { type = "RedoInterviews" });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Sorry! Could not send invite!";
+                return RedirectToAction("Index", new { type = "RedoInterviews" });
+            }
+        }
+        #endregion
     }
 }

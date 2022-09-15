@@ -5,6 +5,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class RedoInterviewVM
     {
+        public int id { get; set; }
         public int interviewid { get; set; }
         [Display(Name ="Candidate Face")]
         public string CandidateFace { get; set; }
@@ -18,6 +19,7 @@ namespace Risebird.Entities.ViewModel
         public string HandsOfCoding { get; set; }
         [Display(Name ="Redo Interview Reason")]
         public string Comments { get; set; }
+        public string RejectionComment { get; set; }
         public string ModifiedBy { get; set; }
     }
 }

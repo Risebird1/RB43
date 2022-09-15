@@ -5577,7 +5577,6 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
@@ -5990,6 +5989,10 @@ namespace Risebird.Repository
                     parameters.Add("@videoduration", videoduration);
                     var result = SqlMapper.Query(con, "usp_UpdatevideoDetailsById", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
+                    DynamicParameters parametersPoints = new DynamicParameters();
+                    parametersPoints.Add("@interviewId", interviewid);
+                    SqlMapper.Query(con, "usp_InsertOrUpdateInterviewPoints", parametersPoints,
+                                    commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -6209,6 +6212,89 @@ namespace Risebird.Repository
             }
             return false;
         }
-
+        public async Task<RedoInterviewVM> GetRedoInterviewDetailsById(int id)
+        {
+            try
+            {
+                var query = "Select * From RedoInterviews where interviewid=@id";
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<RedoInterviewVM>(query, parameters);
+                    return results.LastOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateRejectRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", model.interviewid);
+                dynamicParameters.Add("@id", model.id);
+                dynamicParameters.Add("@RejectionComment", model.RejectionComment);
+                dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateRejectRedoInterviewDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> ResetInterviewPayment(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_ResetInterviewPayment", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool CheckInterviewCancellable(int meetingid)
+        {
+            try
+            {
+                var query = "Select Count(*) From InterviewMeetings where id = @meetingid and interviewDate>@interviewdate";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@interviewdate", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

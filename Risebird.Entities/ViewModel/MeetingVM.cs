@@ -283,6 +283,7 @@ namespace Risebird.Entities.ViewModel
         public string TemplateName { get; set; }
         public bool AadhaarVerified { get; set; }
         public bool IsAadhaarVerificationRequired { get; set; }
+        public bool RedoInterview { get; set; }
     }
     public class VedioComments
     {

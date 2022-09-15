@@ -132,3 +132,15 @@ function FetchInterviewAadhaarDetails(candidateEmail) {
         }
     });
 }
+function NewgenerateCaptcha() {
+    showloader();
+    $.ajax({
+        type: "POST",
+        url: "/Aadhaar/ReGenerateAadhaarCaptcha",
+        data: { datenow: Date.now(), uuid: $("#aadhaaruuid").val() },
+        success: function (data) {
+            bindAadhaarData(data);
+            hideloader();
+        }
+    });
+}
