@@ -136,6 +136,9 @@
                     <button style="margin-bottom: 4px; margin-left: 17px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
                         Comments
                     </button>
+                    <button style="margin-bottom: 4px; margin-left: 10px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
+                        Audio Feedback
+                    </button>
 
                 </div>
 
@@ -1432,7 +1435,7 @@
 </div>
 
 <div id="modal_clientComment_placeholder"></div>
-
+<div id="modal_clientAudio_placeholder"></div>
 
 <div id="PublicUrlShareModel" class="modal modal-bg">
     <!-- Modal content -->
