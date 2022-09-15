@@ -117,12 +117,12 @@
                                 </button>
                             </div>
                             
-                            <!--<div class="pull-left">-->
+                            <div class="pull-left">
                                 @*<a href="#0" class="cd-btn js-cd-panel-trigger" data-panel="main">Client Feed</a>*@
-                                <!--<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space @*cd-btn*@ js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
-                                    <span--> @*class="fa fa-life-ring"*@ <!--data-toggle="tooltip" data-placement="top" title="Client Feed" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feed</font></span>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
+                                    <span data-toggle="tooltip" data-placement="top" title="Client Feed" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feed</font></span>
                                 </button>
-                            </div>-->
+                            </div>
 
 
                         </div>
@@ -780,7 +780,7 @@
 
 <div class="cd-panel cd-panel--from-right js-cd-panel-main">
     <header class="cd-panel__header">
-        <h1>Client Feed</h1>
+        <h1 style="font-weight:bold; font-size: 16px">Client Feed</h1>
         <a href="#0" class="cd-panel__close js-cd-close">Close</a>
     </header>
 
@@ -821,6 +821,12 @@
         //    $('button[data-panel="main"]').click();
         //}, 1);
 
+        function openClientFeed() {
+            $('button[data-panel="main"]').click();
+            setTimeout(openClientFeed, 60000);
+        }
+
+        openClientFeed();
 
         $.ajax({
             type: "GET",

@@ -2981,7 +2981,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to Update Status, Please try again");
             }
         }
-        public async Task<IActionResult> GetClientFeedForInterviewer()
+        public async Task<IActionResult> GetClientFeedForInterviewer(string postWhichDate = null)
         {
             try
             {
@@ -2993,10 +2993,21 @@ namespace Risebird.Web.Controllers
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
+                        DateTime? postWhichDateValue = null;
+                        if(!string.IsNullOrEmpty(postWhichDate))
+                        {
+                            postWhichDateValue = Convert.ToDateTime(postWhichDate);
+                        }    
+                        IEnumerable<ClientFeedDataVM> model = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue);
 
-                        IEnumerable<ClientFeedDataVM> model = await _interviewerService.GetClientFeedForInterviewer(emailId, null);
-
-                        return PartialView("GetClientFeedForInterviewer", model);
+                        if(model != null && model.Count() > 0)
+                        {
+                            return PartialView("GetClientFeedForInterviewer", model);
+                        }
+                        else
+                        {
+                            return Json(null);
+                        }
                     }
                     else
                     {

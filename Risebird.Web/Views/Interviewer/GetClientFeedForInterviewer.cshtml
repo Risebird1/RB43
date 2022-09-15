@@ -7,29 +7,42 @@
         background-color: transparent;
         width: 100%;
         border: 3px solid black;
-        padding: 30px;
+        padding: 20px;
         margin: 20px;
     }
+
     .broadcastContent {
-        font-family:auto;
-        font-size:18px;
+        font-family: auto;
+        font-size: 18px;
     }
-    .date{
-        font-style:italic
+
+    .date {
+        font-style: italic
+    }
+
+    .fillStar {
+        color: orange;
+    }
+
+    .boldContent {
+        font-weight: bold
     }
 </style>
 
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
 
 <!-- Modal -->
 @if (Model != null)
 {
+    int feedDataCount = 0;
     @foreach (var feed in Model)
     {
+        feedDataCount = feedDataCount + 1;
         @if (feed.FeedType == ClientFeedbackType.Audio.GetDescription())
         {
             @if (feed.FeedDate != null)
             {
-                <p class="date">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
             }
             <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                 <thead>
@@ -52,15 +65,55 @@
         {
             @if (feed.FeedDate != null)
             {
-                <p class="date">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
             }
             <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
             <div class="box">
                 <p class="broadcastContent">@feed.FeedSubject</p>
                 <p class="broadcastContent">@feed.FeedText</p>
             </div>
-            
-            
+
+
+        }
+        @if (feed.FeedType == ClientFeedbackType.Rating.GetDescription())
+        {
+            @if (feed.FeedDate != null)
+            {
+                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+            }
+            <p style="font-family:none">You have been Rated by: <span style="font-weight: bold;"><strong>@(feed.Client) HR</strong></span></p>
+            <div @*class="box"*@>
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="boldContent">Interview Date</td>
+                        <td>@feed.InterviewDate?.ToString("dddd, dd MMMM yyyy HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        <td class="boldContent">Candidate Name</td>
+                        <td>@feed.CandidateName</td>
+                    </tr>
+                    <tr>
+                        <td class="boldContent">Rating</td>
+                        <td>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                string fillStarClass = string.Empty;
+                                if (feed.FeedRating >= i)
+                                {
+                                    fillStarClass = "fillStar";
+                                }
+                                <span class="fa fa-star @fillStarClass"></span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="boldContent">Comments</td>
+                        <td>@feed.FeedText</td>
+                    </tr>
+                </table>
+            </div>
+
+
         }
     }
 
