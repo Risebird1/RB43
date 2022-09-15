@@ -29,6 +29,7 @@
     }
 </style>
 
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
 
 <!-- Modal -->
 @if (Model != null)
@@ -80,7 +81,7 @@
             {
                 <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
             }
-            <p style="font-family:none">You have been Rated by: <span style="font-weight: bold;"><strong>@feed.RatedBy</strong></span></p>
+            <p style="font-family:none">You have been Rated by: <span style="font-weight: bold;"><strong>@(feed.Client) HR</strong></span></p>
             <div @*class="box"*@>
                 <table class="table table-borderless">
                     <tr>
