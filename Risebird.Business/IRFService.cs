@@ -2828,11 +2828,11 @@ namespace Risebird.Business
                     }
                     if (irf.BussinessType == "B2B")
                     {
-                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
+                        _notificationHelper.SendRedoB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
                     }
                     else
                     {
-                        _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                        _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                     }
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
