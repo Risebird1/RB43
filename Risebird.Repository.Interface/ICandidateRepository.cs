@@ -26,5 +26,6 @@ namespace Risebird.Repository.Interface
         Task<Candidate> GetCandidateForFitmentReport(int candidateMasterId, int irfId);
         Task<bool> ProcessCandidateResume(int id);
         Task<string> FetchCandidateResumeById(int id);
+        Task<string> FetchBillingownerById(int id);
     }
 }
