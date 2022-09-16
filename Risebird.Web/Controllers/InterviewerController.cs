@@ -97,17 +97,31 @@ namespace Risebird.Web.Controllers
                                 var Assessmentgroups = String.Empty;
                                 foreach (var groups in item.AssessmentGroupId.Split(","))
                                 {
-                                    int assesmsnetid = Convert.ToInt32(groups);
-                                    if (String.IsNullOrEmpty(Assessmentgroups))
+                                    try
                                     {
-                                        Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                        int assesmsnetid = Convert.ToInt32(String.IsNullOrWhiteSpace(groups) ? "0" : groups);
+                                        if (String.IsNullOrEmpty(Assessmentgroups))
+                                        {
+                                            Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                                        }
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+
                                     }
                                 }
-                                item.AssessmentGroupId = Assessmentgroups;
+                                try
+                                {
+                                    item.AssessmentGroupId = Assessmentgroups;
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
                             }
                         }
                         if (HttpContext.Session.GetString("InterviewerIndexfilters") != null)
@@ -2989,18 +3003,18 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if(profileName == "Interviewer")
+                    if (profileName == "Interviewer")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
                         DateTime? postWhichDateValue = null;
-                        if(!string.IsNullOrEmpty(postWhichDate))
+                        if (!string.IsNullOrEmpty(postWhichDate))
                         {
                             postWhichDateValue = Convert.ToDateTime(postWhichDate);
-                        }    
+                        }
                         IEnumerable<ClientFeedDataVM> model = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue);
 
-                        if(model != null && model.Count() > 0)
+                        if (model != null && model.Count() > 0)
                         {
                             return PartialView("GetClientFeedForInterviewer", model);
                         }

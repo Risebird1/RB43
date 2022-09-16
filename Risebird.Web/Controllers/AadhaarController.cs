@@ -192,5 +192,27 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+        [HttpPost]
+        public async Task<JsonResult> ReGenerateAadhaarCaptcha(string datenow, string uuid)
+        {
+            var model = new AadhaarVM();
+            SetHeaderValue(model.headers, datenow);
+            model.request.uuid = uuid;
+            var client = new RestClient(apiendpoint + "getNewCaptcha");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
+            if (convertedResponse != null)
+            {
+                if (convertedResponse.response_status.status.ToLower() == "fail")
+                {
+
+                }
+                return Json(new { image = convertedResponse.response_data.captcha, uuid = model.request.uuid });
+            }
+            return Json(new { image = "", uuid = model.request.uuid });
+        }
     }
 }

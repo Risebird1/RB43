@@ -299,69 +299,69 @@
                                                                             </div>
                                                                         </div>
                                                                         @*<div class="form-group">
-                                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
-                                                                                    Approval Status
-                                                                                </label>
-                                                                                <div class="col-md-12 col-sm-12">
-                                                                                    <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                                        @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
-                                                                                        {
-                                                                                            @if (item != null && item != "")
-                                                                                            {
-                                                                                                <option value="@item">@item</option>
-                                                                                            }
-                                                                                        }
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
-                                                                                    Selection Status
-                                                                                </label>
-                                                                                <div class="col-md-12 col-sm-12">
-                                                                                    <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
-                                                                                        @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
-                                                                                        {
-                                                                                            @if (item != null && item != "")
-                                                                                            {
-                                                                                                <option value="@item">@item</option>
-                                                                                            }
-                                                                                        }
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
-                                                                                    Joining Status
-                                                                                </label>
-                                                                                <div class="col-md-12 col-sm-12">
-                                                                                    <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                                        @foreach (var item in Model.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
-                                                                                        {
-                                                                                            @if (item != null && item != "")
-                                                                                            {
-                                                                                                <option value="@item">@item</option>
-                                                                                            }
-                                                                                        }
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus">
-                                                                                    Offer Status
-                                                                                </label>
-                                                                                <div class="col-md-12 col-sm-12">
-                                                                                    <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
-                                                                                        @foreach (var item in Model.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
-                                                                                        {
-                                                                                            @if (item != null && item != "")
-                                                                                            {
-                                                                                                <option value="@item">@item</option>
-                                                                                            }
-                                                                                        }
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>*@
+                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
+                                                                        Approval Status
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                        <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                                                                        {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }
+                                                                        }
+                                                                        </select>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
+                                                                        Selection Status
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                        <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
+                                                                        {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }
+                                                                        }
+                                                                        </select>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
+                                                                        Joining Status
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                        <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
+                                                                        {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }
+                                                                        }
+                                                                        </select>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus">
+                                                                        Offer Status
+                                                                        </label>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                        <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
+                                                                        {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }
+                                                                        }
+                                                                        </select>
+                                                                        </div>
+                                                                        </div>*@
                                                                         <div class="form-group col-md-12">
 
 
@@ -615,39 +615,34 @@
                                                                                             else
                                                                                             {
                                                                                                 <div class="article">
-
                                                                                                     <p>
                                                                                                         @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
                                                                                                     </p>
                                                                                                 </div>
                                                                                             }}
                                                                                         else
-                                                                                        { <div></div>}
-
-
-
-
-
-
-
+                                                                                        {
+                                                                                            <div></div>
+                                                                                        }
                                                                                         <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-
-
                                                                                     </div>
-
                                                                                 </td>
-
-
-
-                                                                                @if ((item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                                                @if (!item.RedoInterview)
                                                                                 {
-                                                                                    <td>
-                                                                                        <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
-                                                                                    </td>
+                                                                                    @if ((item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>No Report</td>
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <td>No Report</td>
+                                                                                    <td>Redo Interview</td>
                                                                                 }
                                                                                 <td class="text-center action">
 
@@ -1041,8 +1036,7 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
+                    function () {
                         location.reload();
                         //window.location.href = '/Interview/Index';
                     }
@@ -1058,143 +1052,143 @@
 
 
 <script>
-            $(document).ready(function () {
-                var d = new Date();
-                d.setMonth(d.getMonth() - 5);
-                var _month = d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth();
-                var _day = d.getDate() > 9 ? d.getDate() : "0" + d.getDate();
-                $("#StartDate").attr("min", d.getFullYear() + "-" + _month + "-" + _day);
-                $("#ResetFilter").click(function () {
-                    ResetFilter();
-                })
-                if ('@filter' != "") {
-                    ApplySessionFilter();
-                }
-                //$("#PrimarySkill").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#CandidateName").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#ClientHR").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#InterviewDate").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#ClientName").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#ApprovalStatus").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#SelectionStatus").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#JoiningStatus").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$("#OfferStatus").multiselect({
-                //    includeSelectAllOption: true,
-                //    selectedClass: 'active1',
-                //    buttonWidth: '100%',
-                //    maxHeight: 200
-                //});
-                //$('#meeting').DataTable({
-                //    "pagingType": "full_numbers",
-                //    "lengthMenu": [
-                //        [10, 25, 50, -1],
-                //        [10, 25, 50, "All"]
-                //    ],
-                //    order: [],
-                //    responsive: true,
-                //    language: {
-                //        search: "_INPUT_",
-                //        searchPlaceholder: "Search records",
-                //    },
-                //    "fnInitComplete": function () {
-                //        $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
-                //        $(".dataTables_filter").keyup(function (e) {
-                //            if ($(this).val() != "") { $("#x").hide(); }
-                //            else { $("#x").show(); }
-                //        });
-                //    }
-
-                //});
-                //var table = $('#meeting').DataTable();
-            });
-
-        function changeicon(id) {
-            if ($("#" + id).attr("data-changes") == "1") {
-                $("#" + id).addClass("shows");
-                $('.' + id).addClass("in");
-                $("#" + id).attr("data-changes", "2");
-            }
-            else {
-                $("#" + id).removeClass("shows");
-                $('.' + id).removeClass("in");
-                $("#" + id).attr("data-changes", "1");
-            }
+    $(document).ready(function () {
+        var d = new Date();
+        d.setMonth(d.getMonth() - 5);
+        var _month = d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth();
+        var _day = d.getDate() > 9 ? d.getDate() : "0" + d.getDate();
+        $("#StartDate").attr("min", d.getFullYear() + "-" + _month + "-" + _day);
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
         }
-            function ResetFilter() {
-                window.location.href = "/Client/ResetSelectedPriorityClientMeetingsfilters";
+        //$("#PrimarySkill").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#CandidateName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#ClientHR").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#InterviewDate").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#ClientName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#ApprovalStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#SelectionStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#JoiningStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#OfferStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$('#meeting').DataTable({
+        //    "pagingType": "full_numbers",
+        //    "lengthMenu": [
+        //        [10, 25, 50, -1],
+        //        [10, 25, 50, "All"]
+        //    ],
+        //    order: [],
+        //    responsive: true,
+        //    language: {
+        //        search: "_INPUT_",
+        //        searchPlaceholder: "Search records",
+        //    },
+        //    "fnInitComplete": function () {
+        //        $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+        //        $(".dataTables_filter").keyup(function (e) {
+        //            if ($(this).val() != "") { $("#x").hide(); }
+        //            else { $("#x").show(); }
+        //        });
+        //    }
+
+        //});
+        //var table = $('#meeting').DataTable();
+    });
+
+    function changeicon(id) {
+        if ($("#" + id).attr("data-changes") == "1") {
+            $("#" + id).addClass("shows");
+            $('.' + id).addClass("in");
+            $("#" + id).attr("data-changes", "2");
+        }
+        else {
+            $("#" + id).removeClass("shows");
+            $('.' + id).removeClass("in");
+            $("#" + id).attr("data-changes", "1");
+        }
+    }
+    function ResetFilter() {
+        window.location.href = "/Client/ResetSelectedPriorityClientMeetingsfilters";
 
 
-            }
-            function ApplySessionFilter() {
-                var strtDte = '@strtDte';
-                var endDte = '@endDte';
-                var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-                var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
-                var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-                var interviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
-                var clientName =  @Html.Raw(Json.Serialize(ClientName));
+    }
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var candidateName = @Html.Raw(Json.Serialize(CandidateName));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var interviewDate = @Html.Raw(Json.Serialize(InterviewDate));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
 
-                var selectionStatus = @Html.Raw(Json.Serialize(SelectionStatus));
-                var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
-                var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
-                var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
+        var selectionStatus = @Html.Raw(Json.Serialize(SelectionStatus));
+        var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
+        var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
+        var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
 
 
-                $('input[name=StartDate]').val(strtDte);
-                $('input[name=EndDate]').val(endDte);
-                $("#PrimarySkill").val(primarySkillsArr);
-                $("#CandidateName").val(candidateName);
-                $("#ClientHR").val(clientHR);
-                $("#InterviewDate").val(interviewDate);
-                $("#ClientName").val(clientName);
-                $("#SelectionStatus").val(selectionStatus);
-                $("#ApprovalStatus").val(approvalStatus);
-                $("#JoiningStatus").val(joiningStatus);
-                $("#OfferStatus").val(offerStatus);
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#CandidateName").val(candidateName);
+        $("#ClientHR").val(clientHR);
+        $("#InterviewDate").val(interviewDate);
+        $("#ClientName").val(clientName);
+        $("#SelectionStatus").val(selectionStatus);
+        $("#ApprovalStatus").val(approvalStatus);
+        $("#JoiningStatus").val(joiningStatus);
+        $("#OfferStatus").val(offerStatus);
 
-                var form = $("#form").serialize();
+        var form = $("#form").serialize();
 
-            }
+    }
 </script>
 
 <script>

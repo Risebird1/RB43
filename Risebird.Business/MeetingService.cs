@@ -1857,7 +1857,7 @@ namespace Risebird.Business
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
                 model.BroadcastReciever = "Interviewers";
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
-                if(model.Profile == ProfileEnum.Client.GetDescription() && !string.IsNullOrEmpty(result) && result.ToLower().Contains("success"))
+                if (model.Profile == ProfileEnum.Client.GetDescription() && !string.IsNullOrEmpty(result) && result.ToLower().Contains("success"))
                 {
                     await _meetingRespository.StoreClientBroadcastMessage(model);
                 }
@@ -3597,6 +3597,83 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<RedoInterviewVM> GetInterviewDetailsById(int id)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetInterviewDetailsById(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveRedoInterviewDetails(model);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<RedoInterviewVM> GetRedoInterviewDetailsById(int id)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetRedoInterviewDetailsById(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateRejectRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var result = await _meetingRespository.UpdateRejectRedoInterviewDetails(model);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> ResetInterviewPayment(int id)
+        {
+            try
+            {
+                var result = await _meetingRespository.ResetInterviewPayment(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public bool CheckInterviewCancellable(int meetingid)
+        {
+            try
+            {
+                return _meetingRespository.CheckInterviewCancellable(meetingid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }
