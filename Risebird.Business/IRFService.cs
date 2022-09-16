@@ -983,6 +983,7 @@ namespace Risebird.Business
         {
             try
             {
+                
                 //check if the candidate email exists for the IRFId
                 var duplicate = (await _irfRepository.GetIRFCandidates(obj.IRFId)).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
                 if (duplicate != null && duplicate.Any())
