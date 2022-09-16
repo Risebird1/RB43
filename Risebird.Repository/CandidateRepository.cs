@@ -565,5 +565,29 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<string> FetchBillingownerById(int id)
+        {
+            try
+            {
+                var query = "Select ul.EmailId From IRF join UserList ul on ul.id=IRF.BillingOwner where IRF.id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

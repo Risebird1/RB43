@@ -1054,19 +1054,46 @@ namespace Risebird.Web.Controllers
                 {
                     model.EmailId = model.EmailId.ToLower();
                 }
-                var result = _irfService.AddCandidate(model, emailids, model.profileName).Result;
-                if (model.Candidateesumeid > 0)
+
+                var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
+                var ClientDomain = string.Empty;
+                if (string.IsNullOrWhiteSpace(ClientEmailid))
                 {
-                    await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
-                    var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids);
-                    if (String.IsNullOrEmpty(id))
+                    ClientDomain = "risebird.io";
+                }
+                else
+                {
+                    ClientDomain = ClientEmailid.Split("@")[1];
+                }
+                string result = string.Empty;
+                if ((model.EmailId.Split("@").Contains("risebird.io")) || model.EmailId.Split("@").Contains(ClientDomain)) //HttpContext.Session.GetString("IRFId")
+                {
+                    if (ClientDomain == "risebird.io")
                     {
-                        TempData["SuccessErrorMessageCandidateResume"] = result;
-                        return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                        result = "Domain @Risebird.io is prohibited for a candidate";
                     }
                     else
                     {
-                        return RedirectToAction("ResumesPublicly", new { irfId = model.IRFId, irfName = model.IRFName, emailid = emailids, id = id });
+                        result = "Domain @Risebird.io and " + ClientDomain + " is prohibited for a candidate";
+                    }
+                }
+                else
+                {
+                    result = _irfService.AddCandidate(model, emailids, model.profileName).Result;
+
+                    if (model.Candidateesumeid > 0)
+                    {
+                        await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
+                        var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids);
+                        if (String.IsNullOrEmpty(id))
+                        {
+                            TempData["SuccessErrorMessageCandidateResume"] = result;
+                            return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            return RedirectToAction("ResumesPublicly", new { irfId = model.IRFId, irfName = model.IRFName, emailid = emailids, id = id });
+                        }
                     }
                 }
                 TempData["SuccessErrorMessageCandidate"] = result;
@@ -1156,17 +1183,44 @@ namespace Risebird.Web.Controllers
                         //{
                         //    model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
                         //}
-                        if (await _irfService.UpdateCandidate(model, emailid))
+                        //var result = "Risebird.io is not allowed to add as candidate";
+                        var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
+                        var ClientDomain = string.Empty;
+                        if (string.IsNullOrWhiteSpace(ClientEmailid))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate has been updated Successfully!";
-                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                            ClientDomain = "risebird.io";
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Failed to update Candidate!";
-                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                            ClientDomain = ClientEmailid.Split("@")[1];
                         }
-
+                        string result = string.Empty;
+                        if (!model.EmailId.Split("@").Contains("risebird.io") && !model.EmailId.Split("@").Contains(ClientDomain)) //HttpContext.Session.GetString("IRFId"))
+                        {
+                            if (await _irfService.UpdateCandidate(model, emailid))
+                            {
+                                TempData["SuccessErrorMessageCandidate"] = "Candidate has been updated Successfully!";
+                                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageCandidate"] = "Failed to update Candidate!";
+                                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                            }
+                        }
+                        else
+                        {
+                            if (ClientDomain == "risebird.io")
+                            {
+                                result = "Domain @Risebird.io is prohibited for a candidate";
+                                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                            }
+                            else
+                            {
+                                result = "Domain @Risebird.io  and " + ClientDomain + " is prohibited for a candidate";
+                                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                            }
+                        }
                     }
                     else
                     {
@@ -2710,6 +2764,16 @@ namespace Risebird.Web.Controllers
                                         var workSheet = currentSheet.First();
                                         var noOfCol = workSheet.Dimension.End.Column;
                                         var noOfRow = workSheet.Dimension.End.Row;
+                                        var ClientEmailid = _candidateService.FetchBillingownerById(IRFId).Result;
+                                        var ClientDomain = string.Empty;
+                                        if (string.IsNullOrWhiteSpace(ClientEmailid))
+                                        {
+                                            ClientDomain = "risebird.io";
+                                        }
+                                        else
+                                        {
+                                            ClientDomain = ClientEmailid.Split("@")[1];
+                                        }
                                         for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
                                         {
                                             if (workSheet.Cells[rowIterator, 2].Value != null)
@@ -2739,7 +2803,12 @@ namespace Risebird.Web.Controllers
 
                                                     };
 
-                                                    candidateList.Add(candidate);
+
+                                                    if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
+                                                    {
+                                                        candidateList.Add(candidate);
+                                                    }
+
 
                                                 }
                                                 catch (Exception ex)
