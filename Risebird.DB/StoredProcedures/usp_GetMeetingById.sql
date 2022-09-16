@@ -9,7 +9,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_GetMeetingById]    
+CREATE PROCEDURE [dbo].[usp_GetMeetingById]    
     
 @interviewId int,  
 @timeNow datetime  
@@ -71,6 +71,7 @@ SELECT [InterviewMeetings].id as imid
   ,ca.CandidateMasterId  
   ,HasDistinctParticipants
   ,ul.AadhaarVerified
+  ,IRF.MeetingPlatform
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    
