@@ -1432,10 +1432,13 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")//|| emailId.ToLower() == "parvathi_sg@risebird.io" || emailId.ToLower() == "ambika_ratkalle@risebird.io") 
                     {
-                        AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
+                        AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);                                              
                         if (meetingToUpdate == null)
                             return RedirectToAction("Index");
-
+                        if (meetingToUpdate.MeetingPlatform == null)
+                        {
+                            meetingToUpdate.MeetingPlatform = "Zoom";
+                        }
                         SetAddUpdateMeetingParameters(meetingToUpdate);
 
                         if (meetingToUpdate != null)
@@ -1605,7 +1608,7 @@ namespace Risebird.Web.Controllers
             var list = new List<SelectListItem>
             {
                 new SelectListItem { Text = "No Clients", Value = "" }
-            };
+            };       
             var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                        select new { ID = (int)s, Name = s.GetDescription() };
             meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");

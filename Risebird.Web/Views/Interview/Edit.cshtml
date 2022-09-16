@@ -17,7 +17,7 @@
 <div class="main-panel" id="main-panel">
     <div class="content client">
         <div class="row bg-white">
-            <div class="col-md-12">
+            <div class="col-md-12">               
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("Edit", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
@@ -43,7 +43,7 @@
 
                                         <input list="skillChannels" name="IRFId" id="IRFId" class="form-control text-box single-line" onchange="SkillChannelChanged(this.value)">
                                         <datalist id="skillChannels">
-                                            @foreach(var item in Model.IRFList)
+                                            @foreach (var item in Model.IRFList)
                                             {
                                                 <option value="@item.Value">@item.Text</option>
                                             }
@@ -120,12 +120,15 @@
                                             @Html.EditorFor(model => model.zoomDetails, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.zoomDetails, "", new { @class = "text-danger" })
                                         </div>*@
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Zoom Login Details</label>
+                                    @if (Model.MeetingPlatform != "Risebird Meet")
+                                    {
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Zoom Login Details</label>
 
-                                        @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.risebirdHR, "", new { @class = "text-danger" })
-                                    </div>
+                                            @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.risebirdHR, "", new { @class = "text-danger" })
+                                        </div>
+                                    }
                                     <div class="form-group">
                                         @Html.LabelFor(Model => Model.ConfirmationStatusList, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -160,22 +163,22 @@
                                     </div>
 
                                     @*<div class="form-group">
-                                        @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @if ((Model.QualityControllersList.Any(x => x.Text == Model.QCInterviewer)) || string.IsNullOrEmpty(Model.QCInterviewer))
-                                        {
-                                            @Html.DropDownListFor(x => Model.QCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @if ((Model.QualityControllersList.Any(x => x.Text == Model.QCInterviewer)) || string.IsNullOrEmpty(Model.QCInterviewer))
+                                            {
+                                                @Html.DropDownListFor(x => Model.QCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
-                                        }
-                                        else
-                                        {
-                                            @Html.EditorFor(model => model.QCInterviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
-                                            @Html.DropDownListFor(x => Model.NewActiveQCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            }
+                                            else
+                                            {
+                                                @Html.EditorFor(model => model.QCInterviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
+                                                @Html.DropDownListFor(x => Model.NewActiveQCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
-                                        }
-                                        @Html.ValidationMessageFor(model => model.QCInterviewer, "", new { @class = "text-danger" })
+                                            }
+                                            @Html.ValidationMessageFor(model => model.QCInterviewer, "", new { @class = "text-danger" })
 
-                                    </div>*@
+                                        </div>*@
                                     <div style=" margin-top: -9px;">
                                         Upload Resume
 
@@ -309,28 +312,28 @@
 
                                     </div>
                                     @Html.LabelFor(model => model.IsEmergency, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label nopad", @style = "font-size: 13px; top: -5px;" })
-                                <div>
-                                    <div class="mdc-checkbox">
-                                        @Html.CheckBoxFor(m => m.HasDistinctParticipants, new { @class = "mdc-checkbox__native-control" })
+                                    <div>
+                                        <div class="mdc-checkbox">
+                                            @Html.CheckBoxFor(m => m.HasDistinctParticipants, new { @class = "mdc-checkbox__native-control" })
 
 
-                                        <div class="mdc-checkbox__background">
-                                            <svg class="mdc-checkbox__checkmark"
-                                                 viewBox="0 0 24 24">
-                                                <path class="mdc-checkbox__checkmark-path"
-                                                      fill="none"
-                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                            </svg>
-                                            <div class="mdc-checkbox__mixedmark"></div>
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark"
+                                                     viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path"
+                                                          fill="none"
+                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                            <div class="mdc-checkbox__ripple"></div>
+
+
                                         </div>
-                                        <div class="mdc-checkbox__ripple"></div>
-
+                                        @Html.LabelFor(model => model.HasDistinctParticipants, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label nopad", @style = "font-size: 13px; top: -5px;" })
 
                                     </div>
-                                    @Html.LabelFor(model => model.HasDistinctParticipants, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label nopad", @style = "font-size: 13px; top: -5px;" })
 
-                                </div>
-                                    
                                 </div>
 
                             </div>
@@ -355,6 +358,7 @@
                             @Html.HiddenFor(m => m.OldrisebirdHR)
                             @Html.HiddenFor(m => m.OldzoomLink)
                             @Html.HiddenFor(m => m.CandidateMasterId)
+                            @Html.HiddenFor(m => m.MeetingPlatform)
                         }
                     </div>
                 </div>

@@ -400,5 +400,17 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<string> FetchBillingownerById(int id)
+        {
+            try
+            {
+                return await _candidateRepository.FetchBillingownerById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }
