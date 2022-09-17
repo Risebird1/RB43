@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
-    @using Risebird.Entities
-    @using Newtonsoft.Json;
-    @using Microsoft.AspNetCore.Http
-    @using Risebird.Entities.ViewModel
-    @using Risebird.CommonHelper
-    @inject IHttpContextAccessor HttpContextAccessor
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
 
-    @{
+@{
     ViewData["Title"] = "Interviews";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -25,400 +25,400 @@
     bool[] IsCandidateResponsed = new bool[] { };
     string[] TemplateName = new string[] { };
     bool[] AadhaarVerified = new bool[] { };
-    }
+}
 
-    @if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
-    {
+@if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
+{
     filter = JsonConvert.DeserializeObject<InterviewFilter>
         (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
-        strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-        endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-        primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-        RFID = filter.RFID != null ? filter.RFID : new string[] { };
-        ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
-        ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
-        MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
-        InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
-        Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
-        ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
-        Client = filter.Client != null ? filter.Client : new string[] { };
-        IsCandidateResponsed = filter.IsCandidateResponsed != null ? filter.IsCandidateResponsed : new bool[] { };
-        TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
-        AadhaarVerified = filter.AadhaarVerified != null ? filter.AadhaarVerified : new bool[] { };
-        }
-        <script>
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
+    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
+    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Client = filter.Client != null ? filter.Client : new string[] { };
+    IsCandidateResponsed = filter.IsCandidateResponsed != null ? filter.IsCandidateResponsed : new bool[] { };
+    TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
+    AadhaarVerified = filter.AadhaarVerified != null ? filter.AadhaarVerified : new bool[] { };
+}
+<script>
     var Header = "Interviews";
     $('#txtpageHeader').empty().html(Header);
-        </script>
+</script>
 
-        <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
-        <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 
-        <div class="main-panel" id="main-panel">
+<div class="main-panel" id="main-panel">
 
-            <div class="pt30">
-                <div class="col-md-12 nopad" style="margin:0px;">
-                    <div class="card-header bg-w clearfix">
-                        <div class="pull-left">
-                            <h4 class="card-title"></h4>
-                            <div class="mobile-view"> <h4 class="card-title"> Interviews</h4></div>
-                        </div>
-                        <div class="pull-left">
-                            @if (ViewBag.Type == "Interviews")
-                            {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
-                            }
-                            else if(ViewBag.Type == "TemplateInterviews")
-                            {
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
-                            }
-                            else
-                            {
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
-                            }
-                        </div>
-                        <div class="pull-right">
-                            <div>
-                                <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action(" InterviewsExporttoExcel", "Interview" )'"></i></span>
-                                <span class="interview_3">
-                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                        <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                        <div class="mdc-button__ripple"></div>
-                                    </button>
-                                </span>
-                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
-                                {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action(" SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
-                                </button>
-                                }
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Interviews</h4></div>
+                </div>
+                <div class="pull-left">
+                    @if (ViewBag.Type == "Interviews")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
+                    }
+                    else if (ViewBag.Type == "TemplateInterviews")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
+                    }
+                </div>
+                <div class="pull-right">
+                    <div>
+                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" )'"></i></span>
+                        <span class="interview_3">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                        </span>
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
+                            </button>
+                        }
 
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
+                        <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                         </button>*@
 
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action(" Add", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
-                                </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("Add", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+                        </button>
 
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action(" MultipleCandidateInvites", "Interview" )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
-                                </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview" )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
+                        </button>
 
 
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div id="interviewerMemberModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
+        </div>
+    </div>
+    <div id="interviewerMemberModal" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
 
 
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
-                            </div>
-                            <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
-                        </div>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                    </div>
+                    <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
+                </button>
 
                 <div class="modal-body" id="memberTableBody">
                 </div>
             </div>
 
-                </div>
-            </div>
+        </div>
+    </div>
 
-            <div class="content interview client">
-                <div class="row bl-bg">
-                    <div class="col-md-12">
-                        <div class="mdc-card card bl-bg">
-                            <div class="mdc-card-wrapper__text-section">
-                                <div class="loader text-center">
+    <div class="content interview client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
 
-                                    <img src="~/Newassets/img/lazyload.gif" />
-                                </div>
-                                <div class="dataloading">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
 
-                                    <div class="toolbar">
+                            <div class="toolbar">
 
-                                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content">
-                                                    <div class="filheader">
-                                                        <div class="filavatar">
-                                                            <span class="fa fa-filter"></span>
+                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <form action="@Url.Action("Index","Interview", new { type = ViewBag.Type })" method="post" id="form">
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                </div>
+                                                            </div>
+
+
+
+
                                                         </div>
-                                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                                    </div>
-                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    <form action="@Url.Action("Index","Interview", new { type = ViewBag.Type })" method="post" id="form">
-
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6 col-sm-6 border-rv">
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                            Start Date
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                                        </div>
-                                                                    </div>
-
-
-
-
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                                 </div>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                            End Date
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 border-rv">
 
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="TemplateName">Template</label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="TemplateName" data-placeholder="None Selected" name="TemplateName" class="form-control multiselect" multiple="multiple">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="TemplateName">Template</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="TemplateName" data-placeholder="None Selected" name="TemplateName" class="form-control multiselect" multiple="multiple">
 
-                                                                                @foreach (var item in Model.Select(x => x.TemplateName).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
+                                                                        @foreach (var item in Model.Select(x => x.TemplateName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
                                                                                 <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
+                                                                            }
+                                                                        }
+                                                                    </select>
 
 
-                                                                        </div>
-                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Jd Title</label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="PrimarySkill" data-placeholder="None Selected" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Jd Title</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="PrimarySkill" data-placeholder="None Selected" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
-                                                                                @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
+                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
                                                                                 <option value="@item.Split(" |")[0]">@item.Split("|")[0]</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
+                                                                            }
+                                                                        }
+                                                                    </select>
 
 
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
-                                                                            Client
-                                                                            HR
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="ClientHR" name="ClientHR" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
-                                                                                <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
-                                                                            Meeting Status
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="MeetingStatus" name="MeetingStatus" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Where(x => !string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
-                                                                                <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
-                                                                            Interviewer
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="Interviewer" name="Interviewer" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
-                                                                                <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
-                                                                            Project Name
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="ClientName" name="ClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
-                                                                                <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
-                                                                <div class="col-md-6 col-sm-6">
-
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel ID</label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="RFID" name="RFID" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-
-                                                                                @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                    Client
+                                                                    HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientHR" name="ClientHR" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
                                                                                 <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
-                                                                            Confirmation Status
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="ConfirmationStatus" data-placeholder="None Selected" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                    Meeting Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="MeetingStatus" name="MeetingStatus" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Where(x => !string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
                                                                                 <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
-                                                                            Interview Status
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="InterviewStatus" data-placeholder="None Selected" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
+                                                                    Interviewer
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Interviewer" name="Interviewer" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
                                                                                 <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
-                                                                            Client
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="Client" name="Client" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
-                                                                                @foreach (var item in Model.Select(x => x.Client).Distinct().ToList())
-                                                                                {
-                                                                                @if (item != null && item != "")
-                                                                                {
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                                                                    Project Name
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
                                                                                 <option value="@item">@item</option>
-                                                                                }
-                                                                                }
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="IsCandidateResponsed">
-                                                                            Candidate Responsed
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="IsCandidateResponsed" data-placeholder="None Selected" name="IsCandidateResponsed" class="form-control multiselect" multiple="multiple">
-                                                                                <option value="true">Responsed</option>
-                                                                                <option value="false">No Response</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerified">
-                                                                            Aadhaar Verified
-                                                                        </label>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <select id="AadhaarVerified" data-placeholder="None Selected" name="AadhaarVerified" class="form-control multiselect" multiple="multiple">
-                                                                                <option value="true">Verified</option>
-                                                                                <option value="false">Not Verified</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <div>
-                                                                            <div class="col-md-12 col-sm-12">
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel ID</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="RFID" name="RFID" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
+                                                                    Confirmation Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ConfirmationStatus" data-placeholder="None Selected" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                    Interview Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="InterviewStatus" data-placeholder="None Selected" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
+                                                                    Client
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Client" name="Client" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.Client).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsCandidateResponsed">
+                                                                    Candidate Responsed
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="IsCandidateResponsed" data-placeholder="None Selected" name="IsCandidateResponsed" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="true">Responsed</option>
+                                                                        <option value="false">No Response</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerified">
+                                                                    Aadhaar Verified
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="AadhaarVerified" data-placeholder="None Selected" name="AadhaarVerified" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="true">Verified</option>
+                                                                        <option value="false">Not Verified</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12">
 
 
-                                                                                <button type="button" id="ResetFilter" onclick="ResetFilter('@ViewBag.Type')" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                                    <font style="font-size:12px;"> Reset Filter</font>
-                                                                                </button>
+                                                                        <button type="button" onclick="ResetFilter('@ViewBag.Type')" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
 
 
-                                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                                    <font style="font-size:12px;"> Apply Filter</font>
-                                                                                </button>
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
 
 
-                                                                            </div>
-
-                                                                        </div>
                                                                     </div>
 
                                                                 </div>
                                                             </div>
 
                                                         </div>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                                    </div>
 
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                    </div>
+
+                                </div>
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
 
                                     <div id="tableID" class="second interview">
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
@@ -518,14 +518,16 @@
                                                     <th>Has Distinct Participants</th>
                                                     <th>Template Used</th>
 
-                                                        </tr>
-                                                    </tfoot>
-                                                    <tbody>
-                                                        @foreach (var item in Model)
-                                                        {
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
 
-                                                        <tr id=@item.imid>
-                                                            <td class="text-center action">
+                                                    <tr id=@item.imid>
+                                                        <td class="text-center action">
+                                                            @if (ViewBag.Type != "RedoInterviews")
+                                                            {
                                                                 <span class="interview_4">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                         <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
@@ -540,136 +542,149 @@
                                                                 </span>
                                                                 @if (item.IsBiometricEnabled)
                                                                 {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span onclick="location.href = '@Url.Action(" VerifyAudio", "Interview" , new { candidateId=item.CandidateId, irfId=item.irfIntId, meetingId=item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                                </button>
-
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview" , new { candidateId=item.CandidateId, irfId=item.irfIntId, meetingId=item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                    </button>
                                                                 }
                                                                 <!--<span class="interview_6">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Upload Videoes">-->
                                                                 @*<span onclick="OpenVideoUploadPopup(@item.imid)" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>*@
                                                                 <!--<span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
-                                                                    </button>
+                                                                </button>
                                                                 </span>-->
                                                                 @if (item.interviewDate.AddHours(1) >= DateTime.Now)
                                                                 {
-                                                                <span class="interview_7">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                        <span onclick="location.href = '@Url.Action(" Edit", "Interview" , new { id=item.imid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                    </button>
-                                                                </span>
-                                                            }
-                                                            @*<span class="interview_8">
+                                                                    <span class="interview_7">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                            <span onclick="location.href = '@Url.Action("Edit", "Interview" , new { id=item.imid })'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+                                                                @*<span class="interview_8">
                                                         <button class="mdc-fab app-fab--absolute " aria-label="Comment">
                                                         <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
                                                         </button>
                                                         </span>*@
-                                                            @if (item.interviewDate < DateTime.Now && (string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1)))
-                                                            {
-                                                                <span class="interview_8">
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Update Video Details">
-                                                                        <span onclick="UpdateVideoDetails(@item.imid,'@item.candidateEmail')" title="Update Video Details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
-                                                                    </button>
-                                                                </span>
+                                                                @if (item.interviewDate < DateTime.Now && (string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1)))
+                                                                {
+                                                                    <span class="interview_8">
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Update Video Details">
+                                                                            <span onclick="UpdateVideoDetails(@item.imid,'@item.candidateEmail')" title="Update Video Details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                                        </button>
+                                                                    </span>
                                                                 }
-                                                                <span class="interview_9">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                    </button>
-                                                                </span>
                                                                 @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                 {
-                                                                <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                                    <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
                                                                 }
-
                                                                 @if (item.IsBiometricEnabled == true)
                                                                 {
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Analyse Sentiment">
-                                                                    <span onclick="SentimentModalClick('@item.imid')" title="Analyse Sentiment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M9 14h6v1.5H9z" /><circle cx="15.5" cy="9.5" r="1.5" /><circle cx="8.5" cy="9.5" r="1.5" /><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg></span>
-                                                                </button>
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Audio to Text">
-                                                                    <span onclick="location.href = '@Url.Action(" UploadInterviewAudio", "Interview" , new { interviewId=item.imid, candidateEmail=item.candidateEmail, irfName=item.IRFId, interviewDate=item.interviewDate, candidateName=item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
-                                                                </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Analyse Sentiment">
+                                                                        <span onclick="SentimentModalClick('@item.imid')" title="Analyse Sentiment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M9 14h6v1.5H9z" /><circle cx="15.5" cy="9.5" r="1.5" /><circle cx="8.5" cy="9.5" r="1.5" /><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg></span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Audio to Text">
+                                                                        <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview" , new { interviewId=item.imid, candidateEmail=item.candidateEmail, irfName=item.IRFId, interviewDate=item.interviewDate, candidateName=item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
+                                                                    </button>
                                                                 }
                                                                 @if (item.IsAadhaarVerificationRequired)
                                                                 {
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Aadhaar Verified Data">
-                                                                    <span title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
-                                                                        <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/aadhaar-logo-png.jpg" title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Aadhaar Verified Data">
+                                                                        <span title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
+                                                                            <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/aadhaar-logo-png.jpg" title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                    //Send Candadidate Link with Client notiifation and Interview price 0
+                                                                <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                    <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                     </span>
                                                                 </button>
-                                                                }
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                    <span onclick="OpenRedoFormModel('@item.imid')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                            <span class="interview_9">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                    <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                        </td>
+                                                        <td title=@item.IRFId> @item.IRFId </td>
+                                                        <td> @item.interviewDate </td>
 
-                                                            </td>
-                                                            <td title=@item.IRFId> @item.IRFId </td>
-                                                            <td> @item.interviewDate </td>
 
-
-                                                            @if (item.IsOnline == 1)
-                                                            {
+                                                        @if (item.IsOnline == 1)
+                                                        {
                                                             <td>
                                                                 <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
                                                             </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>
                                                                 @item.candidateName
                                                             </td>
-                                                            }
+                                                        }
 
 
-                                                            @if (item.zoomLink != null && item.zoomLink != "")
-                                                            {
+                                                        @if (item.zoomLink != null && item.zoomLink != "")
+                                                        {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
 
                                                             <td style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
-                                                            }
-                                                            @if (item.IsProctor)
-                                                            {
+                                                        }
+                                                        @if (item.IsProctor)
+                                                        {
                                                             <td>Proctor</td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>Interview</td>
-                                                            }
-                                                            <td> @item.JDTiltle.Split("|")[0] </td>
+                                                        }
+                                                        <td> @item.JDTiltle.Split("|")[0] </td>
 
-                                                            @if (item.zoomLink != null && item.zoomLink != "")
-                                                            {
-                                                            <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Meeting Link</a> </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        @if (item.zoomLink != null && item.zoomLink != "")
+                                                        {
+                                                            <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
+                                                        }
+                                                        else
+                                                        {
 
                                                             <td><span style="color:red">No Meeting Link</span></td>
-                                                            }
-                                                            @if (@item.interviewer != null || @item.interviewer != "")
-                                                            {
+                                                        }
+                                                        @if (@item.interviewer != null || @item.interviewer != "")
+                                                        {
                                                             @if (item.IsInterviewerOnline == 1)
                                                             {
-                                                            <td>
-                                                                <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
-                                                            </td>
+                                                                <td>
+                                                                    <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
+                                                                </td>
                                                             }
                                                             else
                                                             {
-                                                            <td>
-                                                                @item.interviewer
-                                                            </td>
+                                                                <td>
+                                                                    @item.interviewer
+                                                                </td>
                                                             }
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td></td>
-                                                            }
-                                                            @if (@item.encodedresumeLink != null || @item.encodedresumeLink != "")
-                                                            {
+                                                        }
+                                                        @if (@item.encodedresumeLink != null || @item.encodedresumeLink != "")
+                                                        {
 
                                                             <td>
 
@@ -677,33 +692,33 @@
                                                             </td>
 
 
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>
 
                                                                 <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink>Resume</a>
                                                             </td>
 
-                                                            }
+                                                        }
 
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
+                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                        {
                                                             <td class="text-center">
 
                                                                 <a style="color:red"> @item.confirmationStatus</a>
                                                             </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td class="text-center"> @item.confirmationStatus</td>
-                                                            }
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
+                                                        }
+                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                        {
                                                             <td>@item.Cancellationsource</td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td></td>
                                                         }
                                                         @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -727,107 +742,107 @@
                                                         @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
                                                             <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>@item.MeetingStatusStatusDesc</td>
 
-                                                            }
+                                                        }
 
-                                                            @if (item.InterviewStatus == 2)
-                                                            {
+                                                        @if (item.InterviewStatus == 2)
+                                                        {
                                                             <td class="text-center">
                                                                 <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                             </td>
-                                                            }
-                                                            else if (item.InterviewStatus == 4)
-                                                            {
+                                                        }
+                                                        else if (item.InterviewStatus == 4)
+                                                        {
                                                             <td class="text-center">
                                                                 <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                             </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td class="text-center">@item.intervieweStatusStatDesc</td>
-                                                            }
+                                                        }
 
-                                                            @if (item.IsCandidateResponsed)
-                                                            {
+                                                        @if (item.IsCandidateResponsed)
+                                                        {
                                                             @if (item.CandidateResponse)
                                                             {
-                                                            <td>Responsed (Yes)</td>
+                                                                <td>Responsed (Yes)</td>
                                                             }
                                                             else
                                                             {
-                                                            <td>Responsed (No)</td>
+                                                                <td>Responsed (No)</td>
                                                             }
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>No Response</td>
-                                                            }
+                                                        }
 
-                                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                                            {
+                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                        {
                                                             <td>
 
                                                                 <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
                                                             </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>No Resume</td>
-                                                            }
-                                                            @if (item.JDLink != null && item.JDLink != "")
-                                                            {
+                                                        }
+                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                        {
                                                             <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>No JD</td>
-                                                            }
+                                                        }
 
 
-                                                            <td> @item.risebirdHR</td>
+                                                        <td> @item.risebirdHR</td>
 
-                                                            @if (item.IsHrOnline == 1)
-                                                            {
+                                                        @if (item.IsHrOnline == 1)
+                                                        {
                                                             <td>
                                                                 <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
                                                             </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>
                                                                 @item.CandidateClientHR
                                                             </td>
-                                                            }
-                                                            <td> @item.ClientName </td>
+                                                        }
+                                                        <td> @item.ClientName </td>
 
-                                                            @if (item.VideoLink != null && item.VideoLink != "")
-                                                            {
+                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
                                                             <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink.Replace(" "," %20")>Video</a> </td>
                                                             @if (item.VideoDuration > 0)
                                                             {
-                                                            <td>@item.VideoDuration</td>
+                                                                <td>@item.VideoDuration</td>
 
                                                             }
                                                             else
                                                             {
-                                                            <td></td>
+                                                                <td></td>
                                                             }
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>No Video</td>
                                                             <td>NA</td>
-                                                            }
-                                                            @if (item.IsEmergency)
-                                                            {
+                                                        }
+                                                        @if (item.IsEmergency)
+                                                        {
                                                             <td>Yes</td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>No</td>
                                                         }
                                                         <td>@item.interviewSlot</td>
@@ -844,27 +859,27 @@
                                                     }*@
                                                         <td>@item.HRCoordinatorEmailId</td>
 
-                                                            <td class="interview-com">
+                                                        <td class="interview-com">
 
 
-                                                                <div id="section">
-                                                                    @if (item.HRComment != null && item.HRComment != "")
-                                                                    {
+                                                            <div id="section">
+                                                                @if (item.HRComment != null && item.HRComment != "")
+                                                                {
                                                                     @if (item.HRComment.Length > 22)
                                                                     {
-                                                                    <div class="article">
-                                                                        <p style="margin-bottom:0px;">
-                                                                            @item.HRComment.Substring(0, 22)
-                                                                        </p>
-                                                                        <p class="moretext_@item.imid moretext">
-                                                                            @item.HRComment.Substring(22, @item.HRComment.Length - 22)
-                                                                        </p>
-                                                                    </div>
-                                                                    <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+                                                                        <div class="article">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.HRComment.Substring(0, 22)
+                                                                            </p>
+                                                                            <p class="moretext_@item.imid moretext">
+                                                                                @item.HRComment.Substring(22, @item.HRComment.Length - 22)
+                                                                            </p>
+                                                                        </div>
+                                                                        <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
                                                                     }
                                                                     else
                                                                     {
-                                                                    <div class="article">
+                                                                        <div class="article">
 
                                                                             <p>
                                                                                 @item.HRComment.Substring(0, @item.HRComment.Length)
@@ -878,320 +893,320 @@
                                                                 }
 
 
-                                                                </div>
+                                                            </div>
 
 
 
 
-                                                            </td>
-                                                            @*
-                                                            <td>@item.HRComment</td>*@
-                                                            <td>@item.staffingAgency</td>
-                                                            <td> @item.interviewDuration </td>
-                                                            <td> @item.joiningTime</td>
-                                                            <td> @item.preferredLocation</td>
-                                                            <td> @item.expectedPerHourRate</td>
-                                                            <td> @item.currentEmployerName</td>
-                                                            <td>
-                                                                @item.IsEmergency
-                                                            </td>
-                                                            @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                            {
+                                                        </td>
+                                                        @*
+                                                    <td>@item.HRComment</td>*@
+                                                        <td>@item.staffingAgency</td>
+                                                        <td> @item.interviewDuration </td>
+                                                        <td> @item.joiningTime</td>
+                                                        <td> @item.preferredLocation</td>
+                                                        <td> @item.expectedPerHourRate</td>
+                                                        <td> @item.currentEmployerName</td>
+                                                        <td>
+                                                            @item.IsEmergency
+                                                        </td>
+                                                        @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                        {
                                                             <td>
 
                                                                 <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" "," %20")>Aadhar</a>
                                                             </td>
-                                                            }
-                                                            else
-                                                            {
+                                                        }
+                                                        else
+                                                        {
                                                             <td>No document</td>
-                                                            }
-                                                            <td>
-                                                                @item.NextLevelApprovalStat
-                                                            </td>
-                                                            <td>
-                                                                <div class="talk-bubble tri-right border-bubble right-in ">
-                                                                    <div class="talktext">
-                                                                        @if (item.ApprovalComments != null && item.ApprovalComments.Length > 0)
-                                                                        {
+                                                        }
+                                                        <td>
+                                                            @item.NextLevelApprovalStat
+                                                        </td>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in ">
+                                                                <div class="talktext">
+                                                                    @if (item.ApprovalComments != null && item.ApprovalComments.Length > 0)
+                                                                    {
 
                                                                         <a href="#" data-tooltip="@item.ApprovalComments">  <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea></a>
-                                                                        }
-                                                                        else
-                                                                        {
+                                                                    }
+                                                                    else
+                                                                    {
                                                                         <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
-                                                                        }
+                                                                    }
 
-                                                                    </div>
                                                                 </div>
-                                                            </td>
+                                                            </div>
+                                                        </td>
 
 
 
-                                                            <td>
-                                                                @item.FinalSelectionStat
-                                                            </td>
-                                                            <td>
-                                                                <div class="talk-bubble tri-right border-bubble right-in ">
-                                                                    <div class="talktext">
-                                                                        @if (item.FinalComments != null && item.FinalComments.Length > 0)
-                                                                        {
+                                                        <td>
+                                                            @item.FinalSelectionStat
+                                                        </td>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in ">
+                                                                <div class="talktext">
+                                                                    @if (item.FinalComments != null && item.FinalComments.Length > 0)
+                                                                    {
 
                                                                         <a href="#" data-tooltip="@item.FinalComments"><textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea></a>
-                                                                        }
+                                                                    }
 
-                                                                        else
-                                                                        {
+                                                                    else
+                                                                    {
                                                                         <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
-                                                                        }
+                                                                    }
 
 
-                                                                    </div>
                                                                 </div>
-                                                            </td>
-                                                            <td>
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
                                                                 <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
                                                                 <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
-                                                                }
-                                                            </td>
-                                                            <td>@item.imid</td>
-                                                            @if (item.HasDistinctParticipants)
-                                                            {
+                                                            }
+                                                        </td>
+                                                        <td>@item.imid</td>
+                                                        @if (item.HasDistinctParticipants)
+                                                        {
                                                             <td>Yes</td>
-                                                            }
-                                                            else
-                                                            {
-                                                            <td>No</td>
-                                                            }
-                                                            @if (!string.IsNullOrEmpty(item.TemplateName))
-                                                            {
-                                                            <td>@item.TemplateName</td>
-                                                            }
-                                                            else
-                                                            {
-                                                            <td>None</td>
-                                                            }
-                                                        </tr>
                                                         }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(item.TemplateName))
+                                                        {
+                                                            <td>@item.TemplateName</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>None</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <!-- end content-->
                                 </div>
 
-                                <!-- end col-md-12 -->
+
                             </div>
-
-                            <div id="myModal" class="modal modal-bg">
-                                <!-- Modal content -->
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-
-
-
-                                        <div class="filheader">
-                                            <div class="filavatar">
-                                                <span class="publicsharing-icon">
-
-
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                                </span>
-                                            </div>
-                                            <h5 class="modal-title pull-left"> Call Candidate!</h5>
-                                        </div>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                                        </button>
-
-
-
-                                        <div class="modal-body">
-                                            <div>
-                                                <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
-
-                                            </div>
-
-                                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-
-                            <!-- end row -->
+                            <!-- end content-->
                         </div>
 
+                        <!-- end col-md-12 -->
                     </div>
-                </div>
 
+                    <div id="myModal" class="modal modal-bg">
+                        <!-- Modal content -->
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+
+
+
+                                <div class="filheader">
+                                    <div class="filavatar">
+                                        <span class="publicsharing-icon">
+
+
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                        </span>
+                                    </div>
+                                    <h5 class="modal-title pull-left"> Call Candidate!</h5>
+                                </div>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                </button>
+
+
+
+                                <div class="modal-body">
+                                    <div>
+                                        <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+
+                                    </div>
+
+                                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- end row -->
+                </div>
 
             </div>
         </div>
 
-        <div id="broadcastModal" class="modal modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
+
+    </div>
+</div>
+
+<div id="broadcastModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
 
 
 
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="broadcastPopUp">&times;</span>
+            </button>
+
+            <div class="modal-body">
+
+                <div class="col-md-12 col-sm-12">
+                    <p class="desp-label fx-17">Please select from the following:</p>
+                    <div class="form-group clearfix">
+                        <div class="broad-ele">
+                            <input type="radio" id="radOne" name="receivers" value="Interviewer">
+                            <label for="radOne" class="control-label desp-label">All Interviewers</label>
                         </div>
-                        <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>
-                    </div>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="broadcastPopUp">&times;</span>
-                    </button>
-
-                    <div class="modal-body">
-
-                        <div class="col-md-12 col-sm-12">
-                            <p class="desp-label fx-17">Please select from the following:</p>
-                            <div class="form-group clearfix">
-                                <div class="broad-ele">
-                                    <input type="radio" id="radOne" name="receivers" value="Interviewer">
-                                    <label for="radOne" class="control-label desp-label">All Interviewers</label>
-                                </div>
-                                <div class="broad-ele">
-                                    <input type="radio" id="radTwo" name="receivers" value="Candidate">
-                                    <label for="radTwo" class="control-label desp-label">All Candidates</label>
-                                </div>
-                                <div class="broad-ele">
-                                    <input type="radio" id="radThree" name="receivers" value="Client">
-                                    <label for="radThree" class="control-label desp-label">All Clients</label>
-                                </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radTwo" name="receivers" value="Candidate">
+                            <label for="radTwo" class="control-label desp-label">All Candidates</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radThree" name="receivers" value="Client">
+                            <label for="radThree" class="control-label desp-label">All Clients</label>
+                        </div>
 
 
-                                <div class="broad-ele">
-                                    <div class="pull-left">
-                                        <input type="radio" id="radFour" name="receivers" value="IRF">
-                                        <label for="radFour" class="control-label desp-label">IRF</label>
-                                    </div>
+                        <div class="broad-ele">
+                            <div class="pull-left">
+                                <input type="radio" id="radFour" name="receivers" value="IRF">
+                                <label for="radFour" class="control-label desp-label">IRF</label>
+                            </div>
 
 
-                                    <div id="IRFLIST" class="form-group pull-left" style="display:none;margin-left:15px;">
-                                        <label class="control-label desp-label pull-left" style="padding-top: 2px;">IRF LIST</label>
-                                        <div class="form-group pull-left col-md-9">
-                                            <select id="irflist" class="select-css form-control">
-                                                @foreach (var item in Model.Select(x => (x.irfIntId, x.IRFId)).Distinct().ToList())
-                                                {
-                                                @if (item.IRFId != null && item.IRFId != "")
-                                                {
+                            <div id="IRFLIST" class="form-group pull-left" style="display:none;margin-left:15px;">
+                                <label class="control-label desp-label pull-left" style="padding-top: 2px;">IRF LIST</label>
+                                <div class="form-group pull-left col-md-9">
+                                    <select id="irflist" class="select-css form-control">
+                                        @foreach (var item in Model.Select(x => (x.irfIntId, x.IRFId)).Distinct().ToList())
+                                        {
+                                            @if (item.IRFId != null && item.IRFId != "")
+                                            {
                                                 <option value="@item.irfIntId">@item.IRFId</option>
-                                                }
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
+                                            }
+                                        }
+                                    </select>
                                 </div>
-
-
-
-
-
                             </div>
                         </div>
 
 
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
-                                <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
-                            </div>
 
-                            <div class="form-group">
-                                <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
-                                <div>
-                                    <div class="text-areadiv1">
-                                        <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
-                                    </div>
-                                </div>
 
-                            </div>
 
-                        </div>
-
-                        <div class="col-md-12 col-sm-12 text-right">
-                            <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
-                            <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
-                        </div>
                     </div>
+                </div>
+
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
+                        <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
+                        <div>
+                            <div class="text-areadiv1">
+                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
+                    <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div id="sentimentModal" class="modal">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-
-
-
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span class="publicsharing-icon">
-
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
-                            </span>
-                        </div>
-                        <h5 class="modal-title pull-left"> Upload Video for Sentiment Analysis</h5>
-                    </div>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="sentimentPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
+<div id="sentimentModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
 
 
 
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
 
 
-                    <div class="modal-body">
-                        <ul style="padding:0px;text-align: center">
-                            <li style="list-style:none;font-size: 15px; line-height: 18px;color:red">Kindly ensure the duration of the video file does not exceed 90 seconds.</li>
-                        </ul>
-
-                        @using (Html.BeginForm("AnalyseSentiment", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                        {
-                        <div class="form-group">
-
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
-
-                                <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
-
-                            <input type="file" accept=".mp4, .ogg, .webm" name="UploadedFile" />
-
-                        </div>
-                        <div class="">
-                            <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnVideoUpload" value="Upload">
-                        </div>
-                        <input type="hidden" id="sentimentImid" name="sentimentImid">
-
-                        }
-
-
-                    </div>
-                    <div class="modal-footer" style="background:#fff;"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                    </span>
                 </div>
+                <h5 class="modal-title pull-left"> Upload Video for Sentiment Analysis</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="sentimentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+
+
+
+            <div class="modal-body">
+                <ul style="padding:0px;text-align: center">
+                    <li style="list-style:none;font-size: 15px; line-height: 18px;color:red">Kindly ensure the duration of the video file does not exceed 90 seconds.</li>
+                </ul>
+
+                @using (Html.BeginForm("AnalyseSentiment", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="form-group">
+
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
+
+                            <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                        <input type="file" accept=".mp4, .ogg, .webm" name="UploadedFile" />
+
+                    </div>
+                    <div class="">
+                        <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnVideoUpload" value="Upload">
+                    </div>
+                    <input type="hidden" id="sentimentImid" name="sentimentImid">
+
+                }
+
 
             </div>
+            <div class="modal-footer" style="background:#fff;"></div>
         </div>
 
-        <div id="VideoDetailsModel" class="modal modal-bg">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
+    </div>
+</div>
+
+<div id="VideoDetailsModel" class="modal modal-bg">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
 
             <div class="filheader">
                 <div class="filavatar">
@@ -1208,34 +1223,34 @@
                     </div>
                 </div>
 
-                        <div class="col-md-12 ">
-                            <div class="text-right">
-                                <input style="color:#fff;line-height: 13px;" type="button" onclick="SaveVideoDetails()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
-                                <input style="color:#fff;line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                            </div>
-                        </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="SaveVideoDetails()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div id="CandidateFeedbackModel" class="modal modal-bg" style="z-index:3">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span>
+<div id="CandidateFeedbackModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
 
 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
-                            </span>
-                        </div>
-                        <h5 class="modal-title pull-left">Candidate Feedback </h5>
-                    </div>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span onclick="closeCandidateFeedbackModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Feedback </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeCandidateFeedbackModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
 
             <input type="text" hidden id="txtinterviewid" />
             <div class="modal-body" style="padding: 2px 16px;">
@@ -1255,50 +1270,50 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+<div id="UpdateVideoDetailsModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Video Details </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeUpdateVideoDetailsModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <input type="hidden" id="txtvideointerviewid" />
+                    <input type="hidden" id="txtVideoCandidateEmaild" />
+                    <div style="padding:10px">
+                        <input type="text" id="txtVideoURL" class="form-control" placeholder="Video URL Link" />
+                    </div>
+                    <div style="padding:10px">
+                        <input type="number" id="txtVideoduration" class="form-control" placeholder="Video Duration(Minutes)" />
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right nopad">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="SaveVideoDetailsById()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                            </div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="closeUpdateVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="UpdateVideoDetailsModel" class="modal modal-bg" style="z-index:3">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
-                            </span>
-                        </div>
-                        <h5 class="modal-title pull-left">Video Details </h5>
-                    </div>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span onclick="closeUpdateVideoDetailsModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
-
-                    <input type="text" hidden id="txtinterviewid" />
-                    <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row" style="padding:10px">
-                            <input type="hidden" id="txtvideointerviewid" />
-                            <input type="hidden" id="txtVideoCandidateEmaild" />
-                            <div style="padding:10px">
-                                <input type="text" id="txtVideoURL" class="form-control" placeholder="Video URL Link" />
-                            </div>
-                            <div style="padding:10px">
-                                <input type="number" id="txtVideoduration" class="form-control" placeholder="Video Duration(Minutes)" />
-                            </div>
-                        </div>
-                        <div>
-                            <div class="col-md-12 text-right nopad">
-                                <div>
-                                    <div style="display: inline-block!important;margin-bottom:10px;">
-                                        <input style="color: #fff;line-height: 13px;" type="button" onclick="SaveVideoDetailsById()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
-                                    </div>
-                                    <div style="display: inline-block !important;margin-bottom: 10px;">
-                                        <input style="color: #fff;line-height: 13px;" type="button" onclick="closeUpdateVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
         </div>
     </div>
@@ -1330,10 +1345,28 @@
         </div>
     </div>
 </div>
+<div id="RedoInterviewModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Redo Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeRedoInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="divredoInterview">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 <script src="~/js/Aadhaar.js"></script>
 
-        <script>
+<script>
     var closeMember = document.getElementById("membersPopUp");
     // When the user clicks on <span> (x), close the modal
     closeMember.onclick = function () {
@@ -1356,8 +1389,8 @@
         });
     }
 
-        </script>
-        <script>
+</script>
+<script>
     var span = document.getElementById("sentimentPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -1375,19 +1408,19 @@
         modal.style.display = "block";
         document.getElementById("sentimentImid").value = imid;
     }
-        </script>
+</script>
 
 
-        <script type="text/javascript">
+<script type="text/javascript">
 
-            $(document).ready(function () {
+    $(document).ready(function () {
 
-            //$("#ResetFilter").click(function () {
-            //    ResetFilter();
-            //})
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+        //$("#ResetFilter").click(function () {
+        //    ResetFilter();
+        //})
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
 
         //    $("#PrimarySkill").multiselect({
         //            includeSelectAllOption: true,
@@ -1499,12 +1532,12 @@
     }
 
 
-        </script>
+</script>
 
 
-        @if (ViewBag.Message != null)
-        {
-        <script type="text/javascript">
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
         $(document).ready(function () {
             my_code();
         });
@@ -1520,13 +1553,13 @@
         }
 
         //window.onload = my_code();
-        </script>
-        }
+    </script>
+}
 
 
 
 
-        <script>
+<script>
     function searchResult() {
         $('#meeting').DataTable();
     }
@@ -1601,9 +1634,9 @@
     //    };
     //})();
 
-        </script>
+</script>
 
-        <script type="text/javascript">
+<script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
     $("#meeting").hide();
@@ -1628,8 +1661,8 @@
         }, 2000);
     };
     //// script for loader ends here
-        </script>
-        <script>
+</script>
+<script>
     var candidate = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
@@ -1778,10 +1811,10 @@
 
     }
 
-        </script>
+</script>
 
 
-        <script type="text/javascript">
+<script type="text/javascript">
     var spanbroadcast = document.getElementById("broadcastPopUp");
     // When the user clicks on <span> (x), close the modal
     spanbroadcast.onclick = function () {
@@ -1933,8 +1966,27 @@
             }
         });
     }
-        </script>
-        <script>
+    function OpenRedoFormModel(interviewid) {
+        $.ajax({
+            url: '/Interview/RejectRedoInterviewDetails',
+            data: { 'interviewid': interviewid },
+            success: function (data) {
+                $('#divredoInterview').html('');
+                $('#divredoInterview').html(data);
+                openRedoInterviewModel();
+            }
+        });
+    }
+    function openRedoInterviewModel() {
+        var modal = document.getElementById("RedoInterviewModel");
+        modal.style.display = "block";
+    }
+    function closeRedoInterviewModel() {
+        var modal = document.getElementById("RedoInterviewModel");
+        modal.style.display = "none";
+    }
+</script>
+<script>
     var start = document.getElementById('start');
     start.focus();
 
@@ -1978,8 +2030,8 @@
             dotheneedful(sibling);
         }
     }
-        </script>
-        <script>
+</script>
+<script>
     $(document).ready(function () {
         $('.sendButton').attr('disabled', true);
         $('input[type="text"],textarea').on('keyup', function () {
@@ -2056,14 +2108,14 @@
         });
     }
 
-            function Changeurldetails(type){
-            window.location.href = "/Interview/Index?type="+type;
-            }
+    function Changeurldetails(type) {
+        window.location.href = "/Interview/Index?type=" + type;
+    }
 
-        </script>
-        @*
+</script>
+@*
         <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
-        <script>
+<script>
     $('input:radio[name="receivers"]').click(function () {
 
         if ($(this).val() == 'IRF') {
@@ -2072,15 +2124,15 @@
             $('#IRFLIST').hide()
         }
     });
-        </script>
+</script>
 
 
-        @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"HR\"")
-        {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"HR\"")
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        <script type="text/javascript">
+    <script type="text/javascript">
         hopscotch.registerHelper('addOverlay', function () {
             $('body').append('<div class="overlay"></div>');
         });
@@ -2441,9 +2493,9 @@
 
         hopscotch.startTour(tour);
 
-        </script>
-        }
+    </script>
+}
 
-        <script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/ModalFormServerValidation.js"></script>
 
-        <script src="~/js/CallTwilio.js"></script>
+<script src="~/js/CallTwilio.js"></script>

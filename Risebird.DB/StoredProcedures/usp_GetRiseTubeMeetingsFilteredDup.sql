@@ -73,7 +73,7 @@ if @clientid = 0
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))       
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0
    
    and ulsh.EmailId=@Emailid     
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, im.ClientHrContact,            
@@ -118,7 +118,7 @@ if @clientid = 0
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null       
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0
   
    and ulsh.EmailId=@Emailid         
   
@@ -164,7 +164,7 @@ End
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))       
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)      
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0     
    
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, im.ClientHrContact,            
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,            
@@ -206,7 +206,7 @@ End
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null       
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)      
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0     
    
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, im.ClientHrContact,            
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,            
@@ -271,7 +271,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))             
    and irf.IsDeleted=0 and ca.ClientHRAttemptContact = @Emailid--im.ClientHrContact=@Emailid        
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)      
+   and cast(interviewDate as date) <= cast (@endDate as date)  and ISNULL(im.RedoInterview,0)=0    
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId, im.ClientHrContact,            
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,            
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ulc.FirstName, ulc.LastName,           
@@ -310,7 +310,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    and (ic.MoveToCP is null or ic.MoveToCP =0)             
    and irf.IsDeleted=0 and ca.ClientHRAttemptContact = @Emailid--im.ClientHrContact=@Emailid        
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)      
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0     
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId, im.ClientHrContact,            
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,            
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ulc.FirstName, ulc.LastName,           
@@ -353,7 +353,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)         
    and irf.IsDeleted=0      
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)      
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0     
          
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId, im.ClientHrContact,            
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,            
@@ -396,7 +396,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)      
    and irf.IsDeleted=0      
    and cast(interviewDate as date) >= cast (@startDate as date)      
-   and cast(interviewDate as date) <= cast (@endDate as date)      
+   and cast(interviewDate as date) <= cast (@endDate as date) and ISNULL(im.RedoInterview,0)=0     
          
    group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId, im.ClientHrContact,            
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,            

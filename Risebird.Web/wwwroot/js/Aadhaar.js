@@ -1,4 +1,5 @@
-﻿function openAadhaarpopup() {
+﻿var Buttonclick = 1;
+function openAadhaarpopup() {
     document.getElementById("divSubmit").style.display = "none";
     document.getElementById("divValidate").style.display = "inline-block";
     document.getElementById("divotpvalidation").style.display = "none";
@@ -18,57 +19,63 @@ function bindAadhaarData(data) {
     $("#aadhaaruuid").val(data.uuid);
 }
 function generateCaptcha() {
-    showloader();
-    $.ajax({
-        type: "POST",
-        url: "/Aadhaar/GenerateAadhaarCaptcha",
-        data: { datenow: Date.now() },
-        success: function (data) {
-            bindAadhaarData(data);
-            hideloader();
-        }
-    });
+    if (Buttonclick == 1) {
+        showloader();
+        $.ajax({
+            type: "POST",
+            url: "/Aadhaar/GenerateAadhaarCaptcha",
+            data: { datenow: Date.now() },
+            success: function (data) {
+                bindAadhaarData(data);
+                hideloader();
+            }
+        });
+    }
 }
 function validateAadhaarnumber() {
-    showloader();
-    $.ajax({
-        type: "POST",
-        url: "/Aadhaar/SendAadhaarNumber",
-        data: { uuid: $("#aadhaaruuid").val(), aadharnumber: $("#aadhaarnumber").val().trim(), aadharcaptcha: $("#aadhaarcaptcha").val().trim(), datenow: Date.now() },
-        success: function (data) {
-            if (data.toLowerCase().includes("otp")) {
-                document.getElementById("divotpvalidation").style.display = "block";
-                document.getElementById("divSubmit").style.display = "inline-block";
-                document.getElementById("divValidate").style.display = "none";
-            } else {
+    if (Buttonclick == 1) {
+        showloader();
+        $.ajax({
+            type: "POST",
+            url: "/Aadhaar/SendAadhaarNumber",
+            data: { uuid: $("#aadhaaruuid").val(), aadharnumber: $("#aadhaarnumber").val().trim(), aadharcaptcha: $("#aadhaarcaptcha").val().trim(), datenow: Date.now() },
+            success: function (data) {
+                if (data.toLowerCase().includes("otp")) {
+                    document.getElementById("divotpvalidation").style.display = "block";
+                    document.getElementById("divSubmit").style.display = "inline-block";
+                    document.getElementById("divValidate").style.display = "none";
+                } else {
 
+                }
+                hideloader();
+                alert(data);
             }
-            hideloader();
-            alert(data);
-        }
-    });
+        });
+    }
 }
 function submitOtpnumber() {
-    showloader();
-    $.ajax({
-        type: "POST",
-        url: "/Aadhaar/SubmitOTPNumber",
-        data: { uuid: $("#aadhaaruuid").val(), otp: $("#txtAadhaarOtp").val().trim(), datenow: Date.now() },
-        success: function (data) {
-            $.ajax({
-                type: "POST",
-                url: "/Aadhaar/FetchAadhaarKYC",
-                data: { uuid: $("#aadhaaruuid").val(), datenow: Date.now() },
-                success: function (dataKYC) {
-                    openAadhaarKYCpopup();
-                    closeAadhaarpopup();
-                    hideloader();
-                    BindData(dataKYC);
-                    BindKYCData(dataKYC);
-                }
-            });
-        }
-    });
+    if (Buttonclick == 1) {
+        showloader();
+        $.ajax({
+            type: "POST",
+            url: "/Aadhaar/SubmitOTPNumber",
+            data: { uuid: $("#aadhaaruuid").val(), otp: $("#txtAadhaarOtp").val().trim(), datenow: Date.now() },
+            success: function (data) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Aadhaar/FetchAadhaarKYC",
+                    data: { uuid: $("#aadhaaruuid").val(), datenow: Date.now() },
+                    success: function (dataKYC) {
+                        openAadhaarKYCpopup();
+                        closeAadhaarpopup();
+                        hideloader();
+                        BindData(dataKYC);
+                        BindKYCData(dataKYC);
+                    }
+                });
+            }
+        });
+    }
 }
 function BindKYCData(data) {
     var html = '';
@@ -91,9 +98,11 @@ function closeAadhaarKYCpopup() {
 }
 function showloader() {
     $(".loader").show();
+    Buttonclick = 0;
 }
 function hideloader() {
     $(".loader").hide();
+    Buttonclick = 1;
 }
 function FetchAadhaarDetails(MCQID, candidateEmail) {
     $.ajax({
@@ -131,4 +140,18 @@ function FetchInterviewAadhaarDetails(candidateEmail) {
             BindAadhaarKYCData(data);
         }
     });
+}
+function NewgenerateCaptcha() {
+    if (Buttonclick == 1) {
+        showloader();
+        $.ajax({
+            type: "POST",
+            url: "/Aadhaar/ReGenerateAadhaarCaptcha",
+            data: { datenow: Date.now(), uuid: $("#aadhaaruuid").val() },
+            success: function (data) {
+                bindAadhaarData(data);
+                hideloader();
+            }
+        });
+    }
 }

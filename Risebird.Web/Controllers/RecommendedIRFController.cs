@@ -640,7 +640,7 @@ namespace Risebird.Web.Controllers
             model_Second.Add(new daytimes_second { Daytype = "saturday", dayCheck = true, dayvalue = sun });
             var model_report = new daytimes_report();
             model_report.setvalue = model_Second;
-            model_report.StartDate = eventStartdate.AddHours(16);
+            model_report.StartDate = eventStartdate.AddHours(12);
             model_report.EndDate = eventStartdate.AddDays(60);
             model_report.EventName = EventName;
             model_report.SkillChannel = SkillChannel;
