@@ -44,6 +44,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [ProctorReport][varchar](1000),
     [Cancellationsource][varchar](100),
     [HasDistinctParticipants][bit] NOT NULL Default 1,
+    [RedoInterview][bit] NOT NULL Default 0,
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -297,6 +298,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add HasDistinctParticipants bit not null default 1
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RedoInterview')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add RedoInterview bit not null default 0
 END
 
 END

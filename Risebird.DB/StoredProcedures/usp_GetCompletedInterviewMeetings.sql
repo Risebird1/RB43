@@ -26,10 +26,9 @@ left join UserList ul on ul.id=irf.RisebirdHr
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                
 left join Client cl on cl.id = irf.ClientId  
 left join Trans_QCFormReport tqc on tqc.Interviewid=im.id  
-where IsNull(IsProctor,0)=0 and im.interviewDate >= @startDate AND im.interviewDate < @endDate and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)                                             
+where IsNull(IsProctor,0)=0 and im.interviewDate >= @startDate AND im.interviewDate < @endDate and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) 
+and ISNULL(im.RedoInterview,0)=0
 End
-
-
 
 GO
 

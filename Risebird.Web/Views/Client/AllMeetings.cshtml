@@ -728,13 +728,19 @@
                                                                             @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                             {
                                                                                 <td>@item.intervieweStatusStatDesc</td>
-                                                                                @if ((item.MeetingStatus == 4))
+                                                                                @if (!item.RedoInterview)
                                                                                 {
-                                                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
-                                                                                }
-                                                                                else
+                                                                                    @if ((item.MeetingStatus == 4))
+                                                                                    {
+                                                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>No Report</td>
+                                                                                    }
+                                                                                }else
                                                                                 {
-                                                                                    <td>No Report</td>
+                                                                                    <td>Redo Interview</td>
                                                                                 }
                                                                             }
                                                                             <td>
