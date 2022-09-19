@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -5576,7 +5577,6 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
@@ -5989,6 +5989,10 @@ namespace Risebird.Repository
                     parameters.Add("@videoduration", videoduration);
                     var result = SqlMapper.Query(con, "usp_UpdatevideoDetailsById", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
+                    DynamicParameters parametersPoints = new DynamicParameters();
+                    parametersPoints.Add("@interviewId", interviewid);
+                    SqlMapper.Query(con, "usp_InsertOrUpdateInterviewPoints", parametersPoints,
+                                    commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -6134,6 +6138,25 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<RedoInterviewVM> GetInterviewDetailsById(int id)
+        {
+            try
+            {
+                var query = "Select cl.InterviewDuration as RequiredDuration,ic.VideoDuration as ActualDuration from  InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@id";
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<RedoInterviewVM>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public async Task<bool> StoreClientBroadcastMessage(BroadcastModel model)
         {
@@ -6162,6 +6185,137 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", model.interviewid);
+                dynamicParameters.Add("@CandidateFace", model.CandidateFace);
+                dynamicParameters.Add("@RequiredDuration", model.RequiredDuration);
+                dynamicParameters.Add("@ActualDuration", model.ActualDuration);
+                dynamicParameters.Add("@Inappropriate", model.Inappropriate);
+                dynamicParameters.Add("@HandsOfCoding", model.HandsOfCoding);
+                dynamicParameters.Add("@Comments", model.Comments);
+                dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_AddRedoInterviewDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<RedoInterviewVM> GetRedoInterviewDetailsById(int id)
+        {
+            try
+            {
+                var query = "Select * From RedoInterviews where interviewid=@id";
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<RedoInterviewVM>(query, parameters);
+                    return results.LastOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateRejectRedoInterviewDetails(RedoInterviewVM model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", model.interviewid);
+                dynamicParameters.Add("@id", model.id);
+                dynamicParameters.Add("@RejectionComment", model.RejectionComment);
+                dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateRejectRedoInterviewDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> ResetInterviewPayment(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_ResetInterviewPayment", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool CheckInterviewCancellable(int meetingid)
+        {
+            try
+            {
+                var query = "Select Count(*) From InterviewMeetings where id = @meetingid and interviewDate>@interviewdate";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@interviewdate", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<MeetingVM>> GetRedoInterviewList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRedoInterviewMeetings", null, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -1,0 +1,104 @@
+﻿@model Risebird.Entities.ViewModel.RedoInterviewVM
+
+
+@using (Html.BeginForm("RejectRedoInterviewDetails", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @id = "reportForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal w-full">
+        <div class="clearfix">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </div>
+        @Html.HiddenFor(model => model.interviewid)
+        @Html.HiddenFor(model => model.id)
+        <div class="clearfix row">
+            <div class="form-group row pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.CandidateFace, htmlAttributes: new { @class = "control-label desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.RadioButtonFor(m=>m.CandidateFace,"Visible") Visible
+                    @Html.RadioButtonFor(m=>m.CandidateFace,"Partial Visible") Partial Visible
+                    @Html.RadioButtonFor(m=>m.CandidateFace,"Not Visible") Not Visible
+                </div>
+                @Html.ValidationMessageFor(model => model.CandidateFace, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group row pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.Inappropriate, htmlAttributes: new { @class = "control-label desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.RadioButtonFor(m=>m.Inappropriate,"Selection") Inappropriate Selection
+                    @Html.RadioButtonFor(m=>m.Inappropriate,"Rejection") Inappropriate Rejection
+                    @Html.ValidationMessageFor(model => model.Inappropriate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.RequiredDuration, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.TextBoxFor(m=>m.RequiredDuration,new{@class="form-control",@readonly="readonly",@style="font-weight: bold !important;"})
+                    @Html.ValidationMessageFor(model => model.RequiredDuration, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.ActualDuration, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.TextBoxFor(m=>m.ActualDuration,new{@class="form-control",@readonly="readonly",@style="font-weight: bold !important;"})
+                    @Html.ValidationMessageFor(model => model.ActualDuration, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row  pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.HandsOfCoding, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.RadioButtonFor(m=>m.HandsOfCoding,"Requirementmatched") Requirement Matched
+                    @Html.RadioButtonFor(m=>m.HandsOfCoding,"Missing") Missing
+                    @Html.RadioButtonFor(m=>m.HandsOfCoding,"Notasperrequirement") Not as per the Requirement
+                </div>
+                @Html.ValidationMessageFor(model => model.HandsOfCoding, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group row pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.TextAreaFor(m=>m.Comments,new{@class="form-control",@readonly="readonly",@rows="3",@style="height:100px"})
+                    @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group row pull-left">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    @Html.LabelFor(model => model.RejectionComment, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12">
+                    @Html.TextAreaFor(m=>m.RejectionComment,new{@class="form-control",@maxlength="500",@rows="3",@style="height:100px"})
+                    @Html.ValidationMessageFor(model => model.RejectionComment, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="card-footer" style="margin-top: 15px;">
+                <div class="row">
+                    <div class="col-md-12 mc-button-area">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" onclick="Checkvalidation()">Reject Redo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script>
+    function Checkvalidation() {
+        var comments = $("#RejectionComment").val();
+        if (comments != '' && comments != null) {
+            document.getElementById("reportForm").submit();
+        } else {
+            swal.fire("Rejection comment field is required.");
+        }
+    }
+</script>

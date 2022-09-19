@@ -8,7 +8,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_InsertOrUpdateInterviewPoints  
+
+CREATE Procedure usp_InsertOrUpdateInterviewPoints  
 @interviewId int  
 As  
 BEGIN  
@@ -36,7 +37,7 @@ Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on I
  join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id  where im.id=@interviewId                       
 select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId   
 Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                       
-Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                         
+Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                        
   
    if(@IsEmergency=1)                      
      Begin                      
@@ -147,7 +148,7 @@ if(@Count=0)
     END                        
    Else                        
     BEGIN                        
-    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@CandidateEmail where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'                         
+    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@CandidateEmail where Interviewid = @interviewId and userid=@Userid and [Type]='Interview' and Status='Pending'                         
     END         
   
 END  

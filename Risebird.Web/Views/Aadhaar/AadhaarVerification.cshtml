@@ -19,50 +19,64 @@
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
     </div>
     <div class="container">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="loader text-center">
-                    <img src="~/Newassets/img/lazyload.gif" />
+        @if (Model.status == "InvalidEmail")
+        {
+            <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">You are not authorized to verify aadhaar details using this link.</h1></div>
+        }
+        else if (Model.status == "Unauthorized")
+        {
+            <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">Your link has been expired or aadhaar details are already verified, please contact to HR for further information.</h1></div>
+        }
+        else
+        {
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="loader text-center">
+                <img src="~/Newassets/img/lazyload.gif" />
+            </div>
+            <div class="filheader callno">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" style="width:45px" />
+                    </span>
                 </div>
-                <div class="filheader callno">
-                    <div class="filavatar">
-                        <span class="mdc-fab__icon material-icons">
-                            <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" style="width:45px" />
-                        </span>
-                    </div>
-                    <h2 style="margin-bottom:10px;">Aadhaar Verification</h2>
+                <h2 style="margin-bottom:10px;">Aadhaar Verification</h2>
+            </div>
+            @Html.HiddenFor(m => m.Name)
+            @Html.HiddenFor(m => m.Address)
+            @Html.HiddenFor(m => m.gender)
+            @Html.HiddenFor(m => m.dob)
+            @Html.HiddenFor(m => m.doc_face)
+            @Html.HiddenFor(m => m.email)
+
+            <div class="row" style="padding:10px" id="divcandidateskills">
+                <div class="col-md-12 col-lg-12">
+                    <input type="hidden" id="aadhaaruuid" />
+                    <input type="password" placeholder="Aadhaar Number" id="aadhaarnumber" class="form-control" />
                 </div>
-                @Html.HiddenFor(m => m.Name)
-                @Html.HiddenFor(m => m.Address)
-                @Html.HiddenFor(m => m.gender)
-                @Html.HiddenFor(m => m.dob)
-                @Html.HiddenFor(m => m.doc_face)
-                @Html.HiddenFor(m => m.email)
-                <div class="row" style="padding:10px" id="divcandidateskills">
-                    <div class="col-md-12 col-lg-12">
-                        <input type="hidden" id="aadhaaruuid" />
-                        <input type="password" placeholder="Aadhaar Number" id="aadhaarnumber" class="form-control" />
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
-                        <img alt="Captcha" id="aadharimagecaptcha" />
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
-                        <input type="text" placeholder="Captcha" id="aadhaarcaptcha" class="form-control" />
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-sm-12" style="padding: 10px;display:none" id="divotpvalidation">
-                        <input type="number" placeholder="Enter OTP" id="txtAadhaarOtp" class="form-control" />
-                    </div>
+                <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                    <img alt="Captcha" id="aadharimagecaptcha" />
                 </div>
-                <div>
-                    <div class="col-md-12 text-right">
-                        <div>
-                            <div id="divValidate" style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="validateAadhaarnumber()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Validate"></div>
-                            <div id="divSubmit" style="display: none;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="submitOtpnumber()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Submit"></div>
-                        </div>
+                <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                    <input type="text" placeholder="Captcha" id="aadhaarcaptcha" class="form-control" />
+                </div>
+                <div class="col-md-6 col-lg-6 col-sm-12" style="padding: 10px;display:none" id="divotpvalidation">
+                    <input type="number" placeholder="Enter OTP" id="txtAadhaarOtp" class="form-control" />
+                </div>
+            </div>
+            <div>
+                <div class="col-md-12 text-right">
+                    <div>
+                        <div id="divValidate" style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="validateAadhaarnumber()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Validate"></div>
+                        <div id="divSubmit" style="display: none;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="submitOtpnumber()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Submit"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+        }
+
+        
     </div>
 </body>
 </html>

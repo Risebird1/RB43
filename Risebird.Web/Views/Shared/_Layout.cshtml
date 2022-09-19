@@ -349,15 +349,7 @@
                             <div class="pull-left" title="Customer Service Number" style="padding-right: 5vw; padding-left: 2vw; ">
                                 <div class="pull-left">
                                     <div class="desktop-view topbar-item">
-                                        @if (profileName == "Client")
-                                        {
-                                            <c>For Support Toll Free Number - </c>
-                                            <span class="fa fa-phone">
-                                                18001207842
-                                            </span>
-                                            <c> | </c>
-                                        }
-                                        else if (profileName == "Interviewer")
+                                        @if (profileName == "Client" || profileName == "Interviewer")
                                         {
                                             <c>For Support Toll Free Number - </c>
                                             <span class="fa fa-phone">

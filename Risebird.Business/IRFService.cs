@@ -2796,5 +2796,91 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> SendRedoInvite(int irfId, string email, string loggedUserEmailId)
+        {
+            try
+            {
+                //update irf Invite count here
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                var inviteCount = irf.TotalInvites;
+                var calendlyLink = irf.CalendlyLink;
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
+                if (email != null && calendlyLink != null)
+                {
+                    var jdLink = irf.JDLink;
+                    var client = _clientService.GetClient(irf.ClientId);
+                    var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                    string primarySkill = string.Empty;
+                    primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                    string oneTimeSchedulingLink = String.Empty;
+                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    {
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        {
+                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        }
+                    }
+                    else
+                    {
+                        oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                    }
+                    if (irf.BussinessType == "B2B")
+                    {
+                        _notificationHelper.SendRedoB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
+                    }
+                    else
+                    {
+                        _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                    }
+                    WhatsAppVM _whatsapp = new WhatsAppVM();
+                    _whatsapp.Emailid = email;
+                    _whatsapp.InterviewDate = primarySkill;
+                    _whatsapp.Header = client.Name;
+                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    {
+                        _whatsapp.Event = "Interview Schedule Risebird";
+                    }
+                    else
+                    {
+                        _whatsapp.Event = "Interview Schedule";
+                    }
+                    _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
+                    if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                    {
+                        _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
+                    }
+                    else
+                    {
+                        _whatsapp.buttonlink = !string.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    }
+                    _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
+                    if (candidate.TotalInvites == 0)
+                    {
+                        _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                    }
+                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+                    try
+                    {
+                        await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                    //add candidate status
+                    await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

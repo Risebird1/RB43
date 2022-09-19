@@ -119,5 +119,6 @@ namespace Risebird.Business.Interface
         Task<List<InterviewDetailsVM>> FetchIRFCompletedInterviewDetails(int id, int type, DateTime startDate, DateTime endDate);
         Task<InterviewDetailsVM> FetchIRFInterviewerDetailsById(int id);
         Task<List<string>> FetchSupportAdminEmailid();
+        Task<bool> SendRedoInvite(int irfId, string email, string loggedUserEmailId);
     }
 }

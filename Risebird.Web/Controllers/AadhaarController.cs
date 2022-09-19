@@ -165,7 +165,21 @@ namespace Risebird.Web.Controllers
         {
             var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
             var model = new AadhaarData();
-            model.email = candidateEmailid.EmailId;
+            if (candidateEmailid==null)
+            {
+
+                model.status = "InvalidEmail";
+            }
+
+            else if (candidateEmailid.AadhaarVerified==true)
+                {
+                model.status = "Unauthorized";
+            }
+                else
+            { 
+                model.email = candidateEmailid.EmailId;
+            }
+            
             return View(model);
         }
         public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
@@ -191,6 +205,28 @@ namespace Risebird.Web.Controllers
                 model = new AadhaarData();
             }
             return Json(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> ReGenerateAadhaarCaptcha(string datenow, string uuid)
+        {
+            var model = new AadhaarVM();
+            SetHeaderValue(model.headers, datenow);
+            model.request.uuid = uuid;
+            var client = new RestClient(apiendpoint + "getNewCaptcha");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
+            if (convertedResponse != null)
+            {
+                if (convertedResponse.response_status.status.ToLower() == "fail")
+                {
+
+                }
+                return Json(new { image = convertedResponse.response_data.captcha, uuid = model.request.uuid });
+            }
+            return Json(new { image = "", uuid = model.request.uuid });
         }
     }
 }

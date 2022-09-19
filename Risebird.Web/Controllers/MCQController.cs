@@ -875,6 +875,7 @@ namespace Risebird.Web.Controllers
                     Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
                 };
                 var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+                HttpContext.Session.Remove("TestCandidateQuestion");
                 return Json("TestSubmit");
             }
             catch (Exception)

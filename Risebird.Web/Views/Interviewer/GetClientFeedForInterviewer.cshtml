@@ -1,11 +1,11 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.ClientFeedDataVM>
+﻿@model Risebird.Entities.Data.ClientFeedDataWrapper
 @using Risebird.CommonHelper
 @using Risebird.Entities.Enum
 
 <style>
     .box {
         background-color: transparent;
-        width: 100%;
+        width: 90%;
         border: 3px solid black;
         padding: 20px;
         margin: 20px;
@@ -27,6 +27,10 @@
     .boldContent {
         font-weight: bold
     }
+
+    .interviewBasedPopUp {
+        color:black
+    }
 </style>
 
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
@@ -34,88 +38,106 @@
 <!-- Modal -->
 @if (Model != null)
 {
-    int feedDataCount = 0;
-    @foreach (var feed in Model)
+    string interviewBasedClass = string.Empty;
+    if (Model.InterviewId.HasValue)
     {
-        feedDataCount = feedDataCount + 1;
-        @if (feed.FeedType == ClientFeedbackType.Audio.GetDescription())
-        {
-            @if (feed.FeedDate != null)
-            {
-                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
-            }
-            <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
-                <thead>
-                    <tr>
-                        <th width="30%">Skill Channel</th>
-                        <th width="30%">Audio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@feed.SkillChannelName</td>
-                        <td>
-                            <audio src="@feed.FeedUrl" asp-append-version="true" controls></audio>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        }
-        @if (feed.FeedType == ClientFeedbackType.Broadcast.GetDescription())
-        {
-            @if (feed.FeedDate != null)
-            {
-                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
-            }
-            <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
-            <div class="box">
-                <p class="broadcastContent">@feed.FeedSubject</p>
-                <p class="broadcastContent">@feed.FeedText</p>
-            </div>
-
-
-        }
-        @if (feed.FeedType == ClientFeedbackType.Rating.GetDescription())
-        {
-            @if (feed.FeedDate != null)
-            {
-                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
-            }
-            <p style="font-family:none">You have been Rated by: <span style="font-weight: bold;"><strong>@(feed.Client) HR</strong></span></p>
-            <div @*class="box"*@>
-                <table class="table table-borderless">
-                    <tr>
-                        <td class="boldContent">Interview Date</td>
-                        <td>@feed.InterviewDate?.ToString("dddd, dd MMMM yyyy HH:mm:ss")</td>
-                    </tr>
-                    <tr>
-                        <td class="boldContent">Candidate Name</td>
-                        <td>@feed.CandidateName</td>
-                    </tr>
-                    <tr>
-                        <td class="boldContent">Rating</td>
-                        <td>
-                            @for (int i = 1; i <= 5; i++)
-                            {
-                                string fillStarClass = string.Empty;
-                                if (feed.FeedRating >= i)
-                                {
-                                    fillStarClass = "fillStar";
-                                }
-                                <span class="fa fa-star @fillStarClass"></span>
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="boldContent">Comments</td>
-                        <td>@feed.FeedText</td>
-                    </tr>
-                </table>
-            </div>
-
-
-        }
+        interviewBasedClass = "interviewBasedPopUp";
     }
+    <div class="@interviewBasedClass">
+        @if (Model.InterviewId.HasValue)
+        {
+            <h1 id="clientInstructions_interviewDate" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
+            <h1 id="clientInstructions_candidateName" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
+        }
+        @{
+            int feedDataCount = 0;
+        }
+        @foreach (var feed in Model.ClientFeeds)
+        {
+            feedDataCount = feedDataCount + 1;
+            @if (feed.FeedType == ClientFeedbackType.Audio.GetDescription())
+            {
+                @if (feed.FeedDate != null)
+                {
+                    <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+                }
+                <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th width="30%">Skill Channel</th>
+                            <th width="30%">Audio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@feed.SkillChannelName</td>
+                            <td>
+                                <audio src="@feed.FeedUrl" asp-append-version="true" controls></audio>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            @if (feed.FeedType == ClientFeedbackType.Broadcast.GetDescription())
+            {
+                @if (feed.FeedDate != null)
+                {
+                    <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+                }
+                <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
+                <div class="box">
+                    <p class="broadcastContent">@feed.FeedSubject</p>
+                    <p class="broadcastContent">@feed.FeedText</p>
+                </div>
+
+
+            }
+            @if (feed.FeedType == ClientFeedbackType.Rating.GetDescription())
+            {
+                @if (feed.FeedDate != null)
+                {
+                    <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+                }
+                <p style="font-family:none">You have been Rated by: <span style="font-weight: bold;"><strong>@(feed.Client) HR</strong></span></p>
+                <div @*class="box"*@>
+                    <table class="table table-borderless">
+                        @if (!Model.InterviewId.HasValue)
+                        {
+                            <tr>
+                                <td class="boldContent">Interview Date</td>
+                                <td>@feed.InterviewDate?.ToString("dddd, dd MMMM yyyy HH:mm:ss")</td>
+                            </tr>
+                            <tr>
+                                <td class="boldContent">Candidate Name</td>
+                                <td>@feed.CandidateName</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="boldContent">Rating</td>
+                            <td>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    string fillStarClass = string.Empty;
+                                    if (feed.FeedRating >= i)
+                                    {
+                                        fillStarClass = "fillStar";
+                                    }
+                                    <span class="fa fa-star @fillStarClass"></span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="boldContent">Comments</td>
+                            <td>@feed.FeedText</td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            }
+        }
+    </div>
+    
 
 }
 
