@@ -65,6 +65,7 @@
         public string verified_by { get; set; }
         public string verified_using { get; set; }
         public string reference_id { get; set; }
+        public string status { get; set; }
     }
     public class AadhaarStatus
     {
