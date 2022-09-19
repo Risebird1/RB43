@@ -120,7 +120,7 @@
                             <div class="pull-left">
                                 @*<a href="#0" class="cd-btn js-cd-panel-trigger" data-panel="main">Client Feed</a>*@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
-                                    <span data-toggle="tooltip" data-placement="top" title="Client Feed" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feed</font></span>
+                                    <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
                                 </button>
                             </div>
 
@@ -349,6 +349,7 @@
                                                             @*<th id="myinterview_5">JD Link</th>*@
                                                             <th>Instructions</th>
                                                             <th id="myinterview_6">Resume</th>
+                                                            <th>Client Instructions</th>
                                                             <th id="myinterview_7">Meeting Link</th>
                                                             <th>Max Interview Duration</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
@@ -368,6 +369,7 @@
                                                             @*<th>JD Link</th>*@
                                                             <th>Instructions</th>
                                                             <th>Resume</th>
+                                                            <th>Client Instructions</th>
                                                             <th>Meeting Link</th>
                                                             <th>Max Interview Duration</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
@@ -436,7 +438,7 @@
                                                                 }
                                                                 else if (item.JobCountry == "2")
                                                                 {
-                                                                    <td>Out Side India</td>
+                                                                    <td>Outside India</td>
                                                                 }
                                                                 else
                                                                 {
@@ -473,7 +475,14 @@
                                                                 {
                                                                     <td>No Resume</td>
                                                                 }
-
+                                                                <td>
+                                                                    <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions" 
+                                                                       data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
+                                                                       data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id})">
+                                                                        Client Instruction(s)
+                                                                    </a>
+                                
+                                                                </td>
                                                                 @if (item.zoomLink != null && item.zoomLink != "")
                                                                 {
 
@@ -651,6 +660,25 @@
             <!-- end row -->
         </div>
 
+    </div>
+</div>
+
+
+<div class="modal fade" style="height:1000px" id="clientInstructions" tabindex="-1" role="dialog" aria-labelledby="clientInstructionsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientInstructionsLabel">Client Instructions</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="clientInstructions_modal_body" style="max-height:400px; overflow:auto">
+               
+
+            </div>
+            
+        </div>
     </div>
 </div>
 
@@ -918,6 +946,28 @@
             $(this).hide();
         });
 
+
+        var clientInstructionsPlaceHolder = $('#clientInstructions_modal_body');
+        $('a[data-toggle="clientInstructions-modal"]').click(function (event) {
+            var url = $(this).data('url');
+            //var interviewDate = event.delegateTarget.dataset.interviewDate;
+            var interviewDate = $(this).data('interviewdate');;
+            var candidateName = $(this).data('candidatename');;
+            $.get(url).done(function (data) {
+                clientInstructionsPlaceHolder.html('');
+                $("#clientInstructions_interviewDate").html('');
+                $("#clientInstructions_candidateName").html('');
+
+                $("#clientInstructions").modal('show');
+
+                clientInstructionsPlaceHolder.html(data);
+                $("#clientInstructions_interviewDate").html('Interview Date: ' + interviewDate);
+                $("#clientInstructions_candidateName").html("Candidate's Name: " + candidateName);
+
+            });
+
+        });
+        //clientInstructions_interviewDate
     });
     function ResetFilter() {
                     window.location.href = "/Interview/ResetMyInterviewFilter";
@@ -1421,6 +1471,17 @@
                 html += '   <td></td>';
             }
 
+            if (data[i].jobCountry == "1") {
+                html += '<td>India</td>';
+            }
+            else if (data[i].jobCountry == "2")
+            {
+                html += '<td>Outside India</td>';
+            }
+            else {
+                html += '<td></td>';
+            }
+
             html += '  <td> ' + data[i].interviewDuration + ' </td>';
             //if (data[i].jdLink != null && data[i].jdLink != "") {
             //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
@@ -1440,7 +1501,12 @@
             else {
                 html += ' <td>No Resume</td>';
             }
-
+            html += '<td><a href="#" data-toggle="clientInstructions-modal"';
+            html += 'data-interviewdate="' + data[i].interviewDate + '"';
+            //html += 'data-target="#clientInstructions"';
+            html += 'data-candidatename="' + data[i].candidateName + '"';
+            html += 'data-url= "/Interviewer/GetClientFeedForInterviewer?interviewId=' + data[i].id + '"';
+            html += 'data-target="#clientInstructions" > Client Instruction(s)</a ></td >'
             if (data[i].zoomLink != null && data[i].zoomLink != "") {
 
                 html += ' <td class="cadName"><a target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
