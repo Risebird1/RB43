@@ -1442,8 +1442,8 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Index");
                         if (meetingToUpdate.MeetingPlatform == null)
                         {
-                            meetingToUpdate.MeetingPlatform = "Zoom";
-                        }
+                            meetingToUpdate.MeetingPlatform = MeetingPlatforms.Zoom;
+                        }                      
                         SetAddUpdateMeetingParameters(meetingToUpdate);
 
                         if (meetingToUpdate != null)

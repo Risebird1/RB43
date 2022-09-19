@@ -15,7 +15,8 @@ CREATE PROCEDURE [dbo].[usp_GetClientFeedForInterviewer]
   
 @interviewerEmail varchar(50),
 @timeNow datetime,
-@postWhichDate datetime = null
+@postWhichDate datetime = null,
+@interviewId int = null
   
 AS  
 Begin  
@@ -42,12 +43,27 @@ DECLARE @tbl_RelevantSkillChannels TABLE (
     IRFId INT        
 ) 
 
-insert into @tbl_RelevantSkillChannels
+if(@interviewId is not null)
+Begin
 
-select distinct IRF.id from IRF 
-join TransInterviewer ti on ti.IRFId = irf.id
-where ti.UserId = @interviewerUserId and (irf.IsDeleted is null or irf.IsDeleted = 0)
-and cast(irf.EndDate as date) >= cast(@timeNow as date)
+	insert into @tbl_RelevantSkillChannels
+
+	select IRF.id from IRF 
+	join InterviewMeetings im on im.IRFId = irf.IRFId
+	where im.id = @interviewId
+	
+End
+else
+Begin
+	insert into @tbl_RelevantSkillChannels
+
+	select distinct IRF.id from IRF 
+	join TransInterviewer ti on ti.IRFId = irf.id
+	where ti.UserId = @interviewerUserId and (irf.IsDeleted is null or irf.IsDeleted = 0)
+	and cast(irf.EndDate as date) >= cast(@timeNow as date)
+End
+
+
 
 insert into @tbl_AllFeed
 select irf.IRFId, irf.CreatedOn, 'Audio', null, null, AudioComment, null, null, null, null, null from IRF

@@ -2213,7 +2213,7 @@ namespace Risebird.Repository
         }
 
         #region Client Feed
-        public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate)
+        public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate, int? interviewId)
         {
             try
             {
@@ -2222,6 +2222,7 @@ namespace Risebird.Repository
                 parameters.Add("@interviewerEmail", interviewerEmail);
                 parameters.Add("@timeNow", DateTime.Now);
                 parameters.Add("@postWhichDate", postWhichDate);
+                parameters.Add("@interviewId", interviewId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<ClientFeedDataVM>(con, "[usp_GetClientFeedForInterviewer]", parameters,
