@@ -999,11 +999,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate)
+        public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate, int? interviewId)
         {
             try
             {
-                return await _interviewerRepository.GetClientFeedForInterviewer(interviewerEmail, postWhichDate);
+                return await _interviewerRepository.GetClientFeedForInterviewer(interviewerEmail, postWhichDate, interviewId);
             }
             catch (Exception e)
             {
