@@ -36,7 +36,7 @@
                     @Html.LabelFor(model => model.RequiredDuration, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12">
-                    @Html.TextBoxFor(m=>m.RequiredDuration,new{@class="form-control"})
+                    @Html.TextBoxFor(m=>m.RequiredDuration,new{@class="form-control",@style="font-weight: bold !important;"})
                     @Html.ValidationMessageFor(model => model.RequiredDuration, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     @Html.LabelFor(model => model.ActualDuration, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12">
-                    @Html.TextBoxFor(m=>m.ActualDuration,new{@class="form-control"})
+                    @Html.TextBoxFor(m=>m.ActualDuration,new{@class="form-control",@style="font-weight: bold !important;"})
                     @Html.ValidationMessageFor(model => model.ActualDuration, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red"> * </span>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12">
-                    @Html.TextBoxFor(m=>m.Comments,new{@class="form-control",@maxlength="500"})
+                    @Html.TextAreaFor(m=>m.Comments,new{@class="form-control",@maxlength="500",@rows="3",@style="height:100px"})
                     @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
                 </div>
             </div>
