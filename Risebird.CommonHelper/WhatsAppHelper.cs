@@ -99,6 +99,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
         public string WhatsAppSendOnAssignation(WhatsAppVM _whatsAppVM)
         {
             try
@@ -167,6 +168,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
         public string WhatsAppSendEInterviewer(WhatsAppVM _whatsAppVM)
         {
             try
