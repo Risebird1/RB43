@@ -99,7 +99,6 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-
         public string WhatsAppSendOnAssignation(WhatsAppVM _whatsAppVM)
         {
             try
@@ -168,7 +167,6 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-
         public string WhatsAppSendEInterviewer(WhatsAppVM _whatsAppVM)
         {
             try
@@ -310,77 +308,76 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-       
-        public string WhatsAppSendCandidateReminder(WhatsAppVM _whatsAppVM)
-        {
-            try
-            {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
-                    {
-                        var name = _userService.FetchNameByEmail(item);
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        _whatsAppVM.UserName = name;
-                        _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        client.Timeout = -1;
-                        var request = new RestRequest(Method.POST);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"interviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"Role\":\"" + _whatsAppVM.Header + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
-        }
-        public string WhatsAppSendClientCandidateConfirmation(WhatsAppVM _whatsAppVM)
-        {
-            try
-            {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                var username = _whatsAppVM.UserName;
-                foreach (var item in Emailid)
-                {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
-                    {
-                        var name = _userService.FetchNameByEmail(item);
-                        _whatsAppVM.UserName = name;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
-                        _whatsAppVM.UserName = username;
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        client.Timeout = -1;
-                        var request = new RestRequest(Method.POST);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"Skill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"Status\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
-        }
+        //public string WhatsAppSendCandidateReminder(WhatsAppVM _whatsAppVM)
+        //{
+        //    try
+        //    {
+        //        var Emailid = _whatsAppVM.Emailid.Split(";");
+        //        foreach (var item in Emailid)
+        //        {
+        //            var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+        //            if (!String.IsNullOrEmpty(WhatsAppnumber))
+        //            {
+        //                var name = _userService.FetchNameByEmail(item);
+        //                _whatsAppVM.CountryCode = "+91";
+        //                _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+        //                _whatsAppVM.UserName = name;
+        //                _whatsAppVM.Emailid = item;
+        //                WhatsAppTrackUser(_whatsAppVM);
+        //                var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+        //                client.Timeout = -1;
+        //                var request = new RestRequest(Method.POST);
+        //                request.AddHeader("Authorization", "Basic " + accesskey);
+        //                request.AddHeader("Content-Type", "application/json");
+        //                request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"interviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"Role\":\"" + _whatsAppVM.Header + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+        //                IRestResponse response = client.Execute(request);
+        //                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+        //            }
+        //        }
+        //        return "Message sent successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return "Failed to send message. Please check all fields and try again.";
+        //    }
+        //}
+        //public string WhatsAppSendClientCandidateConfirmation(WhatsAppVM _whatsAppVM)
+        //{
+        //    try
+        //    {
+        //        var Emailid = _whatsAppVM.Emailid.Split(";");
+        //        var username = _whatsAppVM.UserName;
+        //        foreach (var item in Emailid)
+        //        {
+        //            var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+        //            if (!String.IsNullOrEmpty(WhatsAppnumber))
+        //            {
+        //                var name = _userService.FetchNameByEmail(item);
+        //                _whatsAppVM.UserName = name;
+        //                _whatsAppVM.Emailid = item;
+        //                _whatsAppVM.CountryCode = "+91";
+        //                _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+        //                WhatsAppTrackUser(_whatsAppVM);
+        //                _whatsAppVM.UserName = username;
+        //                var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+        //                client.Timeout = -1;
+        //                var request = new RestRequest(Method.POST);
+        //                request.AddHeader("Authorization", "Basic " + accesskey);
+        //                request.AddHeader("Content-Type", "application/json");
+        //                request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"Skill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"Status\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n    }\r\n}", ParameterType.RequestBody);
+        //                IRestResponse response = client.Execute(request);
+        //                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+        //            }
+        //        }
+        //        return "Message sent successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return "Failed to send message. Please check all fields and try again.";
+        //    }
+        //}
         public string WhatsAppSendCancleReScheduling(WhatsAppVM _whatsAppVM)
         {
             try
@@ -486,6 +483,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+       
         public string WhatsAppSendInterviewerFeedbackRemainder(WhatsAppVM _whatsAppVM)
         {
             try
@@ -535,6 +533,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
         public string WhatsAppSendInterviewerCommonInterviewDetails(WhatsAppVM _whatsAppVM)
         {
             try

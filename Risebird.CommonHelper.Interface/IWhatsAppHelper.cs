@@ -12,8 +12,8 @@ namespace Risebird.CommonHelper.Interface
         string WhatsAppSendApology(WhatsAppVM whatsAppVM);
         string WhatsAppSendInterviewWaiting(WhatsAppVM whatsAppVM);
         string WhatsAppSendReScheduling(WhatsAppVM whatsAppVM);
-        string WhatsAppSendCandidateReminder(WhatsAppVM whatsAppVM);
-        string WhatsAppSendClientCandidateConfirmation(WhatsAppVM _whatsAppVM);
+        //string WhatsAppSendCandidateReminder(WhatsAppVM whatsAppVM);
+        //string WhatsAppSendClientCandidateConfirmation(WhatsAppVM _whatsAppVM);
         string WhatsAppSendCancleReScheduling(WhatsAppVM _whatsAppVM);
         string WhatsAppSendRatingNotification(WhatsAppVM whatsAppVM);
         string WhatsAppSendFeedbackRemainder(WhatsAppVM whatsAppVM);
