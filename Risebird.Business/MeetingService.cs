@@ -3676,6 +3676,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public List<MeetingVM> GetRedoInterviewList()
+        {
+            try
+            {
+                return _meetingRespository.GetRedoInterviewList().Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

@@ -99,6 +99,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
         public string WhatsAppSendOnAssignation(WhatsAppVM _whatsAppVM)
         {
             try
@@ -167,6 +168,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
         public string WhatsAppSendEInterviewer(WhatsAppVM _whatsAppVM)
         {
             try
@@ -295,7 +297,7 @@ namespace Risebird.CommonHelper
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
+                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = client.Execute(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
@@ -308,6 +310,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+       
         public string WhatsAppSendCandidateReminder(WhatsAppVM _whatsAppVM)
         {
             try

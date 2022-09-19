@@ -175,8 +175,14 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-
-                            modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
+                            if (type == "RedoInterviews")
+                            {
+                                modelList = _meetingService.GetAllMeetingList(DateTime.Now.AddDays(-30), DateTime.Now.Date.AddDays(1), emailId);
+                            }
+                            else
+                            {
+                                modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
+                            }
                             modelList = modelList.Select(x =>
                             {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
@@ -1431,7 +1437,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")//|| emailId.ToLower() == "parvathi_sg@risebird.io" || emailId.ToLower() == "ambika_ratkalle@risebird.io") 
                     {
-                        AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);                                              
+                        AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
                         if (meetingToUpdate == null)
                             return RedirectToAction("Index");
                         if (meetingToUpdate.MeetingPlatform == null)
@@ -1606,7 +1612,7 @@ namespace Risebird.Web.Controllers
             var list = new List<SelectListItem>
             {
                 new SelectListItem { Text = "No Clients", Value = "" }
-            };       
+            };
             var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                        select new { ID = (int)s, Name = s.GetDescription() };
             meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
@@ -7012,6 +7018,16 @@ namespace Risebird.Web.Controllers
             {
                 model.Inappropriate = "Rejection";
             }
+            var _interview = await _meetingService.GetRedoInterviewDetailsById(interviewid);
+            if (_interview != null)
+            {
+                model = _interview;
+            }
+            else
+            {
+                model.CandidateFace = "Not Visible";
+                model.HandsOfCoding = "Notasperrequirement";
+            }
             return PartialView(model);
         }
         [HttpPost]
@@ -7095,6 +7111,45 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Sorry! Could not send invite!";
                 return RedirectToAction("Index", new { type = "RedoInterviews" });
+            }
+        }
+        public async Task<IActionResult> RedoInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    ViewBag.PageFrom = "Completed";
+                    if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        List<MeetingVM> modelList = new List<MeetingVM>();
+                        modelList = _meetingService.GetRedoInterviewList();
+                        modelList = modelList.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
         #endregion

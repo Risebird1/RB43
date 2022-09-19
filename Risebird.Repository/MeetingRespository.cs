@@ -6296,5 +6296,26 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<MeetingVM>> GetRedoInterviewList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRedoInterviewMeetings", null, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
