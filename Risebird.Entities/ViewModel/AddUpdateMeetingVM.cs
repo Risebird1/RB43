@@ -70,7 +70,7 @@ namespace Risebird.Entities.ViewModel
         //public string zoomDetails { get; set; }
 
         [Display(Name = "Risebird HR")]
-        //[Required(ErrorMessage = "Please enter Zoom login details.")]
+        //[Required(ErrorMessage = "Please enter Zoom login details.")]          
         public string risebirdHR { get; set; }
 
         [Display(Name = "Interviewer")]

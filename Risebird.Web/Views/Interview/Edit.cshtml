@@ -1,5 +1,6 @@
 ﻿@model Risebird.Entities.ViewModel.AddUpdateMeetingVM
 @using Risebird.Entities.Enum
+@using Risebird.Entities.Data
 
 @{
     ViewData["Title"] = "Edit Interview";
@@ -120,12 +121,12 @@
                                             @Html.EditorFor(model => model.zoomDetails, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.zoomDetails, "", new { @class = "text-danger" })
                                         </div>*@
-                                    @if (Model.MeetingPlatform != "Risebird Meet")
+                                    @if (Model.MeetingPlatform != MeetingPlatforms.RisebirdMeet)
                                     {
                                         <div class="form-group">
                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Zoom Login Details</label>
 
-                                            @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control",@required ="required" } })
                                             @Html.ValidationMessageFor(model => model.risebirdHR, "", new { @class = "text-danger" })
                                         </div>
                                     }
