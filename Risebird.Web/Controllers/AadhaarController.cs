@@ -165,7 +165,21 @@ namespace Risebird.Web.Controllers
         {
             var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
             var model = new AadhaarData();
-            model.email = candidateEmailid.EmailId;
+            if (candidateEmailid==null)
+            {
+
+                model.status = "InvalidEmail";
+            }
+
+            else if (candidateEmailid.AadhaarVerified==true)
+                {
+                model.status = "Unauthorized";
+            }
+                else
+            { 
+                model.email = candidateEmailid.EmailId;
+            }
+            
             return View(model);
         }
         public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
