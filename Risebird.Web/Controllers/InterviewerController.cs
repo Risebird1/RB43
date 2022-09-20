@@ -2995,7 +2995,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to Update Status, Please try again");
             }
         }
-        public async Task<IActionResult> GetClientFeedForInterviewer(int? interviewId, string postWhichDate = null)
+        public async Task<IActionResult> GetClientFeedForInterviewer(int? interviewId, string postWhichDate = null, string meetingLink = null)
         {
             try
             {
@@ -3018,6 +3018,7 @@ namespace Risebird.Web.Controllers
                         if(model.ClientFeeds != null && model.ClientFeeds.Count() > 0)
                         {
                             model.InterviewId = interviewId;
+                            model.MeetingLink = meetingLink;
                             return PartialView("GetClientFeedForInterviewer", model);
                         }
                         else
