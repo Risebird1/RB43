@@ -1443,7 +1443,7 @@ namespace Risebird.Web.Controllers
                         if (meetingToUpdate.MeetingPlatform == null)
                         {
                             meetingToUpdate.MeetingPlatform = MeetingPlatforms.Zoom;
-                        }                      
+                        }
                         SetAddUpdateMeetingParameters(meetingToUpdate);
 
                         if (meetingToUpdate != null)
@@ -3730,7 +3730,7 @@ namespace Risebird.Web.Controllers
         //GetClientsByRoles
         [HttpGet]
         public SelectList GetClientsByRoles(string val)
-        {
+        {           
             var list = new List<SelectListItem>();
             var clients = _meetingService.GetClientsByRoles(val);
             if (clients != null && clients.Count() > 0)
@@ -7153,5 +7153,25 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        [HttpGet]
+        public async Task<JsonResult> GetMeetingPlatform(string irfid)
+        {
+            try
+            {
+                var meetingplatform = await _meetingService.GetMeetingPlatformbyIRFId(irfid);
+                //meetingplatform = null;
+                if (meetingplatform == null)
+                {
+                    meetingplatform = MeetingPlatforms.Zoom;
+                }
+
+                return Json(meetingplatform);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
     }
 }
