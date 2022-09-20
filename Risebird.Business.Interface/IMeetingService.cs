@@ -199,6 +199,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateRejectRedoInterviewDetails(RedoInterviewVM model);
         Task<bool> ResetInterviewPayment(int id);
         bool CheckInterviewCancellable(int meetingid);
+        Task<string> GetMeetingPlatformbyIRFId(string IRFId);
         List<MeetingVM> GetRedoInterviewList();
     }
 }

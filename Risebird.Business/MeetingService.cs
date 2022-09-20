@@ -3676,6 +3676,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<string> GetMeetingPlatformbyIRFId(string IRFId)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetMeetingPlatformbyIRFId(IRFId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public List<MeetingVM> GetRedoInterviewList()
         {
             try
