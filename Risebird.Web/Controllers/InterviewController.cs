@@ -5461,7 +5461,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult MyInterviewJson(string searchValue)
+        public IActionResult MyInterviewJson(string searchValue)
         {
             try
             {
@@ -5599,7 +5599,12 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
+                        ViewBag.startPage = Pagestart;
+                        ViewBag.endPage = Pageend;
+                        ViewBag.totalPage = a;
+                        ViewBag.totalentry = myInterview.Count;
+                        return PartialView("MyInterviewPartial", myInterview?.Take(10)?.ToList());
+                        //return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
 
                     }
                     else
