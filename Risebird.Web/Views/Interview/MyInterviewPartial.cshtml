@@ -1,0 +1,315 @@
+﻿@*@model X.PagedList.IPagedList<Risebird.Entities.Data.Meeting>*@
+@model List<Risebird.Entities.Data.Meeting>
+
+@using System.Text.RegularExpressions
+<table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th style="border-right: 0px !important;"></th>
+            <th style="border-left: 0px !important;">Date </th>
+            <th style="text-align:left">Job Level</th>
+            <th style="text-align:left">JD-Skills</th>
+            <th id="myinterview_4">Candidate Name</th>
+            <th>Client</th>
+            <th>Job Location</th>
+            @*<th id="myinterview_5">JD Link</th>*@
+            <th>Instructions</th>
+            <th id="myinterview_6">Resume</th>
+            <th>Client Instructions</th>
+            <th id="myinterview_7">Meeting Link</th>
+            <th>Max Interview Duration</th>
+            <th class="disabled-sorting text-left">Actions</th>
+
+        </tr>
+
+    </thead>
+    <tfoot>
+        <tr>
+            <th style="border-right: 0px !important;"></th>
+            <th style="border-left: 0px !important;width:12%">Date</th>
+            <th>Job Level</th>
+            <th>JD-Skills</th>
+            <th>Candidate Name</th>
+            <th>Client</th>
+            <th>Job Location</th>
+            @*<th>JD Link</th>*@
+            <th>Instructions</th>
+            <th>Resume</th>
+            <th>Client Instructions</th>
+            <th>Meeting Link</th>
+            <th>Max Interview Duration</th>
+            <th class="disabled-sorting text-left">Actions</th>
+
+        </tr>
+
+    </tfoot>
+    <tbody id="tblbodyMyInterview">
+        @if (Model == null || Model.Count == 0)
+        {
+            <tr>
+                <td colspan="12" class="text-center">No data available in table</td>
+            </tr>
+        }
+
+        @foreach (var item in Model)
+        {
+            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+            <tr id=@item.id>
+                <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                <td>
+                    <div> @item.interviewDate</div>
+                    @if (item.Timer > 0)
+                    {
+                        <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
+                    }
+                </td>
+                <td> @item.JobLevelDesc </td>
+                <td>
+                    <button type="button" class="clickhere_btn pull-left">
+                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
+                    </button>
+                    <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
+                </td>
+
+
+                @if (item.candidateName != null && item.candidateName != "")
+                {
+                    @if (item.candidateName.Length > 26)
+                    {
+
+                        <td class="cadName">
+                            <a onclick="" data-tooltip="@item.candidateName"><span class="cname"> @item.candidateName</span> </a>
+                        </td>
+
+                    }
+
+                    else
+                    {
+                        <td class="cadName">
+                            <a onclick=""><span class="cname"> @item.candidateName</span> </a>
+                        </td>
+                    }
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@item.ClientName</td>
+
+                @*<td> @item.HeuristicProfileTypeDesc </td>*@
+                @if (item.JobCountry == "1")
+                {
+                    <td>India</td>
+                }
+                else if (item.JobCountry == "2")
+                {
+                    <td>Outside India</td>
+                }
+                else
+                {
+                    <td> @item.JobCountry </td>
+                }
+                @*@if (item.JDLink != null && item.JDLink != "")
+                    {
+                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                    }
+                    else
+                    {
+                        <td>No JD</td>
+                    }*@
+                @if (!String.IsNullOrEmpty(item.AudioComment))
+                {
+                    <td><a href='@item.AudioComment' asp-append-version="true" download>@item.AudioComment.Split('/').Last()</a></td>
+                }
+                else
+                {
+                    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                    {
+                        <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", "%20")>Instructions</a></td>
+                    }
+                    else
+                    {
+                        <td>No Instructions</td>
+                    }
+                }
+                @if (item.resumeLink != null && item.resumeLink != "")
+                {
+                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                }
+                else
+                {
+                    <td>No Resume</td>
+                }
+                <td>
+                    <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                       data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
+                       data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id})">
+                        Client Instruction(s)
+                    </a>
+
+                </td>
+                @if (item.zoomLink != null && item.zoomLink != "")
+                {
+
+                    <td class="cadName">
+                        @*<a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>*@
+                        <a href="#" title="Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                           data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
+                           data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id, meetingLink = item.zoomLink})">
+                            Meeting Link
+                        </a>
+
+                    </td>
+
+                }
+
+
+                else
+                {
+                    <td></td>
+                }
+
+                <td><strong>@item.interviewDuration</strong></td>
+                <td class="text-left">
+                    @{
+                        var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
+                    }
+                    @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
+                    {
+                        <button id="myinterview_10" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                        </button>
+
+                    }
+
+                    @if (item.interviewDate.Date >= DateTime.Now.Date)
+                    {
+                        <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Unassign Yourself">
+                            <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="Unassign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                        </button>
+                    }
+
+                    <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                        <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new { id = item.irfIntId, irf= item.IRFID })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                    </button>
+                    @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
+                            <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg fill=" rgb(255,255,255)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                        </button>*@
+                    <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey" style="position:relative;top:-1px;left:2px;">
+                        <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="far fa-comments"></i></span>
+                    </button>
+
+                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                    {
+                        <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                            <span onclick="ModalButtonClick('@item.candidateName','@item.MobileNumber','@item.id')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                        </button>
+                    }
+                    @if (item.QCPresent > 0)
+                    {
+                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
+                            <a style="color:white" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.id })" title="QC Form" class="mdc-fab__icon material-icons">
+                                <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                            </a>
+                        </button>
+                    }
+                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Client Rating and Feedback" style="position:relative;top:-1px;left:2px;" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.id})">
+                        <span title="Client Rating and Feedback" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-star"></i></span>
+                    </button>
+                </td>
+
+            </tr>
+
+            <tr class="collapse @item.id">
+                <td colspan="999" class="child-section">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Slot</th>
+                            <th>Candidate Email</th>
+                            <th>Call HR</th>
+                            <th>Meeting Status</th>
+                            <th>Interview Status</th>
+                            <th>Co-ordinating HR</th>
+                            <th>Skill Channel</th>
+
+                        </tr>
+                        <tr>
+                            @if (@item.interviewSlot == "Morning")
+                            {
+                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+                            }
+                            else
+                            {
+                                <td><a style="color: #4242bf;font-weight: bold"> @item.interviewSlot</a></td>
+                            }
+                            @if (item.IsOnilne == 1)
+                            {
+                                <td>
+                                    <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName<span class="dot" style="background-color:green"></span></a>
+                                </td>
+                            }
+                            else
+                            {
+
+                                <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
+                            }
+
+                            <td style="text-align:center">
+                                @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                {
+
+                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                                        <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber','@item.id')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                    </button>
+
+
+                                }
+
+                            </td>
+                            <td>@item.MeetingStatusDesc</td>
+                            <td>@item.InterviewStatusDesc</td>
+                            <td>@item.HRCoordinatorEmailId</td>
+                            <td style="text-align: center"> @item.IRFID </td>
+
+
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p style="display:none" id="id_startPage">@ViewBag.startPage</p>
+<p style="display:none" id="id_endPage">@ViewBag.endPage</p>
+<p style="display:none" id="id_totalPage">@ViewBag.totalPage</p>
+<p style="display:none" id="id_totalentry">@ViewBag.totalentry</p>
+<script>
+
+
+    $(document).ready(function () {
+
+
+        var clientInstructionsPlaceHolder = $('#clientInstructions_modal_body');
+        $('a[data-toggle="clientInstructions-modal"]').click(function (event) {
+            var url = $(this).data('url');
+            //var interviewDate = event.delegateTarget.dataset.interviewDate;
+            var interviewDate = $(this).data('interviewdate');
+            var candidateName = $(this).data('candidatename');
+            $.get(url).done(function (data) {
+                clientInstructionsPlaceHolder.html('');
+                $("#clientInstructions_interviewDate").html('');
+                $("#clientInstructions_candidateName").html('');
+
+                $("#clientInstructions").modal('show');
+
+                clientInstructionsPlaceHolder.html(data);
+                $("#clientInstructions_interviewDate").html('Interview Date: ' + interviewDate);
+                $("#clientInstructions_candidateName").html("Candidate's Name: " + candidateName);
+
+            });
+
+        });
+        //clientInstructions_interviewDate
+    });
+</script>
