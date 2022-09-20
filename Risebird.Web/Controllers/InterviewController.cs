@@ -7164,7 +7164,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var meetingplatform = await _meetingService.GetMeetingPlatformbyIRFId(irfid);
-                //meetingplatform = null;
+                
                 if (meetingplatform == null)
                 {
                     meetingplatform = MeetingPlatforms.Zoom;
