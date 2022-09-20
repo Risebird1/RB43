@@ -379,7 +379,12 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <h6 class="pskill" title="@item.IRFId">@item.IRFId</h6>
+                                                                    @if (item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0)
+                                                                    {
+                                                                        <h6 style="color:blue" class="pskill" title="@item.IRFId">@item.IRFId</h6>
+                                                                    }else{
+                                                                        <h6 class="pskill" title="@item.IRFId">@item.IRFId</h6>
+                                                                    }
                                                                 }
                                                             }
                                                             else

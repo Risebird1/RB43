@@ -7086,6 +7086,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail))
                         {
+                            await _iRFService.SendClientRedoInvite(irfId, interviewid, CandidateemailId);
                             var result = await _meetingService.ResetInterviewPayment(interviewid);
                             TempData["SuccessErrorMessageInterview"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("Index", new { type = "RedoInterviews" });
