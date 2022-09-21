@@ -147,41 +147,6 @@
     </div>
 </div>
 
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $("#ResetFilter").click(function () {
-            ResetFilter();
-        })
-        if ('@filter' != "") {
-            ApplySessionFilter();
-        }
-    });
-    function ResetFilter() {
-        window.location.href = "/Interview/ResetCompletedInterviewsFilter";
-    }
-    function ApplySessionFilter() {
-        var strtDte = '@strtDte';
-        var endDte = '@endDte';
-        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var rFID = @Html.Raw(Json.Serialize(RFID));
-        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
-        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
-        var clientName = @Html.Raw(Json.Serialize(ClientName));
-        var client = @Html.Raw(Json.Serialize(Client));
-
-        $('input[name=StartDate]').val(strtDte);
-        $('input[name=EndDate]').val(endDte);
-        $("#PrimarySkill").val(primarySkillsArr);
-        $("#RFID").val(rFID);
-        $("#InterviewStatus").val(interviewStatus);
-        $("#Interviewer").val(interviewer);
-        $("#ClientName").val(clientName);
-        $("#Client").val(client);
-        var form = $("#form").serialize();
-    }
-</script>
-
 
 @if (ViewBag.Message != null)
 {
