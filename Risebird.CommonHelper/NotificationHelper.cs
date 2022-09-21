@@ -2452,7 +2452,7 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteCandidate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;
@@ -2462,33 +2462,36 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendRedoB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null)
+        public string SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null)
         {
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Interview Invite");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Invite");
                 msg.Subject = ClientName + " - Video Interview - " + primarySkill;
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, "Candidate"));
-                if (!string.IsNullOrEmpty(clientHREmail))
+                if (clientUsers != null && clientUsers.Count > 0)
+                {
+                    foreach (var clientUser in clientUsers)
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
+                    }
+                    if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency))
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
+                    }
+                }
+                else if (!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
-                if (!string.IsNullOrEmpty(staffingAgency))
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
-                }
-                string companyLogoLink = string.Empty;
-                string companyURL = string.Empty;
-                companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
-                companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
-                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
+
+                object[] parameters = new object[] { ClientName, emailId, interviewdate, primarySkill };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteClient.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }

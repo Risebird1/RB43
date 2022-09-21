@@ -385,10 +385,20 @@
             data: { 'IRFId': val },           
             success: function (data) {               
                 if (data == "Zoom") {
-                    $("#hzoom").show();
+                    $("#hzoom").show();  
+                  
+                    //$('#hzoom').attr('required', true);
+                    $("#risebirdHR").attr("required", "required");
+                    //$('#hzoom').attr("required", "required");
+                    //document.getElementById("hzoom").required = true;
+                   
                 }
                 else {
                     $("#hzoom").hide();
+                    //document.getElementById("hzoom").required = false;
+                    //$('#hzoom').removeAttr('required');
+
+                    $("#risebirdHR").removeAttr("required");
                 }
             }
         });
