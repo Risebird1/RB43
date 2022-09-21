@@ -487,12 +487,12 @@
                                                                 {
 
                                                                     <td class="cadName">
-                                                                        @*<a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>*@
-                                                                        <a href="#" title= "Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                                                                        <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                        @*<a href="#" title= "Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
                                                                            data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
                                                                            data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id, meetingLink = item.zoomLink})">
                                                                             Meeting Link
-                                                                        </a>
+                                                                        </a>*@
 
                                                                     </td>
 
@@ -1627,7 +1627,7 @@
         $("#tblbodyMyInterview").empty().html(html);
     }
     function bindPages(pagecount, startpage, endpage, totalcount) {
-        debugger;
+        
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
