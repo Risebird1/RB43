@@ -29,5 +29,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<SelectabilityEvaluatorReport>> FetchMCQReportDetails(string MCQId, string ApplyingCompany);
         Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetailsByCMCQId(string CMCQId);
         Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetails(string MCQId, string ApplyingCompany);
+        Task<IEnumerable<MCQVMset>> FetchMCQSetsForApi(MCQApiVM model);
     }
 }
