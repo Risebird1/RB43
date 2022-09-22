@@ -89,5 +89,6 @@ namespace Risebird.CommonHelper.Interface
         string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail);
         string SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
         string SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null);
+        string SendClientInterviewPublicURL(Mail model, string Name, string publicurl);
     }
 }
