@@ -44,8 +44,6 @@
     body {
         font-family: Arial, Helvetica, sans-serif;
     }
-
-   
 </style>
 <style>
 
@@ -81,7 +79,13 @@
     .tripledot:after {
         content: '\2807';
     }
+    
+    .tox-notifications-container{
+        display:none
+    }
+
 </style>
+
 <script>
     var Header = "<div id='skill_1'>Skills Channel</div>";
     $('#txtpageHeader').empty().html(Header);
@@ -95,6 +99,9 @@
 
 
 @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">*@
+
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
 <div class="main-panel" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"></div>-->
@@ -382,7 +389,9 @@
                                                                     @if (item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0)
                                                                     {
                                                                         <h6 style="color:blue" class="pskill" title="@item.IRFId">@item.IRFId</h6>
-                                                                    }else{
+                                                                    }
+                                                                    else
+                                                                    {
                                                                         <h6 class="pskill" title="@item.IRFId">@item.IRFId</h6>
                                                                     }
                                                                 }
@@ -1170,7 +1179,6 @@
 </div>
 
 <div id="broadcastModal" class="modal modal-bg">
-    <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
@@ -1193,11 +1201,11 @@
 
                     <div class="form-group">
                         <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
+                        
                         <div>
-                            <div class="text-areadiv1">
-                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
-                            </div>
+                            <textarea style="width:100%;" id="bcMessage"></textarea>
                         </div>
+                        
                     </div>
                 </div>
                 <div class="col-md-12 col-sm-12 text-right">
@@ -1205,6 +1213,7 @@
                     <button type="button" onclick="closeBroadcastModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -1229,7 +1238,7 @@
             }
 
         });
-
+        
     });
     function loadPageData(currentPageNumber) {
         currentDataFetched = false;
@@ -2275,18 +2284,29 @@
 <script>
     function closeBroadcastModal() {
         var modal = document.getElementById("broadcastModal");
+        tinymce.remove('#bcMessage');
         modal.style.display = "none";
     }
     function OpenBroadcastModal(irfid, Irfname) {
         var modalBct = document.getElementById("broadcastModal");
         modalBct.style.display = "block";
+
+        tinymce.init({
+            selector: "#bcMessage",
+            menubar: false,
+            statusbar: false,
+            height: "300"
+            
+        });
+
         $("#hid_irfid_broadcast").val(irfid);
         $("#boradcastIrfName").text(Irfname);
         return;
     }
 
     function SendBroadcast() {
-        var message = document.getElementById("bcMessage").value;
+        //var message = document.getElementById("bcMessage").value;
+        var message = tinymce.activeEditor.getContent();;
         var subject = document.getElementById("bcSubject").value;
         var irfid = document.getElementById("hid_irfid_broadcast").value;
         $.ajax({
