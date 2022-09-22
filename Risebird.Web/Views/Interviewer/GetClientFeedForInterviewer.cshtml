@@ -49,6 +49,10 @@
         <h1 id="clientInstructions_interviewDate" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
         <h1 id="clientInstructions_candidateName" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
     }
+    @if(Model.ClientFeeds == null || Model.ClientFeeds.Count()==0)
+    {
+        <p style="text-align:center">No instructions at this moment.</p>
+    }
     @{
         int feedDataCount = 0;
     }
@@ -87,7 +91,7 @@
             <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
             <div class="box">
                 <p class="broadcastContent">@feed.FeedSubject</p>
-                <p class="broadcastContent">@feed.FeedText</p>
+                <p class="broadcastContent">@Html.Raw(feed.FeedText)</p>
             </div>
 
 
@@ -138,14 +142,15 @@
 
         }
 
-        @if(Model.InterviewId.HasValue && !string.IsNullOrEmpty(Model.MeetingLink))
-        {
-            <p style="text-align:center">
-                <a href="@Model.MeetingLink" id="clientInstructions_meetingLink" target="_blank">
-                    Continue with meeting
-                </a>
-            </p>
-        }
+
+    }
+    @if (!string.IsNullOrEmpty(Model.MeetingLink))
+    {
+        <p style="text-align:center">
+            <a href="@Model.MeetingLink" id="clientInstructions_meetingLink" target="_blank">
+                Continue with meeting
+            </a>
+        </p>
     }
 </div>
     
