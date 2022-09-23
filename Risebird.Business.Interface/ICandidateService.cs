@@ -26,5 +26,6 @@ namespace Risebird.Business.Interface
         Task<bool> ProcessCandidateResume(int id);
         Task<string> FetchCandidateResumeById(int id);
         Task<string> FetchBillingownerById(int id);
+        Task<InterviewUsersDetails> FetchChannelOwnerByInterviewid(int interviewid);
     }
 }
