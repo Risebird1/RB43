@@ -6161,7 +6161,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            value = "NEED MORE CLERITY";
+                            value = "NEED MORE CLARITY";
                         }
                         //send mail scheduling link
                         var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
