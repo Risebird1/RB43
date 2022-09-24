@@ -1410,5 +1410,24 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<string>>FetchAlertMessage()
+        {
+            try
+            {
+                string query = "select Announcement from alertmessage where starttime<getdate() and enddate>getdate()";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query,null);
+                    return (List<string>)result;
+                }
+               
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

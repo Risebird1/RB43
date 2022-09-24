@@ -1,0 +1,16 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'Alertmessage')
+BEGIN  
+
+CREATE TABLE [dbo].Alertmessage(
+[ID] [int] IDENTITY(1,1) NOT NULL,
+[Announcement] [varchar](1000) NULL,
+[StartTime] [datetime]  NULL,
+[EndTime] [datetime]  NULL,
+IsActive bit)
+ CONSTRAINT [PK_Alertmessage] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
