@@ -15,7 +15,6 @@
         $.post(actionUrl, dataToSend).done(function (data) {
             //var newBody = $('#comments_modal_body', data);
             //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
-
             var newBody = $('.modal-body', data);
             placeholderElement.find('.modal-body').replaceWith(newBody);
 
@@ -24,17 +23,27 @@
             var isValid = newBody.find('[name="IsValid"]').val() == 'True';
             if (isValid) {
                 placeholderElement.find('.modal').modal('hide');
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'success',
+                    html:'Interviewer rated successfully!',
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
             }
         });
 
     });
 
     var el = document.getElementById("modal_clientComment_placeholder");
-    el.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-        }
-    });
+    if (el != null) {
+        el.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+            }
+        });
+    }
+    
 
     var audio_placeholderElement = $('#modal_clientAudio_placeholder');
 

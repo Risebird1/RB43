@@ -55,6 +55,13 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<style>
+    .tox-notifications-container {
+        display: none
+    }
+</style>
+
 <div class="main-panel" id="main-panel">
 
     <div class="pt30">
@@ -1128,12 +1135,17 @@
                         <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
                     </div>
 
+
+
                     <div class="form-group">
                         <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
-                        <div>
+                        @*<div>
                             <div class="text-areadiv1">
                                 <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
                             </div>
+                        </div>*@
+                        <div>
+                            <textarea style="width:100%;" id="bcMessage"></textarea>
                         </div>
 
                     </div>
@@ -1829,18 +1841,32 @@
     // When the user clicks on <span> (x), close the modal
     spanbroadcast1.onclick = function () {
         var modal = document.getElementById("broadcastModal");
+        tinymce.remove('#bcMessage');
         modal.style.display = "none";
     }
 
 
     function OpenBroadcastModal() {
+
         var modalBct = document.getElementById("broadcastModal");
+
+        tinymce.init({
+            selector: "#bcMessage",
+            menubar: false,
+            statusbar: false,
+            plugins: 'link',
+            height: "300",
+            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
+
+        });
+
         modalBct.style.display = "block";
         return;
     }
 
     function SendBroadcast() {
-        var message = document.getElementById("bcMessage").value;
+        //var message = document.getElementById("bcMessage").value;
+        var message = tinymce.activeEditor.getContent();;
         var subject = document.getElementById("bcSubject").value;
         var irfid = document.getElementById("irflist").value;
         var ele = document.getElementsByName('receivers');
