@@ -775,9 +775,17 @@
 
                                                         @if (item.IsCandidateResponsed)
                                                         {
-                                                            @if (item.CandidateResponse)
+                                                            @if (item.CandidateResponse == 1)
                                                             {
                                                                 <td>Responsed (Yes)</td>
+                                                            }
+                                                            else if (item.CandidateResponse == 3)
+                                                            {
+                                                                <td>Responsed (Reschedule)</td>
+                                                            }
+                                                            else if (item.CandidateResponse == 4)
+                                                            {
+                                                                <td>Responsed (Need More clarity)</td>
                                                             }
                                                             else
                                                             {

@@ -191,4 +191,12 @@ namespace Risebird.Entities.ViewModel
         //public string meetingAttendee { get; set; }
         //public string videoUrl { get; set; }
     }
+    public class MCQApiVM
+    {
+        public string CandidateEmailid { get; set; }
+        public string PrimarySkill { get; set; }
+        public int SeniorityLevel { get; set; }
+        public string Client { get; set; }
+        public string ClientHrEmailid { get; set; }
+    }
 }

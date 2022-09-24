@@ -589,5 +589,28 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<InterviewUsersDetails> FetchChannelOwnerByInterviewid(int interviewid)
+        {
+            try
+            {
+                var query = "Select ClientHrContact as EmailId From InterviewMeetings where im.id=@interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<InterviewUsersDetails>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

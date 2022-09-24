@@ -28,4 +28,10 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string IRFId { get; set; }
     }
+    public class ClientInterviewMapped
+    {
+        public string EmailId { get; set; }
+        public int TotalCompletedInterview { get; set; }
+        public string ClientName { get; set; }
+    }
 }
