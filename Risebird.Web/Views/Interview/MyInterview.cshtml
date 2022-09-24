@@ -336,7 +336,7 @@
 
                                         <div class="clearfix"></div>
                                         <div class="col-sm-12 nopad">
-                                            <div class="table-responsive">
+                                            <div class="table-responsive" id="id_interviewListData">
                                                 <table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
@@ -488,7 +488,13 @@
                                                                 {
 
                                                                     <td class="cadName">
-                                                                        <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                        @*<a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>*@
+                                                                        <a href="#" title= "Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                                                                           data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
+                                                                           data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id, meetingLink = item.zoomLink})">
+                                                                            Meeting Link
+                                                                        </a>
+
                                                                     </td>
 
                                                                 }
@@ -808,7 +814,7 @@
 
 <div class="cd-panel cd-panel--from-right js-cd-panel-main">
     <header class="cd-panel__header">
-        <h1 style="font-weight:bold; font-size: 16px">Client Feed</h1>
+        <h1 style="font-weight:bold; font-size: 16px">Client Feedback</h1>
         <a href="#0" class="cd-panel__close js-cd-close">Close</a>
     </header>
 
@@ -952,8 +958,8 @@
         $('a[data-toggle="clientInstructions-modal"]').click(function (event) {
             var url = $(this).data('url');
             //var interviewDate = event.delegateTarget.dataset.interviewDate;
-            var interviewDate = $(this).data('interviewdate');;
-            var candidateName = $(this).data('candidatename');;
+            var interviewDate = $(this).data('interviewdate');
+            var candidateName = $(this).data('candidatename');
             $.get(url).done(function (data) {
                 clientInstructionsPlaceHolder.html('');
                 $("#clientInstructions_interviewDate").html('');
@@ -964,35 +970,37 @@
                 clientInstructionsPlaceHolder.html(data);
                 $("#clientInstructions_interviewDate").html('Interview Date: ' + interviewDate);
                 $("#clientInstructions_candidateName").html("Candidate's Name: " + candidateName);
-
+                
             });
 
         });
         //clientInstructions_interviewDate
     });
+
     function ResetFilter() {
-                    window.location.href = "/Interview/ResetMyInterviewFilter";
+        window.location.href = "/Interview/ResetMyInterviewFilter";
     }
-        function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var InterviewSlot = @Html.Raw(Json.Serialize(InterviewSlot));
-            var CandidateName =  @Html.Raw(Json.Serialize(CandidateName));
-            var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
-            var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
-            var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var InterviewSlot = @Html.Raw(Json.Serialize(InterviewSlot));
+        var CandidateName =  @Html.Raw(Json.Serialize(CandidateName));
+        var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
+        var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
+        var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
 
 
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#InterviewSlot").val(InterviewSlot);
-            $("#CandidateName").val(CandidateName);
-            $("#RisebirdHR").val(RisebirdHR);
-            $("#InterviewDate").val(InterviewDate);
-            $("#JobLevel").val(JobLevel);
-            //$("#InterviewDuration").val(InterviewDuration);
-            var form = $("#form").serialize();
-    }
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#InterviewSlot").val(InterviewSlot);
+        $("#CandidateName").val(CandidateName);
+        $("#RisebirdHR").val(RisebirdHR);
+        $("#InterviewDate").val(InterviewDate);
+        $("#JobLevel").val(JobLevel);
+        //$("#InterviewDuration").val(InterviewDuration);
+        var form = $("#form").serialize();
+}
     function openSkillpopup(id) {
         $.ajax({
             type: "POST",
@@ -1398,16 +1406,22 @@
         searchResult();
     }
     function searchResult() {
-
         $.ajax({
             type: "POST",
             url: "/Interview/MyInterviewJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
+                    //bindtableData(data.result);
 
-                    bindtableData(data.result);
-                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                    $("#id_interviewListData").empty().html(data);
+                    var totalPage = document.getElementById('id_totalPage').innerHTML;
+                    var endPage = document.getElementById('id_endPage').innerHTML;
+                    var startPage = document.getElementById('id_startPage').innerHTML;
+                    var totalentry = document.getElementById('id_totalentry').innerHTML;
+
+                    //bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                    bindPages(totalPage, startPage, endPage, totalentry);
                 }
             }
         });
@@ -1614,6 +1628,7 @@
         $("#tblbodyMyInterview").empty().html(html);
     }
     function bindPages(pagecount, startpage, endpage, totalcount) {
+        debugger;
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';

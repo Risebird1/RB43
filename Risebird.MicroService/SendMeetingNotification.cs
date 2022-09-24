@@ -7,6 +7,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -186,7 +187,10 @@ namespace Risebird.MicroService
                         else
                         {
                             _whatsapp.buttonlink = !string.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
-
+                        }
+                        if (_whatsapp.buttonlink.Contains("InterviewScheduler/ScheduleEvent"))
+                        {
+                            _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
                         }
                         _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }

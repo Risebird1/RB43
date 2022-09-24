@@ -69,6 +69,7 @@ insert into @tbl_AllFeed
 select irf.IRFId, irf.CreatedOn, 'Audio', null, null, AudioComment, null, null, null, null, null from IRF
 join @tbl_RelevantSkillChannels rsc on rsc.IRFId = irf.id
 where (@postWhichDate is null or CAST(FORMAT(irf.CreatedOn ,'yyyy-MM-dd HH:mm:ss') AS datetime) > @postWhichDate)
+and (irf.AudioComment != '' and irf.AudioComment is not null)
 
 insert into @tbl_AllFeed
 select irf.IRFId, cbm.SentAt, 'Broadcast', cbm.[Message], cbm.[Subject], null, null, null, null, null, null from ClientBroadcastMessages cbm

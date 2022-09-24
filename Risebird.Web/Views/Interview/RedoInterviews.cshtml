@@ -1,0 +1,322 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Redo Interviews";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var Header = "Redo Interviews";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Redo Interviews</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                    <div id="tableID" class="second">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Skill Channel ID</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Client Name</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Channel Owner</th>
+                                                    <th>Interview Status</th>
+                                                    <th>QC Completed</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Skill Channel ID</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Client Name</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Channel Owner</th>
+                                                    <th>Interview Status</th>
+                                                    <th>QC Completed</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+
+                                                    <tr id=@item.imid>
+                                                        <td>@item.IRFId </td>
+                                                        <td>@item.interviewDate </td>
+                                                        <td>@item.candidateName</td>
+                                                        <td>@item.candidateEmail</td>
+                                                        <td>@item.Client</td>
+                                                        <td>@item.interviewer</td>
+                                                        <td>@item.risebirdHR</td>
+                                                        <td>@item.intervieweStatusStatDesc</td>
+                                                        @if (item.QCPresent > 0)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        <td>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                <a style="color:white" target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                <span onclick="OpenRedoFormModel('@item.imid','@item.intervieweStatusStatDesc')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="RedoInterviewModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Redo Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeRedoInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="divredoInterview">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+
+
+
+
+<script>
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+
+    });
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
+<script>
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+    function OpenRedoFormModel(interviewid) {
+        $.ajax({
+            url: '/Interview/RedoInterviewDetails',
+            data: { 'interviewid': interviewid },
+            success: function (data) {
+                $('#divredoInterview').html('');
+                $('#divredoInterview').html(data);
+                openRedoInterviewModel();
+            }
+        });
+    }
+    function openRedoInterviewModel() {
+        var modal = document.getElementById("RedoInterviewModel");
+        modal.style.display = "block";
+    }
+    function closeRedoInterviewModel() {
+        var modal = document.getElementById("RedoInterviewModel");
+        modal.style.display = "none";
+    }
+</script>

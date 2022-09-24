@@ -6296,5 +6296,47 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<string> GetMeetingPlatformbyIRFId(string IRFId)
+        {
+            try
+            {            
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetMeetingPlatformByIRFId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }     
+        public async Task<IEnumerable<MeetingVM>> GetRedoInterviewList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRedoInterviewMeetings", null, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -3001,6 +3001,10 @@ namespace Risebird.Web.Controllers
                 {
                     _whatsapp.buttonlink = !String.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
                 }
+                if (_whatsapp.buttonlink.Contains("InterviewScheduler/ScheduleEvent"))
+                {
+                    _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
+                }
                 _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);

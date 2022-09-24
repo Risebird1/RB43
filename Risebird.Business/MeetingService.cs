@@ -3676,6 +3676,31 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<string> GetMeetingPlatformbyIRFId(string IRFId)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetMeetingPlatformbyIRFId(IRFId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<MeetingVM> GetRedoInterviewList()
+        {
+            try
+            {
+                return _meetingRespository.GetRedoInterviewList().Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
