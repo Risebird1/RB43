@@ -19,7 +19,7 @@ CREATE PROCEDURE [dbo].[usp_GetClientCommentsForReport]
 AS  
 Begin  
 
-select * from ClientCommentsForReport where InterviewId = @interviewId
+select ccr.*, dbo.fn_GetClientActionForInterviewer(ccr.InterviewId) as ClientActionOnInterviewer from ClientCommentsForReport ccr where InterviewId = @interviewId
 
 End  
   

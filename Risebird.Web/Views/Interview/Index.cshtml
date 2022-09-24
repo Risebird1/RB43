@@ -55,6 +55,13 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<style>
+    .tox-notifications-container {
+        display: none
+    }
+</style>
+
 <div class="main-panel" id="main-panel">
 
     <div class="pt30">
@@ -102,9 +109,9 @@
 
 
 
-                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
-                        </button>*@
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
+                        </button>
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("Add", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
@@ -1125,12 +1132,17 @@
                         <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
                     </div>
 
+
+
                     <div class="form-group">
                         <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
-                        <div>
+                        @*<div>
                             <div class="text-areadiv1">
                                 <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
                             </div>
+                        </div>*@
+                        <div>
+                            <textarea style="width:100%;" id="bcMessage"></textarea>
                         </div>
 
                     </div>
@@ -1826,18 +1838,32 @@
     // When the user clicks on <span> (x), close the modal
     spanbroadcast1.onclick = function () {
         var modal = document.getElementById("broadcastModal");
+        tinymce.remove('#bcMessage');
         modal.style.display = "none";
     }
 
 
     function OpenBroadcastModal() {
+
         var modalBct = document.getElementById("broadcastModal");
+
+        tinymce.init({
+            selector: "#bcMessage",
+            menubar: false,
+            statusbar: false,
+            plugins: 'link',
+            height: "300",
+            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
+
+        });
+
         modalBct.style.display = "block";
         return;
     }
 
     function SendBroadcast() {
-        var message = document.getElementById("bcMessage").value;
+        //var message = document.getElementById("bcMessage").value;
+        var message = tinymce.activeEditor.getContent();;
         var subject = document.getElementById("bcSubject").value;
         var irfid = document.getElementById("irflist").value;
         var ele = document.getElementsByName('receivers');
