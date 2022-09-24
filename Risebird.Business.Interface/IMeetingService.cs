@@ -163,7 +163,7 @@ namespace Risebird.Business.Interface
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId);
+        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,bool response);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
@@ -201,5 +201,6 @@ namespace Risebird.Business.Interface
         bool CheckInterviewCancellable(int meetingid);
         Task<string> GetMeetingPlatformbyIRFId(string IRFId);
         List<MeetingVM> GetRedoInterviewList();
+        bool CheckInterviewClerityTime(int meetingid);
     }
 }

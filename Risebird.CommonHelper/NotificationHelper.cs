@@ -2017,7 +2017,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton)
+        public string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton)
         {
             try
             {
@@ -2030,7 +2030,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2041,7 +2041,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton)
+        public string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton)
         {
             try
             {
@@ -2054,7 +2054,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2488,6 +2488,62 @@ namespace Risebird.CommonHelper
                 object[] parameters = new object[] { ClientName, emailId, interviewdate, primarySkill };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteClient.html");
                 string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendClientInterviewPublicURL(Mail model, string Name, string publicurl)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+
+                object[] parameters = new object[] { Name, publicurl };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublic.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Candidate : " + CandidateName + " : raise request for clerity about Interview";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                if (!String.IsNullOrEmpty(ClientHR))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHR, null));
+                }
+                if (irfOwnersAndRestrictedIrfOwners != null && irfOwnersAndRestrictedIrfOwners.Count != 0)
+                {
+                    foreach (var clientEmail in irfOwnersAndRestrictedIrfOwners)
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
+                    }
+                }
+                object[] parameters = new object[] { CandidateEmail, interviewDate };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewClerityClientNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
                 msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;
             }
