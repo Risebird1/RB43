@@ -4273,7 +4273,7 @@ namespace Risebird.Web.Controllers
             model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
         }
 
-        public async Task<IActionResult> GetClientCommentsForReport(int interviewId)
+        public async Task<IActionResult> GetClientCommentsForReport(int interviewId, bool allowClientAction = false)
         {
             try
             {
@@ -4293,6 +4293,7 @@ namespace Risebird.Web.Controllers
                     }
 
                     model.Profile = profileName;
+                    model.allowClientAction = allowClientAction;
                     return PartialView("GetClientCommentsForReport", model);
                 }
                 else

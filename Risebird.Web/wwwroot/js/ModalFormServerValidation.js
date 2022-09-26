@@ -1,8 +1,13 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
     var placeholderElement = $('#modal_clientComment_placeholder');
+    var dateOfInterview = '';
     $('button[data-toggle="ajax-modal"]').click(function (event) {
         OpenPopUp(event, placeholderElement, true);
         //var url = $(this).data('url');
+        if (this.hasAttribute('data-interviewdate')) {
+            dateOfInterview = $(this).data('interviewdate');
+        }
         
     });
 
@@ -15,7 +20,6 @@
         $.post(actionUrl, dataToSend).done(function (data) {
             //var newBody = $('#comments_modal_body', data);
             //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
-
             var newBody = $('.modal-body', data);
             placeholderElement.find('.modal-body').replaceWith(newBody);
 
@@ -24,17 +28,32 @@
             var isValid = newBody.find('[name="IsValid"]').val() == 'True';
             if (isValid) {
                 placeholderElement.find('.modal').modal('hide');
+                var html = "Interviewer rated successfully!";
+                if (dateOfInterview != null && dateOfInterview != '') {
+                    html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+                }
+                
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    type: 'success',
+                    html: html,
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
             }
         });
 
     });
 
     var el = document.getElementById("modal_clientComment_placeholder");
-    el.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-        }
-    });
+    if (el != null) {
+        el.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+            }
+        });
+    }
+    
 
     var audio_placeholderElement = $('#modal_clientAudio_placeholder');
 
