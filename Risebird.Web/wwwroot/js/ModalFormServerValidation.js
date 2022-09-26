@@ -1,8 +1,13 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
     var placeholderElement = $('#modal_clientComment_placeholder');
+    var dateOfInterview = '';
     $('button[data-toggle="ajax-modal"]').click(function (event) {
         OpenPopUp(event, placeholderElement, true);
         //var url = $(this).data('url');
+        if (this.hasAttribute('data-interviewdate')) {
+            dateOfInterview = $(this).data('interviewdate');
+        }
         
     });
 
@@ -23,10 +28,15 @@
             var isValid = newBody.find('[name="IsValid"]').val() == 'True';
             if (isValid) {
                 placeholderElement.find('.modal').modal('hide');
+                var html = "Interviewer rated successfully!";
+                if (dateOfInterview != null && dateOfInterview != '') {
+                    html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+                }
+                
                 Swal.fire({
                     title: '<strong>Successful</u></strong>',
-                    icon: 'success',
-                    html:'Interviewer rated successfully!',
+                    type: 'success',
+                    html: html,
                     confirmButtonText: "Close",
                     allowOutsideClick: false
                 });
