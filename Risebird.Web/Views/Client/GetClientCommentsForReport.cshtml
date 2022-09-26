@@ -15,65 +15,70 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCommentLabel">Comment</h5>
+                <h5 class="modal-title" id="addCommentLabel">Rate the Interviewer</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body" id="comments_modal_body" style="max-height:400px; overflow:auto">
+
+                <p>Interview Date: <span style="font-style:italic; font-weight:bold">@Model.interviewDate.ToString("MM/dd/yyyy hh:mm tt")</span></p>
+
                 @if (Model.Profile == "Client")
                 {
-                <form asp-action="AddUpdateClientCommentsForReport">
+                    <form asp-action="AddUpdateClientCommentsForReport">
 
-                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
 
-                    <div class="star-rating">
-                        <input type="radio" id="Q2_5" name="rating2" value="5" onclick="ChangeClientFeedbackRating(this.value)" @*onmouseover="setRatingOnHover(5)"*@ />
-                        <label for="Q2_5" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_4" name="rating2" value="4" onclick="ChangeClientFeedbackRating(this.value)" />
-                        <label for="Q2_4" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_3" name="rating2" value="3" onclick="ChangeClientFeedbackRating(this.value)" />
-                        <label for="Q2_3" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_2" name="rating2" value="2" onclick="ChangeClientFeedbackRating(this.value)" />
-                        <label for="Q2_2" class="star">&#9733;</label>
-                        <input type="radio" id="Q2_1" name="rating2" value="1" onclick="ChangeClientFeedbackRating(this.value)" />
-                        <label for="Q2_1" class="star">&#9733;</label>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Comment"></label>
-                        @if (Model.Profile == "Client")
-                        {
-                            <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%"></textarea>
-
-                        }
-                        else
-                        {
-                            <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%" readonly></textarea>
-
-                        }
-                        <span asp-validation-for="Comment" class="text-danger"></span>
-                    </div>
-                    @if (Model.allowClientAction)
-                    {
-                        <div class="col-md-12 clearfix">
-                            <div class="col-md-4 pull-left">
-                                <input type="radio" asp-for="ClientActionOnInterviewer" value="Rejected" id="rd_removeinterviewer" style="position:relative;left:-4px;top:4px;" /> Remove Interviewer
-                            </div>
-                            <div class="col-md-4 pull-left">
-                                <input type="radio" asp-for="ClientActionOnInterviewer" value="Shortlisted" id="rd_shortlistinterviewer" style="position:relative;left:-4px;top:4px;" /> Shortlist Interviewer
-                            </div>
+                        <div class="star-rating">
+                            <input type="radio" id="Q2_5" name="rating2" value="5" onclick="ChangeClientFeedbackRating(this.value)" @*onmouseover="setRatingOnHover(5)"*@ />
+                            <label for="Q2_5" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_4" name="rating2" value="4" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_4" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_3" name="rating2" value="3" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_3" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_2" name="rating2" value="2" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_2" class="star">&#9733;</label>
+                            <input type="radio" id="Q2_1" name="rating2" value="1" onclick="ChangeClientFeedbackRating(this.value)" />
+                            <label for="Q2_1" class="star">&#9733;</label>
                         </div>
-                    }
+                        <div class="form-group">
+                            <label asp-for="Comment"></label>
+                            @if (Model.Profile == "Client")
+                            {
+                                <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%"></textarea>
+
+                            }
+                            else
+                            {
+                                <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%" readonly></textarea>
+
+                            }
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+                        @if (Model.allowClientAction)
+                        {
+                            <div class="col-md-12 clearfix">
+                                <div class="col-md-4 pull-left">
+                                    <input type="radio" asp-for="ClientActionOnInterviewer" value="Rejected" id="rd_removeinterviewer" style="position:relative;left:-4px;top:4px;" /> Remove Interviewer
+                                </div>
+                                <div class="col-md-4 pull-left">
+                                    <input type="radio" asp-for="ClientActionOnInterviewer" value="Shortlisted" id="rd_shortlistinterviewer" style="position:relative;left:-4px;top:4px;" /> Shortlist Interviewer
+                                </div>
+                            </div>
+                        }
 
 
-                    <input type="hidden" asp-for="id" />
-                    <input type="hidden" asp-for="InterviewId" />
-                    <input type="hidden" asp-for="Profile" />
-                    <input type="hidden" asp-for="CreatedBy" />
-                    <input type="hidden" asp-for="Rating" />
-                    <input type="hidden" asp-for="allowClientAction" />
+                        <input type="hidden" asp-for="id" />
+                        <input type="hidden" asp-for="InterviewId" />
+                        <input type="hidden" asp-for="Profile" />
+                        <input type="hidden" asp-for="CreatedBy" />
+                        <input type="hidden" asp-for="Rating" />
+                        <input type="hidden" asp-for="allowClientAction" />
+                        <input type="hidden" asp-for="interviewDate" />
+                        <input type="hidden" asp-for="Interviewer" />
 
-                </form>
+                    </form>
                 }
 
 
@@ -93,73 +98,73 @@
                         <tbody style="overflow-y:scroll">
                             @foreach (var item in Model.ClientCommentsList)
                             {
-                            <tr>
-                                @if (Model.Profile != "Interviewer")
-                                {
-                                    <td>@item.CreatedBy</td>
-                                }
-
-                                <td>
-
-                                    @for (int i = 1; i <= 5; i++)
+                                <tr>
+                                    @if (Model.Profile != "Interviewer")
                                     {
-                                        string fillStarClass = string.Empty;
-                                        if (item.Rating >= i)
-                                        {
-                                            fillStarClass = "fillStar";
-                                        }
-                                        <span class="fa fa-star @fillStarClass"></span>
+                                        <td>@item.CreatedBy</td>
                                     }
-                                </td>
-                                
-                                <td class="interview-com" style="word-break: break-word">
 
+                                    <td>
 
-                                    <div id="section_@item.id">
-                                        @if (item.Comment != null && item.Comment != "")
+                                        @for (int i = 1; i <= 5; i++)
                                         {
-                                            @if (item.Comment.Length > 22)
+                                            string fillStarClass = string.Empty;
+                                            if (item.Rating >= i)
                                             {
-                                                <div class="article">
-                                                    <p style="margin-bottom:0px;">
-                                                        @item.Comment.Substring(0, 22)
-                                                    </p>
-                                                    <p class="moretext_@item.id moretext">
-                                                        @item.Comment.Substring(22, @item.Comment.Length - 22)
-                                                    </p>
-                                                </div>
-                                                <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                fillStarClass = "fillStar";
                                             }
-                                            else
-                                            {
-                                                <div class="article">
-
-                                                    <p>
-                                                        @item.Comment.Substring(0, @item.Comment.Length)
-                                                    </p>
-                                                </div>
-                                            }
+                                            <span class="fa fa-star @fillStarClass"></span>
                                         }
-                                        
-                                    </div>
+                                    </td>
+
+                                    <td class="interview-com" style="word-break: break-word">
+
+
+                                        <div id="section_@item.id">
+                                            @if (item.Comment != null && item.Comment != "")
+                                            {
+                                                @if (item.Comment.Length > 22)
+                                                {
+                                                    <div class="article">
+                                                        <p style="margin-bottom:0px;">
+                                                            @item.Comment.Substring(0, 22)
+                                                        </p>
+                                                        <p class="moretext_@item.id moretext">
+                                                            @item.Comment.Substring(22, @item.Comment.Length - 22)
+                                                        </p>
+                                                    </div>
+                                                    <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                }
+                                                else
+                                                {
+                                                    <div class="article">
+
+                                                        <p>
+                                                            @item.Comment.Substring(0, @item.Comment.Length)
+                                                        </p>
+                                                    </div>
+                                                }
+                                            }
+
+                                        </div>
 
 
 
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                         @*<tfoot>
-                            <tr>
-                                @if (Model.Profile != "Interviewer")
-                                {
-                                    <th>User</th>
-                                }
-                                <th>Rating</th>
-                                <th>Comment</th>
-                            </tr>
-                        </tfoot>*@
+                    <tr>
+                        @if (Model.Profile != "Interviewer")
+                        {
+                            <th>User</th>
+                        }
+                        <th>Rating</th>
+                        <th>Comment</th>
+                    </tr>
+                </tfoot>*@
                     </table>
                 }
             </div>
