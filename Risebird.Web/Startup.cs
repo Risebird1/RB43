@@ -148,6 +148,7 @@ namespace Risebird.Web
                        .Allow("https://www.google-analytics.com/")
                        .Allow("https://dc.services.visualstudio.com/")
                        .Allow("https://centralindia-0.in.applicationinsights.azure.com//v2/track")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("'unsafe-inline'");
 
                 builder.Scripts
@@ -178,6 +179,8 @@ namespace Risebird.Web
                        .Allow("https://dc.services.visualstudio.com/")
                        .Allow("https://js.monitor.azure.com/scripts/b/ai.2.min.js")
                        .Allow("https://centralindia-0.in.applicationinsights.azure.com//v2/track")
+                       //.Allow("https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("blob:")
                        .Allow("'unsafe-eval'")
                        .Allow("'unsafe-inline'");
@@ -196,6 +199,7 @@ namespace Risebird.Web
                        .Allow("https://amp.azure.net/")
                        .Allow("https://www.amcharts.com/")
                        .Allow("https://wchat.freshchat.com/")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("'unsafe-inline'");
 
                 builder.Fonts
@@ -210,6 +214,7 @@ namespace Risebird.Web
                        .Allow("https://www.amcharts.com/")
                        .Allow("https://wchat.freshchat.com/")
                        .Allow("https://cdnjs.cloudflare.com/")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("'unsafe-inline'");
 
                 builder.Images
@@ -223,6 +228,8 @@ namespace Risebird.Web
                        .Allow("https://www.google-analytics.com/")
                        .Allow("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/")
                        .Allow("https://d3v0px0pttie1i.cloudfront.net/")
+                       .Allow("https://sp.tinymce.com/")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("data:")
                        //.Allow("data:image/svg+xml,%3csvg")
                        .Allow("'unsafe-inline'");
@@ -235,12 +242,14 @@ namespace Risebird.Web
                        .Allow("https://api.twilio.com/")
                        .Allow("https://risebirdvideos.blob.core.windows.net/")
                        .Allow("https://meet.risebird.io/server/recordings/")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("https://portal.risebird.io/");
 
                 builder.Frame
                        .AllowSelf()
                        .Allow("https://wchat.freshchat.com/")
                        .Allow("https://calendly.com/")
+                       .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("*.webpush.freshchat.com/")
                        .Allow("data:");
                 //builder.Object
