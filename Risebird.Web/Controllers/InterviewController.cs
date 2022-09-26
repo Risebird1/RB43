@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -3730,7 +3731,7 @@ namespace Risebird.Web.Controllers
         //GetClientsByRoles
         [HttpGet]
         public SelectList GetClientsByRoles(string val)
-        {           
+        {
             var list = new List<SelectListItem>();
             var clients = _meetingService.GetClientsByRoles(val);
             if (clients != null && clients.Count() > 0)
@@ -6133,11 +6134,36 @@ namespace Risebird.Web.Controllers
         {
             if (_meetingService.CheckInterviewCancellable(meetingid))
             {
-                var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
+                var response = true;
+                if (status == 4)
+                {
+                    response = _meetingService.CheckInterviewClerityTime(meetingid);
+                }
+                var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
                 if (results == "Success")
                 {
-                    if (status == 2)
+                    if (status == 4)
                     {
+                        var clientHr = await _candidateService.FetchChannelOwnerByInterviewid(meetingid);
+                        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                        var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                        var _result = _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    }
+                    if (status == 2 || status == 3 || (status == 4 && response == false))
+                    {
+                        var value = String.Empty;
+                        if (status == 2)
+                        {
+                            value = "NO";
+                        }
+                        else if (status == 3)
+                        {
+                            value = "RESCHEDULE";
+                        }
+                        else
+                        {
+                            value = "NEED MORE CLARITY";
+                        }
                         //send mail scheduling link
                         var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
                         var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
@@ -6155,7 +6181,7 @@ namespace Risebird.Web.Controllers
                         var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                         var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         DeleteMeetingLink(result.ZoomMeetingId);
-                        return Json("Successfully status updated, NO");
+                        return Json("Successfully status updated, " + value);
                     }
                     return Json("Successfully status updated, Yes");
                 }
@@ -7166,7 +7192,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var meetingplatform = await _meetingService.GetMeetingPlatformbyIRFId(irfid);
-                
+
                 if (meetingplatform == null)
                 {
                     meetingplatform = MeetingPlatforms.Zoom;
