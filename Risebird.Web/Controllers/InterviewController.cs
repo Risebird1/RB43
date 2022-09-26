@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -47,6 +48,7 @@ namespace Risebird.Web.Controllers
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ICandidateService _candidateService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
 
 
         //private static List<MeetingVM> _modelDetails;
@@ -56,7 +58,7 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -74,6 +76,7 @@ namespace Risebird.Web.Controllers
             _whatsAppHelper = whatsAppHelper;
             _candidateService = candidateService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
 
 
@@ -7204,6 +7207,84 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("failed");
             }
+        }
+        public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId)
+        {
+            AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(interviewid);
+            var JDTitle = _interviewSchedulerservice.FetchJDTitle(IRFId);
+            var zoomLink = new InstaZoomMeetingResponse();
+            zoomLink = await CreateZoomMeeting(meetingToUpdate.candidateName, JDTitle.Result, meetingToUpdate.interviewDate, meetingToUpdate.risebirdHR);
+            _ = _interviewSchedulerservice.UpdateMeetingLinkDetails(interviewid, zoomLink.join_url, zoomLink.id.ToString());
+            string timezonevalue = string.Empty;
+            var offset = -330;
+            string hh = string.Empty;
+            var valuecheck = (-offset / 60);
+            if (valuecheck < 10 && valuecheck > 0)
+            {
+                hh = "0" + valuecheck;
+            }
+            if (valuecheck > -10 && valuecheck < 0)
+            {
+                hh = "-0" + valuecheck.ToString().Replace("-", "");
+            }
+            var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
+            var timeZones = TimeZoneInfo.GetSystemTimeZones();
+            foreach (TimeZoneInfo timeZone in timeZones)
+            {
+                if (timeZone.DisplayName.Contains(offsetvalue))
+                {
+                    timezonevalue = timeZone.DisplayName;
+                    break;
+                }
+            }
+            Mail _mail = new Mail
+            {
+                TO = meetingToUpdate.candidateEmail,
+                CC = "hire@risebird.io",
+                Subject = "Invitation: " + meetingToUpdate.candidateName + " @ " + meetingToUpdate.interviewDate + "(" + timezonevalue + ")"
+            };
+            _ = _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, "Client", offset);
+            return Json(zoomLink.join_url);
+        }
+        public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, string accountEmail)
+        {
+            InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
+            _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
+            //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+            //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
+            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+            if (String.IsNullOrEmpty(accountEmail))
+                accountEmail = "me";
+            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+            zoomlink.accountemail = accountEmail;
+            var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
+            return zoomlink;
+        }
+        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
+        {
+            _zoommetingobject.type = 2;
+            _zoommetingobject.duration = 60;
+            _zoommetingobject.timezone = "Asia/Calcutta";
+            _zoommetingobject.settings.host_video = true;
+            _zoommetingobject.settings.participant_video = true;
+            _zoommetingobject.settings.join_before_host = true;
+            _zoommetingobject.settings.jbh_time = 5;
+            _zoommetingobject.settings.auto_recording = "cloud";
+            string token = ZoomToken();
+
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
+
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            var body = JsonConvert.SerializeObject(_zoommetingobject);
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            var content = response.Content;
+            var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
+            convertedResponse.InterviewDate = indianTime;
+            convertedResponse.accountemail = accountEmail;
+            return convertedResponse;
         }
     }
 }

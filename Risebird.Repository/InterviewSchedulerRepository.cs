@@ -451,5 +451,25 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink,string zoommeetingid)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set BackUpLink=@BackUpLink,BackUpLinkId=@BackUpLinkId where id=@interviewid";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@interviewid", interviewid);
+                dp.Add("@BackUpLink", zoomLink);
+                dp.Add("@BackUpLinkId", zoommeetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync(query, dp);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

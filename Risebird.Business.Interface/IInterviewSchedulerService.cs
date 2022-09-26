@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -25,5 +26,6 @@ namespace Risebird.Business.Interface
         bool UpdateSchedulingLinkDetails(string _uniqueid);
         Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
+        Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink,string zoommeetingid);
     }
 }

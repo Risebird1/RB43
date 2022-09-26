@@ -107,5 +107,8 @@ namespace Risebird.Entities.Data
         public string AudioComment { get; set; }
         public string JobCountry { get; set; }
         public int QCPresent { get; set; }
+        public string MeetingPlatform { get; set; }
+        public string BackUpLink { get; set; }
+        public string BackUpLinkId { get; set; }
     }
 }
