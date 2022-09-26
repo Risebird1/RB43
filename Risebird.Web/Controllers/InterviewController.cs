@@ -7208,7 +7208,7 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
-        public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId)
+        public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId, string clientname)
         {
             AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(interviewid);
             var JDTitle = _interviewSchedulerservice.FetchJDTitle(IRFId);
@@ -7243,7 +7243,7 @@ namespace Risebird.Web.Controllers
                 CC = "hire@risebird.io",
                 Subject = "Invitation: " + meetingToUpdate.candidateName + " @ " + meetingToUpdate.interviewDate + "(" + timezonevalue + ")"
             };
-            _ = _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, "Client", offset);
+            _ = _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset);
             return Json(zoomLink.join_url);
         }
         public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, string accountEmail)
