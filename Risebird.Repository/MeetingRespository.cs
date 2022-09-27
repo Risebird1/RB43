@@ -5109,24 +5109,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid)
+        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response)
         {
             try
             {
                 string query = string.Empty;
                 string checkquery = string.Empty;
-                if (status == 1)
+                if (status == 1 || (status == 4 && response == true))
                 {
-                    query = "Update im set IsCandidateResponsed=1,CandidateResponse=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,CandidateResponse=@status from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 else
                 {
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,Cancellationsource='Candidate' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    if (status == 2)
+                    {
+                        status = 0;
+                    }
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=@status,Cancellationsource='Candidate' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 checkquery = "Select count(im.id) from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid and CandidateResponse=0 and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 dynamicParameters.Add("@uniqueid", uniqueid);
+                dynamicParameters.Add("@status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<int>(checkquery, dynamicParameters);
@@ -6300,7 +6305,7 @@ namespace Risebird.Repository
         public async Task<string> GetMeetingPlatformbyIRFId(string IRFId)
         {
             try
-            {            
+            {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6313,10 +6318,10 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
-        }     
+        }
         public async Task<IEnumerable<MeetingVM>> GetRedoInterviewList()
         {
             try
@@ -6337,6 +6342,30 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public bool CheckInterviewClerityTime(int meetingid)
+        {
+            try
+            {
+                var query = "Select Count(*) From InterviewMeetings where id = @meetingid and interviewDate>@interviewdate";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@interviewdate", DateTime.Now.AddHours(2));
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

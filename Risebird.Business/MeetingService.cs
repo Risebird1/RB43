@@ -3212,11 +3212,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response)
         {
             try
             {
-                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid);
+                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, response);
             }
             catch (Exception ex)
             {
@@ -3699,6 +3699,18 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public bool CheckInterviewClerityTime(int meetingid)
+        {
+            try
+            {
+                return _meetingRespository.CheckInterviewClerityTime(meetingid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Risebird.Business
 {
@@ -290,6 +291,25 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return _candidate;
+            }
+        }
+        public MCQVMset FetchMCQSetsForApi(MCQApiVM model)
+        {
+            try
+            {
+                var _mcqset = _mCQRepository.FetchMCQSetsForApi(model).Result.ToList();
+                if (_mcqset.Count() > 1 && model.SeniorityLevel > 0)
+                {
+                    _mcqset = _mcqset.Where(x => !String.IsNullOrWhiteSpace(x.SeniorityLevel) ? x.SeniorityLevel.Contains(model.SeniorityLevel.ToString()) : x.SeniorityLevel != null).ToList();
+                }
+                var random = new Random();
+                int index = random.Next(_mcqset.Count());
+                return _mcqset[index];
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

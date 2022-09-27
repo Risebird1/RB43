@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -698,6 +699,29 @@ namespace Risebird.Repository
                 {
                     var results = await con.QueryAsync<JoinabilityHRReport>(query, dynamicParameters);
                     return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MCQVMset>> FetchMCQSetsForApi(MCQApiVM model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@PrimarySkill", model.PrimarySkill);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultset = await SqlMapper.QueryAsync<MCQVMset>(con, "usp_FetchApiMcqset", dynamicParameters,
+                          commandType: CommandType.StoredProcedure);
+                    return resultset;
                 }
             }
             catch (SqlException ex)

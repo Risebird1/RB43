@@ -770,6 +770,7 @@ namespace Risebird.Repository
                 parameters.Add("@CreatedBy", model.CreatedBy);
                 parameters.Add("@timeNow", DateTime.Now);
                 parameters.Add("@Rating", model.Rating);
+                parameters.Add("@ClientActionOnInterviewer", model.ClientActionOnInterviewer);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "[usp_AddUpdateClientCommentsForReport]", parameters,
