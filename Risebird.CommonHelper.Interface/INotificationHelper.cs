@@ -75,8 +75,8 @@ namespace Risebird.CommonHelper.Interface
         string SendPasswordresetNotification(Mail model);
         string SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset);
         string SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink);
-        string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
-        string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
+        string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton);
+        string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton);
         string SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, string IRFName);
         string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
         string SendClientCommonInterviewNotification(Mail model, DataTable dt);
@@ -87,7 +87,9 @@ namespace Risebird.CommonHelper.Interface
         string SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt);
         string SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name);
         string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail);
-        string SendRedoB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null);
         string SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
+        string SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null);
+        string SendClientInterviewPublicURL(Mail model, string Name, string publicurl);
+        string SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
     }
 }

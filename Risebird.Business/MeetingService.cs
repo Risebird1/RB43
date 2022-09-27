@@ -3212,11 +3212,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response)
         {
             try
             {
-                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid);
+                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, response);
             }
             catch (Exception ex)
             {
@@ -3669,6 +3669,43 @@ namespace Risebird.Business
             try
             {
                 return _meetingRespository.CheckInterviewCancellable(meetingid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<string> GetMeetingPlatformbyIRFId(string IRFId)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetMeetingPlatformbyIRFId(IRFId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<MeetingVM> GetRedoInterviewList()
+        {
+            try
+            {
+                return _meetingRespository.GetRedoInterviewList().Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool CheckInterviewClerityTime(int meetingid)
+        {
+            try
+            {
+                return _meetingRespository.CheckInterviewClerityTime(meetingid);
             }
             catch (Exception ex)
             {

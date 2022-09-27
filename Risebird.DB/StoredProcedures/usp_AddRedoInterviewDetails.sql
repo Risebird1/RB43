@@ -24,5 +24,6 @@ RejectionComment,Createdon,CreatedBy,ModifiedOn,ModifiedBy) values
 (@interviewid,@CandidateFace,@Inappropriate,@RequiredDuration,@ActualDuration,@HandsOfCoding,@Comments,
 null,Getdate(),@ModifiedBy,Getdate(),@ModifiedBy)
 
+Update InterviewMeetings set RedoInterview=1 where id=@interviewid  
 END
 Go

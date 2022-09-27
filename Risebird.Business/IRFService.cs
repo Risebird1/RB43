@@ -983,7 +983,7 @@ namespace Risebird.Business
         {
             try
             {
-                
+
                 //check if the candidate email exists for the IRFId
                 var duplicate = (await _irfRepository.GetIRFCandidates(obj.IRFId)).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
                 if (duplicate != null && duplicate.Any())
@@ -2827,14 +2827,7 @@ namespace Risebird.Business
                     {
                         oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
                     }
-                    if (irf.BussinessType == "B2B")
-                    {
-                        _notificationHelper.SendRedoB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
-                    }
-                    else
-                    {
-                        _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
-                    }
+                    _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
@@ -2880,6 +2873,44 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<bool> SendClientRedoInvite(int irfId, int interviewid, string email)
+        {
+            try
+            {
+                //update irf Invite count here
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                var inviteCount = irf.TotalInvites;
+                var calendlyLink = irf.CalendlyLink;
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
+                var interviewdetails = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.imid == interviewid);
+                var jdLink = irf.JDLink;
+                var client = _clientService.GetClient(irf.ClientId);
+                var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                string primarySkill = string.Empty;
+                primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                string oneTimeSchedulingLink = String.Empty;
+                _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<ClientInterviewMapped>> GetCompletedInterviewCountMappedClient(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetCompletedInterviewCountMappedClient(startDate, endDate);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

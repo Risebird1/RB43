@@ -25,5 +25,6 @@ namespace Risebird.Business.Interface
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetails();
         bool SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
         CandidateDetailsForTestDuplicate FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
+        MCQVMset FetchMCQSetsForApi(MCQApiVM model);
     }
 }

@@ -43,56 +43,62 @@
     {
         interviewBasedClass = "interviewBasedPopUp";
     }
-    <div class="@interviewBasedClass">
-        @if (Model.InterviewId.HasValue)
+<div class="@interviewBasedClass">
+    @if (Model.InterviewId.HasValue)
+    {
+        <h1 id="clientInstructions_interviewDate" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
+        <h1 id="clientInstructions_candidateName" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
+    }
+    @if(Model.ClientFeeds == null || Model.ClientFeeds.Count()==0)
+    {
+        <p style="text-align:center">No instructions at this moment.</p>
+    }
+    @{
+        int feedDataCount = 0;
+    }
+    @foreach (var feed in Model.ClientFeeds)
+    {
+        feedDataCount = feedDataCount + 1;
+        @if (feed.FeedType == ClientFeedbackType.Audio.GetDescription())
         {
-            <h1 id="clientInstructions_interviewDate" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
-            <h1 id="clientInstructions_candidateName" style="font-weight:bold; font-size:16px; margin:10px; text-align:center"></h1>
-        }
-        @{
-            int feedDataCount = 0;
-        }
-        @foreach (var feed in Model.ClientFeeds)
-        {
-            feedDataCount = feedDataCount + 1;
-            @if (feed.FeedType == ClientFeedbackType.Audio.GetDescription())
+            @if (feed.FeedDate != null)
             {
-                @if (feed.FeedDate != null)
-                {
-                    <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
-                }
-                <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th width="30%">Skill Channel</th>
-                            <th width="30%">Audio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>@feed.SkillChannelName</td>
-                            <td>
-                                <audio src="@feed.FeedUrl" asp-append-version="true" controls></audio>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
             }
-            @if (feed.FeedType == ClientFeedbackType.Broadcast.GetDescription())
+            <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th width="30%">Skill Channel</th>
+                        <th width="30%">Audio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@feed.SkillChannelName</td>
+                        <td>
+                            <audio src="@feed.FeedUrl" asp-append-version="true" controls></audio>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        @if (feed.FeedType == ClientFeedbackType.Broadcast.GetDescription())
+        {
+            @if (feed.FeedDate != null)
             {
-                @if (feed.FeedDate != null)
-                {
-                    <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
-                }
-                <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
-                <div class="box">
-                    <p class="broadcastContent">@feed.FeedSubject</p>
-                    <p class="broadcastContent">@feed.FeedText</p>
-                </div>
+                <p class="date @feedDataCount" data-val="@feed.FeedDate">@feed.FeedDate?.ToString("dddd, dd MMMM yyyy")</p>
+            }
+            <p style="font-weight:bold; font-family:none">Email Communication for skill channel <span><strong>@feed.SkillChannelName</strong></span>:</p>
+            <div class="box">
+                <p class="broadcastContent">@feed.FeedSubject</p>
+                <p class="broadcastContent">@Html.Raw(feed.FeedText)</p>
+            </div>
 
 
-            }
-            @if (feed.FeedType == ClientFeedbackType.Rating.GetDescription())
+        }
+        @if (feed.FeedType == ClientFeedbackType.Rating.GetDescription())
+        {
+            @if (!Model.InterviewId.HasValue)
             {
                 @if (feed.FeedDate != null)
                 {
@@ -132,11 +138,21 @@
                         </tr>
                     </table>
                 </div>
-
-
             }
+
         }
-    </div>
+
+
+    }
+    @if (!string.IsNullOrEmpty(Model.MeetingLink))
+    {
+        <p style="text-align:center">
+            <a href="@Model.MeetingLink" id="clientInstructions_meetingLink" target="_blank">
+                Continue with meeting
+            </a>
+        </p>
+    }
+</div>
     
 
 }

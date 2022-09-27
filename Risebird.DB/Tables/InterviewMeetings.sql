@@ -40,7 +40,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsNotificationSentToCandidate][bit] NULL,
     [isAutoCancelled][bit] NULL,
     [IsCandidateResponsed][bit] NULL,
-    [CandidateResponse][bit] NULL,
+    [CandidateResponse][int] NULL,
     [ProctorReport][varchar](1000),
     [Cancellationsource][varchar](100),
     [HasDistinctParticipants][bit] NOT NULL Default 1,
@@ -250,7 +250,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    Add CandidateResponse  bit
+    Add CandidateResponse  int 
 END
 IF NOT EXISTS(
     SELECT *

@@ -119,7 +119,7 @@
                                             @Html.EditorFor(model => model.zoomDetails, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.zoomDetails, "", new { @class = "text-danger" })
                                         </div>*@
-                                    <div class="form-group">
+                                    <div class="form-group" id="hzoom">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Login Details(For Zoom Meetings)</label>
 
                                         @Html.EditorFor(model => model.risebirdHR, new { htmlAttributes = new { @class = "form-control" } })
@@ -378,7 +378,30 @@
 
             }
         });
+        
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetMeetingPlatform",
+            data: { 'IRFId': val },           
+            success: function (data) {               
+                if (data == "Zoom") {
+                    $("#hzoom").show();  
+                  
+                    //$('#hzoom').attr('required', true);
+                    $("#risebirdHR").attr("required", "required");
+                    //$('#hzoom').attr("required", "required");
+                    //document.getElementById("hzoom").required = true;
+                   
+                }
+                else {
+                    $("#hzoom").hide();
+                    //document.getElementById("hzoom").required = false;
+                    //$('#hzoom').removeAttr('required');
 
+                    $("#risebirdHR").removeAttr("required");
+                }
+            }
+        });
     }
 
     function checkDate() {

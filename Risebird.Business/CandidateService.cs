@@ -412,5 +412,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<InterviewUsersDetails> FetchChannelOwnerByInterviewid(int interviewid)
+        {
+            try
+            {
+                return await _candidateRepository.FetchChannelOwnerandInterviewer(interviewid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
