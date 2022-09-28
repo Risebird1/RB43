@@ -4293,7 +4293,7 @@ namespace Risebird.Web.Controllers
                     }
 
                     model.Profile = profileName;
-                    model.allowClientAction = allowClientAction;
+                    model.allowClientAction = allowClientAction;                   
                     return PartialView("GetClientCommentsForReport", model);
                 }
                 else
@@ -4364,9 +4364,11 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     var model = new ClientAudioInstructionsWrapper();
-                    model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+                    //model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+                    model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
 
                     model.Profile = profileName;
+                    model.InterviewId = interviewId;
                     return PartialView("GetClientAudioInstructionsFeedbacks", model);
                 }
                 else

@@ -4816,9 +4816,20 @@ namespace Risebird.Web.Controllers
             var file = Request.Form.Files;
             var nvc = Request.Form;
             int candidateType = 0;
+            bool isClientFeedback = false;
+            string currentUserEmail = string.Empty;
             if (!string.IsNullOrEmpty(nvc["candidateType"]))
             {
                 candidateType = Convert.ToInt32(nvc["candidateType"]);
+            }
+            if (!string.IsNullOrEmpty(nvc["isClientFeedback"]))
+            {
+                isClientFeedback = Convert.ToBoolean(nvc["isClientFeedback"]);
+            }
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                currentUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                currentUserEmail = currentUserEmail.Replace("\"", "");
             }
 
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
@@ -4840,7 +4851,7 @@ namespace Risebird.Web.Controllers
                 }
 
             }
-            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType);
+            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType, isClientFeedback, currentUserEmail);
             return uploadedfbaudioFileURL;
         }
 
@@ -7205,5 +7216,6 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+
     }
 }
