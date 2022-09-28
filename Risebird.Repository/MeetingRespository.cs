@@ -2430,33 +2430,46 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0)
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0, bool isClientFeedback = false, string currentUser = null)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
                 dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
-                if (candidateType == (int)CandidateTypeEnum.Interviewer)
+                if(isClientFeedback)
                 {
+                    dynamicParameters.Add("@emailId", currentUser);
+                    dynamicParameters.Add("@timeNow", DateTime.Now);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        SqlMapper.Query(con, "usp_SaveInterviewerFeedbackAudio", dynamicParameters,
+                        SqlMapper.Query(con, "usp_SaveClientFeedbackAudio", dynamicParameters,
                            commandType: CommandType.StoredProcedure);
                         return true;
                     }
                 }
                 else
                 {
-                    using (SqlConnection con = new SqlConnection(connectionString))
+                    if (candidateType == (int)CandidateTypeEnum.Interviewer)
                     {
-                        SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
-                           commandType: CommandType.StoredProcedure);
-                        return true;
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        {
+                            SqlMapper.Query(con, "usp_SaveInterviewerFeedbackAudio", dynamicParameters,
+                               commandType: CommandType.StoredProcedure);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        {
+                            SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                               commandType: CommandType.StoredProcedure);
+                            return true;
+                        }
                     }
                 }
-
-
+               
             }
             catch (SqlException ex)
             {

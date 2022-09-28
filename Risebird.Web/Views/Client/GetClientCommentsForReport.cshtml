@@ -22,7 +22,10 @@
             </div>
             <div class="modal-body" id="comments_modal_body" style="max-height:400px; overflow:auto">
 
-                <p>Interview Date: <span style="font-style:italic; font-weight:bold">@Model.interviewDate.ToString("MM/dd/yyyy hh:mm tt")</span></p>
+                @if (Model.interviewDate != DateTime.MinValue)
+                {
+                    <p>Interview Date: <span style="font-style:italic; font-weight:bold">@Model.interviewDate.ToString("MM/dd/yyyy hh:mm tt")</span></p>
+                }
 
                 @if (Model.Profile == "Client")
                 {
