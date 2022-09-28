@@ -45,6 +45,7 @@ namespace Risebird.Business.Interface
         Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid);
         Task<InterviewerDashboardVM> GetInterviewDetailsCount(string emailId);
+        Task<List<string>> FetchAlertMessage();
         Task<List<MeetingVM>> GetUpcomingMeetingsDeletedFromZoom(string emailId);
     }
 }

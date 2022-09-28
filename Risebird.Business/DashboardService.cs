@@ -561,6 +561,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<string>> FetchAlertMessage()
+        {
+            try
+            {
+                return await _dashboardRespository.FetchAlertMessage();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<List<MeetingVM>> GetUpcomingMeetingsDeletedFromZoom(string emailId)
         {
             try
