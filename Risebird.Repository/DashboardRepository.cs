@@ -1413,12 +1413,13 @@ namespace Risebird.Repository
         public async Task<List<string>>FetchAlertMessage()
         {
             try
-            {
-                string query = "select Announcement from alertmessage where starttime<getdate() and enddate>getdate()";
-
-                using (SqlConnection con = new SqlConnection(connectionString))
+            {            
+               using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<string>(query,null);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Currenttime", DateTime.Now);
+                   var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAlterMessage", parameters,
+                     commandType: CommandType.StoredProcedure);
                     return (List<string>)result;
                 }
                
