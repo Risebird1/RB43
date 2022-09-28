@@ -2350,7 +2350,12 @@ namespace Risebird.Web.Controllers
                         var Assessmentgroups = String.Empty;
                         foreach (var groups in item.AssessmentGroupId.Split(","))
                         {
-                            int assesmsnetid = Convert.ToInt32(groups);
+                            int assesmsnetid = 0;
+                            if (!string.IsNullOrWhiteSpace(groups))
+                            {
+                                assesmsnetid = Convert.ToInt32(groups);
+                            }
+                            //int assesmsnetid = Convert.ToInt32(groups);
                             if (String.IsNullOrEmpty(Assessmentgroups))
                             {
                                 Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();

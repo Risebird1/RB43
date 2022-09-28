@@ -63,6 +63,14 @@ $(document).ready(function () {
 
     });
 
+    var audioFeedback_placeholderElement = $('#modal_clientAudioFeedback_placeholder');
+
+
+    $('button[data-toggle="ajax-modal-feedback_audio"]').click(function (event) {
+        OpenPopUp(event, audioFeedback_placeholderElement);
+
+    });
+
 });
 
 function ChangeClientFeedbackRating(value) {
