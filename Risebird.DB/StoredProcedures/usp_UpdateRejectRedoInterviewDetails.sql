@@ -14,7 +14,7 @@ Create Procedure usp_UpdateRejectRedoInterviewDetails
 @ModifiedBy varchar(200)
 AS
 BEGIN
-Update RedoInterview Set RejectionComment=@RejectionComment,ModifiedOn=Getdate(),ModifiedBy=@ModifiedBy where id=@id
+Update RedoInterviews Set RejectionComment=@RejectionComment,ModifiedOn=Getdate(),ModifiedBy=@ModifiedBy where id=@id
 Update InterviewMeetings set RedoInterview=0 where id=@interviewid
 END
 Go
