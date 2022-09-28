@@ -1007,7 +1007,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime, bool Candidate)
         {
             try
             {
@@ -1067,6 +1067,7 @@ namespace Risebird.Web.Controllers
                                 _list.EmailAddress = item.Trim();
                                 _list.roomId = _meetinglinks.roomId;
                                 _list.Expiretime = Expiretime;
+                                _list.ShareType = Candidate;
                                 _mCQService.AddMCQSetShareList(_list);
                             }
                         }
@@ -1577,7 +1578,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
-                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id,true);
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id, true);
                     if (candidateset != null)
                     {
                         if (profileName == "Client")
