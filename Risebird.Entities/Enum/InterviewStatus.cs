@@ -58,7 +58,11 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "Dropped (Border Line)")]
         [Description("Dropped (Border Line)")]
-        DroppedBorderLine = 8
+        DroppedBorderLine = 8,
+
+        [Display(Name = "No Show")]
+        [Description("No Show")]
+        NoShowStatus = 9
 
     }
 

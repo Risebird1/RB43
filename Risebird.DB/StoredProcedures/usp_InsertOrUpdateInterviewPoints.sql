@@ -92,7 +92,7 @@ Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and u
  end  
   END  
   --End:Meeting Status 4 or 6 or 7 or 8  
- if(@meetingStatus=5)                           
+ if(@meetingStatus=5 or @MeetingStatus=9)                           
   BEGIN              
   set @CandidateEmail='Penalty '+@CandidateEmail              
   Declare @JobCountry varchar(50)              
