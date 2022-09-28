@@ -19,6 +19,7 @@ namespace Risebird.Entities.ViewModel
         public string HandsOfCoding { get; set; }
         [Display(Name ="Redo Interview Reason")]
         public string Comments { get; set; }
+        [Display(Name = "Rejection Comment")]
         public string RejectionComment { get; set; }
         public string ModifiedBy { get; set; }
     }
