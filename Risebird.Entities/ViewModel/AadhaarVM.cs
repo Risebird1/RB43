@@ -1,4 +1,6 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace Risebird.Entities.ViewModel
 {
     public class AadhaarVM
     {
@@ -77,5 +79,49 @@
     {
         public string EmailId { get; set; }
         public bool AadhaarVerified { get; set; }
+    }
+    public class candidateVerification
+    {
+        public candidateVerification()
+        {
+            document = new verifydocument();
+            phone = new verifyphone();
+        }
+        public string reference { get; set; }
+        public string callback_url { get; set; }
+        public string email { get; set; }
+        public string country { get; set; }
+        public string language { get; set; }
+
+        public string verification_mode { get; set; }
+        public verifydocument document { get; set; }
+        public verifyphone phone { get; set; }
+    }
+    public class verifyphone
+    {
+        public string phone_number { get; set; }
+        public string random_code { get; set; }
+        public string text { get; set; }
+    }
+    public class verifydocument
+    {
+        public verifydocument()
+        {
+            name = new verifyname();
+        }
+        public string proof { get; set; }
+        public string[] supported_types { get; set; }
+        public verifyname name { get; set; }
+    }
+    public class verifyname
+    {
+        public string first_name { get; set; }
+        public string middle_name { get; set; }
+        public string last_name { get; set; }
+    }
+    public class verifyResponse
+    {
+        public string verification_url { get; set; }
+        public string reference { get; set; }
     }
 }

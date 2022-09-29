@@ -23,5 +23,6 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public string Name { get; set; }
         public string ClientName { get; set; }
+        public int JobCountry { get; set; }
     }
 }
