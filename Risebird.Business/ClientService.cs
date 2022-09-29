@@ -444,6 +444,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<ClientAudioInstructions>> GetClientInstructionsAudioForReport(int interviewId, string emailId, string profile)
+        {
+            try
+            {
+                var clientAudioList = await _clientRepository.GetClientInstructionsAudioForReport(interviewId, emailId, profile);
+                return clientAudioList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }
