@@ -65,7 +65,7 @@
                                             <h3><span><strong>Important Announcement:</strong></span></h3>
                                         </div>
                                         <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
+                                            <div class="panel-body panel-body-table" id="divalertmessage">
                                                 <ul>
                                                     <li>
                                                         Alert! : Kindly join the meeting <strong>using either a Laptop or a Desktop</strong>. For meetings conducted with a mobile, video recordings are not generated and therefore <strong>NO COMPENSATION</strong> will be paid for such interviews.
@@ -76,6 +76,8 @@
                                                     <li>All the interviews will be assessed for Quality by our QC Team. Kindly ensure you adhere to standard practices to avoid attracting penalty. <a target="_blank" href="https://risebirdportal.blob.core.windows.net/regulatorycompliancedocuments/Risebird_QC_Guidelines.docx">Click Here</a> to know all standard points.</li>
                                                     <li>
                                                         Kindly Upload your latest Resume. To upload resume please follow the navigation.<br />
+
+
                                                         <strong>Menu --> My Profile </strong> or <strong>Click on Right top account menu -->My Profile</strong>
                                                     </li>
                                                 </ul>
@@ -370,6 +372,17 @@
     });
 </script>
 <script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/DashBoard/FetchAlertMessage',
+            type: 'POST',
+            success: function (data) {
+            binddata(data);
+            }
+        });
+    });
+</script>
+<script>
     function GenerateclientpaiChart(client) {
         var interviewerCountObj = [{ y: client, label: "Client" }, { y: (5 - parseFloat(client)) }]
         var chart = new CanvasJS.Chart("clientrating", {
@@ -412,4 +425,255 @@
         });
         chart.render();
     }
+    function binddata(data) {
+        var html = '';
+        html += '<ul>';
+        for ( i=0;i<data.length; i++)
+        {
+            html += '<li>'+ data[i]+'</li>';
+        }
+        html += '</ul>';
+       
+        $("#divalertmessage").empty().html(html);
+               }
+
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

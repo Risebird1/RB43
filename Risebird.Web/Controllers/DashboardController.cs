@@ -1449,6 +1449,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+       
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> InterviewerCandidateRatingDetails()
@@ -1693,6 +1694,15 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "No data available in table !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> FetchAlertMessage()
+        {
+            var modelList = await _dashboardService.FetchAlertMessage();
+
+            return Json(modelList);
+
         }
     }
 }
