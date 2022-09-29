@@ -165,21 +165,21 @@ namespace Risebird.Web.Controllers
         {
             var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
             var model = new AadhaarData();
-            if (candidateEmailid==null)
+            if (candidateEmailid == null)
             {
 
                 model.status = "InvalidEmail";
             }
 
-            else if (candidateEmailid.AadhaarVerified==true)
-                {
+            else if (candidateEmailid.AadhaarVerified == true)
+            {
                 model.status = "Unauthorized";
             }
-                else
-            { 
+            else
+            {
                 model.email = candidateEmailid.EmailId;
             }
-            
+
             return View(model);
         }
         public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
@@ -228,5 +228,21 @@ namespace Risebird.Web.Controllers
             }
             return Json(new { image = "", uuid = model.request.uuid });
         }
+        #region US Candidate Verification
+        public async Task<IActionResult> CandidateVerification(string uniqueid)
+        {
+            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            var model = new AadhaarData();
+            if (candidateEmailid == null)
+            {
+                model.status = "InvalidEmail";
+            }
+            else
+            {
+                model.email = candidateEmailid.EmailId;
+            }
+            return View(model);
+        }
+        #endregion
     }
 }
