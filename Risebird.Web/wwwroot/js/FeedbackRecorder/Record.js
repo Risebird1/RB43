@@ -307,12 +307,12 @@ function stopClientRecording(interviewId) {
 }
 
 function createClientRecordingDownloadLink(blob) {
-    var list = document.getElementById("recordingsList");
-    var firstChild = list.firstChild;
-    if (firstChild) {
-        list.removeChild(list.childNodes[0]);
+    //var list = document.getElementById("recordingsList");
+    //var firstChild = list.firstChild;
+    //if (firstChild) {
+    //    list.removeChild(list.childNodes[0]);
 
-    }
+    //}
 
 
     //var url = URL.createObjectURL(blob);
@@ -343,7 +343,7 @@ function createClientRecordingDownloadLink(blob) {
     //li.appendChild(link);
 
 
-    document.getElementById('btnUpload').disabled = true;
+    //document.getElementById('btnUpload').disabled = true;
 
     var fd = new FormData();
     fd.append("audio_data", blob, filename + ".wav");
@@ -358,12 +358,17 @@ function createClientRecordingDownloadLink(blob) {
             contentType: false,
             type: "POST",
             success: function (data) {
+
+                //$('#modal_clientAudioFeedback_placeholder').html("").html(data);
                 //document.getElementById('FeedbackAudioLink').value = data;
                 //document.getElementById('playUploadedAudioOne').style.display = "none";
                 document.getElementById('playUploadedAudioTwo').style.display = "block";
+                document.getElementById('anchorAudioId').href = '';
                 document.getElementById('anchorAudioId').href = data;
                 splitData = data.split("/");
+                document.getElementById('anchorAudioId').innerHTML = '';
                 document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
+                document.getElementById('controlAudioId').src = '';
                 document.getElementById('controlAudioId').src = data;
 
             }
@@ -383,7 +388,6 @@ function afterClientRecordingTimeOut() {
 }
 
 function cancelClientRecording() {
-    debugger;
     document.getElementById("stopClientRecButton").disabled = true;
     document.getElementById("startClientRecButton").disabled = false;
     document.getElementById("cancelClientRecButton").disabled = true;

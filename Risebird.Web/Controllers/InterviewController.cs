@@ -4831,7 +4831,6 @@ namespace Risebird.Web.Controllers
                 currentUserEmail = HttpContext.Session.GetString("email")?.Trim();
                 currentUserEmail = currentUserEmail.Replace("\"", "");
             }
-
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
             var interviewId = fileName.Split("_")[2];
             string uploadedfbaudioFileURL = string.Empty;

@@ -117,12 +117,11 @@
                                 </button>
                             </div>
                             
-                            <div class="pull-left">
-                                @*<a href="#0" class="cd-btn js-cd-panel-trigger" data-panel="main">Client Feed</a>*@
+                            @*<div class="pull-left">
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
                                     <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
                                 </button>
-                            </div>
+                            </div>*@
 
 
                         </div>
@@ -455,7 +454,13 @@
                                                                     }*@
                                                                 @if (!String.IsNullOrEmpty(item.AudioComment))
                                                                 {
-                                                                    <td><a href='@item.AudioComment' asp-append-version="true" download>@item.AudioComment.Split('/').Last()</a></td>
+                                                                    string audiofileName = string.Empty;
+                                                                    audiofileName = item.AudioComment.Split('/').Last();
+                                                                    if (audiofileName?.Length >= 25)
+                                                                    {
+                                                                        audiofileName = audiofileName.Substring(0, 24) + "...";
+                                                                    }
+                                                                    <td><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></td>
                                                                 }
                                                                 else
                                                                 {
@@ -549,9 +554,9 @@
                                                                             </a>
                                                                         </button>
                                                                     }
-                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Client Rating and Feedback" style="position:relative;top:-1px;left:2px;" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.id})">
+                                                                    @*<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Client Rating and Feedback" style="position:relative;top:-1px;left:2px;" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.id})">
                                                                         <span title="Client Rating and Feedback" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-star"></i></span>
-                                                                    </button>
+                                                                    </button>*@
                                                                 </td>
 
                                                             </tr>
@@ -851,16 +856,16 @@
 <script>
     var interviewUnassignedMinutes;
     $(document).ready(function () {
-        //setTimeout(function () {
+        ////setTimeout(function () {
+        ////    $('button[data-panel="main"]').click();
+        ////}, 1);
+
+        //function openClientFeed() {
         //    $('button[data-panel="main"]').click();
-        //}, 1);
+        //    setTimeout(openClientFeed, 60000);
+        //}
 
-        function openClientFeed() {
-            $('button[data-panel="main"]').click();
-            setTimeout(openClientFeed, 60000);
-        }
-
-        openClientFeed();
+        //openClientFeed();
 
         $.ajax({
             type: "GET",
