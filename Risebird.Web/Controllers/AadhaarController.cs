@@ -233,16 +233,16 @@ namespace Risebird.Web.Controllers
         #region US Candidate Verification
         public async Task<IActionResult> CandidateVerification(string uniqueid)
         {
-            //var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
             var model = new AadhaarData();
-            //if (candidateEmailid == null)
-            //{
-            //    model.status = "InvalidEmail";
-            //}
-            //else
-            //{
-            //    model.email = candidateEmailid.EmailId;
-            //}
+            if (candidateEmailid == null)
+            {
+                model.status = "InvalidEmail";
+            }
+            else
+            {
+                model.email = candidateEmailid.EmailId;
+            }
             return View(model);
         }
         public async Task<JsonResult> FetchVerificationURL(string Name, string PhoneNumber, string Emailid)
