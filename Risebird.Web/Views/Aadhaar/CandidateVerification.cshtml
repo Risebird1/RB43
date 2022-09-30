@@ -39,13 +39,13 @@
                     </div>
 
                     <div class="row" style="padding:10px" id="divcandidateskills">
-                        <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                        <div class="offset-md-2 col-md-8 col-lg-8 col-sm-8" style="padding-top:10px">
                             <input type="text" id="Candidatename" placeholder="Name" class="form-control" />
                         </div>
-                        <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                        <div class="offset-md-2 col-md-8 col-lg-8 col-sm-8" style="padding-top:10px">
                             <input type="text" placeholder="Mobile Number with country code(+)" id="mobileNumber" class="form-control" />
                         </div>
-                        <div class="col-md-6 col-lg-6 col-sm-12" style="padding-top:10px">
+                        <div class="offset-md-2 col-md-8 col-lg-8 col-sm-8" style="padding-top:10px">
                             <input type="text" id="CandidateEmailid" placeholder="Email Address" class="form-control" />
                         </div>
                     </div>
@@ -68,12 +68,7 @@
     <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
         <div class="modal-content">
             <div class="filheader">
-                <div class="filavatar">
-                    <span class="mdc-fab__icon material-icons">
-                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" style="width:45px" />
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Verifing Data</h5>
+                <h5 class="modal-title pull-left">Verifying Data</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
@@ -87,7 +82,7 @@
 <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
 <script>
     function submitform() {
-        if ($("#Candidatename").val().trim() != '' && $("#mobileNumber").val().trim() != '') {
+        if ($("#Candidatename").val().trim() != '' && $("#mobileNumber").val().trim() != '' && $("#CandidateEmailid").val().trim() != '') {
             $.ajax({
                 type: "POST",
                 url: "/Aadhaar/FetchVerificationURL",

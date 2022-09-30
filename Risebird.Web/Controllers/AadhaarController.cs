@@ -5,6 +5,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Security.Cryptography;
@@ -250,7 +251,7 @@ namespace Risebird.Web.Controllers
             int r = generator.Next(10000, 100000);
             candidateVerification _list = new candidateVerification();
             _list.reference = Guid.NewGuid().ToString();
-            _list.callback_url = "";
+            _list.callback_url = "https://portal.risebird.io/Aadhaar/Getshuftipro";
             _list.email = Emailid;
             _list.country = "GB";
             _list.language = "EN";
@@ -274,6 +275,12 @@ namespace Risebird.Web.Controllers
             IRestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<verifyResponse>(response.Content);
             return Json(convertedResponse.verification_url);
+        }
+        [HttpPost]
+        public async Task<JsonResult> Getshuftipro(Object _model)
+        {
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _model.ToString());
+            return Json("");
         }
         #endregion
     }
