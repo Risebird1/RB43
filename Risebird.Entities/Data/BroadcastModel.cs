@@ -9,5 +9,7 @@
         public int IRFId { get; set; }
         public string SentBy { get; set; }
         public string Profile { get; set; }
+        public int? InterviewId { get; set; }
+        //public bool shouldSendEmail { get; set; }
     }
 }

@@ -1869,6 +1869,26 @@ namespace Risebird.Business
                 return "Broadcast failed.";
             }
         }
+        public async Task<string> StoreClientBroadcastMessage(BroadcastModel model)
+        {
+            try
+            {
+                if (await _meetingRespository.StoreClientBroadcastMessage(model))
+                {
+                    return "Successful!";
+                }
+                else
+                {
+                    return "Broadcast failed!";
+                }
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Broadcast failed.";
+            }
+        }
 
         public IEnumerable<Meeting> GetHROpenInterviews(string emailId)
         {

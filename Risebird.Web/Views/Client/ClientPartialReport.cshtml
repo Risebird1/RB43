@@ -52,6 +52,10 @@
     .mb10 {
         margin-bottom: 10px
     }
+
+    .tox-notifications-container {
+        display: none
+    }
 </style>
 <script>
     var Header = "<div>Interview Report</div>";
@@ -66,6 +70,7 @@
         amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
     </script>*@
 
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
 @if (ViewBag.PageStatus == "PublicExternal")
 {
@@ -137,11 +142,15 @@
                         Comments
                     </button>
                     @*<button style="margin-bottom: 4px; margin-left: 10px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
-                        Audio Feedback
-                    </button>*@
+                            Audio Feedback
+                        </button>*@
                     <button style="margin-bottom: 4px; margin-left: 10px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
                         Audio Feedback
-                    </button>*@
+                    </button>
+                    
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" style="margin-left: 10px">
+                        <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
+                    </button>
 
                 </div>
 
@@ -149,7 +158,7 @@
                 @if (ViewBag.PageStatus == "Mainurl")
                 {
                     <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
-                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
+                    @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>*@
                     <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
                 }
             </div>
@@ -883,7 +892,7 @@
                                                                     @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                                 </tr>
                                                                 <tr>
-                                                                    <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75",@style="font-weight: bold !important;" })</td>
+                                                                    <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75", @style = "font-weight: bold !important;" })</td>
                                                                 </tr>
                                                             }
                                                         }
@@ -914,7 +923,7 @@
                                     </div>
                                     @if (ViewBag.PageStatus != "PublicExternal")
                                     {
-                                        
+
                                         @if (!Model.IsInterviewer && Model.IsJoinabilitySelectabilityRequired)
                                         {
                                             <div class="row mb-40">
@@ -1477,8 +1486,8 @@
     </div>
 </div>
 <!--<div id="myRaitingPopup" class="modal modal-wrap modal-bg">-->
-    <!-- Modal content -->
-    <!--<div class="modal-dialog modal-lg" role="document">
+<!-- Modal content -->
+<!--<div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
@@ -1561,6 +1570,9 @@
     </div>
 </div>
 
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+
+<script src="~/js/BroadcastMessage.js"></script>
 <script src="~/js/ModalFormServerValidation.js"></script>
 
 <script>
@@ -2306,83 +2318,83 @@
         })();
     </script>*@
 @*<script>
-    if ($("#hidPagestatus").val() == "Mainurl") {
-        setTimeout(openpopUpRating, 30000);
-    }
-    function closemyRaitingPopup() {
-        var modal = document.getElementById("myRaitingPopup");
-        modal.style.display = "none";
-    }
-    function openpopUpRating() {
-        var candidate = $("#CandidateName").val();
-        var interviewid = $("#InterviewId").val();
-        $("#txtratingCandidate").text(candidate);
-        $("#txtratinginterviewid").val(interviewid);
-        $.ajax({
-            url: '/RiseTube/FetchRaitingDetails',
-            type: "POST",
-            data: { 'imid': interviewid },
-            success: function (data) {
-                $("#txtratingvalue").val(data.starRating);
-
-                //var decodedComments = $('<div />').html(data.comment).text();
-                $("#txtratingComment").val(data.comment);
-
-                if (data.clientAction == 'Shortlisted') {
-                    document.getElementById('rd_shortlistinterviewer').checked = true;
-                } else if (data.clientAction == 'Rejected') {
-                    document.getElementById('rd_removeinterviewer').checked = true;
-                } else {
-                    document.getElementById('rd_shortlistinterviewer').checked = false;
-                    document.getElementById('rd_removeinterviewer').checked = false;
-                }
-                var modal = document.getElementById("myRaitingPopup");
-                modal.style.display = "block";
-                setRating(data.starRating);
-            }
-        });
-
-    }
-    function ChangeRating(value) {
-        $("#txtratingvalue").val(value);
-    }
-    function SaveRating() {
-        var interviewid = $("#txtratinginterviewid").val();
-        var ratingvalue = $("#txtratingvalue").val();
-        var comments = $("#txtratingComment").val();
-
-        //var encodedComments = $('<div />').text(comments).html();
-
-        var clientaction = '';
-        if (document.getElementById('rd_shortlistinterviewer').checked) {
-            clientaction = 'Shortlisted';
-        } else if (document.getElementById('rd_removeinterviewer').checked) {
-            clientaction = 'Rejected';
-        } else {
-            clientaction = '';
+        if ($("#hidPagestatus").val() == "Mainurl") {
+            setTimeout(openpopUpRating, 30000);
         }
-        if (parseInt(ratingvalue) > 0) {
+        function closemyRaitingPopup() {
+            var modal = document.getElementById("myRaitingPopup");
+            modal.style.display = "none";
+        }
+        function openpopUpRating() {
+            var candidate = $("#CandidateName").val();
+            var interviewid = $("#InterviewId").val();
+            $("#txtratingCandidate").text(candidate);
+            $("#txtratinginterviewid").val(interviewid);
             $.ajax({
-                url: '/RiseTube/SaveRaitingDetails',
+                url: '/RiseTube/FetchRaitingDetails',
                 type: "POST",
-                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
+                data: { 'imid': interviewid },
                 success: function (data) {
-                    swal.fire(data);
+                    $("#txtratingvalue").val(data.starRating);
+
+                    //var decodedComments = $('<div />').html(data.comment).text();
+                    $("#txtratingComment").val(data.comment);
+
+                    if (data.clientAction == 'Shortlisted') {
+                        document.getElementById('rd_shortlistinterviewer').checked = true;
+                    } else if (data.clientAction == 'Rejected') {
+                        document.getElementById('rd_removeinterviewer').checked = true;
+                    } else {
+                        document.getElementById('rd_shortlistinterviewer').checked = false;
+                        document.getElementById('rd_removeinterviewer').checked = false;
+                    }
                     var modal = document.getElementById("myRaitingPopup");
-                    modal.style.display = "none";
+                    modal.style.display = "block";
+                    setRating(data.starRating);
                 }
             });
-        } else {
-            swal.fire("Rating is required.");
+
         }
-    }
-    function setRating(starRating) {
-        if (starRating != '' && parseInt(starRating) > 0) {
-            document.getElementById("Q1_" + starRating).checked = true;
-        } else {
-            for (i = 1; i <= 5; i++) {
-                document.getElementById("Q1_" + i).checked = false;
+        function ChangeRating(value) {
+            $("#txtratingvalue").val(value);
+        }
+        function SaveRating() {
+            var interviewid = $("#txtratinginterviewid").val();
+            var ratingvalue = $("#txtratingvalue").val();
+            var comments = $("#txtratingComment").val();
+
+            //var encodedComments = $('<div />').text(comments).html();
+
+            var clientaction = '';
+            if (document.getElementById('rd_shortlistinterviewer').checked) {
+                clientaction = 'Shortlisted';
+            } else if (document.getElementById('rd_removeinterviewer').checked) {
+                clientaction = 'Rejected';
+            } else {
+                clientaction = '';
+            }
+            if (parseInt(ratingvalue) > 0) {
+                $.ajax({
+                    url: '/RiseTube/SaveRaitingDetails',
+                    type: "POST",
+                    data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
+                    success: function (data) {
+                        swal.fire(data);
+                        var modal = document.getElementById("myRaitingPopup");
+                        modal.style.display = "none";
+                    }
+                });
+            } else {
+                swal.fire("Rating is required.");
             }
         }
-    }
-</script>*@
+        function setRating(starRating) {
+            if (starRating != '' && parseInt(starRating) > 0) {
+                document.getElementById("Q1_" + starRating).checked = true;
+            } else {
+                for (i = 1; i <= 5; i++) {
+                    document.getElementById("Q1_" + i).checked = false;
+                }
+            }
+        }
+    </script>*@
