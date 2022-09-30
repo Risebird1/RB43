@@ -45,7 +45,7 @@
                         {
                             displayStatus = "block";
                             audioUrl = Model.ClientAudioInstructionsList.FirstOrDefault().AudioUrl;
-                            var splitUrl = audioUrl.Split("/");
+                            var splitUrl = audioUrl?.Split("/");
                             fileName = splitUrl?[splitUrl.Length - 1];
                         }
                     }

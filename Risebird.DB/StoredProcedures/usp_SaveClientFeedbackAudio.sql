@@ -22,7 +22,8 @@ Create PROCEDURE [dbo].[usp_SaveClientFeedbackAudio]
 
 AS      
 BEGIN      
-   
+   declare @irfId int
+   set @irfId = (select irf.id from IRF join InterviewMeetings im on im.IRFId = irf.IRFId where im.id = @InterviewId)
    if not exists(select 1 from ClientAudioFeedbackForReport where InterviewId = @InterviewId)
    begin
 
@@ -30,12 +31,14 @@ BEGIN
 			([InterviewId],
              [AudioUrl],
 			 [CreatedBy],
-			 [CreatedAt])
+			 [CreatedAt],
+			 [IRFId])
 		     values
 		     (@InterviewId,		   
 			  @FeedbackAudioLink,
 			  @emailId,
-			  @timeNow)
+			  @timeNow,
+			  @irfId)
 		   
    end
    else
@@ -43,7 +46,8 @@ BEGIN
    
    update ClientAudioFeedbackForReport set 
    AudioUrl = @FeedbackAudioLink,
-   ModifiedAt = @timeNow
+   ModifiedAt = @timeNow,
+   IRFId = @irfId
    where InterviewId=@InterviewId and CreatedBy = @emailId
    end
 END   

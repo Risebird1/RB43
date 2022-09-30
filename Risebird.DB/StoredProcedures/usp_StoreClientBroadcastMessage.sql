@@ -17,13 +17,14 @@ CREATE PROCEDURE [dbo].[usp_StoreClientBroadcastMessage]
 @SentBy varchar(50),
 @Message varchar(max),
 @Subject varchar(500),
-@SentAt datetime
+@SentAt datetime,
+@InterviewId int
 
     
 AS
 BEGIN
-      INSERT INTO ClientBroadcastMessages(IRFId, [Subject], [Message], SentBy, SentAt)
-      VALUES (@IRFId, @Subject, @Message, @SentBy, @SentAt)
+      INSERT INTO ClientBroadcastMessages(IRFId, [Subject], [Message], SentBy, SentAt, InterviewId)
+      VALUES (@IRFId, @Subject, @Message, @SentBy, @SentAt, @InterviewId)
 END
 GO
 

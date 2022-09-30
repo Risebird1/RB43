@@ -6186,6 +6186,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Subject", model.Subject);
                 dynamicParameters.Add("@SentAt", DateTime.Now);
                 dynamicParameters.Add("@IRFId", model.IRFId);
+                dynamicParameters.Add("@InterviewId", model.InterviewId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_StoreClientBroadcastMessage", dynamicParameters,
