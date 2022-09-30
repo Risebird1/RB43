@@ -250,6 +250,7 @@ namespace Risebird.Web
                        .Allow("https://wchat.freshchat.com/")
                        .Allow("https://calendly.com/")
                        .Allow("https://cdn.tiny.cloud/1/no-api-key/")
+                       .Allow("https://app.shuftipro.com/")
                        .Allow("*.webpush.freshchat.com/")
                        .Allow("data:");
                 //builder.Object
