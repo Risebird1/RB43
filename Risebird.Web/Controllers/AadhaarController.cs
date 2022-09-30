@@ -5,6 +5,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Security.Cryptography;
@@ -232,16 +233,16 @@ namespace Risebird.Web.Controllers
         #region US Candidate Verification
         public async Task<IActionResult> CandidateVerification(string uniqueid)
         {
-            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            //var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
             var model = new AadhaarData();
-            if (candidateEmailid == null)
-            {
-                model.status = "InvalidEmail";
-            }
-            else
-            {
-                model.email = candidateEmailid.EmailId;
-            }
+            //if (candidateEmailid == null)
+            //{
+            //    model.status = "InvalidEmail";
+            //}
+            //else
+            //{
+            //    model.email = candidateEmailid.EmailId;
+            //}
             return View(model);
         }
         public async Task<JsonResult> FetchVerificationURL(string Name, string PhoneNumber, string Emailid)
@@ -250,7 +251,7 @@ namespace Risebird.Web.Controllers
             int r = generator.Next(10000, 100000);
             candidateVerification _list = new candidateVerification();
             _list.reference = Guid.NewGuid().ToString();
-            _list.callback_url = "";
+            _list.callback_url = "https://portal.risebird.io/Aadhaar/Getshuftipro";
             _list.email = Emailid;
             _list.country = "GB";
             _list.language = "EN";
@@ -274,6 +275,12 @@ namespace Risebird.Web.Controllers
             IRestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<verifyResponse>(response.Content);
             return Json(convertedResponse.verification_url);
+        }
+        [HttpPost]
+        public async Task<JsonResult> Getshuftipro(Object _model)
+        {
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _model.ToString());
+            return Json("");
         }
         #endregion
     }
