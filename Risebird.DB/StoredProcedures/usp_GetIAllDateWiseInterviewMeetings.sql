@@ -37,7 +37,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource      
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
   from  InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -73,7 +73,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -110,7 +110,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId        
   join SeniorHR sh on sh.Clientid=IRF.ClientId      
@@ -146,7 +146,7 @@ else
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                  
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId 
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        

@@ -163,7 +163,7 @@
 
             <div class="mob_h">
                 <div class="pull-right">
-                    <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
+                   @* <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
                         @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
@@ -177,7 +177,7 @@
                                 <c style="font-size:18px"> | </c>
                             }
                         }
-                    </div>
+                    </div>*@
                     <div class="user user-r pull-left">
                         <h6 class="main-notification-title">
                             @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)

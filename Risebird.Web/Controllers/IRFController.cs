@@ -6598,7 +6598,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid)
+        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid, int interviewId = 0, bool shouldSendEmail = true)
         {
             try
             {
@@ -6620,8 +6620,19 @@ namespace Risebird.Web.Controllers
                         model.IRFId = irfid;
                         model.SentBy = emailId;
                         model.Profile = profileName;
-                        var result = _meetingService.BroadcastIRFmembers(model);
-                        return Json(result.Result);
+                        string result = string.Empty;
+                        if(interviewId > 0  && !shouldSendEmail)
+                        {
+                            model.InterviewId = interviewId;
+                            result =  _meetingService.StoreClientBroadcastMessage(model).Result;
+
+                        }
+                        else
+                        {
+                            result = _meetingService.BroadcastIRFmembers(model).Result;
+
+                        }
+                        return Json(result);
                     }
                     else
                     {

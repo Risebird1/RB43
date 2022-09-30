@@ -414,6 +414,9 @@ namespace Risebird.Repository
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromIRFId", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@CreatedFromIRFId"].Value = templateDetails.id;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = templateDetails.MeetingPlatform;
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@ModifiedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@ModifiedOn"].Value = DateTime.Now;
 

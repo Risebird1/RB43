@@ -36,7 +36,8 @@ DECLARE @tbl_AllFeed TABLE (
 	[RatedBy] varchar(100),
 	[CandidateName] varchar(100),
 	[InterviewDate] datetime,
-	[Client] varchar(150)
+	[Client] varchar(150),
+	[AudioBy] varchar(100)
 ) 
 
 DECLARE @tbl_RelevantSkillChannels TABLE (          
@@ -66,13 +67,14 @@ End
 
 
 insert into @tbl_AllFeed
-select irf.IRFId, irf.CreatedOn, 'Audio', null, null, AudioComment, null, null, null, null, null from IRF
+select irf.IRFId, cafr.CreatedAt, 'Audio', null, null, cafr.AudioUrl, null, null, null, null, null, cafr.CreatedBy from ClientAudioFeedbackForReport cafr
+join IRF on irf.id = cafr.IRFId
 join @tbl_RelevantSkillChannels rsc on rsc.IRFId = irf.id
 where (@postWhichDate is null or CAST(FORMAT(irf.CreatedOn ,'yyyy-MM-dd HH:mm:ss') AS datetime) > @postWhichDate)
 and (irf.AudioComment != '' and irf.AudioComment is not null)
 
 insert into @tbl_AllFeed
-select irf.IRFId, cbm.SentAt, 'Broadcast', cbm.[Message], cbm.[Subject], null, null, null, null, null, null from ClientBroadcastMessages cbm
+select irf.IRFId, cbm.SentAt, 'Broadcast', cbm.[Message], cbm.[Subject], null, null, null, null, null, null, null from ClientBroadcastMessages cbm
 join @tbl_RelevantSkillChannels rsc on rsc.IRFId = cbm.IRFId
 join IRF on IRF.id = cbm.IRFId
 where (@postWhichDate is null or CAST(FORMAT(cbm.SentAt ,'yyyy-MM-dd HH:mm:ss') AS datetime) > @postWhichDate)
@@ -83,7 +85,7 @@ case
   when ul.LastName is null then ul.FirstName        
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))        
 end, 
-im.interviewDate, cl.[Name]
+im.interviewDate, cl.[Name], null
 from ClientCommentsForReport ccr
 join InterviewMeetings im on im.id = ccr.InterviewId
 join IRF on IRF.IRFId = im.IRFId

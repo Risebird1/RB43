@@ -43,11 +43,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName)
+        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName,bool requesttype)
         {
             try
             {
-                return _mCQRepository.FetchAllMCQSets(clientname, profileName).Result;
+                return _mCQRepository.FetchAllMCQSets(clientname, profileName, requesttype).Result;
             }
             catch (Exception e)
             {
@@ -175,11 +175,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId)
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId,bool requesttype)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateDetailsByMCQId(MCQPId).Result;
+                return _mCQRepository.GetMCQCandidateDetailsByMCQId(MCQPId, requesttype).Result;
             }
             catch (Exception e)
             {
@@ -305,6 +305,18 @@ namespace Risebird.Business
                 var random = new Random();
                 int index = random.Next(_mcqset.Count());
                 return _mcqset[index];
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQId(string MCQPId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQReportByMCQId(MCQPId).Result;
             }
             catch (Exception e)
             {

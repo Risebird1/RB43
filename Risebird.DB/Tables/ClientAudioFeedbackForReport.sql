@@ -8,13 +8,28 @@ Begin
 	[AudioUrl] [varchar](max) NULL,
 	[CreatedAt][datetime] NULL,
 	[ModifiedAt][datetime] NULL,
-	[CreatedBy][varchar](50) NULL
+	[CreatedBy][varchar](50) NULL,
+	[IRFId][int] NULL,
 	CONSTRAINT [FK_ClientAudioFeedbackForReport_InterviewId] FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
 	CONSTRAINT [PK_ClientAudioFeedbackForReport] PRIMARY KEY CLUSTERED 
 	(
 		[id] ASC
 	) WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+End
+
+Else
+Begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IRFId')
+      AND Object_ID = Object_ID(N'ClientAudioFeedbackForReport'))
+BEGIN
+    ALTER TABLE ClientAudioFeedbackForReport
+    Add [IRFId] int CONSTRAINT
+	[FK_ClientAudioFeedbackForReport_IRFId] FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id])
+END
 End
 
 Go

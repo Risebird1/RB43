@@ -17,5 +17,6 @@ namespace Risebird.Entities.ViewModel
         public string CandidateName { get; set; } //this is only relevant if the feedType is a Rating
         public DateTime? InterviewDate { get; set; } //this is only relevant if the feedType is a Rating 
         public string Client { get; set; } //this is only relevant if the feedType is a Rating 
+        public string AudioBy { get; set; } //this is only relevant if the feedType is an Audio
     }
 }
