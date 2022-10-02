@@ -51,7 +51,8 @@ namespace Risebird.MicroService
                     _list.roomId = "";
                     _list.Expiretime = 24;
                     _mCQService.AddMCQSetShareList(_list);
-                    return new OkObjectResult(mcqset.PartitionKey);
+                    string currenturl = "https://portal.risebird.io/MCQ/SkillTest?Id=" + mcqset.PartitionKey;
+                    return new OkObjectResult(currenturl);
                 }
             }
             return new BadRequestResult();

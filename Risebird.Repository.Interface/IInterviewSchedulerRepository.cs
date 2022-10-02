@@ -25,5 +25,6 @@ namespace Risebird.Repository.Interface
         string GenerateOneTimeEvent(string olduniqueid);
         Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
+        Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink,string zoommeetingid);
     }
 }

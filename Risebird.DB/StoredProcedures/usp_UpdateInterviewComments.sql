@@ -117,7 +117,13 @@ Begin Try
 				
         
 			END  
+ if (@MeetingStatus=5 or @MeetingStatus=9)
+  Begin
+   Declare @Interviewer varchar(150) 
+   select @Interviewer=Interviewer from [InterviewMeetings] where id=@interviewId 
+  Exec [dbo].[usp_NoshowInterviewerinactive] @Interviewer
 
+  End
 		
         END 
 		
