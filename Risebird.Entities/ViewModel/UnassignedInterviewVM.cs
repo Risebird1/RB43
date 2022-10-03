@@ -14,5 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string uniqueid { get; set; }
         public string staffingAgency { get; set; }
         public string MobileNumber { get; set; }
+        public string ClientName { get; set; }
+        public string PrimarySkillInvite { get; set; }
     }
 }

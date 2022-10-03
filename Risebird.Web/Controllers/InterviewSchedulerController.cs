@@ -227,6 +227,8 @@ namespace Risebird.Web.Controllers
                     model.Uniqueid = result.FirstOrDefault().Uniqueid;
                     ViewBag.Start = 1;
                     model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
+                    var _listhr = _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
+                    model._listhr = new SelectList(_listhr);
                     if (model._IRFDetails == null)
                     {
                         model._IRFDetails = new ScheculeInterviewIRFVM();

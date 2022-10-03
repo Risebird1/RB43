@@ -451,5 +451,23 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public List<string> fetchSkillChannelHRDetails(string IRFId)
+        {
+            try
+            {
+                var query = "Select distinct ca.ClientHRAttemptContact from IRF join Candidate ca on IRF.id=ca.IRFId where IRF.IRFId=@IRFId";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dp);
+                    return (List<string>)results;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

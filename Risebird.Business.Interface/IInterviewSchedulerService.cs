@@ -25,5 +25,6 @@ namespace Risebird.Business.Interface
         bool UpdateSchedulingLinkDetails(string _uniqueid);
         Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
+        List<string> fetchSkillChannelHRDetails(string IRFId);
     }
 }
