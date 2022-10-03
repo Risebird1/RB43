@@ -21,7 +21,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                        color: #9b9393;*/
+                                    color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -397,8 +397,14 @@
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.StaffingAgiencies, htmlAttributes: new { @class = "form-label" })
                                     </div>
-
-                                    @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    @if (!String.IsNullOrWhiteSpace(Model.StaffingAgiencies))
+                                    {
+                                        @Html.TextBoxFor(m => m.StaffingAgiencies, new { @readonly="readonly", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    }
                                 </div>
                                 <div class="form-group">
                                     <div class="mandate">

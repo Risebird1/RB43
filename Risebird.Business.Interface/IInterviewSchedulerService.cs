@@ -28,5 +28,6 @@ namespace Risebird.Business.Interface
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
         Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink,string zoommeetingid);
         List<string> fetchSkillChannelHRDetails(string IRFId);
+        string fetchSkillChannelStaffingDetails(string IRFId);
     }
 }

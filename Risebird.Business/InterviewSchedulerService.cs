@@ -250,5 +250,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string fetchSkillChannelStaffingDetails(string IRFId)
+        {
+            try
+            {
+                return _interviewSchedulerRepository.fetchSkillChannelStaffingDetails(IRFId);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
