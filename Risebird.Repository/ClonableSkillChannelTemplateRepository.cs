@@ -494,7 +494,7 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@QuestionsBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@QuestionsBulkData"].Value = questionsDt;
                     }
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Structured));
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = templateDetails.IsAadhaarVerificationRequired;
                     con.Open();
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
