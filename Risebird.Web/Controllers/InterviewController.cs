@@ -5917,7 +5917,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        public async Task<IActionResult> PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string currentUser = null)
         {
             try
             {
@@ -5987,7 +5987,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
             }
         }

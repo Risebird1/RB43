@@ -898,34 +898,37 @@ function SetTechReportChart(techCollectionIdStartsWith) {
 
 
         const scoreChart = document.getElementById("scoreChart");
-        let width = scoreChart.style.width;
-        if (width == null || width == "") {
-            width = scoreChart.getAttribute("width");
-        }
-        let height = scoreChart.style.height;
-        if (height == null || height == "") {
-            height = scoreChart.getAttribute("height");
-        }
-        scoreChart.remove();
+        if (scoreChart != null) {
+            let width = scoreChart.style.width;
+            if (width == null || width == "") {
+                width = scoreChart.getAttribute("width");
+            }
+            let height = scoreChart.style.height;
+            if (height == null || height == "") {
+                height = scoreChart.getAttribute("height");
+            }
+            scoreChart.remove();
 
 
-        const canvasElement = document.createElement("canvas");
-        canvasElement.setAttribute("id", "scoreChart");
-        canvasElement.setAttribute("height", height);
-        canvasElement.setAttribute("width", width);
-        document.getElementById("canvasDiv").appendChild(canvasElement);
+            const canvasElement = document.createElement("canvas");
+            canvasElement.setAttribute("id", "scoreChart");
+            canvasElement.setAttribute("height", height);
+            canvasElement.setAttribute("width", width);
+            document.getElementById("canvasDiv").appendChild(canvasElement);
+
+
+            var canvas = document.getElementById("scoreChart");
+            var ctx = canvas.getContext('2d');
+
+            const myChart = new Chart(
+                ctx,
+                config
+            );
+
+            document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+
+        }
         
-
-        var canvas = document.getElementById("scoreChart");
-        var ctx = canvas.getContext('2d');
-
-        const myChart = new Chart(
-            ctx,
-            config
-        );
-
-        document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
-
     }
 
 
