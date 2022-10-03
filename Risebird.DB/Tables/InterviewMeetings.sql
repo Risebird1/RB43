@@ -45,6 +45,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [Cancellationsource][varchar](100),
     [HasDistinctParticipants][bit] NOT NULL Default 1,
     [RedoInterview][bit] NOT NULL Default 0,
+    [BackUpLink] [varchar](MAX) NOT NULL,
+    [BackUpLinkId][varchar] (200),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -307,6 +309,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add RedoInterview bit not null default 0
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BackUpLink')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add BackUpLink varchar(max)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BackUpLinkId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add BackUpLinkId varchar(200)
 END
 
 END

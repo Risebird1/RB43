@@ -15,7 +15,8 @@ Create PROCEDURE [dbo].[usp_UpdateClonableSkillChannel]
 --@Name varchar(200),  
 @id int,                        
 @ModifiedOn date,     
-@ModifiedBy varchar(50),  
+@ModifiedBy varchar(50), 
+@MeetingPlatform varchar(25),
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,  
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,  
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,  
@@ -45,7 +46,11 @@ begin try
   
   if exists (select 1 from ClonableSkillChannel where id=@id)       
   Begin     
-  update ClonableSkillChannel set ModifiedOn = @ModifiedOn, ModifiedBy = @ModifiedBy,IsAadhaarVerificationRequired=@IsAadhaarVerificationRequired where id =@id  
+  update ClonableSkillChannel set ModifiedOn = @ModifiedOn,
+  ModifiedBy = @ModifiedBy,
+  IsAadhaarVerificationRequired=@IsAadhaarVerificationRequired,
+  MeetingPlatform = @MeetingPlatform
+  where id =@id  
   End  
   
   if(@id != 0)  

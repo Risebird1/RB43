@@ -2457,7 +2457,7 @@ namespace Risebird.CommonHelper
                 msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }

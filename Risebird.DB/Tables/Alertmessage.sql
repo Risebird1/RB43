@@ -4,15 +4,16 @@ BEGIN
 
 CREATE TABLE [dbo].Alertmessage(
 [ID] [int] IDENTITY(1,1) NOT NULL,
-[Announcement] [varchar](1000) NULL,
+[Announcement] [varchar](Max) NULL,
 [StartTime] [datetime]  NULL,
 [EndTime] [datetime]  NULL,
-IsActive bit)
+IsActive bit,
  CONSTRAINT [PK_Alertmessage] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY] 
 end
 GO
+
 

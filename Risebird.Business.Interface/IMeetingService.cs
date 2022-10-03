@@ -202,5 +202,6 @@ namespace Risebird.Business.Interface
         Task<string> GetMeetingPlatformbyIRFId(string IRFId);
         List<MeetingVM> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);
+        Task<string> StoreClientBroadcastMessage(BroadcastModel model);
     }
 }

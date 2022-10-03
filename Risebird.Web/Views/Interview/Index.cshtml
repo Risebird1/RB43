@@ -439,6 +439,7 @@
                                                     <th>Type</th>
                                                     <th>JD Title</th>
                                                     <th>Meeting Link</th>
+                                                    <th>Backup Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
@@ -488,6 +489,7 @@
                                                     <th>Type</th>
                                                     <th>JD Title</th>
                                                     <th>Meeting Link</th>
+                                                    <th>Backup Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
@@ -649,7 +651,6 @@
                                                         }
                                                         else
                                                         {
-
                                                             <td style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
                                                         @if (item.IsProctor)
@@ -668,8 +669,15 @@
                                                         }
                                                         else
                                                         {
-
                                                             <td><span style="color:red">No Meeting Link</span></td>
+                                                        }
+                                                        @if (item.BackUpLink != null && item.BackUpLink != "")
+                                                        {
+                                                            <td> <a id="BackUpLink" target="_blank" title="@item.BackUpLink" href=@item.BackUpLink>Backup Link</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
                                                         }
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {

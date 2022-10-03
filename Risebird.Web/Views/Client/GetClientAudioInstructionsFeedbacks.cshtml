@@ -45,7 +45,7 @@
                         {
                             displayStatus = "block";
                             audioUrl = Model.ClientAudioInstructionsList.FirstOrDefault().AudioUrl;
-                            var splitUrl = audioUrl.Split("/");
+                            var splitUrl = audioUrl?.Split("/");
                             fileName = splitUrl?[splitUrl.Length - 1];
                         }
                     }
@@ -67,12 +67,12 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>
+                                                <td id="td_audioFile">
                                                     <a id="anchorAudioId" asp-append-version="true" href="@audioUrl" download>
                                                         @fileName
                                                     </a>
                                                 </td>
-                                                <td>
+                                                <td id="td_audioControl">
                                                     <audio id="controlAudioId" asp-append-version="true" src="@audioUrl" controls></audio>
                                                 </td>
                                             </tr>
