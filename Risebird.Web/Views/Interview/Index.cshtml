@@ -93,7 +93,7 @@
                 </div>
                 <div class="pull-right">
                     <div>
-                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" )'"></i></span>
+                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" , new { type = ViewBag.Type })'"></i></span>
                         <span class="interview_3">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -1153,9 +1153,9 @@
                     <div class="form-group">
                         <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
                         @*<div>
-                            <div class="text-areadiv1">
-                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
-                            </div>
+                        <div class="text-areadiv1">
+                        <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                        </div>
                         </div>*@
                         <div>
                             <textarea style="width:100%;" id="bcMessage"></textarea>
