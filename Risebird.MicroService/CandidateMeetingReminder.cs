@@ -57,13 +57,16 @@ namespace Risebird.MicroService
 
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton, rescheulebutton,needcleritybutton);
+                        var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                         _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder Second";
+                        _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+                        _whatsAppVM.MessageValue = item.ClientName;
+                        _whatsAppVM.timezone = "IST";
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                         await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
@@ -76,13 +79,16 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton, rescheulebutton, needcleritybutton);
+                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send  WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                         _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder";
+                        _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+                        _whatsAppVM.MessageValue = item.ClientName;
+                        _whatsAppVM.timezone = "IST";
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
@@ -94,13 +100,16 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton, rescheulebutton, needcleritybutton);
+                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                         _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder";
+                        _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+                        _whatsAppVM.MessageValue = item.ClientName;
+                        _whatsAppVM.timezone = "IST";
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
