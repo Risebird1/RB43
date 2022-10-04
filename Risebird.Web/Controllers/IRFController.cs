@@ -832,7 +832,12 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
-                            TempData["SuccessErrorMessage"] = "Skills Channel has been added Successfully!";
+                            TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
+                            return RedirectToAction("Index");
+                        }
+                        else if (irfDetails.IRFId != null)
+                        {
+                            TempData["SuccessErrorMessage"] = "Failed to add " + irfDetails.IRFId + " Skills Channel!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -1995,7 +2000,12 @@ namespace Risebird.Web.Controllers
                             model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel "+ model.IRFId + " has been saved Successfully!";
+                                return RedirectToAction("Index");
+                            }
+                            else if(model.IRFId != null)
+                            {
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
                                 return RedirectToAction("Index");
                             }
                             else
@@ -2008,7 +2018,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
+                                return RedirectToAction("Index");
+                            }
+                            else if (model.IRFId != null)
+                            {
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
                                 return RedirectToAction("Index");
                             }
                             else
