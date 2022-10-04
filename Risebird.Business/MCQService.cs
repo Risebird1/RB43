@@ -300,7 +300,7 @@ namespace Risebird.Business
                 var _mcqset = _mCQRepository.FetchMCQSetsForApi(model).Result.ToList();
                 if (_mcqset.Count() > 1 && model.SeniorityLevel > 0)
                 {
-                    _mcqset = _mcqset.Where(x => !String.IsNullOrWhiteSpace(x.SeniorityLevel) ? x.SeniorityLevel.Contains(model.SeniorityLevel.ToString()) : x.SeniorityLevel == null).ToList();
+                    _mcqset = _mcqset.Where(x => !string.IsNullOrWhiteSpace(x.SeniorityLevel) ? x.SeniorityLevel.Contains(model.SeniorityLevel.ToString()) : x.SeniorityLevel == null).ToList();
                     var random = new Random();
                     int index = random.Next(_mcqset.Count());
                     return _mcqset[index];

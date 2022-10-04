@@ -501,7 +501,7 @@ namespace Risebird.Web.Controllers
             }
             if (model.Jdfile == null && (model.JdLink == null))
             {
-                ModelState.AddModelError(String.Empty, "Please upload a Jd.");
+                ModelState.AddModelError(string.Empty, "Please upload a Jd.");
                 return View(model);
             }
             if (model.Jdfile != null)
@@ -694,7 +694,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (model.CV == null && (model.CVLink == null))
                     {
-                        ModelState.AddModelError(String.Empty, "Please upload a CV.");
+                        ModelState.AddModelError(string.Empty, "Please upload a CV.");
                         var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                         model.Prioritylist = new SelectList(Priority, "ID", "Name");
@@ -1469,7 +1469,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (Candidatemodel.Where(x => x.Interviewid == item.interviewid).Count() == 0)
                     {
-                        var rating = !String.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
+                        var rating = !string.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
                         Candidatemodel.Add(new InterviewerRating
                         {
                             Interviewid = item.interviewid,

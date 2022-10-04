@@ -185,7 +185,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 5].Value = item.Points;
                                 Sheet.Cells[i, 8].Value = item.Date;
                                 Sheet.Cells[i, 9].Value = item.Status;
-                                if (String.IsNullOrEmpty(item.PreferredLocation))
+                                if (string.IsNullOrEmpty(item.PreferredLocation))
                                 {
                                     Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                 }
@@ -387,7 +387,7 @@ namespace Risebird.Web.Controllers
                         _listyear.Add(DateTime.Now.AddYears(-i).Year.ToString());
                     }
                     var selectListforsize = new List<SelectListItem>();
-                    if (String.IsNullOrEmpty(year))
+                    if (string.IsNullOrEmpty(year))
                     {
                         year = currentyear.ToString();
                     }
@@ -540,7 +540,7 @@ namespace Risebird.Web.Controllers
             amount = _Amount.ToString();
             var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
             var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
-            if (String.IsNullOrEmpty(paymenthistory))
+            if (string.IsNullOrEmpty(paymenthistory))
                 paymenthistory = "0";
             var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymenthistory));
             //Start:Send email to Interviewer
@@ -588,10 +588,10 @@ namespace Risebird.Web.Controllers
                 int Page = 1;
                 var model = JsonConvert.DeserializeObject<List<RBInterviewDetails>>(HttpContext.Session.GetString("financemodel"));
                 SearchValue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.Comment) ? x.Comment.ToUpper().Contains(searchValue) : x.Comment == "")).ToList();
+                    model = model.Where(x => (!string.IsNullOrEmpty(x.Comment) ? x.Comment.ToUpper().Contains(searchValue) : x.Comment == "")).ToList();
                 }
                 int totalcount = model.Count;
                 int Pagestart = 0;
@@ -653,7 +653,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
             var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, Amount, "Advance", "");
-            if (String.IsNullOrEmpty(paymenthistory))
+            if (string.IsNullOrEmpty(paymenthistory))
             {
                 paymenthistory = "0";
             }
@@ -855,7 +855,7 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 7].Value = item.Comment;
                                     Sheet.Cells[i, 8].Value = item.InterviewerEmailid;
                                     Sheet.Cells[i, 9].Value = item.Type;
-                                    if (String.IsNullOrEmpty(item.PreferredLocation))
+                                    if (string.IsNullOrEmpty(item.PreferredLocation))
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
@@ -1034,7 +1034,7 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 7].Value = item.Comment;
                                     Sheet.Cells[i, 8].Value = item.InterviewerEmailid;
                                     Sheet.Cells[i, 9].Value = item.Type;
-                                    if (String.IsNullOrEmpty(item.PreferredLocation))
+                                    if (string.IsNullOrEmpty(item.PreferredLocation))
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
@@ -1162,14 +1162,14 @@ namespace Risebird.Web.Controllers
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     foreach (var item in model)
                     {
-                        if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                        if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                         {
                             var AssessmentGroup = item.AssessmentGroupId.Split(",");
                             string groupdetail = "";
                             foreach (var group in AssessmentGroup)
                             {
                                 int groupid = Convert.ToInt32(group);
-                                if (String.IsNullOrEmpty(groupdetail))
+                                if (string.IsNullOrEmpty(groupdetail))
                                 {
                                     groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
                                 }
@@ -1220,14 +1220,14 @@ namespace Risebird.Web.Controllers
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     foreach (var item in model)
                     {
-                        if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                        if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                         {
                             var AssessmentGroup = item.AssessmentGroupId.Split(",");
                             string groupdetail = "";
                             foreach (var group in AssessmentGroup)
                             {
                                 int groupid = Convert.ToInt32(group);
-                                if (String.IsNullOrEmpty(groupdetail))
+                                if (string.IsNullOrEmpty(groupdetail))
                                 {
                                     groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
                                 }
@@ -1310,14 +1310,14 @@ namespace Risebird.Web.Controllers
                         var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                         foreach (var item in model)
                         {
-                            if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                             {
                                 var AssessmentGroup = item.AssessmentGroupId.Split(",");
                                 string groupdetail = "";
                                 foreach (var group in AssessmentGroup)
                                 {
                                     int groupid = Convert.ToInt32(group);
-                                    if (String.IsNullOrEmpty(groupdetail))
+                                    if (string.IsNullOrEmpty(groupdetail))
                                     {
                                         groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
                                     }
@@ -1637,7 +1637,7 @@ namespace Risebird.Web.Controllers
                         }
                         else { item.JobCountry = "OUTSIDE INDIA"; }
 
-                        item.CompanyType = !String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
+                        item.CompanyType = !string.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
                     }
                     return View(model);
                 }
@@ -1852,7 +1852,7 @@ namespace Risebird.Web.Controllers
                         _listyear.Add(DateTime.Now.AddYears(-i).Year.ToString());
                     }
                     var selectListforsize = new List<SelectListItem>();
-                    if (String.IsNullOrEmpty(year))
+                    if (string.IsNullOrEmpty(year))
                     {
                         year = currentyear.ToString();
                     }

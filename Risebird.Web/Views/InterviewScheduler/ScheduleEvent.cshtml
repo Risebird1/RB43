@@ -114,7 +114,7 @@
             <div class="calendar-con clearfix">
                 <div class="col-md-12">
                     <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
-                        @if (!String.IsNullOrEmpty(Model._IRFDetails.LogoLink))
+                        @if (!string.IsNullOrEmpty(Model._IRFDetails.LogoLink))
                         {
                             <div class="logo-box"><div class="log-wrap"><img src=@Model._IRFDetails.LogoLink class="logo-company"></div></div>
                         }
@@ -297,7 +297,7 @@
             <div class="calendar-con clearfix">
                 <div class="col-md-12">
                     <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
-                        @if (!String.IsNullOrEmpty(Model._IRFDetails.LogoLink))
+                        @if (!string.IsNullOrEmpty(Model._IRFDetails.LogoLink))
                         {
                             <div class="logo-box"><div class="log-wrap"><img src=@Model._IRFDetails.LogoLink class="logo-company"></div></div>
                         }
@@ -397,7 +397,7 @@
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.StaffingAgiencies, htmlAttributes: new { @class = "form-label" })
                                     </div>
-                                    @if (!String.IsNullOrWhiteSpace(Model.StaffingAgiencies))
+                                    @if (!string.IsNullOrWhiteSpace(Model.StaffingAgiencies))
                                     {
                                         @Html.TextBoxFor(m => m.StaffingAgiencies, new { @readonly="readonly", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                     }

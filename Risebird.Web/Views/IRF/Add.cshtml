@@ -1182,7 +1182,7 @@
                                                 {
                                                     @Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                                                 }
-                                                else if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
+                                                else if (string.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
                                                 {
                                                     @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                                                 }
@@ -1205,7 +1205,7 @@
                                             <div class="row">
 
                                                 <div class="col-md-12 mc-button-area">
-                                                    @if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
+                                                    @if (string.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
                                                     {
                                                         @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                     }

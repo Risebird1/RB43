@@ -109,7 +109,7 @@ namespace Risebird.CommonHelper
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
                     var name = _userService.FetchNameByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
@@ -143,7 +143,7 @@ namespace Risebird.CommonHelper
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
                     var name = _userService.FetchNameByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
@@ -177,7 +177,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.CountryCode = "+91";
@@ -213,7 +213,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.CountryCode = "+91";
@@ -248,7 +248,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
@@ -285,7 +285,7 @@ namespace Risebird.CommonHelper
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
                     var name = _userService.FetchNameByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
@@ -318,7 +318,7 @@ namespace Risebird.CommonHelper
         //        foreach (var item in Emailid)
         //        {
         //            var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-        //            if (!String.IsNullOrEmpty(WhatsAppnumber))
+        //            if (!string.IsNullOrEmpty(WhatsAppnumber))
         //            {
         //                var name = _userService.FetchNameByEmail(item);
         //                _whatsAppVM.CountryCode = "+91";
@@ -353,7 +353,7 @@ namespace Risebird.CommonHelper
         //        foreach (var item in Emailid)
         //        {
         //            var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-        //            if (!String.IsNullOrEmpty(WhatsAppnumber))
+        //            if (!string.IsNullOrEmpty(WhatsAppnumber))
         //            {
         //                var name = _userService.FetchNameByEmail(item);
         //                _whatsAppVM.UserName = name;
@@ -388,7 +388,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
@@ -424,7 +424,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
@@ -459,7 +459,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
@@ -544,7 +544,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
@@ -578,7 +578,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         var name = _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;

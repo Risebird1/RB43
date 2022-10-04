@@ -72,7 +72,7 @@ namespace Risebird.Repository
             string prefferedLocation = string.Empty;
             string expectedPerHourRate = string.Empty;
             //string staffingAgenecy = string.Empty;
-            if (String.IsNullOrEmpty(staffingAgenecy))
+            if (string.IsNullOrEmpty(staffingAgenecy))
             {
                 staffingAgenecy = "";
             }

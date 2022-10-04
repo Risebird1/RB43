@@ -646,7 +646,7 @@ namespace Risebird.Web.Controllers
                                  select new QuestionList
                                  {
                                      QuestionNumber = _Q.QuestionNumber,
-                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                     QuestionAnswered = string.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
                                  }).ToList();
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
@@ -697,7 +697,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (Option2 == true)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionAnswer))
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "2";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",2";
@@ -708,7 +708,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (Option3 == true)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionAnswer))
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "3";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",3";
@@ -719,7 +719,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (Option4 == true)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionAnswer))
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "4";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",4";
@@ -778,7 +778,7 @@ namespace Risebird.Web.Controllers
                                  select new QuestionList
                                  {
                                      QuestionNumber = _Q.QuestionNumber,
-                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                     QuestionAnswered = string.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
                                  }).ToList();
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
@@ -833,7 +833,7 @@ namespace Risebird.Web.Controllers
                 //    }
                 //}
                 _mCQService.AddMCQCandidates(_list);
-                if (!String.IsNullOrWhiteSpace(values.Name))
+                if (!string.IsNullOrWhiteSpace(values.Name))
                 {
                     var aadhaarKYCmodel = new AadhaarData();
                     aadhaarKYCmodel.Name = values.Name;
@@ -858,7 +858,7 @@ namespace Risebird.Web.Controllers
                 string HrEmailaddress = string.Empty;
                 foreach (var item in HrEmailaddresslist)
                 {
-                    if (String.IsNullOrEmpty(HrEmailaddress))
+                    if (string.IsNullOrEmpty(HrEmailaddress))
                     {
                         HrEmailaddress = item.EmailId;
                     }
@@ -1029,7 +1029,7 @@ namespace Risebird.Web.Controllers
                             ClientName = client.Result.ClientName.ToUpper();
                         }
                     }
-                    if (String.IsNullOrEmpty(ClientName))
+                    if (string.IsNullOrEmpty(ClientName))
                     {
                         ClientName = "";
                     }
@@ -1127,7 +1127,7 @@ namespace Risebird.Web.Controllers
                 }
                 var _candidate = new CandidateDetailsForTestDuplicate();
                 var candidateset = _mCQService.GetMCQReportByMCQId(MCQId);
-                if (!String.IsNullOrWhiteSpace(CMCQId))
+                if (!string.IsNullOrWhiteSpace(CMCQId))
                 {
                     _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
                 }
@@ -1142,9 +1142,9 @@ namespace Risebird.Web.Controllers
                 _candidate.JoinabilityHRReportCollection = new List<JoinabilityHRReport>();
                 _candidate = _mCQService.FetchMCQReportDetails(_candidate);
                 SetSelectabilityorJoniblity(_candidate);
-                if (String.IsNullOrEmpty(_candidate.VideoLink))
+                if (string.IsNullOrEmpty(_candidate.VideoLink))
                 {
-                    if (!String.IsNullOrEmpty(_candidate.roomId))
+                    if (!string.IsNullOrEmpty(_candidate.roomId))
                     {
                         var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
                         var request = new RestRequest(Method.GET);

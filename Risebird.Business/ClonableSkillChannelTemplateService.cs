@@ -186,7 +186,7 @@ namespace Risebird.Business
             var Skillset = _irfRepository.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.Skills = new SelectList(Skillset, "id", "Name");
             foreach (var item in model.InterviewerCollection)

@@ -108,7 +108,7 @@
                                                                         @Html.TextBoxFor(m => m.TdsCertificateCollection[i].comment, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                     </td>
                                                                     <td>
-                                                                        @if (!String.IsNullOrEmpty(Model.TdsCertificateCollection[i].certificatelink))
+                                                                        @if (!string.IsNullOrEmpty(Model.TdsCertificateCollection[i].certificatelink))
                                                                         {
                                                                             <a target="_blank" href="@Model.TdsCertificateCollection[i].certificatelink">Click Here</a>
                                                                         }

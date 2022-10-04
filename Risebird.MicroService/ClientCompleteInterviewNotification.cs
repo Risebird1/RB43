@@ -43,7 +43,7 @@ namespace Risebird.MicroService
                         Guid uniqueid = Guid.NewGuid();
                         var _uniqueid = await _clientService.PublicClientUrlSave(item.EmailId, uniqueid.ToString());
                         string sendreporturl = "https://portal.risebird.io/Candidate/PublicAllMeetings?id=" + uniqueid;
-                        if (!String.IsNullOrEmpty(_uniqueid))
+                        if (!string.IsNullOrEmpty(_uniqueid))
                         {
                             sendreporturl = "https://portal.risebird.io/Candidate/PublicAllMeetings?id=" + _uniqueid;
                         }
