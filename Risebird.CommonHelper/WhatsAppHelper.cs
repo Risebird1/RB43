@@ -6,6 +6,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -26,7 +27,7 @@ namespace Risebird.CommonHelper
             accesskey = _configuration["WhatsApp:AccessKey"];
             _userService = userService;
         }
-        public string WhatsAppTrackUser(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppTrackUser(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace Risebird.CommonHelper
                 request.AddHeader("Authorization", "Basic " + accesskey);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                IRestResponse response = client.ExecuteAsync(request)?.Result;
+                IRestResponse response = await client.ExecuteAsync(request);
                 if (response != null)
                 {
                     var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
@@ -60,11 +61,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to Add User. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendEventNotification(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendEventNotification(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -82,7 +83,7 @@ namespace Risebird.CommonHelper
                 request.AddHeader("Authorization", "Basic " + accesskey);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddParameter("application/json", "{\r\n    \"userId\": \"" + _whatsAppVM.Userid + "\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"Interview Notification\",\r\n    \"traits\": {\r\n        \"productName\": \"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
+                IRestResponse response = await client.ExecuteAsync(request);
                 var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                 if (obj.result == "true")
                 {
@@ -95,12 +96,12 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
 
-        public string WhatsAppSendOnAssignation(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendOnAssignation(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -115,14 +116,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -130,11 +131,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendScheduling(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendScheduling(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -149,14 +150,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -164,12 +165,12 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
 
-        public string WhatsAppSendEInterviewer(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendEInterviewer(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -185,7 +186,7 @@ namespace Risebird.CommonHelper
                         var username = _whatsAppVM.UserName;
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
+                       await WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -193,7 +194,7 @@ namespace Risebird.CommonHelper
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -201,11 +202,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendApology(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendApology(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -220,14 +221,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -235,11 +236,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendInterviewWaiting(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendInterviewWaiting(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -255,7 +256,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         name = Username;
 
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
@@ -264,7 +265,7 @@ namespace Risebird.CommonHelper
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -272,11 +273,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendReScheduling(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendReScheduling(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -291,14 +292,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -306,7 +307,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
@@ -380,7 +381,7 @@ namespace Risebird.CommonHelper
         //        return "Failed to send message. Please check all fields and try again.";
         //    }
         //}
-        public string WhatsAppSendCancleReScheduling(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendCancleReScheduling(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -395,7 +396,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
+                       await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -403,7 +404,7 @@ namespace Risebird.CommonHelper
                         request.AddHeader("Content-Type", "application/json");
                         //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n    }\r\n}", ParameterType.RequestBody);
                         request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -411,11 +412,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendRatingNotification(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendRatingNotification(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -431,7 +432,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = Username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -439,7 +440,7 @@ namespace Risebird.CommonHelper
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + name + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -447,11 +448,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendFeedbackRemainder(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendFeedbackRemainder(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -466,14 +467,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -481,12 +482,12 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
 
-        public string WhatsAppSendInterviewerFeedbackRemainder(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendInterviewerFeedbackRemainder(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -505,14 +506,14 @@ namespace Risebird.CommonHelper
                                 _whatsAppVM.Emailid = item;
                                 _whatsAppVM.CountryCode = "+91";
                                 _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                                WhatsAppTrackUser(_whatsAppVM);
+                               await WhatsAppTrackUser(_whatsAppVM);
                                 var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                                 client.Timeout = -1;
                                 var request = new RestRequest(Method.POST);
                                 request.AddHeader("Authorization", "Basic " + accesskey);
                                 request.AddHeader("Content-Type", "application/json");
                                 request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
-                                IRestResponse response = client.Execute(request);
+                                IRestResponse response = await client.ExecuteAsync(request);
                                 var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                             }
                         }
@@ -531,12 +532,12 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
 
-        public string WhatsAppSendInterviewerCommonInterviewDetails(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendInterviewerCommonInterviewDetails(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -551,14 +552,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"TotalCount\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -566,11 +567,11 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
-        public string WhatsAppSendInterviewReminder(WhatsAppVM _whatsAppVM)
+        public async Task<string> WhatsAppSendInterviewReminder(WhatsAppVM _whatsAppVM)
         {
             try
             {
@@ -585,14 +586,14 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
+                       await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Authorization", "Basic " + accesskey);
                         request.AddHeader("Content-Type", "application/json");
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"TimeZone\":\"" + _whatsAppVM.timezone + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
+                        IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                     }
                 }
@@ -600,7 +601,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
