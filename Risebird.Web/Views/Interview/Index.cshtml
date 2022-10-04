@@ -470,7 +470,6 @@
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
                                                     <th>Emergency Interview</th>
-                                                    <th>Aadhar Link</th>
                                                     <th>ID Verification</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
@@ -521,7 +520,6 @@
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
                                                     <th>Emergency Interview</th>
-                                                    <th>Aadhar Link</th>
                                                     <th>ID Verification</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
@@ -937,17 +935,6 @@
                                                     <td>
                                                         @item.IsEmergency
                                                     </td>
-                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                    {
-                                                        <td>
-
-                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" "," %20")>Aadhar</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No document</td>
-                                                    }
                                                     @if (item.IsAadhaarVerificationRequired == null)
                                                     {
                                                         <td>Not Mandatory</td>
