@@ -14,6 +14,8 @@ namespace Risebird.Entities.ViewModel
         public string Event { get; set; }
         public string Header { get; set; }
         public string buttonlink { get; set; }
+        public string PrimarySkill { get; set; }
+        public string timezone { get; set; }
     }
     public class WhatsAppVMResponse
     {
