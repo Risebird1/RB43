@@ -1346,36 +1346,10 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                 {
                     string clientname = string.Empty;
-                    if (profileName == "Client")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        if (client != null)
-                        {
-                            clientname = client.Result.ClientName.ToUpper();
-                        }
-                    }
                     var result = _mCQService.FetchAllMCQSets(clientname, profileName, true);
-                    if (profileName == "Client")
-                    {
-                        List<MCQVMset> filteredByClient = new List<MCQVMset>();
-                        foreach (var item in result)
-                        {
-                            if (!string.IsNullOrEmpty(item.Clients))
-                            {
-                                var clientsMapped = item.Clients.Split(",");
-                                if (clientsMapped != null && clientsMapped.Any(x => !string.IsNullOrEmpty(x) && x.ToLower() == clientname?.ToLower()))
-                                {
-                                    filteredByClient.Add(item);
-                                }
-                            }
-                        }
-                        result = filteredByClient;
-                    }
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -1518,7 +1492,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                     {
                         if (filter != null)
                         {
