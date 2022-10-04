@@ -4912,7 +4912,7 @@ namespace Risebird.Repository
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
                             parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
-                            parameters.Add("@operationStatus", dbType: DbType.string, direction: ParameterDirection.Output, size: 5215585);
+                            parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
 
                             await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
