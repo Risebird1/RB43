@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
@@ -283,5 +285,38 @@ namespace Risebird.Web.Controllers
             return Json("");
         }
         #endregion
+
+       [Authorize]
+       [HttpGet]
+        public async Task<IActionResult> AadharDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin"|| profileName == "SupportAdmin")
+                    {                     
+                        var adhardetail = await _aadhaarService.GetAadharDetails();
+                        return View(adhardetail);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index", "Interview");
+
+            }
+        }
     }
 }

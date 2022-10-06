@@ -68,6 +68,8 @@ namespace Risebird.Entities.ViewModel
         public string verified_using { get; set; }
         public string reference_id { get; set; }
         public string status { get; set; }
+        public string CreatedOn { get; set; }
+        public int id { get; set; }
     }
     public class AadhaarStatus
     {
