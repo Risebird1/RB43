@@ -522,10 +522,10 @@ namespace Risebird.Web.Controllers
                         if (result.FirstOrDefault().BufferTime > 0)
                         {
                             int buffertimevalue = result.FirstOrDefault().BufferTime;
-                            var comdate = DateTime.Now.AddMinutes(-offset).AddHours(buffertimevalue);
+                            var comdate = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue);
                             if (comdate.Date == DateTime.Now.Date)
                             {
-                                int offsetbuffer = DateTime.Now.AddMinutes(-offset).AddHours(buffertimevalue).Hour;
+                                int offsetbuffer = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue).Hour;
                                 int valueset = Convert.ToInt32(item.End) - Convert.ToInt32(item.Start);
                                 for (int i = 0; i < valueset; i++)
                                 {
@@ -554,7 +554,7 @@ namespace Risebird.Web.Controllers
                                                     DateTime value1 = new DateTime(year, month, (day - 1), newslot, 0, 0);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
-                                                        if (slots > offsetbuffer)
+                                                        if (slots > (offsetbuffer*60))
                                                         {
                                                             model.Add(((slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                         }
@@ -572,7 +572,7 @@ namespace Risebird.Web.Controllers
                                                     DateTime value1 = new DateTime(year, month, (day + 1), newslot, 0, 0);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
-                                                        if (slots > offsetbuffer)
+                                                        if (slots > (offsetbuffer * 60))
                                                         {
                                                             model.Add(((slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                         }
@@ -585,7 +585,7 @@ namespace Risebird.Web.Controllers
                                             DateTime value1 = new DateTime(year, month, day, (Convert.ToInt32(item.Start) + i), 0, 0);
                                             if (result.FirstOrDefault().StartDate <= value1)
                                             {
-                                                if (slots > offsetbuffer)
+                                                if (slots > (offsetbuffer * 60))
                                                 {
                                                     model.Add((slots / 60).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                 }
