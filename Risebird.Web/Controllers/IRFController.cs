@@ -2000,10 +2000,10 @@ namespace Risebird.Web.Controllers
                             model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel "+ model.IRFId + " has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
-                            else if(model.IRFId != null)
+                            else if (model.IRFId != null)
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
                                 return RedirectToAction("Index");
@@ -6606,7 +6606,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    
+
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
@@ -6621,10 +6621,10 @@ namespace Risebird.Web.Controllers
                         model.SentBy = emailId;
                         model.Profile = profileName;
                         string result = string.Empty;
-                        if(interviewId > 0  && !shouldSendEmail)
+                        if (interviewId > 0 && !shouldSendEmail)
                         {
                             model.InterviewId = interviewId;
-                            result =  _meetingService.StoreClientBroadcastMessage(model).Result;
+                            result = _meetingService.StoreClientBroadcastMessage(model).Result;
 
                         }
                         else

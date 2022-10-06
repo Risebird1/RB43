@@ -2437,7 +2437,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
                 dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
-                if(isClientFeedback)
+                if (isClientFeedback)
                 {
                     dynamicParameters.Add("@emailId", currentUser);
                     dynamicParameters.Add("@timeNow", DateTime.Now);
@@ -2469,7 +2469,7 @@ namespace Risebird.Repository
                         }
                     }
                 }
-               
+
             }
             catch (SqlException ex)
             {

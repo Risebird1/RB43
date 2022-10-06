@@ -4287,13 +4287,13 @@ namespace Risebird.Web.Controllers
                     ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId, emailId, profileName);
                     //ClientFeedbackCommentVM model = await _clientService.GetClientCommentsList(interviewId, emailId);
 
-                    if(model == null)
+                    if (model == null)
                     {
                         model = new ClientCommentsForReport();
                     }
 
                     model.Profile = profileName;
-                    model.allowClientAction = allowClientAction;                   
+                    model.allowClientAction = allowClientAction;
                     return PartialView("GetClientCommentsForReport", model);
                 }
                 else
@@ -4324,11 +4324,11 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            if(string.IsNullOrEmpty(model.CreatedBy))
+                            if (string.IsNullOrEmpty(model.CreatedBy))
                             {
                                 model.CreatedBy = emailId;
                             }
-                            
+
                             await _clientService.AddUpdateClientCommentsForReport(model);
 
                         }

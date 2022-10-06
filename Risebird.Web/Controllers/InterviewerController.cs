@@ -3020,7 +3020,7 @@ namespace Risebird.Web.Controllers
                         ClientFeedDataWrapper model = new ClientFeedDataWrapper();
                         //IEnumerable<ClientFeedDataVM> model = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue, interviewId);
                         model.ClientFeeds = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue, interviewId);
-                        if((model.ClientFeeds != null && model.ClientFeeds.Count() > 0) || !string.IsNullOrEmpty(meetingLink) || interviewId.HasValue)
+                        if ((model.ClientFeeds != null && model.ClientFeeds.Count() > 0) || !string.IsNullOrEmpty(meetingLink) || interviewId.HasValue)
                         {
                             model.InterviewId = interviewId;
                             model.MeetingLink = meetingLink;

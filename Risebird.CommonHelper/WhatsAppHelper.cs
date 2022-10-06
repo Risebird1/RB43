@@ -61,7 +61,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to Add User. Please check all fields and try again.";
             }
         }
@@ -165,7 +165,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
@@ -186,7 +186,7 @@ namespace Risebird.CommonHelper
                         var username = _whatsAppVM.UserName;
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
-                       await WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = username;
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
@@ -273,7 +273,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
@@ -396,7 +396,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                       await WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -412,7 +412,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
@@ -448,7 +448,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
@@ -506,7 +506,7 @@ namespace Risebird.CommonHelper
                                 _whatsAppVM.Emailid = item;
                                 _whatsAppVM.CountryCode = "+91";
                                 _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                               await WhatsAppTrackUser(_whatsAppVM);
+                                await WhatsAppTrackUser(_whatsAppVM);
                                 var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                                 client.Timeout = -1;
                                 var request = new RestRequest(Method.POST);
@@ -532,7 +532,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
@@ -586,7 +586,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                       await WhatsAppTrackUser(_whatsAppVM);
+                        await WhatsAppTrackUser(_whatsAppVM);
                         var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                         client.Timeout = -1;
                         var request = new RestRequest(Method.POST);
@@ -601,7 +601,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-               await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
