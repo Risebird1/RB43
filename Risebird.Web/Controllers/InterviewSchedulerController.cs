@@ -209,18 +209,18 @@ namespace Risebird.Web.Controllers
             bool isPaused = false;
             if (result != null && result.Count() > 0)
             {
-                if (!String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                if (!string.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
                 {
                     isPaused = await _interviewSchedulerservice.CheckSkillChannelPaused(result.FirstOrDefault().SkillChannel);
                 }
-                else if (!String.IsNullOrEmpty(result.FirstOrDefault().SkillChannelRelation))
+                else if (!string.IsNullOrEmpty(result.FirstOrDefault().SkillChannelRelation))
                 {
                     isPaused = await _interviewSchedulerservice.CheckSkillChannelPaused(result.FirstOrDefault().SkillChannelRelation);
                 }
                 if (!isPaused)
                 {
                     model.InterviewChannelId = result.FirstOrDefault().SkillChannel;
-                    if (String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                    if (string.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
                     {
                         model.InterviewChannelId = result.FirstOrDefault().SkillChannelRelation;
                     }
@@ -258,7 +258,7 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.Start = 2;
                 DateTime interviewdatetime = new DateTime();
-                if (!String.IsNullOrEmpty(model.InterviewDate))
+                if (!string.IsNullOrEmpty(model.InterviewDate))
                 {
                     var _date = model.InterviewDate.Split(" ");
                     var _time = _date[3].Split(":");
@@ -709,7 +709,7 @@ namespace Risebird.Web.Controllers
             //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
             var accountEmail = await _interviewSchedulerservice.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
-            if (String.IsNullOrEmpty(accountEmail))
+            if (string.IsNullOrEmpty(accountEmail))
                 accountEmail = "me";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;

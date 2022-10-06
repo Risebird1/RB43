@@ -206,7 +206,7 @@ namespace Risebird.Business
                 //{
                 //    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
                 //    {
-                //        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
+                //        if (groupid == "" || string.IsNullOrEmpty(item.AssessmentGroupId))
                 //        {
                 //            continue;
                 //        }
@@ -1090,13 +1090,13 @@ namespace Risebird.Business
                     //var staffingAgency = await _candidateRepository.GetCandidateStaffingAgency(candidate.id);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    string oneTimeSchedulingLink = String.Empty;
+                    string oneTimeSchedulingLink = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
@@ -1952,13 +1952,13 @@ namespace Risebird.Business
                                {
                                    var candidate = _irfRepository.GetCandidateByIRF(irfId, candidateEmail).Result;
                                    string mailResult = string.Empty;
-                                   string oneTimeSchedulingLink = String.Empty;
+                                   string oneTimeSchedulingLink = string.Empty;
                                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                                    {
                                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
                                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
                                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                                       if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                                       if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                                        {
                                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                                        }
@@ -2812,13 +2812,13 @@ namespace Risebird.Business
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    string oneTimeSchedulingLink = String.Empty;
+                    string oneTimeSchedulingLink = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }

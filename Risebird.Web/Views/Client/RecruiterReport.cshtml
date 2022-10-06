@@ -8,14 +8,14 @@
     ViewBag.PageHeader = "Recruiter Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("RecruiterReportfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("RecruiterReportfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />

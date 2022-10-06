@@ -14,8 +14,8 @@
     ViewBag.PageHeader = "Candidates Status";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] MeetingStatus = new string[] { };
     string[] InterviewStatus = new string[] { };
     string[] ScheduleStatus = new string[] { };
@@ -25,8 +25,8 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFCandidateStatusfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContextAccessor.HttpContext.Session.GetString("IRFCandidateStatusfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
 
     MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };

@@ -134,7 +134,7 @@
 //            var secToken = new JwtSecurityToken(header, payload);
 //            var handler = new JwtSecurityTokenHandler();
 
-//            // Token to String so you can use it in your client
+//            // Token to string so you can use it in your client
 //            var tokenString = handler.WriteToken(secToken);
 
 //            return tokenString;

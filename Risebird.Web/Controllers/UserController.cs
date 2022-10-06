@@ -70,7 +70,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.profileName = profileName;
                     var model = _userService.GetRisebirdUsers();
                     List<Profile> profiles = _profileService.GetProfile();
-                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
+                    List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
                     ViewBag.profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
                     if (HttpContext.Session.GetString("RiseBirdUserfilters") != null)
                     {
@@ -157,8 +157,8 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
-                    List<String> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
+                    List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
+                    List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
                     if (profileName != "Admin")
                     {
                         profilesToExclude.Add("SupportAdmin");
@@ -251,7 +251,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter" };
+                        List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -679,16 +679,16 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.profile = profileName;
                     var model = _userService.GetInterviewers();
-                    if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                    if (string.IsNullOrEmpty(searchValue) && Page > 1)
                     {
                         searchValue = SearchInterviewers;
                     }
 
                     ViewBag.Searchvalue = searchValue;
-                    if (!String.IsNullOrEmpty(searchValue))
+                    if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                        model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                     }
                     ViewBag.TotalCount = model.Count;
@@ -769,7 +769,7 @@ namespace Risebird.Web.Controllers
                     string uploadedFileURL = string.Empty;
                     if (interviewer.File == null && (interviewer.ResumeLink == null || interviewer.ResumeLink == ""))
                     {
-                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
+                        ModelState.AddModelError(string.Empty, "Please upload a resume.");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
@@ -797,7 +797,7 @@ namespace Risebird.Web.Controllers
 
                     if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                     {
-                        ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                        ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
@@ -807,8 +807,8 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         interviewer.ResumeLink = uploadedFileURL;
-                        List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-                        interviewer.PrimarySkill = String.Join(",", selectedSkill);
+                        List<string> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                        interviewer.PrimarySkill = string.Join(",", selectedSkill);
                         if (!string.IsNullOrEmpty(interviewer.EmailId))
                         {
                             interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
@@ -896,7 +896,7 @@ namespace Risebird.Web.Controllers
 
                         if (uploadedFileURL == null)
                         {
-                            ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                            ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                             var model = new InterviewerVM();
                             model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
                             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
@@ -1177,7 +1177,7 @@ namespace Risebird.Web.Controllers
                     string uploadedFileURL = string.Empty;
                     if (qcinterviewer.File == null && qcinterviewer.ResumeLink == null)
                     {
-                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
+                        ModelState.AddModelError(string.Empty, "Please upload a resume.");
                         qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
                         return View("AddQCInterviewer", qcinterviewer);
@@ -1206,7 +1206,7 @@ namespace Risebird.Web.Controllers
 
                     if (uploadedFileURL == null)
                     {
-                        ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                        ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                         qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
                         return View("AddQCInterviewer", qcinterviewer);
@@ -1215,8 +1215,8 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         qcinterviewer.ResumeLink = uploadedFileURL;
-                        List<String> selectedSkill = skills.Where(x => qcinterviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-                        qcinterviewer.PrimarySkill = String.Join(",", selectedSkill);
+                        List<string> selectedSkill = skills.Where(x => qcinterviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                        qcinterviewer.PrimarySkill = string.Join(",", selectedSkill);
 
                         qcinterviewer.EmailId = qcinterviewer.EmailId.ToLower();
 
@@ -1303,7 +1303,7 @@ namespace Risebird.Web.Controllers
 
                             if (uploadedFileURL == null)
                             {
-                                ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                                ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                                 var model = new InterviewerVM();
                                 model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
@@ -1317,9 +1317,9 @@ namespace Risebird.Web.Controllers
                             qcInterviewer.ResumeLink = qcInterviewer.PageResumeLink;
                         }
 
-                        if (String.IsNullOrEmpty(qcInterviewer.PrimarySkill))
+                        if (string.IsNullOrEmpty(qcInterviewer.PrimarySkill))
                         {
-                            ModelState.AddModelError(String.Empty, "Please mention Skill");
+                            ModelState.AddModelError(string.Empty, "Please mention Skill");
                             var model = new InterviewerVM();
                             model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
@@ -1432,10 +1432,10 @@ namespace Risebird.Web.Controllers
                     }
 
                     var model = _userService.GetResumeEvaluators();
-                    if (!String.IsNullOrEmpty(searchValue))
+                    if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                        model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                     }
                     ViewBag.TotalCount = model.Count;
@@ -1644,10 +1644,10 @@ namespace Risebird.Web.Controllers
 
                     }
                     var model = _userService.GetRecruiters();
-                    if (!String.IsNullOrEmpty(searchValue))
+                    if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                        model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                     }
                     ViewBag.TotalCount = model.Count;
@@ -1862,10 +1862,10 @@ namespace Risebird.Web.Controllers
                 int Pageend = 0;
 
                 ViewBag.Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                    model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
                 ViewBag.TotalCount = model.Count;
@@ -1918,10 +1918,10 @@ namespace Risebird.Web.Controllers
                 int Pageend = 0;
 
                 ViewBag.Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                    model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
                 ViewBag.TotalCount = model.Count;
@@ -1974,10 +1974,10 @@ namespace Risebird.Web.Controllers
                 int Pageend = 0;
 
                 ViewBag.Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                    model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
                 ViewBag.TotalCount = model.Count;
@@ -2069,7 +2069,7 @@ namespace Risebird.Web.Controllers
                 }
                 foreach (var item in resultset)
                 {
-                    if (!String.IsNullOrEmpty(item.RecordingUrl))
+                    if (!string.IsNullOrEmpty(item.RecordingUrl))
                         item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/" + item.RecordingUrl;
                 }
                 return Json(resultset);

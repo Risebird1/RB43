@@ -451,7 +451,7 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.CreatedBy = emailid;
                     if (profileName != "Client")
                     {
-                        if (!String.IsNullOrEmpty(model._clientjddetails.ClientEmail))
+                        if (!string.IsNullOrEmpty(model._clientjddetails.ClientEmail))
                         {
                             var client = _userRepository.GetClientUserDetails(model._clientjddetails.ClientEmail);
                             if (client.Result != null)
@@ -920,12 +920,12 @@ namespace Risebird.Web.Controllers
                         ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
 
                         ViewBag.Searchvalue = searchValue;
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
-                         || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
-                         || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
+                            meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                         || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
+                         || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count;
@@ -968,7 +968,7 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("SignOut", "Session");
                     }
                 }
-                else if (!String.IsNullOrEmpty(Emailid))
+                else if (!string.IsNullOrEmpty(Emailid))
                 {
                     var emailid = Emailid;
                     ViewBag.Emailid = Emailid;
@@ -999,12 +999,12 @@ namespace Risebird.Web.Controllers
                     ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
 
                     ViewBag.Searchvalue = searchValue;
-                    if (!String.IsNullOrEmpty(searchValue))
+                    if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
-                     || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
-                     || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
+                        meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                     || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
+                     || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
                     }
                     ViewBag.TotalCount = meetings.Count;
                     ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -1083,7 +1083,7 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("SignOut", "Session");
                     }
                 }
-                else if (!String.IsNullOrEmpty(Emailid))
+                else if (!string.IsNullOrEmpty(Emailid))
                 {
                     return RedirectToAction("AllMeetings", new { Page = Page, searchValue = searchValue, Emailid = Emailid });
                 }
@@ -1266,12 +1266,12 @@ namespace Risebird.Web.Controllers
 
                 //}
                 var meetings = JsonConvert.DeserializeObject<List<MeetingVM>>(HttpContext.Session.GetString("SearchAllMeetings"));
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ")
-                     || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
-                     || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
+                    meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ")
+                     || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
+                     || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
                 }
                 int totalcount = meetings.Count;
                 int Pagestart = 0;
@@ -1742,10 +1742,10 @@ namespace Risebird.Web.Controllers
         //                ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, selectedMeeting);
         //                ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, selectedMeeting);
         //                ViewBag.Searchvalue = searchValue;
-        //                if (!String.IsNullOrEmpty(searchValue))
+        //                if (!string.IsNullOrEmpty(searchValue))
         //                {
         //                    searchValue = searchValue.ToUpper();
-        //                    selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "")).ToList();
+        //                    selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "")).ToList();
 
         //                }
         //                ViewBag.TotalCount = selectedMeeting.Count;
@@ -1907,10 +1907,10 @@ namespace Risebird.Web.Controllers
         //                    && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
         //                && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
         //                ViewBag.Searchvalue = searchValue;
-        //                if (!String.IsNullOrEmpty(searchValue))
+        //                if (!string.IsNullOrEmpty(searchValue))
         //                {
         //                    searchValue = searchValue.ToUpper();
-        //                    selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "")).ToList();
+        //                    selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "")).ToList();
 
         //                }
         //                ViewBag.TotalCount = selectedMeeting.Count;
@@ -2069,10 +2069,10 @@ namespace Risebird.Web.Controllers
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, selectedMeeting);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, selectedMeeting);
                         ViewBag.Searchvalue = searchValue;
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "")).ToList();
+                            selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "")).ToList();
                         }
                         ViewBag.TotalCount = selectedMeeting.Count;
 
@@ -2740,10 +2740,10 @@ namespace Risebird.Web.Controllers
                     //    }
 
                     var selectedMeeting = JsonConvert.DeserializeObject<List<MeetingVM>>(HttpContext.Session.GetString("SearchSelectedMeetings"));
-                    if (!String.IsNullOrEmpty(searchValue))
+                    if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ")).ToList();
+                        selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ") || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ")).ToList();
                     }
                     int totalcount = selectedMeeting.Count;
                     int Pagestart = 0;
@@ -2844,7 +2844,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
                                     return View("VerifyAudio", model);
                                 }
                                 else
@@ -2920,19 +2920,19 @@ namespace Risebird.Web.Controllers
                             ViewBag.FinalSelection = meetings.Select(x => x.FinalSelectionStat).Distinct();
                             ViewBag.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).Distinct();
                             ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
-                            if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                            if (string.IsNullOrEmpty(searchValue) && Page > 1)
                             {
                                 searchValue = Searchvalueproiprity;
                             }
                             Searchvalueproiprity = searchValue;
 
                             ViewBag.Searchvalue = searchValue;
-                            if (!String.IsNullOrEmpty(searchValue))
+                            if (!string.IsNullOrEmpty(searchValue))
                             {
                                 searchValue = searchValue.ToUpper().Trim();
-                                meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
-                                || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
-                                || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                                meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                                || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                                || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
                             }
                             ViewBag.TotalCount = meetings.Count;
                             ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -3122,12 +3122,12 @@ namespace Risebird.Web.Controllers
                     //    && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
                     //}
                     var meetings = JsonConvert.DeserializeObject<List<MeetingVM>>(HttpContext.Session.GetString("SearchRejectedMeetings"));
-                    if (!String.IsNullOrEmpty(searchValue))
+                    if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ")
-                         || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
-                         || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
+                        meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ")
+                         || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
+                         || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
                     }
                     int totalcount = meetings.Count;
                     int Pagestart = 0;
@@ -3778,7 +3778,7 @@ namespace Risebird.Web.Controllers
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
                 string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + uniqueid;
-                if (!String.IsNullOrEmpty(_uniqueid))
+                if (!string.IsNullOrEmpty(_uniqueid))
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
@@ -3809,7 +3809,7 @@ namespace Risebird.Web.Controllers
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
                 string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + uniqueid;
-                if (!String.IsNullOrEmpty(_uniqueid))
+                if (!string.IsNullOrEmpty(_uniqueid))
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }

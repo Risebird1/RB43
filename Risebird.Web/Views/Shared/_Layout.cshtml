@@ -43,7 +43,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css?v=6" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
-    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
+    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
     {
         <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/blue-theme.css" />
     }
@@ -291,7 +291,7 @@
                                     }
                                 </h6>
                                 <div class="main-img-user">
-                                    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                                    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
                                     {
                                         <a class="mini-photo-wrapper"> <img src="~/img/man.png" /></a>
                                     }
@@ -397,7 +397,7 @@
                                     }
                                 </h6>
                                 <div class="main-img-user">
-                                    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                                    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
                                     {
                                         <a class="mini-photo-wrapper"> <img src="~/img/man.png" /></a>
                                     }

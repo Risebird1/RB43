@@ -12,7 +12,7 @@ namespace Risebird.Entities.ViewModel
         public string Value { get; set; }
         public int Weightage { get; set; }
         [NotMapped]
-        public String Name { get; set; }
+        public string Name { get; set; }
 
     }
 }

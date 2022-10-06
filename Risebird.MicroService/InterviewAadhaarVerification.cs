@@ -34,7 +34,7 @@ namespace Risebird.MicroService
                 {
                     try
                     {
-                        if (!String.IsNullOrWhiteSpace(item.uniqueid))
+                        if (!string.IsNullOrWhiteSpace(item.uniqueid))
                         {
                             if (item.JobCountry == 2)
                             {

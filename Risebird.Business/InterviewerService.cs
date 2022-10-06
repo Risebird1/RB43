@@ -56,16 +56,16 @@ namespace Risebird.Business
                 };
                 interviewerProfile.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails);
                 var NickNamesList = GetNickNames(0);
-                if (String.IsNullOrEmpty(interviewerProfile.NickName))
+                if (string.IsNullOrEmpty(interviewerProfile.NickName))
                 {
-                    var lastnamelength = !String.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Length : 0;
-                    var NickName = (!String.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2).Trim() : "Ri") + "" + (!String.IsNullOrEmpty(interviewerProfile.LastName) ? lastnamelength >= 2 ? interviewerProfile.LastName.Substring(0, 2).Trim().Replace(".", "") : interviewerProfile.LastName.Substring(0, 1).Trim().Replace(".", "") : "se") + "" + (!String.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1145");
+                    var lastnamelength = !string.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Length : 0;
+                    var NickName = (!string.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2).Trim() : "Ri") + "" + (!string.IsNullOrEmpty(interviewerProfile.LastName) ? lastnamelength >= 2 ? interviewerProfile.LastName.Substring(0, 2).Trim().Replace(".", "") : interviewerProfile.LastName.Substring(0, 1).Trim().Replace(".", "") : "se") + "" + (!string.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1145");
                     int i = 0;
                     while (i <= 4)
                     {
                         if (NickNamesList.Contains(NickName))
                         {
-                            NickName = NickName + (!String.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber[interviewerProfile.MobileNumber.Length - 1].ToString() : "5");
+                            NickName = NickName + (!string.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber[interviewerProfile.MobileNumber.Length - 1].ToString() : "5");
                         }
                         else
                         {
@@ -268,7 +268,7 @@ namespace Risebird.Business
                     // Get all the List from DB
                     profileModel.InterviewerAvailabilityDetails = _interviewerRepository.GetAvailabilityList(profileModel.id).Result.ToList();
                     profileModel.InterviewerAccDetails = _interviewerRepository.GetAccDetailsList(profileModel.id).Result;
-                    profileModel.InterviewerAccDetails.AccountNumber = String.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
+                    profileModel.InterviewerAccDetails.AccountNumber = string.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
                     return profileModel;
                 }
                 else return new InterviewerProfileVM { EmailId = emailId };

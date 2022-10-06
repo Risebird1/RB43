@@ -54,6 +54,7 @@ namespace Risebird.Entities.ViewModel
         public int CandidateAttempt { get; set; }
         public string Clients { get; set; }
         public bool AadhaarVerification { get; set; }
+        public string ErrorMessage { get; set; }
     }
     public class QuestionList
     {

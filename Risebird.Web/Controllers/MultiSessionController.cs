@@ -36,14 +36,14 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-
+                
                 var sessionId = HttpContext.Session.Id;
                 await _userService.ClearSessionForOthersUsers(emailId);
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId, sessionId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
                 var username = _userService.GetCurrentUsername(emailId);
-                if (String.IsNullOrEmpty(currenttheme))
+                if (string.IsNullOrEmpty(currenttheme))
                 {
                     HttpContext.Session.SetString("Currenttheme", "");
                 }
@@ -51,7 +51,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("Currenttheme", currenttheme);
 
 
-                if (String.IsNullOrEmpty(username))
+                if (string.IsNullOrEmpty(username))
                 {
                     HttpContext.Session.SetString("CurrentUsername", "");
                 }
@@ -62,7 +62,7 @@ namespace Risebird.Web.Controllers
                 if (menus.Count > 0)
                 {
 
-                    if (String.IsNullOrEmpty(menus.FirstOrDefault().LogoLink))
+                    if (string.IsNullOrEmpty(menus.FirstOrDefault().LogoLink))
                     {
                         HttpContext.Session.SetString("Logo", "");
                     }

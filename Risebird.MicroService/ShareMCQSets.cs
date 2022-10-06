@@ -33,7 +33,7 @@ namespace Risebird.MicroService
             string name = req.Query["name"];
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             MCQApiVM data = JsonConvert.DeserializeObject<MCQApiVM>(requestBody);
-            if (!String.IsNullOrEmpty(data.CandidateEmailid) && !String.IsNullOrEmpty(data.PrimarySkill))
+            if (!string.IsNullOrEmpty(data.CandidateEmailid) && !string.IsNullOrEmpty(data.PrimarySkill))
             {
                 var mcqset = _mCQService.FetchMCQSetsForApi(data);
                 if (mcqset != null)
@@ -42,8 +42,8 @@ namespace Risebird.MicroService
                     MCQVMShare _list = new MCQVMShare();
                     _list.status = 0;
                     _list.MCQSet = mcqset.Title;
-                    _list.ClientHR = String.IsNullOrEmpty(data.ClientHrEmailid) ? "" : data.ClientHrEmailid; ;
-                    _list.ApplyingCompany = String.IsNullOrEmpty(data.Client) ? "" : data.Client;
+                    _list.ClientHR = string.IsNullOrEmpty(data.ClientHrEmailid) ? "" : data.ClientHrEmailid; ;
+                    _list.ApplyingCompany = string.IsNullOrEmpty(data.Client) ? "" : data.Client;
                     _list.WhoShared = "MCQ Bot";
                     _list.PartitionKey = date1;
                     _list.MCQId = mcqset.PartitionKey;

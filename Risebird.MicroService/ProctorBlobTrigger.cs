@@ -29,7 +29,7 @@ namespace Risebird.MicroService
             try
             {
                 int interviewid = 0;
-                if (!String.IsNullOrEmpty(name))
+                if (!string.IsNullOrEmpty(name))
                 {
                     var id = name.Split("_")[0];
                     interviewid = Convert.ToInt32(id);

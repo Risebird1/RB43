@@ -677,7 +677,7 @@ namespace Risebird.Web.Controllers
                             string uploadedFileURL = string.Empty;
                             if (meeting.ResumeFile == null)
                             {
-                                ModelState.AddModelError(String.Empty, "Please upload a Resume or add a Resume link.");
+                                ModelState.AddModelError(string.Empty, "Please upload a Resume or add a Resume link.");
                                 var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                                 meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                                 return View("Add", meeting);
@@ -715,7 +715,7 @@ namespace Risebird.Web.Controllers
                             }
                             if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
-                                ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                ModelState.AddModelError(string.Empty, "Resume Upload has failed.");
                                 var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                                 meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                                 return View("Add", meeting);
@@ -827,7 +827,7 @@ namespace Risebird.Web.Controllers
                                         if (uploadedFileURL == null)
                                         {
                                             var model = new AddUpdateMeetingVM();
-                                            ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                            ModelState.AddModelError(string.Empty, "Resume Upload has failed.");
                                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                                             meetingUpdated.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                                             return View(model);
@@ -953,7 +953,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Interviewer")
                     {
                         var checkforAssign = _instaInterviewService.CheckForInstaAssign(id);
-                        if (String.IsNullOrEmpty(checkforAssign))
+                        if (string.IsNullOrEmpty(checkforAssign))
                         {
                             var result = _instaInterviewService.InstaAssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                             if (result.Contains("Successfully"))
@@ -964,7 +964,7 @@ namespace Risebird.Web.Controllers
                                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
                                 _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
                                 var accountEmail = await _instaInterviewService.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
-                                if (String.IsNullOrEmpty(accountEmail))
+                                if (string.IsNullOrEmpty(accountEmail))
                                     accountEmail = "me";
                                 var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
                                 var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
@@ -1235,7 +1235,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.isAdminHR = isAdminHR;
                         //if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         //{
-                        //    ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                        //    ModelState.AddModelError(string.Empty, "Video file/link not found.");
                         //    return View("AddReport", model);
                         //}
                         if (model.VideoFile != null)
@@ -1246,7 +1246,7 @@ namespace Risebird.Web.Controllers
                             var uploadedvideoFileURL = resulttype;
                             if (uploadedvideoFileURL == null)
                             {
-                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                ModelState.AddModelError(string.Empty, "Video Upload is failed.");
                                 return View("AddReport", model);
                             }
                             else

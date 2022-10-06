@@ -68,7 +68,7 @@
                                                         </div>
                                                         <div class="avatar-preview">
 
-                                                            @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                                                            @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
                                                             {
                                                                 <div id="imagePreview" style="background-image: url(../../Newassets/img/default-avatar.png);">
                                                                 </div>
