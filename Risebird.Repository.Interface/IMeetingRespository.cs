@@ -74,7 +74,7 @@ namespace Risebird.Repository.Interface
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);
         string CandidateSuitable(int id, string email, string Comment);
-        VedioComments Intrestreaction(string vedioid, string Status);
+        Task<VedioComments> Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
         Task<IEnumerable<Meeting>> ShortListedClient(string emailid, string IRFID);
         Task<IEnumerable<Meeting>> InterestListClient(string emailid, string IRFID);

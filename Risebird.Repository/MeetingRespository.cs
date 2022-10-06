@@ -2205,7 +2205,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public VedioComments Intrestreaction(string vedioid, string Status)
+        public async Task<VedioComments> Intrestreaction(string vedioid, string Status)
         {
             try
             {
@@ -2227,7 +2227,7 @@ namespace Risebird.Repository
                                 //CC = email,
                                 Subject = "Risebird: Insuficient Balance in your wallet"
                             };
-                            var result = _notificationHelper.InsuficientBalancNotifiaction(_mail);
+                            var result = await _notificationHelper.InsuficientBalancNotifiaction(_mail);
                         }
                     }
                 }
@@ -2246,13 +2246,13 @@ namespace Risebird.Repository
                 finaldynamicParameters.Add("@Id", vedioid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<VedioComments>(finalquery, finaldynamicParameters);
+                    var result = await con.QueryAsync<VedioComments>(finalquery, finaldynamicParameters);
                     return (VedioComments)result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

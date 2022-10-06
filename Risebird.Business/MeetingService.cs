@@ -327,7 +327,7 @@ namespace Risebird.Business
         }
 
 
-        public bool AddMeeting(AddUpdateMeetingVM meeting)
+        public async Task<bool> AddMeeting(AddUpdateMeetingVM meeting)
         {
             try
             {
@@ -336,12 +336,12 @@ namespace Risebird.Business
                     var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
                     if (interviwers != null && string.IsNullOrEmpty(meeting.interviewer))
                     {
-                        _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                        await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
                         return true;
                     }
                     else if (!string.IsNullOrEmpty(meeting.interviewer))
                     {
-                        _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
+                        await _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
                         return true;
                     }
                 }
@@ -349,7 +349,7 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -915,7 +915,7 @@ namespace Risebird.Business
             }
         }
 
-        public bool CancelInterview(int meetingid, string interviewDate, string candidateEmail)
+        public async Task<bool> CancelInterview(int meetingid, string interviewDate, string candidateEmail)
         {
             try
             {
@@ -924,16 +924,15 @@ namespace Risebird.Business
                     //send mail to the HRs
                     var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
                     var irfOwnersAndRestrictedOwners = _candidateRepository.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid).Result;
-                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate, irfOwnersAndRestrictedOwners?.ToList());
+                    await _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate, irfOwnersAndRestrictedOwners?.ToList());
                     return true;
                 }
+
                 return false;
-
-
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -1469,7 +1468,7 @@ namespace Risebird.Business
                                 namemodel += reportModel.CandidateName?.ToCharArray()[0];
                             //get curated users
                             var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
-                            _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
+                            await _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
                         }
 
                     }
@@ -1723,16 +1722,16 @@ namespace Risebird.Business
             }
 
         }
-        public VedioComments Intrestreaction(string vedioid, string Status)
+        public async Task<VedioComments> Intrestreaction(string vedioid, string Status)
         {
             try
             {
-                var assignedMeeting = _meetingRespository.Intrestreaction(vedioid, Status);
+                var assignedMeeting = await _meetingRespository.Intrestreaction(vedioid, Status);
                 return assignedMeeting;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -1833,12 +1832,12 @@ namespace Risebird.Business
                     for (int i = 0; i < flafcounts; i++)
                     {
                         var receiverEmailslist = receiverEmails.ToList().Skip(i * 900).Take(900).ToList();
-                        result = _notificationHelper.SendBroadcastMail(receiverEmailslist, supportEmails.ToList(), model);
+                        result = await _notificationHelper.SendBroadcastMail(receiverEmailslist, supportEmails.ToList(), model);
                     }
                 }
                 else
                 {
-                    result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                    result = await _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 }
                 return result;
             }
@@ -1856,7 +1855,7 @@ namespace Risebird.Business
                 var receiverEmails = _meetingRespository.GetIRFMembersEmails(model.IRFId).Result;
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
                 model.BroadcastReciever = "Interviewers";
-                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                var result = await _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 if (model.Profile == ProfileEnum.Client.GetDescription() && !string.IsNullOrEmpty(result) && result.ToLower().Contains("success"))
                 {
                     await _meetingRespository.StoreClientBroadcastMessage(model);
@@ -3169,9 +3168,9 @@ namespace Risebird.Business
                     interviewers.Add(result.interviewer);
                 }
 
-                _ = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                _ = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                _ = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                _ = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                _ = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                _ = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                 return true;
             }
             catch (Exception ex)
