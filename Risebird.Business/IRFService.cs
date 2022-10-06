@@ -2815,8 +2815,8 @@ namespace Risebird.Business
                     string oneTimeSchedulingLink = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
-                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
-                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length-1];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length-1];
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
