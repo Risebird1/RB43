@@ -250,7 +250,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string fetchSkillChannelStaffingDetails(string IRFId)
+        public List<string> fetchSkillChannelStaffingDetails(string IRFId)
         {
             try
             {

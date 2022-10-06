@@ -475,7 +475,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select distinct ca.ClientHRAttemptContact from IRF join Candidate ca on IRF.id=ca.IRFId where IRF.IRFId=@IRFId";
+                var query = "Select distinct ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where (tc.ClientRoleId=1 or tc.ClientRoleId=2) and IRF.IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -489,17 +489,17 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public string fetchSkillChannelStaffingDetails(string IRFId)
+        public List<string> fetchSkillChannelStaffingDetails(string IRFId)
         {
             try
             {
-                var query = "Select ul.EmailId From IRF join UserList ul on IRF.BillingOwner=ul.id where IRFId=@IRFId";
+                var query = "Select ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where tc.ClientRoleId=4 and IRF.IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<string>(query, dp);
-                    return results.FirstOrDefault();
+                    return (List<string>)results;
                 }
             }
             catch (Exception ex)
