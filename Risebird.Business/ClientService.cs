@@ -407,7 +407,7 @@ namespace Risebird.Business
                     if (profile == ProfileEnum.Client.GetDescription())
                     {
                         model = clientCommentsList.Where(x => !string.IsNullOrEmpty(x.CreatedBy) && x.CreatedBy.ToLower() == emailId.ToLower())?.FirstOrDefault();
-                        if(model != null)
+                        if (model != null)
                         {
                             model.ClientCommentsList = clientCommentsList?.Where(x => string.IsNullOrEmpty(x.CreatedBy) || x.CreatedBy.ToLower() != emailId.ToLower());
                         }

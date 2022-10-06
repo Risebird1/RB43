@@ -1,4 +1,4 @@
-﻿using Risebird.Business.Interface;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;

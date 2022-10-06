@@ -90,6 +90,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string MeetingPlatform { get; set; }
         public SelectList _listhr { get; set; }
+        public SelectList _liststaffing { get; set; }
     }
     public class TimeslotsVM
     {

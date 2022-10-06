@@ -19,7 +19,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var httpContext = _httpContextAccessor.HttpContext;
-                if (httpContext != null && httpContext.User !=null && httpContext.User.Identity != null && httpContext.User.Identity is ClaimsIdentity)
+                if (httpContext != null && httpContext.User != null && httpContext.User.Identity != null && httpContext.User.Identity is ClaimsIdentity)
                 {
                     var userClaims = httpContext.User.Identity as ClaimsIdentity;
 

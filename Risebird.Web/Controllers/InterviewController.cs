@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -26,7 +25,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1342,7 +1340,7 @@ namespace Risebird.Web.Controllers
                             string uploadedFileURL = string.Empty;
                             if (meeting.File == null && (meeting.resumeLink == null))
                             {
-                                ModelState.AddModelError(String.Empty, "Please upload a Resume or add a Resume link.");
+                                ModelState.AddModelError(string.Empty, "Please upload a Resume or add a Resume link.");
                                 SetAddUpdateMeetingParameters(meeting);
                                 return View("Add", meeting);
                             }
@@ -1366,7 +1364,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = meeting.resumeLink;
                             if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
-                                ModelState.AddModelError(String.Empty, "Resume Upload has been failed.");
+                                ModelState.AddModelError(string.Empty, "Resume Upload has been failed.");
                                 SetAddUpdateMeetingParameters(meeting);
                                 return View("Add", meeting);
                             }
@@ -1551,7 +1549,7 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            //String uploadedFileURL = String.Empty;
+                            //string uploadedFileURL = string.Empty;
                             if ((meetingUpdated.File != null))
                             {
                                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meetingUpdated.File);
@@ -1565,7 +1563,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedFileURL == null)
                                     {
                                         var model = new AddUpdateMeetingVM();
-                                        ModelState.AddModelError(String.Empty, "Resume Upload has been Failed.");
+                                        ModelState.AddModelError(string.Empty, "Resume Upload has been Failed.");
                                         SetAddUpdateMeetingParameters(model);
                                         return View("Edit", model);
 
@@ -1729,10 +1727,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessage");
                         }
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.risebirdHR) ? x.risebirdHR.ToUpper().Contains(searchValue) : x.risebirdHR == "")).ToList();
+                            meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.risebirdHR) ? x.risebirdHR.ToUpper().Contains(searchValue) : x.risebirdHR == "")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count;
@@ -1987,10 +1985,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessage");
                             //TempData.Clear();
                         }
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.Contains(searchValue) : x.MeetingStatusDesc == "")
-                            || (!String.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
+                            myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.Contains(searchValue) : x.MeetingStatusDesc == "")
+                            || (!string.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
                         }
                         ViewBag.TotalCount = myInterview.Count;
                         ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -3111,7 +3109,7 @@ namespace Risebird.Web.Controllers
                                     string uploadedAadharFileURL = blob.Uri.ToString();
                                     if (uploadedAadharFileURL == null)
                                     {
-                                        ModelState.AddModelError(String.Empty, "Aadhar Upload has failed.");
+                                        ModelState.AddModelError(string.Empty, "Aadhar Upload has failed.");
                                         GetStatusList(interviewComments);
                                         return View("InterviewComments", interviewComments);
                                     }
@@ -3133,7 +3131,7 @@ namespace Risebird.Web.Controllers
                                     string uploadedaudioFileURL = blob.Uri.ToString();
                                     if (uploadedaudioFileURL == null)
                                     {
-                                        ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                        ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
                                         GetStatusList(interviewComments);
                                         return View("InterviewComments", interviewComments);
                                     }
@@ -3157,7 +3155,7 @@ namespace Risebird.Web.Controllers
                                     string uploadedvideoFileURL = blob.Uri.ToString();
                                     if (uploadedvideoFileURL == null)
                                     {
-                                        ModelState.AddModelError(String.Empty, "Video Upload has been Failed.");
+                                        ModelState.AddModelError(string.Empty, "Video Upload has been Failed.");
                                         GetStatusList(interviewComments);
                                         //return View("InterviewComments", interviewComments);
                                     }
@@ -3426,7 +3424,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
                                     GetStatusList(model);
                                     return View("AddReport", model);
                                 }
@@ -3452,7 +3450,7 @@ namespace Risebird.Web.Controllers
 
                                 if (uploadedvideoFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Video Upload is failed.");
                                     GetStatusList(model);
                                     return View("AddReport", model);
                                 }
@@ -3525,7 +3523,7 @@ namespace Risebird.Web.Controllers
                                 //Send mail to client for report
                                 //find all IRFowner and Users
                                 //var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
-                                //var maillist = String.Join(";", clientlist);
+                                //var maillist = string.Join(";", clientlist);
                                 //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
                                 //Mail _mail1 = new Mail
                                 //{
@@ -3543,7 +3541,7 @@ namespace Risebird.Web.Controllers
                                 var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = model.CandidateEmail;
-                                _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                                _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
                                 _whatsAppVM.Event = "Feedback Remainder";
                                 _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
@@ -4470,11 +4468,11 @@ namespace Risebird.Web.Controllers
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                             var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                             List<string> interviewers = new List<string>();
-                            if (!String.IsNullOrEmpty(result.interviewer))
+                            if (!string.IsNullOrEmpty(result.interviewer))
                             {
                                 interviewers.Add(result.interviewer);
                             }
-                            if (!String.IsNullOrEmpty(result.EmailId))
+                            if (!string.IsNullOrEmpty(result.EmailId))
                             {
                                 interviewers.Add(result.EmailId);
                             }
@@ -4564,7 +4562,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
                                     return View("VerifyAudio", model);
                                 }
                                 else
@@ -4653,7 +4651,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
                                     return View("VerifyMyInterviewAudio", model);
                                 }
                                 else
@@ -4887,7 +4885,7 @@ namespace Risebird.Web.Controllers
                     var message = Request.Form["message"].ToString();
                     var receiver = Request.Form["receiver"].ToString();
                     var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         var model = new BroadcastModel
                         {
@@ -4955,7 +4953,7 @@ namespace Risebird.Web.Controllers
                         //Start:Save View counts of vedio
                         if (HttpContext.Session.GetString("UserLogedIn") != null)
                         {
-                            string values = String.Empty;
+                            string values = string.Empty;
                             var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
                             if (valuestatus == "Yes")
                             {
@@ -5478,7 +5476,7 @@ namespace Risebird.Web.Controllers
             var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
             WhatsAppVM _whatsAppVM = new WhatsAppVM();
             _whatsAppVM.Emailid = CandidateEmail;
-            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
             _whatsAppVM.Event = "Feedback Remainder";
             _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
             if (emailsend == "Mail has been sent Successfully!")
@@ -5581,11 +5579,11 @@ namespace Risebird.Web.Controllers
                         }
 
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper();
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusDesc == "")
-                            || (!String.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.ToUpper().Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
+                            myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusDesc == "")
+                            || (!string.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.ToUpper().Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
 
                         }
                         int totalcount = myInterview.Count;
@@ -6017,7 +6015,7 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
-                var Emailid = String.Empty;
+                var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -6137,7 +6135,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var Emailid = String.Empty;
+                var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -6180,7 +6178,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (status == 2 || status == 3 || (status == 4 && response == false))
                     {
-                        var value = String.Empty;
+                        var value = string.Empty;
                         if (status == 2)
                         {
                             value = "NO";
@@ -6198,11 +6196,11 @@ namespace Risebird.Web.Controllers
                         var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
                         var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
                         List<string> interviewers = new List<string>();
-                        if (!String.IsNullOrEmpty(result.interviewer))
+                        if (!string.IsNullOrEmpty(result.interviewer))
                         {
                             interviewers.Add(result.interviewer);
                         }
-                        if (!String.IsNullOrEmpty(result.EmailId))
+                        if (!string.IsNullOrEmpty(result.EmailId))
                         {
                             interviewers.Add(result.EmailId);
                         }
@@ -6261,7 +6259,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
                                     GetStatusList(model);
                                     return View("ProctorReport", model);
                                 }
@@ -6287,7 +6285,7 @@ namespace Risebird.Web.Controllers
 
                                 if (uploadedvideoFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Video Upload is failed.");
                                     GetStatusList(model);
                                     return View("ProctorReport", model);
                                 }
@@ -6308,7 +6306,7 @@ namespace Risebird.Web.Controllers
                             //    //Send mail to client for report
                             //    //find all IRFowner and Users
                             //    var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
-                            //    var maillist = String.Join(";", clientlist);
+                            //    var maillist = string.Join(";", clientlist);
                             //    string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
                             //    Mail _mail1 = new Mail
                             //    {
@@ -6326,7 +6324,7 @@ namespace Risebird.Web.Controllers
                             //    var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
                             //    WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             //    _whatsAppVM.Emailid = model.CandidateEmail;
-                            //    _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                            //    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
                             //    _whatsAppVM.Event = "Feedback Remainder";
                             //    _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             //}
@@ -7043,7 +7041,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                if (String.IsNullOrEmpty(VideoURL))
+                if (string.IsNullOrEmpty(VideoURL))
                 {
                     VideoURL = "";
                 }
@@ -7280,7 +7278,7 @@ namespace Risebird.Web.Controllers
             //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
             //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
-            if (String.IsNullOrEmpty(accountEmail))
+            if (string.IsNullOrEmpty(accountEmail))
                 accountEmail = "me";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;

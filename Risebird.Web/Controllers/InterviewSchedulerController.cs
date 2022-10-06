@@ -209,18 +209,18 @@ namespace Risebird.Web.Controllers
             bool isPaused = false;
             if (result != null && result.Count() > 0)
             {
-                if (!String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                if (!string.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
                 {
                     isPaused = await _interviewSchedulerservice.CheckSkillChannelPaused(result.FirstOrDefault().SkillChannel);
                 }
-                else if (!String.IsNullOrEmpty(result.FirstOrDefault().SkillChannelRelation))
+                else if (!string.IsNullOrEmpty(result.FirstOrDefault().SkillChannelRelation))
                 {
                     isPaused = await _interviewSchedulerservice.CheckSkillChannelPaused(result.FirstOrDefault().SkillChannelRelation);
                 }
                 if (!isPaused)
                 {
                     model.InterviewChannelId = result.FirstOrDefault().SkillChannel;
-                    if (String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                    if (string.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
                     {
                         model.InterviewChannelId = result.FirstOrDefault().SkillChannelRelation;
                     }
@@ -229,8 +229,14 @@ namespace Risebird.Web.Controllers
                     model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
                     var _listhr = _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
                     var _staffing = _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
-                    model.StaffingAgiencies = _staffing;
-                    model._listhr = new SelectList(_listhr);
+                    if (_staffing != null)
+                    {
+                        model._liststaffing = new SelectList(_staffing);
+                    }
+                    if (_listhr != null)
+                    {
+                        model._listhr = new SelectList(_listhr);
+                    }
                     if (model._IRFDetails == null)
                     {
                         model._IRFDetails = new ScheculeInterviewIRFVM();
@@ -258,7 +264,7 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.Start = 2;
                 DateTime interviewdatetime = new DateTime();
-                if (!String.IsNullOrEmpty(model.InterviewDate))
+                if (!string.IsNullOrEmpty(model.InterviewDate))
                 {
                     var _date = model.InterviewDate.Split(" ");
                     var _time = _date[3].Split(":");
@@ -516,10 +522,10 @@ namespace Risebird.Web.Controllers
                         if (result.FirstOrDefault().BufferTime > 0)
                         {
                             int buffertimevalue = result.FirstOrDefault().BufferTime;
-                            var comdate = DateTime.Now.AddMinutes(-offset).AddHours(buffertimevalue);
+                            var comdate = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue);
                             if (comdate.Date == DateTime.Now.Date)
                             {
-                                int offsetbuffer = DateTime.Now.AddMinutes(-offset).AddHours(buffertimevalue).Hour;
+                                int offsetbuffer = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue).Hour;
                                 int valueset = Convert.ToInt32(item.End) - Convert.ToInt32(item.Start);
                                 for (int i = 0; i < valueset; i++)
                                 {
@@ -548,7 +554,7 @@ namespace Risebird.Web.Controllers
                                                     DateTime value1 = new DateTime(year, month, (day - 1), newslot, 0, 0);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
-                                                        if (slots > offsetbuffer)
+                                                        if (slots > (offsetbuffer * 60))
                                                         {
                                                             model.Add(((slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                         }
@@ -566,7 +572,7 @@ namespace Risebird.Web.Controllers
                                                     DateTime value1 = new DateTime(year, month, (day + 1), newslot, 0, 0);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
-                                                        if (slots > offsetbuffer)
+                                                        if (slots > (offsetbuffer * 60))
                                                         {
                                                             model.Add(((slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                         }
@@ -579,7 +585,7 @@ namespace Risebird.Web.Controllers
                                             DateTime value1 = new DateTime(year, month, day, (Convert.ToInt32(item.Start) + i), 0, 0);
                                             if (result.FirstOrDefault().StartDate <= value1)
                                             {
-                                                if (slots > offsetbuffer)
+                                                if (slots > (offsetbuffer * 60))
                                                 {
                                                     model.Add((slots / 60).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                 }
@@ -709,7 +715,7 @@ namespace Risebird.Web.Controllers
             //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
             var accountEmail = await _interviewSchedulerservice.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
-            if (String.IsNullOrEmpty(accountEmail))
+            if (string.IsNullOrEmpty(accountEmail))
                 accountEmail = "me";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;

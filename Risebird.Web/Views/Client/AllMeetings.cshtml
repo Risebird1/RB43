@@ -14,8 +14,8 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ClientHR = new string[] { };
@@ -34,8 +34,8 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
@@ -837,7 +837,7 @@
                                                                                             {
                                                                                                 <td>No document</td>
                                                                                             }
-                                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
                                                                                             {
                                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                                                             }
@@ -1551,7 +1551,7 @@ else
                                                                                             {
                                                                                                 <td>No document</td>
                                                                                             }
-                                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                            @if ( item.VideoLink != null && item.VideoLink != "")
                                                                                             {
                                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                                                             }
@@ -1948,7 +1948,7 @@ else
                 } else {
                     html += '<td>No document</td>';
                 }
-                if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                if (data[i].videoLink != null && data[i].videoLink != "") {
                     html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
                 }
                 else {

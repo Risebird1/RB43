@@ -8,8 +8,8 @@
     ViewBag.PageHeader = "Projects";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] ProjectID = new string[] { };
     string[] ArchiveStatus = new string[] { };
     string[] ClientName = new string[] { };
@@ -18,8 +18,8 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("Projectfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<ProjectFilter>(HttpContextAccessor.HttpContext.Session.GetString("Projectfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     ProjectID = filter.ProjectID != null ? filter.ProjectID : new string[] { };
     ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };

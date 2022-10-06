@@ -1461,7 +1461,7 @@ namespace Risebird.Business
 
                         if (reportModel.InterviewStatus.Value == 2)
                         {
-                            var namemodel = String.Empty;
+                            var namemodel = string.Empty;
 
                             if (reportModel.CandidateName != null && reportModel.CandidateName.Length >= 2)
                                 namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0] + reportModel.CandidateName?.ToCharArray()[1];
@@ -3164,7 +3164,7 @@ namespace Risebird.Business
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingId);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingId);
                 List<string> interviewers = new List<string>();
-                if (!String.IsNullOrEmpty(result.interviewer))
+                if (!string.IsNullOrEmpty(result.interviewer))
                 {
                     interviewers.Add(result.interviewer);
                 }

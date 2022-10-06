@@ -120,7 +120,7 @@
             {
             <td>No JD</td>
             }*@
-                @if (!String.IsNullOrEmpty(item.AudioComment))
+                @if (!string.IsNullOrEmpty(item.AudioComment))
                 {
                     <td><a href='@item.AudioComment' asp-append-version="true" download>@item.AudioComment.Split('/').Last()</a></td>
                 }

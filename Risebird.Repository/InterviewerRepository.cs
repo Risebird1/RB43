@@ -1438,7 +1438,7 @@ namespace Risebird.Repository
 
                     foreach (var item in reportDetails.TechSkillReportCollection)
                     {
-                        if (String.IsNullOrWhiteSpace(item.TechComments))
+                        if (string.IsNullOrWhiteSpace(item.TechComments))
                         {
                             item.TechComments = "";
                         }
@@ -1583,7 +1583,7 @@ namespace Risebird.Repository
 
                 foreach (var item in _assessment.Questionslist)
                 {
-                    if (!String.IsNullOrEmpty(item.QuestionCovered))
+                    if (!string.IsNullOrEmpty(item.QuestionCovered))
                     {
                         questionsDt.Rows.Add(assessmentid, 0, item.QuestionCovered, item.Level, item.Time, item.VideoLink, item.Skills);
                     }
@@ -1696,7 +1696,7 @@ namespace Risebird.Repository
 
                 foreach (var item in _assessment.Questionslist)
                 {
-                    if (!String.IsNullOrEmpty(item.QuestionCovered))
+                    if (!string.IsNullOrEmpty(item.QuestionCovered))
                     {
                         questionsDt.Rows.Add(assessmentid, 0, item.QuestionCovered, item.Level, item.Time, item.VideoLink, item.Skills);
                     }

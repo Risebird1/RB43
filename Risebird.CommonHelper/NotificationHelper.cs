@@ -557,7 +557,7 @@ namespace Risebird.CommonHelper
 
                 foreach (var supportEmail in supportEmails)
                 {
-                    if (!String.IsNullOrEmpty(supportEmail))
+                    if (!string.IsNullOrEmpty(supportEmail))
                     {
                         msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(supportEmail, null));
                     }
@@ -1163,7 +1163,7 @@ namespace Risebird.CommonHelper
 
                 }
 
-                //if (!String.IsNullOrEmpty(fileName))
+                //if (!string.IsNullOrEmpty(fileName))
                 //{
                 //    byte[] byteData = Encoding.ASCII.GetBytes(File.ReadAllText(fileName));
 
@@ -1339,7 +1339,7 @@ namespace Risebird.CommonHelper
                 int i = 0;
                 foreach (var item in videoidlist)
                 {
-                    if (!String.IsNullOrEmpty(item))
+                    if (!string.IsNullOrEmpty(item))
                     {
                         i++;
                         sr.Append(i);
@@ -2017,7 +2017,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton,string timezone)
+        public string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone)
         {
             try
             {
@@ -2041,7 +2041,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton,string timezone)
+        public string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone)
         {
             try
             {
@@ -2451,7 +2451,7 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
 
-                object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink , calendlyLink };
+                object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink, calendlyLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteCandidate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2529,7 +2529,7 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = "Candidate : " + CandidateName + " : raise request for clerity about Interview";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-                if (!String.IsNullOrEmpty(ClientHR))
+                if (!string.IsNullOrEmpty(ClientHR))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHR, null));
                 }

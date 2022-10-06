@@ -526,7 +526,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
                     {
-                        if (!String.IsNullOrEmpty(userProfile.ImageURL))
+                        if (!string.IsNullOrEmpty(userProfile.ImageURL))
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
@@ -543,7 +543,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (_accountService.UpdateUserProfile(userProfile).Result)
                     {
-                        if (!String.IsNullOrEmpty(userProfile.ImageURL))
+                        if (!string.IsNullOrEmpty(userProfile.ImageURL))
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }

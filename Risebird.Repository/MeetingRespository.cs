@@ -2219,7 +2219,7 @@ namespace Risebird.Repository
                         var updatestatus = SqlMapper.Query<string>(con, "usp_UpdateWalletdetails", parameters,
                             commandType: CommandType.StoredProcedure);
                         //mail to client for insuficiant balance
-                        if (!String.IsNullOrEmpty(updatestatus.FirstOrDefault()))
+                        if (!string.IsNullOrEmpty(updatestatus.FirstOrDefault()))
                         {
                             Mail _mail = new Mail
                             {
@@ -2391,7 +2391,7 @@ namespace Risebird.Repository
                     {
                         var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioSharedetails", parameters,
                             commandType: CommandType.StoredProcedure);
-                        if (String.IsNullOrEmpty(emailidreturn))
+                        if (string.IsNullOrEmpty(emailidreturn))
                         {
                             emailidreturn = result;
                         }
@@ -2437,7 +2437,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
                 dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
-                if(isClientFeedback)
+                if (isClientFeedback)
                 {
                     dynamicParameters.Add("@emailId", currentUser);
                     dynamicParameters.Add("@timeNow", DateTime.Now);
@@ -2469,7 +2469,7 @@ namespace Risebird.Repository
                         }
                     }
                 }
-               
+
             }
             catch (SqlException ex)
             {
@@ -2718,7 +2718,7 @@ namespace Risebird.Repository
 
                     foreach (var item in reportModel.TechSkillReportCollection)
                     {
-                        if (String.IsNullOrWhiteSpace(item.TechComments))
+                        if (string.IsNullOrWhiteSpace(item.TechComments))
                         {
                             item.TechComments = "";
                         }
@@ -2747,7 +2747,7 @@ namespace Risebird.Repository
 
                     foreach (var item in reportModel.QuestionsCollection)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionStatus))
+                        if (string.IsNullOrEmpty(item.QuestionStatus))
                         {
                             questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
                         }
@@ -5506,7 +5506,7 @@ namespace Risebird.Repository
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@Emailid", emailID);
                     var results = con.Query<string>(query, dp);
-                    if (String.IsNullOrEmpty(results.FirstOrDefault()))
+                    if (string.IsNullOrEmpty(results.FirstOrDefault()))
                     {
                         return false;
                     }

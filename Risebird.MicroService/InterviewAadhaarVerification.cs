@@ -1,12 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -34,12 +33,13 @@ namespace Risebird.MicroService
                 {
                     try
                     {
-                        if (!String.IsNullOrWhiteSpace(item.uniqueid))
+                        if (!string.IsNullOrWhiteSpace(item.uniqueid))
                         {
                             if (item.JobCountry == 2)
                             {
                                 uniqueurl = "https://portal.risebird.io/Aadhaar/CandidateVerification?uniqueid=" + item.uniqueid;
-                            }else 
+                            }
+                            else
                             {
                                 uniqueurl = "https://portal.risebird.io/Aadhaar/AadhaarVerification?uniqueid=" + item.uniqueid;
                             }

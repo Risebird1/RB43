@@ -1384,22 +1384,22 @@ namespace Risebird.Repository
                     if (dataset.Tables.Count > 0)
                     {
                         dt = dataset.Tables[0];
-                        _resultVM.MyInterviewCount = !String.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
+                        _resultVM.MyInterviewCount = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)
                     {
                         dt = dataset.Tables[1];
-                        _resultVM.OpenInterviewCount = !String.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
+                        _resultVM.OpenInterviewCount = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 2)
                     {
                         dt = dataset.Tables[2];
-                        _resultVM.PendingReportCount = !String.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
+                        _resultVM.PendingReportCount = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 3)
                     {
                         dt = dataset.Tables[3];
-                        _resultVM.QCReportCount = !String.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
+                        _resultVM.QCReportCount = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     return _resultVM;
                 }
@@ -1410,19 +1410,19 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<string>>FetchAlertMessage()
+        public async Task<List<string>> FetchAlertMessage()
         {
             try
-            {            
-               using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Currenttime", DateTime.Now);
-                   var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAlterMessage", parameters,
-                     commandType: CommandType.StoredProcedure);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAlterMessage", parameters,
+                      commandType: CommandType.StoredProcedure);
                     return (List<string>)result;
                 }
-               
+
             }
             catch (SqlException ex)
             {

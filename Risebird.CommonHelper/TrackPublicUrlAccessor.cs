@@ -4,9 +4,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.CommonHelper
 {
@@ -21,16 +19,16 @@ namespace Risebird.CommonHelper
         }
         public void SendTelemetry(string emailId, string requestedUrl)
         {
-            if(!string.IsNullOrEmpty(emailId))
+            if (!string.IsNullOrEmpty(emailId))
             {
                 emailId = emailId.Replace("\"", "");
             }
-            if(telemetryConfiguration == null)
+            if (telemetryConfiguration == null)
             {
                 telemetryConfiguration = TelemetryConfiguration.CreateDefault();
                 telemetryConfiguration.InstrumentationKey = _configuration["ApplicationInsights:InstrumentationKey"];//"";
             }
-            if( telemetryClient ==  null)
+            if (telemetryClient == null)
             {
                 telemetryClient = new TelemetryClient(telemetryConfiguration);
             }
