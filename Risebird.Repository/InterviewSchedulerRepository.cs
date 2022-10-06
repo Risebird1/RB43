@@ -384,7 +384,7 @@ namespace Risebird.Repository
             try
             {
                 daytimes_report resultset = new daytimes_report();
-                var query = "Select * from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
+                var query = "Select * from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", olduniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
