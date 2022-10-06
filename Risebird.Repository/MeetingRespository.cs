@@ -657,18 +657,19 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId)
+        public async Task<int> CheckCompletedInterviews(string emailID)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(emailID))
+                    return 0;
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@emailID", emailID);
-                    parameters.Add("@ClientId", clientId);
-                    parameters.Add("@irfId", irfId);
                     //usp_CheckCompletedInterviews
-                    return await SqlMapper.QueryAsync<int>(con, "usp_CheckCompletedInterviews", parameters,
+                    return await SqlMapper.QueryFirstOrDefaultAsync<int>(con, "usp_CheckCompletedInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -681,7 +682,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return null;
+            return 0;
 
         }
 

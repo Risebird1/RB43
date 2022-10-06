@@ -52,7 +52,7 @@ namespace Risebird.Repository.Interface
         bool PostSelectionStatus(int imid, int value, string comment);
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP);
 
-        Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId);
+        Task<int> CheckCompletedInterviews(string emailID);
         bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
         Task<IEnumerable<Meeting>> GetAllEmergencyOpenInterviews(string emailID);
         Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID, string status);
