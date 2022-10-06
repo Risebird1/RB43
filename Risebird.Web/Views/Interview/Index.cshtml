@@ -11,8 +11,8 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ClientHR = new string[] { };
@@ -31,8 +31,8 @@
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>
         (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
@@ -109,9 +109,12 @@
 
 
 
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                       @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                {
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                         </button>
+                                }
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("Add", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
@@ -467,7 +470,6 @@
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
                                                     <th>Emergency Interview</th>
-                                                    <th>Aadhar Link</th>
                                                     <th>ID Verification</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
@@ -518,7 +520,6 @@
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
                                                     <th>Emergency Interview</th>
-                                                    <th>Aadhar Link</th>
                                                     <th>ID Verification</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
@@ -787,7 +788,7 @@
                                                         {
                                                             @if (item.CandidateResponse == 1)
                                                             {
-                                                                <td>Responsed (Yes)</td>
+                                                                <td>Responded (Yes)</td>
                                                             }
                                                             else if (item.CandidateResponse == 3)
                                                             {
@@ -795,11 +796,11 @@
                                                             }
                                                             else if (item.CandidateResponse == 4)
                                                             {
-                                                                <td>Responsed (Need More clarity)</td>
+                                                                <td>Responded (Need More Clarity)</td>
                                                             }
                                                             else
                                                             {
-                                                                <td>Responsed (No)</td>
+                                                                <td>Responded (No)</td>
                                                             }
                                                         }
                                                         else
@@ -934,17 +935,6 @@
                                                     <td>
                                                         @item.IsEmergency
                                                     </td>
-                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                    {
-                                                        <td>
-
-                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" "," %20")>Aadhar</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No document</td>
-                                                    }
                                                     @if (item.IsAadhaarVerificationRequired == null)
                                                     {
                                                         <td>Not Mandatory</td>

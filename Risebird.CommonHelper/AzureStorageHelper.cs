@@ -1044,7 +1044,7 @@ namespace Risebird.CommonHelper
         //    IAzureMediaServicesClient client,
         //    string resourceGroupName,
         //    string accountName,
-        //    String locatorName)
+        //    string locatorName)
         //{
         //    const string DefaultStreamingEndpointName = "default";
 

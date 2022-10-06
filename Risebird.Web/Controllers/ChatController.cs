@@ -141,7 +141,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");

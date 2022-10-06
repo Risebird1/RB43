@@ -441,7 +441,7 @@
                                                         </div>
                                                         <div class="">
                                                             @{
-                                                                if (!String.IsNullOrEmpty(Model.CompanyDetails))
+                                                                if (!string.IsNullOrEmpty(Model.CompanyDetails))
                                                                 {
                                                                     <a id="companydetailsId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Interview Instructions</a>
                                                                 }
@@ -559,7 +559,7 @@
                                                         </div>
                                                         <div class="upload">
                                                             @{
-                                                                if (!String.IsNullOrEmpty(Model.JDLink))
+                                                                if (!string.IsNullOrEmpty(Model.JDLink))
                                                                 {
                                                                     <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
                                                                 }

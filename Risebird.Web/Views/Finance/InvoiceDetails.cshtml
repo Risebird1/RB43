@@ -9,16 +9,16 @@
     ViewBag.PageHeader = "Invoice Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string Month = String.Empty;
-    string Year = String.Empty;
+    string Month = string.Empty;
+    string Year = string.Empty;
     string[] PaymentStatus = new string[] { };
     string[] Client = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InvoiceFilter") != null)
 {
     filter = JsonConvert.DeserializeObject<InvoiceFilter>(HttpContextAccessor.HttpContext.Session.GetString("InvoiceFilter"));
-    Month = filter.Month != null ? filter.Month : String.Empty;
-    Year = filter.Year != null ? filter.Year : String.Empty;
+    Month = filter.Month != null ? filter.Month : string.Empty;
+    Year = filter.Year != null ? filter.Year : string.Empty;
     PaymentStatus = filter.PaymentStatus != null ? filter.PaymentStatus : new string[] { };
     Client = filter.Client != null ? filter.Client : new string[] { };
 }
@@ -224,7 +224,7 @@
                                                                 }
                                                                 <td>@item.Comment</td>
                                                                 <td>@item.ReferenceNumber</td>
-                                                                @if (!String.IsNullOrEmpty(item.filelink))
+                                                                @if (!string.IsNullOrEmpty(item.filelink))
                                                                 {
                                                                     <td>
                                                                         <a href=@item.filelink>Download</a>

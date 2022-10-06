@@ -83,10 +83,10 @@ namespace Risebird.Business
                 if (_instaInterviewRepository.AddInstaMeeting(meeting).Result)
                 {
                     var model = _instaInterviewRepository.FetchRequestById(meeting.RequestId);
-                    string RequiredSkill = String.Empty;
+                    string RequiredSkill = string.Empty;
                     foreach (var item in model.Result.TechSkill)
                     {
-                        if (String.IsNullOrEmpty(RequiredSkill))
+                        if (string.IsNullOrEmpty(RequiredSkill))
                             RequiredSkill = item.SkillId.ToString();
                         else
                             RequiredSkill = RequiredSkill + "," + item.SkillId;

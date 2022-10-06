@@ -73,7 +73,7 @@ namespace Risebird.Web.Controllers
                         {
                             x.CountryName = ((InterviewRequestCountry)Convert.ToInt32(x.Country)).GetDescription();
                             x.JobLevelName = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription();
-                            x.IsSetToComplete = !String.IsNullOrEmpty(x.Assignto) ? x.Assignto.ToUpper() == emailid.ToUpper() ? true : false : false;
+                            x.IsSetToComplete = !string.IsNullOrEmpty(x.Assignto) ? x.Assignto.ToUpper() == emailid.ToUpper() ? true : false : false;
                             return x;
                         }).ToList();
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -373,7 +373,7 @@ namespace Risebird.Web.Controllers
                                     return View(meeting);
                                 }
                             }
-                            else if (!String.IsNullOrEmpty(meeting.JDLink))
+                            else if (!string.IsNullOrEmpty(meeting.JDLink))
                             {
                                 meeting.JDLink = meeting.JDLink;
                             }
@@ -392,7 +392,7 @@ namespace Risebird.Web.Controllers
                             {
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                                 var emaildids = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io;parvathi_sg@risebird.io";
-                                if (!String.IsNullOrEmpty(meeting.Assignto))
+                                if (!string.IsNullOrEmpty(meeting.Assignto))
                                 {
                                     emaildids = emaildids + ";" + meeting.Assignto;
                                 }
@@ -500,8 +500,8 @@ namespace Risebird.Web.Controllers
                 var model = _interviewRequestService.FetchInterviewRequestById(id);
                 model.CountryName = ((InterviewRequestCountry)Convert.ToInt32(model.Country)).GetDescription();
                 model.JobLevelName = ((JobLevels)Convert.ToInt32(model.JobLevel)).GetDescription();
-                var CalendlyLink = String.Empty;
-                if (!String.IsNullOrEmpty(model.CalendlyLink))
+                var CalendlyLink = string.Empty;
+                if (!string.IsNullOrEmpty(model.CalendlyLink))
                 {
                     CalendlyLink = model.CalendlyLink;
                 }
@@ -526,7 +526,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var Emailid = String.Empty;
+                var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -563,14 +563,14 @@ namespace Risebird.Web.Controllers
                     }
                     TempData.Remove("SuccessErrorMessageInterview");
                 }
-                if (!String.IsNullOrEmpty(emailid))
+                if (!string.IsNullOrEmpty(emailid))
                 {
                     if (!string.IsNullOrEmpty(Emailid) && Emailid != emailid)
                     {
                         return RedirectToAction("PublicAllMeetings", new { id = id });
                     }
                 }
-                if (!String.IsNullOrEmpty(id))
+                if (!string.IsNullOrEmpty(id))
                 {
                     ViewBag.Status = "Public";
                 }
@@ -592,7 +592,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = meeting.RequestedBy;
                 ViewBag.id = meeting.uniqueid;
                 var emailId = meeting.RequestedBy;
-                if (!String.IsNullOrEmpty(meeting.uniqueid))
+                if (!string.IsNullOrEmpty(meeting.uniqueid))
                 {
                     ViewBag.Status = "Public";
                 }

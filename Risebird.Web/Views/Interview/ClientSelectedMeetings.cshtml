@@ -7,8 +7,8 @@
     ViewData["Title"] = "Selected Candidates Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] primarySkills = new string[] { };
     string[] CandidateName = new string[] { };
     string[] ClientHR = new string[] { };
@@ -22,8 +22,8 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("ClientSelectedMeetingsfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClientSelectedMeetingsfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };

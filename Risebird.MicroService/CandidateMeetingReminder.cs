@@ -62,7 +62,7 @@ namespace Risebird.MicroService
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder Second";
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
@@ -84,7 +84,7 @@ namespace Risebird.MicroService
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder";
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
@@ -105,7 +105,7 @@ namespace Risebird.MicroService
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder";
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
@@ -123,11 +123,11 @@ namespace Risebird.MicroService
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
                             var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
                             List<string> interviewers = new List<string>();
-                            if (!String.IsNullOrEmpty(result.interviewer))
+                            if (!string.IsNullOrEmpty(result.interviewer))
                             {
                                 interviewers.Add(result.interviewer);
                             }
-                            if (!String.IsNullOrEmpty(result.EmailId))
+                            if (!string.IsNullOrEmpty(result.EmailId))
                             {
                                 interviewers.Add(result.EmailId);
                             }

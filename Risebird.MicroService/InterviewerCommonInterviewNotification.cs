@@ -40,15 +40,15 @@ namespace Risebird.MicroService
                 var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview();
                 foreach (var item in _AllInterviewerInterview)
                 {
-                    if (!String.IsNullOrEmpty(item.EmailId))
+                    if (!string.IsNullOrEmpty(item.EmailId))
                     {
-                        string sendreporturl = String.Empty;
-                        if (String.IsNullOrEmpty(item.uniqueid))
+                        string sendreporturl = string.Empty;
+                        if (string.IsNullOrEmpty(item.uniqueid))
                         {
                             Guid uniqueid = Guid.NewGuid();
                             var _uniqueid = await _clientService.PublicInterviewerUrlSave(item.EmailId, uniqueid.ToString());
                             sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
-                            if (!String.IsNullOrEmpty(_uniqueid))
+                            if (!string.IsNullOrEmpty(_uniqueid))
                             {
                                 sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                             }
@@ -71,7 +71,7 @@ namespace Risebird.MicroService
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.EmailId;
                             _whatsAppVM.MessageValue = item.Total.ToString();
-                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
+                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
                             _whatsAppVM.Event = "Interviewer Common Interview";
                             _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
                         }
@@ -121,11 +121,11 @@ namespace Risebird.MicroService
             //Start: Send email
             foreach (var item in _clientemailids)
             {
-                if (!String.IsNullOrEmpty(item))
+                if (!string.IsNullOrEmpty(item))
                 {
                     try
                     {
-                        if (!String.IsNullOrEmpty(item) && item.Contains("@"))
+                        if (!string.IsNullOrEmpty(item) && item.Contains("@"))
                         {
                             var details = _AllClientAndStaffingAgency.Where(x => x.EmailId == item).ToList();
                             DataTable dt = new DataTable();

@@ -114,11 +114,11 @@ namespace Risebird.Repository
 
                     foreach (var item in templateDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }
@@ -360,11 +360,11 @@ namespace Risebird.Repository
 
                     foreach (var item in templateDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }

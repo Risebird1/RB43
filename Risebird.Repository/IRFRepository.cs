@@ -1769,11 +1769,11 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }
@@ -4383,7 +4383,7 @@ namespace Risebird.Repository
             try
             {
                 var interviewer = Interviewerids.Split(',');
-                var resultset = String.Empty;
+                var resultset = string.Empty;
                 for (int i = 0; i < interviewer.Count(); i++)
                 {
                     var query = "select PrimarySkill from Interviewer where Userid =@Interviewerids";
@@ -4405,7 +4405,7 @@ namespace Risebird.Repository
                         }
                         if (flag == true)
                         {
-                            if (String.IsNullOrEmpty(resultset))
+                            if (string.IsNullOrEmpty(resultset))
                             {
                                 resultset = result[0];
                             }
@@ -4417,7 +4417,7 @@ namespace Risebird.Repository
                     }
                 }
                 var Skills = resultset.Split(',');
-                var Skillset = String.Empty;
+                var Skillset = string.Empty;
                 for (int i = 0; i < Skills.Count(); i++)
                 {
                     var query = "Select Id from skill where Name=@Skill";
@@ -4428,7 +4428,7 @@ namespace Risebird.Repository
                     {
                         var results = con.Query<string>(query, dynamicParameters);
                         var result = results.FirstOrDefault();
-                        if (String.IsNullOrEmpty(Skillset))
+                        if (string.IsNullOrEmpty(Skillset))
                         {
                             Skillset = result;
                         }
@@ -5758,11 +5758,11 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }
@@ -5996,11 +5996,11 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }

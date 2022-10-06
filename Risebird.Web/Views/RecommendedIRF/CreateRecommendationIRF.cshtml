@@ -421,7 +421,7 @@ else
                                                                                         {
                                                                                             @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                         }*@
-                                                                                    @if (!String.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
                                                                                     {
                                                                                         <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank">Resume</a>
                                                                                     }
@@ -568,7 +568,7 @@ else
                                                                             </thead>
                                                                             <tbody>
                                                                                 <tr>
-                                                                                    @if (!String.IsNullOrEmpty(Model.AudioComment))
+                                                                                    @if (!string.IsNullOrEmpty(Model.AudioComment))
                                                                                     {
                                                                                         <td>
                                                                                             <a id="anchorAudioId" asp-append-version="true" href="@Model.AudioComment" download>
@@ -1198,7 +1198,7 @@ else
     }
 
     function CheckTotalWeightage() {
-        debugger;
+       
         var inCorrectCount = 0;
         var skillArray = ["SkillCollection"];
 
