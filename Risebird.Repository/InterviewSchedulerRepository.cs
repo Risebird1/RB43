@@ -475,7 +475,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select distinct ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where (tc.ClientRoleId=1 or tc.ClientRoleId=2) and IRFId=@IRFId";
+                var query = "Select distinct ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where (tc.ClientRoleId=1 or tc.ClientRoleId=2) and IRF.IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -493,7 +493,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where tc.ClientRoleId=4 and IRFId=@IRFId";
+                var query = "Select ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where tc.ClientRoleId=4 and IRF.IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
