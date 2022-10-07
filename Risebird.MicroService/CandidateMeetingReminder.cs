@@ -67,7 +67,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
                         _whatsAppVM.timezone = "IST";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                       await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                         await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
                     }
@@ -89,7 +89,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
                         _whatsAppVM.timezone = "IST";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                       await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
                     else if (item.Typefunction == 24)
@@ -110,7 +110,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
                         _whatsAppVM.timezone = "IST";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                        await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
                     else if (item.Typefunction == 1)
@@ -131,9 +131,9 @@ namespace Risebird.MicroService
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                            var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                            var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         }
                     }
                 }

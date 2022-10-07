@@ -26,8 +26,7 @@ namespace Risebird.Web.Controllers.api
             var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(IRFID);
             if (interviwers != null)
             {
-                _notificationHelper.SendIRFBasedInterviewerMail(interviwers, interviewDate);
-
+                await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, interviewDate);
             }
 
             return new HttpResponseMessage(HttpStatusCode.OK);

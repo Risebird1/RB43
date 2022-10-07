@@ -1007,7 +1007,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
+        public async Task<JsonResult> VideoShare(string value, string videoid, string name, string Emailids)
         {
             _meetingService.VedioShare(value, videoid);
             string Name = string.Empty;
@@ -1025,7 +1025,7 @@ namespace Risebird.Web.Controllers
                 CC = email,
                 Subject = "Risebird: Interview video is shared with you"
             };
-            var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+            var result = await _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             if (result.Contains("Mail sent successfully"))
             {
                 return Json("Success");
@@ -1062,7 +1062,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult CandidateShortList(string videoid)
+        public async Task<JsonResult> CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
             var Shortlistcount = _meetingService.GetvedioShortList(videoid, email);
@@ -1080,14 +1080,14 @@ namespace Risebird.Web.Controllers
                 StringBuilder bulider = new StringBuilder();
 
                 bulider.Append("Client: " + email.ToUpper() + " has shortlisted your profile");
-                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                await _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
             return Json(result);
         }
 
         [HttpPost]
-        public JsonResult CandidateSuitable(string videoid, string Comment)
+        public async Task<JsonResult> CandidateSuitable(string videoid, string Comment)
         {
             //store data in database
             int id = Convert.ToInt32(videoid);
@@ -1104,13 +1104,13 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
                 bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
-                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+               await _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }
 
         [HttpPost]
-        public JsonResult VedioShared(string Emailids, string videoid, string Name, string skills)
+        public async Task<JsonResult> VedioShared(string Emailids, string videoid, string Name, string skills)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
@@ -1125,7 +1125,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
                 };
-                _ = _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
+                _ = await _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
             }
             var modelemail = modelList.Split(";");
             foreach (var item in modelemail)
@@ -1141,13 +1141,13 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
                 };
-                _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+                await _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             }
             return Json("");
         }
 
         [HttpPost]
-        public JsonResult ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
+        public async Task<JsonResult> ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
@@ -1166,7 +1166,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "An interview of Candidate: " + Name + " video is shared with you"
                 };
-                _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
+                await _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class JoinabilityReport
     {

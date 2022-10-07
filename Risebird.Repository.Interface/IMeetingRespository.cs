@@ -52,7 +52,7 @@ namespace Risebird.Repository.Interface
         bool PostSelectionStatus(int imid, int value, string comment);
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP);
 
-        Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId);
+        Task<int> CheckCompletedInterviews(string emailID);
         bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
         Task<IEnumerable<Meeting>> GetAllEmergencyOpenInterviews(string emailID);
         Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID, string status);
@@ -74,7 +74,7 @@ namespace Risebird.Repository.Interface
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);
         string CandidateSuitable(int id, string email, string Comment);
-        VedioComments Intrestreaction(string vedioid, string Status);
+        Task<VedioComments> Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
         Task<IEnumerable<Meeting>> ShortListedClient(string emailid, string IRFID);
         Task<IEnumerable<Meeting>> InterestListClient(string emailid, string IRFID);
@@ -196,7 +196,7 @@ namespace Risebird.Repository.Interface
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid,bool response);
+        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response);
         Task<bool> ApplyInterviewPenalty(int meetingid, string JobCountry, string interviewer);
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();

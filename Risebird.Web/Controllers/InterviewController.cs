@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -26,7 +25,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1374,7 +1372,7 @@ namespace Risebird.Web.Controllers
                             {
                                 meeting.resumeLink = uploadedFileURL;
                                 meeting.candidateEmail = meeting.candidateEmail.ToLower();
-                                if (_meetingService.AddMeeting(meeting))
+                                if (await _meetingService.AddMeeting(meeting))
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting has been added Successfully!";
                                     return RedirectToAction("Index");
@@ -3540,12 +3538,12 @@ namespace Risebird.Web.Controllers
                                     TO = model.CandidateEmail,
                                     Subject = "Risebird: Feedback form"
                                 };
-                                var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                                var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = model.CandidateEmail;
                                 _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
                                 _whatsAppVM.Event = "Feedback Remainder";
-                                _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                                await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
                             if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
@@ -4478,7 +4476,7 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                            await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
                         }
@@ -4709,9 +4707,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Intrestreaction(string vedioid, string Status)
+        public async Task<JsonResult> Intrestreaction(string vedioid, string Status)
         {
-            var Email = _meetingService.Intrestreaction(vedioid, Status);
+            var Email = await _meetingService.Intrestreaction(vedioid, Status);
 
             if (Email != null)
             {
@@ -4742,7 +4740,7 @@ namespace Risebird.Web.Controllers
 
 
                 }
-                _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
+                await _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
 
             }
             return Json("Success");
@@ -5167,7 +5165,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
+        public async Task<JsonResult> VideoShare(string value, string videoid, string name, string Emailids)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
@@ -5181,7 +5179,7 @@ namespace Risebird.Web.Controllers
                 TO = Emailids,
                 Subject = $"Risebird: {email} Interview video is shared with you"
             };
-            var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
+            var result = await _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
             if (result.Contains("Mail has been sent Successfully!"))
             {
                 return Json("Success");
@@ -5193,7 +5191,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl, string Candidateemail)
+        public async Task<JsonResult> VideoShareEmail(string videoid, string Emailid, string CurrentUrl, string Candidateemail)
         {
             //Start:Save View counts of vedio
             Emailid = Emailid.Replace("\"", "");
@@ -5202,7 +5200,7 @@ namespace Risebird.Web.Controllers
 
             if (ispresent > 0)
             {
-                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
+                await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
                 return Json("Success");
             }
             else
@@ -5213,7 +5211,7 @@ namespace Risebird.Web.Controllers
                     TO = Candidateemail,
                     Subject = $"Risebird: {Emailid} is requesting access of your Interview Video"
                 };
-                var result = _notificationHelper.VideoAccessRequest(_mail, CurrentUrl, Emailid);
+                var result = await _notificationHelper.VideoAccessRequest(_mail, CurrentUrl, Emailid);
                 return Json("Fail");
             }
         }
@@ -5467,7 +5465,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
+        public async Task<JsonResult> ResendFeedbackform(int interviewid, string CandidateEmail)
         {
             string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + interviewid;
             Mail _mail = new Mail
@@ -5475,12 +5473,12 @@ namespace Risebird.Web.Controllers
                 TO = CandidateEmail,
                 Subject = "Risebird: Feedback form"
             };
-            var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+            var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
             WhatsAppVM _whatsAppVM = new WhatsAppVM();
             _whatsAppVM.Emailid = CandidateEmail;
             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
             _whatsAppVM.Event = "Feedback Remainder";
-            _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+            await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
             if (emailsend == "Mail has been sent Successfully!")
             {
                 return Json("Feedback Form has been sent Successfully!");
@@ -6206,9 +6204,9 @@ namespace Risebird.Web.Controllers
                         {
                             interviewers.Add(result.EmailId);
                         }
-                        var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                        var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                        var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         DeleteMeetingLink(result.ZoomMeetingId);
                         return Json("Successfully status updated, " + value);
                     }

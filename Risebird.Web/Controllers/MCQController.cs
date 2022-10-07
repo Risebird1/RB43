@@ -874,7 +874,7 @@ namespace Risebird.Web.Controllers
                     CC = HrEmailaddress,
                     Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
                 };
-                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+                var resultretrun = await _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
                 HttpContext.Session.Remove("TestCandidateQuestion");
                 return Json("TestSubmit");
             }
@@ -1051,7 +1051,7 @@ namespace Risebird.Web.Controllers
                                 TO = item,
                                 Subject = "Invitation for " + details.Title + " : " + ClientName
                             };
-                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
+                            var result = await _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
                             //var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
                             string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&SMCQId=" + date1;
                             Mail _mail1 = new Mail
@@ -1059,7 +1059,7 @@ namespace Risebird.Web.Controllers
                                 TO = ClientEmail,
                                 Subject = "Invitation for " + details.Title + " : " + item
                             };
-                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                            await _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
                             if (result.Contains("Mail sent successfully"))
                             {
                                 _list.PartitionKey = date1;
