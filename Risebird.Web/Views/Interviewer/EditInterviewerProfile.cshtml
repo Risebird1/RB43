@@ -1,5 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
-@using Risebird.Entities.Enum 
+@using Risebird.Entities.Enum
 @{
     ViewData["Title"] = "Edit Interviewer Profile";
     ViewBag.PageHeader = "";
@@ -58,7 +58,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text" } })
+                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text",@required="required" } })
                                         @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group dob">
@@ -86,9 +86,9 @@
                                         @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*@Html.EditorFor(model => model.IsLeadInterviewer, new { htmlAttributes = new { id = "txt_IsLeadInterviewer", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                         @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
-                                                        {   new SelectListItem { Text = "No", Value = "false" },
-                                                            new SelectListItem { Text = "Yes", Value = "true"} },
-                                                          new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
+                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                    new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -122,7 +122,7 @@
                                         <select class="select-css form-control webkitEnabled" asp-for="IndiaServiceRate" asp-items="Model.IndiaServiceRateList"></select>@*style="margin-top: 10px; height: 45px;"*@
                                         @Html.ValidationMessageFor(model => model.IndiaServiceRate, "", new { @class = "text-danger" })
                                     </div>
-                                    
+
 
                                 </div>
 
@@ -165,9 +165,9 @@
                                         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                         @Html.DropDownListFor(model => model.IsActive, new[]
-                                                        {   new SelectListItem { Text = "No", Value = "false" },
-                                                            new SelectListItem { Text = "Yes", Value = "true"} },
-                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                    new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -200,9 +200,9 @@
                                         @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*@Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                         @Html.DropDownListFor(model => model.IsApproved, new[]
-                                                        {   new SelectListItem { Text = "No", Value = "false" },
-                                                            new SelectListItem { Text = "Yes", Value = "true"} },
-                                                          new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
+                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                    new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -277,16 +277,16 @@
                                     <div>
                                         @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.Isinstaavailable, new[]
-                                                        {   new SelectListItem { Text = "No", Value = "false" },
-                                                            new SelectListItem { Text = "Yes", Value = "true"} },
-                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                    new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.Isinstaavailable, "", new { @class = "text-danger" })
                                     </div>
 
                                     @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
                                     @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
                                     @*@Html.HiddenFor(m => m.ResumeLink, Model.ResumeLink)
-        @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
+                                @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
                                 </div>
 
                             </div>
@@ -515,10 +515,10 @@
 
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -563,10 +563,10 @@
                                                                     @Html.CheckBoxFor((x => x.InterviewerEducationDetails[i].AnyGap), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -595,78 +595,78 @@
                             <!-- Educational Details End-->
                             <!-- Previous Company Details start-->
                             @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Professional Details</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="professionalDetailsTable">
-                                                <thead class="tableHeaderClass">
-                                                    <tr>
-                                                        <th width="18%" class="table_heading">Company Name </th>
-                                                        <th width="18%" class="table_heading">Comapny Type</th>
-                                                        <th width="18%" class="table_heading">Domain</th>
-                                                        <th width="18%" class="table_heading">Start Date</th>
-                                                        <th width="18%" class="table_heading">End Date</th>
-                                                        <th width="10%" class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.InterviewerProfessionalDetails == null || Model.InterviewerProfessionalDetails.Count() == 0)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.TextBox("InterviewerProfessionalDetails[0].CompanyName", null, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBox("InterviewerProfessionalDetails[0].Domain", null, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBox("InterviewerProfessionalDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBox("InterviewerProfessionalDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
-                                                            </td>
-                                                            <td>
-                                                                <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="multiple_row">
+                        <h2>Professional Details</h2>
+                        </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="table-responsive">
+                        <table class="table table-bordered mbn" id="professionalDetailsTable">
+                        <thead class="tableHeaderClass">
+                        <tr>
+                        <th width="18%" class="table_heading">Company Name </th>
+                        <th width="18%" class="table_heading">Comapny Type</th>
+                        <th width="18%" class="table_heading">Domain</th>
+                        <th width="18%" class="table_heading">Start Date</th>
+                        <th width="18%" class="table_heading">End Date</th>
+                        <th width="10%" class="table_heading">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.InterviewerProfessionalDetails == null || Model.InterviewerProfessionalDetails.Count() == 0)
+                        {
+                        <tr>
+                        <td>
+                        @Html.TextBox("InterviewerProfessionalDetails[0].CompanyName", null, new { @class = "form-control text-box single-line" })
+                        </td>
+                        <td>
+                        @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                        </td>
+                        <td>
+                        @Html.TextBox("InterviewerProfessionalDetails[0].Domain", null, new { @class = "form-control text-box single-line" })
+                        </td>
+                        <td>
+                        @Html.TextBox("InterviewerProfessionalDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date" })
+                        </td>
+                        <td>
+                        @Html.TextBox("InterviewerProfessionalDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
+                        </td>
+                        <td>
+                        <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                        <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                        </td>
+                        </tr>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.InterviewerProfessionalDetails.Count(); i++)
-                                                        {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].CompanyName, null, new { @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerProfessionalDetails[i].CompanyName, (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].Domain, null, new { @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
+                        }
+                        else
+                        {
+                        for (int i = 0; i < Model.InterviewerProfessionalDetails.Count(); i++)
+                        {
+                        <tr>
+                        <td>
+                        @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].CompanyName, null, new { @class = "form-control text-box single-line" })
+                        </td>
+                        <td>
+                        @Html.DropDownListFor(m => m.InterviewerProfessionalDetails[i].CompanyName, (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                        </td>
+                        <td>
+                        @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].Domain, null, new { @class = "form-control text-box single-line" })
+                        </td>
+                        <td>
+                        <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                        <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                        </td>
+                        </tr>
+                        }
+                        }
 
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="SkillCollection_WeightageError" style=" color: red; margin-left: 815px"></label>
-                                        </div>
-                                    </div>
-                                </div>*@
+                        </tbody>
+                        </table>
+                        <label class="text-danger" id="SkillCollection_WeightageError" style=" color: red; margin-left: 815px"></label>
+                        </div>
+                        </div>
+                        </div>*@
                             <!-- Previoud Comany Detils End-->
                             <!-- Project Details start-->
                             <div class="row">
@@ -693,17 +693,17 @@
                                                 {
                                                     <tr>
                                                         @*<td>
-                                                                @Html.TextBox("InterviewerProjectsDetails[0].TechnologyEnvironment", null, new { @class = "form-control text-box single-line" })
-                                                            </td>*@
+                                                @Html.TextBox("InterviewerProjectsDetails[0].TechnologyEnvironment", null, new { @class = "form-control text-box single-line" })
+                                                </td>*@
                                                         <td>
                                                             <div class="mdc-checkbox">
                                                                 @Html.CheckBox(("InterviewerProjectsDetails[0].IsPrimarySkillUsed"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -719,10 +719,10 @@
                                                                 @Html.CheckBox(("InterviewerProjectsDetails[0].IsCommercialProject"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -745,18 +745,18 @@
                                                     {
                                                         <tr>
                                                             @*<td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].TechnologyEnvironment, null, new { @class = "form-control text-box single-line" })
-                                                                </td>*@
+                                                @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].TechnologyEnvironment, null, new { @class = "form-control text-box single-line" })
+                                                </td>*@
                                                             <td>
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor((M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed), new { @class = "mdc-checkbox__native-control" })
                                                                     @*<label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>*@
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -772,10 +772,10 @@
                                                                     @*<label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>*@
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -833,14 +833,15 @@
                                                         <td>
                                                             @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
-                                                        <td><div class="mdc-checkbox">
+                                                        <td>
+                                                            <div class="mdc-checkbox">
                                                                 @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -870,10 +871,10 @@
                                                                     @Html.CheckBoxFor((x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                 viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -957,8 +958,8 @@
 
                         }
                         @*<div class=" col-md-3">
-                                @Html.ActionLink("Back", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                            </div>*@
+                        @Html.ActionLink("Back", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                        </div>*@
                     </div>
                 </div>
             </div>
@@ -1490,20 +1491,20 @@
             //}
             //return false;
         }
-        //function CheckvalidationforProfile() {
-        //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
-        //    //    $("#err_assessmentgroup").text("");
-        //    //    return true;
-        //    //}
-        //    //$(".multiselect-selected-text").focus();
-        //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-        //    //return false;
-        //    if ($(".badge").length > 0) {
-        //        $("#err_assessmentgroup").text("");
-        //        return true;
-        //    }
-        //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-        //    return false;
-        //}
+                //function CheckvalidationforProfile() {
+                //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+                //    //    $("#err_assessmentgroup").text("");
+                //    //    return true;
+                //    //}
+                //    //$(".multiselect-selected-text").focus();
+                //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+                //    //return false;
+                //    if ($(".badge").length > 0) {
+                //        $("#err_assessmentgroup").text("");
+                //        return true;
+                //    }
+                //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+                //    return false;
+                //}
     </script>
 
