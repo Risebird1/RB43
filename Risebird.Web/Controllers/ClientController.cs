@@ -541,7 +541,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CandidateJDScore(CandidateCuratedScoreVM model)
+        public async Task<IActionResult> CandidateJDScore(CandidateCuratedScoreVM model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -565,7 +565,7 @@ namespace Risebird.Web.Controllers
                             TO = result,
                             Subject = "New candidate(s) added into JD " + model.JDTitle
                         };
-                        var resultset = _notificationHelper.CandidateJDScoreNotification(_mail, newcandidatecount, model.JDTitle);
+                        var resultset = await _notificationHelper.CandidateJDScoreNotification(_mail, newcandidatecount, model.JDTitle);
                     }
                     return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
                 }
@@ -4287,13 +4287,13 @@ namespace Risebird.Web.Controllers
                     ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId, emailId, profileName);
                     //ClientFeedbackCommentVM model = await _clientService.GetClientCommentsList(interviewId, emailId);
 
-                    if(model == null)
+                    if (model == null)
                     {
                         model = new ClientCommentsForReport();
                     }
 
                     model.Profile = profileName;
-                    model.allowClientAction = allowClientAction;                   
+                    model.allowClientAction = allowClientAction;
                     return PartialView("GetClientCommentsForReport", model);
                 }
                 else
@@ -4324,11 +4324,11 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            if(string.IsNullOrEmpty(model.CreatedBy))
+                            if (string.IsNullOrEmpty(model.CreatedBy))
                             {
                                 model.CreatedBy = emailId;
                             }
-                            
+
                             await _clientService.AddUpdateClientCommentsForReport(model);
 
                         }

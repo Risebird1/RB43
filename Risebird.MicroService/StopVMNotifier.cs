@@ -37,7 +37,7 @@ namespace Risebird.MicroService
                 foreach (var item in result)
                 {
                     //send email to each user
-                    _notificationHelper.SendVmStopReminder(item);
+                    await _notificationHelper.SendVmStopReminder(item);
                 }
                 log.LogInformation($"C# UnShareVM Timer trigger function executed at: {DateTime.Now}");
             }

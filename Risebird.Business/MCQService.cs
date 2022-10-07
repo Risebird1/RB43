@@ -6,7 +6,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Risebird.Business
 {
@@ -43,7 +42,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName,bool requesttype)
+        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName, bool requesttype)
         {
             try
             {
@@ -175,7 +174,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId,bool requesttype)
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId, bool requesttype)
         {
             try
             {

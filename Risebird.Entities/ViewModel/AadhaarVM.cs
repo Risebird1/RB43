@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class AadhaarVM
     {

@@ -96,7 +96,7 @@ namespace Risebird.Web
                     var resultValue = await _meetingInviteService.InsertMeetingInvite(startdate, enddate, loggedinUser, accountEmail, meetingURL.ToString(), candidateEmailId + ";" + AdditionalUser, Subject, TimeZoneDetails);
                     if (!resultValue.Contains("failed"))
                     {
-                        var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue, Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
+                        var resultset = await _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue, Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
                         if (resultset == "Mail sent Successfully.")
                         {
                             return Json("Invite sent successfully");

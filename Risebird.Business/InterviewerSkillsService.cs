@@ -369,7 +369,7 @@ namespace Risebird.Business
             }
         }
 
-        public bool SendInvite(int iscId, string email, int interviewerProfileId)
+        public async Task<bool> SendInvite(int iscId, string email, int interviewerProfileId)
         {
             try
             {
@@ -377,7 +377,7 @@ namespace Risebird.Business
 
                 if (email != null && isc != null)
                 {
-                    var result = _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId, isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
+                    var result = await _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId, isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
                     if (result.Contains("successfully"))
                     {
                         //update total invites count
@@ -390,12 +390,12 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
 
-        public bool CancelInvite(int iscId, string email)
+        public async Task<bool> CancelInvite(int iscId, string email)
         {
             try
             {
@@ -404,7 +404,7 @@ namespace Risebird.Business
                 if (email != null)
                 {
 
-                    var result = _notificationHelper.CancelInterviewerInvite(isc.InterviewerSkillId, isc.SkillName, email, isc.HREmailId);
+                    var result = await _notificationHelper.CancelInterviewerInvite(isc.InterviewerSkillId, isc.SkillName, email, isc.HREmailId);
                     if (result.ToLower().Contains("success"))
                     {
                         return true;
