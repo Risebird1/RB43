@@ -479,7 +479,7 @@
                                                                         <th>Report</th>
                                                                         <th>Video</th>
                                                                         <th>Rate Interviewer</th>
-
+                                                                        <th>Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tfoot>
@@ -492,7 +492,7 @@
                                                                         <th>Report</th>
                                                                         <th>Video</th>
                                                                         <th>Rate Interviewer</th>
-
+                                                                        <th>Action</th>
                                                                     </tr>
                                                                 </tfoot>
                                                                 <tbody id="tblbodyPriority">
@@ -707,7 +707,16 @@
                                                                                     </span>
                                                                                 </button>
                                                                             </td>
-
+                                                                            <td>
+                                                                                @if (item.IsClientQCRequired && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                                                                {
+                                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
+                                                                                        <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="ClientReject" })'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                                            <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                }
+                                                                            </td>
 
                                                                         </tr>
                                                                         <tr class="collapse @item.imid">
@@ -1165,7 +1174,13 @@
             html += '<span onclick="openpopUpRating(' + "'" + data[i].candidateName + "'" + ',' + data[i].imid + ')" title="Rate Interviewer">';
             html += ' <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>';
             html += '</span></button></td> ';
-
+            html+='<td>';
+             if (data[i].isClientQCRequired && (data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8)) {
+                html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">';
+                html += '<a href="/Interview/QCReportForm?interviewid='+ data[i].imid+'&interviewer='+data[i].interviewer+'&type=ClientReject" title="QC Form" class="mdc-fab__icon material-icons">';
+                html += '<i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i></a></button>';
+            }
+            html+='</td>';
             html += '</tr>';
             html += '<tr class="collapse ' + data[i].imid + '">';
             html += '<td colspan="999" class="child-section">';

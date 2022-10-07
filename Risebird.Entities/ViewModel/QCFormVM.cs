@@ -17,6 +17,7 @@ namespace Risebird.Entities.ViewModel
         public int Redflags { get; set; }
         public bool Isedit { get; set; }
         public string Type { get; set; }
+        public string uniqueid { get; set; }
 
         //Video Quality Check
         [Display(Name = "Whether hands-on coding is present")]

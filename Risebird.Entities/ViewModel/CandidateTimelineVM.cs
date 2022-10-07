@@ -42,6 +42,8 @@ namespace Risebird.Entities.ViewModel
         public string ClientAction { get; set; }
         public string NickName { get; set; }
         public int reportcount { get; set; }
+        public bool IsQCRequired { get; set; }
+        public string Interviewer { get; set; }
     }
 
     public class TimelineStatus

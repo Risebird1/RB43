@@ -3455,6 +3455,7 @@ namespace Risebird.Web.Controllers
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                 }
+                var client = await _userRepository.GetClientUserDetails(emailid);
                 var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
                 _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
                 var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
@@ -3489,6 +3490,7 @@ namespace Risebird.Web.Controllers
                     }
                     var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                     var candidateTimeline = new CandidateTimelineVM();
+                    candidateTimeline.IsQCRequired = client.IsQCRequired;
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3511,6 +3513,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ClientAction = firstData.ClientAction;
                     candidateTimeline.NickName = firstData.InterviewerNickName;
                     candidateTimeline.reportcount = _datavalue;
+                    candidateTimeline.Interviewer = firstData.Interviewer;
                     //candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3588,6 +3591,7 @@ namespace Risebird.Web.Controllers
             ViewBag.id = id;
             try
             {
+                var client = await _userRepository.GetClientUserDetails(emailid);
                 var model = new List<CandidateTimelineVM>();
                 if (filter != null)
                 {
@@ -3624,7 +3628,7 @@ namespace Risebird.Web.Controllers
                     //}
                     var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                     var candidateTimeline = new CandidateTimelineVM();
-
+                    candidateTimeline.IsQCRequired = client.IsQCRequired;
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3647,6 +3651,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ClientAction = firstData.ClientAction;
                     candidateTimeline.NickName = firstData.InterviewerNickName;
                     candidateTimeline.reportcount = _datavalue;
+                    candidateTimeline.Interviewer = firstData.Interviewer;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
@@ -3753,6 +3758,7 @@ namespace Risebird.Web.Controllers
             var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
             _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            HttpContext.Session.SetString("profileName", "Client");
             var role = await _clientService.GetUniqueClientRoleByEmailId(Emailid, id);
             var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
             if (string.IsNullOrEmpty(logovalue))

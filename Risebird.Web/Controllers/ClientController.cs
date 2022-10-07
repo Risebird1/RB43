@@ -885,12 +885,16 @@ namespace Risebird.Web.Controllers
                     ViewBag.emailid = emailid;
                     if (profileName == "Client")
                     {
+                        if (TempData["SuccessErrorMessageQCForm"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                            TempData.Remove("SuccessErrorMessageQCForm");
+                        }
+                        var client = await _userRepository.GetClientUserDetails(emailid);
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
-
                         ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
-
                         var meetings = _meetingService.GetClientMeetingList(emailid);
-                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                         {
                             meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
@@ -1977,6 +1981,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
+                        var client = await _userRepository.GetClientUserDetails(emailid);
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = new List<MeetingVM>();
                         //var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
@@ -1994,6 +1999,7 @@ namespace Risebird.Web.Controllers
 
                         foreach (var m in meetings)
                         {
+                            m.IsClientQCRequired = client.IsQCRequired;
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
                             {
                                 m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
@@ -2065,6 +2071,11 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        if (TempData["SuccessErrorMessageQCForm"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                            TempData.Remove("SuccessErrorMessageQCForm");
                         }
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, selectedMeeting);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, selectedMeeting);
@@ -2879,7 +2890,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult RejectedMeetings(int? Page, string searchValue)
+        public async Task<IActionResult> RejectedMeetings(int? Page, string searchValue)
         {
             try
             {
@@ -2891,6 +2902,13 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
+                        if (TempData["SuccessErrorMessageQCForm"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                            TempData.Remove("SuccessErrorMessageQCForm");
+                        }
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ViewBag.IsQCRequired = client.IsQCRequired;
                         var roleid = _clientService.GetClientRoleByEmailId(emailid).Result;
                         if (roleid != 4)
                         {
@@ -2960,7 +2978,10 @@ namespace Risebird.Web.Controllers
                             }
                             _modelDetails = meetings;
                             ViewBag.Date = DateTime.Now;
-
+                            foreach (var item in meetings)
+                            {
+                                item.IsClientQCRequired = client.IsQCRequired;
+                            }
                             var rejectdata = JsonConvert.SerializeObject(meetings);
                             HttpContext.Session.SetString("SearchRejectedMeetings", rejectdata);
                             return View(meetings.ToPagedList(Page ?? 1, 10));
@@ -4287,13 +4308,13 @@ namespace Risebird.Web.Controllers
                     ClientCommentsForReport model = await _clientService.GetClientCommentsForReport(interviewId, emailId, profileName);
                     //ClientFeedbackCommentVM model = await _clientService.GetClientCommentsList(interviewId, emailId);
 
-                    if(model == null)
+                    if (model == null)
                     {
                         model = new ClientCommentsForReport();
                     }
 
                     model.Profile = profileName;
-                    model.allowClientAction = allowClientAction;                   
+                    model.allowClientAction = allowClientAction;
                     return PartialView("GetClientCommentsForReport", model);
                 }
                 else
@@ -4324,11 +4345,11 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            if(string.IsNullOrEmpty(model.CreatedBy))
+                            if (string.IsNullOrEmpty(model.CreatedBy))
                             {
                                 model.CreatedBy = emailId;
                             }
-                            
+
                             await _clientService.AddUpdateClientCommentsForReport(model);
 
                         }
