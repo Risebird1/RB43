@@ -3649,7 +3649,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult PauseIRF(int irfId, string irfName)
+        public async Task<IActionResult> PauseIRF(int irfId, string irfName)
         {
             try
             {
@@ -3659,7 +3659,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (_irfService.PauseIRF(irfId, irfName))
+                        if (await _irfService.PauseIRF(irfId, irfName))
                         {
                             TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");
@@ -3682,7 +3682,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "IRF pause Failed";
                 return RedirectToAction("Index");
             }
@@ -5829,7 +5829,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public JsonResult SendEmailForCandidateFeedbackByIRF(string IRFId)
+        public async Task<JsonResult> SendEmailForCandidateFeedbackByIRF(string IRFId)
         {
             var modelData = new List<SurveyVM>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -5853,7 +5853,7 @@ namespace Risebird.Web.Controllers
                             TO = CandidateEmail,
                             Subject = "Risebird: Feedback form"
                         };
-                        var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                        var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                         if (emailsend == "Mail sent successfully.")
                         {
                             flag = true;

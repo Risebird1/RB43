@@ -657,18 +657,19 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId)
+        public async Task<int> CheckCompletedInterviews(string emailID)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(emailID))
+                    return 0;
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@emailID", emailID);
-                    parameters.Add("@ClientId", clientId);
-                    parameters.Add("@irfId", irfId);
                     //usp_CheckCompletedInterviews
-                    return await SqlMapper.QueryAsync<int>(con, "usp_CheckCompletedInterviews", parameters,
+                    return await SqlMapper.QueryFirstOrDefaultAsync<int>(con, "usp_CheckCompletedInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -681,7 +682,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return null;
+            return 0;
 
         }
 
@@ -2205,7 +2206,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public VedioComments Intrestreaction(string vedioid, string Status)
+        public async Task<VedioComments> Intrestreaction(string vedioid, string Status)
         {
             try
             {
@@ -2227,7 +2228,7 @@ namespace Risebird.Repository
                                 //CC = email,
                                 Subject = "Risebird: Insuficient Balance in your wallet"
                             };
-                            var result = _notificationHelper.InsuficientBalancNotifiaction(_mail);
+                            var result = await _notificationHelper.InsuficientBalancNotifiaction(_mail);
                         }
                     }
                 }
@@ -2246,13 +2247,13 @@ namespace Risebird.Repository
                 finaldynamicParameters.Add("@Id", vedioid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<VedioComments>(finalquery, finaldynamicParameters);
+                    var result = await con.QueryAsync<VedioComments>(finalquery, finaldynamicParameters);
                     return (VedioComments)result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

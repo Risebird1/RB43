@@ -1335,7 +1335,7 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
-                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), intervieweeEmail))
+                        if (await _meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), intervieweeEmail))
                         {
                             return Json(new { url = Url.Action("MyScheduledDiscussions", "Interviewer") });
                         }
@@ -2193,7 +2193,7 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public IActionResult AddAssessments(AssignmentVM model)
+        public async Task<IActionResult> AddAssessments(AssignmentVM model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2216,7 +2216,7 @@ namespace Risebird.Web.Controllers
                             TO = Emailids,
                             Subject = "Risebird: Interviewer send assessment for approval"
                         };
-                        var resultset = _notificationHelper.SendAssessmentNotification(_mail, emailid);
+                        var resultset = await _notificationHelper.SendAssessmentNotification(_mail, emailid);
                         return RedirectToAction("InterviewerAssessment");
                     }
                     return View("AddAssessments");
@@ -2283,14 +2283,14 @@ namespace Risebird.Web.Controllers
         /// <param name="comments"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
+        public async Task<JsonResult> ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
         {
             Mail _mail = new Mail
             {
                 TO = EmailAddress,
                 Subject = "Risebird: Review Comments on your assessment"
             };
-            var resultset = _notificationHelper.SendAssessmentNotificationComments(_mail, assessment, comments);
+            var resultset = await _notificationHelper.SendAssessmentNotificationComments(_mail, assessment, comments);
             return Json("Success");
         }
         /// <summary>

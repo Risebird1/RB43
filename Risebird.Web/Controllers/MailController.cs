@@ -48,7 +48,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var result = _notificationHelper.SendHelpsupportMail(mail);
+                    var result = await _notificationHelper.SendHelpsupportMail(mail);
                     ViewBag.Message = result;
                     return View();
                 }
@@ -75,7 +75,7 @@ namespace Risebird.Web.Controllers
                     mail.TO = To;
                     mail.Subject = Subject;
                     mail.Body = Body;
-                    var result = _notificationHelper.SendHelpsupportMail(mail);
+                    var result = await _notificationHelper.SendHelpsupportMail(mail);
                     if (result == "Mail sent successfully.")
                     {
                         return Json("Success");
