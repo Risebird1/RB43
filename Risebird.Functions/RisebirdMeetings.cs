@@ -31,7 +31,7 @@ namespace Risebird.Functions
 
             string jsonContent = await req.Content.ReadAsStringAsync();
             log.Info(jsonContent);
-           // string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
+            // string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
             //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
@@ -272,7 +272,7 @@ namespace Risebird.Functions
             }
             if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "1")
             {
-              
+
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     var query = "select* from[dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid where candidateEmail = @candidateEmail and intc.MeetingStatus = 4 and IRFId= @IRFId";
@@ -286,7 +286,7 @@ namespace Risebird.Functions
                     {
                         //Cancel Interview
                         var query1 = "Update InterviewMeetings set isAutoCancelled=1,confirmationStatus=2,Cancellationsource='Already Completed Interview' where id=@meetingid";
-                         results = con.Query(query1, dynamicParameters1);                  
+                        results = con.Query(query1, dynamicParameters1);
 
                         var masg = new SendGridMessage();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
@@ -627,7 +627,7 @@ namespace Risebird.Functions
                 }
                 var irfid = 0;
                 var queryirf = "Select id from IRF where IRFId=@IRFId";
-               
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var dynamicParametersirf1 = new DynamicParameters();

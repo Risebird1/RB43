@@ -85,7 +85,7 @@ namespace Risebird.Web.Controllers
                         TO = model1.Interviewer,
                         Subject = "Candidate Interview Feedback"
                     };
-                    var resultsetdetails = _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
+                    var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
 
                 }
 

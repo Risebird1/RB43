@@ -2000,10 +2000,10 @@ namespace Risebird.Web.Controllers
                             model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel "+ model.IRFId + " has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
-                            else if(model.IRFId != null)
+                            else if (model.IRFId != null)
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
                                 return RedirectToAction("Index");
@@ -3649,7 +3649,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult PauseIRF(int irfId, string irfName)
+        public async Task<IActionResult> PauseIRF(int irfId, string irfName)
         {
             try
             {
@@ -3659,7 +3659,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (_irfService.PauseIRF(irfId, irfName))
+                        if (await _irfService.PauseIRF(irfId, irfName))
                         {
                             TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");
@@ -3682,7 +3682,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "IRF pause Failed";
                 return RedirectToAction("Index");
             }
@@ -5829,7 +5829,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public JsonResult SendEmailForCandidateFeedbackByIRF(string IRFId)
+        public async Task<JsonResult> SendEmailForCandidateFeedbackByIRF(string IRFId)
         {
             var modelData = new List<SurveyVM>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -5853,7 +5853,7 @@ namespace Risebird.Web.Controllers
                             TO = CandidateEmail,
                             Subject = "Risebird: Feedback form"
                         };
-                        var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                        var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                         if (emailsend == "Mail sent successfully.")
                         {
                             flag = true;
@@ -6606,7 +6606,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    
+
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
@@ -6621,10 +6621,10 @@ namespace Risebird.Web.Controllers
                         model.SentBy = emailId;
                         model.Profile = profileName;
                         string result = string.Empty;
-                        if(interviewId > 0  && !shouldSendEmail)
+                        if (interviewId > 0 && !shouldSendEmail)
                         {
                             model.InterviewId = interviewId;
-                            result =  _meetingService.StoreClientBroadcastMessage(model).Result;
+                            result = _meetingService.StoreClientBroadcastMessage(model).Result;
 
                         }
                         else

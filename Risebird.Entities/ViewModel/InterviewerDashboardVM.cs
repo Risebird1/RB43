@@ -9,5 +9,5 @@
         public int QCReportCount { get; set; }
 
     }
-   
+
 }

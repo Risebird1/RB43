@@ -780,7 +780,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SendInvite(int iscId, string iscName, string emailId, DateTime endDate, int interviewerProfileId)
+        public async Task<IActionResult> SendInvite(int iscId, string iscName, string emailId, DateTime endDate, int interviewerProfileId)
         {
             try
             {
@@ -797,7 +797,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite! The requested ISC has been terminated.";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
-                        if (_iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
+                        if (await _iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
                         {
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
@@ -821,7 +821,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite!";
                 return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
             }
@@ -830,7 +830,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult CancelInvite(int iscId, string iscName, string emailId)
+        public async Task<IActionResult> CancelInvite(int iscId, string iscName, string emailId)
         {
             try
             {
@@ -843,7 +843,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
-                        if (_iInterviewerSkillsService.CancelInvite(iscId, emailId))
+                        if (await _iInterviewerSkillsService.CancelInvite(iscId, emailId))
                         {
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Invite has been cancelled Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });

@@ -1449,7 +1449,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-       
+
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> InterviewerCandidateRatingDetails()

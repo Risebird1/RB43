@@ -2655,7 +2655,7 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
-                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        if (await _meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
                         {
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("Interviews", "Candidate") });
@@ -2978,7 +2978,8 @@ namespace Risebird.Web.Controllers
                 {
                     interviewers.Add(result.EmailId);
                 }
-                _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+
+                await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
@@ -4078,9 +4079,9 @@ namespace Risebird.Web.Controllers
                     {
                         interviewers.Add(result.EmailId);
                     }
-                    var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                    var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                    var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName);
+                    var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName);
 
                     if (!string.IsNullOrEmpty(zoomMeetingId))
                     {
@@ -4355,11 +4356,11 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult PauseIRF(int irfId, string irfName)
+        public async Task<JsonResult> PauseIRF(int irfId, string irfName)
         {
             try
             {
-                if (_irfService.PauseIRF(irfId, irfName))
+                if (await _irfService.PauseIRF(irfId, irfName))
                 {
                     return Json("IRF has been paused Successfully!");
                 }
@@ -4370,7 +4371,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("IRF pause Failed");
             }
         }

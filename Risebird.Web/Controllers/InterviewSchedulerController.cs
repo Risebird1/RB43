@@ -554,7 +554,7 @@ namespace Risebird.Web.Controllers
                                                     DateTime value1 = new DateTime(year, month, (day - 1), newslot, 0, 0);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
-                                                        if (slots > (offsetbuffer*60))
+                                                        if (slots > (offsetbuffer * 60))
                                                         {
                                                             model.Add(((slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                         }
