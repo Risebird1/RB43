@@ -1403,6 +1403,40 @@ namespace Risebird.Repository
                 return "Fail";
             }
         }
+
+        public async Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewId", interviewId);
+                parameters.Add("@IRFId", IRFId);
+                parameters.Add("@RecordingSid", recordingSid);
+                parameters.Add("@CallSid", callSid);
+                parameters.Add("@callRecipient", callRecipient);
+                parameters.Add("@caller", caller);
+                parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@callRecipientPhoneNumber", callRecipientPhoneNumber);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_AddorUpdateCallRecordingData", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return OperationResponseTypes.Successful;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return OperationResponseTypes.Failed;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return OperationResponseTypes.Failed;
+            }
+        }
+
         public List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid)
         {
             try
@@ -1679,6 +1713,58 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public async Task<IEnumerable<CallRecordingDataVM>> GetRecordingDataToUpdate()
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CallRecordingDataVM>(con, "[dbo].[usp_GetRecordingDataToUpdate]", dp,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateRecordingData(CallRecordingDataVM obj)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@id", obj.id);
+                dp.Add("@RecordingSid", obj.RecordingSid);
+                dp.Add("@StartTime", obj.StartTime);
+                dp.Add("@Status", obj.Status);
+                dp.Add("@Price", obj.Price);
+                dp.Add("@PriceUnit", obj.PriceUnit);
+                dp.Add("@Duration", obj.Duration);
+                dp.Add("@RecordingUri", obj.RecordingUri);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "[dbo].[usp_UpdateRecordingDataFromTwilio]", dp,
+                        commandType: StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

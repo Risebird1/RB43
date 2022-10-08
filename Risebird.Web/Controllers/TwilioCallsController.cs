@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.CommonHelper.Interface;
+using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -50,6 +51,7 @@ namespace Risebird.Web.Controllers
             };
             var capability = new ClientCapability("ACcad9f6682d4a76df9af7cde78dd0867e",
                                                   "3f15940e73243adb8e75f9689adaa0e2",
+                                                  DateTime.Now.AddSeconds(300),
                                                   scopes: scopes);
 
             return capability.ToJwt();

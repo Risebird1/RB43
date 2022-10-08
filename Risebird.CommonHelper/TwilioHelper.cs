@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
 using Twilio;
@@ -221,5 +223,29 @@ namespace Risebird.CommonHelper
                 return false;
             }
         }
+
+        public async Task<RecordingResource> FetchCallRecordingDetails(string recordingSid)
+        {
+            try
+            {
+
+                string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
+                string authToken = _configuration["TwilioSettings:AUTH_TOKEN"];
+               
+                TwilioClient.Init(accountSid, authToken);
+
+                var recordingData = RecordingResource.Fetch(
+                    pathSid: recordingSid
+                );
+
+                return recordingData;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
