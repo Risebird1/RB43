@@ -98,6 +98,10 @@
     public class face
     {
         public string proof { get; set; }
+        public string allow_offline { get; set; } = "1";
+        public string check_duplicate_request { get; set; } = "1";
+        public int check_duplicate_request { get; set; } = 1;
+
     }
     public class verifyphone
     {
