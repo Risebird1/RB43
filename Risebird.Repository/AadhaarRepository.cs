@@ -5,6 +5,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -135,6 +136,28 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<AadhaarData>(con, "usp_GetInterviewAadhaarDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<AadhaarData>> GetAadharDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {                  
+                    var result = await SqlMapper.QueryAsync<AadhaarData>(con, "usp_GetAadhardetailsforInterview", 
+                         commandType: CommandType.StoredProcedure);
+                    return result;
                 }
             }
             catch (SqlException ex)
