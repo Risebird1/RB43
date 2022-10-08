@@ -84,6 +84,7 @@
         {
             document = new verifydocument();
             phone = new verifyphone();
+            face = new face();
         }
         public string reference { get; set; }
         public string callback_url { get; set; }
@@ -101,7 +102,6 @@
         public string allow_offline { get; set; } = "0";
         public string allow_online { get; set; } = "1";
         public string check_duplicate_request { get; set; } = "1";
-        public int check_duplicate_request { get; set; } = 1;
 
     }
     public class verifyphone
