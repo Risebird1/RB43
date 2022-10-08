@@ -1,0 +1,214 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.AadhaarData>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+
+@{
+    ViewData["Title"] = "Aadhaar Details";
+    ViewBag.PageHeader = "Aadhaar Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Aadhaar Details</h4></div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card  bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                    <div id="tableID">
+                                        <table id="dupmeeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    @*<th id='start'>Invite Count</th>*@
+                                                    <th>Name</th>
+                                                    <th>Address</th>
+                                                    <th>Email</th>
+                                                    <th>Reference ID</th>
+                                                    <th>Gender</th>
+                                                    <th>Date of Birth</th>
+                                                    @*<th>Doc Face</th>*@
+                                                    <th>Verified Using</th>
+                                                    <th>Created On</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Address</th>
+                                                    <th>Email</th>
+                                                    <th>Reference ID</th>
+                                                    <th>Gender</th>
+                                                    <th>Date of Birth</th>
+                                                    @*<th>Doc Face</th>*@
+                                                    <th>Verified Using</th>
+                                                    <th>Created On</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        @*<tr id=@item.imid>*@
+                                                        <td> @item.Name </td>
+                                                        <td>
+                                                            @if (item.Address != null && item.Address != "")
+                                                            {
+                                                                @if (item.Address.Length > 40)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.Address.Substring(0, 40)
+                                                                        </p>
+                                                                        <p class="moretext_@item.id moretext">
+                                                                            @item.Address.Substring(40, @item.Address.Length - 40)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+                                                                        <p>
+                                                                            @item.Address.Substring(0, @item.Address.Length)
+                                                                        </p>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        </td>
+
+                                                        <td> @item.email</td>
+                                                        <td> @item.reference_id</td>
+                                                        <td> @item.gender </td>
+                                                        <td> @item.dob</td>
+                                                        @*<td> @item.doc_face</td>*@
+                                                        <td> @item.verified_using</td>
+                                                        <td> @item.CreatedOn</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+        </div>
+    </div>
+</div>
+
+<script>
+    function RefreshSearch() {
+        $('#dupmeeting').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
+        $('#dupmeeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()' style='top:11px;' ><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+
+
+
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#dupmeeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#dupmeeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#dupmeeting").show();
+        }, 2000);
+    };
+                //// script for loader ends here
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
