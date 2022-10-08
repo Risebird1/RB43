@@ -98,7 +98,8 @@
     public class face
     {
         public string proof { get; set; }
-        public string allow_offline { get; set; } = "1";
+        public string allow_offline { get; set; } = "0";
+        public string allow_online { get; set; } = "1";
         public string check_duplicate_request { get; set; } = "1";
         public int check_duplicate_request { get; set; } = 1;
 
