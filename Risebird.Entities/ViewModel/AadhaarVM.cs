@@ -90,10 +90,14 @@
         public string email { get; set; }
         public string country { get; set; }
         public string language { get; set; }
-
+        public face face { get; set; }
         public string verification_mode { get; set; }
         public verifydocument document { get; set; }
         public verifyphone phone { get; set; }
+    }
+    public class face
+    {
+        public string proof { get; set; }
     }
     public class verifyphone
     {
