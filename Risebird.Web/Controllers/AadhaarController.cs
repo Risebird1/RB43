@@ -266,7 +266,7 @@ namespace Risebird.Web.Controllers
             _list.phone.phone_number = PhoneNumber;
             _list.phone.random_code = r.ToString();
             _list.phone.text = "Your verification code is " + r.ToString();
-            var client = new RestClient("https://api.shuftipro.com/");
+            var client = new RestClient("https://api.shuftipro.com/real_time/verification");
             var request = new RestRequest(Method.POST);
             request.AddHeader("Authorization", "Basic " + "MDA4M2YwODYwMDU1MmYzOWQ4MjZhZWM2NDUzMmM5NDU2MWE5ZDhlM2YyYWRhMGQ1MGFlZGFkYjdhMzUyYTVmZTpHdW16QjJpTDVDTzhGcUM4d2ExdnFHMGd4U21mVkY2SQ==");
             request.AddHeader("Content-Type", "application/json");
