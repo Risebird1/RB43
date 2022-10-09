@@ -2018,17 +2018,25 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> makecall(string sid, int interviewid, string IRFId, string CandidateEmail)
+        public async Task<JsonResult> makecall(string callSid, int? interviewid, string callRecipient, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
+                var currentUserEmailId = HttpContext.Session.GetString("email")?.Trim();
+                currentUserEmailId = currentUserEmailId.Replace("\"", "");
                 //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
                 var callbackUrl = "";
-                var result = await _twiliohelper.callrecording(sid, callbackUrl);
-                var resultset = _userService.SaveCallRecording(interviewid, IRFId, CandidateEmail, emailid, sid, result);
-                return Json(result);
+                var recordingSid = await _twiliohelper.callrecording(callSid, callbackUrl);
+                if(!string.IsNullOrEmpty(recipientType) && recipientType ==  "Interviewer")
+                {
+                    var resultset = _userService.SaveCallRecordingInterviewer(callRecipient, currentUserEmailId, callSid, recordingSid);
+                }
+                else
+                {
+                    var resultset = _userService.SaveCallRecording((interviewid.HasValue ? interviewid.Value : 0), IRFId, callRecipient, currentUserEmailId, callSid, recordingSid);
+                }
+                _ = await _userService.SaveCallRecordingData(interviewid, callRecipient, currentUserEmailId, callSid, recordingSid, callRecipientPhoneNumber, IRFId);
+                return Json(recordingSid);
             }
             return Json("Fail");
         }
