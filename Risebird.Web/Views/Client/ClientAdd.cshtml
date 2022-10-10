@@ -137,6 +137,18 @@
                                             @Html.CheckBoxFor(model => model.IsMeetingAutoCancelled) Auto cancel candidate interview.<i title="Candidate does not confirm availability" class="fa fa-info-circle"></i>
                                         </div>
                                     </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsQCRequired) QC done by Client
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsRedoInterview) Redo Interview<i title="Redo Interview raised by client" class="fa fa-info-circle"></i>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PerInterviewRate, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
