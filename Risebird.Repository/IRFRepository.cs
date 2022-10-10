@@ -1939,6 +1939,15 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@idRecommendation", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@idRecommendation"].Value = irfDetails.IRFRecommendations.id;
 
@@ -2787,6 +2796,9 @@ namespace Risebird.Repository
             parameters.Add("@IsJoinabilitySelectabilityRequired", entity.IsJoinabilitySelectabilityRequired);
             parameters.Add("@IsGeneralSkillRequired", entity.IsGeneralSkillRequired);
             parameters.Add("@IsAadhaarVerificationRequired", entity.IsAadhaarVerificationRequired);
+            parameters.Add("@IsCandidateavailability", entity.IsCandidateavailability);
+            parameters.Add("@IsMeetingAutoCancelled", entity.IsMeetingAutoCancelled);
+            parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
@@ -5978,6 +5990,13 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromTemplateId", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@CreatedFromTemplateId"].Value = irfDetails.CreatedFromTemplateId;
 
@@ -6311,6 +6330,25 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public bool EditIRFConfiguration(int irfId)
+        {
+            try
+            {
+                var query = "Select Case When IsCandidateavailability is null and IsMeetingNotificationSend is null then 0 Else 1 END from IRF where IRF.id =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<bool>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

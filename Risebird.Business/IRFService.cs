@@ -31,9 +31,10 @@ namespace Risebird.Business
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
         private readonly ISkillService _skillService;
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
+        private readonly IClientRepository _clientRepository;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService, IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService, IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IClientRepository clientRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +49,7 @@ namespace Risebird.Business
             _interviewSchedulerRepository = interviewSchedulerRepository;
             _skillService = skillService;
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
+            _clientRepository = clientRepository;
         }
 
         #region IRF Functions
@@ -473,6 +475,17 @@ namespace Risebird.Business
 
                 //get all values from database
                 var IRF = _irfRepository.EditIRF(id);
+                var IRFConfiguration = _irfRepository.EditIRFConfiguration(id);
+                if (!IRFConfiguration)
+                {
+                    var _clientdetails = _clientRepository.GetClient(id).Result;
+                    if (_clientdetails != null)
+                    {
+                        IRF.IsCandidateavailability = _clientdetails.IsCandidateavailability;
+                        IRF.IsMeetingAutoCancelled = _clientdetails.IsMeetingAutoCancelled;
+                        IRF.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
+                    }
+                }
                 var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
                 var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 var transJoinability = _irfRepository.GetTransJoinability(id);
@@ -561,6 +574,9 @@ namespace Risebird.Business
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
                 model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
                 model.IsAadhaarVerificationRequired = IRF.IsAadhaarVerificationRequired;
+                model.IsCandidateavailability = IRF.IsCandidateavailability;
+                model.IsMeetingAutoCancelled = IRF.IsMeetingAutoCancelled;
+                model.IsMeetingNotificationSend = IRF.IsMeetingNotificationSend;
                 return model;
             }
             catch (Exception e)
@@ -1356,7 +1372,7 @@ namespace Risebird.Business
                     //get emails
                     foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
-                       await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId);
+                        await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId);
                         //insert meeting in PausedIRF
                         // _irfRepository.AddPausedMeetings(irfId, item.imid);
 
@@ -1973,7 +1989,7 @@ namespace Risebird.Business
                                    }
                                    else
                                    {
-                                       mailResult =  _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource).Result;
+                                       mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource).Result;
                                    }
                                    var index = data.Rows.IndexOf(row);
                                    if (mailResult.ToLower().Contains("success"))
