@@ -287,6 +287,7 @@ namespace Risebird.Entities.ViewModel
         public string MeetingPlatform { get; set; }
         public string BackUpLink { get; set; }
         public string BackUpLinkId { get; set; }
+        public bool IsClientQCRequired { get; set; }
     }
     public class VedioComments
     {

@@ -33,7 +33,6 @@
                 </div>
 
                 <div class="pull-right">
-                    
                 </div>
             </div>
         </div>
@@ -128,7 +127,7 @@
         </div>
     </div>
 </div>
-<div id="RedoInterviewModel" class="modal modal-bg">
+<div id="RedoInterviewModel" class="modal modal-bg" style="z-index:5">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -300,10 +299,10 @@
             $('#read_' + id).val('Readmore');
         }
     }
-    function OpenRedoFormModel(interviewid) {
+    function OpenRedoFormModel(interviewid, interviewstatus) {
         $.ajax({
             url: '/Interview/RedoInterviewDetails',
-            data: { 'interviewid': interviewid },
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus },
             success: function (data) {
                 $('#divredoInterview').html('');
                 $('#divredoInterview').html(data);
