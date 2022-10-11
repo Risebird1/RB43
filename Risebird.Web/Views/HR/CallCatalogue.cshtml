@@ -66,6 +66,14 @@
                             </button>
                         </div>
                         <div style="float:left">
+                            @if(ViewBag.profile == "Admin")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings Details</font></span>
+                                </button>
+                                
+                            }
+                            
                         </div>
                     </div>
                     <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallCatalogueExporttoExcel", "HR")'"></i></span>

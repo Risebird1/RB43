@@ -991,34 +991,34 @@
                                                                     }
 
 
-                                                                </div>
                                                             </div>
-                                                        </td>
-                                                        <td>
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
-                                                            }
-                                                        </td>
-                                                        <td>@item.imid</td>
-                                                        @if (item.HasDistinctParticipants)
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
-                                                            <td>Yes</td>
+                                                            <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid', '@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
                                                         }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (!string.IsNullOrEmpty(item.TemplateName))
-                                                        {
-                                                            <td>@item.TemplateName</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>None</td>
-                                                        }
-                                                    </tr>
+                                                    </td>
+                                                    <td>@item.imid</td>
+                                                    @if (item.HasDistinctParticipants)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.TemplateName))
+                                                    {
+                                                        <td>@item.TemplateName</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>None</td>
+                                                    }
+                                                </tr>
                                                 }
                                             </tbody>
                                         </table>
@@ -1033,7 +1033,9 @@
                         <!-- end col-md-12 -->
                     </div>
 
-                    <div id="myModal" class="modal modal-bg">
+                    @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+                    @*<div id="myModal" class="modal modal-bg">
                         <!-- Modal content -->
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
@@ -1069,7 +1071,7 @@
                             </div>
 
                         </div>
-                    </div>
+                    </div>*@
 
 
                     <!-- end row -->
@@ -1398,7 +1400,7 @@
         </div>
     </div>
 </div>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+@*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
 
 <script>
@@ -1697,8 +1699,10 @@
     };
     //// script for loader ends here
 </script>
+
+<script src="~/js/TwilioCallMaker.js"></script>
 <script>
-    var candidate = "";
+    @*var candidate = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1770,7 +1774,7 @@
         hangUp();
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
-    }
+    }*@
     //function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
     //    $.ajax({
     //        url: '/Candidate/PublicCancelInterview',
@@ -2547,4 +2551,4 @@
 
 <script src="~/js/ModalFormServerValidation.js"></script>
 
-<script src="~/js/CallTwilio.js"></script>
+@*<script src="~/js/CallTwilio.js"></script>*@
