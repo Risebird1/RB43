@@ -206,7 +206,7 @@ namespace Risebird.Business
                 //{
                 //    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
                 //    {
-                //        if (groupid == "" || String.IsNullOrEmpty(item.AssessmentGroupId))
+                //        if (groupid == "" || string.IsNullOrEmpty(item.AssessmentGroupId))
                 //        {
                 //            continue;
                 //        }
@@ -1090,13 +1090,13 @@ namespace Risebird.Business
                     //var staffingAgency = await _candidateRepository.GetCandidateStaffingAgency(candidate.id);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    string oneTimeSchedulingLink = String.Empty;
+                    string oneTimeSchedulingLink = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
-                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
-                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
@@ -1114,7 +1114,7 @@ namespace Risebird.Business
                     else
                     {
                         //_notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
-                        _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                        await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
 
                     }
                     WhatsAppVM _whatsapp = new WhatsAppVM();
@@ -1187,7 +1187,7 @@ namespace Risebird.Business
                     var jdLink = irf.JDLink;
                     var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                    var result = _notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
+                    var result = await _notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
                     if (result.ToLower().Contains("success"))
                     {
                         return true;
@@ -1343,7 +1343,7 @@ namespace Risebird.Business
                 return new List<IRFVm>();
             }
         }
-        public bool PauseIRF(int irfId, string irfName)
+        public async Task<bool> PauseIRF(int irfId, string irfName)
         {
             try
             {
@@ -1356,12 +1356,11 @@ namespace Risebird.Business
                     //get emails
                     foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
-                        _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId);
+                       await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId);
                         //insert meeting in PausedIRF
                         // _irfRepository.AddPausedMeetings(irfId, item.imid);
 
-
-                        _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"));
+                        await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"));
 
                     }
                     //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
@@ -1371,7 +1370,7 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -1952,13 +1951,13 @@ namespace Risebird.Business
                                {
                                    var candidate = _irfRepository.GetCandidateByIRF(irfId, candidateEmail).Result;
                                    string mailResult = string.Empty;
-                                   string oneTimeSchedulingLink = String.Empty;
+                                   string oneTimeSchedulingLink = string.Empty;
                                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                                    {
-                                       string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
-                                       var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                                       string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                                       var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
                                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                                       if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                                       if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                                        {
                                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                                        }
@@ -1974,7 +1973,7 @@ namespace Risebird.Business
                                    }
                                    else
                                    {
-                                       mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                                       mailResult =  _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource).Result;
                                    }
                                    var index = data.Rows.IndexOf(row);
                                    if (mailResult.ToLower().Contains("success"))
@@ -2812,13 +2811,13 @@ namespace Risebird.Business
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    string oneTimeSchedulingLink = String.Empty;
+                    string oneTimeSchedulingLink = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
-                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
-                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
@@ -2884,14 +2883,14 @@ namespace Risebird.Business
                 var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
                 var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
-                var interviewdetails = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.imid == interviewid);
+                var interviewdetails = await _candidateRepository.FetchChannelOwnerandInterviewer(interviewid);
                 var jdLink = irf.JDLink;
                 var client = _clientService.GetClient(irf.ClientId);
                 var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                 string primarySkill = string.Empty;
                 primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                 string oneTimeSchedulingLink = String.Empty;
-                _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
+                _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
                 return true;
             }
             catch (Exception ex)

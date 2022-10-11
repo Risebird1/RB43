@@ -43,5 +43,7 @@ namespace Risebird.Entities.ViewModel
         //[Display(Name = "Password Reset after first login/Password aging")]
         //public bool IsPasswordReset { get; set; }
         public bool IsRecruiterActive { get; set; }
+        public bool IsQCRequired { get; set; }
+        public bool IsRedoInterview { get; set; }
     }
 }

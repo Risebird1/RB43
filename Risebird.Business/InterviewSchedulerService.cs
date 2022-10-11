@@ -226,5 +226,41 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink, string zoommeetingid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.UpdateMeetingLinkDetails(interviewid, zoomLink, zoommeetingid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public List<string> fetchSkillChannelHRDetails(string IRFId)
+        {
+            try
+            {
+                return _interviewSchedulerRepository.fetchSkillChannelHRDetails(IRFId);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<string> fetchSkillChannelStaffingDetails(string IRFId)
+        {
+            try
+            {
+                return _interviewSchedulerRepository.fetchSkillChannelStaffingDetails(IRFId);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

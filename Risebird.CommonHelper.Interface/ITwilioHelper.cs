@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Risebird.CommonHelper.Interface
 {
@@ -10,6 +11,7 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> AutoCallCandidate(string phoneNumber, int irfId, int candidateId, string loggedInEmail);
         Task<string> callrecording(string callSid, string callbackUrl);
         Task<bool> CandidateReminderCall(string phoneNumber, string FirstName, string interviewdate);
+        Task<RecordingResource> FetchCallRecordingDetails(string recordingSid);
 
     }
 }

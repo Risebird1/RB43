@@ -10,7 +10,7 @@ namespace Risebird.Business.Interface
     public interface IMeetingService
     {
         List<MeetingVM> GetMeetingList();
-        bool AddMeeting(AddUpdateMeetingVM meeting);
+        Task<bool> AddMeeting(AddUpdateMeetingVM meeting);
         List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites(string emailid);
@@ -36,7 +36,7 @@ namespace Risebird.Business.Interface
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP, string clientEmailId);
         bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus, string performedBy = null);
         Task<List<Meeting>> GetCandidateInterviews(string emailID, string status);
-        bool CancelInterview(int meetingid, string interviewDate, string candidateEmail);
+        Task<bool> CancelInterview(int meetingid, string interviewDate, string candidateEmail);
         List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList);
         List<string> GetEndClientList(string emailId, List<MeetingVM> meetingList);
         List<string> GetIRFList(string emailId, List<MeetingVM> meetingList);
@@ -54,7 +54,7 @@ namespace Risebird.Business.Interface
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);
         string CandidateSuitable(int id, string email, string Comment);
-        VedioComments Intrestreaction(string vedioid, string Status);
+        Task<VedioComments> Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
         List<Meeting> ShortListedClient(string emailid, string IRFID);
         List<Meeting> InterestListClient(string emailid, string IRFID);
@@ -163,7 +163,7 @@ namespace Risebird.Business.Interface
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,bool response);
+        string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
@@ -202,5 +202,6 @@ namespace Risebird.Business.Interface
         Task<string> GetMeetingPlatformbyIRFId(string IRFId);
         List<MeetingVM> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);
+        Task<string> StoreClientBroadcastMessage(BroadcastModel model);
     }
 }

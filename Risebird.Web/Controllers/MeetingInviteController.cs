@@ -71,7 +71,7 @@ namespace Risebird.Web
                 _meeting.attendees = new List<Attendee>();
                 _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = candidateEmailId, name = "" }, type = "required" });
                 _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = loggedinUser, name = "" }, type = "required" });
-                if (!String.IsNullOrEmpty(AdditionalUser))
+                if (!string.IsNullOrEmpty(AdditionalUser))
                 {
                     var emailaddresses = AdditionalUser.Split(";");
                     foreach (var item in emailaddresses)
@@ -96,7 +96,7 @@ namespace Risebird.Web
                     var resultValue = await _meetingInviteService.InsertMeetingInvite(startdate, enddate, loggedinUser, accountEmail, meetingURL.ToString(), candidateEmailId + ";" + AdditionalUser, Subject, TimeZoneDetails);
                     if (!resultValue.Contains("failed"))
                     {
-                        var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue, Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
+                        var resultset = await _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue, Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
                         if (resultset == "Mail sent Successfully.")
                         {
                             return Json("Invite sent successfully");

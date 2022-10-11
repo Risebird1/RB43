@@ -771,7 +771,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload failed!");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed!");
                                     return View("UploadAudio", model);
                                 }
                                 else

@@ -824,7 +824,7 @@ namespace Risebird.Web.Controllers
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
                         //Start: Auto Generate Scheduling Link 
-                        if (String.IsNullOrEmpty(irfDetails.CalendlyLink))
+                        if (string.IsNullOrEmpty(irfDetails.CalendlyLink))
                         {
                             var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling");
                             irfDetails.CalendlyLink = _schedulinglink;
@@ -832,7 +832,12 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
-                            TempData["SuccessErrorMessage"] = "Skills Channel has been added Successfully!";
+                            TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
+                            return RedirectToAction("Index");
+                        }
+                        else if (irfDetails.IRFId != null)
+                        {
+                            TempData["SuccessErrorMessage"] = "Failed to add " + irfDetails.IRFId + " Skills Channel!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -930,7 +935,7 @@ namespace Risebird.Web.Controllers
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
             model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            if (!String.IsNullOrEmpty(model.InterviewerId))
+            if (!string.IsNullOrEmpty(model.InterviewerId))
             {
                 List<InterviewerIds> _string = new List<InterviewerIds>();
                 ViewBag.InterviewerFromSearch = model.InterviewerId;
@@ -1452,10 +1457,10 @@ namespace Risebird.Web.Controllers
 
                         //                        ViewData["list"] = list;
                         ViewBag.profileName = profileName.ToLower();
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = selectedMeeting.Count;
@@ -1535,10 +1540,10 @@ namespace Risebird.Web.Controllers
                             modelList.ForEach(x => x.IsAdmin = true);
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            modelList = modelList.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = modelList.Count;
@@ -1688,12 +1693,12 @@ namespace Risebird.Web.Controllers
 
                         meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
-                            || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
-                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                            || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count;
@@ -1986,7 +1991,7 @@ namespace Risebird.Web.Controllers
                             }
                             var domain = Request.Scheme + "://" + Request.Host.Value;
                             //Start: Auto Generate Scheduling Link 
-                            if (String.IsNullOrEmpty(model.CalendlyLink))
+                            if (string.IsNullOrEmpty(model.CalendlyLink))
                             {
                                 var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                                 model.CalendlyLink = _schedulinglink;
@@ -1995,7 +2000,12 @@ namespace Risebird.Web.Controllers
                             model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
+                                return RedirectToAction("Index");
+                            }
+                            else if (model.IRFId != null)
+                            {
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
                                 return RedirectToAction("Index");
                             }
                             else
@@ -2008,7 +2018,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
+                                return RedirectToAction("Index");
+                            }
+                            else if (model.IRFId != null)
+                            {
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
                                 return RedirectToAction("Index");
                             }
                             else
@@ -2078,7 +2093,7 @@ namespace Risebird.Web.Controllers
             var Skillset = _irfRepository.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
             if (!model.IsClone)
@@ -2129,7 +2144,7 @@ namespace Risebird.Web.Controllers
             {
                 model.Type = "B2B";
             }
-            if (String.IsNullOrEmpty(model.AssessmentGroupId))
+            if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
                 model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(model.id).Result;
                 model.InterviewerCollection = new List<TransInterviewer>();
@@ -2242,7 +2257,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
                                     GetStatusList(model);
                                     return View("AddReport", model);
                                 }
@@ -2256,7 +2271,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
-                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                            ModelState.AddModelError(string.Empty, "Video file/link not found.");
                             GetStatusList(model);
                             return View("AddReport", model);
                         }
@@ -2280,7 +2295,7 @@ namespace Risebird.Web.Controllers
                                 var uploadedvideoFileURL = resulttype;
                                 if (uploadedvideoFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Video Upload is failed.");
                                     GetStatusList(model);
                                     return View("AddReport", model);
                                 }
@@ -2377,7 +2392,7 @@ namespace Risebird.Web.Controllers
                         List<object> iData = new List<object>();
 
                         DataTable dt = new DataTable();
-                        dt.Columns.Add("Meeting Status", System.Type.GetType("System.String"));
+                        dt.Columns.Add("Meeting Status", System.Type.GetType("System.string"));
                         dt.Columns.Add("Count", System.Type.GetType("System.Int32"));
 
                         DataRow dr = dt.NewRow();
@@ -2460,7 +2475,7 @@ namespace Risebird.Web.Controllers
                         List<object> iData = new List<object>();
                         //Creating sample data  
                         DataTable dt = new DataTable();
-                        dt.Columns.Add("Interview Status", System.Type.GetType("System.String"));
+                        dt.Columns.Add("Interview Status", System.Type.GetType("System.string"));
                         dt.Columns.Add("Count", System.Type.GetType("System.Int32"));
 
                         DataRow dr = dt.NewRow();
@@ -2796,10 +2811,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                            candidateList = candidateList.Where(x => (!string.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
                         ViewBag.TotalCount = candidateList.Count;
@@ -3634,7 +3649,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult PauseIRF(int irfId, string irfName)
+        public async Task<IActionResult> PauseIRF(int irfId, string irfName)
         {
             try
             {
@@ -3644,7 +3659,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (_irfService.PauseIRF(irfId, irfName))
+                        if (await _irfService.PauseIRF(irfId, irfName))
                         {
                             TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");
@@ -3667,7 +3682,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "IRF pause Failed";
                 return RedirectToAction("Index");
             }
@@ -3802,7 +3817,7 @@ namespace Risebird.Web.Controllers
                         // code for fetch data or any thing else
                         InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
                         interviewerVM.id = Convert.ToInt32(Id);
-                        if (!String.IsNullOrEmpty(Videoid))
+                        if (!string.IsNullOrEmpty(Videoid))
                         {
                             //fetch vediolink wth details
                             var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
@@ -4603,8 +4618,8 @@ namespace Risebird.Web.Controllers
         public IActionResult InterviewerEntitle(Assessment model)
         {
             List<Skill> skills = _skillService.GetSkills();
-            List<String> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-            model._skilldetails.PrimarySkill = String.Join(",", selectedSkill);
+            List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+            model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
             var result = _irfService.Addassignmentgroup(model._skilldetails);
             if (result == "Success")
             {
@@ -4957,10 +4972,10 @@ namespace Risebird.Web.Controllers
         {
             int Page = 1;
             var candidateList = _modelDetails;
-            if (!String.IsNullOrEmpty(searchValue))
+            if (!string.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper().Trim();
-                candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                candidateList = candidateList.Where(x => (!string.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
             }
             int totalcount = candidateList.Count;
@@ -5002,12 +5017,12 @@ namespace Risebird.Web.Controllers
         {
             int Page = 1;
             var meetings = _modelDetail;
-            if (!String.IsNullOrEmpty(searchValue))
+            if (!string.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper().Trim();
-                meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
-                            || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
-                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                            || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
             }
             int totalcount = meetings.Count;
@@ -5049,10 +5064,10 @@ namespace Risebird.Web.Controllers
         {
             int Page = 1;
             var selectedMeeting = _modelDetail;
-            if (!String.IsNullOrEmpty(searchValue))
+            if (!string.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper().Trim();
-                selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
             }
             int totalcount = selectedMeeting.Count;
@@ -5094,11 +5109,11 @@ namespace Risebird.Web.Controllers
         {
             int Page = 1;
             var modelList = _modelDetle;
-            if (!String.IsNullOrEmpty(searchValue))
+            if (!string.IsNullOrEmpty(searchValue))
             {
                 searchValue = searchValue.ToUpper().Trim();
-                modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") ||
-                (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == string.Empty) || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == string.Empty) || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == null) || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == null)).ToList();
+                modelList = modelList.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") ||
+                (!string.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == string.Empty) || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == string.Empty) || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == null) || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == null)).ToList();
 
             }
             int totalcount = modelList.Count;
@@ -5814,7 +5829,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public JsonResult SendEmailForCandidateFeedbackByIRF(string IRFId)
+        public async Task<JsonResult> SendEmailForCandidateFeedbackByIRF(string IRFId)
         {
             var modelData = new List<SurveyVM>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -5838,7 +5853,7 @@ namespace Risebird.Web.Controllers
                             TO = CandidateEmail,
                             Subject = "Risebird: Feedback form"
                         };
-                        var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                        var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                         if (emailsend == "Mail sent successfully.")
                         {
                             flag = true;
@@ -6314,7 +6329,7 @@ namespace Risebird.Web.Controllers
             var Skillset = _irfRepository.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             foreach (var item in transTechSkills)
             {
@@ -6458,7 +6473,7 @@ namespace Risebird.Web.Controllers
             model_report.SkillChannel = SkillChannel;
             model_report.duration = 60;
             model_report.Concurrency = 10;
-            model_report.BufferTime = 12;
+            model_report.BufferTime = 18;
             model_report.MeetingPlatform = meetingPlatform;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
@@ -6495,7 +6510,7 @@ namespace Risebird.Web.Controllers
                     sb.Append("</table>");
                     foreach (var item in model)
                     {
-                        if (!String.IsNullOrEmpty(item.EmailId))
+                        if (!string.IsNullOrEmpty(item.EmailId))
                         {
                             string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
                             string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
@@ -6583,7 +6598,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid)
+        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid, int interviewId = 0, bool shouldSendEmail = true)
         {
             try
             {
@@ -6591,7 +6606,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    
+
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
@@ -6605,8 +6620,19 @@ namespace Risebird.Web.Controllers
                         model.IRFId = irfid;
                         model.SentBy = emailId;
                         model.Profile = profileName;
-                        var result = _meetingService.BroadcastIRFmembers(model);
-                        return Json(result.Result);
+                        string result = string.Empty;
+                        if (interviewId > 0 && !shouldSendEmail)
+                        {
+                            model.InterviewId = interviewId;
+                            result = _meetingService.StoreClientBroadcastMessage(model).Result;
+
+                        }
+                        else
+                        {
+                            result = _meetingService.BroadcastIRFmembers(model).Result;
+
+                        }
+                        return Json(result);
                     }
                     else
                     {
@@ -7012,7 +7038,7 @@ namespace Risebird.Web.Controllers
         //    {
         //        stringChars[i] = chars[random.Next(chars.Length)];
         //    }
-        //    var finalString = new String(stringChars);
+        //    var finalString = new string(stringChars);
         //    return finalString;
         //}
         public string GenerateSkillChannelName(string assessmentGroupName, string clientCompanyName)

@@ -282,9 +282,12 @@ namespace Risebird.Entities.ViewModel
         public bool HasDistinctParticipants { get; set; }
         public string TemplateName { get; set; }
         public bool AadhaarVerified { get; set; }
-        public bool IsAadhaarVerificationRequired { get; set; }
+        public bool? IsAadhaarVerificationRequired { get; set; }
         public bool RedoInterview { get; set; }
         public string MeetingPlatform { get; set; }
+        public string BackUpLink { get; set; }
+        public string BackUpLinkId { get; set; }
+        public bool IsClientQCRequired { get; set; }
     }
     public class VedioComments
     {

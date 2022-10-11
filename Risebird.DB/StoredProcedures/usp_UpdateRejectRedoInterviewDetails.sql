@@ -7,14 +7,14 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_UpdateRejectRedoInterviewDetails
-@interviewid int,
-@id int,
-@RejectionComment varchar(500),
-@ModifiedBy varchar(200)
-AS
-BEGIN
-Update RedoInterviews Set RejectionComment=@RejectionComment,ModifiedOn=Getdate(),ModifiedBy=@ModifiedBy where id=@id
-Update InterviewMeetings set RedoInterview=0 where id=@interviewid
+Create Procedure usp_UpdateRejectRedoInterviewDetails  
+@interviewid int,  
+@id int,  
+@RejectionComment varchar(500),  
+@ModifiedBy varchar(200)  
+AS  
+BEGIN  
+Update RedoInterviews Set RejectionComment=@RejectionComment,ModifiedOn=Getdate(),ModifiedBy=@ModifiedBy where id=@id  
+Update InterviewMeetings set RedoInterview=0 where id=@interviewid  
 END
 Go

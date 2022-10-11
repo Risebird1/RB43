@@ -38,7 +38,7 @@ namespace Risebird.MicroService
                 var _list = _interviewerService.FetchAllPasswordResetDetails(Convert.ToInt32(PasswordTimePeriod));
                 if (_list != null)
                 {
-                    var clientlist = String.Join(";", _list);
+                    var clientlist = string.Join(";", _list);
                     //Send Email Notification For reset Password
                     Mail _mail1 = new Mail
                     {

@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css?v=6" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
-    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
+    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
     {
         <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/blue-theme.css" />
     }
@@ -146,7 +146,7 @@
 
 
         <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute" style="height:53px;margin-bottom:0px;padding-left:2px">
-            @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
+            @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
             {
                 <img style="position:relative;top:0px;width:8%" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
             }
@@ -163,7 +163,7 @@
 
             <div class="mob_h">
                 <div class="pull-right">
-                    <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
+                   @* <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
                         @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
@@ -177,7 +177,7 @@
                                 <c style="font-size:18px"> | </c>
                             }
                         }
-                    </div>
+                    </div>*@
                     <div class="user user-r pull-left">
                         <h6 class="main-notification-title">
                             @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)

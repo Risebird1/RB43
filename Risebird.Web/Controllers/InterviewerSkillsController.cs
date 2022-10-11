@@ -257,7 +257,7 @@ namespace Risebird.Web.Controllers
                     //string skills = string.Empty;
                     //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
                     //var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
-                    if (!String.IsNullOrEmpty(model.AssessmentGroupId))
+                    if (!string.IsNullOrEmpty(model.AssessmentGroupId))
                     {
                         var interviewers = _iInterviewerSkillsService.GetInterviewersByAssessmentGroup(model.AssessmentGroupId);
                         ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
@@ -780,7 +780,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SendInvite(int iscId, string iscName, string emailId, DateTime endDate, int interviewerProfileId)
+        public async Task<IActionResult> SendInvite(int iscId, string iscName, string emailId, DateTime endDate, int interviewerProfileId)
         {
             try
             {
@@ -797,7 +797,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite! The requested ISC has been terminated.";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
-                        if (_iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
+                        if (await _iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
                         {
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
@@ -821,7 +821,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite!";
                 return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
             }
@@ -830,7 +830,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult CancelInvite(int iscId, string iscName, string emailId)
+        public async Task<IActionResult> CancelInvite(int iscId, string iscName, string emailId)
         {
             try
             {
@@ -843,7 +843,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
-                        if (_iInterviewerSkillsService.CancelInvite(iscId, emailId))
+                        if (await _iInterviewerSkillsService.CancelInvite(iscId, emailId))
                         {
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Invite has been cancelled Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
@@ -933,7 +933,7 @@ namespace Risebird.Web.Controllers
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in modelList)
                         {
-                            if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            if (!string.IsNullOrEmpty(item.Senioritylevel))
                             {
                                 int Seniorityid = Convert.ToInt32(item.Senioritylevel);
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
@@ -955,7 +955,7 @@ namespace Risebird.Web.Controllers
 
                         ViewBag.profileName = profileName;
 
-                        if (!String.IsNullOrEmpty(searchvalue))
+                        if (!string.IsNullOrEmpty(searchvalue))
                         {
                             ViewBag.searchvalue = searchvalue;
                         }
@@ -1091,7 +1091,7 @@ namespace Risebird.Web.Controllers
 
                         if (IRListModel != null)
                         {
-                            if (String.IsNullOrEmpty(IRListModel.ProfileType))
+                            if (string.IsNullOrEmpty(IRListModel.ProfileType))
                             {
                                 IRListModel.ProfileType = "";
                             }
@@ -1099,7 +1099,7 @@ namespace Risebird.Web.Controllers
                             {
                                 IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
                             }
-                            if (String.IsNullOrEmpty(IRListModel.CompentencyLevel))
+                            if (string.IsNullOrEmpty(IRListModel.CompentencyLevel))
                             {
                                 IRListModel.CompentencyLevel = "";
                             }
@@ -1152,14 +1152,14 @@ namespace Risebird.Web.Controllers
                         if (IRListModel != null)
                         {
                             int Seniorityid = Convert.ToInt32(IRListModel.Senioritylevel);
-                            if (!String.IsNullOrEmpty(IRListModel.SkillCategory))
+                            if (!string.IsNullOrEmpty(IRListModel.SkillCategory))
                             {
                                 var SkillCategorys = IRListModel.SkillCategory.Split(",");
                                 var Skillset = "";
                                 foreach (var item in SkillCategorys)
                                 {
                                     int SkillCategoryid = Convert.ToInt32(item);
-                                    if (!String.IsNullOrEmpty(Skillset))
+                                    if (!string.IsNullOrEmpty(Skillset))
                                     {
                                         Skillset = Skillset + "," + SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
                                     }
@@ -1253,7 +1253,7 @@ namespace Risebird.Web.Controllers
                     var SkillNatureList = _iRFRepository.GetSkillNature();
                     if (IRListModel != null)
                     {
-                        if (String.IsNullOrEmpty(IRListModel.ProfileType))
+                        if (string.IsNullOrEmpty(IRListModel.ProfileType))
                         {
                             IRListModel.ProfileType = "";
                         }
@@ -1261,7 +1261,7 @@ namespace Risebird.Web.Controllers
                         {
                             IRListModel.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(IRListModel.ProfileType)).GetDescription();
                         }
-                        if (String.IsNullOrEmpty(IRListModel.CompentencyLevel))
+                        if (string.IsNullOrEmpty(IRListModel.CompentencyLevel))
                         {
                             IRListModel.CompentencyLevel = "";
                         }
@@ -1312,14 +1312,14 @@ namespace Risebird.Web.Controllers
                     if (IRListModel != null)
                     {
                         int Seniorityid = Convert.ToInt32(IRListModel.Senioritylevel);
-                        if (!String.IsNullOrEmpty(IRListModel.SkillCategory))
+                        if (!string.IsNullOrEmpty(IRListModel.SkillCategory))
                         {
                             var SkillCategorys = IRListModel.SkillCategory.Split(",");
                             var Skillset = "";
                             foreach (var item in SkillCategorys)
                             {
                                 int SkillCategoryid = Convert.ToInt32(item);
-                                if (!String.IsNullOrEmpty(Skillset))
+                                if (!string.IsNullOrEmpty(Skillset))
                                 {
                                     Skillset = Skillset + "," + SkillCategoryList.Where(x => x.Id == SkillCategoryid).FirstOrDefault().Name;
                                 }
@@ -1523,12 +1523,12 @@ namespace Risebird.Web.Controllers
                         ViewData["list"] = list;
                         meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
-                            || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
-                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                            || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count;
@@ -1662,10 +1662,10 @@ namespace Risebird.Web.Controllers
 
                         ViewData["list"] = list;
                         ViewBag.profileName = profileName.ToLower();
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                            selectedMeeting = selectedMeeting.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!string.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!string.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!string.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = selectedMeeting.Count;

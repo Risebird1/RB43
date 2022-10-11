@@ -384,7 +384,7 @@ namespace Risebird.Repository
             try
             {
                 daytimes_report resultset = new daytimes_report();
-                var query = "Select * from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
+                var query = "Select * from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", olduniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -449,6 +449,62 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+        public async Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink, string zoommeetingid)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set BackUpLink=@BackUpLink,BackUpLinkId=@BackUpLinkId where id=@interviewid";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@interviewid", interviewid);
+                dp.Add("@BackUpLink", zoomLink);
+                dp.Add("@BackUpLinkId", zoommeetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync(query, dp);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public List<string> fetchSkillChannelHRDetails(string IRFId)
+        {
+            try
+            {
+                var query = "Select distinct ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where (tc.ClientRoleId=1 or tc.ClientRoleId=2) and IRF.IRFId=@IRFId";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dp);
+                    return (List<string>)results;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public List<string> fetchSkillChannelStaffingDetails(string IRFId)
+        {
+            try
+            {
+                var query = "Select ul.EmailId From IRF join TransClientUser tc on tc.IRFId=IRF.id join UserList ul on ul.Id=tc.ClientUserId where tc.ClientRoleId=4 and IRF.IRFId=@IRFId";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dp);
+                    return (List<string>)results;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

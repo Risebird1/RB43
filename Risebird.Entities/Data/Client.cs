@@ -57,5 +57,9 @@ namespace Risebird.Entities.Data
         public int InterviewDuration { get; set; }
         public SelectList InterviewDurationList { get; set; }
         public bool IsMeetingAutoCancelled { get; set; }
+        [Display(Name = "QC By Client")]
+        public bool IsQCRequired { get; set; }
+        [Display(Name = "Redo Interview By Client")]
+        public bool IsRedoInterview { get; set; }
     }
 }

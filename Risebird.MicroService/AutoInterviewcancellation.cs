@@ -50,11 +50,11 @@ namespace Risebird.MicroService
                             //var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
                             //var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
                             //List<string> interviewers = new List<string>();
-                            //if (!String.IsNullOrEmpty(result.interviewer))
+                            //if (!string.IsNullOrEmpty(result.interviewer))
                             //{
                             //    interviewers.Add(result.interviewer);
                             //}
-                            ////if (!String.IsNullOrEmpty(result.EmailId))
+                            ////if (!string.IsNullOrEmpty(result.EmailId))
                             ////{
                             ////    interviewers.Add(result.EmailId);
                             ////}

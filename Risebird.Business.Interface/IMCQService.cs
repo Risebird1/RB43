@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
     {
         string AddorUpdateMCQSet(MCQVMset _lstset);
         string AddMCQQuestions(List<MCQVM> _lstMCQ, string MCQId);
-        IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName);
+        IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName, bool requesttype);
         IEnumerable<MCQVMset> FetchMCQSetById(string MCQPId);
         string AddMCQSetShareList(MCQVMShare _list);
         IEnumerable<MCQVMShare> GetShareMCQEmailListByMCQId(string MCQPId);
@@ -18,7 +18,7 @@ namespace Risebird.Business.Interface
         string AddMCQCandidateQuestions(List<MCQVM> _question);
         string DeleteMCQCandidate(string CSPId, string CPId);
         string DeleteMCQSet(string MCQPId);
-        IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId);
+        IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId, bool requesttype);
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
         IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId);
         string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
@@ -26,5 +26,6 @@ namespace Risebird.Business.Interface
         bool SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
         CandidateDetailsForTestDuplicate FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
         MCQVMset FetchMCQSetsForApi(MCQApiVM model);
+        IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQId(string MCQPId);
     }
 }

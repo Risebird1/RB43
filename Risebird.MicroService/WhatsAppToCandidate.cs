@@ -45,7 +45,7 @@ namespace Risebird.MicroService
         //                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
         //                    _whatsAppVM.Emailid = item.candidateEmail;
         //                    _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-        //                    _whatsAppVM.buttonlink = !String.IsNullOrEmpty(urllink) ? urllink.Replace("https://portal.risebird.io/", "") : "";
+        //                    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(urllink) ? urllink.Replace("https://portal.risebird.io/", "") : "";
         //                    _whatsAppVM.Event = "Candidate Reminder";
         //                    _whatsAppVM.MessageValue = item.ClientName;
         //                    _whatsAppVM.Header = item.JobTitle;

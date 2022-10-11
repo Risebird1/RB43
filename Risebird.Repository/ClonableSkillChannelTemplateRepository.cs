@@ -114,11 +114,11 @@ namespace Risebird.Repository
 
                     foreach (var item in templateDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }
@@ -360,11 +360,11 @@ namespace Risebird.Repository
 
                     foreach (var item in templateDetails.SkillCollection)
                     {
-                        if (String.IsNullOrEmpty(item.Concepts))
+                        if (string.IsNullOrEmpty(item.Concepts))
                         {
                             item.Concepts = "";
                         }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
                         {
                             item.Natureofquestion = "";
                         }
@@ -413,6 +413,9 @@ namespace Risebird.Repository
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromIRFId", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@CreatedFromIRFId"].Value = templateDetails.id;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = templateDetails.MeetingPlatform;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@ModifiedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@ModifiedOn"].Value = DateTime.Now;
@@ -491,7 +494,7 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@QuestionsBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@QuestionsBulkData"].Value = questionsDt;
                     }
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Structured));
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = templateDetails.IsAadhaarVerificationRequired;
                     con.Open();
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)

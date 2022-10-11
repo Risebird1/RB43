@@ -92,15 +92,15 @@ namespace Risebird.Web.Controllers
                         var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                         foreach (var item in model)
                         {
-                            if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                             {
-                                var Assessmentgroups = String.Empty;
+                                var Assessmentgroups = string.Empty;
                                 foreach (var groups in item.AssessmentGroupId.Split(","))
                                 {
                                     try
                                     {
-                                        int assesmsnetid = Convert.ToInt32(String.IsNullOrWhiteSpace(groups) ? "0" : groups);
-                                        if (String.IsNullOrEmpty(Assessmentgroups))
+                                        int assesmsnetid = Convert.ToInt32(string.IsNullOrWhiteSpace(groups) ? "0" : groups);
+                                        if (string.IsNullOrEmpty(Assessmentgroups))
                                         {
                                             Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
                                         }
@@ -152,13 +152,13 @@ namespace Risebird.Web.Controllers
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in model)
                         {
-                            if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            if (!string.IsNullOrEmpty(item.Senioritylevel))
                             {
-                                var Senioritylevelgroups = String.Empty;
+                                var Senioritylevelgroups = string.Empty;
                                 foreach (var itemseniority in item.Senioritylevel.Split(","))
                                 {
                                     int Seniorityid = Convert.ToInt32(itemseniority);
-                                    if (String.IsNullOrEmpty(Senioritylevelgroups))
+                                    if (string.IsNullOrEmpty(Senioritylevelgroups))
                                     {
                                         Senioritylevelgroups = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                                     }
@@ -195,17 +195,17 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
 
-                        if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                        if (string.IsNullOrEmpty(searchValue) && Page > 1)
                         {
                             searchValue = Searchvalueprofile;
                         }
                         Searchvalueprofile = searchValue;
 
                         ViewBag.Searchvalue = searchValue;
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                            model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
                         ViewBag.TotalCount = model.Count;
@@ -278,13 +278,13 @@ namespace Risebird.Web.Controllers
                         var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                         foreach (var item in model)
                         {
-                            if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                             {
-                                var Assessmentgroups = String.Empty;
+                                var Assessmentgroups = string.Empty;
                                 foreach (var groups in item.AssessmentGroupId.Split(","))
                                 {
                                     int assesmsnetid = Convert.ToInt32(groups);
-                                    if (String.IsNullOrEmpty(Assessmentgroups))
+                                    if (string.IsNullOrEmpty(Assessmentgroups))
                                     {
                                         Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
                                     }
@@ -326,7 +326,7 @@ namespace Risebird.Web.Controllers
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in model)
                         {
-                            if (!String.IsNullOrEmpty(item.Senioritylevel))
+                            if (!string.IsNullOrEmpty(item.Senioritylevel))
                             {
                                 int Seniorityid = Convert.ToInt32(item.Senioritylevel);
                                 item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
@@ -357,17 +357,17 @@ namespace Risebird.Web.Controllers
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
                         ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
-                        if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                        if (string.IsNullOrEmpty(searchValue) && Page > 1)
                         {
                             searchValue = Searchvalueprofile;
                         }
                         Searchvalueprofile = searchValue;
 
                         ViewBag.Searchvalue = searchValue;
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+                            model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
                         ViewBag.TotalCount = model.Count;
@@ -738,7 +738,7 @@ namespace Risebird.Web.Controllers
             var Skillset = _skillService.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
@@ -1335,7 +1335,7 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
-                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), intervieweeEmail))
+                        if (await _meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), intervieweeEmail))
                         {
                             return Json(new { url = Url.Action("MyScheduledDiscussions", "Interviewer") });
                         }
@@ -1498,16 +1498,16 @@ namespace Risebird.Web.Controllers
                         }
 
 
-                        if (String.IsNullOrEmpty(searchValue) && Page > 1)
+                        if (string.IsNullOrEmpty(searchValue) && Page > 1)
                         {
                             searchValue = SearchvalueInterviewer;
                         }
                         SearchvalueInterviewer = searchValue;
                         ViewBag.Searchvalue = searchValue;
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+                            myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!string.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                         }
                         ViewBag.TotalCount = myInterview.Count;
@@ -1883,7 +1883,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
                                     GetStatusList(model);
                                     return View("AddReport", model);
                                 }
@@ -1906,7 +1906,7 @@ namespace Risebird.Web.Controllers
 
                             if (uploadedvideoFileURL == null)
                             {
-                                ModelState.AddModelError(String.Empty, "Video Upload has failed.");
+                                ModelState.AddModelError(string.Empty, "Video Upload has failed.");
                                 GetStatusList(model);
                                 return View("AddReport", model);
                             }
@@ -2193,7 +2193,7 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public IActionResult AddAssessments(AssignmentVM model)
+        public async Task<IActionResult> AddAssessments(AssignmentVM model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2208,15 +2208,15 @@ namespace Risebird.Web.Controllers
                     //send mail to HR
                     if (result == "Success")
                     {
-                        var hrlist = new List<String>();
+                        var hrlist = new List<string>();
                         hrlist = _supportService.GetAllSupportHR(emailid).Select(x => x.EmailId).ToList();
-                        var Emailids = String.Join(";", hrlist);
+                        var Emailids = string.Join(";", hrlist);
                         Mail _mail = new Mail
                         {
                             TO = Emailids,
                             Subject = "Risebird: Interviewer send assessment for approval"
                         };
-                        var resultset = _notificationHelper.SendAssessmentNotification(_mail, emailid);
+                        var resultset = await _notificationHelper.SendAssessmentNotification(_mail, emailid);
                         return RedirectToAction("InterviewerAssessment");
                     }
                     return View("AddAssessments");
@@ -2283,14 +2283,14 @@ namespace Risebird.Web.Controllers
         /// <param name="comments"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
+        public async Task<JsonResult> ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
         {
             Mail _mail = new Mail
             {
                 TO = EmailAddress,
                 Subject = "Risebird: Review Comments on your assessment"
             };
-            var resultset = _notificationHelper.SendAssessmentNotificationComments(_mail, assessment, comments);
+            var resultset = await _notificationHelper.SendAssessmentNotificationComments(_mail, assessment, comments);
             return Json("Success");
         }
         /// <summary>
@@ -2345,9 +2345,9 @@ namespace Risebird.Web.Controllers
                 var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                 foreach (var item in model)
                 {
-                    if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                    if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                     {
-                        var Assessmentgroups = String.Empty;
+                        var Assessmentgroups = string.Empty;
                         foreach (var groups in item.AssessmentGroupId.Split(","))
                         {
                             int assesmsnetid = 0;
@@ -2356,7 +2356,7 @@ namespace Risebird.Web.Controllers
                                 assesmsnetid = Convert.ToInt32(groups);
                             }
                             //int assesmsnetid = Convert.ToInt32(groups);
-                            if (String.IsNullOrEmpty(Assessmentgroups))
+                            if (string.IsNullOrEmpty(Assessmentgroups))
                             {
                                 Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
                             }
@@ -2395,13 +2395,13 @@ namespace Risebird.Web.Controllers
                 var Senioritylevel = _iRFRepository.GetSenioritylevel();
                 foreach (var item in model)
                 {
-                    if (!String.IsNullOrEmpty(item.Senioritylevel))
+                    if (!string.IsNullOrEmpty(item.Senioritylevel))
                     {
-                        var Senioritylevelgroups = String.Empty;
+                        var Senioritylevelgroups = string.Empty;
                         foreach (var itemseniority in item.Senioritylevel.Split(","))
                         {
                             int Seniorityid = Convert.ToInt32(itemseniority);
-                            if (String.IsNullOrEmpty(Senioritylevelgroups))
+                            if (string.IsNullOrEmpty(Senioritylevelgroups))
                             {
                                 Senioritylevelgroups = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
                             }
@@ -2418,10 +2418,10 @@ namespace Risebird.Web.Controllers
                 int Pagestart = 0;
                 int Pageend = 0;
                 ViewBag.Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || (!String.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+                    model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || (!string.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
                 }
                 ViewBag.TotalCount = model.Count;
                 Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -2469,10 +2469,10 @@ namespace Risebird.Web.Controllers
                 int Pageend = 0;
 
                 ViewBag.Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
+                    myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!string.IsNullOrEmpty(x.PrimarySkill) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
 
                 }
                 ViewBag.TotalCount = myInterview.Count;
@@ -2681,7 +2681,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (modelData.Where(x => x.Interviewid == item.interviewid).Count() == 0)
                             {
-                                var rating = !String.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
+                                var rating = !string.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
                                 modelData.Add(new InterviewerRating
                                 {
                                     Interviewid = item.interviewid,
@@ -2726,7 +2726,7 @@ namespace Risebird.Web.Controllers
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
                 string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
-                if (!String.IsNullOrEmpty(_uniqueid))
+                if (!string.IsNullOrEmpty(_uniqueid))
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                 }
@@ -2757,7 +2757,7 @@ namespace Risebird.Web.Controllers
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
                 string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
-                if (!String.IsNullOrEmpty(_uniqueid))
+                if (!string.IsNullOrEmpty(_uniqueid))
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                 }
@@ -2777,13 +2777,13 @@ namespace Risebird.Web.Controllers
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             foreach (var item in model)
             {
-                if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                if (!string.IsNullOrEmpty(item.AssessmentGroupId))
                 {
-                    var Assessmentgroups = String.Empty;
+                    var Assessmentgroups = string.Empty;
                     foreach (var groups in item.AssessmentGroupId.Split(","))
                     {
                         int assesmsnetid = Convert.ToInt32(groups);
-                        if (String.IsNullOrEmpty(Assessmentgroups))
+                        if (string.IsNullOrEmpty(Assessmentgroups))
                         {
                             Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
                         }
@@ -2828,7 +2828,7 @@ namespace Risebird.Web.Controllers
                     {
                         var yearstring = DateTime.Now.Year.ToString() + "-" + DateTime.Now.AddYears(1).Year.ToString();
                         _listyear.Add(yearstring);
-                        if (String.IsNullOrEmpty(year))
+                        if (string.IsNullOrEmpty(year))
                         {
                             year = yearstring;
                         }
@@ -2965,7 +2965,7 @@ namespace Risebird.Web.Controllers
                 var model = await _interviewerService.GetAllInterviewerMembers();
                 foreach (var item in model)
                 {
-                    if (!String.IsNullOrEmpty(item.EmailId))
+                    if (!string.IsNullOrEmpty(item.EmailId))
                     {
                         string yesbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid;
                         string nobutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid;
@@ -3020,7 +3020,7 @@ namespace Risebird.Web.Controllers
                         ClientFeedDataWrapper model = new ClientFeedDataWrapper();
                         //IEnumerable<ClientFeedDataVM> model = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue, interviewId);
                         model.ClientFeeds = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue, interviewId);
-                        if((model.ClientFeeds != null && model.ClientFeeds.Count() > 0) || !string.IsNullOrEmpty(meetingLink) || interviewId.HasValue)
+                        if ((model.ClientFeeds != null && model.ClientFeeds.Count() > 0) || !string.IsNullOrEmpty(meetingLink) || interviewId.HasValue)
                         {
                             model.InterviewId = interviewId;
                             model.MeetingLink = meetingLink;

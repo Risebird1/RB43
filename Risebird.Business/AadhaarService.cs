@@ -1,9 +1,10 @@
-﻿using Risebird.Business.Interface;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -71,6 +72,19 @@ namespace Risebird.Business
             try
             {
                 return await _aadhaarRepository.FetchInterviewAadhaarDetails(candidateEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<AadhaarData>> GetAadharDetails()
+        {
+            try
+            {
+                return await _aadhaarRepository.GetAadharDetails();
             }
             catch (Exception ex)
             {

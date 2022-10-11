@@ -8,8 +8,8 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ArchiveStatus = new string[] { };
@@ -25,8 +25,8 @@
 {
     filter = JsonConvert.DeserializeObject<IRFFilter>
     (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
@@ -79,11 +79,10 @@
     .tripledot:after {
         content: '\2807';
     }
-    
-    .tox-notifications-container{
-        display:none
-    }
 
+    .tox-notifications-container {
+        display: none
+    }
 </style>
 
 <script>
@@ -1178,45 +1177,7 @@
     </div>
 </div>
 
-<div id="broadcastModal" class="modal modal-bg">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
-                </div>
-                <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>@*(<label id="boradcastIrfName"></label>)*@
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" onclick="closeBroadcastModal()">&times;</span>
-            </button>
-
-            <div class="modal-body">
-                <input type="hidden" id="hid_irfid_broadcast" />
-                <div class="col-md-12 col-sm-12">
-                    <div class="form-group">
-                        <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
-                        <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
-                        
-                        <div>
-                            <textarea style="width:100%;" id="bcMessage"></textarea>
-                        </div>
-                        
-                    </div>
-                </div>
-                <div class="col-md-12 col-sm-12 text-right">
-                    <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
-                    <button type="button" onclick="closeBroadcastModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script>
@@ -1238,7 +1199,7 @@
             }
 
         });
-        
+
     });
     function loadPageData(currentPageNumber) {
         currentDataFetched = false;
@@ -1439,6 +1400,7 @@
         </script>
 
     }*@
+<script src="~/js/BroadcastMessage.js"></script>
 <script src="~/js/CallTwilio.js"></script>
 <script>
     var span = document.getElementById("callPopUp");
@@ -2282,46 +2244,6 @@
     }
 </script>
 <script>
-    function closeBroadcastModal() {
-        var modal = document.getElementById("broadcastModal");
-        tinymce.remove('#bcMessage');
-        modal.style.display = "none";
-    }
-    function OpenBroadcastModal(irfid, Irfname) {
-        var modalBct = document.getElementById("broadcastModal");
-        modalBct.style.display = "block";
-
-        tinymce.init({
-            selector: "#bcMessage",
-            menubar: false,
-            statusbar: false,
-            plugins: 'link',
-            height: "300",
-            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
-
-        });
-
-        $("#hid_irfid_broadcast").val(irfid);
-        //$("#boradcastIrfName").text(Irfname);
-        $("#filterModalLabel").text('');
-        $("#filterModalLabel").text('Broadcast (' + Irfname + ')');
-        return;
-    }
-
-    function SendBroadcast() {
-        //var message = document.getElementById("bcMessage").value;
-        var message = tinymce.activeEditor.getContent();
-        var subject = document.getElementById("bcSubject").value;
-        var irfid = document.getElementById("hid_irfid_broadcast").value;
-        $.ajax({
-            type: "POST",
-            url: "/IRF/BroadcastIRFmembers",
-            data: { 'message': message, 'subject': subject, 'irfid': irfid },
-            success: function (data) {
-                window.location.href = '/IRF/Index';
-            }
-        });
-    }
     function closeVoiceRecordingModal() {
         var modalBct = document.getElementById("VoiceRecordingModal");
         modalBct.style.display = "none";

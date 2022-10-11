@@ -50,7 +50,7 @@ namespace Risebird.MicroService
                     }
                     else
                     {
-                        if (!String.IsNullOrEmpty(item.HRCoordinatorEmailId))
+                        if (!string.IsNullOrEmpty(item.HRCoordinatorEmailId))
                         {
                             CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
                         }
@@ -67,10 +67,10 @@ namespace Risebird.MicroService
                             _whatsAppVM.Emailid = item.candidateEmail + ";" + CCEmails;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.UserName = item.candidateName;
-                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
+                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.Event = "Interviewer Waiting";
                             _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
-                            if (!String.IsNullOrEmpty(item.ClientHrContact))
+                            if (!string.IsNullOrEmpty(item.ClientHrContact))
                             {
                                 if (!CCEmails.Contains(item.ClientHrContact))
                                 {
@@ -97,7 +97,7 @@ namespace Risebird.MicroService
                             var resultset = _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.interviewer + ";" + CCEmails;
-                            _whatsAppVM.buttonlink = !String.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
+                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.UserName = item.candidateName;
                             _whatsAppVM.Event = "Candidate Waiting";
@@ -117,7 +117,7 @@ namespace Risebird.MicroService
                         var resultset = _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.emergencyinterviewer;
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
                         _whatsAppVM.UserName = item.candidateName;
                         _whatsAppVM.Event = "Emergency Notification";
                         _whatsAppHelper.WhatsAppSendEInterviewer(_whatsAppVM);
@@ -148,13 +148,13 @@ namespace Risebird.MicroService
                     }
                     else if (item.EmailType == "Reschedule")
                     {
-                        string oneTimeSchedulingLink = String.Empty;
+                        string oneTimeSchedulingLink = string.Empty;
                         if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                         {
                             string stepfirst = item.CalendlyLink.Split("?")[item.CalendlyLink.Split("?").Length];
                             var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
-                            if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                            if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                             {
                                 oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                             }

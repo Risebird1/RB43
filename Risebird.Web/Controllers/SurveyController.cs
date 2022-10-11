@@ -85,7 +85,7 @@ namespace Risebird.Web.Controllers
                         TO = model1.Interviewer,
                         Subject = "Candidate Interview Feedback"
                     };
-                    var resultsetdetails = _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
+                    var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
 
                 }
 
@@ -808,9 +808,9 @@ namespace Risebird.Web.Controllers
                 }
                 if (modelData != null && modelData.Count > 0)
                 {
-                    var avgQ1 = modelData.Average(x => String.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
-                    var avgQ2 = modelData.Average(x => String.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("0.00");
-                    var avgQ6 = modelData.Average(x => String.IsNullOrEmpty(x.Question6) ? 0 : Convert.ToInt32(x.Question6)).ToString("#.##");
+                    var avgQ1 = modelData.Average(x => string.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
+                    var avgQ2 = modelData.Average(x => string.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("0.00");
+                    var avgQ6 = modelData.Average(x => string.IsNullOrEmpty(x.Question6) ? 0 : Convert.ToInt32(x.Question6)).ToString("#.##");
                     return Json(new { avgQ1 = avgQ1, avgQ2 = avgQ2, avgQ6 = avgQ6 });
                 }
                 else

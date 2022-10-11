@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -109,7 +108,7 @@ namespace Risebird.Repository
             }
             return "Fail";
         }
-        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSets(string clientname, string profileName)
+        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSets(string clientname, string profileName, bool requesttype)
         {
             try
             {
@@ -119,6 +118,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@profileName", profileName);
                     parameters.Add("@clientname", clientname);
+                    parameters.Add("@requesttype", requesttype);
                     var result = await SqlMapper.QueryAsync<MCQVMset>(con, "usp_GetMCQSets", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result;
@@ -176,6 +176,7 @@ namespace Risebird.Repository
                     parameters.Add("@Expiretime", _list.Expiretime);
                     parameters.Add("@WhoShared", _list.WhoShared);
                     parameters.Add("@ShareDate", DateTime.Now);
+                    parameters.Add("@ShareType", _list.ShareType);
 
                     await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidate", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -421,7 +422,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQId(string MCQPId)
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQId(string MCQPId, bool requesttype)
         {
             try
             {
@@ -429,8 +430,9 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@MCQPId", MCQPId);
+                    parameters.Add("@requesttype", requesttype);
                     var result = await SqlMapper.QueryAsync<CandidateDetailsForTestDuplicate>(con, "usp_MCQCandidateDetailsByMCQId", parameters,
-                         commandType: CommandType.StoredProcedure);
+                                                commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
@@ -722,6 +724,29 @@ namespace Risebird.Repository
                     var resultset = await SqlMapper.QueryAsync<MCQVMset>(con, "usp_FetchApiMcqset", dynamicParameters,
                           commandType: CommandType.StoredProcedure);
                     return resultset;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQReportByMCQId(string MCQPId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MCQPId", MCQPId);
+                    var result = await SqlMapper.QueryAsync<CandidateDetailsForTestDuplicate>(con, "usp_MCQReportByMCQId", parameters,
+                                                commandType: CommandType.StoredProcedure);
+                    return result;
                 }
             }
             catch (SqlException ex)

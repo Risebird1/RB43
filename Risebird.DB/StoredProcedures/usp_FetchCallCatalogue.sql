@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO  
 Create Procedure usp_FetchCallCatalogue      
-@UserRole Varchar(10),      
+@UserRole Varchar(15),      
 @Emailid varchar(150)      
 AS      
 BEGIN      

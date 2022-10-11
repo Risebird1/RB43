@@ -54,6 +54,7 @@ namespace Risebird.Entities.ViewModel
         public int CandidateAttempt { get; set; }
         public string Clients { get; set; }
         public bool AadhaarVerification { get; set; }
+        public string ErrorMessage { get; set; }
     }
     public class QuestionList
     {
@@ -115,6 +116,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime ShareDate { get; set; }
         public int Expiretime { get; set; }
         public string WhoShared { get; set; }
+        public bool ShareType { get; set; }
     }
     public class ProfileTypeSkills
     {

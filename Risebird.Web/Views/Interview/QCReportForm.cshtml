@@ -44,6 +44,7 @@
                             @Html.HiddenFor(m => m.Interviewer)
                             @Html.HiddenFor(m => m.Isedit)
                             @Html.HiddenFor(m => m.Type)
+                            @Html.HiddenFor(m => m.uniqueid)
                             <div class="canvas_div_pdf">
                                 <div class="report-full-wrap">
                                     <div class="row">
@@ -313,6 +314,22 @@
                                             @if (Model.Type == "Completed")
                                             {
                                                 <a href="/Interview/CompletedInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else if (Model.Type == "ClientAll")
+                                            {
+                                                <a href="/Client/AllMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else if (Model.Type == "ClientSelect")
+                                            {
+                                                <a href="/Client/SelectedMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else if (Model.Type == "ClientReject")
+                                            {
+                                                <a href="/Client/RejectedMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else if (Model.Type == "ClientPublic")
+                                            {
+                                                <a href="/Candidate/PublicCandidateStatus?emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
                                             }
                                             else
                                             {

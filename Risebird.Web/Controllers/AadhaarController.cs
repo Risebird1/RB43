@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Security.Cryptography;
@@ -165,21 +168,21 @@ namespace Risebird.Web.Controllers
         {
             var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
             var model = new AadhaarData();
-            if (candidateEmailid==null)
+            if (candidateEmailid == null)
             {
 
                 model.status = "InvalidEmail";
             }
 
-            else if (candidateEmailid.AadhaarVerified==true)
-                {
+            else if (candidateEmailid.AadhaarVerified == true)
+            {
                 model.status = "Unauthorized";
             }
-                else
-            { 
+            else
+            {
                 model.email = candidateEmailid.EmailId;
             }
-            
+
             return View(model);
         }
         public async Task<JsonResult> SaveAadhaarDetails(string Name, string Address, string gender, string dob, string email, string doc_face)
@@ -227,6 +230,92 @@ namespace Risebird.Web.Controllers
                 return Json(new { image = convertedResponse.response_data.captcha, uuid = model.request.uuid });
             }
             return Json(new { image = "", uuid = model.request.uuid });
+        }
+        #region US Candidate Verification
+        public async Task<IActionResult> CandidateVerification(string uniqueid)
+        {
+            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            var model = new AadhaarData();
+            if (candidateEmailid == null)
+            {
+                model.status = "InvalidEmail";
+            }
+            else
+            {
+                model.email = candidateEmailid.EmailId;
+            }
+            return View(model);
+        }
+        public async Task<JsonResult> FetchVerificationURL(string Name, string PhoneNumber, string Emailid)
+        {
+            Random generator = new Random();
+            int r = generator.Next(10000, 100000);
+            candidateVerification _list = new candidateVerification();
+            _list.reference = Guid.NewGuid().ToString();
+            _list.callback_url = "https://portal.risebird.io/Aadhaar/Getshuftipro";
+            _list.email = Emailid;
+            _list.country = "GB";
+            _list.language = "EN";
+            _list.verification_mode = "any";
+
+            _list.document.proof = "";
+            _list.document.supported_types = new string[] { "id_card", "driving_license", "passport" };
+
+            _list.document.name.first_name = "";
+            _list.document.name.middle_name = "";
+            _list.document.name.last_name = "";
+
+            _list.phone.phone_number = PhoneNumber;
+            _list.phone.random_code = r.ToString();
+            _list.phone.text = "Your verification code is " + r.ToString();
+            var client = new RestClient("https://api.shuftipro.com/");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Authorization", "Basic " + "MDA4M2YwODYwMDU1MmYzOWQ4MjZhZWM2NDUzMmM5NDU2MWE5ZDhlM2YyYWRhMGQ1MGFlZGFkYjdhMzUyYTVmZTpHdW16QjJpTDVDTzhGcUM4d2ExdnFHMGd4U21mVkY2SQ==");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddJsonBody(_list);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<verifyResponse>(response.Content);
+            return Json(convertedResponse.verification_url);
+        }
+        [HttpPost]
+        public async Task<JsonResult> Getshuftipro(Object _model)
+        {
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _model.ToString());
+            return Json("");
+        }
+        #endregion
+
+       [Authorize]
+       [HttpGet]
+        public async Task<IActionResult> AadharDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin"|| profileName == "SupportAdmin")
+                    {                     
+                        var adhardetail = await _aadhaarService.GetAadharDetails();
+                        return View(adhardetail);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index", "Interview");
+
+            }
         }
     }
 }

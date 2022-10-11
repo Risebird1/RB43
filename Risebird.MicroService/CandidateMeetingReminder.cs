@@ -57,14 +57,17 @@ namespace Risebird.MicroService
 
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton, rescheulebutton,needcleritybutton);
+                        var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder Second";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                        _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+                        _whatsAppVM.MessageValue = item.ClientName;
+                        _whatsAppVM.timezone = "IST";
+                       await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                         await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
                     }
@@ -76,14 +79,17 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton, rescheulebutton, needcleritybutton);
+                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send  WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                        _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+                        _whatsAppVM.MessageValue = item.ClientName;
+                        _whatsAppVM.timezone = "IST";
+                       await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
                     else if (item.Typefunction == 24)
@@ -94,14 +100,17 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton, rescheulebutton, needcleritybutton);
+                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
                         _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
                         _whatsAppVM.Event = "Interview Reminder";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                        _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+                        _whatsAppVM.MessageValue = item.ClientName;
+                        _whatsAppVM.timezone = "IST";
+                        await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
                     else if (item.Typefunction == 1)
@@ -114,17 +123,17 @@ namespace Risebird.MicroService
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
                             var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
                             List<string> interviewers = new List<string>();
-                            if (!String.IsNullOrEmpty(result.interviewer))
+                            if (!string.IsNullOrEmpty(result.interviewer))
                             {
                                 interviewers.Add(result.interviewer);
                             }
-                            if (!String.IsNullOrEmpty(result.EmailId))
+                            if (!string.IsNullOrEmpty(result.EmailId))
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                            var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                            var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         }
                     }
                 }

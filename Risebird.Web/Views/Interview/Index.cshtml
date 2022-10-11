@@ -11,8 +11,8 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ClientHR = new string[] { };
@@ -31,8 +31,8 @@
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>
         (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
@@ -93,7 +93,7 @@
                 </div>
                 <div class="pull-right">
                     <div>
-                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" )'"></i></span>
+                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" , new { type = ViewBag.Type })'"></i></span>
                         <span class="interview_3">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -109,9 +109,12 @@
 
 
 
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                       @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                {
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                         </button>
+                                }
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("Add", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
@@ -120,8 +123,12 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview" )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
                         </button>
-
-
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("AadharDetails", "Aadhaar")'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;">Aadhar Details</font></span>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -439,6 +446,7 @@
                                                     <th>Type</th>
                                                     <th>JD Title</th>
                                                     <th>Meeting Link</th>
+                                                    <th>Backup Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
@@ -456,7 +464,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                    <th>QC Status</th>*@
+                                                        <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -466,7 +474,7 @@
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
                                                     <th>Emergency Interview</th>
-                                                    <th>Aadhar Link</th>
+                                                    <th>ID Verification</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
                                                     <th>Final Selection Status</th>
@@ -488,6 +496,7 @@
                                                     <th>Type</th>
                                                     <th>JD Title</th>
                                                     <th>Meeting Link</th>
+                                                    <th>Backup Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
@@ -505,7 +514,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                    <th>QC Status</th>*@
+                                                        <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -515,7 +524,7 @@
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
                                                     <th>Emergency Interview</th>
-                                                    <th>Aadhar Link</th>
+                                                    <th>ID Verification</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
                                                     <th>Final Selection Status</th>
@@ -568,10 +577,10 @@
                                                                     </span>
                                                                 }
                                                                 @*<span class="interview_8">
-                                                        <button class="mdc-fab app-fab--absolute " aria-label="Comment">
-                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
-                                                        </button>
-                                                        </span>*@
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Comment">
+                                                                    <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                                    </button>
+                                                                    </span>*@
                                                                 @if (item.interviewDate < DateTime.Now && (string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1)))
                                                                 {
                                                                     <span class="interview_8">
@@ -593,7 +602,7 @@
                                                                         <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview" , new { interviewId=item.imid, candidateEmail=item.candidateEmail, irfName=item.IRFId, interviewDate=item.interviewDate, candidateName=item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
                                                                     </button>
                                                                 }
-                                                                @if (item.IsAadhaarVerificationRequired)
+                                                                @if (item.IsAadhaarVerificationRequired == true)
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Aadhaar Verified Data">
                                                                         <span title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
@@ -604,7 +613,7 @@
                                                             }
                                                             else
                                                             {
-                    //Send Candadidate Link with Client notiifation and Interview price 0
+                                                                //Send Candadidate Link with Client notiifation and Interview price 0
                                                                 <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
                                                                     <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
@@ -649,7 +658,6 @@
                                                         }
                                                         else
                                                         {
-
                                                             <td style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
                                                         @if (item.IsProctor)
@@ -668,8 +676,15 @@
                                                         }
                                                         else
                                                         {
-
                                                             <td><span style="color:red">No Meeting Link</span></td>
+                                                        }
+                                                        @if (item.BackUpLink != null && item.BackUpLink != "")
+                                                        {
+                                                            <td> <a id="BackUpLink" target="_blank" title="@item.BackUpLink" href=@item.BackUpLink>Backup Link</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
                                                         }
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
@@ -729,23 +744,23 @@
                                                             <td></td>
                                                         }
                                                         @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
-                                                    {
-                                                    @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                                                    {
-                                                    <td class="text-center">
-                                                    <a style="color:hotpink; font-weight: bold">Status Pending</a>
-                                                    </td>
+                                                            {
+                                                            @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                                            {
+                                                            <td class="text-center">
+                                                            <a style="color:hotpink; font-weight: bold">Status Pending</a>
+                                                            </td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
-                                                    }
-                                                    }
-                                                    else
-                                                    {
-                                                    <td></td>
-                                                    }*@
+                                                            }
+                                                            else
+                                                            {
+                                                            <td class="text-center">@item.MeetingStatusStatusDesc</td>
+                                                            }
+                                                            }
+                                                            else
+                                                            {
+                                                            <td></td>
+                                                            }*@
                                                         @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
                                                             <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
@@ -777,19 +792,19 @@
                                                         {
                                                             @if (item.CandidateResponse == 1)
                                                             {
-                                                                <td>Responsed (Yes)</td>
+                                                                <td>Responded (Yes)</td>
                                                             }
                                                             else if (item.CandidateResponse == 3)
                                                             {
-                                                                <td>Responsed (Reschedule)</td>
+                                                                <td title="Candidate Request to reschedule">Responsed (Reschedule)</td>
                                                             }
                                                             else if (item.CandidateResponse == 4)
                                                             {
-                                                                <td>Responsed (Need More clarity)</td>
+                                                                <td>Responded (Need More Clarity)</td>
                                                             }
                                                             else
                                                             {
-                                                                <td>Responsed (No)</td>
+                                                                <td>Responded (No)</td>
                                                             }
                                                         }
                                                         else
@@ -862,16 +877,16 @@
                                                         }
                                                         <td>@item.interviewSlot</td>
                                                         @*<td>@item.QCInterviewer</td>
-                                                    @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
-                                                    {
-                                                    <td>@item.QCStatusStatusDesc</td>
+                                                            @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
+                                                            {
+                                                            <td>@item.QCStatusStatusDesc</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                    <td></td>
+                                                            }
+                                                            else
+                                                            {
+                                                            <td></td>
 
-                                                    }*@
+                                                            }*@
                                                         <td>@item.HRCoordinatorEmailId</td>
 
                                                         <td class="interview-com">
@@ -913,37 +928,37 @@
 
 
 
-                                                        </td>
-                                                        @*
-                                                    <td>@item.HRComment</td>*@
-                                                        <td>@item.staffingAgency</td>
-                                                        <td> @item.interviewDuration </td>
-                                                        <td> @item.joiningTime</td>
-                                                        <td> @item.preferredLocation</td>
-                                                        <td> @item.expectedPerHourRate</td>
-                                                        <td> @item.currentEmployerName</td>
-                                                        <td>
-                                                            @item.IsEmergency
-                                                        </td>
-                                                        @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                        {
-                                                            <td>
-
-                                                                <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" "," %20")>Aadhar</a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No document</td>
-                                                        }
-                                                        <td>
-                                                            @item.NextLevelApprovalStat
-                                                        </td>
-                                                        <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in ">
-                                                                <div class="talktext">
-                                                                    @if (item.ApprovalComments != null && item.ApprovalComments.Length > 0)
-                                                                    {
+                                                    </td>
+                                                    @*<td>@item.HRComment</td>*@
+                                                    <td>@item.staffingAgency</td>
+                                                    <td> @item.interviewDuration </td>
+                                                    <td> @item.joiningTime</td>
+                                                    <td> @item.preferredLocation</td>
+                                                    <td> @item.expectedPerHourRate</td>
+                                                    <td> @item.currentEmployerName</td>
+                                                    <td>
+                                                        @item.IsEmergency
+                                                    </td>
+                                                    @if (item.IsAadhaarVerificationRequired == null)
+                                                    {
+                                                        <td>Not Mandatory</td>
+                                                    }
+                                                    else if (item.IsAadhaarVerificationRequired == true)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else 
+                                                    { 
+                                                        <td>No</td>
+                                                    }
+                                                    <td>
+                                                        @item.NextLevelApprovalStat
+                                                    </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in ">
+                                                            <div class="talktext">
+                                                                @if (item.ApprovalComments != null && item.ApprovalComments.Length > 0)
+                                                                {
 
                                                                         <a href="#" data-tooltip="@item.ApprovalComments">  <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea></a>
                                                                     }
@@ -1146,9 +1161,9 @@
                         <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
                         @*<div>
                             <div class="text-areadiv1">
-                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                            <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
                             </div>
-                        </div>*@
+                            </div>*@
                         <div>
                             <textarea style="width:100%;" id="bcMessage"></textarea>
                         </div>
@@ -2148,7 +2163,7 @@
 
 </script>
 @*
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
 <script>
     $('input:radio[name="receivers"]').click(function () {
 

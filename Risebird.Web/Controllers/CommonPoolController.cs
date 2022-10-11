@@ -212,7 +212,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         ViewBag.profileName = profileName;
-                        if (!String.IsNullOrEmpty(searchvalue))
+                        if (!string.IsNullOrEmpty(searchvalue))
                         {
                             modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();
                             ViewBag.searchvalue = searchvalue;
@@ -525,7 +525,7 @@ namespace Risebird.Web.Controllers
                         NewModel.resumeLink = model.resumeLink;
                         if (profileName == "CuratedUser")
                         {
-                            if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                            if (!string.IsNullOrEmpty(IRListModel.encodedresumeLink))
                             {
                                 NewModel.resumeLink = IRListModel.encodedresumeLink;
                             }
@@ -587,7 +587,7 @@ namespace Risebird.Web.Controllers
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
                     MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
-                    var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
+                    var status = string.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
                         if (model.CandidateAvailable != "Available")
@@ -604,7 +604,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var usernames = IRListModel.CandidateName.Trim().Split(" ");
-                            var namemodel = String.Empty;
+                            var namemodel = string.Empty;
                             foreach (var name in usernames)
                             {
                                 if (name != null && name.Length >= 2)
@@ -621,7 +621,7 @@ namespace Risebird.Web.Controllers
                         //NewModel.candidateName = model.candidateName;
 
                         var usernames1 = model.candidateName.Trim().Split(" ");
-                        var namemodel1 = String.Empty;
+                        var namemodel1 = string.Empty;
                         foreach (var name in usernames1)
                         {
                             if (name != null && name.Length >= 2)
@@ -648,7 +648,7 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
-                        if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                        if (!string.IsNullOrEmpty(IRListModel.encodedresumeLink))
                         {
                             NewModel.resumeLink = IRListModel.encodedresumeLink;
                         }
@@ -736,7 +736,7 @@ namespace Risebird.Web.Controllers
                     //Start:Save View counts of vedio
                     if (HttpContext.Session.GetString("UserLogedIn") != null)
                     {
-                        string values = String.Empty;
+                        string values = string.Empty;
                         var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
                         if (valuestatus == "Yes")
                         {
@@ -878,7 +878,7 @@ namespace Risebird.Web.Controllers
                         NewModel.resumeLink = model.resumeLink;
                         if (profileName == "CuratedUser")
                         {
-                            if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                            if (!string.IsNullOrEmpty(IRListModel.encodedresumeLink))
                             {
                                 NewModel.resumeLink = IRListModel.encodedresumeLink;
                             }
@@ -1007,7 +1007,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
+        public async Task<JsonResult> VideoShare(string value, string videoid, string name, string Emailids)
         {
             _meetingService.VedioShare(value, videoid);
             string Name = string.Empty;
@@ -1025,7 +1025,7 @@ namespace Risebird.Web.Controllers
                 CC = email,
                 Subject = "Risebird: Interview video is shared with you"
             };
-            var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+            var result = await _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             if (result.Contains("Mail sent successfully"))
             {
                 return Json("Success");
@@ -1062,7 +1062,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult CandidateShortList(string videoid)
+        public async Task<JsonResult> CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
             var Shortlistcount = _meetingService.GetvedioShortList(videoid, email);
@@ -1080,14 +1080,14 @@ namespace Risebird.Web.Controllers
                 StringBuilder bulider = new StringBuilder();
 
                 bulider.Append("Client: " + email.ToUpper() + " has shortlisted your profile");
-                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                await _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
             return Json(result);
         }
 
         [HttpPost]
-        public JsonResult CandidateSuitable(string videoid, string Comment)
+        public async Task<JsonResult> CandidateSuitable(string videoid, string Comment)
         {
             //store data in database
             int id = Convert.ToInt32(videoid);
@@ -1104,20 +1104,20 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
                 bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
-                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+               await _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }
 
         [HttpPost]
-        public JsonResult VedioShared(string Emailids, string videoid, string Name, string skills)
+        public async Task<JsonResult> VedioShared(string Emailids, string videoid, string Name, string skills)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
             var modelList = _meetingService.VedioShared(Emailids, videoid, email);
             string currenturl = Request.Host.ToString() + Request.Path.ToString() + "?id=" + videoid;
 
-            if (!String.IsNullOrEmpty(modelList))
+            if (!string.IsNullOrEmpty(modelList))
             {
                 Mail _mail1 = new Mail
                 {
@@ -1125,7 +1125,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
                 };
-                _ = _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
+                _ = await _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
             }
             var modelemail = modelList.Split(";");
             foreach (var item in modelemail)
@@ -1141,13 +1141,13 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
                 };
-                _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+                await _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             }
             return Json("");
         }
 
         [HttpPost]
-        public JsonResult ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
+        public async Task<JsonResult> ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
@@ -1166,7 +1166,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "An interview of Candidate: " + Name + " video is shared with you"
                 };
-                _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
+                await _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }
@@ -1194,7 +1194,7 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null)
             {
-                if (String.IsNullOrEmpty(emailid))
+                if (string.IsNullOrEmpty(emailid))
                 {
                     emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");

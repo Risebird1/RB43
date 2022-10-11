@@ -10,8 +10,8 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] primarySkills = new string[] { };
     string[] CandidateName = new string[] { };
     string[] ClientHR = new string[] { };
@@ -26,8 +26,8 @@
 {
     filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>
         (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
@@ -488,7 +488,6 @@
                                                                                             <div class="mtop-5">
                                                                                                 @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
                                                                                                 {
-
                                                                                                     @if (item.JDTiltle.Split("|")[0].Length > 38)
                                                                                                     {
                                                                                                         <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
@@ -497,17 +496,12 @@
                                                                                                     {
                                                                                                         <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
                                                                                                     }
-
-
-
                                                                                                 }
                                                                                                 else
                                                                                                 {
 
                                                                                                 }
                                                                                             </div>
-
-
                                                                                         </td>
                                                                                     }
                                                                                     else
@@ -544,9 +538,6 @@
                                                                                                     {
                                                                                                         <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
                                                                                                     }
-
-
-
                                                                                                 }
                                                                                                 else
                                                                                                 {
@@ -554,8 +545,6 @@
                                                                                                 }
                                                                                             </div>
                                                                                         </td>
-
-
                                                                                     }
 
                                                                                 }
@@ -563,10 +552,6 @@
                                                                                 {
                                                                                     <td></td>
                                                                                 }
-
-
-
-
                                                                                 @if (item.ClientHrContact != null && item.ClientHrContact != "")
                                                                                 {
                                                                                     @if (item.IsHrOnline == 1)
@@ -595,8 +580,6 @@
                                                                                 {
                                                                                     <td>No Video</td>
                                                                                 }
-
-
                                                                                 <td class="interview-com">
                                                                                     <div id="section">
                                                                                         @if (item.InterviewerComment != null && item.InterviewerComment != "")
@@ -645,40 +628,30 @@
                                                                                     <td>Redo Interview</td>
                                                                                 }
                                                                                 <td class="text-center action">
-
-
                                                                                     <button id="selectedcandidate_9" class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
                                                                                         <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                                     </button>
 
                                                                                     @if (item.IsBiometricEnabled)
                                                                                     {
-
                                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Verify">
                                                                                             <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
                                                                                         </button>
-
-
-
-
-
+                                                                                    }
+                                                                                    @if (item.IsClientQCRequired && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                                                                    {
+                                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
+                                                                                            <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="ClientSelect" })'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                                                <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                                            </span>
+                                                                                        </button>
                                                                                     }
                                                                                 </td>
                                                                                 <td>
-
-
-
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
                                                                                         <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-
-
                                                                                         <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
-
-
-
-
-
                                                                                     }
 
                                                                                 </td>
@@ -1602,9 +1575,15 @@
             if (data[i].interviewStatus == 4 || data[i].interviewStatus == 2) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; }
             else { html += '   <td>No Report</td>'; }
             html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
-            html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>'; if (data[i].isBiometricEnabled) {
+            html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>';
+            if (data[i].isBiometricEnabled) {
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
                 html += '<a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>'; html += '</button>';
+            }
+            if (data[i].isClientQCRequired && (data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8)) {
+                html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">';
+                html += '<a href="/Interview/QCReportForm?interviewid='+ data[i].imid+'&interviewer='+data[i].interviewer+'&type=ClientSelect" title="QC Form" class="mdc-fab__icon material-icons">';
+                html += '<i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i></a></button>';
             }
             html += '</td>'; html += '<td>'; if (data[i].mobileNumber != null && data[i].mobileNumber != "") { html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top"  onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>'; } html += '</td>'; html += '</tr>'; html += '<tr class="collapse ' + data[i].imid + '">'; html += '<td colspan="999" class=child-section">'; html += '<table class="table table-striped">'; html += '<tr>'; html += '<th>Project Name</th>'; html += ' <th>Aadhar Link</th>'; html += ' <th>Approval Status</th>'; html += '<th>Final Selection Status</th>'; html += '<th>Offer Status</th>'; html += '<th>Joining Status</th>'; html += '</tr>'; html += '<tr>'; html += '<td> ' + data[i].clientName + ' </td>'; if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
                 html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';

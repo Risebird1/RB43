@@ -6,7 +6,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Risebird.Business
 {
@@ -43,11 +42,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName)
+        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName, bool requesttype)
         {
             try
             {
-                return _mCQRepository.FetchAllMCQSets(clientname, profileName).Result;
+                return _mCQRepository.FetchAllMCQSets(clientname, profileName, requesttype).Result;
             }
             catch (Exception e)
             {
@@ -175,11 +174,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId)
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId, bool requesttype)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateDetailsByMCQId(MCQPId).Result;
+                return _mCQRepository.GetMCQCandidateDetailsByMCQId(MCQPId, requesttype).Result;
             }
             catch (Exception e)
             {
@@ -300,11 +299,27 @@ namespace Risebird.Business
                 var _mcqset = _mCQRepository.FetchMCQSetsForApi(model).Result.ToList();
                 if (_mcqset.Count() > 1 && model.SeniorityLevel > 0)
                 {
-                    _mcqset = _mcqset.Where(x => !String.IsNullOrWhiteSpace(x.SeniorityLevel) ? x.SeniorityLevel.Contains(model.SeniorityLevel.ToString()) : x.SeniorityLevel != null).ToList();
+                    _mcqset = _mcqset.Where(x => !string.IsNullOrWhiteSpace(x.SeniorityLevel) ? x.SeniorityLevel.Contains(model.SeniorityLevel.ToString()) : x.SeniorityLevel == null).ToList();
+                    var random = new Random();
+                    int index = random.Next(_mcqset.Count());
+                    return _mcqset[index];
                 }
-                var random = new Random();
-                int index = random.Next(_mcqset.Count());
-                return _mcqset[index];
+                return new MCQVMset
+                {
+                    ErrorMessage = "No Matching Result Found"
+                };
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQId(string MCQPId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQReportByMCQId(MCQPId).Result;
             }
             catch (Exception e)
             {

@@ -96,10 +96,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageHR");
                         }
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+                            meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count();
@@ -205,10 +205,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageHR");
                         }
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+                            meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
 
                         }
                         ViewBag.TotalCount = meetings.Count();
@@ -328,10 +328,10 @@ namespace Risebird.Web.Controllers
                 int Page = 1;
                 var meetings = _modelDetail;
                 Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
+                    meetings = meetings.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!string.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")).ToList();
 
                 }
                 int totalcount = meetings.Count();
@@ -451,10 +451,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageHR");
                         }
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
+                            myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
 
                         }
                         ViewBag.TotalCount = myInterview.Count();
@@ -583,10 +583,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageHR");
                         }
 
-                        if (!String.IsNullOrEmpty(searchValue))
+                        if (!string.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
+                            myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
 
                         }
                         ViewBag.TotalCount = myInterview.Count();
@@ -711,10 +711,10 @@ namespace Risebird.Web.Controllers
                 int Page = 1;
                 var myInterview = _modelDetail;
                 Searchvalue = searchValue;
-                if (!String.IsNullOrEmpty(searchValue))
+                if (!string.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
-                    myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
+                    myInterview = myInterview.Where(x => (!string.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!string.IsNullOrEmpty(x.interviewer) ? x.interviewer.ToUpper().Contains(searchValue) : x.interviewer == "") || (!string.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "")).ToList();
                 }
                 int totalcount = myInterview.Count;
                 int Pagestart = 0;

@@ -746,6 +746,20 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+
+        public async Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string CallSid, string RecordingSid, string callRecipientPhoneNumber = null, string IRFId = null)
+        {
+            try
+            {
+                return await _userRepository.SaveCallRecordingData(interviewId, callRecipient, caller, CallSid, RecordingSid, callRecipientPhoneNumber, IRFId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
         public List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid)
         {
             try

@@ -1,0 +1,999 @@
+﻿@model Risebird.Entities.ViewModel.MCQDropdowndetails
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Interviewer Interview";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string[] PrimarySkill = new string[] { };
+    string SeniorityLevel = string.Empty;
+    string CountryType = string.Empty;
+    string CompanyType = string.Empty;
+    string EmploymentType = string.Empty;
+    string DifficultyLevel = string.Empty;
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerMCQSetList") != null)
+{
+    filter = JsonConvert.DeserializeObject<MCQFilter>(HttpContextAccessor.HttpContext.Session.GetString("InterviewerMCQSetList"));
+    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
+    CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : string.Empty;
+    EmploymentType = filter.EmploymentType != null ? filter.EmploymentType : string.Empty;
+    DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
+}
+<style>
+    [type="datetime-local"] {
+        background: #ececee !important;
+    }
+
+    .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
+        background: #ececee !important;
+    }
+</style>
+<script>
+    var Header = "Interviewer Interview";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
+<div class="main-panel" id="main-panel">
+
+    <!--  <div class="panel-header panel-header-sm"></div>-->
+
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Interviewer Interview</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                        @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+                        {
+                            var profileName = @HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim();
+                            profileName = profileName.Replace("\"", "");
+                            if (profileName == "Admin" || profileName == "SupportAdmin")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Recruiter Interview</font></span>
+                                </button>
+                                <a href="/MCQ/CandidateListDetails" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Candidates List</a>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card  bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+
+                        <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="fa fa-filter"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                    </div>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <form action="@Url.Action("InterviewerMCQ","MCQ")" method="post" id="form">
+
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="CountryType" name="CountryType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<CountryTypeEnum>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
+                                                        <div class="col-md-12 col-sm-12">
+
+                                                            <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<JobLevels>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType">Employment Type</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="EmploymentType" name="EmploymentType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">
+                                                            Primary Skills
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                @foreach (var item in Model._MCQVMset.Select(x => x.PrimarySkills).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+
+                                                <div class="form-group col-md-12 col-sm-12">
+                                                    <div>
+                                                        <div class="col-md-12 col-sm-12 mc-button-area text-right">
+                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                Reset Filter
+                                                            </button>
+                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                Apply Filter
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- Start Card -->
+                        <div class="row">
+                            @foreach (var item in Model._MCQVMset)
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class=" col-md-12 col-sm-12 first">
+                                                    <h6 style=" padding-top: 10px;">@item.Title</h6>
+                                                    <input type="hidden" value="@item.Title" id="txttitlevalue_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.Timer" id="txttimevalue_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.ProfileType" id="txtProfilevalue_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.PrimarySkills" id="txtPrimarySkill_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.SecondarySkill" id="txtSecondarySkill_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.SeniorityLevel" id="txtSeniorityLevel_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.EmploymentType" id="txtEmploymentType_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.CompanyType" id="txtCompanyType_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.CountryType" id="txtCountryType_@item.PartitionKey" />
+                                                    @*<input type="hidden" value="@item.PerHourRate" id="txtPerHourRate_@item.PartitionKey" />*@
+                                                    @*<input type="hidden" value="@item.CompentencyLevel" id="txtCompentencyLevel_@item.PartitionKey" />*@
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- irf body-->
+                                        <div class="card-body">
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Questions:</div> <div class="clientName" style="width:180px !important"> @item.QuestionCount</div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Time:</div> <div class="client-name" style="width:180px !important">@item.Timer Mins</div>
+                                            </div>
+                                            @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                        <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
+                                        </div>*@
+                                            <div class="col-md-12 col-sm-12">
+                                                @if (!string.IsNullOrEmpty(item.ProfileTypeName))
+                                                {
+                                                    @if (item.ProfileTypeName.Length > 25)
+                                                    {
+                                                        <div class="client-field">Profile Level: </div> <div class="client-name" style="width:180px" title="@item.SecondarySkill"> @item.ProfileTypeName.Substring(0, 25)...</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="client-field">Profile Level: </div> <div class="client-name" style="width:180px"> @item.ProfileTypeName</div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="client-field">Profile Level: </div> <div class="client-name" style="width:180px"> @item.ProfileTypeName</div>
+                                                }
+                                            </div>
+                                            @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                        <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
+                                        </div>*@
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Primary Skill:</div> <div class="client-name"> @item.PrimarySkills </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Total Invite/ Attempt:</div> <div class="client-name">@item.TotalInvite / @item.CandidateAttempt</div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                @if (!string.IsNullOrEmpty(item.SecondarySkill))
+                                                {
+                                                    @if (item.SecondarySkill.Length > 25)
+                                                    {
+                                                        <div class="client-field">Secondary Skill: </div> <div class="client-name" title="@item.SecondarySkill"> @item.SecondarySkill.Substring(0, 25)...</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="client-field">Secondary Skill:</div> <div class="client-name"> @item.SecondarySkill</div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="card-footer action">
+                                            <div class="col-md-12">
+
+                                                <div class="text-right card-header-buttons action">
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="Share MCQ Set" style="background: #59b259 !important" title="Share MCQ Set">
+                                                        <span onclick="javascript:ShareMCQ('@item.PartitionKey');" title="Share MCQ Set" class=" mdc-fab__icon material-icons">									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>								</span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="View" title="View Questions">
+                                                        <span onclick="javascript:ViewDetails('@item.PartitionKey');" title="View Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg></span>
+                                                    </button>
+                                                    @if (ViewBag.profile != "Client")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute priority" aria-label="Edit" title="Edit">
+                                                            <span onclick="javascript:EditMcqSet('@item.PartitionKey', '@item.id', '@item.ProfileType', '@item.SeniorityLevel', '@item.EmploymentType', '@item.CompanyType', '@item.CountryType','@item.Clients','@item.AadhaarVerification');" title="Edit" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+                                                    }
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="List" title="Candidate List">
+                                                        <span onclick="javascript:CandidateTestDetails('@item.PartitionKey');" title="Candidate List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
+                                                        <span onclick="javascript:GeneratePublicUrl('@item.PartitionKey');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                    </button>
+                                                    @if (ViewBag.profile == "Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete MCQ">
+                                                            <span title="Click here to delete MCQ" onclick="javascript:DeleteEntityMCQ('@item.PartitionKey');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- End Card-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="CreateMCQPopUp" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <i class="fa fa-file" aria-hidden="true" style="font-size:21px"></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Recruiter Interview Set </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeCreatePopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    @*<div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>*@
+                    <div class="col-md-12"><a class="text-right mcq-dnbutton" href="@ViewBag.TemplateUrl" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #fff;">Download Template</span></a></div>
+                    <input type="hidden" id="txtpartialid" />
+                    <input type="hidden" id="idMcqTile" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                Primary Skills
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlPrimarySkills" style="width:100% !important">
+                                    @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
+                                    {
+                                        <option value="@item.Text">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                Secondary Skills
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlSecondarySkills" style="width:100% !important">
+                                    @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
+                                    {
+                                        <option value="@item.Text">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType" style="margin-bottom:0px;">
+                                Country Type
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlCountryType" style="margin-bottom: 10px">
+                                    @foreach (var item in Html.GetEnumSelectList<CountryTypeEnum>())
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType" style="margin-bottom:0px;">
+                                Company Type
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlCompanyType" style="margin-bottom: 10px">
+                                    @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel" style="margin-bottom:0px;">
+                                Seniority Level
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlSeniorityLevel" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.SeniorityLevelList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType" style="margin-bottom:0px;">
+                                Difficulty Level@*Profile Type*@
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType" style="margin-bottom:0px;">
+                                Employment Type
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlEmploymentType" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.EmploymentTypeOptions)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="padding-top:30px">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="AadhaarVerification" style="margin-bottom:0px;">
+                                <input type="checkbox" id="chkAadhaarverification" /> Aadhaar Verification Required
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Clients" style="margin-bottom:0px;">
+                                Clients
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlClients" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model.ClientList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Screen+ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
+                    </div>
+                    <div class="col-md-12">   <input type="file" class="choose-file" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input style="color: #fff;line-height: 13px;margin-bottom:10px;" type="button" onclick="CreateMCQ()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Upload">
+                        <input style="color: #fff;line-height: 13px; margin:0px 10px 10px 0px;" type="button" onclick="closeCreatePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="MyShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" fill="rgb(255, 255, 255)" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Share Test Link</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    @*<div class="sharing">
+                    <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Please Select Video Recording Option</label>
+                    <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
+                    <option value="0">None</option>
+                    <option value="1">Recording Only</option>
+                    <option value="2">Recording and Uploading</option>
+                    </select>
+                    </div>*@
+                    <div class="sharing">
+                        <label class="label-field desp-label" for="Please enter Meeting Date Time" style="font-weight:normal;"> Meeting Date Time</label>
+                        <input type="datetime-local" placeholder="Meeting Date Time" id="txtmeetingdatetime" class="form-control " style="margin-bottom:10px;" />
+                    </div>
+                    <div class="sharing">
+                        <label class="label-field desp-label" style="font-weight:normal;">Link Validation(Hours)</label>
+                        <input type="number" placeholder="Link validation time(in hours) 1 to 48" id="txtExpireTime" min="1" max="48" class="form-control " style="margin-bottom:10px;" />
+                    </div>
+                    @if (ViewBag.profile != "Client")
+                    {
+                        <div class="sharing">
+                            <label class="label-field desp-label" for="Please enter Client Name" style="font-weight:normal;"> Please Enter Client's Name</label>
+                            <input type="email" placeholder="Client Name" id="txtclientsharename" class="form-control " style="margin-bottom:10px;" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="sharing" style="display:none">
+                            <label class="label-field desp-label" for="Please enter Client Name" style="font-weight:normal;"> Please Enter Client's Name</label>
+                            <input type="email" placeholder="Client Name" id="txtclientsharename" class="form-control " style="margin-bottom:10px;" />
+                        </div>
+                    }
+                    <div class="sharing">
+                        <label class="label-field desp-label" for="Please enter Client Name" style="font-weight:normal;"> Please Enter Client HR Email Address</label>
+                        <input type="email" placeholder="Client HR Email" id="txtclientshareEmail" class="form-control " style="margin-bottom:10px;" />
+                    </div>
+                    <label class="label-field desp-label" for="Please enter EmailIds" style="font-weight:normal;"> Please Enter Candidate Email Id's</label>
+                    <input type="hidden" id="txtsharePartialid" />
+                    <div class="sharing">
+                        <textarea spellcheck="true" class="form-control " rows="2" id="txtsharetext" placeholder="Please Enter Candidate EmailIds ';' seprated" style="width:100%;overflow:hidden;margin-bottom:10px;"></textarea>
+                        <div id="words"></div>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input type="button" onclick="shareTestLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*@if (Model.Message != null)
+    {
+        <script type="text/javascript">
+
+            function my_code() {
+                var msg = '@Model.Message';
+
+
+
+                if (msg.toLowerCase().includes("success")) {
+                    swal({
+                        title: 'Successful',
+                        text: '@Model.Message',
+                        type: 'success',
+                        showConfirmButton: true
+
+                    },
+                        function (value) //confirm
+                        {
+                            //if Yes do this
+                            window.location.href = '/IRF/Index';
+                        }
+                    )
+
+                }
+                else {
+                    swal({
+                        title: 'Failed',
+                        text: '@Model.Message',
+                        type: 'error',
+                        showConfirmButton: true
+
+                    },
+                        function () {
+                            window.location.href = '/IRF/Index';
+                        }
+                    )
+                }
+
+            }
+
+            window.onload = my_code();
+        </script>
+
+    }*@
+<script>
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+
+        //$("#PrimarySkill").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#SelectionStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#SecondarySkill").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#CompentencyLevel").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+    });
+    function closeCreatePopUp() {
+        var modal = document.getElementById("CreateMCQPopUp");
+        modal.style.display = "none";
+        $("#idMcqTile").val('0');
+        $("#txtpartialid").val('');
+        $("#txtMCQTitle").val('');
+        $("#txtTime").val('');
+        document.getElementById("chkAadhaarverification").checked = false;
+        //$("#txtPerHourRate").val('');
+        //document.getElementById("ddlProfileType").value = 0;
+        //document.getElementById("ddlCompentencyLevel").value = 0;
+        document.getElementById("ddlPrimarySkills").value = 0;
+        document.getElementById("ddlCompanyType").value = 0;
+        document.getElementById("ddlCountryType").value = 0;
+        //document.getElementById("ddlClients").value = '';
+        $("#ddlSecondarySkills").val('');
+        $("#ddlSecondarySkills").select2().trigger('change');
+        $("#ddlProfileType").val('');
+        $("#ddlProfileType").select2().trigger('change');
+        $("#ddlSeniorityLevel").val('');
+        $("#ddlSeniorityLevel").select2().trigger('change');
+        $("#ddlEmploymentType").val('');
+        $("#ddlEmploymentType").select2().trigger('change');
+        $("#ddlClients").val('');
+        $("#ddlClients").select2().trigger('change');
+    }
+    function openCreatePopUp() {
+        var modal = document.getElementById("CreateMCQPopUp");
+        modal.style.display = "block";
+    }
+    function CreateMCQ() {
+        var flag = true;
+        if ($("#txtpartialid").val().trim() == "") {
+            if (document.getElementById("Mcqfile").files.length > 0) {
+                flag = true;
+            } else {
+                flag = false;
+            }
+        }
+        //if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
+        if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && flag && $("#ddlPrimarySkills").val() != null) {
+            $(".loader").show();
+            var file_data = $("#Mcqfile").prop("files")[0];
+            var form_data = new FormData();
+            form_data.append("file", file_data);
+            form_data.append("title", $("#txtMCQTitle").val());
+            form_data.append("time", $("#txtTime").val());
+            form_data.append("PartialId", $("#txtpartialid").val());
+            form_data.append("ProfileType", $("#ddlProfileType").val());
+            form_data.append("PrimarySkill", $("#ddlPrimarySkills").val());
+            form_data.append("SecondarySkill", $("#ddlSecondarySkills").val());
+            form_data.append("SeniorityLevel", $("#ddlSeniorityLevel").val());
+            form_data.append("EmploymentType", $("#ddlEmploymentType").val());
+            form_data.append("CompanyType", $("#ddlCompanyType").val());
+            form_data.append("CountryType", $("#ddlCountryType").val());
+            form_data.append("Clients", $("#ddlClients").val());
+            //form_data.append("PerHourRate", $("#txtPerHourRate").val());
+            form_data.append("id", $("#idMcqTile").val());
+            form_data.append("AadhaarVerification", document.getElementById("chkAadhaarverification").checked);
+            //form_data.append("CompentencyLevel", $("#ddlCompentencyLevel").val());
+            if ($("#txtpartialid").val().trim() != "") {
+                form_data.append("status", "Edit");
+            } else {
+                form_data.append("status", "Create");
+            }
+            $.ajax({
+                type: "POST",
+                url: "/MCQ/UploadQuestions",
+                data: form_data,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                processData: false,
+                success: function (data) {
+                    $(".loader").hide();
+                    alert(data);
+                    closeCreatePopUp();
+                    window.location.href = 'Index';
+                }
+            });
+        }
+        else {
+            alert("Please fill all the fields.");
+        }
+    }
+    function CandidateTestDetails(id) {
+        var url = '/MCQ/InterviewerTestDetails?id=' + id;
+        window.location.href = url;
+    }
+    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType, clients, aadhaarVerification) {
+        openCreatePopUp();
+        $("#idMcqTile").val(idMcq);
+        $("#txtpartialid").val(id);
+        $("#txtMCQTitle").val($("#txttitlevalue_" + id).val());
+        $("#txtTime").val($("#txttimevalue_" + id).val());
+        //$("#txtPerHourRate").val(perHourRate);
+        //document.getElementById("ddlProfileType").value = $("#txtProfilevalue_" + id).val();
+        document.getElementById("ddlPrimarySkills").value = $("#txtPrimarySkill_" + id).val();
+        //document.getElementById("ddlCompanyType").value = $("#txtCompanyType_" + id).val();
+        document.getElementById("ddlCompanyType").value = companyType;
+        //document.getElementById("ddlCountryType").value = $("#txtCountryType_" + id).val();
+        document.getElementById("ddlCountryType").value = countryType;
+        //document.getElementById("ddlCompentencyLevel").value = $("#txtCompentencyLevel_" + id).val();
+        var values = ($("#txtSecondarySkill_" + id).val()).split(",");
+        $("#ddlSecondarySkills").val(values);
+        $("#ddlSecondarySkills").select2().trigger('change');
+
+        //var profileTypeValues = ($("#txtProfilevalue_" + id).val()).split(",");
+        var profileTypeValues = (profileType).split(",");
+        $("#ddlProfileType").val(profileTypeValues);
+        $("#ddlProfileType").select2().trigger('change');
+
+        //var seniorityLevelValues = ($("#txtSeniorityLevel_" + id).val()).split(",");
+        var seniorityLevelValues = (seniorityLevel).split(",");
+        $("#ddlSeniorityLevel").val(seniorityLevelValues);
+        $("#ddlSeniorityLevel").select2().trigger('change');
+
+        //var employmentTypeValues = ($("#txtEmploymentType_" + id).val()).split(",");
+        var employmentTypeValues = (employmentType).split(",");
+        $("#ddlEmploymentType").val(employmentTypeValues);
+        $("#ddlEmploymentType").select2().trigger('change');
+
+        var clientList = (clients).split(",");
+        $("#ddlClients").val(clientList);
+        $("#ddlClients").select2().trigger('change');
+        var bool_value = aadhaarVerification == "True" ? true : false
+        document.getElementById("chkAadhaarverification").checked = bool_value;
+    }
+
+    function closeSharePopUp() {
+        var modal = document.getElementById("MyShareModel");
+        modal.style.display = "none";
+        $("#txtsharePartialid").val('');
+    }
+    function ShareMCQ(id) {
+        var modal = document.getElementById("MyShareModel");
+        modal.style.display = "block";
+        $("#txtsharePartialid").val(id);
+        mindatefield();
+    }
+    function mindatefield() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("txtmeetingdatetime").setAttribute("min", today);
+    }
+    function shareTestLink() {
+        if ($("#txtsharetext").val().trim() != "" && $("#txtclientshareEmail").val().trim() != "") {
+            if ($("#txtExpireTime").val().trim() != "" && parseInt($("#txtExpireTime").val()) >= 1 && parseInt($("#txtExpireTime").val()) <= 48) {
+                var emailflag = true;
+                var clientemail = isEmail($("#txtclientshareEmail").val().trim());
+                var emailids = $("#txtsharetext").val().trim().split(";");
+                for (var i = 0; i < emailids.length; i++) {
+                    emailflag = isEmail(emailids[i].trim());
+                    if (emailflag == false) {
+                        break;
+                    }
+                }
+                if (clientemail == true && emailflag == true) {
+                    var date1 = new Date($("#txtmeetingdatetime").val());
+                    var date2 = new Date();
+                    if (date1 > date2) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/MCQ/ShareTestLink",
+                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: true },
+                            success: function (data) {
+                                if (data == "success") {
+                                    alert("Successfully share the Phone Screen+ set.");
+                                    closeSharePopUp();
+
+                                } else {
+                                    alert("Error to share the test");
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        alert("Please enter future meeting date.");
+                    }
+                } else {
+                    alert("Please enter the valid emailids.");
+                }
+            } else {
+                alert("Please enter link validation time in hours between 1 to 48.");
+            }
+        } else {
+            alert("Please enter the emailids.");
+        }
+    }
+    function ViewDetails(id) {
+        window.location.href = "Questionpage?Id=" + id;
+    }
+    function ResetFilter() {
+        window.location.href = "/MCQ/ResetInterviewerMCQFilter";
+    }
+    function ApplySessionFilter() {
+
+        var skillsset = @Html.Raw(Json.Serialize(PrimarySkill));
+    @*var Secondaryskills =  @Html.Raw(Json.Serialize(SecondarySkill));*@
+    @*var CompentencyLevels=  @Html.Raw(Json.Serialize(CompentencyLevel));
+            var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));*@
+
+            var seniorityLevel = @Html.Raw(Json.Serialize(SeniorityLevel));
+        var countryType = @Html.Raw(Json.Serialize(CountryType));
+        var companyType = @Html.Raw(Json.Serialize(CompanyType));
+        var employmentType = @Html.Raw(Json.Serialize(EmploymentType));
+        var difficultyLevel = @Html.Raw(Json.Serialize(DifficultyLevel));
+
+        //$("#SelectionStatus").val(levelset);
+        $("#PrimarySkill").val(skillsset);
+        //$("#SecondarySkill").val(Secondaryskills);
+        //$("#CompentencyLevel").val(CompentencyLevels);
+        $("#SeniorityLevel").val(seniorityLevel);
+        $("#CountryType").val(countryType);
+        $("#CompanyType").val(companyType);
+        $("#EmploymentType").val(employmentType);
+        $("#DifficultyLevel").val(difficultyLevel);
+    }
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        urlcurrent = urlcurrent.replace("Index", "SkillTest");
+        urlcurrent = urlcurrent + "?Id=" + index;
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+    function DeleteEntityMCQ(Id) {
+        swal.fire({
+            title: 'Are you sure you want to delete Recruiter Interview?',
+            text: "It will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/MCQ/DeleteMCQ',
+                        data: { 'Id': Id },
+                        type: 'Delete',
+                        method: 'POST',
+                        success: function (result) {
+                            if (result == "Successfully deleted") {
+                                resolve(result);
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The Recruiter Interview has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/MCQ/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+
+<script src="~/js/Common.js"></script>
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js?v7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#ddlSecondarySkills, #ddlProfileType, #ddlSeniorityLevel, #ddlEmploymentType, #ddlClients").select2({ multiple: true });
+    });
+
+</script>

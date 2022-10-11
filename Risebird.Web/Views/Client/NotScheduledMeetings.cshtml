@@ -11,8 +11,8 @@
     ViewBag.PageHeader = "Not Scheduled Candidates";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
     string[] RFID = new string[] { };
     string[] primarySkills = new string[] { };
     string[] ClientHR = new string[] { };
@@ -21,8 +21,8 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("NotScheduledMeetingsfilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
@@ -308,7 +308,7 @@
                                                                                 </td>
 
 
-                                                                                @if (!String.IsNullOrEmpty(item.resumeLink))
+                                                                                @if (!string.IsNullOrEmpty(item.resumeLink))
                                                                                 {
                                                                                     <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
                                                                                 }
@@ -452,7 +452,7 @@
                                                                                 </td>
 
 
-                                                                                @if (!String.IsNullOrEmpty(item.resumeLink))
+                                                                                @if (!string.IsNullOrEmpty(item.resumeLink))
                                                                                 {
                                                                                     <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
                                                                                 }

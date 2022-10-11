@@ -91,7 +91,7 @@
         <div class="pull-left mt-20">
 
             <button style="margin-bottom: 4px; margin-left: 30px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
-                Comments
+                <text style="color:red">Rate Interviewer</text>
             </button>
             <button style="margin-bottom: 4px; margin-left: 10px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
                 Audio Feedback
@@ -2107,7 +2107,7 @@
         //var interviewStatusElem = document.getElementById("InterviewStatus");
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
         var interviewStatusValue = document.getElementById("InterviewStatus").value;
-        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4) {
+        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 1) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";

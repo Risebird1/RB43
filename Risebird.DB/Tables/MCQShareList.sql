@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[MCQShareList](
 	[roomId] [varchar](50) NULL,
 	[Expiretime] [int] NULL,
 	[WhoShared] [varchar](200) NULL,
+	[ShareType] [bit],
  CONSTRAINT [PK_MCQShareList] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -38,5 +39,14 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE MCQShareList
     Add WhoShared varchar(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ShareType')
+      AND Object_ID = Object_ID(N'MCQShareList'))
+BEGIN
+    ALTER TABLE MCQShareList
+    Add ShareType bit
 END
 GO

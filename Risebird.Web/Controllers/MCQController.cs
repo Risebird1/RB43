@@ -75,7 +75,7 @@ namespace Risebird.Web.Controllers
                             clientname = client.Result.ClientName.ToUpper();
                         }
                     }
-                    var result = _mCQService.FetchAllMCQSets(clientname, profileName);
+                    var result = _mCQService.FetchAllMCQSets(clientname, profileName, false);
                     if (profileName == "Client")
                     {
                         List<MCQVMset> filteredByClient = new List<MCQVMset>();
@@ -646,7 +646,7 @@ namespace Risebird.Web.Controllers
                                  select new QuestionList
                                  {
                                      QuestionNumber = _Q.QuestionNumber,
-                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                     QuestionAnswered = string.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
                                  }).ToList();
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
@@ -697,7 +697,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (Option2 == true)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionAnswer))
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "2";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",2";
@@ -708,7 +708,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (Option3 == true)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionAnswer))
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "3";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",3";
@@ -719,7 +719,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (Option4 == true)
                     {
-                        if (String.IsNullOrEmpty(item.QuestionAnswer))
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "4";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",4";
@@ -778,7 +778,7 @@ namespace Risebird.Web.Controllers
                                  select new QuestionList
                                  {
                                      QuestionNumber = _Q.QuestionNumber,
-                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                     QuestionAnswered = string.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
                                  }).ToList();
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
@@ -833,7 +833,7 @@ namespace Risebird.Web.Controllers
                 //    }
                 //}
                 _mCQService.AddMCQCandidates(_list);
-                if (!String.IsNullOrWhiteSpace(values.Name))
+                if (!string.IsNullOrWhiteSpace(values.Name))
                 {
                     var aadhaarKYCmodel = new AadhaarData();
                     aadhaarKYCmodel.Name = values.Name;
@@ -858,7 +858,7 @@ namespace Risebird.Web.Controllers
                 string HrEmailaddress = string.Empty;
                 foreach (var item in HrEmailaddresslist)
                 {
-                    if (String.IsNullOrEmpty(HrEmailaddress))
+                    if (string.IsNullOrEmpty(HrEmailaddress))
                     {
                         HrEmailaddress = item.EmailId;
                     }
@@ -874,7 +874,7 @@ namespace Risebird.Web.Controllers
                     CC = HrEmailaddress,
                     Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
                 };
-                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+                var resultretrun = await _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
                 HttpContext.Session.Remove("TestCandidateQuestion");
                 return Json("TestSubmit");
             }
@@ -899,7 +899,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
-                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id);
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id, false);
                     if (candidateset != null)
                     {
                         if (profileName == "Client")
@@ -1007,7 +1007,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime, bool Candidate)
         {
             try
             {
@@ -1029,7 +1029,7 @@ namespace Risebird.Web.Controllers
                             ClientName = client.Result.ClientName.ToUpper();
                         }
                     }
-                    if (String.IsNullOrEmpty(ClientName))
+                    if (string.IsNullOrEmpty(ClientName))
                     {
                         ClientName = "";
                     }
@@ -1051,7 +1051,7 @@ namespace Risebird.Web.Controllers
                                 TO = item,
                                 Subject = "Invitation for " + details.Title + " : " + ClientName
                             };
-                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
+                            var result = await _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
                             //var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
                             string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&SMCQId=" + date1;
                             Mail _mail1 = new Mail
@@ -1059,7 +1059,7 @@ namespace Risebird.Web.Controllers
                                 TO = ClientEmail,
                                 Subject = "Invitation for " + details.Title + " : " + item
                             };
-                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                            await _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
                             if (result.Contains("Mail sent successfully"))
                             {
                                 _list.PartitionKey = date1;
@@ -1067,6 +1067,7 @@ namespace Risebird.Web.Controllers
                                 _list.EmailAddress = item.Trim();
                                 _list.roomId = _meetinglinks.roomId;
                                 _list.Expiretime = Expiretime;
+                                _list.ShareType = Candidate;
                                 _mCQService.AddMCQSetShareList(_list);
                             }
                         }
@@ -1125,8 +1126,8 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("Logo", "");
                 }
                 var _candidate = new CandidateDetailsForTestDuplicate();
-                var candidateset = _mCQService.GetMCQCandidateDetailsByMCQId(MCQId);
-                if (!String.IsNullOrWhiteSpace(CMCQId))
+                var candidateset = _mCQService.GetMCQReportByMCQId(MCQId);
+                if (!string.IsNullOrWhiteSpace(CMCQId))
                 {
                     _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
                 }
@@ -1141,9 +1142,9 @@ namespace Risebird.Web.Controllers
                 _candidate.JoinabilityHRReportCollection = new List<JoinabilityHRReport>();
                 _candidate = _mCQService.FetchMCQReportDetails(_candidate);
                 SetSelectabilityorJoniblity(_candidate);
-                if (String.IsNullOrEmpty(_candidate.VideoLink))
+                if (string.IsNullOrEmpty(_candidate.VideoLink))
                 {
-                    if (!String.IsNullOrEmpty(_candidate.roomId))
+                    if (!string.IsNullOrEmpty(_candidate.roomId))
                     {
                         var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
                         var request = new RestRequest(Method.GET);
@@ -1334,6 +1335,314 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
+        }
+        #endregion
+        #region Interviewer MCQ
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerMCQ()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
+                {
+                    string clientname = string.Empty;
+                    var result = _mCQService.FetchAllMCQSets(clientname, profileName, true);
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    var skillset = _skillService.GetSkills();
+
+                    var resultset = new MCQDropdowndetails();
+
+                    resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+                    resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
+                    resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
+
+                    resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
+
+                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+
+                    foreach (var item in result ?? new List<MCQVMset>())
+                    {
+                        if (!string.IsNullOrEmpty(item.ProfileType))
+                        {
+                            var listProfileTypes = new List<string>();
+                            foreach (var profile in item.ProfileType.Split(','))
+                            {
+                                var name = Enum.GetName(typeof(Heuristicsscorelevel), Convert.ToInt16(profile));
+                                listProfileTypes.Add(name);
+                            }
+                            item.ProfileTypeName = string.Join(",", listProfileTypes);
+                        }
+                    }
+                    if (HttpContext.Session.GetString("InterviewerMCQSetList") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<MCQFilter>(HttpContext.Session.GetString("InterviewerMCQSetList"));
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = result.Select(x => x.PrimarySkills).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.SecondarySkill = filter.SecondarySkill == null ? filter.SecondarySkill = result.Select(x => x.SecondarySkill).ToArray() : filter.SecondarySkill = filter.SecondarySkill;
+                        if (result != null && result.Count() > 0)
+                        {
+                            bool continueApplyingFilter = true;
+                            if (filter.PrimarySkill != null)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByPrimarySkill = null;
+                                resultFilteredByPrimarySkill = result.Where(c => filter.PrimarySkill.Contains(c.PrimarySkills));
+                                if (resultFilteredByPrimarySkill != null)
+                                {
+                                    result = resultFilteredByPrimarySkill;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.CountryType))
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByCountryType = null;
+
+                                resultFilteredByCountryType = result.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
+                                if (resultFilteredByCountryType != null && resultFilteredByCountryType.Count() > 0)
+                                {
+                                    result = resultFilteredByCountryType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.CompanyType) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByCompanyType = null;
+                                resultFilteredByCompanyType = result.Where(c => c.CompanyType.HasValue && c.CompanyType.Value == Convert.ToInt16(filter.CompanyType));
+                                if (resultFilteredByCompanyType != null && resultFilteredByCompanyType.Count() > 0)
+                                {
+                                    result = resultFilteredByCompanyType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(filter.SeniorityLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredBySeniority = null;
+                                resultFilteredBySeniority = result.Where(c => c.SeniorityLevel != null && c.SeniorityLevel.Contains(filter.SeniorityLevel));
+                                if (resultFilteredBySeniority != null && resultFilteredBySeniority.Count() > 0)
+                                {
+                                    result = resultFilteredBySeniority;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(filter.DifficultyLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByDifficulty = null;
+                                resultFilteredByDifficulty = result.Where(c => c.ProfileType != null && c.ProfileType.Contains(filter.DifficultyLevel));
+                                if (resultFilteredByDifficulty != null && resultFilteredByDifficulty.Count() > 0)
+                                {
+                                    result = resultFilteredByDifficulty;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(filter.EmploymentType) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByEmploymentType = null;
+                                resultFilteredByEmploymentType = result.Where(c => c.EmploymentType != null && c.EmploymentType.Contains(filter.EmploymentType));
+                                if (resultFilteredByEmploymentType != null && resultFilteredByEmploymentType.Count() > 0)
+                                {
+                                    result = resultFilteredByEmploymentType;
+                                }
+                            }
+                        }
+                        result = result?.ToList();
+                    }
+                    resultset._MCQVMset = result != null ? (List<MCQVMset>)result : new List<MCQVMset>();
+                    ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
+                    ViewBag.profile = profileName;
+                    return View(resultset);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> InterviewerMCQ(MCQFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
+                    {
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("InterviewerMCQSetList", JsonConvert.SerializeObject(filter));
+                        }
+                        return RedirectToAction("InterviewerMCQ");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetInterviewerMCQFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InterviewerMCQSetList");
+                    return RedirectToAction("InterviewerMCQ");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerTestDetails(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var isclient = false;
+                var clientname = string.Empty;
+                var candidateset = new List<CandidateDetailsForTestDuplicate>();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                {
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id, true);
+                    if (candidateset != null)
+                    {
+                        if (profileName == "Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            var client = _userRepository.GetClientUserDetails(emailid);
+                            if (client != null)
+                            {
+                                clientname = client.Result.ClientName.ToUpper();
+                                isclient = true;
+                                candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
+                            }
+                        }
+                        if (HttpContext.Session.GetString("MCQInterviewerList") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQCandidateList"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
+                            }
+                            if (profileName != "Client")
+                            {
+                                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
+                                filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                                candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
+                                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
+                            }
+                        }
+                        ViewBag.ID = id;
+                        ViewBag.Isclient = isclient;
+                        ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
+                        ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
+                        return View(candidateset);
+                    }
+                }
+                return View(candidateset);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> InterviewerTestDetails(InterviewFilter filter, string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("MCQInterviewerList", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("InterviewerTestDetails", new { id = id });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public IActionResult ResetInterviewerMCQCandidateFilter(string id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("MCQInterviewerList");
+                    return RedirectToAction("InterviewerTestDetails", new { id = id });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
         #endregion
     }

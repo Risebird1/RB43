@@ -260,7 +260,7 @@
                                                     <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
                                                 </div>*@
                                             <div class="col-md-12 col-sm-12">
-                                                @if (!String.IsNullOrEmpty(item.ProfileTypeName))
+                                                @if (!string.IsNullOrEmpty(item.ProfileTypeName))
                                                 {
                                                     @if (item.ProfileTypeName.Length > 25)
                                                     {
@@ -286,7 +286,7 @@
                                                 <div class="client-field">Total Invite/ Attempt:</div> <div class="client-name">@item.TotalInvite / @item.CandidateAttempt</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12">
-                                                @if (!String.IsNullOrEmpty(item.SecondarySkill))
+                                                @if (!string.IsNullOrEmpty(item.SecondarySkill))
                                                 {
                                                     @if (item.SecondarySkill.Length > 25)
                                                     {
@@ -864,7 +864,7 @@
                         $.ajax({
                             type: "POST",
                             url: "/MCQ/ShareTestLink",
-                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val() },
+                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: false },
                             success: function (data) {
                                 if (data == "success") {
                                     alert("Successfully share the Phone Screen+ set.");

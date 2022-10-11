@@ -264,7 +264,7 @@ namespace Risebird.Web.Controllers
         //[HttpGet]
         //public IActionResult Index(string emailid, string uniqueid)
         //{
-        //    var Emailid = String.Empty;
+        //    var Emailid = string.Empty;
         //    if (HttpContext.Session.GetString("email") != null)
         //    {
         //        Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -340,7 +340,7 @@ namespace Risebird.Web.Controllers
         //{
         //    try
         //    {
-        //        var Emailid = String.Empty;
+        //        var Emailid = string.Empty;
         //        if (HttpContext.Session.GetString("email") != null)
         //        {
         //            Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -389,11 +389,11 @@ namespace Risebird.Web.Controllers
         //        {
         //            var irfflag = false;
         //            var IRFId = string.Empty;
-        //            if (String.IsNullOrEmpty(model.IRFId))
+        //            if (string.IsNullOrEmpty(model.IRFId))
         //            {
         //                while (!irfflag)
         //                {
-        //                    if (!String.IsNullOrEmpty(model.ClientName))
+        //                    if (!string.IsNullOrEmpty(model.ClientName))
         //                    {
         //                        IRFId = model.ClientName.Substring(0, 3);
         //                        var _irfassessment = model.OldAssessmentGroupId;
@@ -447,7 +447,7 @@ namespace Risebird.Web.Controllers
         //                return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
         //            }
         //            var domain = Request.Scheme + "://" + Request.Host.Value;
-        //            if (String.IsNullOrEmpty(model.OldCalendlyLink))
+        //            if (string.IsNullOrEmpty(model.OldCalendlyLink))
         //            {
         //                //Start: Auto Generate Scheduling Link 
         //                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
@@ -494,7 +494,7 @@ namespace Risebird.Web.Controllers
         //{
         //    try
         //    {
-        //        var Emailid = String.Empty;
+        //        var Emailid = string.Empty;
         //        if (HttpContext.Session.GetString("email") != null)
         //        {
         //            Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -568,7 +568,7 @@ namespace Risebird.Web.Controllers
             var Skillset = _irfRepository.GetSkills();
             if (Skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
@@ -601,7 +601,7 @@ namespace Risebird.Web.Controllers
             {
                 model.Type = "B2B";
             }
-            if (String.IsNullOrEmpty(model.AssessmentGroupId))
+            if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
                 model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(model.id).Result;
                 model.InterviewerCollection = new List<TransInterviewer>();
@@ -646,7 +646,7 @@ namespace Risebird.Web.Controllers
             model_report.SkillChannel = SkillChannel;
             model_report.duration = 60;
             model_report.Concurrency = 10;
-            model_report.BufferTime = 12;
+            model_report.BufferTime = 18;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -684,7 +684,7 @@ namespace Risebird.Web.Controllers
             //{
             //    stringChars[i] = chars[random.Next(chars.Length)];
             //}
-            //var finalString = new String(stringChars);
+            //var finalString = new string(stringChars);
             //return finalString;
         }
         [HttpPost]
