@@ -1410,25 +1410,67 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<string>>FetchAlertMessage()
+        public async Task<List<string>> FetchAlertMessage()
         {
             try
-            {            
-               using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Currenttime", DateTime.Now);
-                   var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAlterMessage", parameters,
-                     commandType: CommandType.StoredProcedure);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAlterMessage", parameters,
+                      commandType: CommandType.StoredProcedure);
                     return (List<string>)result;
                 }
-               
+
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<AlterMessage>> FetchAlertMessageList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<AlterMessage>(con, "usp_GetAlterMessageList",null,
+                   commandType: CommandType.StoredProcedure);
+                    return (List<AlterMessage>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        
+        public async Task<string> AddAlertMessage(AlterMessage model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ID", model.ID);
+                    parameters.Add("@Announcement",model.Announcement);
+                    parameters.Add("@StartTime", model.StartTime);
+                    parameters.Add("@EndTime", model.EndTime);
+                    parameters.Add("@Isactive", model.IsActive);
+                    
+                    await SqlMapper.QueryAsync(con, "usp_AddAlertMessage", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "success";
         }
     }
 }
