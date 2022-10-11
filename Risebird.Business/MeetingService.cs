@@ -3732,6 +3732,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid)
+        {
+            try
+            {
+                var recordingsData = _meetingRespository.GetCallRecordingData(profile, Emailid).Result.ToList();
+                return recordingsData ?? new List<CallRecordingDataVM>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
