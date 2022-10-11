@@ -5759,6 +5759,13 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
+
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
                     techSkillDt.Columns.Add("LevelId", typeof(int));
