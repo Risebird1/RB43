@@ -12,15 +12,11 @@ Create Procedure usp_FetchCallRecordingDataDB
 @UserProfile Varchar(15),      
 @Emailid varchar(150)      
 AS      
-BEGIN      
-if(@UserProfile = 'Admin')      
 BEGIN    
 
 select crd.id, crd.InterviewId, crd.IRFId, crd.[Caller], crd.CallRecipient, crd.DateCreated,
 crd.Duration, crd.Price, crd.PriceUnit, crd.CallSid, crd.StartTime, crd.RecipientProfileType, crd.RecordingUri, crd.RecordingSid
 from CallRecordingData crd
-
-END 
 
 END
 GO
