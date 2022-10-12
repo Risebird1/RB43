@@ -278,7 +278,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> Getshuftipro(Object _model)
         {
-            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _model.ToString());
+            var _model1 = JsonConvert.SerializeObject(_model);
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _model1.ToString());
             return Json("");
         }
         #endregion
