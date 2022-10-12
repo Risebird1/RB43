@@ -53,14 +53,16 @@
                                         </ul>
 
                                     </div>
-
+                                    @Html.HiddenFor(model=>model.IsCandidateavailability)
+                                    @Html.HiddenFor(model=>model.IsMeetingAutoCancelled)
+                                    @Html.HiddenFor(model=>model.IsMeetingNotificationSend)
                                     <div>
                                         <h3 class="tab_drawer_heading" rel="tab-1">Event Details</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
                                             <div class="tab-main-box clearfix">
-                                                
+
                                                 <div class="row">
-                                                    
+
                                                     <div class="col-md-4 col-sm-4">
                                                         <div class="form-group" style="margin-bottom:20px;">
                                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
@@ -356,10 +358,10 @@
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-4">Interviewer</h3>
-                                        @{ 
+                                        @{
                                             string displayStatus = string.Empty;//"block";
 
-                                            if(Model.Profile == "Client")
+                                            if (Model.Profile == "Client")
                                             {
                                                 displayStatus = "none";
                                             }
@@ -384,7 +386,7 @@
                                                                             <th width="20%" class="table_heading">EmailId</th>
                                                                         }
                                                                         <th width="50%" class="table_heading">Skills</th>
-                                                                        
+
                                                                         <th width="20%" class="table_heading" style="display:@displayStatus">Per Interviewer Rate <span style="color:red">*</span></th>
 
                                                                         <th width="10%" class="table_heading"> Select </th>
@@ -535,7 +537,7 @@
                                                                                         </td>
                                                                                     }
                                                                                 }
-                                                                    
+
 
                                                                             </tr>
                                                                         }
@@ -591,7 +593,7 @@
                                 </div>
                             </div>
                         }
-                        
+
 
                     </div>
 
@@ -661,7 +663,7 @@
             document.getElementById("error_JDTiltle").innerHTML = "";
             return false;
         }
-        
+
     }
 
     function CheckTotalWeightage() {
@@ -779,7 +781,7 @@
                     //drpdwnId.options.length = 0;
                     //$("#ClientCollection_0__ClientUserId option").remove();
                     //var optionsSelector = "#" + "ClientCollection_" + i + "__ClientUserId option";
-                    $("#"+ clientUserDrpDowns[i].id + " option").remove();
+                    $("#" + clientUserDrpDowns[i].id + " option").remove();
                     //$("#" + + clientUserDrpDowns[i].id + " option").remove();
                     if (data.length > 0) {
                         $(data).each(function () {
@@ -823,10 +825,20 @@
                         drpbilling.append(option);
                     });
                 }
-                
+
             }
         });
         GenerateSkillChannelName(clientCompanyName);
+        $.ajax({
+            type: "POST",
+            url: "/IRF/GetClientDetails",
+            data: { 'clientid': clientId },
+            success: function (data) {
+                document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
+                document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
+                document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
+            }
+        });
     }
 
     function GenerateSkillChannelName(clientCompanyName) {
@@ -989,7 +1001,7 @@
 
     var firstClientUserRole = '';
     function ClientUserChanged(val, id) {
-        
+
         var index = id.split('_')[1];
         //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__Role';
@@ -1133,8 +1145,6 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
-
-
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
 
@@ -1255,7 +1265,7 @@
     function CheckConditionsOnClientFormSubmit() {
         var flag = false;
         flag = IsJobProfileNameInvalid();
-        if ($('#ClientId').val() == null || $('#ClientId').val() == "" ) {
+        if ($('#ClientId').val() == null || $('#ClientId').val() == "") {
             $('#error_ClientId').text("Please select a Client");
             flag = true;
 
@@ -1300,7 +1310,7 @@
         }
         flag = checkClientDetails();
         if (flag) {
-            swal.fire("Oops!", "Kindly check the details on the Client User Tab." , "error");
+            swal.fire("Oops!", "Kindly check the details on the Client User Tab.", "error");
             return;
         }
         if (flag == false) {
@@ -1415,5 +1425,18 @@
         document.getElementById("noInterviewer").innerHTML = "";
         return true;
     }
-
+    function configurationChange() {
+        if($("#ClientId").val()!=''){
+        $.ajax({
+            type: "POST",
+            url: "/IRF/GetClientDetails",
+            data: { 'clientid': $("#ClientId").val() },
+            success: function (data) {
+                document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
+                document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
+                document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
+            }
+        });
+        }
+    }
 </script>

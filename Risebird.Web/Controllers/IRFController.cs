@@ -7250,5 +7250,11 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> GetClientDetails(int clientid)
+        {
+            var _clientdetails = _clientService.GetClient(clientid);
+            return Json(_clientdetails);
+        }
     }
 }

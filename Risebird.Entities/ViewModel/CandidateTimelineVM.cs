@@ -44,6 +44,7 @@ namespace Risebird.Entities.ViewModel
         public int reportcount { get; set; }
         public bool IsQCRequired { get; set; }
         public string Interviewer { get; set; }
+        public bool IsRedoInterview { get; set; }
     }
 
     public class TimelineStatus
