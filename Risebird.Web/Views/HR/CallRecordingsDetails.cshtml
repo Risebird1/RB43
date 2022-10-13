@@ -51,19 +51,19 @@
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Other')"><strong>Other</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Other')"><strong>Others</strong></div>
                         }
                         else if (ViewBag.type == "Candidate")
                         {
                             <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Other')"><strong>Other</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Other')"><strong>Others</strong></div>
                         }
                         else
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Other')"><strong>Other</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Other')"><strong>Others</strong></div>
                         }
                     </div>
                     @*<div class="pull-right client-ms">
@@ -79,6 +79,15 @@
 @*                    <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallCatalogueExporttoExcel", "HR")'"></i></span>
 *@
                     @*<div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>*@
+                    <div class="pull-right client-ms">
+                        <div style="float:left">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Archived Data</font></span>
+                            </button>
+
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
