@@ -47,5 +47,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid);
         Task<InterviewerDashboardVM> GetInterviewDetailsCount(string emailId);
         Task<List<string>> FetchAlertMessage();
+        Task<List<AlterMessage>> FetchAlertMessageList();
+        Task<string> AddAlertMessage(AlterMessage model);
     }
 }

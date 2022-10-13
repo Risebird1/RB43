@@ -1700,9 +1700,11 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> FetchAlertMessage()
         {
             var modelList = await _dashboardService.FetchAlertMessage();
-
+            for (int i = 0; i < modelList.Count; i++)
+            {
+                modelList[i] = System.Web.HttpUtility.HtmlDecode(modelList[i]);
+            }
             return Json(modelList);
-
         }
     }
 }

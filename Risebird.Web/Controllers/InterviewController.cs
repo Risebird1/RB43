@@ -6564,8 +6564,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         var model = _meetingService.FetchQCFormDetailsById(interviewid);
-                        model.uniqueid = uniqueid;
-                        model.Emailid = emailId;
+                        
                         if (model == null)
                         {
                             model = new QCFormVM();
@@ -6576,9 +6575,16 @@ namespace Risebird.Web.Controllers
                         {
                             model.Isedit = true;
                         }
-                        model.Interviewer = interviewer;
-                        model.Profile = profileName;
-                        model.Type = type;
+
+                        if (model != null)
+                        {
+                            model.uniqueid = uniqueid;
+                            model.Emailid = emailId;
+                            model.Interviewer = interviewer;
+                            model.Profile = profileName;
+                            model.Type = type;
+                        }
+                        
                         return View(model);
                     }
                     else

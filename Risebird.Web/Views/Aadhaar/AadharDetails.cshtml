@@ -20,7 +20,7 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Aadhaar Details</h4></div>
                 </div>
-               
+
             </div>
         </div>
     </div>
@@ -44,7 +44,10 @@
                                                     <th>Name</th>
                                                     <th>Address</th>
                                                     <th>Email</th>
-                                                    <th>Reference ID</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                                    {
+                                                        <th>MCQ ID</th>
+                                                    }
                                                     <th>Gender</th>
                                                     <th>Date of Birth</th>
                                                     @*<th>Doc Face</th>*@
@@ -57,7 +60,10 @@
                                                     <th>Name</th>
                                                     <th>Address</th>
                                                     <th>Email</th>
-                                                    <th>Reference ID</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                                    {
+                                                        <th>MCQ ID</th>
+                                                    }
                                                     <th>Gender</th>
                                                     <th>Date of Birth</th>
                                                     @*<th>Doc Face</th>*@
@@ -98,7 +104,10 @@
                                                         </td>
 
                                                         <td> @item.email</td>
-                                                        <td> @item.reference_id</td>
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                                                        {
+                                                            <td> @item.reference_id</td>
+                                                        }
                                                         <td> @item.gender </td>
                                                         <td> @item.dob</td>
                                                         @*<td> @item.doc_face</td>*@
@@ -199,7 +208,7 @@
             $("#dupmeeting").show();
         }, 2000);
     };
-                //// script for loader ends here
+    //// script for loader ends here
     function moreless(id) {
         $('.moretext_' + id).slideToggle();
         if ($('#read_' + id).val() == 'Readmore') {
