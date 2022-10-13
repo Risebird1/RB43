@@ -2018,7 +2018,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> makecall(string callSid, int? interviewid, string callRecipient, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null)
+        public async Task<JsonResult> makecall(string sid, int? interviewid, string callRecipient, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null, string CandidateEmail = null)//sid  actually means callSid here
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2026,16 +2026,16 @@ namespace Risebird.Web.Controllers
                 currentUserEmailId = currentUserEmailId.Replace("\"", "");
                 //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
                 var callbackUrl = "";
-                var recordingSid = await _twiliohelper.callrecording(callSid, callbackUrl);
+                var recordingSid = await _twiliohelper.callrecording(sid, callbackUrl);
                 if(!string.IsNullOrEmpty(recipientType) && recipientType ==  "Interviewer")
                 {
-                    var resultset = _userService.SaveCallRecordingInterviewer(callRecipient, currentUserEmailId, callSid, recordingSid);
+                    var resultset = _userService.SaveCallRecordingInterviewer(CandidateEmail, currentUserEmailId, sid, recordingSid);
                 }
                 else
                 {
-                    var resultset = _userService.SaveCallRecording((interviewid.HasValue ? interviewid.Value : 0), IRFId, callRecipient, currentUserEmailId, callSid, recordingSid);
+                    var resultset = _userService.SaveCallRecording((interviewid.HasValue ? interviewid.Value : 0), IRFId, callRecipient, currentUserEmailId, sid, recordingSid);
                 }
-                _ = await _userService.SaveCallRecordingData(interviewid, callRecipient, currentUserEmailId, callSid, recordingSid, callRecipientPhoneNumber, IRFId);
+                _ = await _userService.SaveCallRecordingData(interviewid, (callRecipient != null ? callRecipient : CandidateEmail), currentUserEmailId, sid, recordingSid, callRecipientPhoneNumber, IRFId);
                 return Json(recordingSid);
             }
             return Json("Fail");
