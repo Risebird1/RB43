@@ -111,7 +111,11 @@ function FetchAadhaarDetails(MCQID, candidateEmail) {
         data: { MCQID: MCQID, candidateEmail: candidateEmail },
         success: function (data) {
             openAadhaarKYCpopup();
-            BindAadhaarKYCData(data);
+            if (data.type == 1) {
+                BindCandidateKYCData();
+            } else {
+                BindAadhaarKYCData(data);
+            }
         }
     });
 }
@@ -126,7 +130,7 @@ function BindAadhaarKYCData(data) {
         html += '</table>';
     }
     if (data.email == null) {
-        html = 'Not yet Aadhaar verified for this candidate';
+        html = 'Not yet Candidate verified for this candidate';
     }
     $("#divAadhaarKYC").empty().html(html);
 }
@@ -137,7 +141,11 @@ function FetchInterviewAadhaarDetails(candidateEmail) {
         data: { candidateEmail: candidateEmail },
         success: function (data) {
             openAadhaarKYCpopup();
-            BindAadhaarKYCData(data);
+            if (data.type == 1) {
+                BindCandidateKYCData();
+            } else {
+                BindAadhaarKYCData(data);
+            }
         }
     });
 }
@@ -154,4 +162,21 @@ function NewgenerateCaptcha() {
             }
         });
     }
+}
+function BindCandidateKYCData(data) {
+    var html = '';
+    if (data.email != null) {
+        html += '<table style="overflow:auto" width="100%">';
+        html += '<tr><td>First Name</td><td>' + data.first_name + '</td></tr>';
+        html += '<tr><td>Middle Name</td><td>' + data.middle_name + '</td></tr>';
+        html += '<tr><td>Last Name</td><td>' + data.last_name + '</td></tr>';
+        html += '<tr><td>Document Verified</td><td>' + data.selected_type + '</td></tr>';
+        html += '<tr><td>Country</td><td>' + data.country + '</td></tr>';
+        html += '<tr><td>Face Matched</td><td>' + data.face_match_confidence + ' %</td></tr>';
+        html += '</table>';
+    }
+    if (data.email == null) {
+        html = 'Not yet candidate verified for this candidate';
+    }
+    $("#divAadhaarKYC").empty().html(html);
 }

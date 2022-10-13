@@ -10,6 +10,7 @@ namespace Risebird.Repository.Interface
         Task<AadhaarDetails> FetchCandidateEmailidByUniqueId(string uniqueid);
         Task<string> FetchUniqueIdByEmailid(string emailid);
         Task<AadhaarData> FetchInterviewAadhaarDetails(string candidateEmail);
+        Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
 
     }
 }

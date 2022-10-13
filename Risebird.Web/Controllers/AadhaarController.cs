@@ -158,7 +158,15 @@ namespace Risebird.Web.Controllers
             var model = await _aadhaarService.FetchAadhaarDetails(MCQID, candidateEmail);
             if (model == null)
             {
-                model = new AadhaarData();
+                model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
+                if (model == null)
+                {
+                    model = new AadhaarData();
+                }
+                else
+                {
+                    model.type = 1;
+                }
             }
             return Json(model);
         }
@@ -203,7 +211,15 @@ namespace Risebird.Web.Controllers
             var model = await _aadhaarService.FetchInterviewAadhaarDetails(candidateEmail);
             if (model == null)
             {
-                model = new AadhaarData();
+                model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
+                if (model == null)
+                {
+                    model = new AadhaarData();
+                }
+                else
+                {
+                    model.type = 1;
+                }
             }
             return Json(model);
         }
@@ -280,9 +296,9 @@ namespace Risebird.Web.Controllers
         {
             var _model1 = JsonConvert.SerializeObject(_model);
             await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, _model1);
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, _model.reference);
             return Json("");
         }
-        
         #endregion
     }
 }
