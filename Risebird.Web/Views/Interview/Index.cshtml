@@ -123,8 +123,12 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview" )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
                         </button>
-
-
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("AadharDetails", "Aadhaar")'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;">Aadhar Details</font></span>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -461,25 +465,17 @@
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
                                                     <th>QC Status</th>*@
-                                                    <th>Co-ordinating HR</th>
-                                                    <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
                                                     <th>Interview Duration</th>
+                                                    <th>ID Verification</th>
+                                                    <th style="text-align:center">Call</th>
+                                                    <th>ReportId</th>
+                                                    <th>Has Distinct Participants</th>
                                                     <th>Expected Joining Time</th>
                                                     <th>Preferred Location</th>
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
-                                                    <th>Emergency Interview</th>
-                                                    <th>ID Verification</th>
-                                                    <th>Approval Status</th>
-                                                    <th>Approval Comments</th>
-                                                    <th>Final Selection Status</th>
-                                                    <th>Final Selection Comments</th>
-                                                    <th style="text-align:center">Call</th>
-                                                    <th>ReportId</th>
-                                                    <th>Has Distinct Participants</th>
-                                                    <th>Template Used</th>
-
+                                                    <th>Emergency Interview</th>                                                    
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -511,31 +507,22 @@
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
                                                     <th>QC Status</th>*@
-                                                    <th>Co-ordinating HR</th>
-                                                    <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
                                                     <th>Interview Duration</th>
+                                                    <th>ID Verification</th>
+                                                    <th style="text-align:center">Call</th>
+                                                    <th>ReportId</th>
+                                                    <th>Has Distinct Participants</th>
                                                     <th>Expected Joining Time</th>
                                                     <th>Preferred Location</th>
                                                     <th>Expected Salary</th>
                                                     <th>Current Employer</th>
-                                                    <th>Emergency Interview</th>
-                                                    <th>ID Verification</th>
-                                                    <th>Approval Status</th>
-                                                    <th>Approval Comments</th>
-                                                    <th>Final Selection Status</th>
-                                                    <th>Final Selection Comments</th>
-                                                    <th style="text-align:center">Call</th>
-                                                    <th>ReportId</th>
-                                                    <th>Has Distinct Participants</th>
-                                                    <th>Template Used</th>
-
+                                                    <th>Emergency Interview</th>                                                  
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-
                                                 <tr id=@item.imid>
                                                     <td class="text-center action">
                                                         @if (ViewBag.Type != "RedoInterviews")
@@ -598,7 +585,7 @@
                                                                     <span onclick="location.href = '@Url.Action("UploadInterviewAudio", "Interview" , new { interviewId=item.imid, candidateEmail=item.candidateEmail, irfName=item.IRFId, interviewDate=item.interviewDate, candidateName=item.candidateName})'" title="Audio to Text" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16 height=" 16 viewBox="0 0 24 24"><path d="M4 9h16v2H4zm0 4h10v2H4z" /></svg></span>
                                                                 </button>
                                                             }
-                                                            @if (item.IsAadhaarVerificationRequired==true)
+                                                            @if (item.IsAadhaarVerificationRequired == true)
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
                                                                     <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
@@ -883,58 +870,10 @@
         <td></td>
 
         }*@
-                                                    <td>@item.HRCoordinatorEmailId</td>
 
-                                                    <td class="interview-com">
-
-
-                                                        <div id="section">
-                                                            @if (item.HRComment != null && item.HRComment != "")
-                                                            {
-                                                                @if (item.HRComment.Length > 22)
-                                                                {
-                                                                    <div class="article">
-                                                                        <p style="margin-bottom:0px;">
-                                                                            @item.HRComment.Substring(0, 22)
-                                                                        </p>
-                                                                        <p class="moretext_@item.imid moretext">
-                                                                            @item.HRComment.Substring(22, @item.HRComment.Length - 22)
-                                                                        </p>
-                                                                    </div>
-                                                                    <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="article">
-
-                                                                        <p>
-                                                                            @item.HRComment.Substring(0, @item.HRComment.Length)
-                                                                        </p>
-                                                                    </div>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <div></div>
-                                                            }
-
-
-                                                        </div>
-
-
-
-
-                                                    </td>
                                                     @*<td>@item.HRComment</td>*@
                                                     <td>@item.staffingAgency</td>
                                                     <td> @item.interviewDuration </td>
-                                                    <td> @item.joiningTime</td>
-                                                    <td> @item.preferredLocation</td>
-                                                    <td> @item.expectedPerHourRate</td>
-                                                    <td> @item.currentEmployerName</td>
-                                                    <td>
-                                                        @item.IsEmergency
-                                                    </td>
                                                     @if (item.IsAadhaarVerificationRequired == null)
                                                     {
                                                         <td>Not Mandatory</td>
@@ -943,58 +882,15 @@
                                                     {
                                                         <td>Yes</td>
                                                     }
-                                                    else 
-                                                    { 
+                                                    else
+                                                    {
                                                         <td>No</td>
                                                     }
-                                                    <td>
-                                                        @item.NextLevelApprovalStat
-                                                    </td>
-                                                    <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in ">
-                                                            <div class="talktext">
-                                                                @if (item.ApprovalComments != null && item.ApprovalComments.Length > 0)
-                                                                {
-
-                                                                    <a href="#" data-tooltip="@item.ApprovalComments">  <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea></a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
-                                                                }
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
-
-
-
-                                                    <td>
-                                                        @item.FinalSelectionStat
-                                                    </td>
-                                                    <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in ">
-                                                            <div class="talktext">
-                                                                @if (item.FinalComments != null && item.FinalComments.Length > 0)
-                                                                {
-
-                                                                    <a href="#" data-tooltip="@item.FinalComments"><textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea></a>
-                                                                }
-
-                                                                else
-                                                                {
-                                                                    <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
-                                                                }
-
-
-                                                            </div>
-                                                        </div>
-                                                    </td>
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
                                                             <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid', '@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
                                                         }
                                                     </td>
                                                     <td>@item.imid</td>
@@ -1006,14 +902,13 @@
                                                     {
                                                         <td>No</td>
                                                     }
-                                                    @if (!string.IsNullOrEmpty(item.TemplateName))
-                                                    {
-                                                        <td>@item.TemplateName</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>None</td>
-                                                    }
+                                                    <td> @item.joiningTime</td>
+                                                    <td> @item.preferredLocation</td>
+                                                    <td> @item.expectedPerHourRate</td>
+                                                    <td> @item.currentEmployerName</td>
+                                                    <td>
+                                                        @item.IsEmergency
+                                                    </td>
                                                 </tr>
                                                 }
                                             </tbody>
@@ -1029,7 +924,9 @@
                         <!-- end col-md-12 -->
                     </div>
 
-                    <div id="myModal" class="modal modal-bg">
+                    @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+                    @*<div id="myModal" class="modal modal-bg">
                         <!-- Modal content -->
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
@@ -1065,7 +962,7 @@
                             </div>
 
                         </div>
-                    </div>
+                    </div>*@
 
 
                     <!-- end row -->
@@ -1156,10 +1053,10 @@
                     <div class="form-group">
                         <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
                         @*<div>
-                        <div class="text-areadiv1">
-                        <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
-                        </div>
-                        </div>*@
+                            <div class="text-areadiv1">
+                            <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                            </div>
+                            </div>*@
                         <div>
                             <textarea style="width:100%;" id="bcMessage"></textarea>
                         </div>
@@ -1394,7 +1291,7 @@
         </div>
     </div>
 </div>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+@*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
 
 <script>
@@ -1693,8 +1590,10 @@
     };
     //// script for loader ends here
 </script>
+
+<script src="~/js/TwilioCallMaker.js"></script>
 <script>
-    var candidate = "";
+    @*var candidate = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1766,7 +1665,7 @@
         hangUp();
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
-    }
+    }*@
     //function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
     //    $.ajax({
     //        url: '/Candidate/PublicCancelInterview',
@@ -2159,7 +2058,7 @@
 
 </script>
 @*
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
 <script>
     $('input:radio[name="receivers"]').click(function () {
 
@@ -2543,4 +2442,4 @@
 
 <script src="~/js/ModalFormServerValidation.js"></script>
 
-<script src="~/js/CallTwilio.js"></script>
+@*<script src="~/js/CallTwilio.js"></script>*@

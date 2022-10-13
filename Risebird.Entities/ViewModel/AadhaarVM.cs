@@ -74,6 +74,8 @@
         public string selected_type { get; set; }
         public string face_match_confidence { get; set; }
         public int type { get; set; }
+        public string CreatedOn { get; set; }
+        public int id { get; set; }
     }
     public class AadhaarStatus
     {

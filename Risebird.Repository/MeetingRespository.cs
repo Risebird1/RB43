@@ -6382,5 +6382,28 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserProfile", profile);
+                    parameters.Add("@Emailid", Emailid);
+                    return await SqlMapper.QueryAsync<CallRecordingDataVM>(con, "usp_FetchCallRecordingDataDB", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

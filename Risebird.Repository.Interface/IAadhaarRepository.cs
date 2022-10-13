@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.ViewModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
@@ -11,6 +12,7 @@ namespace Risebird.Repository.Interface
         Task<string> FetchUniqueIdByEmailid(string emailid);
         Task<AadhaarData> FetchInterviewAadhaarDetails(string candidateEmail);
         Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
+        Task<IEnumerable<AadhaarData>> GetAadharDetails();
 
     }
 }

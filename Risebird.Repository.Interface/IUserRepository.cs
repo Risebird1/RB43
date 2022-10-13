@@ -75,5 +75,8 @@ namespace Risebird.Repository.Interface
         AssignmentVM GetInterviewerEntitleById(int assessmentid);
         string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
         List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid);
+        Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null);
+        Task<IEnumerable<CallRecordingDataVM>> GetRecordingDataToUpdate();
+        Task<bool> UpdateRecordingData(CallRecordingDataVM obj);
     }
 }

@@ -6550,7 +6550,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Create QCForm
-        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type)
+        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid)
         {
             try
             {
@@ -6561,9 +6561,10 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         var model = _meetingService.FetchQCFormDetailsById(interviewid);
+                        
                         if (model == null)
                         {
                             model = new QCFormVM();
@@ -6574,9 +6575,16 @@ namespace Risebird.Web.Controllers
                         {
                             model.Isedit = true;
                         }
-                        model.Interviewer = interviewer;
-                        model.Profile = profileName;
-                        model.Type = type;
+
+                        if (model != null)
+                        {
+                            model.uniqueid = uniqueid;
+                            model.Emailid = emailId;
+                            model.Interviewer = interviewer;
+                            model.Profile = profileName;
+                            model.Type = type;
+                        }
+                        
                         return View(model);
                     }
                     else
@@ -6607,7 +6615,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         model.Emailid = emailId;
                         var redflag = await CheckFlagCount(model);
@@ -6652,6 +6660,22 @@ namespace Risebird.Web.Controllers
                         {
                             return RedirectToAction("CompletedInterviews");
                         }
+                        else if (model.Type == "ClientAll")
+                        {
+                            return RedirectToAction("AllMeetings", "Client");
+                        }
+                        else if (model.Type == "ClientSelect")
+                        {
+                            return RedirectToAction("SelectedMeetings", "Client");
+                        }
+                        else if (model.Type == "ClientReject")
+                        {
+                            return RedirectToAction("RejectedMeetings", "Client");
+                        }
+                        else if (model.Type == "ClientPublic")
+                        {
+                            return RedirectToAction("PublicCandidateStatus", "Candidate", new { emailid = model.Emailid, id = model.uniqueid });
+                        }
                         else
                         {
                             return RedirectToAction("ResolvedRedFlagsInterviews");
@@ -6674,6 +6698,18 @@ namespace Risebird.Web.Controllers
                 if (model.Type == "Completed")
                 {
                     return RedirectToAction("CompletedInterviews");
+                }
+                else if (model.Type == "ClientAll")
+                {
+                    return RedirectToAction("AllMeetings", "Client");
+                }
+                else if (model.Type == "ClientSelect")
+                {
+                    return RedirectToAction("SelectedMeetings", "Client");
+                }
+                else if (model.Type == "ClientReject")
+                {
+                    return RedirectToAction("RejectedMeetings", "Client");
                 }
                 else
                 {

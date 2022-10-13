@@ -181,22 +181,22 @@
                                                     </div>
                                                     @*<div class="col-md-6 col-sm-6 border-rv">
 
-                                                    <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                    <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+                                                <div class="form-group">
+                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
+                                                <div class="col-md-12 col-sm-12">
+                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
 
-                                                    @foreach (var item in ViewBag.CompentencyLevel)
-                                                    {
-                                                    @if (item != null && item != "")
-                                                    {
-                                                    <option value="@item">@item</option>
-                                                    }
-                                                    }
-                                                    </select>
-                                                    </div>
-                                                    </div>
-                                                    </div>*@
+                                                @foreach (var item in ViewBag.CompentencyLevel)
+                                                {
+                                                @if (item != null && item != "")
+                                                {
+                                                <option value="@item">@item</option>
+                                                }
+                                                }
+                                                </select>
+                                                </div>
+                                                </div>
+                                                </div>*@
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
@@ -530,7 +530,7 @@
                                                             <br />
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
-                                                                <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+                                                                <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClickInterviewer('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
 
                                                             }
                                                             @if (ViewBag.profile != "Finance")
@@ -731,10 +731,11 @@
             </div>
             <!-- end col-md-12 -->
 
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
-            <div id="myCallModal" class="modal modal-wrap modal-bg">
+            <!--<div id="myCallModal" class="modal modal-wrap modal-bg">-->
                 <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
+                <!--<div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
 
 
@@ -768,7 +769,7 @@
                     </div>
 
                 </div>
-            </div>
+            </div>-->
 
 
 
@@ -1291,7 +1292,7 @@
                 }*@
 
                 if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
-                html += '<input type="hidden" id="hidmobile' + data[i].userId + '" value="' + data[i].mobileNumber + '"/><input type="hidden" id="hidcandidateEmail_' + data[i].userId + '" value="' + data[i].emailId + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].userId + ')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top:-3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span>';
+                html += '<input type="hidden" id="hidmobile' + data[i].userId + '" value="' + data[i].mobileNumber + '"/><input type="hidden" id="hidcandidateEmail_' + data[i].userId + '" value="' + data[i].emailId + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickInterviewerjson(' + data[i].userId + ')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top:-3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span>';
             }
 
 
@@ -1493,75 +1494,76 @@
     }
 
 </script>
+<script src="~/js/TwilioCallMaker.js"></script>
 <script>
-    var interviewer = "";
-    var cancandidateEmailid = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
+    //var interviewer = "";
+    //var cancandidateEmailid = "";
+    //var span = document.getElementById("callPopUp");
+    //// When the user clicks on <span> (x), close the modal
+    //span.onclick = function () {
+    //    hangUp();
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
+    //$(document).ready(function () {
+    //    $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+    //        // Set up the Twilio Client Device with the token
+    //        Twilio.Device.setup(data.token);
+    //    });
+    //});
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+    ///* Callback to let us know Twilio Client is ready */
+    //Twilio.Device.ready(function (device) {
 
-    });
+    //});
 
-    function callInterviewer(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+    //function callInterviewer(phoneNumber) {
+    //    var params = { "phoneNumber": phoneNumber };
+    //    Twilio.Device.connect(params);
+    //}
+    //function hangUp() {
+    //    Twilio.Device.disconnectAll();
+    //}
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        startCallRecording(connection.parameters.CallSid);
-    });
+    //Twilio.Device.connect(function (connection) {
+    //    var appendText = "In call with " + "<b>" + candidate + "</b>";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    startCallRecording(connection.parameters.CallSid);
+    //});
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+    //function afterTimeOut() {
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected!";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
+    //Twilio.Device.disconnect(function (connection) {
+    //    var appendText = "Call disconnected!";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    setTimeout(afterTimeOut, 2000);
 
-    });
+    //});
 
-    function CallButtonClickjson(userId) {
-        var interviewer = $("#hidfirstname" + userId).val();
-        var mobile = $("#hidmobile" + userId).val();
-        var candidateemail = $("#hidcandidateEmail_" + userId).val();
+    //function CallButtonClickInterviewerjson(userId) {
+    //    var interviewer = $("#hidfirstname" + userId).val();
+    //    var mobile = $("#hidmobile" + userId).val();
+    //    var candidateemail = $("#hidcandidateEmail_" + userId).val();
 
-        // Get the modal
-        CallButtonClick(interviewer, mobile, candidateemail);
+    //    // Get the modal
+    //    CallButtonClickInterviewer(interviewer, mobile, candidateemail);
 
-    }
-    function CallButtonClick(name, phoneNumber, candidateEmail) {
-        interviewer = name;
-        cancandidateEmailid = candidateEmail;
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + interviewer + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callInterviewer(phoneNumber);
+    //}
+    //function CallButtonClickInterviewer(name, phoneNumber, candidateEmail) {
+    //    interviewer = name;
+    //    cancandidateEmailid = candidateEmail;
+    //    // Get the modal
+    //    var modal = document.getElementById("myCallModal");
+    //    // When the user clicks the button, open the modal
+    //    modal.style.display = "block";
+    //    var appendText = "Calling... " + "<b>" + interviewer + "</b>";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    callInterviewer(phoneNumber);
 
-    }
+    //}
     function closeCallPopUp() {
         hangUp();
         var modal = document.getElementById("myCallModal");
@@ -1652,17 +1654,17 @@
     function OpenTdsCertificates(EmailId) {
         window.location.href = "/Interviewer/TdsCertificateInterviewers?emailid=" + EmailId;
     }
-    function startCallRecording(sid) {
-        console.log("sid:" + sid);
-        $.ajax({
-            url: '/User/makecallInterviewer',
-            type: "GET",
-            data: { 'sid': sid, 'CandidateEmail': cancandidateEmailid },
-            success: function (data) {
-                console.log("rsid:" + data);
-            }
-        });
-    }
+    //function startCallRecording(sid) {
+    //    console.log("sid:" + sid);
+    //    $.ajax({
+    //        url: '/User/makecallInterviewer',
+    //        type: "GET",
+    //        data: { 'sid': sid, 'CandidateEmail': cancandidateEmailid },
+    //        success: function (data) {
+    //            console.log("rsid:" + data);
+    //        }
+    //    });
+    //}
 </script>
 <script type="text/javascript">
     $(document).ready(function () {

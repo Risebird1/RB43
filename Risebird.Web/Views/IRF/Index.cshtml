@@ -1176,7 +1176,7 @@
         </div>
     </div>
 </div>
-
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 <script src="~/js/FeedbackRecorder/Record.js"></script>
@@ -1401,8 +1401,9 @@
 
     }*@
 <script src="~/js/BroadcastMessage.js"></script>
-<script src="~/js/CallTwilio.js"></script>
-<script>
+<script src="~/js/TwilioCallMaker.js"></script>
+@*<script src="~/js/CallTwilio.js"></script>
+*@@*<script>
     var span = document.getElementById("callPopUp");
     span.onclick = function () {
         hangUp();
@@ -1414,7 +1415,7 @@
             Twilio.Device.setup(data.token);
         });
     });
-</script>
+</script>*@
 <script>
     var closeMember = document.getElementById("membersPopUp");
     closeMember.onclick = function () {

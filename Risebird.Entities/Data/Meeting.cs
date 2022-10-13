@@ -110,5 +110,8 @@ namespace Risebird.Entities.Data
         public string MeetingPlatform { get; set; }
         public string BackUpLink { get; set; }
         public string BackUpLinkId { get; set; }
+        public string InterviewerFirstName { get; set; }
+        public string ClientHREmailId { get; set; }
+        public string StaffingAgencyEmailId { get; set; }
     }
 }

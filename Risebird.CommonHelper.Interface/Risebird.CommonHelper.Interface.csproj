@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.14.0" />
+    <PackageReference Include="Twilio" Version="5.31.4" />
   </ItemGroup>
 
   <ItemGroup>
