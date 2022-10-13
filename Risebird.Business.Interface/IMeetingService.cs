@@ -203,5 +203,6 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);
         Task<string> StoreClientBroadcastMessage(BroadcastModel model);
+        Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid);
     }
 }

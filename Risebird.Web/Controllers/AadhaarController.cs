@@ -298,6 +298,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin"|| profileName == "SupportAdmin")
                     {                     
                         var adhardetail = await _aadhaarService.GetAadharDetails();
+                        ViewBag.profile = profileName;
                         return View(adhardetail);
                     }
                     else
