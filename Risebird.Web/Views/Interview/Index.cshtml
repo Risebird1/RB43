@@ -600,9 +600,9 @@
                                                             }
                                                             @if (item.IsAadhaarVerificationRequired==true)
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Aadhaar Verified Data">
-                                                                    <span title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
-                                                                        <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/aadhaar-logo-png.jpg" title="Aadhaar Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
+                                                                    <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
+                                                                        <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
                                                                     </span>
                                                                 </button>
                                                             }
@@ -1355,10 +1355,10 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span class="mdc-fab__icon material-icons">
-                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                        <img src="~/img/Aadhaar/verificationlogo.png" />
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Aadhaar Verified Data</h5>
+                <h5 class="modal-title pull-left">Candidate Verified Data</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>

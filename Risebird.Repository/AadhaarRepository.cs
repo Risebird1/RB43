@@ -147,5 +147,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@candidateEmail", candidateEmail);
+                    var result = await SqlMapper.QueryAsync<AadhaarData>(con, "usp_GetInterviewCandidateDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

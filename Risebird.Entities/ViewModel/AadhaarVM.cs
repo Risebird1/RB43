@@ -66,6 +66,14 @@
         public string verified_using { get; set; }
         public string reference_id { get; set; }
         public string status { get; set; }
+
+        public string first_name { get; set; }
+        public string last_name { get; set; }
+        public string middle_name { get; set; }
+        public string country { get; set; }
+        public string selected_type { get; set; }
+        public string face_match_confidence { get; set; }
+        public int type { get; set; }
     }
     public class AadhaarStatus
     {
