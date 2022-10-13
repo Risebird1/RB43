@@ -276,10 +276,11 @@ namespace Risebird.Web.Controllers
             return Json(convertedResponse.verification_url);
         }
         [HttpPost]
-        public async Task<JsonResult> Getshuftipro(Object _model)
+        public async Task<JsonResult> Getshuftipro(verifyResponse _model)
         {
             var _model1 = JsonConvert.SerializeObject(_model);
-            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _model1.ToString());
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, _model1);
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, _model.reference);
             return Json("");
         }
         #endregion

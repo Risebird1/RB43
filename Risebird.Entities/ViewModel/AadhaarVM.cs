@@ -130,5 +130,8 @@
     {
         public string verification_url { get; set; }
         public string reference { get; set; }
+        public string Event { get; set; }
+        public string email { get; set; }
+        public string country { get; set; }
     }
 }
