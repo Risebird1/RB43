@@ -7097,7 +7097,7 @@ namespace Risebird.Web.Controllers
         }
         #region Redo Interviews
         [HttpGet]
-        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus, string type,string uniqueid)
+        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus, string type, string uniqueid)
         {
             var model = new RedoInterviewVM();
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -7212,7 +7212,8 @@ namespace Risebird.Web.Controllers
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail))
+                        var linkurl = "https://" + Request.Host.ToString();
+                        if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail, linkurl))
                         {
                             await _iRFService.SendClientRedoInvite(irfId, interviewid, CandidateemailId);
                             var result = await _meetingService.ResetInterviewPayment(interviewid);
@@ -7386,7 +7387,8 @@ namespace Risebird.Web.Controllers
             {
                 var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                 loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail))
+                var linkurl = "https://" + Request.Host.ToString();
+                if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail, linkurl))
                 {
                     await _iRFService.SendClientRedoInvite(irfId, interviewid, CandidateemailId);
                     var result = await _meetingService.ResetInterviewPayment(interviewid);

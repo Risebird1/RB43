@@ -2811,7 +2811,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SendRedoInvite(int irfId, string email, string loggedUserEmailId)
+        public async Task<bool> SendRedoInvite(int irfId, string email, string loggedUserEmailId, string linkurl)
         {
             try
             {
@@ -2837,6 +2837,7 @@ namespace Risebird.Business
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
+                        oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }
                     else
                     {
