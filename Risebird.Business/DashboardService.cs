@@ -601,6 +601,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<AlterMessage>> FetchAlertMessageList()
+        {
+            try
+            {
+                return await _dashboardRespository.FetchAlertMessageList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
+        public async Task<string> AddAlertMessage(AlterMessage model)
+        {
+            try
+            {
+                return await _dashboardRespository.AddAlertMessage(model);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

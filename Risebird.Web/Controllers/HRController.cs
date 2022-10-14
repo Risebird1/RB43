@@ -1278,5 +1278,75 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallRecordingsDetails(string type)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" /*|| profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin"*/)
+                    {
+                        if(string.IsNullOrEmpty(type))
+                        {
+                            type = "Candidate";
+                        }
+                        
+                        ViewBag.type = type;
+
+                        //if (TempData["SuccessErrorMessageCandidate"] != null)
+                        //{
+                        //    ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                        //    TempData.Remove("SuccessErrorMessageCandidate");
+                        //}
+                        //var recordings = new List<CallRecordingDataVM>();
+                        IEnumerable<CallRecordingDataVM> recordings;
+                        //if (type == "Interviewer")
+                        //{
+                        //    ViewBag.type = "Interviewer";
+                        //    recordings = (await _meetingService.GetCallRecordingData(profileName, emailid)).Where(x => x.RecipientProfileType?.ToLower() == "interviewer");
+                        //}
+                        //else
+                        //{
+                        //    recordings = (await _meetingService.GetCallRecordingData(profileName, emailid)).Where(x => x.RecipientProfileType?.ToLower() == "interviewer");
+                        //}
+                        recordings = await _meetingService.GetCallRecordingData(profileName, emailid);
+                        if (type == "Candidate" || type == "Interviewer")
+                        {
+                            recordings = recordings?.Where(x => x.RecipientProfileType?.ToLower() == type.ToLower());
+                        }
+                        else
+                        {
+                            recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer");
+
+                        }
+
+                        recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-30));
+                        ViewBag.profile = profileName;
+                        return View(recordings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

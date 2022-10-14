@@ -29,7 +29,8 @@ im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer, ca.Ph
 ca.ResumeLink as resumeLink ,irf.JDLink, ca.CandidateMasterId, uli.MobileNumber as InterviewerPhone, im.HRComment, IRF.JDTiltle, IRF.id as irfIntId,IRF.ClientName,    
 im.HRImageFileURL, im.candidateEmail, ul.FirstName as candidateName,     
 ca.ClientHRAttemptContact as CandidateClientHR, irf.ClientName, cl.[Name] as ClientCompName, im.IsEmergency,   
-ic.MeetingStatus,ic.InterviewStatus, ic.videoLink, qc.QCStatus, im.risebirdHR  
+ic.MeetingStatus,ic.InterviewStatus, ic.videoLink, qc.QCStatus, im.risebirdHR,
+uli.FirstName as InterviewerFirstName, ulc.EmailId as ClientHREmailId, uls.EmailId as StaffingAgencyEmailId
 from  IRF  irf join InterviewMeetings im on im.irfid=irf.IRFId  left join interviewcomments ic on ic.interviewid = im.id 
 join UserList ul on ul.EmailId = im.candidateEmail    
 join  CandidatesMaster cm on ul.id=cm.UserId    
