@@ -1291,7 +1291,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    
+                    ViewBag.Profile = profileName;
                     if (profileName == "Admin" /*|| profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin"*/)
                     {
                         if(string.IsNullOrEmpty(type))
@@ -1317,7 +1317,16 @@ namespace Risebird.Web.Controllers
                         //{
                         //    recordings = (await _meetingService.GetCallRecordingData(profileName, emailid)).Where(x => x.RecipientProfileType?.ToLower() == "interviewer");
                         //}
-                        recordings = (await _meetingService.GetCallRecordingData(profileName, emailid)).Where(x => x.RecipientProfileType?.ToLower() == type.ToLower());
+                        recordings = await _meetingService.GetCallRecordingData(profileName, emailid);
+                        if (type == "Candidate" || type == "Interviewer")
+                        {
+                            recordings = recordings?.Where(x => x.RecipientProfileType?.ToLower() == type.ToLower());
+                        }
+                        else
+                        {
+                            recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer");
+
+                        }
 
                         recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-30));
                         ViewBag.profile = profileName;
