@@ -84,14 +84,14 @@ function startCallRecording(callSid) {
 function CallButtonClick(candidateObj, indexid) {
     if (indexid == 1) {
         callRecipientName = candidateObj.Name;
-        //irfId = candidateObj.IRFId;
-        irfId = candidateObj.IRFName;
+        irfId = candidateObj.IRFId;
+        //irfId = candidateObj.IRFName;
         callRecipientEmail = candidateObj.EmailId;
     }
     else {
         callRecipientName = candidateObj.name;
-        //irfId = candidateObj.irfId;
-        irfId = candidateObj.irfName;
+        irfId = candidateObj.irfId;
+        //irfId = candidateObj.irfName;
         callRecipientEmail = candidateObj.emailId;
     }
     // Get the modal

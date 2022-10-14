@@ -44,6 +44,7 @@ namespace Risebird.MicroService
             {
                 try
                 {
+                    var primaryskill = item.PrimarySkillInvite;
                     string yesbutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=1&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
                     string nobutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=2&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
                     string rescheulebutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
@@ -54,8 +55,7 @@ namespace Risebird.MicroService
                         Mail _mail = new Mail
                         {
                             TO = item.CandidateEmail,
-
-                            Subject = "Risebird: Interview Reminder Confirm Your Availability"
+                            Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
@@ -67,7 +67,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
                         _whatsAppVM.timezone = "IST";
-                       await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                        await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                         await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
                     }
@@ -77,7 +77,7 @@ namespace Risebird.MicroService
                         Mail _mail = new Mail
                         {
                             TO = item.CandidateEmail,
-                            Subject = "Risebird: Interview Reminder Confirm Your Availability"
+                            Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send  WhatsApp and mail
@@ -89,7 +89,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                         _whatsAppVM.MessageValue = item.ClientName;
                         _whatsAppVM.timezone = "IST";
-                       await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                        await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
                     else if (item.Typefunction == 24)
@@ -98,7 +98,7 @@ namespace Risebird.MicroService
                         Mail _mail = new Mail
                         {
                             TO = item.CandidateEmail,
-                            Subject = "Risebird: Interview Reminder Confirm Your Availability"
+                            Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
