@@ -3492,6 +3492,7 @@ namespace Risebird.Web.Controllers
                     var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                     var candidateTimeline = new CandidateTimelineVM();
                     candidateTimeline.IsQCRequired = client.IsQCRequired;
+                    candidateTimeline.IsRedoInterview = client.IsRedoInterview;
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3630,6 +3631,7 @@ namespace Risebird.Web.Controllers
                     var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                     var candidateTimeline = new CandidateTimelineVM();
                     candidateTimeline.IsQCRequired = client.IsQCRequired;
+                    candidateTimeline.IsRedoInterview = client.IsRedoInterview;
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;

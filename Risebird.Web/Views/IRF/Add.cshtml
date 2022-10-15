@@ -1651,7 +1651,17 @@
 
             }
         });
-
+        $.ajax({
+            type: "POST",
+            url: "/IRF/GetClientDetails",
+            data: { 'clientid': clientId },
+            success: function (data) {
+                document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
+                document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
+                document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
+                CheckCandidateavailabilityDetails();
+            }
+        });
     }
 
     function TechSkillChanged() {
@@ -3135,7 +3145,7 @@
                 document.getElementById("tab-11").style.display = "none";
     @*document.getElementById("btnNext").style.display = "block";
                     document.getElementById("btnUpload").style.display = "none";*@
-                }
+                    }
             else if (activeTab.trim() == "Manage Channel") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-11").addClass("active");
@@ -3430,7 +3440,7 @@
                     document.getElementById("tab-10").style.display = "none";
     @*document.getElementById("btnNext").style.display = "none";
                         document.getElementById("btnUpload").style.display = "block";*@
-                    }
+                        }
             }
             else if (activeTab.trim() == "Coordinator") {
                 if (!flag) {
@@ -3700,7 +3710,7 @@
         document.getElementById("emInterviewer").innerHTML = "";
         return false;
     }
-     $('#IsCandidateavailability').on('change', function () {
+    $('#IsCandidateavailability').on('change', function () {
         CheckCandidateavailabilityDetails()
     });
     function CheckCandidateavailabilityDetails() {
@@ -3711,5 +3721,8 @@
             document.getElementById('IsMeetingAutoCancelled').checked = false;
             document.getElementById('IsMeetingAutoCancelled').disabled = true;
         }
+    }
+    function configurationChange(){
+
     }
 </script>
