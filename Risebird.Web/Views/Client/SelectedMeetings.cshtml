@@ -646,6 +646,17 @@
                                                                                             </span>
                                                                                         </button>
                                                                                     }
+                                                                                    @*@if (item.IsClientRedoInterview && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                                                                {
+                                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                                <span onclick="OpenRedoFormModel('@item.imid','@item.intervieweStatusStatDesc')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                                </svg>
+                                                                                </span>
+                                                                                </button>
+                                                                                }*@
                                                                                 </td>
                                                                                 <td>
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -975,6 +986,24 @@
         </div>
     </div>
 
+</div>
+<div id="RedoInterviewModel" class="modal modal-bg" style="z-index:5">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Redo Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeRedoInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="divredoInterview">
+            </div>
+        </div>
+    </div>
 </div>
 @if (ViewBag.Message != null)
 {
@@ -1582,9 +1611,15 @@
             }
             if (data[i].isClientQCRequired && (data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8)) {
                 html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">';
-                html += '<a href="/Interview/QCReportForm?interviewid='+ data[i].imid+'&interviewer='+data[i].interviewer+'&type=ClientSelect" title="QC Form" class="mdc-fab__icon material-icons">';
+                html += '<a href="/Interview/QCReportForm?interviewid=' + data[i].imid + '&interviewer=' + data[i].interviewer + '&type=ClientSelect" title="QC Form" class="mdc-fab__icon material-icons">';
                 html += '<i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i></a></button>';
             }
+            //if (data[i].isClientRedoInterview && (data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8)) {
+            //    html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">';
+            //    html += '<span onclick="OpenRedoFormModel(' + data[i].imid + ','  + "'" + data[i].intervieweStatusStatDesc + "'" +')" title="ReDo Interview" class="mdc-fab__icon material-icons">';
+            //    html += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" /><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" /></svg>';
+            //    html += '</span></button>';
+            //}
             html += '</td>'; html += '<td>'; if (data[i].mobileNumber != null && data[i].mobileNumber != "") { html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top"  onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>'; } html += '</td>'; html += '</tr>'; html += '<tr class="collapse ' + data[i].imid + '">'; html += '<td colspan="999" class=child-section">'; html += '<table class="table table-striped">'; html += '<tr>'; html += '<th>Project Name</th>'; html += ' <th>Aadhar Link</th>'; html += ' <th>Approval Status</th>'; html += '<th>Final Selection Status</th>'; html += '<th>Offer Status</th>'; html += '<th>Joining Status</th>'; html += '</tr>'; html += '<tr>'; html += '<td> ' + data[i].clientName + ' </td>'; if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
                 html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
             } else { html += '<td>No document</td>'; } if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") { html += '<td>    ' + data[i].nextLevelApprovalStat + '</td></td>'; } else { html += ' <td>No document</td>'; }
@@ -1789,7 +1824,25 @@
             $('#read_' + id).val('Readmore');
         }
     }
-
+    function OpenRedoFormModel(interviewid, interviewstatus) {
+        $.ajax({
+            url: '/Interview/RedoInterviewDetails',
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus,'type':'ClientSelect' },
+            success: function (data) {
+                $('#divredoInterview').html('');
+                $('#divredoInterview').html(data);
+                openRedoInterviewModel();
+            }
+        });
+    }
+    function openRedoInterviewModel() {
+        var modal = document.getElementById("RedoInterviewModel");
+        modal.style.display = "block";
+    }
+    function closeRedoInterviewModel() {
+        var modal = document.getElementById("RedoInterviewModel");
+        modal.style.display = "none";
+    }
 </script>
 
 

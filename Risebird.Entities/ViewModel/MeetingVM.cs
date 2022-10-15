@@ -288,6 +288,7 @@ namespace Risebird.Entities.ViewModel
         public string BackUpLink { get; set; }
         public string BackUpLinkId { get; set; }
         public bool IsClientQCRequired { get; set; }
+        public bool IsClientRedoInterview { get; set; }
     }
     public class VedioComments
     {

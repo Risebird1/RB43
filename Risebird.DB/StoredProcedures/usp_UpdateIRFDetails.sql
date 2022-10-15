@@ -8,8 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-  
 Create PROCEDURE [dbo].[usp_UpdateIRFDetails]    
 (    
 	@IRFId nvarchar(200),        
@@ -41,6 +39,9 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@IsJoinabilitySelectabilityRequired bit,
 	@IsGeneralSkillRequired bit,
 	@IsAadhaarVerificationRequired bit,
+	@IsCandidateavailability bit,
+	@IsMeetingAutoCancelled bit,
+	@IsMeetingNotificationSend bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -103,6 +104,9 @@ BEGIN
 	,[IsJoinabilitySelectabilityRequired] = @IsJoinabilitySelectabilityRequired
 	,[IsGeneralSkillRequired] = @IsGeneralSkillRequired
 	,[IsAadhaarVerificationRequired]=@IsAadhaarVerificationRequired
+	,[IsCandidateavailability]=@IsCandidateavailability
+	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
+	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	Where id =@id        
     
 	
@@ -243,6 +247,8 @@ BEGIN
   
     
 END    
+  
+
 GO
 
 

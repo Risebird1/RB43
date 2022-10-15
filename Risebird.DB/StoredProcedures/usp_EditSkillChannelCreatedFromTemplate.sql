@@ -36,7 +36,10 @@ Create PROCEDURE [dbo].[usp_EditSkillChannelCreatedFromTemplate]
 @IsQCRequired bit,  
 @IsJoinabilitySelectabilityRequired bit,  
 @IsGeneralSkillRequired bit,      
-@IsAadhaarVerificationRequired bit,      
+@IsAadhaarVerificationRequired bit, 
+@IsCandidateavailability bit,
+@IsMeetingAutoCancelled bit,
+@IsMeetingNotificationSend bit,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
@@ -87,6 +90,9 @@ begin try
  ,[IsGeneralSkillRequired] = @IsGeneralSkillRequired  
  ,[ModifiedOn] = @ModifiedOn
  ,[IsAadhaarVerificationRequired]=@IsAadhaarVerificationRequired
+ ,[IsCandidateavailability]=@IsCandidateavailability
+,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
+,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
  Where id =@id          
       
    

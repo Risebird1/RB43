@@ -24,6 +24,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -6711,6 +6712,10 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("RejectedMeetings", "Client");
                 }
+                else if (model.Type == "ClientPublic")
+                {
+                    return RedirectToAction("PublicCandidateStatus", "Candidate", new { emailid = model.Emailid, id = model.uniqueid });
+                }
                 else
                 {
                     return RedirectToAction("ResolvedRedFlagsInterviews");
@@ -7098,30 +7103,38 @@ namespace Risebird.Web.Controllers
         }
         #region Redo Interviews
         [HttpGet]
-        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus)
+        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus, string type, string uniqueid)
         {
-            var interviewdetails = await _meetingService.GetInterviewDetailsById(interviewid);
             var model = new RedoInterviewVM();
-            model.interviewid = interviewid;
-            model.RequiredDuration = interviewdetails.RequiredDuration;
-            model.ActualDuration = interviewdetails.ActualDuration;
-            if (interviewstatus.ToLower() == "Selected")
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                model.Inappropriate = "Selection";
-            }
-            else
-            {
-                model.Inappropriate = "Rejection";
-            }
-            var _interview = await _meetingService.GetRedoInterviewDetailsById(interviewid);
-            if (_interview != null)
-            {
-                model = _interview;
-            }
-            else
-            {
-                model.CandidateFace = "Not Visible";
-                model.HandsOfCoding = "Notasperrequirement";
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var interviewdetails = await _meetingService.GetInterviewDetailsById(interviewid);
+                model.interviewid = interviewid;
+                model.RequiredDuration = interviewdetails.RequiredDuration;
+                model.ActualDuration = interviewdetails.ActualDuration;
+                model.type = type;
+                model.ModifiedBy = emailId;
+                model.uniqueid = uniqueid;
+                if (interviewstatus.ToLower() == "Selected")
+                {
+                    model.Inappropriate = "Selection";
+                }
+                else
+                {
+                    model.Inappropriate = "Rejection";
+                }
+                var _interview = await _meetingService.GetRedoInterviewDetailsById(interviewid);
+                if (_interview != null)
+                {
+                    model = _interview;
+                }
+                else
+                {
+                    model.CandidateFace = "Not Visible";
+                    model.HandsOfCoding = "Notasperrequirement";
+                }
             }
             return PartialView(model);
         }
@@ -7132,15 +7145,41 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
                 model.ModifiedBy = emailId;
                 var result = await _meetingService.SaveRedoInterviewDetails(model);
+                if (profileName == "Client")
+                {
+                    AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(model.interviewid);
+                    await SendRescheduleMeetingInvite(meetingToUpdate.irfIntId, meetingToUpdate.candidateEmail, meetingToUpdate.imid);
+                }
                 if (result)
                 {
                     TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is successfully.";
-                    return RedirectToAction("CompletedInterviews");
                 }
             }
             TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is failed.";
+            if (model.type == "Completed")
+            {
+                return RedirectToAction("CompletedInterviews");
+            }
+            else if (model.type == "ClientAll")
+            {
+                return RedirectToAction("AllMeetings", "Client");
+            }
+            else if (model.type == "ClientSelect")
+            {
+                return RedirectToAction("SelectedMeetings", "Client");
+            }
+            else if (model.type == "ClientReject")
+            {
+                return RedirectToAction("RejectedMeetings", "Client");
+            }
+            else if (model.type == "ClientPublic")
+            {
+                return RedirectToAction("PublicCandidateStatus", "Candidate", new { emailid = model.ModifiedBy, id = model.uniqueid });
+            }
             return RedirectToAction("CompletedInterviews");
         }
         [HttpGet]
@@ -7179,7 +7218,8 @@ namespace Risebird.Web.Controllers
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail))
+                        var linkurl = "https://" + Request.Host.ToString();
+                        if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail, linkurl))
                         {
                             await _iRFService.SendClientRedoInvite(irfId, interviewid, CandidateemailId);
                             var result = await _meetingService.ResetInterviewPayment(interviewid);
@@ -7347,6 +7387,28 @@ namespace Risebird.Web.Controllers
             convertedResponse.accountemail = accountEmail;
             return convertedResponse;
         }
-
+        public async Task<string> SendRescheduleMeetingInvite(int irfId, string CandidateemailId, int interviewid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
+                var linkurl = "https://" + Request.Host.ToString();
+                if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail, linkurl))
+                {
+                    await _iRFService.SendClientRedoInvite(irfId, interviewid, CandidateemailId);
+                    var result = await _meetingService.ResetInterviewPayment(interviewid);
+                    return "Success";
+                }
+                else
+                {
+                    return "Fail";
+                }
+            }
+            else
+            {
+                return "Fail";
+            }
+        }
     }
 }

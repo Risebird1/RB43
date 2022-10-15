@@ -894,7 +894,7 @@ namespace Risebird.Web.Controllers
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
                         ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                         var meetings = _meetingService.GetClientMeetingList(emailid);
-                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; return x; }).ToList();
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                         {
                             meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
@@ -2000,6 +2000,7 @@ namespace Risebird.Web.Controllers
                         foreach (var m in meetings)
                         {
                             m.IsClientQCRequired = client.IsQCRequired;
+                            m.IsClientRedoInterview = client.IsRedoInterview;
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
                             {
                                 m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
@@ -2981,6 +2982,7 @@ namespace Risebird.Web.Controllers
                             foreach (var item in meetings)
                             {
                                 item.IsClientQCRequired = client.IsQCRequired;
+                                item.IsClientRedoInterview = client.IsRedoInterview;
                             }
                             var rejectdata = JsonConvert.SerializeObject(meetings);
                             HttpContext.Session.SetString("SearchRejectedMeetings", rejectdata);
