@@ -5977,6 +5977,9 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageReport = "External";
                 ViewBag.ClientDetails = "";
+
+                ViewBag.CurrentUser = currentUser;
+                
                 if (isClient || isClientSelected)
                 {
                     ViewBag.ClientDetails = "client";

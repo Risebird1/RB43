@@ -190,7 +190,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAadhaarVerificationRequired { get; set; }
         [Display(Name = "Check candidate availability")]
         public bool IsCandidateavailability { get; set; }
-        [Display(Name = "Risebird Meeting waiting Notification")]
+        [Display(Name = "Participant Waiting Notification")]
         public bool IsMeetingNotificationSend { get; set; }
         [Display(Name = "Auto cancel candidate interview")]
         public bool IsMeetingAutoCancelled { get; set; }

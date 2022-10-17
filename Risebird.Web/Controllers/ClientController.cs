@@ -4376,22 +4376,32 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId)
+        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId, string profile = null, string currentUser = null)
         {
             try
             {
+                string profileName;
+                string emailId;
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    var model = new ClientAudioInstructionsWrapper();
-                    //model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
-                    model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
+                    var model = await CreateAudioInstructionsModal(interviewId, profileName, emailId);
+                    //var model = new ClientAudioInstructionsWrapper();
+                    ////model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+                    //model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
 
-                    model.Profile = profileName;
-                    model.InterviewId = interviewId;
+                    //model.Profile = profileName;
+                    //model.InterviewId = interviewId;
+                    return PartialView("GetClientAudioInstructionsFeedbacks", model);
+                }
+                else if(!string.IsNullOrEmpty(profile) && !string.IsNullOrEmpty(currentUser))
+                {
+                    profileName = profile;
+                    emailId = currentUser.Trim('\'');
+                    var model = CreateAudioInstructionsModal(interviewId, profileName, emailId);
                     return PartialView("GetClientAudioInstructionsFeedbacks", model);
                 }
                 else
@@ -4406,5 +4416,16 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        public async Task<ClientAudioInstructionsWrapper> CreateAudioInstructionsModal(int interviewId, string profileName, string emailId)
+        {
+            var model = new ClientAudioInstructionsWrapper();
+            //model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+            model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
+
+            model.Profile = profileName;
+            model.InterviewId = interviewId;
+            return model;
+        }
     }
 }
