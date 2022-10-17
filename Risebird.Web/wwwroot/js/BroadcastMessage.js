@@ -1,4 +1,7 @@
-﻿function closeBroadcastModal() {
+﻿
+$.getScript("https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js");
+
+function closeBroadcastModal() {
     var modal = document.getElementById("broadcastModal");
     tinymce.remove('#bcMessage');
     modal.style.display = "none";

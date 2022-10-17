@@ -34,6 +34,14 @@
     ProfileSource = filter.ProfileSource != null ? filter.ProfileSource : new string[] { };
 
 }
+@{
+    string currentUser = string.Empty;
+    if (!string.IsNullOrEmpty(ViewBag.emailid))
+    {
+        currentUser = ViewBag.emailid;
+
+    }
+}
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
@@ -495,8 +503,7 @@
                                                                         <td>
                                                                             @if ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
                                                                             {
-                                                                                string currentUser = string.Empty;
-                                                                                currentUser = ViewBag.emailid;
+                                                                                
                                                                                 <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })'" title="Feedback Report">Report</a>
                                                                             }
                                                                             else
@@ -1151,7 +1158,7 @@
             html += '<td>';
             if (data[i].statusValue == "Meeting Status") {
                 if ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8) && (data[i].confirmationStatus == 1)) {
-                    html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&isClient=true&actiontype=Candidate" title="Feedback Report">Report</a>';
+                    html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true&actiontype=Candidate" title="Feedback Report">Report</a>';
                 }
                 else {
                     html += '<p></p>';

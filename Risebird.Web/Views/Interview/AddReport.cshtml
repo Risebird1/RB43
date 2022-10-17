@@ -93,9 +93,9 @@
             <button style="margin-bottom: 4px; margin-left: 30px; background-color:red; font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
                 <text style="color:white"> Rate Interviewer </text>
             </button>
-            <button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
+            @*<button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
                 <text style="color:white"> Audio Feedback </text>
-            </button>
+            </button>*@
 
         </div>
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
@@ -2103,12 +2103,26 @@
         return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills()); //&& CheckQuestionsTiming()
     }
 
+    function CheckLength(length)
+    {
+        var comments = document.getElementById("InterviewerComment").value;
+            if (comments.length >= length) {
+                document.getElementById("interviewerComment_Error").innerHTML = "";
+                return true;
+            }
+            else {
+                //interviewerComment_Error
+                document.getElementById("InterviewerComment").focus();
+                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of "  + length +  " characters.";
+                return false;
+            }
+    }
     function CheckInterviewerComments() {
         //var interviewStatusElem = document.getElementById("InterviewStatus");
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
         var interviewStatusValue = document.getElementById("InterviewStatus").value;
-        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 1) {
-            var comments = document.getElementById("InterviewerComment").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4) {
+            @*var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
                 return true;
@@ -2118,7 +2132,12 @@
                 document.getElementById("InterviewerComment").focus();
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
-            }
+            }*@
+            return CheckLength(250);
+        }
+        else if(interviewStatusValue == 1 || interviewStatusValue == 3)
+        {
+            return CheckLength(50);
         }
         else
             return true;
