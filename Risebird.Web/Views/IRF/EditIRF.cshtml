@@ -1503,7 +1503,7 @@
                                                 <div class="tab-main-box">
                                                     <div class="row">
                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="col-md-3 col-sm-3 pull-left">
+                                                            <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field  m10-b">
                                                                     <div class="mdc-checkbox">
                                                                         @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "mdc-checkbox__native-control" })
@@ -1516,7 +1516,7 @@
                                                                     @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-3 col-sm-3 pull-left">
+                                                            <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
                                                                         @Html.CheckBoxFor(m => m.IsAadhaarVerificationRequired, new { @class = "mdc-checkbox__native-control" })
@@ -1532,7 +1532,7 @@
                                                                     @Html.LabelFor(model => model.IsAadhaarVerificationRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-3 col-sm-3 pull-left">
+                                                            <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
                                                                         @Html.CheckBoxFor(m => m.IsCandidateavailability, new { @class = "mdc-checkbox__native-control" })
@@ -1548,7 +1548,7 @@
                                                                     @Html.LabelFor(model => model.IsCandidateavailability, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-3 col-sm-3 pull-left">
+                                                            <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
                                                                         @Html.CheckBoxFor(m => m.IsMeetingAutoCancelled, new { @class = "mdc-checkbox__native-control" })
@@ -1562,9 +1562,10 @@
                                                                         <div class="mdc-checkbox__ripple"></div>
                                                                     </div>
                                                                     @Html.LabelFor(model => model.IsMeetingAutoCancelled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                    <i style="margin-right:-4vw" title="Auto-cancels a candidate interview if the candidate fails to confirm his/her availability atleast an hour prior to the scheduled datetime." class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-3 col-sm-3 pull-left">
+                                                            <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
                                                                         @Html.CheckBoxFor(m => m.IsMeetingNotificationSend, new { @class = "mdc-checkbox__native-control" })
@@ -1578,6 +1579,7 @@
                                                                         <div class="mdc-checkbox__ripple"></div>
                                                                     </div>
                                                                     @Html.LabelFor(model => model.IsMeetingNotificationSend, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                    <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1831,7 +1833,7 @@
                     document.getElementById("tab-7").style.display = "block";
                 }
                 document.getElementById("tab-11").style.display = "none";
-                if ($("#hidprofile").val() == "Admin" || $("#hidprofile").val()  == "SupportAdmin") {
+                if ($("#hidprofile").val() == "Admin" || $("#hidprofile").val() == "SupportAdmin") {
                     document.getElementById("btnNext").style.display = "block";
                     if ($("#hidClientuser").val() == false) {
                         document.getElementById("btnUpload").style.display = "none";
@@ -2029,7 +2031,7 @@
             }
             else if (activeTab.trim() == "Coordinator") {
     @*flag = checkTabValidation(activeTab);*@
-                                                if (!flag) {
+                                                    if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-12").addClass("active");
                     document.getElementById("tab-12").style.display = "block";
@@ -2601,6 +2603,7 @@
 
 <script>
     $(document).ready(function () {
+
         var countryType = $("#JobCountry").val();
         var interviewerQCRate;
         if (countryType == "1") {
@@ -2660,11 +2663,12 @@
         var inputs = document.getElementsByTagName("input");
         for (i = 0; i <= inputs.length - 1; i++) {
             inputs[i].addEventListener("input", function () {
-                if (!ViewBag.IsClientUser) {
+                if (!@ViewBag.IsClientUser) {
                     document.getElementById("btnUpload").disabled = false;
                 }
             });
         }
+        CheckCandidateavailabilityDetails();
     });
 
 </script>
