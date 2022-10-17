@@ -1135,7 +1135,15 @@ namespace Risebird.Web.Controllers
                 {
                     _candidate = candidateset.Where(x => x.SMCQId == SMCQId).FirstOrDefault();
                 }
+                if (_candidate == null)
+                {
+                    _candidate = new CandidateDetailsForTestDuplicate();
+                }
                 var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
+                if (questions == null)
+                {
+                    questions = new List<MCQVM>();
+                }
                 _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
                 _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 _candidate.SelectabilityEvaluatorReportCollection = new List<SelectabilityEvaluatorReport>();

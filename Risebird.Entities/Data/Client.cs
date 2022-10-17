@@ -45,7 +45,7 @@ namespace Risebird.Entities.Data
         public bool IsPasswordReset { get; set; }
         [Display(Name = "Check candidate availability")]
         public bool IsCandidateavailability { get; set; }
-        [Display(Name = "Risebird Meeting waiting Notification")]
+        [Display(Name = "Participant Waiting Notification")]
         public bool IsMeetingNotificationSend { get; set; }
         [Display(Name = "Per Interview Rate")]
         public int PerInterviewRate { get; set; }
