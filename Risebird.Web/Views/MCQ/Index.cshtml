@@ -535,6 +535,13 @@
                                 <option value="2">Recording and Uploading</option>
                             </select>
                         </div>*@
+                        <div class="sharing">
+                            <label class="label-field desp-label" for="MCQ Share To" style="font-weight:normal;"> Share To</label>
+                            <select id="txtsharetype" class="form-control " style="margin-bottom:10px;">
+                                <option value="0">Candidate</option>
+                                <option value="1">Interviewer</option>
+                            </select>
+                        </div>
                     <div class="sharing">
                         <label class="label-field desp-label" for="Please enter Meeting Date Time" style="font-weight:normal;"> Meeting Date Time</label>
                         <input type="datetime-local" placeholder="Meeting Date Time" id="txtmeetingdatetime" class="form-control " style="margin-bottom:10px;" />
@@ -857,6 +864,11 @@
                         break;
                     }
                 }
+                var candidatetype=false;
+                if($("#txtsharetype").val()==1)
+                {
+                    candidatetype=true;
+                }
                 if (clientemail == true && emailflag==true) {
                     var date1 = new Date($("#txtmeetingdatetime").val());
                     var date2 = new Date();
@@ -864,7 +876,7 @@
                         $.ajax({
                             type: "POST",
                             url: "/MCQ/ShareTestLink",
-                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: false },
+                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: candidatetype },
                             success: function (data) {
                                 if (data == "success") {
                                     alert("Successfully share the Phone Screen+ set.");

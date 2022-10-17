@@ -550,6 +550,14 @@ namespace Risebird.Repository
                     dynamicParameters.Add("@RecruiterComment", _candidate.RecruiterComment);
                     var results = await con.QueryAsync(query, dynamicParameters);
 
+                    if (_candidate.ShareType)
+                    {
+                        var query1 = "Update ip set ip.IsApproved=@Isapproved from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where ul.EmailId=@Emailid";
+                        var dynamicParameters1 = new DynamicParameters();
+                        dynamicParameters1.Add("@Isapproved", _candidate.IsInterviewerVerified);
+                        dynamicParameters1.Add("@Emailid", _candidate.CandidateEmail);
+                        var results1 = await con.QueryAsync(query1, dynamicParameters1);
+                    }
                     if (_candidate.SelectabilityEvaluatorReportCollection != null && _candidate.SelectabilityEvaluatorReportCollection.Count > 0)
                     {
                         DataTable selectabilityDt = new DataTable();

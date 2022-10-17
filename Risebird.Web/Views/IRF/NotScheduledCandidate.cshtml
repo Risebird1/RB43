@@ -148,12 +148,16 @@
                                                                             <td class="text-left">
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px; cursor:pointer;" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
                                                                                 @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
-                                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                {
-                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="        top: -7px;
-        position: relative;
-        cursor: pointer;" title="Click here to call the candidate."><span class="far fa-phone-alt"></span></span></span>
-                                                                                }
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
+                                                                                            <span class="btn-call" style="top: -7px;position: relative;cursor: pointer;" title="Click here to call the candidate.">
+                                                                                                <span class="far fa-phone-alt">
+
+                                                                                                </span>
+                                                                                            </span>
+                                                                                        </span>
+                                                                                    }
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -180,9 +184,8 @@
 </div>
 
 <!-- end row -->
-
-
-<div id="myCallModal" class="modal  modal-bg">
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@*<div id="myCallModal" class="modal  modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content ">
@@ -203,7 +206,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 
 <script>
     function Sendinvite(id, IRFId, CandidateEmail) {
@@ -391,8 +394,8 @@
         else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
     });
 </script>
-
-<script>
+<script src="~/js/twiliocallmaker.js"></script>
+@*<script>
     var candidate = "";
     var canirfid = "";
     var cancandidateEmail = "";
@@ -469,7 +472,7 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-</script>
+</script>*@
 
 <loading></loading>
 

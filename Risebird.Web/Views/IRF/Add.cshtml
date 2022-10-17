@@ -1135,7 +1135,7 @@
                                             <div class="tab-main-box">
                                                 <div class="row">
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="col-md-3 col-sm-3 pull-left">
+                                                        <div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field  m10-b">
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "mdc-checkbox__native-control" })
@@ -1148,7 +1148,7 @@
                                                                 @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3 col-sm-3 pull-left">
+                                                        <div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor(m => m.IsAadhaarVerificationRequired, new { @class = "mdc-checkbox__native-control" })
@@ -1164,7 +1164,7 @@
                                                                 @Html.LabelFor(model => model.IsAadhaarVerificationRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3 col-sm-3 pull-left">
+                                                        <div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor(m => m.IsCandidateavailability, new { @class = "mdc-checkbox__native-control" })
@@ -1180,7 +1180,7 @@
                                                                 @Html.LabelFor(model => model.IsCandidateavailability, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3 col-sm-3 pull-left">
+                                                        <div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor(m => m.IsMeetingAutoCancelled, new { @class = "mdc-checkbox__native-control" })
@@ -1194,9 +1194,10 @@
                                                                     <div class="mdc-checkbox__ripple"></div>
                                                                 </div>
                                                                 @Html.LabelFor(model => model.IsMeetingAutoCancelled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                <i style="margin-right:-4vw" title="Auto-cancels a candidate interview if the candidate fails to confirm his/her availability atleast an hour prior to the scheduled datetime." class="fa fa-info-circle"></i>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3 col-sm-3 pull-left">
+                                                        <div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor(m => m.IsMeetingNotificationSend, new { @class = "mdc-checkbox__native-control" })
@@ -1210,6 +1211,7 @@
                                                                     <div class="mdc-checkbox__ripple"></div>
                                                                 </div>
                                                                 @Html.LabelFor(model => model.IsMeetingNotificationSend, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1651,7 +1653,17 @@
 
             }
         });
-
+        $.ajax({
+            type: "POST",
+            url: "/IRF/GetClientDetails",
+            data: { 'clientid': clientId },
+            success: function (data) {
+                document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
+                document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
+                document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
+                CheckCandidateavailabilityDetails();
+            }
+        });
     }
 
     function TechSkillChanged() {
@@ -3135,7 +3147,7 @@
                 document.getElementById("tab-11").style.display = "none";
     @*document.getElementById("btnNext").style.display = "block";
                     document.getElementById("btnUpload").style.display = "none";*@
-                }
+                    }
             else if (activeTab.trim() == "Manage Channel") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-11").addClass("active");
@@ -3430,7 +3442,7 @@
                     document.getElementById("tab-10").style.display = "none";
     @*document.getElementById("btnNext").style.display = "none";
                         document.getElementById("btnUpload").style.display = "block";*@
-                    }
+                        }
             }
             else if (activeTab.trim() == "Coordinator") {
                 if (!flag) {
@@ -3700,7 +3712,7 @@
         document.getElementById("emInterviewer").innerHTML = "";
         return false;
     }
-     $('#IsCandidateavailability').on('change', function () {
+    $('#IsCandidateavailability').on('change', function () {
         CheckCandidateavailabilityDetails()
     });
     function CheckCandidateavailabilityDetails() {
@@ -3711,5 +3723,8 @@
             document.getElementById('IsMeetingAutoCancelled').checked = false;
             document.getElementById('IsMeetingAutoCancelled').disabled = true;
         }
+    }
+    function configurationChange(){
+
     }
 </script>

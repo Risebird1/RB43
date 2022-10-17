@@ -9,6 +9,9 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         </div>
         @Html.HiddenFor(model => model.interviewid)
+        @Html.HiddenFor(model => model.type)
+        @Html.HiddenFor(model => model.uniqueid)
+        @Html.HiddenFor(model => model.ModifiedBy)
         <div class="clearfix row">
             <div class="form-group row pull-left">
                 <div class="col-lg-5 col-md-5 col-sm-12">

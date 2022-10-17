@@ -74,34 +74,34 @@
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr>
-                                                        @*<tr id=@item.imid>*@
-                                                        <td> @item.Name </td>
-                                                        <td>
-                                                            @if (item.Address != null && item.Address != "")
+                                                <tr>
+                                                    @*<tr id=@item.imid>*@
+                                                    <td> @item.Name </td>
+                                                    <td>
+                                                        @if (item.Address != null && item.Address != "")
+                                                        {
+                                                            @if (item.Address.Length > 40)
                                                             {
-                                                                @if (item.Address.Length > 40)
-                                                                {
-                                                                    <div class="article">
-                                                                        <p style="margin-bottom:0px;">
-                                                                            @item.Address.Substring(0, 40)
-                                                                        </p>
-                                                                        <p class="moretext_@item.id moretext">
-                                                                            @item.Address.Substring(40, @item.Address.Length - 40)
-                                                                        </p>
-                                                                    </div>
-                                                                    <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="article">
-                                                                        <p>
-                                                                            @item.Address.Substring(0, @item.Address.Length)
-                                                                        </p>
-                                                                    </div>
-                                                                }
+                                                                <div class="article">
+                                                                    <p style="margin-bottom:0px;">
+                                                                        @item.Address.Substring(0, 40)
+                                                                    </p>
+                                                                    <p class="moretext_@item.id moretext">
+                                                                        @item.Address.Substring(40, @item.Address.Length - 40)
+                                                                    </p>
+                                                                </div>
+                                                                <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
                                                             }
-                                                        </td>
+                                                            else
+                                                            {
+                                                                <div class="article">
+                                                                    <p>
+                                                                        @item.Address.Substring(0, @item.Address.Length)
+                                                                    </p>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </td>
 
                                                         <td> @item.email</td>
                                                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")

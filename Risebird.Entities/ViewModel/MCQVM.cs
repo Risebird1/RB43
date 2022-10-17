@@ -179,6 +179,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Candidate Name")]
         public string Name { get; set; }
         public string SMCQId { get; set; }
+        public bool ShareType { get; set; }
+        public bool IsInterviewerVerified { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {

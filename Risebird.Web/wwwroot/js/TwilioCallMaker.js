@@ -100,6 +100,7 @@ function CallButtonClick(candidateObj, indexid) {
     modal.style.display = "block";
     var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
     document.getElementById("callingLabel").innerHTML = appendText;
+    recipientType = 'Candidate';
     if (indexid == 1) {
         callRecipient(candidateObj.Phone);
     }
@@ -134,11 +135,19 @@ function CallButtonClickInterviewer(name, phoneNumber, emailId) {
     callRecipient(callRecipientPhoneNumber);
 
 }
-function CommonCallButtonClick(name, mobileNumber, interviewId = '', emailId = '') {
+function CommonCallButtonClick(name, mobileNumber, emailId = '', interviewIdParam = null, irfIdParam = null, recipientTypeParam = null) {
     callRecipientName = name;
-    interviewId = interviewId;
+    if (interviewIdParam != null) {
+        interviewId = interviewIdParam;
+    }
     callRecipientPhoneNumber = mobileNumber;
     callRecipientEmail = emailId;
+    if (irfIdParam != null) {
+        irfId = irfIdParam;
+    }
+    if (recipientTypeParam != null) {
+        recipientType = recipientTypeParam;
+    }
     // Get the modal
     var modal = document.getElementById("myCallModal");
     // When the user clicks the button, open the modal
@@ -148,6 +157,16 @@ function CommonCallButtonClick(name, mobileNumber, interviewId = '', emailId = '
     document.getElementById("idCallingTitle").innerHTML = " Call ";
 
     callRecipient(callRecipientPhoneNumber);
+}
+function CommonCallButtonClickJson(imid) {
+    var name = $("#hidcandidate_" + imid).val();
+    var mobile = $("#hidmobile" + imid).val();
+    var emailId = $("#hidcandidateEmail_" + imid).val();
+
+    // Get the modal
+    //CallButtonClickInterviewer(interviewer, mobile, emailId);
+    CommonCallButtonClick(name, mobile, emailId, imid, null, 'Candidate');
+
 }
 
 function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = '') {
