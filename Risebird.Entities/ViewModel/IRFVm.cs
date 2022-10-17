@@ -188,7 +188,12 @@ namespace Risebird.Entities.ViewModel
         public string CategoryName { get; set; }
         [Display(Name = "Aadhaar Verification Required")]
         public bool IsAadhaarVerificationRequired { get; set; }
-
+        [Display(Name = "Check candidate availability")]
+        public bool IsCandidateavailability { get; set; }
+        [Display(Name = "Participant Waiting Notification")]
+        public bool IsMeetingNotificationSend { get; set; }
+        [Display(Name = "Auto cancel candidate interview")]
+        public bool IsMeetingAutoCancelled { get; set; }
     }
     public class InterviewerIds
     {
@@ -298,6 +303,9 @@ namespace Risebird.Entities.ViewModel
         public int UserId { get; set; }
         public int? CreatedFromTemplateId { get; set; }
         public bool IsAadhaarVerificationRequired { get; set; }
+        public bool IsCandidateavailability { get; set; }
+        public bool IsMeetingNotificationSend { get; set; }
+        public bool IsMeetingAutoCancelled { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

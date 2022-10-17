@@ -102,7 +102,10 @@
                                 </button>
                                 @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                 {
-                                    <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
+                                    @*<button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
+                                        <i class="now-ui-icons fa fa-phone"></i>
+                                    </button>*@
+                                    <button type="button" onclick="CommonCallButtonClick('@item.InterviewerFirstName', '@item.InterviewerPhone', '@item.interviewer', null, null, 'Interviewer')" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
                                         <i class="now-ui-icons fa fa-phone"></i>
                                     </button>
                                 }
@@ -117,7 +120,10 @@
                 </div>
             }
         </div>
-        <div id="myModal" class="modal modal-bg">
+
+        @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+        @*<div id="myModal" class="modal modal-bg">
             <!-- Modal content -->
             <div class="modal-content">
 
@@ -148,7 +154,7 @@
 
             </div>
 
-        </div>
+        </div>*@
         <!-- end row -->
     </div>
 
@@ -156,8 +162,8 @@
 
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-
-<script>
+<script src="~/js/twiliocallmaker.js"></script>
+@*<script>
     var interviewerMail = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
@@ -235,7 +241,7 @@
     }
 
 
-</script>
+</script>*@
 <script>
     function CancelInterview(obj) {
 

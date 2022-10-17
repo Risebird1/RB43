@@ -21,12 +21,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
     /*.sidebar-mini .sidebar:hover {
-        width: 80px !important;
-    }*/
+                                    width: 80px !important;
+                                }*/
 
     /*   .sidebar .navbar-minimize .btn {
-        display: none !important
-    }*/
+                                    display: none !important
+                                }*/
 </style>
 <script>
     document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
@@ -96,16 +96,25 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (!string.IsNullOrWhiteSpace(Model.AadhaarVerificationDone))
-                                            {
-                                                <div class="row">
+                                            <div class="row">
+                                                @if (!string.IsNullOrWhiteSpace(Model.AadhaarVerificationDone))
+                                                {
                                                     <div class="col-md-6 col-sm-6 border-rv pull-left">
                                                         <div class="form-group" style="padding-left:10px">
                                                             <a href="#" onclick="javascript:FetchAadhaarDetails('@Model.SameID','@Model.CandidateEmail');">Click Here For Candidate Verified Data</a>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            }
+                                                }
+                                                @Html.HiddenFor(m=>m.ShareType)
+                                                @if (Model.ShareType)
+                                                {
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            @Html.CheckBoxFor(m => m.IsInterviewerVerified) Interviewer Verified
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="report-full-wrap">
@@ -121,8 +130,8 @@
                                                 <div class="videoConplayer">
                                                     @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                     {
-                                                        //string appendTime = "0";
-                                                        //var src = Model.VideoLink + "#t=" + appendTime;
+                                                    //string appendTime = "0";
+                                                    //var src = Model.VideoLink + "#t=" + appendTime;
                                                         <video width="600" controls="controls" preload="metadata" class="vjs-tech">
                                                             @*<source src='@src' type="video/mp4">*@
                                                             <source src='@Model.VideoLink' type="video/mp4">
@@ -358,12 +367,10 @@
             </button>
             <div class="modal-body">
                 <div style="padding:10px" id="divAadhaarKYC">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
-
                         </div>
                     </div>
                 </div>
@@ -380,7 +387,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("successful",'@ViewBag.Message', "success");
+                swal.fire("successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");

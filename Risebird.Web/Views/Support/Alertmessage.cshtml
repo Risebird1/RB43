@@ -17,6 +17,7 @@
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
 <div class="main-panel" id="main-panel">
 
@@ -26,6 +27,7 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Announcement</h4></div>
+
                 </div>
 
                 <div class="pull-right">
@@ -33,7 +35,7 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="EditAlertMessage(0)" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add </font></span></button>
 
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -119,12 +121,18 @@
     <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
         <div class="modal-content">
             <div class="filheader">
-                <h5 class="modal-title pull-left">Announcement</h5>
-            </div>
+            <h5 class="modal-title pull-left">Announcement</h5>
+        </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeEditalertpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
-            <div class="modal-body"id="divalertmessagelist">
+            <div class="modal-body" id="divalertmessagelist">
+                <div class="form-group">
+                    <label class="control-label  desp-label" for="Message">Message<span class="required">*</span></label>
+                    <div>
+                        <textarea style="width:100%;" id="bcMessage"></textarea>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -241,17 +249,17 @@
             $("#meeting").show();
         }, 2000);
     };
-//// script for loader ends here
-        function moreless(id) {
-            $('.moretext_' + id).slideToggle();
-            if ($('#read_' + id).val() == 'Readmore') {
-                $('#read_' + id).empty().html('Read more');
-                $('#read_' + id).val('Readless');
-            } else {
-                $('#read_' + id).empty().html('Read less');
-                $('#read_' + id).val('Readmore');
-            }
+    //// script for loader ends here
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
         }
+    }
 </script>
 <script type="text/javascript">
 
@@ -267,12 +275,24 @@
         });
     }
     function openEditalertpopup() {
-            var modal = document.getElementById("EditAlertMessage");
-            modal.style.display = "block";
+        var modal = document.getElementById("EditAlertMessage");
+        tinymce.init({
+            selector: "#Announcement",
+            menubar: false,
+            statusbar: false,
+            plugins: 'link',
+            height: "300",
+            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
+
+        });
+        modal.style.display = "block";
+        return;
     }
 
     function closeEditalertpopup() {
         var modal = document.getElementById("EditAlertMessage");
+        tinymce.remove('#Announcement');
         modal.style.display = "none";
     }
+
 </script>

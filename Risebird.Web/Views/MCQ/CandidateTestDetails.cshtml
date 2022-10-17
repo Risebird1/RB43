@@ -170,7 +170,7 @@
                                                 <th>Score</th>
                                                 <th>Fitment Score</th>
                                                 @*@if (ViewBag.Isclient == false)
-                                                    {*@
+                                                {*@
                                                 <th>Rating</th>
                                                 <th>Comment</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
@@ -189,7 +189,7 @@
                                                 <th>Score</th>
                                                 <th>Fitment Score</th>
                                                 @*@if (ViewBag.Isclient == false)
-                                                    {*@
+                                                {*@
                                                 <th>Rating</th>
                                                 <th>Comment</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
@@ -213,13 +213,13 @@
                                                         <td></td>
                                                     }
                                                     @*@if (string.IsNullOrEmpty(item.VideoLink))
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td><a style="color:blue;cursor:pointer" onclick="openOnlineMeetingModel('@item.VideoLink')">Click Here</a></td>
-                                                        }*@
+                                                {
+                                                <td></td>
+                                                }
+                                                else
+                                                {
+                                                <td><a style="color:blue;cursor:pointer" onclick="openOnlineMeetingModel('@item.VideoLink')">Click Here</a></td>
+                                                }*@
                                                     @if (item.Skills != null && item.Skills != "")
                                                     {
                                                         @if (item.Skills.Length > 25)
@@ -244,15 +244,15 @@
                                                         var valuescore = (@item.CandidateScore * 100) / @item.TotalQuestions;
                                                         <td>@valuescore%</td>
                                                     }
-                                                    <td>@((item.Selectability+item.Joinability)/2) %</td>
+                                                    <td>@((item.Selectability + item.Joinability) / 2) %</td>
 
                                                     <td>@item.Feedbackreating out of 5</td>
                                                     <td>
                                                         @*<div class="talk-bubble tri-right border-bubble right-in">
-                                                                <div class="talktext">
-                                                                    <textarea> @item.FeedbackComment</textarea>
-                                                                </div>
-                                                            </div>*@
+                                                    <div class="talktext">
+                                                    <textarea> @item.FeedbackComment</textarea>
+                                                    </div>
+                                                    </div>*@
                                                         @if (item.FeedbackComment != null && item.FeedbackComment != "")
                                                         {
                                                             @if (item.FeedbackComment.Length > 40)
@@ -284,24 +284,21 @@
                                                                 <span onclick="javascript:DeleteCandidateFromTest('@item.PartitionKey','@item.Id','@item.SameID');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                             </button>
                                                         }
-                                                        @if (!string.IsNullOrEmpty(item.TotalExprience))
-                                                        {
-                                                            <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, CMCQId = item.Id })'>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                </button>
-                                                            </a>
-                                                            <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
-                                                                <span title="Generate URL" onclick="javascript:GeneratePublicUrl('@item.SameID','@item.Id');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                        <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, CMCQId = item.Id,SMCQId=item.SMCQId })'>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                             </button>
-                                                            @if (item.AadhaarVerification)
-                                                            {
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
-                                                                    <span title="Candidate Verified Data" onclick="javascript:FetchAadhaarDetails('@item.SameID','@item.CandidateEmail');" class="mdc-fab__icon material-icons">
-                                                                        <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchAadhaarDetails('@item.SameID','@item.CandidateEmail');" />
-                                                                    </span>
-                                                                </button>
-                                                            }
+                                                        </a>
+                                                        <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
+                                                            <span title="Generate URL" onclick="javascript:GeneratePublicUrl('@item.SameID','@item.Id');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                        </button>
+                                                        @if (item.AadhaarVerification)
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute " aria-label="Aadhaar Verified Data">
+                                                                <span title="Aadhaar Verified Data" onclick="javascript:FetchAadhaarDetails('@item.SameID','@item.CandidateEmail');" class="mdc-fab__icon material-icons">
+                                                                    <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/aadhaar-logo-png.jpg" title="Aadhaar Verified Data" onclick="javascript:FetchAadhaarDetails('@item.SameID','@item.CandidateEmail');" />
+                                                                </span>
+                                                            </button>
                                                         }
                                                     </td>
                                                 </tr>
@@ -388,22 +385,20 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span class="mdc-fab__icon material-icons">
-                        <img src="~/img/Aadhaar/verificationlogo.png" />
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Candidate Verified Data</h5>
+                <h5 class="modal-title pull-left">Aadhaar Verified Data</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body">
                 <div style="padding:10px" id="divAadhaarKYC">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
-
                         </div>
                     </div>
                 </div>
@@ -445,8 +440,7 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
+                    function () {
                         window.location.href = '/Client/List';
                     }
                 )
@@ -466,7 +460,7 @@
         $('#skillLevel').DataTable();
     }
 
-        function RefreshSearch() {
+    function RefreshSearch() {
         $('#skillLevel').DataTable().destroy();
 
         setTimeout(function () {
@@ -533,8 +527,8 @@
         modal.style.display = "block";
         var html = '';
         html += ' <video controls id="vidcandidate" class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>';
-        html += '<source src = "' + videourl+'" type = "video/mp4" autoplay>';
-        html += '<source src="' + videourl +'" type="video/mp4">';
+        html += '<source src = "' + videourl + '" type = "video/mp4" autoplay>';
+        html += '<source src="' + videourl + '" type="video/mp4">';
         html += '</video>';
         html += '<div class="col-md-12 ">';
         html += '<div class="text-right">';
@@ -543,7 +537,7 @@
         html += '</div>';
         $("#divvideoarea").empty().html(html);
     }
-    function DeleteCandidateFromTest(id, indexid,sameid) {
+    function DeleteCandidateFromTest(id, indexid, sameid) {
         swal.fire({
             title: 'Are you sure you want to delete Candidate?',
             text: "It will be permanently deleted !",
@@ -591,7 +585,7 @@
             }
         })
     }
-     $(document).ready(function () {
+    $(document).ready(function () {
         $("#ResetFilter").click(function () {
             ResetFilter();
         })
@@ -600,35 +594,35 @@
         }
 
         // $("#ClientHR").multiselect({
-            //includeSelectAllOption: true,
-           // selectedClass: 'active1',
-           // buttonWidth: '100%',
-           // maxHeight: 200
-       // });
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        // });
 
 
         //$("#SelectionStatus").multiselect({
-           // includeSelectAllOption: true,
-            //selectedClass: 'active1',
-           // buttonWidth: '100%',
-           // maxHeight: 200
+        // includeSelectAllOption: true,
+        //selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
         //});
-     });
+    });
     function ResetFilter() {
         var id = $("#txtCanidateListId").val();
         window.location.href = "/MCQ/ResetMCQCandidateFilter/" + id;
     }
     function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var skillsset = @Html.Raw(Json.Serialize(ClientHR));
-            var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#SelectionStatus").val(levelset);
-            $("#ClientHR").val(skillsset);
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var skillsset = @Html.Raw(Json.Serialize(ClientHR));
+        var levelset = @Html.Raw(Json.Serialize(SelectionStatus));
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#SelectionStatus").val(levelset);
+        $("#ClientHR").val(skillsset);
     }
-    function GeneratePublicUrl(mcqid,CMCQID) {
+    function GeneratePublicUrl(mcqid, CMCQID) {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";
         var urlcurrent = window.location.href;

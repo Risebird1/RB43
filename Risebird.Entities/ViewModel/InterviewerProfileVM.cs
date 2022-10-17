@@ -93,7 +93,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsLeadInterviewer { get; set; }
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
-        [Display(Name = "Is Approved")]
+        [Display(Name = "Is Verified")]
         public bool IsApproved { get; set; }
 
 

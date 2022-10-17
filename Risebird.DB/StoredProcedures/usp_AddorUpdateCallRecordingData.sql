@@ -20,15 +20,29 @@ Create Procedure usp_AddorUpdateCallRecordingData
 AS
 BEGIN
 
-declare @recipientProfileType varchar(20)
+declare @recipientProfileType varchar(20), @numericIRFId varchar(50)
 
 set @recipientProfileType = (select pr.[Name] from UserList ul join [Profile] pr on pr.id = ul.idProfile where EmailId = @callRecipient )
+
+
+if(@IRFId is not null)
+Begin
+if(ISNUMERIC(@IRFId) = 0)
+Begin
+set @numericIRFId = (select id from IRF where IRFId = @IRFId)
+End
+Else
+Begin
+set @numericIRFId = @IRFId
+End
+End
+
 
 if not Exists (Select 1 from CallRecordingData where [CallSid]= @CallSid)
 BEGIN
 
 	Insert into CallRecordingData(InterviewId, IRFId, RecordingSid, [CallSid], CallRecipient, [Caller], RecipientProfileType, DateCreated, RecipientPhoneNumber)   
-	values(@interviewId, @IRFId, @RecordingSid, @CallSid, @callRecipient,  @caller, @recipientProfileType, @timeNow, @callRecipientPhoneNumber) 
+	values(@interviewId, @numericIRFId, @RecordingSid, @CallSid, @callRecipient,  @caller, @recipientProfileType, @timeNow, @callRecipientPhoneNumber) 
 
 END
 

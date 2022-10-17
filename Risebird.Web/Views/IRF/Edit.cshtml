@@ -53,7 +53,11 @@
                                         </ul>
 
                                     </div>
-
+                                    @Html.HiddenFor(model=>model.IsBiometricEnabled)
+                                    @Html.HiddenFor(model=>model.IsAadhaarVerificationRequired)
+                                    @Html.HiddenFor(model=>model.IsCandidateavailability)
+                                    @Html.HiddenFor(model=>model.IsMeetingAutoCancelled)
+                                    @Html.HiddenFor(model=>model.IsMeetingNotificationSend)
                                     <div>
                                         <h3 class="tab_drawer_heading" rel="tab-1">Event Details</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
@@ -685,7 +689,7 @@
                     //drpdwnId.options.length = 0;
                     //$("#ClientCollection_0__ClientUserId option").remove();
                     //var optionsSelector = "#" + "ClientCollection_" + i + "__ClientUserId option";
-                    $("#"+ clientUserDrpDowns[i].id + " option").remove();
+                    $("#" + clientUserDrpDowns[i].id + " option").remove();
                     //$("#" + + clientUserDrpDowns[i].id + " option").remove();
                     if (data.length > 0) {
                         $(data).each(function () {
@@ -736,7 +740,7 @@
     }
 
     function GenerateSkillChannelName(clientCompanyName) {
-     
+
         var assessmentGroupName = '@Model.AssessmentGroupName';
         $.ajax({
             type: "GET",
@@ -896,7 +900,7 @@
 
     var firstClientUserRole = '';
     function ClientUserChanged(val, id) {
-       
+
         var index = id.split('_')[1];
         //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__Role';

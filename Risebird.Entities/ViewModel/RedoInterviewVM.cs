@@ -22,5 +22,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Rejection Comment")]
         public string RejectionComment { get; set; }
         public string ModifiedBy { get; set; }
+        public string type { get; set; }
+        public string uniqueid { get; set; }
     }
 }
