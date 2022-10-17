@@ -155,7 +155,9 @@
                     </div>
                 </div>
             </div>
-            <div id="myCallModal" class="modal modal-wrap modal-bg">
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+            @*<div id="myCallModal" class="modal modal-wrap modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -176,7 +178,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>*@
         </div>
     </div>
 </div>
@@ -254,94 +256,95 @@
     var candidateId;
     var irfId;
 </script>
+<script src="~/js/twiliocallmaker.js"></script>
 <script>
-    var candidate = "";
-    var canIrfid = "";
-    var cancandidateEmail = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+    //var candidate = "";
+    //var canIrfid = "";
+    //var cancandidateEmail = "";
+    //var span = document.getElementById("callPopUp");
+    //// When the user clicks on <span> (x), close the modal
+    //span.onclick = function () {
+    //    hangUp();
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
+    //$(document).ready(function () {
+    //    $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+    //        // Set up the Twilio Client Device with the token
+    //        Twilio.Device.setup(data.token);
+    //    });
+    //});
+    ///* Callback to let us know Twilio Client is ready */
+    //Twilio.Device.ready(function (device) {
 
-    });
+    //});
 
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+    //function callCandidate(phoneNumber) {
+    //    var params = { "phoneNumber": phoneNumber };
+    //    Twilio.Device.connect(params);
+    //}
+    //function hangUp() {
+    //    Twilio.Device.disconnectAll();
+    //}
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        startCallRecording(connection.parameters.CallSid);
-    });
+    //Twilio.Device.connect(function (connection) {
+    //    var appendText = "In call with " + "<b>" + candidate + "</b>";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    startCallRecording(connection.parameters.CallSid);
+    //});
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+    //function afterTimeOut() {
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
+    //Twilio.Device.disconnect(function (connection) {
+    //    var appendText = "Call disconnected! ";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    setTimeout(afterTimeOut, 2000);
 
-    });
-    function startCallRecording(sid) {
-        console.log("sid:" + sid);
-        $.ajax({
-            url: '/User/makecall',
-            type: "GET",
-            data: { 'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
-            success: function (data) {
-                console.log("rsid:" + data);
-            }
-        });
-    }
-    function CallButtonClick(candidateObj, indexid) {
-        if (indexid == 1) {
-            candidate = candidateObj.Name;
-            canIrfid = candidateObj.IRFId;
-            cancandidateEmail = candidateObj.EmailId;
-        }
-        else {
-            candidate = candidateObj.name;
-            canIrfid = candidateObj.irfId;
-            cancandidateEmail = candidateObj.emailId;
-        }
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        if (indexid == 1) {
-            callCandidate(candidateObj.Phone);
-        }
+    //});
+    //function startCallRecording(sid) {
+    //    console.log("sid:" + sid);
+    //    $.ajax({
+    //        url: '/User/makecall',
+    //        type: "GET",
+    //        data: { 'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
+    //        success: function (data) {
+    //            console.log("rsid:" + data);
+    //        }
+    //    });
+    //}
+    //function CallButtonClick(candidateObj, indexid) {
+    //    if (indexid == 1) {
+    //        candidate = candidateObj.Name;
+    //        canIrfid = candidateObj.IRFId;
+    //        cancandidateEmail = candidateObj.EmailId;
+    //    }
+    //    else {
+    //        candidate = candidateObj.name;
+    //        canIrfid = candidateObj.irfId;
+    //        cancandidateEmail = candidateObj.emailId;
+    //    }
+    //    // Get the modal
+    //    var modal = document.getElementById("myCallModal");
+    //    // When the user clicks the button, open the modal
+    //    modal.style.display = "block";
+    //    var appendText = "Calling... " + "<b>" + candidate + "</b>";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    if (indexid == 1) {
+    //        callCandidate(candidateObj.Phone);
+    //    }
 
-        else {
-            callCandidate(candidateObj.phone);
-        }
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+    //    else {
+    //        callCandidate(candidateObj.phone);
+    //    }
+    //}
+    //function closeCallPopUp() {
+    //    hangUp();
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
     var spanremoverequest = document.getElementById("ShareRequestPopUp");
     spanremoverequest.onclick = function () {
         var modal = document.getElementById("ShareRequestModal");
