@@ -61,6 +61,9 @@
     .mb10 {
         margin-bottom: 10px
     }
+    .tox-notifications-container {
+        display: none
+    }
 </style>
 @if (ViewBag.PageStatus == "ExecutiveReport")
 {
@@ -108,15 +111,25 @@
 <div class="main-panel" id="main-panel">
 
     <div class="mt50 col-md-12">
+        @if (ViewBag.ClientDetails == "client")
+        {
+            <div class="pull-left mt-20">
 
-        <div class="pull-left mt-20">
+                <button style="margin-bottom: 4px; margin-left: 47px; background-color:red; font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                    <text style="color:white">Rate Interviewer</text>
+                </button>
 
-            <button style="margin-bottom: 4px; margin-left: 47px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
-                <text style="color:red">Rate Interviewer</text>
-            </button>
+                <button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
+                    <text style="color:white"> Audio Feedback </text>
+                </button>
+                    
+                <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px; background-color:red; font-size: 11px">
+                    <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"><text style="color:white"> Mass Communication</text></font></span>
+                </button>
 
-
-        </div>
+            </div>
+        }
+        
 
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
@@ -135,7 +148,7 @@
                     <div class="mdc-card card bl-bg">
                         <div class="mdc-card-wrapper__text-section">
 
-                            @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
+                            @*@if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
                             {
                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
                                 <div class="clearfix text-right">
@@ -150,7 +163,7 @@
                                     </button>
 
                                 </div>
-                            }
+                            }*@
 
                             <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine clearfix ng-valid form" id="Clienform">
                                 @Html.AntiForgeryToken()
@@ -228,7 +241,7 @@
                                                         @{
                                                             if (Model.resumeLink != null && Model.resumeLink != "")
                                                             {
-                                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
+                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
                                                             }
                                                         }
 
@@ -406,7 +419,7 @@
                                                                 @{
                                                                     if (Model.VideoLink != null)
                                                                     {
-                                                                        <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
+                                                                            <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
                                                                     }
                                                                 }
                                                             </div>
@@ -1457,9 +1470,17 @@
         </div>
     </div>
 </div>
+
 <div id="modal_clientComment_placeholder"></div>
 
+<div id="modal_clientAudioFeedback_placeholder"></div>
+
 <script src="~/js/ModalFormServerValidation.js"></script>
+
+
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+
+<script src="~/js/BroadcastMessage.js"></script>
 
 <script>
     function dropDwnToolTips(id) {
@@ -2359,6 +2380,9 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js"></script>
 @*<script>
     if ($("#hidPagestatus").val() == "client") {
         setTimeout(openpopUpRating, 30000);

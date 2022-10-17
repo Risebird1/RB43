@@ -239,7 +239,7 @@
                                                     <th>Call Recipient</th>
                                                     <th>Called At</th>
                                                     <th>Duration(s)</th>
-                                                    @if (ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
                                                     {
                                                         <th>Price</th>
                                                         <th>Price Unit</th>
@@ -259,7 +259,7 @@
                                                             <td>@item.CallRecipient</td>
                                                             <td>@item.DateCreated</td>
                                                             <td>@item.Duration</td>
-                                                            @if(ViewBag.Profile == "Admin")
+                                                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
                                                             {
                                                                 <td>@item.Price</td>
                                                                 <td>@item.PriceUnit</td>
