@@ -34,6 +34,13 @@ Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail,im.
 From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId left join Userlist ul on ul.EmailId=im.candidateEmail                
 left join CandidatesMaster cm on cm.UserId=ul.id left join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id               
 where interviewDate>=dateadd(minute,360,GetDate()) and interviewDate<=dateadd(minute,390,GetDate()) and confirmationstatus=1 and Isnull(IsCandidateResponsed,0)=0 and ISNULL(cl.IsCandidateavailability,0)=1 and ISNULL(cl.IsMeetingAutoCancelled,0)=1
+--For meeting reminder set 0  
+union all  
+Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail,im.interviewDate,ul.FirstName,31 as Typefunction,cm.id candidateid,ul.uniqueid,im.staffingAgency,im.MobileNumber,cl.Name as ClientName,IRF.PrimarySkillInvite                      
+From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId left join Userlist ul on ul.EmailId=im.candidateEmail                       
+left join CandidatesMaster cm on cm.UserId=ul.id left join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id                     
+where interviewDate>=dateadd(minute,420,GetDate()) and interviewDate<=dateadd(minute,450,GetDate()) and confirmationstatus=1 and Isnull(IsCandidateResponsed,0)=0 and 
+ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsCandidateavailability end,cl.IsCandidateavailability)=0    
     
 END 
  
