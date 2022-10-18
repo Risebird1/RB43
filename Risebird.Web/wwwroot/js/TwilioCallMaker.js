@@ -66,7 +66,7 @@ function startCallRecording(callSid) {
         url: '/User/makecall',
         type: "GET",
         //data: {'sid': sid, 'IRFId': canIrfid, 'CandidateEmail': cancandidateEmail },
-        data: { 'callSid': callSid, 'IRFId': irfId, 'callRecipient': callRecipientEmail, 'callRecipientPhoneNumber': callRecipientPhoneNumber, 'recipientType': recipientType },
+        data: { 'sid': callSid, 'IRFId': irfId, 'callRecipient': callRecipientEmail, 'callRecipientPhoneNumber': callRecipientPhoneNumber, 'recipientType': recipientType },
         success: function (data) {
         }
     });
@@ -84,14 +84,14 @@ function startCallRecording(callSid) {
 function CallButtonClick(candidateObj, indexid) {
     if (indexid == 1) {
         callRecipientName = candidateObj.Name;
-        //irfId = candidateObj.IRFId;
-        irfId = candidateObj.IRFName;
+        irfId = candidateObj.IRFId;
+        //irfId = candidateObj.IRFName;
         callRecipientEmail = candidateObj.EmailId;
     }
     else {
         callRecipientName = candidateObj.name;
-        //irfId = candidateObj.irfId;
-        irfId = candidateObj.irfName;
+        irfId = candidateObj.irfId;
+        //irfId = candidateObj.irfName;
         callRecipientEmail = candidateObj.emailId;
     }
     // Get the modal
@@ -100,6 +100,7 @@ function CallButtonClick(candidateObj, indexid) {
     modal.style.display = "block";
     var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
     document.getElementById("callingLabel").innerHTML = appendText;
+    recipientType = 'Candidate';
     if (indexid == 1) {
         callRecipient(candidateObj.Phone);
     }
@@ -134,11 +135,19 @@ function CallButtonClickInterviewer(name, phoneNumber, emailId) {
     callRecipient(callRecipientPhoneNumber);
 
 }
-function CommonCallButtonClick(name, mobileNumber, interviewId = '', emailId = '') {
+function CommonCallButtonClick(name, mobileNumber, emailId = '', interviewIdParam = null, irfIdParam = null, recipientTypeParam = null) {
     callRecipientName = name;
-    interviewId = interviewId;
+    if (interviewIdParam != null) {
+        interviewId = interviewIdParam;
+    }
     callRecipientPhoneNumber = mobileNumber;
     callRecipientEmail = emailId;
+    if (irfIdParam != null) {
+        irfId = irfIdParam;
+    }
+    if (recipientTypeParam != null) {
+        recipientType = recipientTypeParam;
+    }
     // Get the modal
     var modal = document.getElementById("myCallModal");
     // When the user clicks the button, open the modal
@@ -148,6 +157,16 @@ function CommonCallButtonClick(name, mobileNumber, interviewId = '', emailId = '
     document.getElementById("idCallingTitle").innerHTML = " Call ";
 
     callRecipient(callRecipientPhoneNumber);
+}
+function CommonCallButtonClickJson(imid) {
+    var name = $("#hidcandidate_" + imid).val();
+    var mobile = $("#hidmobile" + imid).val();
+    var emailId = $("#hidcandidateEmail_" + imid).val();
+
+    // Get the modal
+    //CallButtonClickInterviewer(interviewer, mobile, emailId);
+    CommonCallButtonClick(name, mobile, emailId, imid, null, 'Candidate');
+
 }
 
 function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = '') {
@@ -167,7 +186,6 @@ function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = ''
     callRecipient(callRecipientPhoneNumber);
 }
 function ModalButtonClickJsonHR(phone, id, type) {
-    debugger;
     if (type == 1) {
         var name = $('#hidinterviewer' + id).val();
         var emailId = $('#hidinterviewerEmailId' + id).val();
@@ -199,6 +217,22 @@ function closeCallPopUp() {
     hangUp();
     var modal = document.getElementById("myCallModal");
     modal.style.display = "none";
+}
+
+function CallModalButtonClick(emailId, phone, interviewid, type = '') {
+    callRecipientName = emailId;
+    callRecipientEmail = emailId;
+    callRecipientPhoneNumber = phone;
+    interviewId = interviewid;
+    recipientType = type;    
+    // Get the modal
+    var modal = document.getElementById("myCallModal");
+    // When the user clicks the button, open the modal
+    modal.style.display = "block";
+    var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
+    document.getElementById("callingLabel").innerHTML = appendText;
+    document.getElementById("idCallingTitle").innerHTML = " Call ";
+    callRecipient(callRecipientPhoneNumber);
 }
 
 

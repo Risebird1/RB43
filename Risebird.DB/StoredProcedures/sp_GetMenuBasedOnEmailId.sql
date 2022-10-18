@@ -44,14 +44,9 @@ END
 	if(@EmailId!='ExternalUser')  
 		begin
 			if(@profile='Interviewer')
-
 			Begin
-			
 				declare @userId int;
 				set @userId = (select id from UserList where EmailId = @EmailId and IsActive=1)
-				
-				IF Exists(select 1 from InterviewerProfile where UserId=@userId and IsLeadInterviewer=1)
-					Begin
 						select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
 						pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
 						join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
@@ -59,30 +54,7 @@ END
 						join [dbo].[UserList] ul on pl.id = ul.idprofile 
 						left join ClientUser cu on cu.UserId=ul.id
 						left join Client c on c.id=cu.ClientId
-						where ul.EmailId = @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) order by idisplayorder
-					End
-				ELSE IF Exists(select 1 from InterviewerProfile where UserId=@userId and IsApproved=0)
-					Begin
-						select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-						pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
-						join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-						join [dbo].[Profile] pl on pl.id = pf.idprofile      
-						join [dbo].[UserList] ul on pl.id = ul.idprofile 
-						left join ClientUser cu on cu.UserId=ul.id
-						left join Client c on c.id=cu.ClientId
-						where ul.EmailId = @EmailId AND ul.IsActive=1 and (fn.IsUnapproved = 1 or fn.IsCommon=1)order by idisplayorder
-					End
-				ELSE
-					Begin
-						select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-						pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
-						join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-						join [dbo].[Profile] pl on pl.id = pf.idprofile      
-						join [dbo].[UserList] ul on pl.id = ul.idprofile 
-						left join ClientUser cu on cu.UserId=ul.id
-						left join Client c on c.id=cu.ClientId
-						where ul.EmailId = @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) and (fn.IsLead is null or fn.IsLead=0) order by idisplayorder
-					End
+						where ul.EmailId = @EmailId AND ul.IsActive=1 order by idisplayorder
 			End
 			else if (@profile = 'Client' and @roleId = 4)--staffing agency
 			begin

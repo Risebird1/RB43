@@ -70,8 +70,8 @@
         amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
     </script>*@
 
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-
+@*<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+*@
 @if (ViewBag.PageStatus == "PublicExternal")
 {
     <style>
@@ -138,18 +138,18 @@
 
                 <div class="pull-left mt-20">
 
-                    <button style="margin-bottom: 4px; margin-left: 17px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
-                        <text style="color:red">Rate Interviewer</text>
+                    <button style="margin-bottom: 4px; margin-left: 17px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                        <text style="color:white">Rate Interviewer</text>
                     </button>
                     @*<button style="margin-bottom: 4px; margin-left: 10px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
                             Audio Feedback
                         </button>*@
-                    <button style="margin-bottom: 4px; margin-left: 10px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
-                        Audio Feedback
+                    <button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
+                       <text style="color:white"> Audio Feedback </text>
                     </button>
                     
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" style="margin-left: 10px">
-                        <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Mass Communication</font></span>
+                    <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px; background-color:red; font-size: 11px">
+                        <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"><text style="color:white"> Mass Communication</text></font></span>
                     </button>
 
                 </div>

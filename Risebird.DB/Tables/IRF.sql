@@ -36,6 +36,9 @@ CREATE TABLE [dbo].[IRF](
             [SendIntervieweravailbilityOn][Datetime] NULL,
             [MeetingPlatform][varchar](25) NULL,
             [IsAadhaarVerificationRequired][bit] NULL,
+            [IsCandidateavailability][bit] NULL,
+            [IsMeetingNotificationSend][bit] NULL,
+            [IsMeetingAutoCancelled][bit] NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -285,6 +288,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add IsAadhaarVerificationRequired bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsCandidateavailability')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsCandidateavailability bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsMeetingNotificationSend')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsMeetingNotificationSend bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsMeetingAutoCancelled')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsMeetingAutoCancelled bit
 END
 
 END

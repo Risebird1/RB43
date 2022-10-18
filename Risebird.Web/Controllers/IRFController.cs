@@ -6240,7 +6240,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                if (profileName == "Admin" ||  profileName == "SupportAdmin") /*profileName == "HR" || profileName == "SeniorHR" ||*/
                 {
                     var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrWhiteSpace(x.AssessmentGroup) && (x.AssessmentGroupId != 0) && (x.CreatedFromTemplateId == null || x.CreatedFromTemplateId == 0));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
@@ -7249,6 +7249,12 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetClientDetails(int clientid)
+        {
+            var _clientdetails = _clientService.GetClient(clientid);
+            return Json(_clientdetails);
         }
     }
 }

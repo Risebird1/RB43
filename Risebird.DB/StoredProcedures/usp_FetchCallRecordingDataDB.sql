@@ -15,8 +15,10 @@ AS
 BEGIN    
 
 select crd.id, crd.InterviewId, crd.IRFId, crd.[Caller], crd.CallRecipient, crd.DateCreated,
-crd.Duration, crd.Price, crd.PriceUnit, crd.CallSid, crd.StartTime, crd.RecipientProfileType, crd.RecordingUri, crd.RecordingSid
+crd.Duration, crd.Price, crd.PriceUnit, crd.CallSid, crd.StartTime, crd.RecipientProfileType, crd.RecordingUri, 
+crd.RecordingSid, crd.RecipientPhoneNumber
 from CallRecordingData crd
+order by DateCreated desc
 
 END
 GO

@@ -42,6 +42,9 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @CreatedFromTemplateId int,  
 @MeetingPlatform varchar(25),  
 @IsAadhaarVerificationRequired bit,
+@IsCandidateavailability bit,
+@IsMeetingAutoCancelled bit,
+@IsMeetingNotificationSend bit,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
@@ -89,7 +92,10 @@ begin try
   ,[IsGeneralSkillRequired]  
   ,[CreatedFromTemplateId]  
   ,[MeetingPlatform]
-  ,[IsAadhaarVerificationRequired])              
+  ,[IsAadhaarVerificationRequired]
+  ,[IsCandidateavailability]
+  ,[IsMeetingAutoCancelled]
+  ,[IsMeetingNotificationSend])              
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -121,7 +127,10 @@ begin try
   @IsGeneralSkillRequired,  
   @CreatedFromTemplateId,  
   @MeetingPlatform,
-  @IsAadhaarVerificationRequired)                                                                           
+  @IsAadhaarVerificationRequired ,
+  @IsCandidateavailability,
+  @IsMeetingAutoCancelled,
+  @IsMeetingNotificationSend)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      

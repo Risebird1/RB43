@@ -894,7 +894,7 @@ namespace Risebird.Web.Controllers
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
                         ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                         var meetings = _meetingService.GetClientMeetingList(emailid);
-                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; return x; }).ToList();
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                         {
                             meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
@@ -2000,6 +2000,7 @@ namespace Risebird.Web.Controllers
                         foreach (var m in meetings)
                         {
                             m.IsClientQCRequired = client.IsQCRequired;
+                            m.IsClientRedoInterview = client.IsRedoInterview;
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
                             {
                                 m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
@@ -2981,6 +2982,7 @@ namespace Risebird.Web.Controllers
                             foreach (var item in meetings)
                             {
                                 item.IsClientQCRequired = client.IsQCRequired;
+                                item.IsClientRedoInterview = client.IsRedoInterview;
                             }
                             var rejectdata = JsonConvert.SerializeObject(meetings);
                             HttpContext.Session.SetString("SearchRejectedMeetings", rejectdata);
@@ -4374,22 +4376,32 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId)
+        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId, string profile = null, string currentUser = null)
         {
             try
             {
+                string profileName;
+                string emailId;
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    var model = new ClientAudioInstructionsWrapper();
-                    //model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
-                    model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
+                    var model = await CreateAudioInstructionsModal(interviewId, profileName, emailId);
+                    //var model = new ClientAudioInstructionsWrapper();
+                    ////model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+                    //model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
 
-                    model.Profile = profileName;
-                    model.InterviewId = interviewId;
+                    //model.Profile = profileName;
+                    //model.InterviewId = interviewId;
+                    return PartialView("GetClientAudioInstructionsFeedbacks", model);
+                }
+                else if(!string.IsNullOrEmpty(profile) && !string.IsNullOrEmpty(currentUser))
+                {
+                    profileName = profile;
+                    emailId = currentUser.Trim('\'');
+                    var model = CreateAudioInstructionsModal(interviewId, profileName, emailId);
                     return PartialView("GetClientAudioInstructionsFeedbacks", model);
                 }
                 else
@@ -4404,5 +4416,16 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        public async Task<ClientAudioInstructionsWrapper> CreateAudioInstructionsModal(int interviewId, string profileName, string emailId)
+        {
+            var model = new ClientAudioInstructionsWrapper();
+            //model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
+            model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
+
+            model.Profile = profileName;
+            model.InterviewId = interviewId;
+            return model;
+        }
     }
 }

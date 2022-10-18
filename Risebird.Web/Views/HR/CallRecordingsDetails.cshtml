@@ -227,6 +227,7 @@
                                                     {
                                                         <th>Price</th>
                                                         <th>Price Unit</th>
+                                                        <th>Recipient Phone Number</th>
                                                     }
                                                     
                                                     <th>Recording</th>
@@ -238,10 +239,11 @@
                                                     <th>Call Recipient</th>
                                                     <th>Called At</th>
                                                     <th>Duration(s)</th>
-                                                    @if (ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
                                                     {
                                                         <th>Price</th>
                                                         <th>Price Unit</th>
+                                                        <th>Recipient Phone Number</th>
                                                     }
                                                     <th>Recording</th>
                                                 </tr>
@@ -257,22 +259,18 @@
                                                             <td>@item.CallRecipient</td>
                                                             <td>@item.DateCreated</td>
                                                             <td>@item.Duration</td>
-                                                            @if(ViewBag.Profile == "Admin")
+                                                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
                                                             {
-                                                                <td>@item.Price</td>
-                                                                <td>@item.PriceUnit</td>
-                                                            }
-@*                                                            <td>@item.Price</td>
-*@                                                            @*@{
                                                                 string price = item.Price;
-                                                                if(!string.IsNullOrEmpty(item.Price) && item.Price.Contains("-"))
+                                                                if(!string.IsNullOrEmpty(item.Price) && item.Price.IndexOf("-") == 0)
                                                                 {
-                                                                    price = item.Price.Remove(0);
+                                                                    price = item.Price.Remove(0, 1);
                                                                 }
+                                                                <td>@price</td>
+                                                                <td>@item.PriceUnit</td>
+                                                                <td>@item.RecipientPhoneNumber</td>
                                                             }
-                                                            <td>@price</td>*@
-                                                            @*<td>@item.PriceUnit</td>*@
-
+                                                            
                                                             @*<td>
                                                                 <audio asp-append-version="true" src="@item.RecordingUri" controls></audio>
                                                             </td>*@

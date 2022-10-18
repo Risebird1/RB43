@@ -492,6 +492,9 @@
     $("#actual-btn").change(function () {
         readURL(this);
     });
+    function OpenTdsCertificate() {
+        window.location.href = "/Interviewer/TdsCertificateInterviewers";
+    }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
 {
