@@ -6649,7 +6649,7 @@ namespace Risebird.Web.Controllers
                             }
                             var _model = new InterviewerRating();
                             _model.StarRating = rating;
-                            _model.Comment = "QC Form rating biased on redflags: " + redflag;
+                            _model.Comment = "Redflags raised: " + redflag;
                             _model.Emailid = _clienthr;
                             _model.Interviewid = model.Interviewid;
                             _model.ClientAction = "";

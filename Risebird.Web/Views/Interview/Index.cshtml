@@ -1947,6 +1947,7 @@
         modal.style.display = "none";
     }
 </script>
+
 <script>
     var start = document.getElementById('start');
     start.focus();
@@ -1994,12 +1995,15 @@
 </script>
 <script>
     $(document).ready(function () {
+        
         $('.sendButton').attr('disabled', true);
         $('input[type="text"],textarea').on('keyup', function () {
             ValidateBroadcastFields();
         });
+        
     });
 
+    
     //new added Popup
     //function OpenVideoUploadPopup(interviewid) {
     //    var url = "/Interview/partialVideoView?id=" + interviewid;
