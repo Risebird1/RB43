@@ -317,7 +317,7 @@
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, ,'@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
                                                                                             <span class="btn-call" style="top: -7px;
         position: relative;
         cursor: pointer
@@ -460,7 +460,7 @@
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, ,'@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
                                                                                             <span class="btn-call" style="        top: -7px;
         position: relative;
         cursor: pointer
