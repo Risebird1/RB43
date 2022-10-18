@@ -15,7 +15,7 @@ BEGIN
 
 Select id, RecordingSid From CallRecordingData 
 where DateCreated > DATEADD(MINUTE, -25, @timeNow) 
-and Duration is null
+and (Duration is null or Price is null)
 
 END  
 GO
