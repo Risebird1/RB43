@@ -1996,14 +1996,7 @@
     $(document).ready(function () {
         $('.sendButton').attr('disabled', true);
         $('input[type="text"],textarea').on('keyup', function () {
-            var textarea_value = $("#bcMessage").val();
-            var text_value = $('input[name="textField"]').val();
-            if (textarea_value != '' && text_value != '') {
-                $('.sendButton').attr('disabled', false);
-
-            } else {
-                $('.sendButton').attr('disabled', true);
-            }
+            ValidateBroadcastFields();
         });
     });
 
