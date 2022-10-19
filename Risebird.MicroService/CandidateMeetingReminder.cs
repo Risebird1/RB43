@@ -143,7 +143,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.CandidateEmail,
 
-                            Subject = "Risebird: Interview Reminder"
+                            Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder"
                         };
                         var emailresult = _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST");
                     }
