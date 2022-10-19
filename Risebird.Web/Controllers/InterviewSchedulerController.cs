@@ -1,10 +1,13 @@
 ﻿using FileTypeInterrogator;
+using iTextSharp.text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -13,6 +16,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -229,6 +233,10 @@ namespace Risebird.Web.Controllers
                     model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
                     var _listhr = _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
                     var _staffing = _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
+                    List<string> _list = new List<string>();
+                    _list.Add("prashantindoliya@gmail.com");
+                    _listhr = _list;
+                    _staffing = _list;
                     if (_staffing != null)
                     {
                         model._liststaffing = new SelectList(_staffing);
@@ -243,6 +251,13 @@ namespace Risebird.Web.Controllers
                     }
                     model.ClientName = model._IRFDetails.Name;
                     model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
+                    var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                    List<SelectListItem> items = new List<SelectListItem>();
+                    foreach (var tzi in timeZones)
+                    {
+                        items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
+                    }
+                    model.TimeZonesList = items;
                 }
                 else
                 {
@@ -270,7 +285,8 @@ namespace Risebird.Web.Controllers
                     var _time = _date[3].Split(":");
                     DateTime value = new DateTime(Convert.ToInt32(_date[2]), Convert.ToInt32(_date[1]), Convert.ToInt32(_date[0]), Convert.ToInt32(_time[0]), Convert.ToInt32(_time[1]), 0);
                     interviewdatetime = value;
-                    model.scheduleDate = value.AddMinutes(model.offset);
+                    model.TimeZoneoffset = FetchCurrentoffset(model.offset, value, model.TimeZonesValue);
+                    model.scheduleDate = value.AddMinutes(model.TimeZoneoffset);
                 }
                 if (model.ResumeFile != null)
                 {
@@ -366,11 +382,11 @@ namespace Risebird.Web.Controllers
                     bool result = false;
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail);
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, zoomLink.accountemail);
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
-                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, rbMeetingLinkResponse.meetingAgent, model.InterviewChannelId, rbMeetingLinkResponse.roomId, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, rbMeetingLinkResponse.meetingAgent, model.InterviewChannelId, rbMeetingLinkResponse.roomId, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue);
                     }
                     if (result)
                     {
@@ -390,12 +406,27 @@ namespace Risebird.Web.Controllers
                         var timeZones = TimeZoneInfo.GetSystemTimeZones();
                         foreach (TimeZoneInfo timeZone in timeZones)
                         {
-                            if (timeZone.DisplayName.Contains(offsetvalue))
+                            //if (timeZone.DisplayName.Contains(offsetvalue))
+                            //{
+                            //    timezonevalue = timeZone.DisplayName;
+                            //    break;
+                            //}
+                            if (timeZone.DisplayName.Contains(model.TimeZonesValue))
                             {
-                                timezonevalue = timeZone.DisplayName;
-                                break;
+                                if (timeZone.DisplayName.Contains(offsetvalue))
+                                {
+                                    if (timeZone.IsDaylightSavingTime(interviewdatetime))
+                                    {
+                                        timezonevalue = timeZone.DaylightName;
+                                    }
+                                    else
+                                    {
+                                        timezonevalue = timeZone.StandardName;
+                                    }
+                                }
                             }
                         }
+
                         //if (zoomLink.accountemail == "me")
                         //{
                         //    zoomLink.accountemail = "host@risebird.io";
@@ -410,11 +441,11 @@ namespace Risebird.Web.Controllers
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
-                            _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
+                            _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset);
                         }
                         else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                         {
-                            _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
+                            _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset);
                         }
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
@@ -449,7 +480,7 @@ namespace Risebird.Web.Controllers
             FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
             return fileTypeInfo.MimeType.ToLower();
         }
-        public JsonResult FetchSlots(int day, int month, int year, string id, int offset)
+        public JsonResult FetchSlots(int day, int month, int year, string id, int offset, string TimeZonevalue)
         {
             DateTime value = new DateTime(year, month, day);
             var result = _interviewSchedulerservice.FetchSlots(value, id);
@@ -459,6 +490,7 @@ namespace Risebird.Web.Controllers
             var result1 = result.Where(x => x.Daytype == dayofweek1).ToList();
             string dayofweek2 = value.AddDays(-1).DayOfWeek.ToString().ToLower();
             var result2 = result.Where(x => x.Daytype == dayofweek2).ToList();
+            offset = FetchCurrentoffset(offset, value, TimeZonevalue);
             int addontime = offset + 330;
             var model = new List<string>();
 
@@ -784,6 +816,41 @@ namespace Risebird.Web.Controllers
             IRestResponse response = client.Execute(request);
             var content = response.Content;
             return "Delete successfully";
+        }
+        public int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue)
+        {
+            int currentOffset = offset;
+            string timezonevalue = string.Empty;
+            string hh = string.Empty;
+
+            var valuecheck = (-offset / 60);
+            if (valuecheck < 10 && valuecheck > 0)
+            {
+                hh = "0" + valuecheck;
+            }
+            if (valuecheck > -10 && valuecheck < 0)
+            {
+                hh = "-0" + valuecheck.ToString().Replace("-", "");
+            }
+            var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
+            var timeZones = TimeZoneInfo.GetSystemTimeZones();
+            foreach (TimeZoneInfo timeZone in timeZones)
+            {
+                var flag = false;
+                if (timeZone.DisplayName.Contains(TimeZonevalue))
+                {
+                    if (timeZone.DisplayName.Contains(offsetvalue))
+                    {
+                        flag = timeZone.IsDaylightSavingTime(value);
+                        if (flag)
+                        {
+                            TimeSpan currentOffsetvalue = timeZone.GetUtcOffset(value);
+                            currentOffset = -(currentOffsetvalue.Hours * 60);
+                        }
+                    }
+                }
+            }
+            return currentOffset;
         }
     }
 }

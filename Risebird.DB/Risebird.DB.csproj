@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="StoredProcedures\InsertMeetings.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Views\" />
   </ItemGroup>
 
