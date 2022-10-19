@@ -877,10 +877,10 @@ namespace Risebird.Business
                         _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.JobCountry, meeting.interviewer);
 
                         //cancel meeting here
-                        if (PublicCancelInterview(meetingid, $"Auto cancelled by System(Interviewer '{email}' unassigned within 30 mins from scheduled time.)"))
-                        {
-                            _ = SendsMailsAfterCancellingInterview(meetingid, meeting.irfIntId, meeting.candidateEmail).Result;
-                        }
+                        //if (PublicCancelInterview(meetingid, $"Auto cancelled by System(Interviewer '{email}' unassigned within 30 mins from scheduled time.)"))
+                        //{
+                        //    _ = SendsMailsAfterCancellingInterview(meetingid, meeting.irfIntId, meeting.candidateEmail).Result;
+                        //}
 
                     }
                     else
