@@ -337,7 +337,8 @@
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                         {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                @*<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>*@         
+                                                                <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail', '@item.id', null, 'Candidate')" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                         }
 
                                                     </td>
@@ -356,7 +357,10 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal modal-bg">
+
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+            @*<div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-content">
 
@@ -385,7 +389,7 @@
 
                 </div>
 
-            </div>
+            </div>*@
             <!-- end row -->
         </div>
 
@@ -553,7 +557,10 @@
     };
     //// script for loader ends here
 </script>
-<script>
+
+<script src="~/js/twiliocallmaker.js"></script>
+
+@*<script>
     var candidate = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
@@ -629,7 +636,7 @@
     }
 
 
-</script>
+</script>*@
 
 
 

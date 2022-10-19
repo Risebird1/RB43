@@ -145,7 +145,8 @@
                                                 {
 
                                                     <button class="mdc-fab app-fab--absolute twelve" aria-label="Call Interviewer">
-                                                        <span onclick="ModalButtonClick('@item.interviewer','@item.InterviewerPhone','@item.id')" title="Call Interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+@*                                                        <span onclick="ModalButtonClick('@item.interviewer','@item.InterviewerPhone','@item.id')" title="Call Interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+*@                                                        <span onclick="CommonCallButtonClick('@item.interviewer','@item.InterviewerPhone', '@item.interviewer', '@item.id', null, 'Interviewer')" title="Call Interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                     </button>
 
                                                 }
@@ -153,7 +154,8 @@
 
 
                                                 <button class="mdc-fab app-fab--absolute thirteen" aria-label="Call HR">
-                                                    <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber','@item.id')" title="Call HR" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+@*                                                    <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber','@item.id')" title="Call HR" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+*@                                                    <span onclick="CommonCallButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber', '@item.HRCoordinatorEmailId', '@item.id', null, 'HR')" title="Call HR" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                 </button>
                                                 @if (item.BussinessType == "B2C")
                                                 {
@@ -213,8 +215,8 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-
-        <div id="myModal" class="modal modal-bg">
+        @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+        @*<div id="myModal" class="modal modal-bg">
             <div class="modal-dialog modal-lg" role="document">
                 <!-- Modal content -->
                 <div class="modal-content">
@@ -250,7 +252,7 @@
                 </div>
 
             </div>
-        </div>
+        </div>*@
         <!-- end row -->
     </div>
 
@@ -382,9 +384,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
-<script>
+<script src="~/js/twiliocallmaker.js"></script>
+@*<script>
     var receiver = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
@@ -460,13 +462,13 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
+</script>*@
 
+<script>
     function RelatedJD(id) {
         var url = '/Client/CandidateRelatedJD?interviewid=' + id;
         window.location.href = url;
     }
-</script>
-<script>
     function CancelInterview(obj) {
 
         //var IdIRF = dataID;

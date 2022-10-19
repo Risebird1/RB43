@@ -1744,7 +1744,19 @@
 
 </script>
 
+<script>
+    function ValidateBroadcastFields(){
+        //var message_Value = $("#bcMessage").val();
+        var message_Value = tinymce.get("bcMessage").getContent();
+        var text_value = $('input[name="textField"]').val();
+        if (message_Value != '' && text_value != '') {
+            $('.sendButton').attr('disabled', false);
 
+        } else {
+            $('.sendButton').attr('disabled', true);
+        }
+    }
+</script>
 <script type="text/javascript">
     var spanbroadcast = document.getElementById("broadcastPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1773,7 +1785,11 @@
             plugins: 'link',
             height: "300",
             toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
-
+            setup: function(ed) {
+                ed.on('keyup', function(e) {
+                    ValidateBroadcastFields();
+                });
+            }
         });
 
         modalBct.style.display = "block";
@@ -1931,6 +1947,7 @@
         modal.style.display = "none";
     }
 </script>
+
 <script>
     var start = document.getElementById('start');
     start.focus();
@@ -1978,19 +1995,15 @@
 </script>
 <script>
     $(document).ready(function () {
+        
         $('.sendButton').attr('disabled', true);
         $('input[type="text"],textarea').on('keyup', function () {
-            var textarea_value = $("#bcMessage").val();
-            var text_value = $('input[name="textField"]').val();
-            if (textarea_value != '' && text_value != '') {
-                $('.sendButton').attr('disabled', false);
-
-            } else {
-                $('.sendButton').attr('disabled', true);
-            }
+            ValidateBroadcastFields();
         });
+        
     });
 
+    
     //new added Popup
     //function OpenVideoUploadPopup(interviewid) {
     //    var url = "/Interview/partialVideoView?id=" + interviewid;
