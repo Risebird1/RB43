@@ -815,38 +815,45 @@ namespace Risebird.Web.Controllers
         }
         public int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue)
         {
-            int currentOffset = offset;
-            string timezonevalue = string.Empty;
-            string hh = string.Empty;
+            try
+            {
+                int currentOffset = offset;
+                string timezonevalue = string.Empty;
+                string hh = string.Empty;
 
-            var valuecheck = (-offset / 60);
-            if (valuecheck < 10 && valuecheck > 0)
-            {
-                hh = "0" + valuecheck;
-            }
-            if (valuecheck > -10 && valuecheck < 0)
-            {
-                hh = "-0" + valuecheck.ToString().Replace("-", "");
-            }
-            var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
-            var timeZones = TimeZoneInfo.GetSystemTimeZones();
-            foreach (TimeZoneInfo timeZone in timeZones)
-            {
-                var flag = false;
-                if (!string.IsNullOrWhiteSpace(TimeZonevalue) &&  timeZone.DisplayName.Contains(TimeZonevalue))
+                var valuecheck = (-offset / 60);
+                if (valuecheck < 10 && valuecheck > 0)
                 {
-                    if (timeZone.DisplayName.Contains(offsetvalue))
+                    hh = "0" + valuecheck;
+                }
+                if (valuecheck > -10 && valuecheck < 0)
+                {
+                    hh = "-0" + valuecheck.ToString().Replace("-", "");
+                }
+                var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
+                var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                foreach (TimeZoneInfo timeZone in timeZones)
+                {
+                    var flag = false;
+                    if (!string.IsNullOrWhiteSpace(TimeZonevalue) && timeZone.DisplayName.Contains(TimeZonevalue))
                     {
-                        flag = timeZone.IsDaylightSavingTime(value);
-                        if (flag)
+                        if (timeZone.DisplayName.Contains(offsetvalue))
                         {
-                            TimeSpan currentOffsetvalue = timeZone.GetUtcOffset(value);
-                            currentOffset = -(currentOffsetvalue.Hours * 60);
+                            flag = timeZone.IsDaylightSavingTime(value);
+                            if (flag)
+                            {
+                                TimeSpan currentOffsetvalue = timeZone.GetUtcOffset(value);
+                                currentOffset = -(currentOffsetvalue.Hours * 60);
+                            }
                         }
                     }
                 }
+                return currentOffset;
             }
-            return currentOffset;
+            catch (Exception ex)
+            {
+                return offset;
+            }
         }
     }
 }
