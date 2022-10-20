@@ -8,6 +8,6 @@ namespace Risebird.Entities.ViewModel
         public string Profile { get; set; }
         public int InterviewId { get; set; }
         public string CreatedBy { get; set; }
-        public int irfid { get; set; }
+        public string irfid { get; set; }
     }
 }

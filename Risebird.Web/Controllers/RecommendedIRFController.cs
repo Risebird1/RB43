@@ -225,6 +225,9 @@ namespace Risebird.Web.Controllers
                 {
                     model.Message2 = TempData["SuccessErrorCloneSkillChannnelMessage2"].ToString();
                     TempData.Remove("SuccessErrorCloneSkillChannnelMessage2");
+                    model.IRFId = TempData["SuccessErrorCloneSkillChannnelMessageIRFId"].ToString();
+                    TempData.Remove("SuccessErrorCloneSkillChannnelMessageIRFId");
+                    
                 }
                 TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
             }
@@ -881,6 +884,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                         TempData["SuccessErrorCloneSkillChannnelMessage2"] = model.CalendlyLink;
+                        TempData["SuccessErrorCloneSkillChannnelMessageIRFId"] = model.IRFId;
                         return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
                     }
                     else

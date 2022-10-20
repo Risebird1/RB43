@@ -4376,7 +4376,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId, int Irfid, string profile = null, string currentUser = null)
+        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId, string Irfid, string profile = null, string currentUser = null)
         {
             try
             {

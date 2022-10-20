@@ -67,6 +67,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Upload Your Resume*")]
         public IFormFile ResumeFile { get; set; }
         public string Resume { get; set; }
+        [EmailAddress]
         [Display(Name = "Staffing Agencies")]
         public string StaffingAgiencies { get; set; }
         public string Uniqueid { get; set; }
