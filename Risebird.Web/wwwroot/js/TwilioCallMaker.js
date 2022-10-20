@@ -169,6 +169,17 @@ function CommonCallButtonClickJson(imid) {
 
 }
 
+function CommonCallButtonClickJsonV2(imid) {
+    var name = $("#hidcandidate_" + imid).val();
+    var mobile = $("#hidmobile" + imid).val();
+    var emailId = $("#hidcandidateEmail_" + imid).val();
+
+    // Get the modal
+    //CallButtonClickInterviewer(interviewer, mobile, emailId);
+    CommonCallButtonClick(name, mobile, emailId, null, null, 'Interviewer');
+
+}
+
 function ModalButtonClickHR(phone, receiverName, type, interviewid, emailId = '') {
     callRecipientName = receiverName;
     interviewId = interviewid;
