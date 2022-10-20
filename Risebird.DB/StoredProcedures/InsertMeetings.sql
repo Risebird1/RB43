@@ -31,7 +31,7 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 @textreminder nvarchar(200),        
 @zoomMeetingId varchar(200),   
 @TimeZoneoffset int,
-@TimeZonesValue varchar(100),
+@TimeZonesValue varchar(200),
 @interviewIdOutput int out        
 AS        
 Begin   

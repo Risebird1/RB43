@@ -48,7 +48,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [BackUpLink] [varchar](MAX) NOT NULL,
     [BackUpLinkId][varchar] (200),
     [TimeZoneoffset][int],
-    [TimeZonesValue][varchar] (100),
+    [TimeZonesValue][varchar] (200),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -346,7 +346,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    Add TimeZonesValue varchar(100)
+    Add TimeZonesValue varchar(200)
 END
 
 END
