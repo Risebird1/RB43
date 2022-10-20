@@ -833,7 +833,7 @@ namespace Risebird.Web.Controllers
             foreach (TimeZoneInfo timeZone in timeZones)
             {
                 var flag = false;
-                if (timeZone.DisplayName.Contains(TimeZonevalue))
+                if (!string.IsNullOrWhiteSpace(TimeZonevalue) &&  timeZone.DisplayName.Contains(TimeZonevalue))
                 {
                     if (timeZone.DisplayName.Contains(offsetvalue))
                     {
