@@ -136,6 +136,17 @@ namespace Risebird.MicroService
                             var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         }
                     }
+                    else if (item.Typefunction == 31)
+                    {
+                        //Send Notifications
+                        Mail _mail = new Mail
+                        {
+                            TO = item.CandidateEmail,
+
+                            Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder"
+                        };
+                        var emailresult = _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST");
+                    }
                 }
                 catch (Exception ex)
                 {
