@@ -47,6 +47,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [RedoInterview][bit] NOT NULL Default 0,
     [BackUpLink] [varchar](MAX) NOT NULL,
     [BackUpLinkId][varchar] (200),
+    [TimeZoneoffset][int],
+    [TimeZonesValue][varchar] (200),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -327,6 +329,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add BackUpLinkId varchar(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TimeZoneoffset')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add TimeZoneoffset int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TimeZonesValue')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add TimeZonesValue varchar(200)
 END
 
 END

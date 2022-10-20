@@ -168,8 +168,8 @@
 
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
-                                                                        <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
+                                                                          <span onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>                                                                       
+                                                                          <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
                                                                     }
                                                                 </td>
@@ -697,52 +697,7 @@
 
     }
 </script>
-<script>
-    var caninterviewid = 0;
-    $(document).ready(function () {
 
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
-
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
-
-
-    });
-
-    function callCandidate(phoneNumber, interviewid) {
-        caninterviewid = interviewid;
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        startCallRecording(connection.parameters.CallSid);
-
-    });
-
-    Twilio.Device.disconnect(function (connection) {
-
-    });
-    function startCallRecording(sid) {
-        console.log("sid:" + sid);
-        $.ajax({
-            url: '/User/makecall',
-            type: "GET",
-            data: { 'sid': sid, 'interviewid': caninterviewid },
-            success: function (data) {
-                console.log("rsid:" + data);
-            }
-        });
-    }
-
-</script>
 <script>
     var imid = "";
     var span = document.getElementById("feedbackPopUp");

@@ -196,8 +196,9 @@
                                                                     }
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span id="intselmeet_9" onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone-alt"></i></span>
-                                                                        <span id="intselmeet_10" onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone-alt"></i></span>
+@*                                                                        <span id="intselmeet_9" onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone-alt"></i></span>
+*@                                                                        <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate" class="btn-call"><i class="fa fa-phone-alt"></i></span>
+                                                                          <span id="intselmeet_10" onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone-alt"></i></span>
 
                                                                     }
                                                                 </td>
@@ -493,6 +494,7 @@
 
 </div>
 
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 @*<script>
         $(document).ready(function () {
@@ -542,6 +544,7 @@
     </script>*@
 
 
+<script src="~/js/twiliocallmaker.js"></script>
 
 <script>
     function changeicon(id) {
@@ -661,7 +664,7 @@
             }
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
                 html += '    <td class="text-right action">';
-                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ',' + data[i].imid + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone-alt"></i></span>';
+                html += '   <span onclick="CommonCallButtonClick(' + data[i].candidateName + ',' + data[i].mobileNumber + ',' + data[i].candidateEmail + ',' + data[i].imid + ',' + null + 'Candidate' + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone-alt"></i></span>';
                 html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone-alt"></i></span>';
                 html += '     </td>';
             }
@@ -769,7 +772,7 @@
 
     }
 </script>
-<script>
+@*<script>
 
     $(document).ready(function () {
 
@@ -806,7 +809,7 @@
         callCandidate(phonenumber, interviewid);
     }
 
-</script>
+</script>*@
 <script>
     var imid = "";
     var span = document.getElementById("feedbackPopUp");
@@ -819,17 +822,17 @@
 
 </script>
 <script>
-    function startCallRecording(sid) {
-        console.log("sid:" + sid);
-        $.ajax({
-            url: '/User/makecall',
-            type: "GET",
-            data: { 'sid': sid, 'interviewid': imid },
-            success: function (data) {
-                console.log("rsid:" + data);
-            }
-        });
-    }
+    //function startCallRecording(sid) {
+    //    console.log("sid:" + sid);
+    //    $.ajax({
+    //        url: '/User/makecall',
+    //        type: "GET",
+    //        data: { 'sid': sid, 'interviewid': imid },
+    //        success: function (data) {
+    //            console.log("rsid:" + data);
+    //        }
+    //    });
+    //}
     function ModalButtonClickjson(item) {
         var obj = list[item];
         ModalButtonClick(obj);

@@ -1833,7 +1833,7 @@
                     document.getElementById("tab-7").style.display = "block";
                 }
                 document.getElementById("tab-11").style.display = "none";
-                if ($("#hidprofile").val() == "Admin" || $("#hidprofile").val() == "SupportAdmin") {
+                if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin") {
                     document.getElementById("btnNext").style.display = "block";
                     if ($("#hidClientuser").val() == false) {
                         document.getElementById("btnUpload").style.display = "none";
@@ -2024,8 +2024,10 @@
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
-    @*document.getElementById("btnNext").style.display = "none";
-                        document.getElementById("btnUpload").style.display = "block";*@
+                    if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin") {
+                    document.getElementById("btnNext").style.display = "none";
+                        document.getElementById("btnUpload").style.display = "block";
+                }
                         document.getElementById("tab-10").style.display = "none";
                 }
             }
@@ -2358,6 +2360,12 @@
                 document.getElementById("btnPrev").style.display = "block";
             }
             if (newHeader == "tab-12") {
+                document.getElementById("btnNext").style.display = "none";
+                if ($("#hidClientuser").val() == false) {
+                    document.getElementById("btnUpload").style.display = "block";
+                }
+            }
+            else if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin" && newHeader == "tab-11") {
                 document.getElementById("btnNext").style.display = "none";
                 if ($("#hidClientuser").val() == false) {
                     document.getElementById("btnUpload").style.display = "block";
