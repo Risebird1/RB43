@@ -271,6 +271,13 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ScheduleEvent(ScheculeInterview model)
         {
+            var timeZones1 = TimeZoneInfo.GetSystemTimeZones();
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (var tzi in timeZones1)
+            {
+                items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
+            }
+            model.TimeZonesList = items;
             if (ModelState.IsValid)
             {
                 ViewBag.Start = 2;
