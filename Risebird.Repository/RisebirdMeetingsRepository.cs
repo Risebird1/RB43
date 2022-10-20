@@ -39,7 +39,7 @@ namespace Risebird.Repository
             _candidateRepository = candidateRepository;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, string zoomAccountEmail = null)
+            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact,int TimeZoneoffset, string TimeZonesValue, string zoomAccountEmail = null)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -122,6 +122,8 @@ namespace Risebird.Repository
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));//
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));//
+                cmd.Parameters.Add(new SqlParameter("@TimeZoneoffset", TimeZoneoffset));
+                cmd.Parameters.Add(new SqlParameter("@TimeZonesValue", TimeZonesValue));
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(outPutVal);
