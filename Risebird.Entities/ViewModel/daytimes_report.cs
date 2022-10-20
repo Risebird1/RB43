@@ -91,6 +91,10 @@ namespace Risebird.Entities.ViewModel
         public string MeetingPlatform { get; set; }
         public SelectList _listhr { get; set; }
         public SelectList _liststaffing { get; set; }
+        public List<SelectListItem> TimeZonesList { get; set; }
+        public string TimeZones { get; set; }
+        public string TimeZonesValue { get; set; }
+        public int TimeZoneoffset { get; set; }
     }
     public class TimeslotsVM
     {

@@ -260,6 +260,8 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));
+                cmd.Parameters.Add(new SqlParameter("@TimeZoneoffset", 330));
+                cmd.Parameters.Add(new SqlParameter("@TimeZonesValue", ""));
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(outPutVal);

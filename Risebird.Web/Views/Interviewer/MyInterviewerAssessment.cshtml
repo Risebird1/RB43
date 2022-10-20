@@ -186,7 +186,8 @@
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                                 {
                                                                     <button id="myinterviewerassmenu_5" class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer.">
-                                                                        <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail', '@item.id')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+@*                                                                        <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail', '@item.id')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+*@                                                                        <span onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail', null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                     </button>
                                                                 }
 
@@ -239,7 +240,10 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal modal-bg">
+
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+            @*<div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -268,7 +272,7 @@
 
                 </div>
 
-            </div>
+            </div>*@
             <!-- end row -->
         </div>
 
@@ -276,8 +280,8 @@
 </div>
 
 
-
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+@*
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 
 <script>
     function RefreshSearch() {
@@ -324,7 +328,10 @@
     };
     //// script for loader ends here
 </script>
-<script>
+
+<script src="~/js/twiliocallmaker.js"></script>
+
+@*<script>
     var interviewer = "";
     var caninterviewid = 0;
     var span = document.getElementById("callPopUp");
@@ -406,7 +413,7 @@
     }
 
 
-</script>
+</script>*@
 
 
 
@@ -739,7 +746,7 @@
             newDateObj.setTime(oldDateObj.getTime() - (5 * 60 * 1000));
             newObj.setTime(oldDateObj.getTime() + (65 * 60 * 1000));
             if (data[i].mobileNumber != null && data[i].mobileNumber != "" && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
-                html += '<input id="hidemail_' + data[i].id + '" type="hidden" value="' + data[i].candidateEmail + '"/><button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer."><span onclick="ModalButtonClickJson(' + data[i].mobileNumber + ', ' + data[i].id + ')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc - fab__icon material - icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span></button>';
+                html += '<input id="hidcandidateEmail_' + data[i].id + '" type="hidden" value="' + data[i].candidateEmail + '"/>' + '<input id="hidcandidate_' + data[i].id + '" type="hidden" value="' + data[i].candidateName + '"/>' + '<input id="hidmobile_' + data[i].id + '" type="hidden" value="' + data[i].mobileNumber + '"/>' + '<button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer."><span onclick="CommonCallButtonClickJsonV2(' + data[i].id + ')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc - fab__icon material - icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span></button>';
 
             }
 
