@@ -233,10 +233,6 @@ namespace Risebird.Web.Controllers
                     model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
                     var _listhr = _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
                     var _staffing = _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
-                    List<string> _list = new List<string>();
-                    _list.Add("prashantindoliya@gmail.com");
-                    _listhr = _list;
-                    _staffing = _list;
                     if (_staffing != null)
                     {
                         model._liststaffing = new SelectList(_staffing);
