@@ -4835,6 +4835,7 @@ namespace Risebird.Web.Controllers
             var file = Request.Form.Files;
             var nvc = Request.Form;
             int candidateType = 0;
+            int irfid = 0;
             bool isClientFeedback = false;
             string currentUserEmail = string.Empty;
             if (!string.IsNullOrEmpty(nvc["candidateType"]))
@@ -4844,6 +4845,10 @@ namespace Risebird.Web.Controllers
             if (!string.IsNullOrEmpty(nvc["isClientFeedback"]))
             {
                 isClientFeedback = Convert.ToBoolean(nvc["isClientFeedback"]);
+            }
+            if (!string.IsNullOrEmpty(nvc["irfid"]))
+            {
+                irfid = Convert.ToInt32(nvc["irfid"]);
             }
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -5979,7 +5984,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientDetails = "";
 
                 ViewBag.CurrentUser = currentUser;
-                
+
                 if (isClient || isClientSelected)
                 {
                     ViewBag.ClientDetails = "client";
@@ -6568,7 +6573,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         var model = _meetingService.FetchQCFormDetailsById(interviewid);
-                        
+
                         if (model == null)
                         {
                             model = new QCFormVM();
@@ -6588,7 +6593,7 @@ namespace Risebird.Web.Controllers
                             model.Profile = profileName;
                             model.Type = type;
                         }
-                        
+
                         return View(model);
                     }
                     else

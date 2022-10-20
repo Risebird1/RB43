@@ -4376,7 +4376,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId, string profile = null, string currentUser = null)
+        public async Task<IActionResult> GetClientAudioInstructionsFeedbacks(int interviewId, int Irfid, string profile = null, string currentUser = null)
         {
             try
             {
@@ -4389,6 +4389,7 @@ namespace Risebird.Web.Controllers
                     emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     var model = await CreateAudioInstructionsModal(interviewId, profileName, emailId);
+                    model.irfid = Irfid;
                     //var model = new ClientAudioInstructionsWrapper();
                     ////model.ClientAudioInstructionsList = await _clientService.GetClientAudioForIRF(interviewId, emailId, profileName);
                     //model.ClientAudioInstructionsList = await _clientService.GetClientInstructionsAudioForReport(interviewId, emailId, profileName);
@@ -4397,7 +4398,7 @@ namespace Risebird.Web.Controllers
                     //model.InterviewId = interviewId;
                     return PartialView("GetClientAudioInstructionsFeedbacks", model);
                 }
-                else if(!string.IsNullOrEmpty(profile) && !string.IsNullOrEmpty(currentUser))
+                else if (!string.IsNullOrEmpty(profile) && !string.IsNullOrEmpty(currentUser))
                 {
                     profileName = profile;
                     emailId = currentUser.Trim('\'');

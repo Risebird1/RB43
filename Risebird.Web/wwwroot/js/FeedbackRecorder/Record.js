@@ -9,6 +9,7 @@ var input; 							//MediaStreamAudioSourceNode we'll be recording
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext;//audio context to help us record
 var interviewId;
+var irfid;
 var candidateType;
 function startRecording() {
     //console.log("recordButton clicked");
@@ -23,12 +24,12 @@ function startRecording() {
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
         //console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
 
-		/*
-			create an audio context after getUserMedia is called
-			sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
-			the sampleRate defaults to the one set in your OS for your playback device
+        /*
+            create an audio context after getUserMedia is called
+            sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+            the sampleRate defaults to the one set in your OS for your playback device
 
-		*/
+        */
         audioContext = new AudioContext();
 
         //update the format 
@@ -39,10 +40,10 @@ function startRecording() {
         /* use the stream */
         input = audioContext.createMediaStreamSource(stream);
 
-		/* 
-			Create the Recorder object and configure to record mono sound (1 channel)
-			Recording 2 channels  will double the file size
-		*/
+        /* 
+            Create the Recorder object and configure to record mono sound (1 channel)
+            Recording 2 channels  will double the file size
+        */
         rec = new Recorder(input, { numChannels: 1 });
 
         //start the recording process
@@ -181,7 +182,7 @@ function stopIRFRecording(id) {
     document.getElementById("startRecButton").disabled = false;
     document.getElementById("cancelRecButton").disabled = true;
     document.getElementById("recordingStatus").innerHTML = "Recording stopped!";
-        interviewId = id;
+    interviewId = id;
     candidateType = 3;
     //tell the recorder to stop the recording
     rec.stop();
@@ -253,12 +254,12 @@ function startClientRecording() {
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
         //console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
 
-		/*
-			create an audio context after getUserMedia is called
-			sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
-			the sampleRate defaults to the one set in your OS for your playback device
+        /*
+            create an audio context after getUserMedia is called
+            sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+            the sampleRate defaults to the one set in your OS for your playback device
 
-		*/
+        */
         audioContext = new AudioContext();
 
         //update the format 
@@ -269,10 +270,10 @@ function startClientRecording() {
         /* use the stream */
         input = audioContext.createMediaStreamSource(stream);
 
-		/* 
-			Create the Recorder object and configure to record mono sound (1 channel)
-			Recording 2 channels  will double the file size
-		*/
+        /* 
+            Create the Recorder object and configure to record mono sound (1 channel)
+            Recording 2 channels  will double the file size
+        */
         debugger;
         rec = new Recorder(input, { numChannels: 1 });
 
@@ -287,7 +288,7 @@ function startClientRecording() {
     });
 }
 
-function stopClientRecording(interviewId) {
+function stopClientRecording(interviewId, irfid) {
     debugger;
     document.getElementById("stopClientRecButton").disabled = true;
     document.getElementById("startClientRecButton").disabled = false;
@@ -295,6 +296,7 @@ function stopClientRecording(interviewId) {
     document.getElementById("clientRecordingStatus").innerHTML = "Recording stopped!";
     setTimeout(afterClientRecordingTimeOut, 500);
     interviewId = interviewId;
+    irfid = irfid;
     //candidateType = canType;
     //tell the recorder to stop the recording
     rec.stop();
@@ -309,12 +311,13 @@ function stopClientRecording(interviewId) {
 
 
 function createClientRecordingDownloadLink(blob) {
-    
+
 
     var fd = new FormData();
     fd.append("audio_data", blob, filename + ".wav");
     fd.append('interviewId', interviewId);
     fd.append('isClientFeedback', true);
+    fd.append('irfid', irfid);
 
     $.ajax(
         {
@@ -337,7 +340,7 @@ function createClientRecordingDownloadLink(blob) {
                 if (splitData != null && splitData.length > 1) {
                     a.innerText = splitData[splitData.length - 1];
                 }
-                
+
 
                 // Append the anchor element.
                 const elementFile = document.getElementById("td_audioFile").children[0];
@@ -347,7 +350,7 @@ function createClientRecordingDownloadLink(blob) {
                 audio.id = 'controlAudioId';
                 audio.controls = 'controls';
                 audio.src = data;
-               
+
                 const elementAudio = document.getElementById("td_audioControl");//.children[0];
                 elementAudio.removeChild(elementAudio.children[0]);
                 elementAudio.appendChild(audio);
@@ -355,7 +358,7 @@ function createClientRecordingDownloadLink(blob) {
             }
         }
     );
-    
+
 
 }
 
