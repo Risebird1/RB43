@@ -37,7 +37,18 @@ namespace Risebird.Repository
                     parameters.Add("@event", model.@event);
                     parameters.Add("@timestamp", model.timestamp);
                     parameters.Add("@CreatedAt", DateTime.Now);
-                    
+                    parameters.Add("@smtpid", model.smtpid);
+                    parameters.Add("@ip", model.ip);
+                    parameters.Add("@category", model.category);
+                    parameters.Add("@sg_event_id", model.sg_event_id);
+                    parameters.Add("@sg_message_id", model.sg_message_id);
+                    parameters.Add("@response", model.response);
+                    parameters.Add("@url", model.url);
+                    parameters.Add("@useragent", model.useragent);
+                    parameters.Add("@reason", model.reason);
+                    parameters.Add("@status", model.status);
+
+
                     await SqlMapper.QueryAsync(con, "usp_SaveSendGridEventDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
