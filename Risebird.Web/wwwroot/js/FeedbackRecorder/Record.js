@@ -1,4 +1,6 @@
-﻿//webkitURL is deprecated but nevertheless
+﻿
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js");
+//webkitURL is deprecated but nevertheless
 URL = window.URL || window.webkitURL;
 
 var gumStream; 						//stream from getUserMedia()
@@ -274,7 +276,6 @@ function startClientRecording() {
             Create the Recorder object and configure to record mono sound (1 channel)
             Recording 2 channels  will double the file size
         */
-        debugger;
         rec = new Recorder(input, { numChannels: 1 });
 
         //start the recording process
@@ -288,15 +289,14 @@ function startClientRecording() {
     });
 }
 
-function stopClientRecording(interviewId, irfid) {
-    debugger;
+function stopClientRecording(id,_irfid) {
     document.getElementById("stopClientRecButton").disabled = true;
     document.getElementById("startClientRecButton").disabled = false;
     document.getElementById("cancelClientRecButton").disabled = true;
     document.getElementById("clientRecordingStatus").innerHTML = "Recording stopped!";
     setTimeout(afterClientRecordingTimeOut, 500);
-    interviewId = interviewId;
-    irfid = irfid;
+    interviewId = id;
+    irfid = _irfid;
     //candidateType = canType;
     //tell the recorder to stop the recording
     rec.stop();
@@ -312,12 +312,12 @@ function stopClientRecording(interviewId, irfid) {
 
 function createClientRecordingDownloadLink(blob) {
 
-
+    var filename = "Audio_ClientFeedback_" + interviewId + "_" + new Date().toISOString();
     var fd = new FormData();
     fd.append("audio_data", blob, filename + ".wav");
     fd.append('interviewId', interviewId);
-    fd.append('isClientFeedback', true);
     fd.append('irfid', irfid);
+    fd.append('isClientFeedback', true);
 
     $.ajax(
         {
@@ -354,7 +354,7 @@ function createClientRecordingDownloadLink(blob) {
                 const elementAudio = document.getElementById("td_audioControl");//.children[0];
                 elementAudio.removeChild(elementAudio.children[0]);
                 elementAudio.appendChild(audio);
-
+                document.getElementById('div_playUploadedAudioTwo').style.display = "block";
             }
         }
     );

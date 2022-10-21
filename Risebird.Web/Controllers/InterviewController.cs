@@ -3124,7 +3124,7 @@ namespace Risebird.Web.Controllers
                             if (interviewComments.AudioFile != null)
                             {
                                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.AudioFile);
-                                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                                 {
                                     await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
                                     var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -3417,7 +3417,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -4555,7 +4555,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -4644,7 +4644,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -4835,7 +4835,7 @@ namespace Risebird.Web.Controllers
             var file = Request.Form.Files;
             var nvc = Request.Form;
             int candidateType = 0;
-            int irfid = 0;
+            string irfid = "";
             bool isClientFeedback = false;
             string currentUserEmail = string.Empty;
             if (!string.IsNullOrEmpty(nvc["candidateType"]))
@@ -4848,7 +4848,7 @@ namespace Risebird.Web.Controllers
             }
             if (!string.IsNullOrEmpty(nvc["irfid"]))
             {
-                irfid = Convert.ToInt32(nvc["irfid"]);
+                irfid = nvc["irfid"].ToString();
             }
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -4861,7 +4861,7 @@ namespace Risebird.Web.Controllers
             if (file != null)
             {
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
-                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                 {
                     await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
                     var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -4874,7 +4874,7 @@ namespace Risebird.Web.Controllers
                 }
 
             }
-            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType, isClientFeedback, currentUserEmail);
+            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), irfid, uploadedfbaudioFileURL, candidateType, isClientFeedback, currentUserEmail);
             return uploadedfbaudioFileURL;
         }
 
@@ -5726,7 +5726,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
 
                             {
                                 //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
@@ -6260,7 +6260,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
