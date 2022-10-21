@@ -31,7 +31,7 @@ namespace Risebird.MicroService
 
         [FunctionName("CaptureSendgridEvents")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "CaptureSendgridEvents")] HttpRequest req,
             ILogger log)
         {
             try
