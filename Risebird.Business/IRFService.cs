@@ -2828,6 +2828,7 @@ namespace Risebird.Business
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                     string oneTimeSchedulingLink = string.Empty;
+                    string oneTimeSchedulingLink1 = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
@@ -2837,13 +2838,13 @@ namespace Risebird.Business
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
-                        oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                        oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }
                     else
                     {
-                        oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                        oneTimeSchedulingLink1 = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
                     }
-                    _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                    _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;

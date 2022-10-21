@@ -2431,12 +2431,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink, int candidateType = 0, bool isClientFeedback = false, string currentUser = null)
+        public bool SaveFeedbackAudio(int interviewId, string irfid, string feedbackAudioLink, int candidateType = 0, bool isClientFeedback = false, string currentUser = null)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
+                dynamicParameters.Add("@irf_id", irfid);//@IrfId
                 dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
                 if (isClientFeedback)
                 {
