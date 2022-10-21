@@ -386,6 +386,7 @@ namespace Risebird.Web
             services.AddScoped<IAadhaarRepository, AadhaarRepository>();
             services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
             services.AddSingleton<ITrackPublicUrlAccessor, TrackPublicUrlAccessor>();
+            services.AddScoped<ISendGridRepository, SendGridRepository>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

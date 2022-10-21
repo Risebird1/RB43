@@ -109,6 +109,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IMCQService, MCQService>();
             builder.Services.AddScoped<IMCQRepository, MCQRepository>();
+            builder.Services.AddScoped<ISendGridRepository, SendGridRepository>();
         }
 
 
