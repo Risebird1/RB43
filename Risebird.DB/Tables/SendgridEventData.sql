@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[SendgridEventData](
 	[timestamp] [varchar](50) NULL,
 	[event] [varchar](25) NULL,
 	[smtp-id] [varchar](50) NULL,
-	[ip"] [varchar](50) NULL,
+	[ip] [varchar](50) NULL,
 	[category] [varchar](50) NULL,
 	[sg_event_id] [varchar](50) NULL,
 	[sg_message_id] [varchar](50) NULL,
