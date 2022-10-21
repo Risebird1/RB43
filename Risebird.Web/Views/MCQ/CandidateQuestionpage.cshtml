@@ -141,11 +141,12 @@
 
         var timmertime = parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
         timehave = parseInt(timehave) + 1;
-        if (parseInt(timmertime) == 0) {
+        if (parseInt(timmertime) >= 1) {
             //submit finally
             $("#zquestion_final").val("true");
             clearInterval(myVar);
-            $("#btnsubmit").click();
+            FetchQuestion();
+            //$("#btnsubmit").click();
         }
         if (parseInt(timehave) == 60) {
             document.getElementById('btnStop').click();

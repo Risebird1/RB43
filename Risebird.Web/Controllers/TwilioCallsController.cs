@@ -67,7 +67,7 @@ namespace Risebird.Web.Controllers
             if (file != null)
             {
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
-                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                 {
                     await _azureStorageHelper.InsertBlob(filename, "audios", file[0]);
 

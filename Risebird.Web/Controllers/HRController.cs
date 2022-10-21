@@ -1348,5 +1348,103 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task <FileContentResult> CallRecordingExporttoExcel(string type)
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_CallRecordings" + ".xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (string.IsNullOrEmpty(type))
+                    {
+                        type = "Candidate";
+                    }
+
+                    IEnumerable<CallRecordingDataVM> recordings;
+
+                    recordings = await _meetingService.GetCallRecordingData(profileName, emailid);
+                    if (type == "Candidate" || type == "Interviewer")
+                    {
+                        recordings = recordings?.Where(x => x.RecipientProfileType?.ToLower() == type.ToLower());
+                    }
+                    else
+                    {
+                        recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer");
+
+                    }
+
+                    recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-30));
+                    Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                    Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                    Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                    //Sheet.Column(1).Width = 30;
+                    //Sheet.Column(2).Width = 30;
+                    int startColumn = 1; int endColumn = 40;
+                    for (int a = startColumn; a <= endColumn; a++)
+                    {
+                        Sheet.Column(a).Width = 40;
+                    }
+                    Sheet.Cells[1, 1].Value = "Caller";
+                    Sheet.Cells[1, 2].Value = "Call Recipient";
+                    Sheet.Cells[1, 3].Value = "Called At";
+                    Sheet.Cells[1, 4].Value = "Duration(s)";
+                    Sheet.Cells[1, 5].Value = "Price";
+                    Sheet.Cells[1, 6].Value = "Price Unit";
+                    Sheet.Cells[1, 7].Value = "Recipient Phone Number";
+                                       
+                    int i = 2;
+                    if (recordings.Count() > 0)
+                    {
+                        foreach (var item in recordings)
+                        {
+                            Sheet.Cells[i, 1].Value = item.Caller;
+                            Sheet.Cells[i, 2].Value = item.CallRecipient;
+                            Sheet.Cells[i, 3].Value = item.StartTime.Value.ToString("MM/dd/yyyy HH:mm"); 
+                            Sheet.Cells[i, 4].Value = item.Duration;
+                            string price = item.Price;
+                            if (!string.IsNullOrEmpty(item.Price) && item.Price.IndexOf("-") == 0)
+                            {
+                                Sheet.Cells[i, 5].Value = item.Price.Remove(0, 1);
+                            }                          
+                            Sheet.Cells[i, 6].Value = item.PriceUnit;
+                            Sheet.Cells[i, 7].Value = item.RecipientPhoneNumber;                          
+                            i++;
+                        }
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "No data available in table !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
+
     }
 }

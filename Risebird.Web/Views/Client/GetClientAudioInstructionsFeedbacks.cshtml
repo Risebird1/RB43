@@ -15,7 +15,7 @@
 
                     <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
                         <div class="pull-left" style="padding:10px"><button id="startClientRecButton" onclick="startClientRecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play"></i></button></div>
-                        <div class="pull-left" style="padding:10px"><button id="stopClientRecButton" type="button" onclick="stopClientRecording(@Model.InterviewId)" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
+                        <div class="pull-left" style="padding:10px"><button id="stopClientRecButton" type="button" onclick="stopClientRecording('@Model.InterviewId','@Model.irfid')" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
                         <div class="pull-left" style="padding:10px"><button id="cancelClientRecButton" type="button" onclick="cancelClientRecording()" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
 
                     </div>
@@ -49,7 +49,7 @@
                             fileName = splitUrl?[splitUrl.Length - 1];
                         }
                     }
-                    <div @*class="row"*@ id="playUploadedAudioTwo" style="display:@displayStatus">
+                    <div id="div_playUploadedAudioTwo" style="display:@displayStatus">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="multiple_row">
