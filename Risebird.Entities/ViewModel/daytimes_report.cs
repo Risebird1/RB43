@@ -64,7 +64,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Client HR Coordinator")]
         public string HRCoordinator { get; set; }
         public string InterviewDate { get; set; }
-        [Display(Name = "Upload Your Resume*")]
+        [Display(Name = "Upload Your Resume")]
         public IFormFile ResumeFile { get; set; }
         public string Resume { get; set; }
         [EmailAddress]
