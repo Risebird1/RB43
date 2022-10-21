@@ -846,7 +846,8 @@
                                                                                             @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
                                                                                             {
                                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName','@Model.imid')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+@*                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName','@Model.imid')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+*@                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@Model.IreportModel.CandidateName','@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateEmail', '@Model.imid', null, 'Candidate')" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                                                                 </div>
                                                                                             }
                                                                                             <div class="col-md-6 col-sm-6">
@@ -1859,7 +1860,10 @@
         </div>
     </div>
 </div>
-<div id="myModal" class="modal modal-bg">
+
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+@*<div id="myModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -1893,7 +1897,7 @@
 
         </div>
     </div>
-</div>
+</div>*@
 <div id="myModalComment" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -3160,6 +3164,9 @@
 
 
 </script>
+
+<script src="~/js/twiliocallmaker.js"></script>
+@*
 <script>
     var candidate = "";
     var caninterviewid = 0;
@@ -3236,7 +3243,7 @@
     }
 
 
-</script>
+</script>*@
 <style>
     [role="tooltip"] {
         visibility: hidden;

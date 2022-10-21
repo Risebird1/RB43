@@ -333,7 +333,8 @@
                                                                         {
                                                                             <span>
                                                                                 <button class="call-btn" aria-label="Call">
-                                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                    @* <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>*@                                                                                    
+                                                                                    <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                                 </button>
                                                                             </span>
                                                                         }
@@ -581,7 +582,9 @@
                 </div>
             </div>
 
-            <div id="myCallModal" class="modal modal-wrap modal-bg">
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+            @*<div id="myCallModal" class="modal modal-wrap modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -618,7 +621,7 @@
                     </div>
 
                 </div>
-            </div>
+            </div>*@
         </div>
 
     </div>
@@ -1378,81 +1381,81 @@
 
         }*@
 
-
+<script src="~/js/twiliocallmaker.js"></script>
 <script>
-    var candidate = "";
-    var caninterviewid = 0;
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
+    //var candidate = "";
+    //var caninterviewid = 0;
+    //var span = document.getElementById("callPopUp");
+    //// When the user clicks on <span> (x), close the modal
+    //span.onclick = function () {
+    //    hangUp();
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
+    //$(document).ready(function () {
+    //    $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+    //        // Set up the Twilio Client Device with the token
+    //        Twilio.Device.setup(data.token);
+    //    });
+    //});
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+    ///* Callback to let us know Twilio Client is ready */
+    //Twilio.Device.ready(function (device) {
 
-    });
+    //});
 
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+    //function callCandidate(phoneNumber) {
+    //    var params = { "phoneNumber": phoneNumber };
+    //    Twilio.Device.connect(params);
+    //}
+    //function hangUp() {
+    //    Twilio.Device.disconnectAll();
+    //}
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        startCallRecording(connection.parameters.CallSid);
-    });
+    //Twilio.Device.connect(function (connection) {
+    //    var appendText = "In call with " + "<b>" + candidate + "</b>";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    startCallRecording(connection.parameters.CallSid);
+    //});
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+    //function afterTimeOut() {
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-    });
+    //Twilio.Device.disconnect(function (connection) {
+    //    var appendText = "Call disconnected! ";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    setTimeout(afterTimeOut, 2000);
+    //});
 
-    function startCallRecording(sid) {
-        console.log("sid:" + sid);
-        $.ajax({
-            url: '/User/makecall',
-            type: "GET",
-            data: { 'sid': sid, 'interviewid': caninterviewid },
-            success: function (data) {
-                console.log("rsid:" + data);
-            }
-        });
-    }
-    function CallButtonClick(name, phoneNumber, interviewid) {
-        candidate = name;
-        caninterviewid = interviewid;
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(phoneNumber);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+    //function startCallRecording(sid) {
+    //    console.log("sid:" + sid);
+    //    $.ajax({
+    //        url: '/User/makecall',
+    //        type: "GET",
+    //        data: { 'sid': sid, 'interviewid': caninterviewid },
+    //        success: function (data) {
+    //            console.log("rsid:" + data);
+    //        }
+    //    });
+    //}
+    //function CallButtonClick(name, phoneNumber, interviewid) {
+    //    candidate = name;
+    //    caninterviewid = interviewid;
+    //    // Get the modal
+    //    var modal = document.getElementById("myCallModal");
+    //    // When the user clicks the button, open the modal
+    //    modal.style.display = "block";
+    //    var appendText = "Calling... " + "<b>" + candidate + "</b>";
+    //    document.getElementById("callingLabel").innerHTML = appendText;
+    //    callCandidate(phoneNumber);
+    //}
+    //function closeCallPopUp() {
+    //    hangUp();
+    //    var modal = document.getElementById("myCallModal");
+    //    modal.style.display = "none";
+    //}
     function closemyRaitingPopup() {
         var modal = document.getElementById("myRaitingPopup");
         modal.style.display = "none";
