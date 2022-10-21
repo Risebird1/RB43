@@ -58,7 +58,7 @@ namespace Risebird.Entities.ViewModel
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        [Display(Name = "Interview Channel Id")]
+        [Display(Name = "Interview Channel")]
         public string InterviewChannelId { get; set; }
         [EmailAddress]
         [Display(Name = "Client HR Coordinator")]
@@ -74,7 +74,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime scheduleDate { get; set; }
         public int offset { get; set; }
         public ScheculeInterviewIRFVM _IRFDetails { get; set; }
-        [Display(Name = "Laptop or machine on which i can code")]
+        [Display(Name = "Laptop or Machine on which i can code")]
         public bool Checkbox1 { get; set; }
         [Display(Name = "Quality Headphone")]
         public bool Checkbox2 { get; set; }
@@ -86,6 +86,7 @@ namespace Risebird.Entities.ViewModel
         public bool Checkbox5 { get; set; }
         [Display(Name = "Silent place with appropriate lighting")]
         public bool Checkbox6 { get; set; }
+        [Display(Name = "Mobile Number")]
         public string MobileNumber { get; set; }
         public string CountryCode { get; set; }
         public string ClientName { get; set; }

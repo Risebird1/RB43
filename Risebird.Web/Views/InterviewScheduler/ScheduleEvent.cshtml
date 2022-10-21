@@ -346,7 +346,7 @@
                                 <h2>Enter Details</h2>
                                 <div class="form-group">
                                     <div class="mandate">
-                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-label required" });                                       
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-label required" })                                       
                                     </div>
                                     @Html.TextBoxFor(m => m.Name, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
@@ -411,7 +411,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="mandate">
-                                        @Html.Label("", "Please checkmark your available infra for the video interview *", htmlAttributes: new { @class = "form-label" })
+                                        @Html.Label("", "Please checkmark your available infra for the video interview", htmlAttributes: new { @class = "form-label required" })
                                     </div>
                                     <p> @Html.CheckBoxFor(m => m.Checkbox1) @Html.LabelFor(m => m.Checkbox1, htmlAttributes: new { @style = "font-weight:normal" }) </p>
                                     <p> @Html.CheckBoxFor(m => m.Checkbox2) @Html.LabelFor(m => m.Checkbox2, htmlAttributes: new { @style = "font-weight:normal" }) </p>
@@ -422,7 +422,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="mandate">
-                                        @Html.LabelFor(m => m.MobileNumber, htmlAttributes: new { @class = "form-label" }) *
+                                        @Html.LabelFor(m => m.MobileNumber, htmlAttributes: new { @class = "form-label required" })
                                     </div>
                                     <div class="input-group">
                                         @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
