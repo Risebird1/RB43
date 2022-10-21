@@ -16,6 +16,6 @@ namespace Risebird.Entities.ViewModel
         public string ClientCompanyName { get; set; }
         public string Message2 { get; set; }
         public string AsmtGrpsPrSkillsMappedToCurrentTemplates { get; set; }
-
+        public string IRFId { get; set; }
     }
 }

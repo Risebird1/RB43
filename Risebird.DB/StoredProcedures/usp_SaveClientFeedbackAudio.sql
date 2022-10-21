@@ -15,6 +15,7 @@ GO
  
 Create PROCEDURE [dbo].[usp_SaveClientFeedbackAudio]     
 @InterviewId int,
+@irf_id varchar(10),
 @FeedbackAudioLink nvarchar(max),
 @emailId varchar(50),
 @timeNow datetime
@@ -23,7 +24,14 @@ Create PROCEDURE [dbo].[usp_SaveClientFeedbackAudio]
 AS      
 BEGIN      
    declare @irfId int
+   if(@irf_id=null or @irf_id='')
+   BEGIN
    set @irfId = (select irf.id from IRF join InterviewMeetings im on im.IRFId = irf.IRFId where im.id = @InterviewId)
+   END
+   else 
+   BEGIN
+   set @irfId=(Select id from IRF where IRFId=@irf_id)
+   END
    if not exists(select 1 from ClientAudioFeedbackForReport where InterviewId = @InterviewId)
    begin
 
