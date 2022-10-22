@@ -34,18 +34,11 @@
                         {
                             <td style="color: #17c317">@item.Type</td>
                         }
-
-                        @if (item.Type == "Emergency Interviewer")
+                        else
                         {
                             <td style="color: #ff7bf5">@item.Type</td>
                         }
-
-
-                        @if (item.Type == "QCInterviewer")
-                        {
-                            <td style="color:yellow">@item.Type</td>
-                        }
-                        <td class="text-center">@item.InterviewerName</td>
+                        <td>@item.InterviewerName</td>
                         <td class="text-center">
                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                             {
