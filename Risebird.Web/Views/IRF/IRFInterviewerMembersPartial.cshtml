@@ -8,7 +8,7 @@
                 <thead>
                     <tr>
                         <th>Type</th>
-                       
+                        <th>Interviewer Name</th>
                         <th class="text-center">Call</th>
                        
                         <th>ResumeLink</th>
@@ -29,80 +29,80 @@
 
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            @if (item.Type == "Interviewer")
+                    <tr>
+                        @if (item.Type == "Interviewer")
+                        {
+                            <td style="color: #17c317">@item.Type</td>
+                        }
+
+                        @if (item.Type == "Emergency Interviewer")
+                        {
+                            <td style="color: #ff7bf5">@item.Type</td>
+                        }
+
+
+                        @if (item.Type == "QCInterviewer")
+                        {
+                            <td style="color:yellow">@item.Type</td>
+                        }
+                        <td class="text-center">@item.InterviewerName</td>
+                        <td class="text-center">
+                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                             {
-                                <td style="color: #17c317">@item.Type</td>
+                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName', '@item.MobileNumber', '@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
                             }
 
-                            @if (item.Type == "Emergency Interviewer")
-                            {
-                                <td style="color: #ff7bf5">@item.Type</td>
-                            }
+                        </td>
 
-
-                            @if (item.Type == "QCInterviewer")
-                            {
-                                <td style="color:yellow">@item.Type</td>
-                            }
-                           
+                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                        {
                             <td class="text-center">
-                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                {
-                                  <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName', '@item.MobileNumber', '@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
-                                }
-
+                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
                             </td>
-                            
-                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                        }
+                        else
+                        {
+                            <td class="text-center">No Resume</td>
+                        }
+                        @if (ViewBag.Type == "IRF")
+                        {
+                            @if (item.IsActive)
                             {
-                                <td class="text-center">
-                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
-                                </td>
+                                <td class="text-center">Yes</td>
                             }
                             else
                             {
-                                <td class="text-center">No Resume</td>
+                                <td class="text-center">No</td>
                             }
-                            @if (ViewBag.Type == "IRF")
+                        }
+                        @if (ViewBag.Type == "IRF")
+                        {
+                            @if (item.IsAvailable)
                             {
-                                @if (item.IsActive)
-                                {
-                                    <td class="text-center">Yes</td>
-                                }
-                                else
-                                {
-                                    <td class="text-center">No</td>
-                                }
-                            }
-                            @if (ViewBag.Type == "IRF")
-                            {
-                                @if (item.IsAvailable)
-                                {
-                                    <td class="text-center">Yes</td>
-                                }
-                                else
-                                {
-                                    <td class="text-center">No</td>
-                                }
+                                <td class="text-center">Yes</td>
                             }
                             else
                             {
-                                @if (@item.AvailableStatus != "0")
-                                {
-                                    <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
+                                <td class="text-center">No</td>
                             }
-                            <td class="text-center">@item.TotalInterviews</td>
-                            @if (ViewBag.Type == "IRF")
+                        }
+                        else
+                        {
+                            @if (@item.AvailableStatus != "0")
                             {
-                                <td class="text-center">@item.TotalQCInterviews</td>
+                                <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
                             }
-                        </tr>
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                        <td class="text-center">@item.TotalInterviews</td>
+                        @if (ViewBag.Type == "IRF")
+                        {
+                            <td class="text-center">@item.TotalQCInterviews</td>
+                        }
+                    </tr>
                     }
 
                 </tbody>
