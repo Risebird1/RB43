@@ -18,10 +18,7 @@
                         }
                         <th>Available</th>
                         <th>Total Interviews</th>
-                        @if (ViewBag.Type == "IRF")
-                        {
-                            <th>Total QC</th>
-                        }
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -91,10 +88,7 @@
                             }
                         }
                         <td class="text-center">@item.TotalInterviews</td>
-                        @if (ViewBag.Type == "IRF")
-                        {
-                            <td class="text-center">@item.TotalQCInterviews</td>
-                        }
+                       
                     </tr>
                     }
 
