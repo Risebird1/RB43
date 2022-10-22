@@ -283,6 +283,9 @@ namespace Risebird.Web.Controllers
                                 var Assessmentgroups = string.Empty;
                                 foreach (var groups in item.AssessmentGroupId.Split(","))
                                 {
+                                    if (string.IsNullOrWhiteSpace(groups))
+                                        continue;
+
                                     int assesmsnetid = Convert.ToInt32(groups);
                                     if (string.IsNullOrEmpty(Assessmentgroups))
                                     {
@@ -2782,6 +2785,9 @@ namespace Risebird.Web.Controllers
                     var Assessmentgroups = string.Empty;
                     foreach (var groups in item.AssessmentGroupId.Split(","))
                     {
+                        if (string.IsNullOrWhiteSpace(groups))
+                            continue;
+
                         int assesmsnetid = Convert.ToInt32(groups);
                         if (string.IsNullOrEmpty(Assessmentgroups))
                         {

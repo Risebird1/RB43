@@ -371,50 +371,59 @@
                                             <tbody id="tblbodyInterviewerProfile">
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.id data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
-                                                        @if (item.FirstName != null && item.FirstName != "")
+                                                <tr id=@item.id data-changes="1">
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                    @if (item.FirstName != null && item.FirstName != "")
+                                                    {
+                                                        <td class="cadName intwname">
+                                                            <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (item.LastName != null && item.LastName != "")
+                                                    {
+                                                        @if (item.LastName.Length > 10)
                                                         {
-                                                            <td class="cadName intwname">
-                                                                <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
+                                                            <td class="cadLast">
+                                                                <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
                                                             </td>
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.LastName != null && item.LastName != "")
-                                                        {
-                                                            @if (item.LastName.Length > 10)
-                                                            {
-                                                                <td class="cadLast">
-                                                                    <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="cadLast">
-                                                                    <a onclick=""> @item.LastName </a>
-                                                                </td>
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-
-                                                        @if (item.EmailId != null && item.EmailId != "")
-                                                        {
-                                                            <td class="cadEmail">
-                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
+                                                            <td class="cadLast">
+                                                                <a onclick=""> @item.LastName </a>
                                                             </td>
                                                         }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (ViewBag.profile == "Admin" && item.EmailId != null && item.EmailId != "")
+                                                    {
+                                                        <td class="cadEmail">
+                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (ViewBag.profile == "Admin")
+                                                    {
                                                         <td>@item.MobileNumber</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
                                                         @if (item.Isinstaavailable)
                                                         {
                                                             <td>Yes</td>
@@ -1223,14 +1232,18 @@
             }
             //html += '  <td>' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/></td>';
 
-            if (data[i].emailId != null && data[i].emailId != "") {
+            if (ViewBag.profile == "Admin" && data[i].emailId != null && data[i].emailId != "") {
                 html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '"><span class="intEmail">' + data[i].emailId + '</span></a></td>';
             }
             else {
                 html += '<td></td>';
             }
-
-            html += '<td>' + data[i].mobileNumber + '</td>';
+            if (ViewBag.profile == "Admin") {
+                html += '<td>' + data[i].mobileNumber + '</td>';
+            }
+            else {
+                html += '<td></td>';
+            }
             if (data[i].isinstaavailable) {
                 html += '    <td>Yes</td>';
             }
