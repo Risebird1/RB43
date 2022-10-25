@@ -1,5 +1,11 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using System.Collections.Generic;
+
+namespace Risebird.Entities.ViewModel
 {
+    #region Aadhaar
     public class AadhaarVM
     {
         public AadhaarVM()
@@ -80,6 +86,8 @@
         public string EmailId { get; set; }
         public bool AadhaarVerified { get; set; }
     }
+    #endregion
+    #region SuftiPro
     public class candidateVerification
     {
         public candidateVerification()
@@ -124,4 +132,85 @@
         public string verification_url { get; set; }
         public string reference { get; set; }
     }
+    #endregion
+    #region Signgy
+    public class candidatePassportVerificated
+    {
+        public string status { get; set; }
+        [DisplayName("Email Address")]
+        public string email { get; set; }
+        public string uniqueid { get; set; }
+        public string Name { get; set; }
+        public string MobileNumber { get; set; }
+        [Required(ErrorMessage = "Please choose a file to upload.")]
+        [DisplayName("Passport Front File")]
+        public IFormFile PassportFront { get; set; }
+        [Required(ErrorMessage = "Please choose a file to upload.")]
+        [DisplayName("Passport Back File")]
+        public IFormFile PassportBack { get; set; }
+        [Required(ErrorMessage = "Please choose a file to upload.")]
+        [DisplayName("Passport Size Photo")]
+        public IFormFile CandidateImage { get; set; }
+        public string Passportfrontlink { get; set; }
+        public string Passportbacklink { get; set; }
+        public string CandidateImagelink { get; set; }
+    }
+    public class CandidatePassportRequest
+    {
+        public CandidatePassportRequest()
+        {
+            images = new List<string>();
+        }
+        public string username { get; set; }
+        public string password { get; set; }
+        public string type { get; set; }
+        public string email { get; set; }
+        public string callbackUrl { get; set; }
+        public List<string> images { get; set; }
+
+        public string service { get; set; }
+        public string itemId { get; set; }
+        public string task { get; set; }
+        public string accessToken { get; set; }
+        public candidateverificationessentials essentials { get; set; }
+    }
+    public class CandidatePassportResponse
+    {
+        public string id { get; set; }
+        public string ttl { get; set; }
+        public string userId { get; set; }
+        public string accessToken { get; set; }
+        public string patronId { get; set; }
+        public CandidateDetailsResponse response { get; set; }
+        public candidateDetailsresult result { get; set; }
+    }
+    public class candidateverificationessentials
+    {
+        public string url { get; set; }
+        public string fileNumber { get; set; }
+        public string dob { get; set; }
+        public string name { get; set; }
+        public string secondImage { get; set; }
+        public string firstImage { get; set; }
+    }
+    public class CandidateDetailsResponse
+    {
+        public candidateDetailsresult result { get; set; }
+    }
+    public class candidateDetailsresult
+    {
+        public string birthDate { get; set; }
+        public string name { get; set; }
+        public string fileNumber { get; set; }
+        public string cropped { get; set; }
+        public string message { get; set; }
+        public string verified { get; set; }
+        public string matchPercentage { get; set; }
+        public string nationality { get; set; }
+        public string address { get; set; }
+        public string passportNumber { get; set; }
+        public string sex { get; set; }
+        public string email { get; set; }
+    }
+    #endregion
 }

@@ -40,5 +40,6 @@ namespace Risebird.CommonHelper.Interface
         Task<IEnumerable<T>> GetAllEntitiesAsync<T>(string tableName) where T : TableEntity, new();
 
         Task InsertResumeBlob(string filename, string containerName, IFormFile blobFile, string extension);
+        Task InsertImageBlob(string filename, string containerName, IFormFile blobFile,string contentType);
     }
 }
