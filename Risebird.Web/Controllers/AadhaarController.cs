@@ -389,7 +389,7 @@ namespace Risebird.Web.Controllers
                 modelsave.matchPercentage = resultset.result.matchPercentage;
                 //save in db
                 await _aadhaarService.SaveCandidateVerificationDetails(modelsave);
-                TempData["SuccessAadhaarMessage"] = verification.result.message;
+                TempData["SuccessAadhaarMessage"] = verification.response.result.message;
                 return RedirectToAction("CandidateVerification", new { uniqueid = model.uniqueid });
             }
             ModelState.AddModelError(string.Empty, "All files are mandatory to upload.");
