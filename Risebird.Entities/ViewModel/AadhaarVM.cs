@@ -77,10 +77,10 @@ namespace Risebird.Entities.ViewModel
         public int type { get; set; }
 
         public string birthDate { get; set; }
-        public string name { get; set; }
         public string matchPercentage { get; set; }
         public string nationality { get; set; }
         public string passportNumber { get; set; }
+        public string passport_image { get; set; }
     }
     public class AadhaarStatus
     {
@@ -218,6 +218,8 @@ namespace Risebird.Entities.ViewModel
         public string passportNumber { get; set; }
         public string sex { get; set; }
         public string email { get; set; }
+        public string doc_face { get; set; }
+        public string passport_image { get; set; }
     }
     #endregion
 }
