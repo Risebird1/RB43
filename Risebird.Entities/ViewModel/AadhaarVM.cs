@@ -75,6 +75,13 @@ namespace Risebird.Entities.ViewModel
         public string CreatedOn { get; set; }
         public int id { get; set; }
         public int type { get; set; }
+
+        public string birthDate { get; set; }
+        public string name { get; set; }
+        public string matchPercentage { get; set; }
+        public string nationality { get; set; }
+        public string address { get; set; }
+        public string passportNumber { get; set; }
     }
     public class AadhaarStatus
     {
