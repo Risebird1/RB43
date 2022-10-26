@@ -80,7 +80,6 @@ namespace Risebird.Entities.ViewModel
         public string name { get; set; }
         public string matchPercentage { get; set; }
         public string nationality { get; set; }
-        public string address { get; set; }
         public string passportNumber { get; set; }
     }
     public class AadhaarStatus
