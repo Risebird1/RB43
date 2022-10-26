@@ -217,14 +217,14 @@ namespace Risebird.Web.Controllers
             if (model == null)
             {
                 //model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
-                //if (model == null)
-                //{
-                //    model = new AadhaarData();
-                //}
-                //else
-                //{
-                //    model.type = 1;
-                //}
+                if (model == null)
+                {
+                    model = new AadhaarData();
+                }
+                else
+                {
+                    model.type = 1;
+                }
             }
             return Json(model);
         }
