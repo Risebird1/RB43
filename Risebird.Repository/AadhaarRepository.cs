@@ -154,10 +154,63 @@ namespace Risebird.Repository
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
-                {                  
-                    var result = await SqlMapper.QueryAsync<AadhaarData>(con, "usp_GetAadhardetailsforInterview", 
+                {
+                    var result = await SqlMapper.QueryAsync<AadhaarData>(con, "usp_GetAadhardetailsforInterview",
                          commandType: CommandType.StoredProcedure);
                     return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@name", model.name);
+                    parameters.Add("@address", model.address);
+                    parameters.Add("@email", model.email);
+                    parameters.Add("@passportNumber", model.passportNumber);
+                    parameters.Add("@gender", model.sex);
+                    parameters.Add("@birthDate", model.birthDate);
+                    parameters.Add("@nationality", model.nationality);
+                    parameters.Add("@matchPercentage", model.matchPercentage);
+                    await SqlMapper.QueryAsync(con, "usp_SaveCandidateverificationDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@candidateEmail", candidateEmail);
+                    var result = await SqlMapper.QueryAsync<AadhaarData>(con, "usp_GetInterviewCandidateDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
