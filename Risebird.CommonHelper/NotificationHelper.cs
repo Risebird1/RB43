@@ -209,8 +209,8 @@ namespace Risebird.CommonHelper
 
                 object[] parameters = new object[] { meetingDate };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
-                //string msgBody = string.Format(rawEmail, parameters);
-                string msgBody = "You have been assigned with a new interview.";
+                string msgBody = string.Format(rawEmail, parameters);
+                //string msgBody = "You have been assigned with a new interview.";
 
 
                 msg.HtmlContent = msgBody;
