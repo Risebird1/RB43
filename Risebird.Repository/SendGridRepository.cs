@@ -47,9 +47,43 @@ namespace Risebird.Repository
                     parameters.Add("@useragent", model.useragent);
                     parameters.Add("@reason", model.reason);
                     parameters.Add("@status", model.status);
+                    parameters.Add("@Split_Message_Id", model.Split_Message_Id);
 
 
                     await SqlMapper.QueryAsync(con, "usp_SaveSendGridEventDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> SaveSentMailDetails(SentMailDetails model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@To", model.To);
+                    parameters.Add("@Cc", model.Cc);
+                    parameters.Add("@Bcc", model.Bcc);
+                    parameters.Add("@MailBody", model.MailBody);
+                    parameters.Add("@MailSubject", model.MailSubject);
+                    parameters.Add("@sg_message_id", model.sg_message_id);
+                    parameters.Add("@IRFId", model.IRFId);
+                    parameters.Add("@InterviewId", model.InterviewId);
+                    parameters.Add("@CreatedAt", DateTime.Now);
+
+                    await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
                 }

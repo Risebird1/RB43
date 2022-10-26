@@ -18,6 +18,7 @@ namespace Risebird.Entities.Data
         public string category { get; set; }
         public string sg_event_id { get; set; }
         public string sg_message_id { get; set; }
+        public string Split_Message_Id { get; set; }
         public string response { get; set; }
         public string url { get; set; }
         public string useragent { get; set; }
