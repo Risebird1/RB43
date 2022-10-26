@@ -82,7 +82,6 @@ namespace Risebird.Entities.ViewModel
         public int type { get; set; }
         public string CreatedOn { get; set; }
         public int id { get; set; }
-        public int type { get; set; }
 
         public string birthDate { get; set; }
         public string name { get; set; }
