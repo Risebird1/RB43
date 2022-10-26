@@ -1875,7 +1875,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");

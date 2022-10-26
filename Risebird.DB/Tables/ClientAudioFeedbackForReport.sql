@@ -10,7 +10,6 @@ Begin
 	[ModifiedAt][datetime] NULL,
 	[CreatedBy][varchar](50) NULL,
 	[IRFId][int] NULL,
-	CONSTRAINT [FK_ClientAudioFeedbackForReport_InterviewId] FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
 	CONSTRAINT [PK_ClientAudioFeedbackForReport] PRIMARY KEY CLUSTERED 
 	(
 		[id] ASC

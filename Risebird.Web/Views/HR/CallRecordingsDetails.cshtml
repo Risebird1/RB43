@@ -81,13 +81,15 @@
                     @*<div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>*@
                     <div class="pull-right client-ms">
                         <div style="float:left">
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" style="margin-bottom: 18px">
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Archived Data</font></span>
                             </button>
-
+                            @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
+                            {
+                                <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallRecordingExporttoExcel", "HR", new { type = ViewBag.Type })'"></i></span>
+                            }
                         </div>
-                    </div>
-                    
+                    </div>                    
                 </div>
             </div>
         </div>

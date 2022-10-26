@@ -92,5 +92,29 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model)
+        {
+            try
+            {
+                return await _aadhaarRepository.SaveCandidateVerificationDetails(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail)
+        {
+            try
+            {
+                return await _aadhaarRepository.FetchInterviewCandidateDetails(candidateEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

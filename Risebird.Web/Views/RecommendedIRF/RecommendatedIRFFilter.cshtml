@@ -58,6 +58,9 @@
 
                 <div class="pull-right">
                     <div>
+                        <button id="btnAudioInstruction" style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px;display:none" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording">
+                            <text style="color:white"> Audio Feedback </text>
+                        </button>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                             <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Back To List</font></span>
                         </button>
@@ -166,23 +169,23 @@
                                                                     <select id="PrimarySkills" name="PrimarySkills" data-placeholder="None Selected" class="form-select test" multiple="multiple" @*style="display: none;"*@ multiple>
                                                                         @*<option value="">Select</option>
                                                                         @{
-                                                                            var primarySkills = new List<string>();
-                                                                            foreach (var item in Model.ClonableTemplates)
-                                                                            {
-                                                                                if (!string.IsNullOrEmpty(item.PrimarySkills))
-                                                                                {
-                                                                                    var splitSkills = item.PrimarySkills.Split(";");
-                                                                                    if (splitSkills != null && splitSkills.Count() > 0)
-                                                                                    {
-                                                                                        primarySkills.AddRange(splitSkills);
-                                                                                    }
-                                                                                }
-                                                                            }
+                                                                        var primarySkills = new List<string>();
+                                                                        foreach (var item in Model.ClonableTemplates)
+                                                                        {
+                                                                        if (!string.IsNullOrEmpty(item.PrimarySkills))
+                                                                        {
+                                                                        var splitSkills = item.PrimarySkills.Split(";");
+                                                                        if (splitSkills != null && splitSkills.Count() > 0)
+                                                                        {
+                                                                        primarySkills.AddRange(splitSkills);
+                                                                        }
+                                                                        }
+                                                                        }
 
                                                                         }
                                                                         @foreach (var item in primarySkills)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                        <option value="@item">@item</option>
                                                                         }*@
                                                                     </select>
                                                                 </div>
@@ -221,16 +224,16 @@
                                                                     <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
                                                                         @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
-                    {
-                        @if (item != null && item != "")
-                        {
-                            <option value="@item">@item</option>
-                        }
-                    }*@
+                                                                        {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }
+                                                                        }*@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            
+
 
 
                                                             <div class="form-group">
@@ -310,17 +313,17 @@
                                                             </td>
 
                                                             @*<td>
-                                                                <button type="button" class="clickhere_btn pull-left">
-                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                                </button>
-                                                            </td>*@
+                                                    <button type="button" class="clickhere_btn pull-left">
+                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                    </button>
+                                                    </td>*@
 
                                                             <td>
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
-                                                                        <span onclick="location.href='@Url.Action("CreateRecommendationIRF", "RecommendedIRF", new { recommirfid = item.ClonableSkillChannelId,emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
-                                                                            <i style="font-size:14px!important;" class="fa fa-plus-circle"></i>
-                                                                        </span>
-                                                                    </button>*@
+                                                        <span onclick="location.href='@Url.Action("CreateRecommendationIRF", "RecommendedIRF", new { recommirfid = item.ClonableSkillChannelId,emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
+                                                        <i style="font-size:14px!important;" class="fa fa-plus-circle"></i>
+                                                        </span>
+                                                        </button>*@
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
                                                                     <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@(item.NameWithoutHtml ?? item.Name)', '@item.AssessmentGroupName', '@item.AssessmentGroupId')" title="Create Interview Link" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
@@ -383,7 +386,6 @@
 
                 <div class="modal-body">
                     <div style="padding:10px" id="divTechSkillBody">
-
                     </div>
                     <div>
                         <div class="col-md-12 text-right">
@@ -418,7 +420,6 @@
 
                 <div class="modal-body">
                     <div style="padding:10px" id="divInterviewersBody">
-
                     </div>
                     <div>
                         <div class="col-md-12 text-right">
@@ -482,7 +483,9 @@
         </div>
     </div>
 </div>
-
+<div id="modal_clientAudioFeedback_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/feedbackrecorder/record.js"></script>
 @if (Model.Message != null)
 {
     <script type="text/javascript">
@@ -502,6 +505,8 @@
                     confirmButtonText: "Close",
                     allowOutsideClick: false
                 });
+                $("#btnAudioInstruction").attr('data-url', '/Client/GetClientAudioInstructionsFeedbacks?Irfid=' + @Model.IRFId);
+                $("#btnAudioInstruction").click();
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");
@@ -615,15 +620,15 @@
     }
 
     function ApplySessionFilter() {
-        @*var competencyLevel =  @Html.Raw(Json.Serialize(CompetencyLevel));*@
-        var seniorityLevel =  @Html.Raw(Json.Serialize(SeniorityLevel));
-        var countryType =  @Html.Raw(Json.Serialize(CountryType));
-        var companyType =  @Html.Raw(Json.Serialize(CompanyType));
-        var employmentType =  @Html.Raw(Json.Serialize(EmploymentType));
-        var difficultyLevel =  @Html.Raw(Json.Serialize(DifficultyLevel));
-        var assessmentGroupTemplate =  @Html.Raw(Json.Serialize(AssessmentGroupTemplate));
-        var category =  @Html.Raw(Json.Serialize(Category));
-        var primarySkills =  @Html.Raw(Json.Serialize(PrimarySkills));
+    @*var competencyLevel =  @Html.Raw(Json.Serialize(CompetencyLevel));*@
+                        var seniorityLevel = @Html.Raw(Json.Serialize(SeniorityLevel));
+        var countryType = @Html.Raw(Json.Serialize(CountryType));
+        var companyType = @Html.Raw(Json.Serialize(CompanyType));
+        var employmentType = @Html.Raw(Json.Serialize(EmploymentType));
+        var difficultyLevel = @Html.Raw(Json.Serialize(DifficultyLevel));
+        var assessmentGroupTemplate = @Html.Raw(Json.Serialize(AssessmentGroupTemplate));
+        var category = @Html.Raw(Json.Serialize(Category));
+        var primarySkills = @Html.Raw(Json.Serialize(PrimarySkills));
 
         //$("#TemplateName").val(templateName);
         //$("#CompetencyLevel").val(competencyLevel);

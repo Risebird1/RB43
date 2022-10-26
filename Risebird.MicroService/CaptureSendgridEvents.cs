@@ -12,6 +12,11 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Repository.Interface;
 using Risebird.Entities.Enum;
+using System.Collections.Generic;
+using System.Net;
+using System.Web.Http;
+using RestSharp;
+using Risebird.Repository;
 
 namespace Risebird.MicroService
 {
@@ -31,36 +36,50 @@ namespace Risebird.MicroService
 
         [FunctionName("CaptureSendgridEvents")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CaptureSendgridEvents")] HttpRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation($"CaptureSendgridEvents : C# HTTP trigger function invoked at {DateTime.Now}");
 
-                string name = req.Query["name"];
-
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 log.LogInformation($"CaptureSendgridEvents : Event data recieved with request body :  {requestBody}");
 
-                SendgridEventData data = JsonConvert.DeserializeObject<SendgridEventData>(requestBody);
+                var dataList = JsonConvert.DeserializeObject<IEnumerable<SendgridEventData>>(requestBody);
 
-                //name = name ?? data?.name;
-                var email = data?.email;
-                var timestamp = data?.timestamp;
-                var @event = data?.@event;
+                if (dataList != null)
+                {
+                    //foreach (var data in dataList)
+                    //{
 
-                var result = await _sendGridRepository.SaveSendGridEventDetails(data);
-                //string responseMessage = string.IsNullOrEmpty(name)
-                //    ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                //    : $"Hello, {name}. This HTTP triggered function executed successfully.";
+                    //    await _sendGridRepository.SaveSendGridEventDetails(data);
+                    //}
+                    Parallel.ForEach(dataList, data =>
+                    {
+                        try
+                        {
+                            if(data != null && !string.IsNullOrEmpty(data.sg_message_id) && data.sg_message_id.Contains("."))
+                            {
+                                data.Split_Message_Id = data.sg_message_id.Split(".")[0];
+                            }
+                            _ = _sendGridRepository.SaveSendGridEventDetails(data).Result;
+                        }
+                        catch (Exception ex)
+                        {
+                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            log.LogError($"CaptureSendgridEvents : Error at: {DateTime.Now}, Message : {ex.Message}");
+                            return;
+                        }
+                    });
+                }
 
-                return new OkObjectResult(result);
+                return new OkObjectResult(true);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

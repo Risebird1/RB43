@@ -560,6 +560,8 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Message2 = TempData["SuccessErrorMessageInterview2"].ToString();
                         TempData.Remove("SuccessErrorMessageInterview2");
+                        ViewBag.IRFId = TempData["SuccessErrorCloneSkillChannnelMessageIRFId"].ToString();
+                        TempData.Remove("SuccessErrorCloneSkillChannnelMessageIRFId");
                     }
                     TempData.Remove("SuccessErrorMessageInterview");
                 }
@@ -667,6 +669,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorMessageInterview"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
                         TempData["SuccessErrorMessageInterview2"] = model.CalendlyLink;
+                        TempData["SuccessErrorCloneSkillChannnelMessageIRFId"] = model.IRFId;
                         return RedirectToAction("PublicCreateInterviewRequest", new { emailid = emailId, id = meeting.uniqueid });
                     }
                     else

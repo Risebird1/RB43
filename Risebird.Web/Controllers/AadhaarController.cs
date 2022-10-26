@@ -1,14 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,8 +28,12 @@ namespace Risebird.Web.Controllers
         private readonly string client_code;
         private readonly string api_key;
         private readonly string salt;
+        private readonly string user_name;
+        private readonly string password;
+        private readonly string passportUrl;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService)
+        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -36,6 +43,10 @@ namespace Risebird.Web.Controllers
             api_key = _configuration["AadhaarApiDetails:api_key"];
             salt = _configuration["AadhaarApiDetails:salt"];
             _aadhaarService = aadhaarService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
+            user_name = _configuration["CandidatePassportVerfication:username"];
+            password = _configuration["CandidatePassportVerfication:password"];
+            passportUrl = _configuration["CandidatePassportVerfication:endPoint"];
         }
 
         public IActionResult Index()
@@ -160,7 +171,15 @@ namespace Risebird.Web.Controllers
             var model = await _aadhaarService.FetchAadhaarDetails(MCQID, candidateEmail);
             if (model == null)
             {
-                model = new AadhaarData();
+                model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
+                if (model == null)
+                {
+                    model = new AadhaarData();
+                }
+                else
+                {
+                    model.type = 1;
+                }
             }
             return Json(model);
         }
@@ -205,7 +224,15 @@ namespace Risebird.Web.Controllers
             var model = await _aadhaarService.FetchInterviewAadhaarDetails(candidateEmail);
             if (model == null)
             {
-                model = new AadhaarData();
+                model = await _aadhaarService.FetchInterviewCandidateDetails(candidateEmail);
+                if (model == null)
+                {
+                    model = new AadhaarData();
+                }
+                else
+                {
+                    model.type = 1;
+                }
             }
             return Json(model);
         }
@@ -235,7 +262,8 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> CandidateVerification(string uniqueid)
         {
             var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
-            var model = new AadhaarData();
+            var model = new candidatePassportVerificated();
+            model.uniqueid = uniqueid;
             if (candidateEmailid == null)
             {
                 model.status = "InvalidEmail";
@@ -244,38 +272,12 @@ namespace Risebird.Web.Controllers
             {
                 model.email = candidateEmailid.EmailId;
             }
+            if (TempData["SuccessAadhaarMessage"] != null)
+            {
+                TempData.Remove("SuccessAadhaarMessage");
+                model.status = "Success";
+            }
             return View(model);
-        }
-        public async Task<JsonResult> FetchVerificationURL(string Name, string PhoneNumber, string Emailid)
-        {
-            Random generator = new Random();
-            int r = generator.Next(10000, 100000);
-            candidateVerification _list = new candidateVerification();
-            _list.reference = Guid.NewGuid().ToString();
-            _list.callback_url = "https://portal.risebird.io/Aadhaar/Getshuftipro";
-            _list.email = Emailid;
-            _list.country = "GB";
-            _list.language = "EN";
-            _list.verification_mode = "any";
-
-            _list.document.proof = "";
-            _list.document.supported_types = new string[] { "id_card", "driving_license", "passport" };
-
-            _list.document.name.first_name = "";
-            _list.document.name.middle_name = "";
-            _list.document.name.last_name = "";
-
-            _list.phone.phone_number = PhoneNumber;
-            _list.phone.random_code = r.ToString();
-            _list.phone.text = "Your verification code is " + r.ToString();
-            var client = new RestClient("https://api.shuftipro.com/");
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("Authorization", "Basic " + "MDA4M2YwODYwMDU1MmYzOWQ4MjZhZWM2NDUzMmM5NDU2MWE5ZDhlM2YyYWRhMGQ1MGFlZGFkYjdhMzUyYTVmZTpHdW16QjJpTDVDTzhGcUM4d2ExdnFHMGd4U21mVkY2SQ==");
-            request.AddHeader("Content-Type", "application/json");
-            request.AddJsonBody(_list);
-            IRestResponse response = await client.ExecuteAsync(request);
-            var convertedResponse = JsonConvert.DeserializeObject<verifyResponse>(response.Content);
-            return Json(convertedResponse.verification_url);
         }
         [HttpPost]
         public async Task<JsonResult> Getshuftipro(Object _model)
@@ -284,9 +286,8 @@ namespace Risebird.Web.Controllers
             return Json("");
         }
         #endregion
-
-       [Authorize]
-       [HttpGet]
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> AadharDetails()
         {
             try
@@ -295,8 +296,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin"|| profileName == "SupportAdmin")
-                    {                     
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
                         var adhardetail = await _aadhaarService.GetAadharDetails();
                         ViewBag.profile = profileName;
                         return View(adhardetail);
@@ -317,6 +318,183 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index", "Interview");
 
             }
+        }
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CandidatePassportVerificated(candidatePassportVerificated model)
+        {
+            if (model.PassportFront != null && model.PassportBack != null && model.CandidateImage != null)
+            {
+                var fileMimeTypefront = _fileMimeTypeHelper.GetFileMimeType(model.PassportFront);
+                if (fileMimeTypefront == "image/jpg" || fileMimeTypefront == "image/jpeg" || fileMimeTypefront == "image/png")
+                {
+                    await _azureStorageHelper.InsertImageBlob(model.PassportFront.FileName, "passportdetails", model.PassportFront, fileMimeTypefront);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("passportdetails");
+                    var blob = containerRef.GetBlockBlobReference(model.PassportFront.FileName);
+                    string uploadedaudioFileURL = blob.Uri.ToString();
+                    if (uploadedaudioFileURL == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Passport Front Upload failed.");
+                    }
+                    else
+                    {
+                        model.Passportfrontlink = uploadedaudioFileURL;
+                    }
+                }
+                var fileMimeTypeback = _fileMimeTypeHelper.GetFileMimeType(model.PassportBack);
+                if (fileMimeTypeback == "image/jpg" || fileMimeTypeback == "image/jpeg" || fileMimeTypeback == "image/png")
+                {
+                    await _azureStorageHelper.InsertImageBlob(model.PassportBack.FileName, "passportdetails", model.PassportBack, fileMimeTypefront);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("passportdetails");
+                    var blob = containerRef.GetBlockBlobReference(model.PassportBack.FileName);
+                    string uploadedaudioFileURL = blob.Uri.ToString();
+                    if (uploadedaudioFileURL == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Passport Back Upload failed.");
+                    }
+                    else
+                    {
+                        model.Passportbacklink = uploadedaudioFileURL;
+                    }
+                }
+                var fileMimeTypeimage = _fileMimeTypeHelper.GetFileMimeType(model.CandidateImage);
+                if (fileMimeTypeimage == "image/jpg" || fileMimeTypeimage == "image/jpeg" || fileMimeTypeimage == "image/png")
+                {
+                    await _azureStorageHelper.InsertImageBlob(model.CandidateImage.FileName, "passportdetails", model.CandidateImage, fileMimeTypefront);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("passportdetails");
+                    var blob = containerRef.GetBlockBlobReference(model.CandidateImage.FileName);
+                    string uploadedaudioFileURL = blob.Uri.ToString();
+                    if (uploadedaudioFileURL == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "User Image Upload failed.");
+                    }
+                    else
+                    {
+                        model.CandidateImagelink = uploadedaudioFileURL;
+                    }
+                }
+                if (String.IsNullOrWhiteSpace(model.CandidateImagelink) || String.IsNullOrWhiteSpace(model.Passportfrontlink) || String.IsNullOrWhiteSpace(model.Passportbacklink))
+                {
+                    return View("CandidateVerification", model);
+                }
+                var modelsave = new candidateDetailsresult();
+                //Start: Passport Verification
+                var modellist = new CandidatePassportRequest();
+                modellist.username = user_name;
+                modellist.password = password;
+                var client = new RestClient(passportUrl + "patrons/login");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/json");
+                request.AddJsonBody(modellist);
+                IRestResponse response = await client.ExecuteAsync(request);
+                var loginresponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(response.Content);
+                var identityResonse = await Verification_Identityflow(model, loginresponse);
+                var extractresponse = await Verification_Passport_extraction(model, identityResonse);
+                var faceurl = await Verification_Passport_Faceextraction(model, identityResonse);
+                var verification = await Verification_Passport_verification(model, extractresponse, identityResonse.id);
+                var resultset = await Verification_FaceMatch(model, loginresponse, faceurl.response.result.cropped);
+                //End: Passport Verification
+                modelsave.name = extractresponse.response.result.name;
+                modelsave.passportNumber = extractresponse.response.result.passportNumber;
+                modelsave.nationality = extractresponse.response.result.nationality;
+                modelsave.sex = extractresponse.response.result.sex;
+                modelsave.birthDate = extractresponse.response.result.birthDate;
+                modelsave.address = extractresponse.response.result.address;
+                modelsave.email = model.email;
+                modelsave.matchPercentage = resultset.result.matchPercentage;
+                //save in db
+                await _aadhaarService.SaveCandidateVerificationDetails(modelsave);
+                TempData["SuccessAadhaarMessage"] = verification.response.result.message;
+                return RedirectToAction("CandidateVerification", new { uniqueid = model.uniqueid });
+            }
+            ModelState.AddModelError(string.Empty, "All files are mandatory to upload.");
+            return RedirectToAction("CandidateVerification", new { uniqueid = model.uniqueid });
+        }
+        public async Task<CandidatePassportResponse> Verification_Identityflow(candidatePassportVerificated model, CandidatePassportResponse convertedResponse)
+        {
+            var modellist = new CandidatePassportRequest();
+            modellist.type = "passport";
+            modellist.email = "Prashantindoliya@gmail.com";
+            modellist.callbackUrl = "https://portal.risebird.io/Aadhaar/Getshuftipro";
+            modellist.images.Add(model.Passportfrontlink);
+            modellist.images.Add(model.Passportbacklink);
+            var clientrequest = new RestClient(passportUrl + "patrons/" + convertedResponse.userId + "/identities");
+            var _request = new RestRequest(Method.POST);
+            _request.AddHeader("content-type", "application/json");
+            _request.AddHeader("Authorization", convertedResponse.id);
+            _request.AddJsonBody(modellist);
+            IRestResponse _response = await clientrequest.ExecuteAsync(_request);
+            var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
+            return _convertedResponse;
+        }
+        public async Task<CandidatePassportResponse> Verification_Passport_extraction(candidatePassportVerificated model, CandidatePassportResponse convertedResponse)
+        {
+            var modellist = new CandidatePassportRequest();
+            modellist.service = "Identity";
+            modellist.itemId = convertedResponse.id;
+            modellist.task = "autoRecognition";
+            modellist.essentials = new candidateverificationessentials();
+            modellist.accessToken = convertedResponse.accessToken;
+            var clientrequest = new RestClient(passportUrl + "snoops");
+            var _request = new RestRequest(Method.POST);
+            _request.AddHeader("content-type", "application/json");
+            _request.AddJsonBody(modellist);
+            IRestResponse _response = await clientrequest.ExecuteAsync(_request);
+            var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
+            return _convertedResponse;
+        }
+        public async Task<CandidatePassportResponse> Verification_Passport_Faceextraction(candidatePassportVerificated model, CandidatePassportResponse convertedResponse)
+        {
+            var modellist = new CandidatePassportRequest();
+            modellist.service = "Identity";
+            modellist.itemId = convertedResponse.id;
+            modellist.task = "faceExtraction";
+            modellist.essentials = new candidateverificationessentials();
+            modellist.essentials.url = model.Passportfrontlink;
+            modellist.accessToken = convertedResponse.accessToken;
+            var clientrequest = new RestClient(passportUrl + "snoops");
+            var _request = new RestRequest(Method.POST);
+            _request.AddHeader("content-type", "application/json");
+            _request.AddJsonBody(modellist);
+            IRestResponse _response = await clientrequest.ExecuteAsync(_request);
+            var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
+            return _convertedResponse;
+        }
+        public async Task<CandidatePassportResponse> Verification_Passport_verification(candidatePassportVerificated model, CandidatePassportResponse convertedResponse, string itemid)
+        {
+            var modellist = new CandidatePassportRequest();
+            modellist.service = "Identity";
+            modellist.itemId = itemid;
+            modellist.task = "verification";
+            modellist.essentials = new candidateverificationessentials();
+            modellist.essentials.fileNumber = convertedResponse.response.result.fileNumber;
+            modellist.essentials.dob = convertedResponse.response.result.birthDate;
+            modellist.essentials.name = convertedResponse.response.result.name;
+            modellist.accessToken = convertedResponse.accessToken;
+            var clientrequest = new RestClient(passportUrl + "snoops");
+            var _request = new RestRequest(Method.POST);
+            _request.AddHeader("content-type", "application/json");
+            _request.AddJsonBody(modellist);
+            IRestResponse _response = await clientrequest.ExecuteAsync(_request);
+            var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
+            return _convertedResponse;
+        }
+        public async Task<CandidatePassportResponse> Verification_FaceMatch(candidatePassportVerificated model, CandidatePassportResponse convertedResponse, string secondinamge)
+        {
+            var modellist = new CandidatePassportRequest();
+            modellist.essentials = new candidateverificationessentials();
+            modellist.essentials.firstImage = model.Passportfrontlink;
+            modellist.essentials.secondImage = secondinamge;
+            modellist.accessToken = convertedResponse.accessToken;
+            var clientrequest = new RestClient(passportUrl + "patrons/" + convertedResponse.userId + "/facematches");
+            var _request = new RestRequest(Method.POST);
+            _request.AddHeader("content-type", "application/json");
+            _request.AddHeader("Authorization", convertedResponse.id);
+            _request.AddJsonBody(modellist);
+            IRestResponse _response = await clientrequest.ExecuteAsync(_request);
+            var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
+            return _convertedResponse;
         }
     }
 }

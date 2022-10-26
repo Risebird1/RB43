@@ -3,6 +3,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
@@ -21,13 +22,14 @@ namespace Risebird.CommonHelper
     {
         private readonly IApplicationErrorLogger _errorLogger;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly ISendGridRepository _sendGridRepository;
         private readonly string sendGridUserName = string.Empty;
         private readonly string sendGridPassword = string.Empty;
         private readonly string mailFrom = string.Empty;
         private readonly IConfiguration _configuration;
         private readonly string _sendGridClientKey = string.Empty;
 
-        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger)
+        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -36,6 +38,7 @@ namespace Risebird.CommonHelper
             mailFrom = _configuration["SendGridKeySettings:MailFrom"];
             _sendGridClientKey = _configuration["SendGridKeySettings:ApiKey"];
             _errorLogger = errorLogger;
+            _sendGridRepository = sendGridRepository;
         }
 
         public async Task<string> SendHelpsupportMail(Mail model)
@@ -198,13 +201,16 @@ namespace Risebird.CommonHelper
 
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Notification");
-                msg.Subject = "New Interview has been assigned on date: " + meetingDate;
+                //msg.Subject = "New Interview has been assigned on date: " + meetingDate;
+                msg.Subject = "New Interview has been assigned on date: " + DateTime.Now.ToString();
 
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
+                //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("harshit_jajoo@risebird.io", null));
 
                 object[] parameters = new object[] { meetingDate };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
+                //string msgBody = string.Format(rawEmail, parameters);
+                string msgBody = "You have been assigned with a new interview.";
 
 
                 msg.HtmlContent = msgBody;
@@ -1230,7 +1236,7 @@ namespace Risebird.CommonHelper
         //    }
         //    return msg;
         //}
-        private async Task<string> SendMail(SendGridMessage msg)
+        private async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null)
         {
             try
             {
@@ -1242,6 +1248,66 @@ namespace Risebird.CommonHelper
                     return "Failed to send mail. Please check all fields and try again.";
 
                 }
+                SentMailDetails obj = new SentMailDetails();
+                IEnumerable<string> values;
+                //string message_id; 
+                if(response.Headers.TryGetValues("X-Message-Id", out values))
+                {
+                    obj.sg_message_id = values?.FirstOrDefault();
+                }
+                
+                obj.MailSubject = msg.Subject;
+                StringBuilder tos = new StringBuilder();
+                StringBuilder ccs = new StringBuilder();
+                StringBuilder bccs = new StringBuilder();
+
+                if(msg.Personalizations != null)//foreach (var item in msg.Personalizations)
+                {
+                    var item = msg.Personalizations[0];
+                    if(tos.Length == 0)
+                    {
+                        if (item.Tos != null)
+                        {
+                            tos.Append(string.Join(",", item.Tos.Select(x=>x.Email)));
+                        }
+                    }
+                    else
+                    {
+                        tos = tos.Append(",");
+                        tos.Append(string.Join(",", item.Tos.Select(x => x.Email)));
+                    }
+                    if (ccs.Length == 0)
+                    {
+                        if (item.Ccs != null)
+                        {
+                            ccs.Append(string.Join(",", item.Ccs.Select(x => x.Email)));
+                        }
+                    }
+                    else
+                    {
+                        ccs = ccs.Append(",");
+                        ccs.Append(string.Join(",", item.Ccs.Select(x => x.Email)));
+                    }
+                    if (bccs.Length == 0)
+                    {
+                        if (item.Bccs != null)
+                        {
+                            bccs.Append(string.Join(",", item.Bccs.Select(x => x.Email)));
+                        }
+                    }
+                    else
+                    {
+                        bccs = bccs.Append(",");
+                        bccs.Append(string.Join(",", item.Bccs.Select(x => x.Email)));
+                    }
+                }
+                obj.To = tos != null ? tos.ToString() : null;
+                obj.Cc = ccs != null ? ccs.ToString() : null;
+                obj.Bcc = bccs != null ? bccs.ToString() : null;
+                obj.MailBody = msg.Contents?[0].Value;
+                obj.IRFId = IRFId;
+                obj.InterviewId = interviewId;
+                _ = await _sendGridRepository.SaveSentMailDetails(obj);
                 return "Mail sent successfully.";
             }
             catch (Exception ex)

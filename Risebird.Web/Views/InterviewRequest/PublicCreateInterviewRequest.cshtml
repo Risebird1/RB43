@@ -18,6 +18,9 @@
 <div id="main-panel">
 
     <div class="mt50">
+        <button id="btnAudioInstruction" style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px;display:none" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording">
+            <text style="color:white"> Audio Feedback </text>
+        </button>
     </div>
     <div class="content client">
         <div class="row bg-white">
@@ -286,6 +289,9 @@
         $(".select2-selection.select2-selection--multiple").css("margin-top", "-25px").css("height", "40px");
     });
 </script>
+<div id="modal_clientAudioFeedback_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/feedbackrecorder/record.js"></script>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -296,7 +302,7 @@
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
                 //swal.fire("Successful",'@ViewBag.Message', "success");
-                 Swal.fire({
+                Swal.fire({
                     title: '<strong>Successful</u></strong>',
                     icon: 'info',
                     html:
@@ -305,6 +311,8 @@
                     confirmButtonText: "Close",
                     allowOutsideClick: false
                 });
+                $("#btnAudioInstruction").attr('data-url', '/Client/GetClientAudioInstructionsFeedbacks?Irfid=' + @ViewBag.IRFId);
+                $("#btnAudioInstruction").click();
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
