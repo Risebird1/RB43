@@ -112,7 +112,7 @@ function FetchAadhaarDetails(MCQID, candidateEmail) {
         success: function (data) {
             openAadhaarKYCpopup();
             if (data.type == 1) {
-                BindCandidateKYCData();
+                BindCandidateKYCData(data);
             } else {
                 BindAadhaarKYCData(data);
             }
@@ -142,7 +142,7 @@ function FetchInterviewAadhaarDetails(candidateEmail) {
         success: function (data) {
             openAadhaarKYCpopup();
             if (data.type == 1) {
-                BindCandidateKYCData();
+                BindCandidateKYCData(data);
             } else {
                 BindAadhaarKYCData(data);
             }
@@ -167,12 +167,12 @@ function BindCandidateKYCData(data) {
     var html = '';
     if (data.email != null) {
         html += '<table style="overflow:auto" width="100%">';
-        html += '<tr><td>Name</td><td>' + data.name + '</td></tr>';
+        html += '<tr><td rowspan="3"><img src="data:image/png;base64,' + data.doc_face + '" alt="Red dot" /></td><td>Name</td><td>' + data.name + '</td></tr>';
         html += '<tr><td>Address</td><td style="max-width:375px;white-space: break-spaces;word-break:break-word">' + data.address + '</td></tr>';
         html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
-        html += '<tr><td>DOB</td><td>' + data.birthDate + '</td></tr>';
-        html += '<tr><td>Country</td><td>' + data.country + '</td></tr>';
-        html += '<tr><td>Face Matched</td><td>' + data.matchPercentage + ' %</td></tr>';
+        html += '<tr><td rowspan="3"><img src="data:image/png;base64,' + data.passport_image + '" alt="Red dot" /></td><td>DOB</td><td>' + data.birthDate + '</td></tr>';
+        html += '<tr><td>Country</td><td>' + data.nationality + '</td></tr>';
+        html += '<tr><td>Face Matched</td><td>' + data.matchPercentage + '</td></tr>';
         html += '</table>';
     }
     if (data.email == null) {
