@@ -111,7 +111,11 @@ function FetchAadhaarDetails(MCQID, candidateEmail) {
         data: { MCQID: MCQID, candidateEmail: candidateEmail },
         success: function (data) {
             openAadhaarKYCpopup();
-            BindAadhaarKYCData(data);
+            if (data.type == 1) {
+                BindCandidateKYCData();
+            } else {
+                BindAadhaarKYCData(data);
+            }
         }
     });
 }
@@ -137,7 +141,11 @@ function FetchInterviewAadhaarDetails(candidateEmail) {
         data: { candidateEmail: candidateEmail },
         success: function (data) {
             openAadhaarKYCpopup();
-            BindAadhaarKYCData(data);
+            if (data.type == 1) {
+                BindCandidateKYCData();
+            } else {
+                BindAadhaarKYCData(data);
+            }
         }
     });
 }
@@ -154,4 +162,21 @@ function NewgenerateCaptcha() {
             }
         });
     }
+}
+function BindCandidateKYCData(data) {
+    var html = '';
+    if (data.email != null) {
+        html += '<table style="overflow:auto" width="100%">';
+        html += '<tr><td>Name</td><td>' + data.name + '</td></tr>';
+        html += '<tr><td>Address</td><td style="max-width:375px;white-space: break-spaces;word-break:break-word">' + data.address + '</td></tr>';
+        html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
+        html += '<tr><td>DOB</td><td>' + data.birthDate + '</td></tr>';
+        html += '<tr><td>Country</td><td>' + data.country + '</td></tr>';
+        html += '<tr><td>Face Matched</td><td>' + data.matchPercentage + ' %</td></tr>';
+        html += '</table>';
+    }
+    if (data.email == null) {
+        html = 'Not yet candidate verified for this candidate';
+    }
+    $("#divAadhaarKYC").empty().html(html);
 }
