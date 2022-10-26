@@ -59,6 +59,10 @@ namespace Risebird.MicroService
                     {
                         try
                         {
+                            if(data != null && !string.IsNullOrEmpty(data.sg_message_id) && data.sg_message_id.Contains("."))
+                            {
+                                data.Split_Message_Id = data.sg_message_id.Split(".")[0];
+                            }
                             _ = _sendGridRepository.SaveSendGridEventDetails(data).Result;
                         }
                         catch (Exception ex)
