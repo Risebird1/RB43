@@ -44,7 +44,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
 
-
+<input type="hidden" id="txtprofile" value="@ViewBag.profile" />
 
     <div class="pt30">
         <div class="col-md-12 nopad">
@@ -1232,13 +1232,13 @@
             }
             //html += '  <td>' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/></td>';
 
-            if (ViewBag.profile == "Admin" && data[i].emailId != null && data[i].emailId != "") {
+            if ($("#txtprofile").val() == "Admin" && data[i].emailId != null && data[i].emailId != "") {
                 html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '"><span class="intEmail">' + data[i].emailId + '</span></a></td>';
             }
             else {
                 html += '<td></td>';
             }
-            if (ViewBag.profile == "Admin") {
+            if ($("#txtprofile").val()== "Admin") {
                 html += '<td>' + data[i].mobileNumber + '</td>';
             }
             else {
