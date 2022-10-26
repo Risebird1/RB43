@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.AadhaarData
+﻿@model Risebird.Entities.ViewModel.candidatePassportVerificated
 @{
     Layout = null;
 }
@@ -27,36 +27,61 @@
         {
             <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">Your link has been expired or aadhaar details are already verified, please contact to HR for further information.</h1></div>
         }
+        else if (Model.status == "Success")
+        {
+            <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">Passport verification done successfully.</h1></div>
+        }
         else
         {
             <div class="row" id="divdetails">
-                <div class="col-md-8 offset-md-2">
-                    <div class="loader text-center">
-                        <img src="~/Newassets/img/lazyload.gif" />
-                    </div>
-                    <div class="filheader callno">
-                        <h2 style="margin-bottom:10px;">Candidate Verification</h2>
-                    </div>
+                @using (Html.BeginForm("CandidatePassportVerificated", "Aadhaar", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.HiddenFor(m=>m.uniqueid)
+                    <div class="col-md-8 offset-md-2">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="filheader callno">
+                            <h2 style="margin-bottom:10px;">Candidate Passport Verification</h2>
+                        </div>
 
-                    <div class="row" style="padding:10px" id="divcandidateskills">
-                        <div class="offset-md-2 col-md-8 col-lg-8 col-sm-8" style="padding-top:10px">
-                            <input type="text" id="Candidatename" placeholder="Name" class="form-control" />
+                        <div class="row" style="padding:10px" id="divcandidateskills">
+                            <div class="col-md-6 col-lg-6 col-sm-6" style="padding-top:10px">
+                                <input type="text" id="Candidatename" placeholder="Name" class="form-control" />
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6" style="padding-top:10px">
+                                <input type="text" placeholder="Mobile Number with country code(+)" id="mobileNumber" class="form-control" />
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6" style="padding-top:10px">
+                                @Html.LabelFor(model=>model.email,new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                @Html.TextBoxFor(model=>model.email,new { @class = "form-control" })
+                                @*<input type="text" id="CandidateEmailid" placeholder="Email Address" class="form-control" />*@
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6" style="padding-top:10px">
+                                @Html.LabelFor(model => model.PassportFront, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                @Html.TextBoxFor(model => model.PassportFront, new { type = "file", @class = "choose-file", @accept = ".jpg, .png, .jpeg" })
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6" style="padding-top:10px">
+                                @Html.LabelFor(model => model.PassportBack, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                @Html.TextBoxFor(model => model.PassportBack, new { type = "file", @class = "choose-file", @accept = ".jpg, .png, .jpeg" })
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6" style="padding-top:10px">
+                                @Html.LabelFor(model => model.CandidateImage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                @Html.TextBoxFor(model => model.CandidateImage, new { type = "file", @class = "choose-file", @accept = ".jpg, .png, .jpeg" })
+                            </div>
                         </div>
-                        <div class="offset-md-2 col-md-8 col-lg-8 col-sm-8" style="padding-top:10px">
-                            <input type="text" placeholder="Mobile Number with country code(+)" id="mobileNumber" class="form-control" />
-                        </div>
-                        <div class="offset-md-2 col-md-8 col-lg-8 col-sm-8" style="padding-top:10px">
-                            <input type="text" id="CandidateEmailid" placeholder="Email Address" class="form-control" />
-                        </div>
-                    </div>
-                    <div>
-                        <div class="col-md-12 text-right">
-                            <div>
-                                <div id="divSubmit" style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="submitform()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Submit"></div>
+                        <div>
+                            <div class="col-md-12 text-right">
+                                <div>
+                                    @*<div id="divSubmit" style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="submitform()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Submit"></div>*@
+                                    <div id="divSubmit" style="display: inline-block !important;margin-bottom: 10px;">
+                                        <input style="color: #fff;line-height: 13px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded form-control" value="Submit">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         }
 

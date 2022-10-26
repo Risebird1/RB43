@@ -13,6 +13,8 @@ namespace Risebird.Repository.Interface
         Task<AadhaarData> FetchInterviewAadhaarDetails(string candidateEmail);
         Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
         Task<IEnumerable<AadhaarData>> GetAadharDetails();
+        Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model);
+        Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
 
     }
 }

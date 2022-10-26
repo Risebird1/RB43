@@ -8,10 +8,10 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_GetInterviewCandidateDetails]      
-@candidateEmail varchar(200)  
-AS      
-Begin     
-Select * From CandidateVerification where email=@candidateEmail  
-End    
-Go
+Create PROCEDURE [dbo].[usp_GetInterviewCandidateDetails]        
+@candidateEmail varchar(200)    
+AS        
+Begin       
+Select *,Address From CandidateVerification where email=@candidateEmail    
+End
+GO

@@ -1,22 +1,23 @@
 IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
 WHERE TABLE_NAME = N'CandidateVerification')
-BEGIN
+BEGIN  
+
 CREATE TABLE [dbo].[CandidateVerification](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[email] [varchar](200) NULL,
-	[duplicate_account_detected] [bit] NULL,
-	[first_name] [varchar](100) NULL,
-	[last_name] [varchar](100) NULL,
-	[middle_name] [varchar](50) NULL,
-	[country] [varchar](100) NULL,
-	[selected_type] [varchar](50) NULL,
-	[face_match_confidence] [int] NULL,
-	[reference] [varchar](100) NULL,
+	[name] [varchar](200) NULL,
+	[birthDate] [varchar](25) NULL,
+	[passportNumber] [varchar](15) NULL,
+	[address] [varchar](max) NULL,
+	[matchPercentage] [varchar](8) NULL,
+	[nationality] [varchar](25) NULL,
+	[gender] [varchar](2) NULL,
+	[CreatedOn] [datetime] NULL,
  CONSTRAINT [PK_CandidateVerification] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 END
 GO
 

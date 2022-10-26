@@ -167,12 +167,12 @@ function BindCandidateKYCData(data) {
     var html = '';
     if (data.email != null) {
         html += '<table style="overflow:auto" width="100%">';
-        html += '<tr><td>First Name</td><td>' + data.first_name + '</td></tr>';
-        html += '<tr><td>Middle Name</td><td>' + data.middle_name + '</td></tr>';
-        html += '<tr><td>Last Name</td><td>' + data.last_name + '</td></tr>';
-        html += '<tr><td>Document Verified</td><td>' + data.selected_type + '</td></tr>';
+        html += '<tr><td>Name</td><td>' + data.name + '</td></tr>';
+        html += '<tr><td>Address</td><td style="max-width:375px;white-space: break-spaces;word-break:break-word">' + data.address + '</td></tr>';
+        html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
+        html += '<tr><td>DOB</td><td>' + data.birthDate + '</td></tr>';
         html += '<tr><td>Country</td><td>' + data.country + '</td></tr>';
-        html += '<tr><td>Face Matched</td><td>' + data.face_match_confidence + ' %</td></tr>';
+        html += '<tr><td>Face Matched</td><td>' + data.matchPercentage + ' %</td></tr>';
         html += '</table>';
     }
     if (data.email == null) {
