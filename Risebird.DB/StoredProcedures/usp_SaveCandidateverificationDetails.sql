@@ -8,20 +8,22 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_SaveCandidateverificationDetails]      
-@name varchar(200),       
-@address varchar(max),    
-@email varchar(200),    
-@passportNumber varchar(15),    
-@gender varchar(2),    
-@birthDate varchar(25),    
-@nationality varchar(25),    
-@matchPercentage varchar(8)    
-AS      
-Begin     
-Insert into CandidateVerification(email,name,birthDate,passportNumber,address,matchPercentage,nationality,gender,CreatedOn)    
-values(@email,@name,@birthDate,@passportNumber,@address,@matchPercentage,@nationality,@gender,Getdate())    
-  
---Update UserList set AadhaarVerified=1 where EmailId=@email  
+CREATE PROCEDURE [dbo].[usp_SaveCandidateverificationDetails]        
+@name varchar(200),         
+@address varchar(max),      
+@email varchar(200),      
+@passportNumber varchar(15),      
+@gender varchar(2),      
+@birthDate varchar(25),      
+@nationality varchar(25),      
+@matchPercentage varchar(8),
+@doc_face varchar(max),
+@passport_image varchar(max)
+AS        
+Begin       
+Insert into CandidateVerification(email,name,birthDate,passportNumber,address,matchPercentage,nationality,gender,CreatedOn,doc_face,passport_image)      
+values(@email,@name,@birthDate,@passportNumber,@address,@matchPercentage,@nationality,@gender,Getdate(),@doc_face,@passport_image)      
+    
+--Update UserList set AadhaarVerified=1 where EmailId=@email    
 End
 GO

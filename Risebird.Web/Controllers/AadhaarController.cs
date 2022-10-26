@@ -12,6 +12,8 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -405,6 +407,8 @@ namespace Risebird.Web.Controllers
                 modelsave.address = extractresponse.response.result.address;
                 modelsave.email = model.email;
                 modelsave.matchPercentage = resultset.result.matchPercentage;
+                modelsave.doc_face = ConvertImageURLToBase64(faceurl.response.result.cropped);
+                modelsave.passport_image = ConvertImageURLToBase64(model.CandidateImagelink);
                 //save in db
                 await _aadhaarService.SaveCandidateVerificationDetails(modelsave);
                 TempData["SuccessAadhaarMessage"] = verification.response.result.message;
@@ -497,6 +501,39 @@ namespace Risebird.Web.Controllers
             IRestResponse _response = await clientrequest.ExecuteAsync(_request);
             var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
             return _convertedResponse;
+        }
+
+        public string ConvertImageURLToBase64(String url)
+        {
+            StringBuilder _sb = new StringBuilder();
+            Byte[] _byte = GetImage(url);
+            _sb.Append(Convert.ToBase64String(_byte, 0, _byte.Length));
+            return _sb.ToString();
+        }
+        private byte[] GetImage(string url)
+        {
+            Stream stream = null;
+            byte[] buf;
+            try
+            {
+                WebProxy myProxy = new WebProxy();
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+                stream = response.GetResponseStream();
+                using (BinaryReader br = new BinaryReader(stream))
+                {
+                    int len = (int)(response.ContentLength);
+                    buf = br.ReadBytes(len);
+                    br.Close();
+                }
+                stream.Close();
+                response.Close();
+            }
+            catch (Exception exp)
+            {
+                buf = null;
+            }
+            return (buf);
         }
     }
 }

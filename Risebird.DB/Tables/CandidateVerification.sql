@@ -13,11 +13,34 @@ CREATE TABLE [dbo].[CandidateVerification](
 	[nationality] [varchar](25) NULL,
 	[gender] [varchar](2) NULL,
 	[CreatedOn] [datetime] NULL,
+	[doc_face] [varchar](max) NULL,
+	[passport_image] [varchar](max) NULL
  CONSTRAINT [PK_CandidateVerification] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'doc_face')
+      AND Object_ID = Object_ID(N'CandidateVerification'))
+BEGIN
+    ALTER TABLE CandidateVerification
+    Add doc_face varchar(max)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'passport_image')
+      AND Object_ID = Object_ID(N'CandidateVerification'))
+BEGIN
+    ALTER TABLE CandidateVerification
+    Add passport_image varchar(max)
+END
 END
 GO
 

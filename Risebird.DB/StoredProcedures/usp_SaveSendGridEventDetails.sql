@@ -23,12 +23,13 @@ CREATE PROCEDURE [dbo].[usp_SaveSendGridEventDetails]
 @url varchar(500),
 @useragent varchar(200),
 @reason varchar(100),
-@status varchar(50)
+@status varchar(50),
+@Split_Message_Id varchar(50)
 AS    
 Begin  
 
-Insert into SendgridEventData(email, [timestamp], [event], CreatedAt, [smtp-id], [ip], category, sg_event_id, sg_message_id, response, [url], useragent, reason, [status] )  
-values(@email, @timestamp, @event, @CreatedAt, @smtpid, @ip, @category, @sg_event_id, @sg_message_id, @response, @url, @useragent, @reason, @status)  
+Insert into SendgridEventData(email, [timestamp], [event], CreatedAt, [smtp-id], [ip], category, sg_event_id, sg_message_id, response, [url], useragent, reason, [status], Split_Message_Id)  
+values(@email, @timestamp, @event, @CreatedAt, @smtpid, @ip, @category, @sg_event_id, @sg_message_id, @response, @url, @useragent, @reason, @status, @Split_Message_Id )  
 
 End
 GO
