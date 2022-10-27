@@ -440,7 +440,7 @@ namespace Risebird.Web.Controllers
                         {
                             TO = model.Email,
                             CC = accountEmail,//zoomLink.accountemail,
-                            Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
+                            Subject = model.ClientName+" Interview -" + model.Name + " | "+ JDTitle.Result+ " | " + interviewdatetime + "(" + timezonevalue + ")"
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
