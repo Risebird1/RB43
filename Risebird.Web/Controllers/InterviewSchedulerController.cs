@@ -1,13 +1,10 @@
 ﻿using FileTypeInterrogator;
-using iTextSharp.text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -16,7 +13,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -440,7 +436,7 @@ namespace Risebird.Web.Controllers
                         {
                             TO = model.Email,
                             CC = accountEmail,//zoomLink.accountemail,
-                            Subject = model.ClientName+" Interview -" + model.Name + " | "+ JDTitle.Result+ " | " + interviewdatetime + "(" + timezonevalue + ")"
+                            Subject = model.ClientName + " Interview - " + model.Name + " | " + JDTitle.Result + " | " + interviewdatetime + "(" + timezonevalue + ")"
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {

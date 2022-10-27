@@ -1,22 +1,18 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Risebird.Entities.Data;
-using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using Risebird.Repository.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Web.Http;
-using RestSharp;
-using Risebird.Repository;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -59,7 +55,7 @@ namespace Risebird.MicroService
                     {
                         try
                         {
-                            if(data != null && !string.IsNullOrEmpty(data.sg_message_id) && data.sg_message_id.Contains("."))
+                            if (data != null && !string.IsNullOrEmpty(data.sg_message_id) && data.sg_message_id.Contains("."))
                             {
                                 data.Split_Message_Id = data.sg_message_id.Split(".")[0];
                             }

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel

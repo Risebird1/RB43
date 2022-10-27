@@ -1226,7 +1226,7 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-        public async Task InsertImageBlob(string filename, string containerName, IFormFile blobFile,string contentType)
+        public async Task InsertImageBlob(string filename, string containerName, IFormFile blobFile, string contentType)
         {
             CloudBlockBlob blob;
             blob = GetCloudBlockBlobClient(containerName, filename);

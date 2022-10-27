@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;

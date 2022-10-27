@@ -2027,7 +2027,7 @@ namespace Risebird.Web.Controllers
                 //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
                 var callbackUrl = "";
                 var recordingSid = await _twiliohelper.callrecording(sid, callbackUrl);
-                if(!string.IsNullOrEmpty(recipientType) && recipientType ==  "Interviewer")
+                if (!string.IsNullOrEmpty(recipientType) && recipientType == "Interviewer")
                 {
                     var resultset = _userService.SaveCallRecordingInterviewer(CandidateEmail, currentUserEmailId, sid, recordingSid);
                 }

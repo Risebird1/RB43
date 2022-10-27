@@ -6240,7 +6240,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" ||  profileName == "SupportAdmin") /*profileName == "HR" || profileName == "SeniorHR" ||*/
+                if (profileName == "Admin" || profileName == "SupportAdmin") /*profileName == "HR" || profileName == "SeniorHR" ||*/
                 {
                     var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrWhiteSpace(x.AssessmentGroup) && (x.AssessmentGroupId != 0) && (x.CreatedFromTemplateId == null || x.CreatedFromTemplateId == 0));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)

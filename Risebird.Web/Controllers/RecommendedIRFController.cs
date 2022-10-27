@@ -227,7 +227,7 @@ namespace Risebird.Web.Controllers
                     TempData.Remove("SuccessErrorCloneSkillChannnelMessage2");
                     model.IRFId = TempData["SuccessErrorCloneSkillChannnelMessageIRFId"].ToString();
                     TempData.Remove("SuccessErrorCloneSkillChannnelMessageIRFId");
-                    
+
                 }
                 TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
             }

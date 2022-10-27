@@ -342,9 +342,9 @@ namespace Risebird.Web.Controllers
                 {
                     var AlterMessage = await _dashboardService.FetchAlertMessageList();
                     var model = AlterMessage?.Where(x => x.ID == Alertid)?.FirstOrDefault();
-                    if(model!=null)
-                    { 
-                    model.Announcement = System.Web.HttpUtility.HtmlDecode(model.Announcement);
+                    if (model != null)
+                    {
+                        model.Announcement = System.Web.HttpUtility.HtmlDecode(model.Announcement);
                     }
                     return PartialView(model);
                 }

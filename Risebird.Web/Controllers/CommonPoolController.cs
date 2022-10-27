@@ -1104,7 +1104,7 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
                 bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
-               await _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                await _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }

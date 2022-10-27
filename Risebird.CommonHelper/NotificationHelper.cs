@@ -12,7 +12,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -1251,24 +1250,24 @@ namespace Risebird.CommonHelper
                 SentMailDetails obj = new SentMailDetails();
                 IEnumerable<string> values;
                 //string message_id; 
-                if(response.Headers.TryGetValues("X-Message-Id", out values))
+                if (response.Headers.TryGetValues("X-Message-Id", out values))
                 {
                     obj.sg_message_id = values?.FirstOrDefault();
                 }
-                
+
                 obj.MailSubject = msg.Subject;
                 StringBuilder tos = new StringBuilder();
                 StringBuilder ccs = new StringBuilder();
                 StringBuilder bccs = new StringBuilder();
 
-                if(msg.Personalizations != null)//foreach (var item in msg.Personalizations)
+                if (msg.Personalizations != null)//foreach (var item in msg.Personalizations)
                 {
                     var item = msg.Personalizations[0];
-                    if(tos.Length == 0)
+                    if (tos.Length == 0)
                     {
                         if (item.Tos != null)
                         {
-                            tos.Append(string.Join(",", item.Tos.Select(x=>x.Email)));
+                            tos.Append(string.Join(",", item.Tos.Select(x => x.Email)));
                         }
                     }
                     else
@@ -2617,7 +2616,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite,string timezone)
+        public string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone)
         {
             try
             {

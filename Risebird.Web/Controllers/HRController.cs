@@ -1294,11 +1294,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if(string.IsNullOrEmpty(type))
+                        if (string.IsNullOrEmpty(type))
                         {
                             type = "Candidate";
                         }
-                        
+
                         ViewBag.type = type;
 
                         //if (TempData["SuccessErrorMessageCandidate"] != null)
@@ -1351,7 +1351,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task <FileContentResult> CallRecordingExporttoExcel(string type)
+        public async Task<FileContentResult> CallRecordingExporttoExcel(string type)
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
@@ -1401,7 +1401,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, 5].Value = "Price";
                     Sheet.Cells[1, 6].Value = "Price Unit";
                     Sheet.Cells[1, 7].Value = "Recipient Phone Number";
-                                       
+
                     int i = 2;
                     if (recordings.Count() > 0)
                     {
@@ -1409,15 +1409,15 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 1].Value = item.Caller;
                             Sheet.Cells[i, 2].Value = item.CallRecipient;
-                            Sheet.Cells[i, 3].Value = item.StartTime.Value.ToString("MM/dd/yyyy HH:mm"); 
+                            Sheet.Cells[i, 3].Value = item.StartTime.Value.ToString("MM/dd/yyyy HH:mm");
                             Sheet.Cells[i, 4].Value = item.Duration;
                             string price = item.Price;
                             if (!string.IsNullOrEmpty(item.Price) && item.Price.IndexOf("-") == 0)
                             {
                                 Sheet.Cells[i, 5].Value = item.Price.Remove(0, 1);
-                            }                          
+                            }
                             Sheet.Cells[i, 6].Value = item.PriceUnit;
-                            Sheet.Cells[i, 7].Value = item.RecipientPhoneNumber;                          
+                            Sheet.Cells[i, 7].Value = item.RecipientPhoneNumber;
                             i++;
                         }
                         return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
