@@ -1251,24 +1251,24 @@ namespace Risebird.CommonHelper
                 SentMailDetails obj = new SentMailDetails();
                 IEnumerable<string> values;
                 //string message_id; 
-                if(response.Headers.TryGetValues("X-Message-Id", out values))
+                if (response.Headers.TryGetValues("X-Message-Id", out values))
                 {
                     obj.sg_message_id = values?.FirstOrDefault();
                 }
-                
+
                 obj.MailSubject = msg.Subject;
                 StringBuilder tos = new StringBuilder();
                 StringBuilder ccs = new StringBuilder();
                 StringBuilder bccs = new StringBuilder();
 
-                if(msg.Personalizations != null)//foreach (var item in msg.Personalizations)
+                if (msg.Personalizations != null)//foreach (var item in msg.Personalizations)
                 {
                     var item = msg.Personalizations[0];
-                    if(tos.Length == 0)
+                    if (tos.Length == 0)
                     {
                         if (item.Tos != null)
                         {
-                            tos.Append(string.Join(",", item.Tos.Select(x=>x.Email)));
+                            tos.Append(string.Join(",", item.Tos.Select(x => x.Email)));
                         }
                     }
                     else
@@ -2617,7 +2617,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite,string timezone)
+        public string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone)
         {
             try
             {
@@ -2641,8 +2641,29 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public async Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string url, string ClientName)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
 
+                object[] parameters = new object[] { title, timeduration, url, ClientName };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateBotInvitationTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
-
-
 }

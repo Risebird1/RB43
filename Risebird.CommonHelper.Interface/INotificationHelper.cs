@@ -93,6 +93,6 @@ namespace Risebird.CommonHelper.Interface
         string SendClientInterviewPublicURL(Mail model, string Name, string publicurl);
         string SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
         string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone);
-
+        Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
     }
 }

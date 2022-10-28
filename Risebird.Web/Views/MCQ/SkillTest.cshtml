@@ -17,10 +17,10 @@
 <body>
 
     @*<video controls hidden></video>
-        <video id="vid2" hidden controls></video>*@
+    <video id="vid2" hidden controls></video>*@
     @*<div class="text-center" style="background-color: #363c43;padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
-            <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
-        </div>*@
+    <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
+    </div>*@
     <div class="text-center" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
     </div>
@@ -58,15 +58,16 @@
                     @Html.HiddenFor(m => m.Gender)
                     @Html.HiddenFor(m => m.DOB)
                     @Html.HiddenFor(m => m.CandidateImage)
+                    @Html.HiddenFor(m => m.uniqueid)
                     <input type="hidden" id="MCQId" name="MCQId" value="@ViewBag.Questionsetid" />
-                    @if (Model.AadhaarVerification)
+                    @if (Model.uniqueid != "322" && Model.AadhaarVerification)
                     {
                         <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px">
                             <span data-toggle="tooltip" data-placement="top" title="" onclick="openAadhaarpopup()" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
                         </button>
                     }
                     <div>
-                        @if (Model.AadhaarVerification)
+                        @if (Model.uniqueid != "322" && Model.AadhaarVerification)
                         {
                             <input type="submit" disabled id="btnSubmitDetails" style="width:120px !important" value="Start Test >>" class="callsubmit" />
                         }
@@ -150,7 +151,6 @@
             </button>
             <div class="modal-body">
                 <div style="padding:10px" id="divAadhaarKYC">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
