@@ -366,7 +366,9 @@
 
 
                             <div id="skill_card">
-                                <input id="skill_irf_count" type="hidden" value="@Model.IRFList.Count()" />
+                                @if(Model.IRFList != null)
+                                {
+                                    <input id="skill_irf_count" type="hidden" value="@Model.IRFList?.Count()" />
                                 <div class="row" id="irfTilesBody">
                                     @foreach (var item in Model.IRFList)
                                     {
@@ -772,6 +774,8 @@
                                         </div>
                                     }
                                 </div>
+                                }
+                                
                                 <div class="row">
                                     <span id="loader" style="display:none">
                                         <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
