@@ -185,6 +185,8 @@ namespace Risebird.Repository
                     parameters.Add("@birthDate", model.birthDate);
                     parameters.Add("@nationality", model.nationality);
                     parameters.Add("@matchPercentage", model.matchPercentage);
+                    parameters.Add("@doc_face", model.doc_face);
+                    parameters.Add("@passport_image", model.passport_image);
                     await SqlMapper.QueryAsync(con, "usp_SaveCandidateverificationDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
