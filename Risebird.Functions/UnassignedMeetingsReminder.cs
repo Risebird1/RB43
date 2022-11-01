@@ -57,7 +57,7 @@ namespace Risebird.Functions
                             var primarySkill = meetingDetails.JDTiltle.Split('|')[0];
                             var interviewDate = meetingDetails.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt");
 
-                            SendMailToInterviewer(interviewerMailList, irfName, candidateEmail, primarySkill, interviewDate);
+                            SendMailToInterviewer(interviewerMailList, irfName, candidateEmail, primarySkill, interviewDate, null, meetingId, log);
 
                             //var sb = new StringBuilder();
                             //sb.Append("You have received this communication as a reminder to assign a meeting scheduled for the date " + interviewDate + ".");
@@ -99,7 +99,7 @@ namespace Risebird.Functions
             }
         }
 
-        public static void SendMailToInterviewer(IEnumerable<string> interviewerMailIds, string irfName, string candidateEmail, string primarySkill, string interviewDate)
+        public static void SendMailToInterviewer(IEnumerable<string> interviewerMailIds, string irfName, string candidateEmail, string primarySkill, string interviewDate, int? irfID = null, int? interviewId = null, TraceWriter log = null)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace Risebird.Functions
 
                 masg.HtmlContent = msgBody;
                 CommonSendMail _common = new CommonSendMail();
-                _common.SendMail(masg);
+                _ = _common.SendMail(masg, irfID, interviewId, log).Result;
             }
             catch (Exception)
             {
