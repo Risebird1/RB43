@@ -434,7 +434,7 @@ namespace Risebird.Repository
                     parameters.Add("@ClientCompanyList", filterModel != null && filterModel.ClientName != null ? string.Join(",", filterModel.ClientName) : null);
                     parameters.Add("@EndCLientNameList", filterModel != null && filterModel.EndClientName != null ? string.Join(",", filterModel.EndClientName) : null);
                     parameters.Add("@PrimarySkillList", filterModel != null && filterModel.PrimarySkill != null ? string.Join(",", filterModel.PrimarySkill) : null);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandType: CommandType.StoredProcedure);
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandType: CommandType.StoredProcedure, commandTimeout: 300);
                 }
 
             }

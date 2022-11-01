@@ -21,15 +21,15 @@ namespace Risebird.Functions
             try
             {
                 var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your upcoming video based interview meeting scheduled today. Kindly be available on time.";
-                var mails = new List<string>();
+                var mails = new List<Meeting>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
+                var query = "select InterviewMeetings.id, InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(35));
                 using (SqlConnection con = new SqlConnection(str))
                 {
-                    mails = con.Query<string>(query, dynamicParameters).ToList();
+                    mails = con.Query<Meeting>(query, dynamicParameters).ToList();
                 }
 
                 if (mails != null && mails.Count() > 0)
@@ -40,12 +40,12 @@ namespace Risebird.Functions
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         foreach (var mail in mails)
                         {
-                            if (!string.IsNullOrEmpty(mail))
+                            if (!string.IsNullOrEmpty(mail.interviewer))
                             {
-                                masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                                masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail.interviewer, null));
                             }
                         }
-                        masg.Subject = "Urgent Alert!! Your video based interview meeting in the next 30 minutes";
+                        masg.Subject = "Reminder! You have a video based interview meeting coming up in the next 30 minutes.";
 
 
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
@@ -53,16 +53,16 @@ namespace Risebird.Functions
                         msgBody.Append("\n");
                         msgBody.AppendLine(msg);
                         msgBody.AppendLine(
-                            "Kindly login over risebird portal and click on MyInterview menu and take interview.");
+                            "Kindly login over risebird portal and head over to \'MyInterview\' menu to join.");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("Note: Login over zoom account just 2 minutes before schedule interview and try to finish before 2 minutes.");
+                        msgBody.AppendLine("Note: Please login over zoom 2 minutes prior to the scheduled time of the interview and try finishing 2 minutes before the scheduled close time.");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
                         masg.PlainTextContent = msgBody.ToString();
                         CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
+                        _ = _common.SendMail(masg, null, mails.FirstOrDefault().id, log).Result;
                         log.Info("Interview schedule mail sent to interviewer.");
 
                     }
@@ -81,5 +81,11 @@ namespace Risebird.Functions
 
 
         }
+    }
+    public class Meeting
+    {
+        public int id { get; set; }
+        public string interviewer { get; set; }
+        
     }
 }

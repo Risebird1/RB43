@@ -293,20 +293,20 @@ namespace Risebird.Functions
                         var masg = new SendGridMessage();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
                         masg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHrContact, null));
-                        masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                        masg.Subject = $"Interview scheduled for {interviewDate} has been cancelled.";
 
                         StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("Your interview has been cancelled on interview date " + interviewDate + ". As you have already completed interview for this particular requirement.");
-                        msgBody.AppendLine("Please contact to your HR or Recruiter about your interview.");
+                        msgBody.AppendLine("Your interview scheduled for " + interviewDate + " has been cancelled as you have already completed an interview for this particular requirement.");
+                        msgBody.AppendLine("Please contact your HR or Recruiter for additional details.");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
                         masg.PlainTextContent = msgBody.ToString();
                         CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
+                        _ = _common.SendMail(masg, null, interviewId).Result;
                     }
                 }
                 //try
@@ -448,6 +448,18 @@ namespace Risebird.Functions
                     {
                         var results = con.Query(query, dynamicParameters);
                     }
+                    int? meetId = 0;
+                    var queryMeetingId= "Select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId";
+
+                    using (SqlConnection con = new SqlConnection(str))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@candidateEmail", candidateEmail);
+                        parameters.Add("@IRFId", IRFID);
+                        parameters.Add("@interviewDate", interviewDate);
+                        var resultMeetingId= con.Query<int>(queryMeetingId, parameters);
+                        meetId = resultMeetingId.FirstOrDefault();
+                    }
                     var masg = new SendGridMessage();
                     using (SqlConnection conn = new SqlConnection(str))
                     {
@@ -464,21 +476,21 @@ namespace Risebird.Functions
                         {
                             masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                        masg.Subject = $"Interview scheduled for {interviewDate} has been cancelled.";
 
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
+                        msgBody.AppendLine("You have received this communication as an interview scheduled for " + interviewDate + " has been cancelled.");
                         msgBody.AppendLine(
-                            "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                            "Thanks for your support. We will keep updating if requirements matching your skills come up in the future.");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("Thank You, Team Risebird");
+                        msgBody.AppendLine("Thank You, Team Risebird!");
 
                         masg.PlainTextContent = msgBody.ToString();
                         CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
+                        _ = _common.SendMail(masg, null, meetId.HasValue && meetId.Value != 0 ? meetId : null, log).Result;
                         log.Info("Interview cancelled mail sent to interviewer.");
                     }
                 }
@@ -662,20 +674,20 @@ namespace Risebird.Functions
                 //End:add Candidte Status
                 var masg = new SendGridMessage();
                 masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(CandidateEmailid, null));
-                masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                masg.Subject = $"Interview scheduled for {interviewDate} has been cancelled.";
 
                 StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("Your interview has been cancelled on interview date " + interviewDate + " .");
-                msgBody.AppendLine("Please contact to your HR or Recruiter to schedule the interview.");
+                msgBody.AppendLine("You have received this communication as an interview scheduled for " + interviewDate + " has been cancelled.");
+                msgBody.AppendLine("Please contact your HR or Recruiter to schedule another interview.");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
                 masg.PlainTextContent = msgBody.ToString();
                 CommonSendMail _common = new CommonSendMail();
-                _common.SendMail(masg);
+                _ = _common.SendMail(masg, null, interviewid).Result;
             }
         }
     }

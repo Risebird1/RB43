@@ -84,162 +84,6 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string searchValue = null)
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                {
-                    var model = new IRFViewModel();
-                    IRFFilter filter = null;
-                    if (HttpContext.Session.GetString("IRFfilters") != null)
-                    {
-                        filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
-
-                        //IRFilterdata  new call according to the filter applied
-                        model.IRFFilterData = await _irfService.GetIRFFilterData(emailid, profileName, filter);
-
-                    }
-                    else
-                    {
-                        model.IRFFilterData = await _irfService.GetIRFFilterData(emailid, profileName);
-                    }
-                    var irfList = _irfService.GetAllIRFs(emailid, profileName, null, searchValue, filter);
-                    irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
-                    model.IRFList = irfList;
-
-                    foreach (var item in model.IRFList)
-                    {
-                        if (item.IsPaused)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                            item.IRFStatus = "Paused";
-                        }
-
-                        else if (item.IsDeleted)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.IRFStatus = "Archived";
-                        }
-                        else if (item.EndDate >= DateTime.Now)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                            item.IRFStatus = "Active";
-                        }
-                        else
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.IRFStatus = "Archived";
-                        }
-                    }
-                    if (profileName != null && profileName.Contains("Client"))
-                    {
-                        model.IsClientUser = true;
-                    }
-                    if (TempData["SuccessErrorMessage"] != null)
-                    {
-                        model.Message = TempData["SuccessErrorMessage"].ToString();
-                        if (TempData["SuccessErrorMessage2"] != null)
-                        {
-                            model.Message2 = TempData["SuccessErrorMessage2"].ToString();
-                            TempData.Remove("SuccessErrorMessage2");
-                        }
-                        TempData.Remove("SuccessErrorMessage");
-                    }
-                    HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
-                    model.Profile = profileName;
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Index(IRFFilter filter)
-        {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                if (filter != null)
-                {
-                    HttpContext.Session.SetString("IRFfilters", JsonConvert.SerializeObject(filter));
-
-                }
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                {
-
-                    var model = new IRFViewModel();
-
-                    var irfList = _irfService.GetAllIRFs(emailid, profileName, null, null, filter);
-
-                    irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
-                    model.IRFFilterData = await _irfService.GetIRFFilterData(emailid, profileName, filter);
-
-                    if (profileName != null && profileName.Contains("Client"))
-                    {
-                        model.IsClientUser = true;
-                    }
-
-                    foreach (var item in irfList)
-                    {
-                        if (item.IsPaused)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                            item.IRFStatus = "Paused";
-                        }
-
-                        else if (item.IsDeleted)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.IRFStatus = "Archived";
-                        }
-                        else if (item.EndDate >= DateTime.Now)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                            item.IRFStatus = "Active";
-                        }
-                        else
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.IRFStatus = "Archived";
-                        }
-                    }
-
-                    model.IRFList = irfList;
-
-                    model.Profile = profileName;
-
-                    return View(model);
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult IndexPartial(int? pageNumber, string searchValue = null)
-        {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -255,12 +99,115 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("IRFfilters") != null)
                         {
                             filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
+
+                            //IRFilterdata  new call according to the filter applied
+                            model.IRFFilterData = await _irfService.GetIRFFilterData(emailid, profileName, filter);
+
+                        }
+                        else
+                        {
+                            model.IRFFilterData = await _irfService.GetIRFFilterData(emailid, profileName);
+                        }
+                        var irfList = await _irfService.GetAllIRFs(emailid, profileName, null, searchValue, filter);
+                        irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
+                        model.IRFList = irfList;
+
+                        if (model.IRFList != null)
+                        {
+                            foreach (var item in model.IRFList)
+                            {
+                                if (item.IsPaused)
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                                    item.IRFStatus = "Paused";
+                                }
+
+                                else if (item.IsDeleted)
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                    item.IRFStatus = "Archived";
+                                }
+                                else if (item.EndDate >= DateTime.Now)
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                                    item.IRFStatus = "Active";
+                                }
+                                else
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                    item.IRFStatus = "Archived";
+                                }
+                            }
                         }
 
-                        var irfList = _irfService.GetAllIRFs(emailid, profileName, pageNumber, searchValue, filter);
-                        irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
-                        model.IRFList = irfList;
-                        foreach (var item in model.IRFList)
+                        if (profileName != null && profileName.Contains("Client"))
+                        {
+                            model.IsClientUser = true;
+                        }
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            model.Message = TempData["SuccessErrorMessage"].ToString();
+                            if (TempData["SuccessErrorMessage2"] != null)
+                            {
+                                model.Message2 = TempData["SuccessErrorMessage2"].ToString();
+                                TempData.Remove("SuccessErrorMessage2");
+                            }
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
+                        model.Profile = profileName;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Index(IRFFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("IRFfilters", JsonConvert.SerializeObject(filter));
+
+                    }
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+
+                        var model = new IRFViewModel();
+
+                        var irfList = await _irfService.GetAllIRFs(emailid, profileName, null, null, filter);
+
+                        irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
+                        model.IRFFilterData = await _irfService.GetIRFFilterData(emailid, profileName, filter);
+
+                        if (profileName != null && profileName.Contains("Client"))
+                        {
+                            model.IsClientUser = true;
+                        }
+
+                        foreach (var item in irfList)
                         {
                             if (item.IsPaused)
                             {
@@ -284,6 +231,86 @@ namespace Risebird.Web.Controllers
                                 item.IRFStatus = "Archived";
                             }
                         }
+
+
+                        model.IRFList = irfList;
+
+                        model.Profile = profileName;
+
+                        return View(model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> IndexPartial(int? pageNumber, string searchValue = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        var model = new IRFViewModel();
+                        IRFFilter filter = null;
+                        if (HttpContext.Session.GetString("IRFfilters") != null)
+                        {
+                            filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
+                        }
+
+                        var irfList = await _irfService.GetAllIRFs(emailid, profileName, pageNumber, searchValue, filter);
+                        irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
+                        model.IRFList = irfList;
+
+                        if(model.IRFList != null)
+                        {
+                            foreach (var item in model.IRFList)
+                            {
+                                if (item.IsPaused)
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                                    item.IRFStatus = "Paused";
+                                }
+
+                                else if (item.IsDeleted)
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                    item.IRFStatus = "Archived";
+                                }
+                                else if (item.EndDate >= DateTime.Now)
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                                    item.IRFStatus = "Active";
+                                }
+                                else
+                                {
+                                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                    item.IRFStatus = "Archived";
+                                }
+                            }
+                        }
+
+                        
                         if (profileName != null && profileName.Contains("Client"))
                         {
                             model.IsClientUser = true;
@@ -319,7 +346,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(false);
             }
         }

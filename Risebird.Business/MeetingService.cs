@@ -924,7 +924,7 @@ namespace Risebird.Business
                     //send mail to the HRs
                     var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
                     var irfOwnersAndRestrictedOwners = _candidateRepository.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid).Result;
-                    await _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate, irfOwnersAndRestrictedOwners?.ToList());
+                    await _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate, irfOwnersAndRestrictedOwners?.ToList(), null, meetingid);
                     return true;
                 }
 
@@ -3168,8 +3168,8 @@ namespace Risebird.Business
                     interviewers.Add(result.interviewer);
                 }
 
-                _ = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                _ = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                _ = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId);
+                _ = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId);
                 _ = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                 return true;
             }
