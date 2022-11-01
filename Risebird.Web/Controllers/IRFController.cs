@@ -111,7 +111,8 @@ namespace Risebird.Web.Controllers
                         var irfList = await _irfService.GetAllIRFs(emailid, profileName, null, searchValue, filter);
                         irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
                         model.IRFList = irfList;
-                        if( model.IRFList != null)
+
+                        if (model.IRFList != null)
                         {
                             foreach (var item in model.IRFList)
                             {
@@ -138,7 +139,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        
+
                         if (profileName != null && profileName.Contains("Client"))
                         {
                             model.IsClientUser = true;
@@ -231,6 +232,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
+
                         model.IRFList = irfList;
 
                         model.Profile = profileName;
@@ -280,7 +282,7 @@ namespace Risebird.Web.Controllers
                         irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt32(x.IsSubscribed)).GetDescription(); });
                         model.IRFList = irfList;
 
-                        if (model.IRFList != null)
+                        if(model.IRFList != null)
                         {
                             foreach (var item in model.IRFList)
                             {
@@ -307,6 +309,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
+
                         
                         if (profileName != null && profileName.Contains("Client"))
                         {

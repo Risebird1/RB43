@@ -4476,7 +4476,7 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                            await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), null, id);
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
                         }
@@ -6212,8 +6212,8 @@ namespace Risebird.Web.Controllers
                         {
                             interviewers.Add(result.EmailId);
                         }
-                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid);
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid);
                         var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         DeleteMeetingLink(result.ZoomMeetingId);
                         return Json("Successfully status updated, " + value);

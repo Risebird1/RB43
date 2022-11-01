@@ -182,7 +182,7 @@ namespace Risebird.Functions
                     }
 
                     //pass the data to send Email
-                    SendMailToHR(hrMailList, noScheduleCandidateEmails, todayCandidateEmails, completedCandidateEmails, selectedCandidatesEmails, irf.IRFId, irf.Client, irf.JDTiltle.Split('|')[0]);
+                    SendMailToHR(hrMailList, noScheduleCandidateEmails, todayCandidateEmails, completedCandidateEmails, selectedCandidatesEmails, irf.IRFId, irf.Client, irf.JDTiltle.Split('|')[0], irf.id, null, log);
                     log.Info($"Interview notifications Timer trigger function executed for IRFId: {irf.IRFId}");
 
                 }
@@ -195,7 +195,7 @@ namespace Risebird.Functions
 
         }
 
-        public static void SendMailToHR(List<string> hrEmails, List<string> noScheduleCandidateEmails, List<string> todayCandidateEmails, List<string> completedCandidateEmails, List<string> selectedCandidatesEmails, string irfName, string client, string primarySkill)
+        public static void SendMailToHR(List<string> hrEmails, List<string> noScheduleCandidateEmails, List<string> todayCandidateEmails, List<string> completedCandidateEmails, List<string> selectedCandidatesEmails, string irfName, string client, string primarySkill, int? irfId = null, int? interviewId = null, TraceWriter log = null)
         {
             try
             {
@@ -406,7 +406,8 @@ namespace Risebird.Functions
 
                 masg.HtmlContent = msgBody;
                 CommonSendMail _common = new CommonSendMail();
-                _common.SendMail(masg);
+                _ = _common.SendMail(masg, irfId, interviewId, log).Result;
+                return;
             }
             catch (Exception e)
             {

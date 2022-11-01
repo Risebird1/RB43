@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -27,8 +28,8 @@ namespace Risebird.CommonHelper
         private readonly string mailFrom = string.Empty;
         private readonly IConfiguration _configuration;
         private readonly string _sendGridClientKey = string.Empty;
-
-        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -38,6 +39,7 @@ namespace Risebird.CommonHelper
             _sendGridClientKey = _configuration["SendGridKeySettings:ApiKey"];
             _errorLogger = errorLogger;
             _sendGridRepository = sendGridRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string> SendHelpsupportMail(Mail model)
@@ -200,11 +202,11 @@ namespace Risebird.CommonHelper
 
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Notification");
-                //msg.Subject = "New Interview has been assigned on date: " + meetingDate;
-                msg.Subject = "New Interview has been assigned on date: " + DateTime.Now.ToString();
+                msg.Subject = "New Interview has been assigned on date: " + meetingDate;
+                //msg.Subject = "New Interview has been assigned on date: " + DateTime.Now.ToString();
 
-                //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("harshit_jajoo@risebird.io", null));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
+                //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("harshit_jajoo@risebird.io", null));
 
                 object[] parameters = new object[] { meetingDate };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
@@ -222,7 +224,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null)
+        public async Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null, int? irfId = null)
         {
             try
             {
@@ -250,7 +252,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
@@ -259,7 +261,7 @@ namespace Risebird.CommonHelper
         }
 
         //CancelInviteCandidateTemplate
-        public async Task<string> CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId)
+        public async Task<string> CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId, int? irfId = null)
         {
             try
             {
@@ -278,7 +280,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
@@ -286,7 +288,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null)
+        public async Task<string> SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -311,7 +313,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
@@ -346,7 +348,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid)
+        public async Task<string> SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid, int? irfId = null)
         {
             try
             {
@@ -369,7 +371,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
@@ -377,7 +379,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate)
+        public async Task<string> SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate, int? irfId = null)
         {
             try
             {
@@ -399,7 +401,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
@@ -1033,7 +1035,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null)
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null)
         {
             try
             {
@@ -1057,7 +1059,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return SendMail(msg, irfId).Result;
             }
             catch (Exception ex)
             {
@@ -1239,6 +1241,8 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
+
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -1306,6 +1310,7 @@ namespace Risebird.CommonHelper
                 obj.MailBody = msg.Contents?[0].Value;
                 obj.IRFId = IRFId;
                 obj.InterviewId = interviewId;
+                obj.SentBy = currentUser;
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
                 return "Mail sent successfully.";
             }
@@ -1852,7 +1857,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null)
+        public async Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -1873,14 +1878,14 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName)
+        public async Task<string> SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName, int? irfId, int? interviewId)
         {
             try
             {
@@ -1899,7 +1904,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {

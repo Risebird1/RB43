@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Risebird.Functions
 {
     public static class InterviewAutoCancellation
@@ -54,7 +55,7 @@ namespace Risebird.Functions
                     {
                         if (interview.candidateEmail != null)
                         {
-                            SendInterviewCancelledMailtoCandidate(interview.candidateEmail, interview.ClientHrContact, interview.interviewDate.ToString("MMMM dd, yyyy"));
+                            SendInterviewCancelledMailtoCandidate(interview.candidateEmail, interview.ClientHrContact, interview.interviewDate.ToString("MMMM dd, yyyy"), null, interview.id);
                             //SendInterviewCancelledMailtoCandidate("harshitjajoo95@gmail.com", "hjajoo995@gmail.com", interview.interviewDate.ToString("MMMM dd, yyyy"));
                         }
                     }
@@ -73,7 +74,7 @@ namespace Risebird.Functions
             }
         }
 
-        public static void SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate)
+        public static void SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate, int? irfId = null, int? interviewId = null, TraceWriter log = null)
         {
             try
             {
@@ -97,12 +98,12 @@ namespace Risebird.Functions
 
                 masg.PlainTextContent = msgBody.ToString();
                 CommonSendMail _common = new CommonSendMail();
-                _common.SendMail(masg);
+                _ = _common.SendMail(masg, irfId, interviewId, log).Result;
                 //return "Mail sent successfully.";
             }
             catch (Exception ex)
             {
-                //log.Error(ex.Message);
+                log.Error(ex.Message);
                 return; //"Failed to send mail. Please check all filled and try again.";
             }
         }
