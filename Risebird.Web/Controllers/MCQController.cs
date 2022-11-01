@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static OfficeOpenXml.ExcelErrorValue;
 
 namespace Risebird.Web.Controllers
 {
@@ -1187,28 +1188,73 @@ namespace Risebird.Web.Controllers
                 {
                     if (!string.IsNullOrEmpty(_candidate.roomId))
                     {
-                        var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                        var request = new RestRequest(Method.GET);
-                        //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
-                        request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
-                        IRestResponse response = _meeting.Execute(request);
-                        var content = response.Content;
-                        if (!string.IsNullOrEmpty(content))
+                        if (_candidate.botactive)
                         {
-                            content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
-                        }
-                        try
-                        {
-                            var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
-                            _candidate.VideoLink = convertedResponse.videoUrl;
-                            if (_candidate != null && _candidate.VideoLink != null)
+                            var _meeting = new RestClient("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId);
+                            var request = new RestRequest(Method.GET);
+                            IRestResponse response = _meeting.Execute(request);
+                            var content = response.Content;
+                            if (!string.IsNullOrEmpty(content))
                             {
-                                _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                            }
+                            try
+                            {
+                                var convertedResponse = JsonConvert.DeserializeObject<MCQBotReport>(content).responseBody;
+                                _candidate.VideoLink = convertedResponse.recording;
+                                if (_candidate != null && _candidate.VideoLink != null)
+                                {
+                                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                }
+                                //save aadhaar face details
+                                if (!string.IsNullOrWhiteSpace(convertedResponse.aadharVerification.data.name))
+                                {
+                                    var values = convertedResponse.aadharVerification.data;
+                                    var _face = convertedResponse.faceVerification.data;
+                                    var aadhaarKYCmodel = new AadhaarData();
+                                    aadhaarKYCmodel.Name = values.name;
+                                    aadhaarKYCmodel.Address = values.address;
+                                    aadhaarKYCmodel.gender = values.gender;
+                                    aadhaarKYCmodel.dob = "";
+                                    aadhaarKYCmodel.doc_face = values.faceBase64;
+                                    aadhaarKYCmodel.email = _candidate.CandidateEmail;
+                                    aadhaarKYCmodel.reference_id = _candidate.SameID;
+                                    aadhaarKYCmodel.verified_using = "BOT";
+                                    aadhaarKYCmodel.matchPercentage = _face.score;
+                                    aadhaarKYCmodel.passport_image = _face.liveImage;
+                                    await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
+                            var request = new RestRequest(Method.GET);
+                            //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                            request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
+                            IRestResponse response = _meeting.Execute(request);
+                            var content = response.Content;
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                            }
+                            try
+                            {
+                                var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+                                _candidate.VideoLink = convertedResponse.videoUrl;
+                                if (_candidate != null && _candidate.VideoLink != null)
+                                {
+                                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
                         }
                     }
                 }

@@ -2,6 +2,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -18,14 +19,16 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
         private readonly IClientService _clientService;
         private readonly IIRFService _irfService;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
-        public ClientCompleteInterviewNotification(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IIRFService irfService)
+        public ClientCompleteInterviewNotification(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IIRFService irfService, IWhatsAppHelper whatsAppHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _clientService = clientService;
             _irfService = irfService;
+            _whatsAppHelper = whatsAppHelper;
         }
         [FunctionName("ClientCompleteInterviewNotification")]
         public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//Every day
@@ -52,6 +55,12 @@ namespace Risebird.MicroService
                             Subject = "Public URL for completed interview details"
                         };
                         var emailsend = _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl);
+                        //Send on whatsApp
+                        WhatsAppVM _whatsapp = new WhatsAppVM();
+                        _whatsapp.Emailid = item.EmailId;
+                        _whatsapp.Event = "Client Complete Interview";
+                        _whatsapp.buttonlink = sendreporturl.Replace("https://portal.risebird.io/Candidate/PublicAllMeetings?id=", "");
+                        await _whatsAppHelper.WhatsAppSendClientCompleteInterview(_whatsapp);
                     }
                 }
                 catch (Exception ex)

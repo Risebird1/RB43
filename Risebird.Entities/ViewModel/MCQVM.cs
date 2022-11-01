@@ -182,6 +182,7 @@ namespace Risebird.Entities.ViewModel
         public string SMCQId { get; set; }
         public bool ShareType { get; set; }
         public bool IsInterviewerVerified { get; set; }
+        public bool botactive { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {
@@ -232,5 +233,28 @@ namespace Risebird.Entities.ViewModel
     {
         public string email { get; set; }
         public string botTestLink { get; set; }
+    }
+    public class MCQBotReport
+    {
+        public MCQBotReportDetails responseBody { get; set; }
+    }
+    public class MCQBotReportDetails
+    {
+        public MCQAadhaarFace aadharVerification { get; set; }
+        public MCQAadhaarFace faceVerification { get; set; }
+        public string recording { get; set; }
+    }
+    public class MCQAadhaarFace
+    {
+        public MCQAadhaarFaceDetails data { get; set; }
+    }
+    public class MCQAadhaarFaceDetails
+    {
+        public string faceBase64 { get; set; }
+        public string name { get; set; }
+        public string address { get; set; }
+        public string gender { get; set; }
+        public string liveImage { get; set; }
+        public string score { get; set; }
     }
 }
