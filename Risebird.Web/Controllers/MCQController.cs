@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static OfficeOpenXml.ExcelErrorValue;
 
 namespace Risebird.Web.Controllers
 {
@@ -556,12 +557,13 @@ namespace Risebird.Web.Controllers
 
         #region CandidateSkillTest
         [HttpGet]
-        public IActionResult SkillTest(string Id)
+        public IActionResult SkillTest(string Id, string uniqueid)
         {
             var result = _mCQService.FetchMCQSetById(Id);
             ViewBag.Questionsetid = Id;
             var model = new CandidateDetailsForTest();
             model.MCQId = Id;
+            model.uniqueid = uniqueid;
             model.AadhaarVerification = result.FirstOrDefault().AadhaarVerification;
             return View(model);
         }
@@ -1007,7 +1009,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime, bool Candidate)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime, bool Candidate, bool botactive)
         {
             try
             {
@@ -1021,6 +1023,21 @@ namespace Risebird.Web.Controllers
                     var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
                     var timmer = details.Timer + " min";
                     string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
+                    var botlinkslist = new MCQBotResponse();
+                    if (botactive)
+                    {
+                        currenturl = currenturl + "&uniqueid=322";
+                        var aadharverificationflag = "N";
+                        if (details.AadhaarVerification)
+                        {
+                            aadharverificationflag = "Y";
+                        }
+                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl);
+                    }
+                    else
+                    {
+                        currenturl = currenturl + "&uniqueid=448";
+                    }
                     if (profileName == "Client")
                     {
                         var client = _userRepository.GetClientUserDetails(emailid);
@@ -1044,22 +1061,42 @@ namespace Risebird.Web.Controllers
                     {
                         try
                         {
+                            var result = string.Empty;
                             var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                            var _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
-                            Mail _mail = new Mail
+                            var _meetinglinks = new ShareMCQRisebirdMeetingResponse();
+                            if (botactive)
                             {
-                                TO = item,
-                                Subject = "Invitation for " + details.Title + " : " + ClientName
-                            };
-                            var result = await _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
-                            //var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
-                            string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&SMCQId=" + date1;
-                            Mail _mail1 = new Mail
+                                var _testurl = botlinkslist.emailBotUrls.Where(x => x.email == item).FirstOrDefault().botTestLink;
+                                _meetinglinks.roomId = _testurl.Split("/").LastOrDefault();
+                                Mail _mail = new Mail
+                                {
+                                    TO = item,
+                                    Subject = "Invitation for " + details.Title + " : " + ClientName
+                                };
+                                result = await _notificationHelper.SharedBotTestLink(_mail, details.Title, timmer, _testurl, ClientName);
+                            }
+                            else
                             {
-                                TO = ClientEmail,
-                                Subject = "Invitation for " + details.Title + " : " + item
-                            };
-                            await _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                                _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                                if (string.IsNullOrWhiteSpace(_meetinglinks.roomId))
+                                {
+                                    _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                                }
+                                Mail _mail = new Mail
+                                {
+                                    TO = item,
+                                    Subject = "Invitation for " + details.Title + " : " + ClientName
+                                };
+                                result = await _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
+                                //var uniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item);
+                                string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&SMCQId=" + date1;
+                                Mail _mail1 = new Mail
+                                {
+                                    TO = ClientEmail,
+                                    Subject = "Invitation for " + details.Title + " : " + item
+                                };
+                                await _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                            }
                             if (result.Contains("Mail sent successfully"))
                             {
                                 _list.PartitionKey = date1;
@@ -1068,6 +1105,7 @@ namespace Risebird.Web.Controllers
                                 _list.roomId = _meetinglinks.roomId;
                                 _list.Expiretime = Expiretime;
                                 _list.ShareType = Candidate;
+                                _list.botactive = botactive;
                                 _mCQService.AddMCQSetShareList(_list);
                             }
                         }
@@ -1154,28 +1192,73 @@ namespace Risebird.Web.Controllers
                 {
                     if (!string.IsNullOrEmpty(_candidate.roomId))
                     {
-                        var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                        var request = new RestRequest(Method.GET);
-                        //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
-                        request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
-                        IRestResponse response = _meeting.Execute(request);
-                        var content = response.Content;
-                        if (!string.IsNullOrEmpty(content))
+                        if (_candidate.botactive)
                         {
-                            content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
-                        }
-                        try
-                        {
-                            var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
-                            _candidate.VideoLink = convertedResponse.videoUrl;
-                            if (_candidate != null && _candidate.VideoLink != null)
+                            var _meeting = new RestClient("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId);
+                            var request = new RestRequest(Method.GET);
+                            IRestResponse response = _meeting.Execute(request);
+                            var content = response.Content;
+                            if (!string.IsNullOrEmpty(content))
                             {
-                                _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                            }
+                            try
+                            {
+                                var convertedResponse = JsonConvert.DeserializeObject<MCQBotReport>(content).responseBody;
+                                _candidate.VideoLink = convertedResponse.recording;
+                                if (_candidate != null && _candidate.VideoLink != null)
+                                {
+                                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                }
+                                //save aadhaar face details
+                                if (!string.IsNullOrWhiteSpace(convertedResponse.aadharVerification.data.name))
+                                {
+                                    var values = convertedResponse.aadharVerification.data;
+                                    var _face = convertedResponse.faceVerification.data;
+                                    var aadhaarKYCmodel = new AadhaarData();
+                                    aadhaarKYCmodel.Name = values.name;
+                                    aadhaarKYCmodel.Address = values.address;
+                                    aadhaarKYCmodel.gender = values.gender;
+                                    aadhaarKYCmodel.dob = values.dob;
+                                    aadhaarKYCmodel.doc_face = values.faceBase64;
+                                    aadhaarKYCmodel.email = _candidate.CandidateEmail;
+                                    aadhaarKYCmodel.reference_id = _candidate.SameID;
+                                    aadhaarKYCmodel.verified_using = "BOT";
+                                    aadhaarKYCmodel.matchPercentage = _face.score;
+                                    aadhaarKYCmodel.passport_image = _face.liveImage;
+                                    await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
+                            var request = new RestRequest(Method.GET);
+                            //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                            request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
+                            IRestResponse response = _meeting.Execute(request);
+                            var content = response.Content;
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                            }
+                            try
+                            {
+                                var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+                                _candidate.VideoLink = convertedResponse.videoUrl;
+                                if (_candidate != null && _candidate.VideoLink != null)
+                                {
+                                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
                         }
                     }
                 }
@@ -1651,6 +1734,28 @@ namespace Risebird.Web.Controllers
                 return null;
             }
 
+        }
+        #endregion
+        #region BotLinks
+        public async Task<MCQBotResponse> GenerateBotLink(string emailds, string AadhaarVerificationRequired, string MCQTestlink)
+        {
+            var model = new MCQBotRequest();
+            model.tenantUuid = "e5f37005-42a3-4510-b211-0a3c0ee675b7";
+            model.email = emailds;
+            model.aadharVerification = AadhaarVerificationRequired;
+            model.faceVerification = "N";
+            model.companyEmailVerification = "N";
+            model.videoBio = "N";
+            model.careerQuestions = "N";
+            model.testLink.mcq = MCQTestlink;
+            model.testLink.code = "";
+            var client = new RestClient("https://bot.risebird.io/api/v1/bot/invite");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
+            return convertedResponse;
         }
         #endregion
     }
