@@ -18,12 +18,13 @@ CREATE PROCEDURE [dbo].[usp_SaveSentMailDetails]
 @sg_message_id varchar(50),
 @IRFId int = null,
 @InterviewId int = null,
-@CreatedAt datetime
+@CreatedAt datetime,
+@SentBy varchar(100)
 AS    
 Begin  
 
-Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt)  
-values(@To, @Cc, @Bcc, @MailBody, @MailSubject, @sg_message_id, @IRFId, @InterviewId, @CreatedAt)  
+Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt, SentBy)  
+values(@To, @Cc, @Bcc, @MailBody, @MailSubject, @sg_message_id, @IRFId, @InterviewId, @CreatedAt, @SentBy)  
 
 End
 GO

@@ -15,13 +15,13 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewerMailOnAssinment(string interviwers, string meetingDate);
         //string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer, string Skillchannelid, string Client);
         //string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
-        Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
-        Task<string> CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId);
+        Task<string> SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null, int? irfId = null);
+        Task<string> CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId, int? irfId = null);
         // Task<string> SendQCInterviewerMail(List<string> interviwers, string meetingDate);
-        Task<string> SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null);
+        Task<string> SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null, int ? irfId = null, int? interviewId = null);
         Task<string> SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
-        Task<string> SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid);
-        Task<string> SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate);
+        Task<string> SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid, int? irfId = null);
+        Task<string> SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate, int? irfId = null);
         Task<string> CuretatedNotification(Mail model, string UserType, string EmailParameter);
         Task<string> SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf, string primarySkill, string codedName);
         Task<string> SharedVideoNofitication(Mail model, string UrlDetails, string Skills);
@@ -46,7 +46,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         Task<string> SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName, string meetingurl, DateTime interviewdatetime, int offset);
         Task<string> CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
-        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null);
+        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null);
         string RBPayNotification(Mail model, string emailid);
         string RBFNQueryNotification(Mail model, string query);
         string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
@@ -69,8 +69,8 @@ namespace Risebird.CommonHelper.Interface
         string InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer);
         string InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole, string CalendlyLink, string IRFID);
         string InterviewRequestAddClientNotification(Mail model, string JdTitle, string PrimarySkill);
-        Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
-        Task<string> SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName);
+        Task<string> SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null);
+        Task<string> SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName, int? irfId = null, int? interviewId = null);
         string SendPublicUrlToInterviewer(Mail model, string UrlDetails);
         string SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount);
         string SendPasswordresetNotification(Mail model);

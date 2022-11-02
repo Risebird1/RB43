@@ -52,7 +52,7 @@ namespace Risebird.Business.Interface
         List<IRFVm> GetUpComingIRFList();
         Task<bool> PauseIRF(int irfId, string irfName);
         bool PlayIRF(int irfId, string irfName);
-        IEnumerable<IRF> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null);
+        Task <IEnumerable<IRF>> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null);
         Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
         Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         bool SaveCandidateStatus(int candidateId, int status);
