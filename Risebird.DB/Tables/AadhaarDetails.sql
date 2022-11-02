@@ -12,11 +12,31 @@ CREATE TABLE [dbo].[AadhaarDetails](
 	[doc_face] [varchar](max) NULL,
 	[verified_using] [varchar](20) NULL,
 	[CreatedOn] [datetime] NULL,
+	[matchPercentage] [varchar](8) NULL,
+	[user_image] [varchar](max) NULL
  CONSTRAINT [PK_AadhaarDetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'matchPercentage')
+      AND Object_ID = Object_ID(N'AadhaarDetails'))
+BEGIN
+    ALTER TABLE AadhaarDetails
+    Add matchPercentage varchar(8)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'user_image')
+      AND Object_ID = Object_ID(N'AadhaarDetails'))
+BEGIN
+    ALTER TABLE AadhaarDetails
+    Add user_image varchar(max)
 END
 GO
 

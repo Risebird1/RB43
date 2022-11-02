@@ -99,7 +99,7 @@ namespace Risebird.Entities.ViewModel
         public string DOB { get; set; }
         public string CandidateImage { get; set; }
         public bool AadhaarVerification { get; set; }
-
+        public string uniqueid { get; set; }
     }
     public class MCQVMShare
     {
@@ -117,6 +117,7 @@ namespace Risebird.Entities.ViewModel
         public int Expiretime { get; set; }
         public string WhoShared { get; set; }
         public bool ShareType { get; set; }
+        public bool botactive { get; set; }
     }
     public class ProfileTypeSkills
     {
@@ -181,6 +182,7 @@ namespace Risebird.Entities.ViewModel
         public string SMCQId { get; set; }
         public bool ShareType { get; set; }
         public bool IsInterviewerVerified { get; set; }
+        public bool botactive { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {
@@ -202,5 +204,58 @@ namespace Risebird.Entities.ViewModel
         public int SeniorityLevel { get; set; }
         public string Client { get; set; }
         public string ClientHrEmailid { get; set; }
+    }
+    public class MCQBotRequest
+    {
+        public MCQBotRequest()
+        {
+            testLink = new MCQTestLinkDetails();
+        }
+        public string tenantUuid { get; set; }
+        public string email { get; set; }
+        public string aadharVerification { get; set; }
+        public string faceVerification { get; set; }
+        public string companyEmailVerification { get; set; }
+        public string videoBio { get; set; }
+        public string careerQuestions { get; set; }
+        public MCQTestLinkDetails testLink { get; set; }
+    }
+    public class MCQTestLinkDetails
+    {
+        public string mcq { get; set; }
+        public string code { get; set; }
+    }
+    public class MCQBotResponse
+    {
+        public List<MCQBotTestLinks> emailBotUrls { get; set; }
+    }
+    public class MCQBotTestLinks
+    {
+        public string email { get; set; }
+        public string botTestLink { get; set; }
+    }
+    public class MCQBotReport
+    {
+        public MCQBotReportDetails responseBody { get; set; }
+    }
+    public class MCQBotReportDetails
+    {
+        public MCQAadhaarFace aadharVerification { get; set; }
+        public MCQAadhaarFace faceVerification { get; set; }
+        public string recording { get; set; }
+    }
+    public class MCQAadhaarFace
+    {
+        public MCQAadhaarFaceDetails data { get; set; }
+    }
+    public class MCQAadhaarFaceDetails
+    {
+        public string faceBase64 { get; set; }
+        public string name { get; set; }
+        public string address { get; set; }
+        public string gender { get; set; }
+        public string liveImage { get; set; }
+        public string score { get; set; }
+        public string dob { get; set; }
     }
 }
