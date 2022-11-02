@@ -125,7 +125,7 @@ namespace Risebird.Functions
 
                 msg.HtmlContent = msgBody;
                 CommonSendMail _common = new CommonSendMail();
-                _common.SendMail(msg);
+                _=  _common.SendMail(msg).Result;
                 return;
             }
             catch (Exception)

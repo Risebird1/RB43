@@ -22,11 +22,11 @@ namespace Risebird.Functions
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
-                var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
-                var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
+                //var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
+                //var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
                 // var twilioSMSNumber = "+12055768041";
                 var receiverDetails = new List<ReceiverDetails>();
-                var query = "select im.candidateEmail, im.interviewer as InterviewerEmailId, ca.Phone as CandidatePhone, ul.MobileNumber as InterviewerPhone, im.interviewDate, irf.JDTiltle from InterviewMeetings im join UserList ulc on im.candidateEmail = ulc.EmailId join irf on irf.IRFId= im.IRFId join CandidatesMaster cm on ulc.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id join UserList ul on ul.EmailId = im.interviewer where im.confirmationStatus=1 and im.interviewDate>@timeNow";
+                var query = "select im.id, im.candidateEmail, im.interviewer as InterviewerEmailId, ca.Phone as CandidatePhone, ul.MobileNumber as InterviewerPhone, im.interviewDate, irf.JDTiltle from InterviewMeetings im join UserList ulc on im.candidateEmail = ulc.EmailId join irf on irf.IRFId= im.IRFId join CandidatesMaster cm on ulc.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id join UserList ul on ul.EmailId = im.interviewer where im.confirmationStatus=1 and im.interviewDate>@timeNow";
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 var parameters = new DynamicParameters();
                 parameters.Add("@timeNow", DateTime.Now);
@@ -39,7 +39,7 @@ namespace Risebird.Functions
                     foreach (var item in receiverDetails)
                     {
 
-                        SendMail(item.candidateEmail, item.InteviewerEmailId, item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt"));
+                        SendMail(item.candidateEmail, item.InteviewerEmailId, item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt"), null, item.id);
 
                         //var phoneNumbers = new List<string>
                         //{
@@ -77,7 +77,7 @@ namespace Risebird.Functions
                 log.Error($"Failed to send email. Please check all filled and try again.");
             }
         }
-        public static void SendMail(string candidateEmail, string interviewerEmail, string interviewDate)
+        public static void SendMail(string candidateEmail, string interviewerEmail, string interviewDate, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace Risebird.Functions
 
                 masg.HtmlContent = msgBody;
                 CommonSendMail _common = new CommonSendMail();
-                _common.SendMail(masg);
+                _ = _common.SendMail(masg, irfId, interviewId).Result;
             }
             catch (Exception)
             {
@@ -155,6 +155,7 @@ namespace Risebird.Functions
         public string InteviewerEmailId { get; set; }
         public string InteviewerPhone { get; set; }
         public DateTime interviewDate { get; set; }
+        public int id { get; set; }
     }
 
 }

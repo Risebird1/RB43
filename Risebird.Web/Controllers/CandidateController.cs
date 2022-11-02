@@ -3007,7 +3007,7 @@ namespace Risebird.Web.Controllers
                     interviewers.Add(result.EmailId);
                 }
 
-                await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), null, id);
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
@@ -4115,9 +4115,9 @@ namespace Risebird.Web.Controllers
                     {
                         interviewers.Add(result.EmailId);
                     }
-                    var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                    var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                    var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName);
+                    var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, id);
+                    var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), IRFId, id);
+                    var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, IRFId, id);
 
                     if (!string.IsNullOrEmpty(zoomMeetingId))
                     {
