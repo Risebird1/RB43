@@ -257,8 +257,8 @@
                                                 <div class="client-field">Time:</div> <div class="client-name" style="width:180px !important">@item.Timer Mins</div>
                                             </div>
                                             @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                    <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
-                                                </div>*@
+                                        <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
+                                        </div>*@
                                             <div class="col-md-12 col-sm-12">
                                                 @if (!string.IsNullOrEmpty(item.ProfileTypeName))
                                                 {
@@ -277,8 +277,8 @@
                                                 }
                                             </div>
                                             @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                    <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
-                                                </div>*@
+                                        <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
+                                        </div>*@
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                 <div class="client-field">Primary Skill:</div> <div class="client-name"> @item.PrimarySkills </div>
                                             </div>
@@ -528,20 +528,23 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     @*<div class="sharing">
-                            <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Please Select Video Recording Option</label>
-                            <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
-                                <option value="0">None</option>
-                                <option value="1">Recording Only</option>
-                                <option value="2">Recording and Uploading</option>
-                            </select>
-                        </div>*@
-                        <div class="sharing">
-                            <label class="label-field desp-label" for="MCQ Share To" style="font-weight:normal;"> Share To</label>
-                            <select id="txtsharetype" class="form-control " style="margin-bottom:10px;">
-                                <option value="0">Candidate</option>
-                                <option value="1">Interviewer</option>
-                            </select>
-                        </div>
+                    <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Please Select Video Recording Option</label>
+                    <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
+                    <option value="0">None</option>
+                    <option value="1">Recording Only</option>
+                    <option value="2">Recording and Uploading</option>
+                    </select>
+                    </div>*@
+                    <div class="sharing">
+                        <label class="label-field desp-label" for="MCQ Share To" style="font-weight:normal;"> Share To</label>
+                        <select id="txtsharetype" class="form-control " style="margin-bottom:10px;" onchange="changesharetype()">
+                            <option value="0">Candidate</option>
+                            <option value="1">Interviewer</option>
+                        </select>
+                    </div>
+                    <div class="sharing">
+                        <input type="checkbox" style="margin-bottom:10px;" id="chkbotlink" />  Share Bot Link
+                    </div>
                     <div class="sharing">
                         <label class="label-field desp-label" for="Please enter Meeting Date Time" style="font-weight:normal;"> Meeting Date Time</label>
                         <input type="datetime-local" placeholder="Meeting Date Time" id="txtmeetingdatetime" class="form-control " style="margin-bottom:10px;" />
@@ -778,8 +781,8 @@
                     window.location.href = 'Index';
                 }
             });
-            }
-            else {
+        }
+        else {
             alert("Please fill all the fields.");
         }
     }
@@ -787,7 +790,7 @@
         var url = '/MCQ/CandidateTestDetails?id=' + id;
         window.location.href = url;
     }
-    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType,clients,aadhaarVerification) {
+    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType, clients, aadhaarVerification) {
         openCreatePopUp();
         $("#idMcqTile").val(idMcq);
         $("#txtpartialid").val(id);
@@ -820,7 +823,7 @@
         $("#ddlEmploymentType").val(employmentTypeValues);
         $("#ddlEmploymentType").select2().trigger('change');
 
-        var clientList= (clients).split(",");
+        var clientList = (clients).split(",");
         $("#ddlClients").val(clientList);
         $("#ddlClients").select2().trigger('change');
         var bool_value = aadhaarVerification == "True" ? true : false
@@ -837,6 +840,7 @@
         modal.style.display = "block";
         $("#txtsharePartialid").val(id);
         mindatefield();
+        changesharetype();
     }
     function mindatefield() {
         var today = new Date();
@@ -864,19 +868,19 @@
                         break;
                     }
                 }
-                var candidatetype=false;
-                if($("#txtsharetype").val()==1)
-                {
-                    candidatetype=true;
+                var candidatetype = false;
+                if ($("#txtsharetype").val() == 1) {
+                    candidatetype = true;
                 }
-                if (clientemail == true && emailflag==true) {
+                var botactive = document.getElementById('chkbotlink').checked;
+                if (clientemail == true && emailflag == true) {
                     var date1 = new Date($("#txtmeetingdatetime").val());
                     var date2 = new Date();
                     if (date1 > date2) {
                         $.ajax({
                             type: "POST",
                             url: "/MCQ/ShareTestLink",
-                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: candidatetype },
+                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: candidatetype, botactive: botactive },
                             success: function (data) {
                                 if (data == "success") {
                                     alert("Successfully share the Phone Screen+ set.");
@@ -905,20 +909,20 @@
         window.location.href = "Questionpage?Id=" + id;
     }
     function ResetFilter() {
-           window.location.href = "/MCQ/ResetMCQFilter";
+        window.location.href = "/MCQ/ResetMCQFilter";
     }
     function ApplySessionFilter() {
 
         var skillsset = @Html.Raw(Json.Serialize(PrimarySkill));
-        @*var Secondaryskills =  @Html.Raw(Json.Serialize(SecondarySkill));*@
-        @*var CompentencyLevels=  @Html.Raw(Json.Serialize(CompentencyLevel));
-        var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));*@
+    @*var Secondaryskills =  @Html.Raw(Json.Serialize(SecondarySkill));*@
+    @*var CompentencyLevels=  @Html.Raw(Json.Serialize(CompentencyLevel));
+            var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));*@
 
-        var seniorityLevel =  @Html.Raw(Json.Serialize(SeniorityLevel));
-        var countryType =  @Html.Raw(Json.Serialize(CountryType));
-        var companyType =  @Html.Raw(Json.Serialize(CompanyType));
-        var employmentType =  @Html.Raw(Json.Serialize(EmploymentType));
-        var difficultyLevel =  @Html.Raw(Json.Serialize(DifficultyLevel));
+                                            var seniorityLevel = @Html.Raw(Json.Serialize(SeniorityLevel));
+        var countryType = @Html.Raw(Json.Serialize(CountryType));
+        var companyType = @Html.Raw(Json.Serialize(CompanyType));
+        var employmentType = @Html.Raw(Json.Serialize(EmploymentType));
+        var difficultyLevel = @Html.Raw(Json.Serialize(DifficultyLevel));
 
         //$("#SelectionStatus").val(levelset);
         $("#PrimarySkill").val(skillsset);
@@ -935,7 +939,7 @@
         modal.style.display = "block";
         var urlcurrent = window.location.href;
         urlcurrent = urlcurrent.replace("Index", "SkillTest");
-        urlcurrent = urlcurrent + "?Id=" + index;
+        urlcurrent = urlcurrent + "?Id=" + index + "&uniqueid=448";
         $("#txtvideoUrls").text(urlcurrent);
     }
     function closePublicUrlShareModel() {
@@ -1003,6 +1007,15 @@
                 )
             }
         })
+    }
+    function changesharetype() {
+        var value = $('#txtsharetype').val();
+        if (value == 0) {
+            document.getElementById('chkbotlink').disabled = false;
+        } else {
+            document.getElementById('chkbotlink').checked = false;
+            document.getElementById('chkbotlink').disabled = true;
+        }
     }
 </script>
 
