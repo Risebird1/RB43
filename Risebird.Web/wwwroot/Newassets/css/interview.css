@@ -2096,6 +2096,10 @@ select:-moz-focusring {
     font-family: serif;
     text-align: center;
     animation: animate 1.5s linear infinite;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
 }
 
 @keyframes animate {
