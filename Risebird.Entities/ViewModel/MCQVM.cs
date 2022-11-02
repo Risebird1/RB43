@@ -256,5 +256,6 @@ namespace Risebird.Entities.ViewModel
         public string gender { get; set; }
         public string liveImage { get; set; }
         public string score { get; set; }
+        public string dob { get; set; }
     }
 }

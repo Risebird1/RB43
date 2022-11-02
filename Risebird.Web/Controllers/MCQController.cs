@@ -1219,7 +1219,7 @@ namespace Risebird.Web.Controllers
                                     aadhaarKYCmodel.Name = values.name;
                                     aadhaarKYCmodel.Address = values.address;
                                     aadhaarKYCmodel.gender = values.gender;
-                                    aadhaarKYCmodel.dob = "";
+                                    aadhaarKYCmodel.dob = values.dob;
                                     aadhaarKYCmodel.doc_face = values.faceBase64;
                                     aadhaarKYCmodel.email = _candidate.CandidateEmail;
                                     aadhaarKYCmodel.reference_id = _candidate.SameID;
