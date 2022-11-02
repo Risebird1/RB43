@@ -1078,6 +1078,10 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                                if (string.IsNullOrWhiteSpace(_meetinglinks.roomId))
+                                {
+                                    _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                                }
                                 Mail _mail = new Mail
                                 {
                                     TO = item,
