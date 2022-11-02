@@ -8,9 +8,10 @@
                 <thead>
                     <tr>
                         <th>Type</th>
-                        <th>Interviewer Name</th>
+                        <th class="text-center">Mobile</th>
+                        <th>EmailId</th>
                         <th class="text-center">Call</th>
-                       
+
                         <th>ResumeLink</th>
                         @if (ViewBag.Type == "IRF")
                         {
@@ -18,7 +19,7 @@
                         }
                         <th>Available</th>
                         <th>Total Interviews</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +36,9 @@
                         {
                             <td style="color: #ff7bf5">@item.Type</td>
                         }
-                        <td>@item.InterviewerName</td>
+                        <td class="text-center">@item.MobileNumber</td>
+               
+                        <td>@item.EmailId</td>
                         <td class="text-center">
                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                             {
@@ -88,7 +91,7 @@
                             }
                         }
                         <td class="text-center">@item.TotalInterviews</td>
-                       
+
                     </tr>
                     }
 
