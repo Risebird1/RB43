@@ -1322,7 +1322,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill)
+        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill)
         {
             try
             {
@@ -1383,16 +1383,16 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
 
             }
         }
-        public string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist)
+        public async Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist)
         {
             try
             {
@@ -1422,14 +1422,14 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception ex)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate)
+        public async Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate)
         {
             try
             {
@@ -1460,7 +1460,7 @@ namespace Risebird.CommonHelper
                     string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotification.html");
                     string msgBody = string.Format(rawEmail, parameters);
                     msg.HtmlContent = msgBody;
-                    return SendMail(msg).Result;
+                    return await SendMail(msg);
                 }
             }
             catch (Exception)
@@ -1468,7 +1468,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string CandidateWaitingEINotification(Mail model, string zoomlink)
+        public async Task<string> CandidateWaitingEINotification(Mail model, string zoomlink)
         {
             try
             {
@@ -1490,14 +1490,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string AppologyNotificationToCandidate(Mail model, string candidateName)
+        public async Task<string> AppologyNotificationToCandidate(Mail model, string candidateName)
         {
             try
             {
@@ -1519,7 +1519,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingForInterviewer.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {

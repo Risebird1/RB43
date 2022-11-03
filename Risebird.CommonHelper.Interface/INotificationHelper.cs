@@ -51,11 +51,11 @@ namespace Risebird.CommonHelper.Interface
         Task<string> RBFNQueryNotification(Mail model, string query);
         Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
         Task<string> RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
-        string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
-        string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
-        string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate);
-        string CandidateWaitingEINotification(Mail model, string zoomlink);
-        string AppologyNotificationToCandidate(Mail model, string candidateName);
+        Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
+        Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
+        Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate);
+        Task<string> CandidateWaitingEINotification(Mail model, string zoomlink);
+        Task<string> AppologyNotificationToCandidate(Mail model, string candidateName);
         string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName);
         string AppologyNotificationToCandidateSecond(Mail model, string candidateName);
         string InstaClientNotification(Mail model, string RequiredSkill);
