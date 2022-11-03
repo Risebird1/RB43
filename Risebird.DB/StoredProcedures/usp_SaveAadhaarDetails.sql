@@ -17,11 +17,13 @@ CREATE PROCEDURE [dbo].[usp_SaveAadhaarDetails]
 @gender varchar(1),  
 @dob varchar(20),  
 @doc_face varchar(max),  
-@verified_using varchar(20)  
+@verified_using varchar(20),
+@matchPercentage varchar(8),
+@passport_image varchar(max)
 AS    
-Begin   
-Insert into AadhaarDetails(Name,Address,email,reference_id,gender,dob,doc_face,verified_using,CreatedOn)  
-values(@Name,@Address,@email,@reference_id,@gender,@dob,@doc_face,@verified_using,Getdate())  
+Begin 
+Insert into AadhaarDetails(Name,Address,email,reference_id,gender,dob,doc_face,verified_using,CreatedOn,matchPercentage,user_image)  
+values(@Name,@Address,@email,@reference_id,@gender,@dob,@doc_face,@verified_using,Getdate(),@matchPercentage,@passport_image)  
 
 Update UserList set AadhaarVerified=1 where EmailId=@email
 End

@@ -2861,11 +2861,11 @@ namespace Risebird.Business
                     _whatsapp.Header = client.Name;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
-                        _whatsapp.Event = "Interview Schedule Risebird";
+                        _whatsapp.Event = "Interview Schedule";
                     }
                     else
                     {
-                        _whatsapp.Event = "Interview Schedule";
+                        _whatsapp.Event = "Interview Schedule Risebird";
                     }
                     _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
                     if (!string.IsNullOrEmpty(oneTimeSchedulingLink))

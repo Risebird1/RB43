@@ -40,6 +40,8 @@ namespace Risebird.Repository
                     parameters.Add("@dob", model.dob);
                     parameters.Add("@doc_face", model.doc_face);
                     parameters.Add("@verified_using", model.verified_using);
+                    parameters.Add("@matchPercentage", model.matchPercentage);
+                    parameters.Add("@passport_image", model.passport_image);
                     await SqlMapper.QueryAsync(con, "usp_SaveAadhaarDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;

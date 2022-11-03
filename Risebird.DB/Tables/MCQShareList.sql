@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[MCQShareList](
 	[Expiretime] [int] NULL,
 	[WhoShared] [varchar](200) NULL,
 	[ShareType] [bit],
+	[botactive] [bit],
  CONSTRAINT [PK_MCQShareList] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -48,5 +49,14 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE MCQShareList
     Add ShareType bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'botactive')
+      AND Object_ID = Object_ID(N'MCQShareList'))
+BEGIN
+    ALTER TABLE MCQShareList
+    Add botactive bit
 END
 GO

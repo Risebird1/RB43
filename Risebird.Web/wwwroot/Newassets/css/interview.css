@@ -2090,3 +2090,22 @@ select:-moz-focusring {
         width: 27% !important;
     }
 }
+
+.blinkMessage {
+    font-size: 11px !important;
+    font-family: serif;
+    text-align: center;
+    animation: animate 1.5s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0;
+    }
+}

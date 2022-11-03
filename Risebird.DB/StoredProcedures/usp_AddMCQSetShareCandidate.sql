@@ -8,32 +8,34 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE usp_AddMCQSetShareCandidate          
-@PartitionKey varchar(50),          
-@ApplyingCompany varchar(50),          
-@ClientHR varchar(200),          
-@EmailAddress varchar(200),          
-@MCQId varchar(50),          
-@MCQSet varchar(50),          
-@Videorecording int,          
-@status int,        
-@roomId varchar(50),      
-@Expiretime int,    
-@WhoShared varchar(200),  
-@ShareDate datetime,
-@ShareType bit
-AS          
-BEGIN         
-Declare @MCQShareCount int      
-Select @MCQShareCount=Count(*) From MCQShareList where EmailAddress=@EmailAddress and MCQId=@MCQId      
-if(@MCQShareCount>0)      
-begin      
-Update MCQShareList set ShareDate=@ShareDate,Expiretime=@Expiretime,WhoShared=@WhoShared,roomId=@roomId,ShareType=@ShareType where EmailAddress=@EmailAddress and MCQId=@MCQId       
-end      
-else      
-begin      
-Insert into MCQShareList (PartitionKey,ApplyingCompany,ClientHR,EmailAddress,MCQId,MCQSet,Videorecording,status,ShareDate,roomId,Expiretime,WhoShared,ShareType)           
-values(@PartitionKey,@ApplyingCompany,@ClientHR,@EmailAddress,@MCQId,@MCQSet,@Videorecording,@status,@ShareDate,@roomId,@Expiretime,@WhoShared,@ShareType)          
-end      
+CREATE PROCEDURE usp_AddMCQSetShareCandidate            
+@PartitionKey varchar(50),            
+@ApplyingCompany varchar(50),            
+@ClientHR varchar(200),            
+@EmailAddress varchar(200),            
+@MCQId varchar(50),            
+@MCQSet varchar(50),            
+@Videorecording int,            
+@status int,          
+@roomId varchar(50),        
+@Expiretime int,      
+@WhoShared varchar(200),    
+@ShareDate datetime,  
+@ShareType bit,
+@botactive bit
+AS            
+BEGIN           
+Declare @MCQShareCount int        
+Select @MCQShareCount=Count(*) From MCQShareList where EmailAddress=@EmailAddress and MCQId=@MCQId        
+if(@MCQShareCount>0)        
+begin        
+Update MCQShareList set ShareDate=@ShareDate,Expiretime=@Expiretime,WhoShared=@WhoShared,roomId=@roomId,ShareType=@ShareType,
+botactive=@botactive where EmailAddress=@EmailAddress and MCQId=@MCQId         
+end        
+else        
+begin        
+Insert into MCQShareList (PartitionKey,ApplyingCompany,ClientHR,EmailAddress,MCQId,MCQSet,Videorecording,status,ShareDate,roomId,Expiretime,WhoShared,ShareType,botactive)             
+values(@PartitionKey,@ApplyingCompany,@ClientHR,@EmailAddress,@MCQId,@MCQSet,@Videorecording,@status,@ShareDate,@roomId,@Expiretime,@WhoShared,@ShareType,@botactive)            
+end        
 END
   Go
