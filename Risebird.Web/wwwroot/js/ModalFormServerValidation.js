@@ -71,6 +71,14 @@ $(document).ready(function () {
 
     });
 
+    var recipientActivity_placeholderElement = $('#modal_recipientActivity_placeholder');
+
+
+    $('button[data-toggle="ajax-modal-recipientActivity"]').click(function (event) {
+        OpenPopUp(event, recipientActivity_placeholderElement);
+
+    });
+
 });
 
 function ChangeClientFeedbackRating(value) {

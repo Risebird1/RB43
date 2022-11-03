@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Risebird.Business;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -14,10 +17,12 @@ namespace Risebird.Web.Controllers
     {
         private INotificationHelper _notificationHelper;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public MailController(INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger)
+        private IMailService _mailService;
+        public MailController(INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IMailService mailService)
         {
             _notificationHelper = notificationHelper;
             _applicationErrorLogger = applicationErrorLogger;
+            _mailService = mailService;
         }
 
         [HttpGet]
@@ -94,6 +99,81 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Failed");
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MailRecipients(string recipientType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
+                    {
+                        if (string.IsNullOrEmpty(recipientType))
+                        {
+                            recipientType = "Candidate";
+                        }
+
+                        ViewBag.recipientType = recipientType;
+
+                        var recipients = await _mailService.GetRecipients(recipientType);
+
+                        ViewBag.UserProfile = profileName;
+
+                        return View(recipients);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetRecipientMailActivities(string recipientEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var model = await _mailService.GetEmailRecipientActivities(recipientEmail);
+                    ViewBag.RecipientEmail = recipientEmail;
+                    return PartialView("GetRecipientMailActivities", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
             }
         }
 
