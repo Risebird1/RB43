@@ -303,7 +303,7 @@ namespace Risebird.Web.Controllers
                         TO = "finance@risebird.io",
                         Subject = "Interviewer Submitted Payment details"
                     };
-                    var emailsend = _notificationHelper.RBPayNotification(_mail, emailid);
+                    var emailsend = await _notificationHelper.RBPayNotification(_mail, emailid);
                     return RedirectToAction("RBPayment");
                 }
                 else
@@ -470,7 +470,7 @@ namespace Risebird.Web.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        public JsonResult SendQuerybyFN(string emailid, string query)
+        public async Task<JsonResult> SendQuerybyFN(string emailid, string query)
         {
             //send a mail to interviewer
             Mail _mail = new Mail
@@ -479,7 +479,7 @@ namespace Risebird.Web.Controllers
                 CC = "finance@risebird.io",
                 Subject = "RiseBird: Finance Team has query regarding you payment request"
             };
-            var emailsend = _notificationHelper.RBFNQueryNotification(_mail, query);
+            var emailsend = await _notificationHelper.RBFNQueryNotification(_mail, query);
             if (emailsend == "Mail sent successfully.")
             {
                 return Json("Success");
@@ -550,7 +550,7 @@ namespace Risebird.Web.Controllers
                 CC = "finance@risebird.io",
                 Subject = "RiseBird: Finance Team has done payment"
             };
-            var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
+            var emailsend = await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
             //End:Send email to Interviewer
             WhatsAppVM _whatsApp = new WhatsAppVM();
             _whatsApp.Emailid = email;
@@ -669,7 +669,7 @@ namespace Risebird.Web.Controllers
                     CC = "finance@risebird.io",
                     Subject = "RiseBird: Finance Team done advance payment"
                 };
-                var emailsend = _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), sb);
+                var emailsend = await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), sb);
                 WhatsAppVM _whatsApp = new WhatsAppVM();
                 _whatsApp.Emailid = Interviewer;
                 _whatsApp.InterviewDate = Amount.ToString();

@@ -46,11 +46,11 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         Task<string> SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName, string meetingurl, DateTime interviewdatetime, int offset);
         Task<string> CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
-        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null);
-        string RBPayNotification(Mail model, string emailid);
-        string RBFNQueryNotification(Mail model, string query);
-        string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
-        string RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
+        Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null);
+        Task<string> RBPayNotification(Mail model, string emailid);
+        Task<string> RBFNQueryNotification(Mail model, string query);
+        Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
+        Task<string> RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
         string SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
         string CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
         string InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate);

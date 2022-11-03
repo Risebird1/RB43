@@ -1036,7 +1036,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null)
+        public async Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null)
         {
             try
             {
@@ -1060,14 +1060,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg, irfId).Result;
+                return await SendMail(msg);
             }
             catch (Exception ex)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string RBPayNotification(Mail model, string emailid)
+        public async Task<string> RBPayNotification(Mail model, string emailid)
         {
             try
             {
@@ -1087,14 +1087,14 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string RBFNQueryNotification(Mail model, string query)
+        public async Task<string> RBFNQueryNotification(Mail model, string query)
         {
             try
             {
@@ -1118,14 +1118,14 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string ChannelRequestNotification(Mail model, string client, string Skill, string Requester)
+        public async Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester)
         {
             try
             {
@@ -1143,14 +1143,14 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb)
+        public async Task<string> RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb)
         {
             try
             {
@@ -1189,7 +1189,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception ex)
             {
