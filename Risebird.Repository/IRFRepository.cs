@@ -3137,14 +3137,7 @@ namespace Risebird.Repository
                 parameters.Add("@CurrentLocation", obj.CurrentLocation);
                 parameters.Add("@CurrentEmployer", obj.CurrentEmployer);
                 int numberOfLetters = obj.Phone.ToCharArray().Length;
-                if (numberOfLetters >= 9 && int.TryParse(obj.Phone, out int value))
-                {
-                    parameters.Add("@Phone", obj.Phone);
-                }
-                else
-                {
-                    parameters.Add("@Phone", string.Empty);
-                }
+                parameters.Add("@Phone", obj.Phone);          
                 parameters.Add("@TotalExperience", obj.TotalExperience);
                 parameters.Add("@CurrentSalary", obj.CurrentSalary);
                 parameters.Add("@ExpectedSalary", obj.ExpectedSalary);

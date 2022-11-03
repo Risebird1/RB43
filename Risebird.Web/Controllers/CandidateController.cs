@@ -2779,11 +2779,10 @@ namespace Risebird.Web.Controllers
                                             if (workSheet.Cells[rowIterator, 2].Value != null)
                                             {
                                                 try
-                                                {
+                                                    {
                                                     string str = workSheet.Cells[rowIterator, 4].Value.ToString();
                                                     int numberOfLetters = str.ToCharArray().Length;
-                                                    if (numberOfLetters >= 9 && int.TryParse(str, out int phoneNumber))
-                                                    {
+                                                    var phoneValidate = numberOfLetters >= 9 && int.TryParse(str, out int phoneNumber);
                                                         var candidate = new CandidateQuickAddModel
                                                         {
                                                             Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
@@ -2791,7 +2790,7 @@ namespace Risebird.Web.Controllers
                                                             ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
                                                   ? workSheet.Cells[rowIterator, 3].Value.ToString()
                                                   : string.Empty,
-                                                            Phone = (workSheet.Cells[rowIterator, 4].Value != null)
+                                                            Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
                                                   ? ("+" + workSheet.Cells[rowIterator, 4].Value)
                                                   : string.Empty,
                                                             WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
@@ -2809,35 +2808,7 @@ namespace Risebird.Web.Controllers
                                                         if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
                                                         {
                                                             candidateList.Add(candidate);
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        var candidate = new CandidateQuickAddModel
-                                                        {
-                                                            Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
-                                                            ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
-                                                ? workSheet.Cells[rowIterator, 3].Value.ToString()
-                                                : string.Empty,
-                                                            Phone = string.Empty,
-                                                            WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                                ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                                : string.Empty,
-                                                            //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                                            //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
-                                                            //    : string.Empty,
-                                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
-
-                                                            ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
-                                                            IRFId = IRFId
-
-                                                        };
-                                                        if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
-                                                        {
-                                                            candidateList.Add(candidate);
-                                                        }
-                                                    }
+                                                        }                                                                                                       
                                                 }
                                                 catch (Exception ex)
                                                 {

@@ -1008,7 +1008,17 @@ namespace Risebird.Business
                 }
                 var userId = _irfRepository.GetUserId(emailId?.Trim().ToLower(), profile);
                 obj.AddedByUserId = userId;
-                var result = _irfRepository.AddCandidate(obj).Result;
+                int numberOfLetters = obj.Phone.ToCharArray().Length;
+                var phoneValidate = numberOfLetters >= 9 && int.TryParse(obj.Phone, out int value);
+                string result = string.Empty;
+                if (phoneValidate == true)
+                {
+                    result = _irfRepository.AddCandidate(obj).Result;
+                }
+                else
+                {
+                    result = string.Empty;
+                }
                 if (result.Contains("successfully"))
                 {
                     //get all resume evaluators and hrs to send mails to
