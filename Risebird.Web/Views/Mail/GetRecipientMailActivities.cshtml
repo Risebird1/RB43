@@ -1,0 +1,121 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MailRecipientActivityDetailsVM>
+@using Newtonsoft.Json
+@using Risebird.Entities.ViewModel
+<style>
+    
+    /*table.fixedSize {
+        table-layout: fixed;
+        width: 100%;
+    }*/
+</style>
+
+@*<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>*@
+
+<!-- Modal -->
+<div class="modal fade" style="height:1000px" id="modalRecipientActivity" tabindex="-1" role="dialog" aria-labelledby="addCommentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCommentLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="recipientActivity_modal_body" style="max-height:400px; overflow:auto">
+
+                
+                @if (Model != null && Model.Count() > 0)
+                {
+                    <div class="scrollers" style="overflow-y:auto">
+                        <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Mail Subject</th>
+                                    <th>Mail Content</th>
+                                    <th>Event/Activity</th>
+                                    <th>Date</th>
+                                    <th>Skill Channel</th>
+                                    <th>Interview Date</th>
+                                    <th>Url(In mail content)</th>
+                                    <th>Sent By</th>
+                                </tr>
+                            </thead>
+                            <tbody @*style="overflow-y:scroll"*@>
+
+                                @foreach (var partitionNumber in Model.Select(x => x.partitionNumber).Distinct())
+                                {
+                                    var dataModel = Model.Where(x => x.partitionNumber == partitionNumber).ToList();
+                                    int rowSpan = dataModel.Count();
+                                    //int counter = 0;
+                                    int maxCount = rowSpan - 1;
+                                    for (int i = 0; i <= maxCount; i++)
+                                    {
+                                        var jsonObj = JsonConvert.SerializeObject(dataModel[i]);
+                                        <tr>
+                                            @if (i == 0)
+                                            {
+                                                <td rowspan="@rowSpan" title="@Html.Raw(dataModel[i].MailSubject)">@dataModel[i].MailSubject</td>
+                                                <td rowspan="@rowSpan">
+                                                    <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue"><u>Content</u></a>
+                                                </td>
+                                            }
+                                            <td>@dataModel[i].eventType</td>
+                                            <td>@dataModel[i].CreatedAt</td>
+                                            
+                                            <td>@dataModel[i].SkillChannelName</td>
+                                            <td>@dataModel[i].interviewDate</td>
+                                            @if (!string.IsNullOrEmpty(dataModel[i].url))
+                                            {
+                                                <td title="@dataModel[i].url">URL</td>
+
+                                            }
+                                            else
+                                            {
+                                                <td>NA</td>
+                                            }
+                                            <td>@dataModel[i].SentBy</td>
+                                        </tr>
+                                    }
+
+                                }
+
+                            </tbody>
+                            @*<tfoot>
+                        <tr>
+                        @if (Model.Profile != "Interviewer")
+                        {
+                        <th>User</th>
+                        }
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        </tr>
+                        </tfoot>*@
+                        </table>
+                    </div>
+                    
+                }
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>*@
+                @*@if (Model.Profile == "Client")
+                {
+                    <div class="col-md-12 text-right clearfix">
+                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save">
+                    </div>
+
+                }*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    function OpenHtmlDocument(htmlData)
+    {
+        var mailBody = htmlData.MailBody;
+        let child = window.open("about:blank", "mailContent");
+        child.document.write(mailBody);
+        child.document.close();
+    }
+</script>
