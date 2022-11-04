@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -194,6 +195,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsMeetingNotificationSend { get; set; }
         [Display(Name = "Auto cancel candidate interview")]
         public bool IsMeetingAutoCancelled { get; set; }
+
+        public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
     }
     public class InterviewerIds
     {
@@ -306,6 +309,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsCandidateavailability { get; set; }
         public bool IsMeetingNotificationSend { get; set; }
         public bool IsMeetingAutoCancelled { get; set; }
+        public string MeetingPlatform { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

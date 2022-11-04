@@ -1522,7 +1522,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsAadhaarVerificationRequired, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                                 viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1538,7 +1538,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsCandidateavailability, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                                 viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1554,7 +1554,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsMeetingAutoCancelled, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                                 viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1571,7 +1571,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsMeetingNotificationSend, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
+                                                                                 viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1582,10 +1582,22 @@
                                                                     <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-md-4 col-sm-4 pull-left">
+                                                                <h5>Meeting Platform</h5>
+                                                                <div class="form-group">
+                                                                    @foreach (var platform in Model.MeetingPlatformOptions)
+                                                                    {
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" asp-for="MeetingPlatform" value="@platform" style="position: relative; top: 3px; margin: 0px 5px;" />@platform<br />
+                                                                        </label>
+                                                                    }
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                         }
                                         else
                                         {

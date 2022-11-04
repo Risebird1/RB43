@@ -1927,6 +1927,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@AssessmentGroupId"].Value = irfDetails.AssessmentGroupId;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
                     //cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
 

@@ -35,6 +35,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@PrimarySkillInvite varchar(100),  
 	@BillingOwner int,  
 	@AssessmentGroupId varchar(100),
+	@MeetingPlatform varchar(100),
 	--@IsQCRequired bit,
 	@IsJoinabilitySelectabilityRequired bit,
 	@IsGeneralSkillRequired bit,
@@ -100,6 +101,7 @@ BEGIN
 	,[PrimarySkillInvite]=@PrimarySkillInvite    
 	,[BillingOwner]=@BillingOwner
 	,[AssessmentGroupId]=@AssessmentGroupId
+	,[MeetingPlatform]=@MeetingPlatform
 	--,[IsQCRequired] = @IsQCRequired
 	,[IsJoinabilitySelectabilityRequired] = @IsJoinabilitySelectabilityRequired
 	,[IsGeneralSkillRequired] = @IsGeneralSkillRequired

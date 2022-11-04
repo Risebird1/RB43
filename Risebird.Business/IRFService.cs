@@ -499,29 +499,12 @@ namespace Risebird.Business
                 var transHR = _irfRepository.GetTransHR(id);
                 var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
-                //IList<TransInterviewer> templateInterviewers; 
-                //if (templateId.HasValue && templateId.Value > 0)
-                //{
-                //    templateInterviewers = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(templateId.Value);
-
-                //    foreach (var interviewer in templateInterviewers)
-                //    {
-
-                //        if(!transInterviewer.Any(x=>x.UserId == interviewer.UserId))
-                //        {
-                //            interviewer.IsActive = false;
-                //        }
-                //    }
-                //    model.InterviewerCollection = (IList<TransInterviewer>)(templateInterviewers?.OrderByDescending(x => x.IsActive).ToList());
-                //}
-                //else
-                //{
-                //    model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
-                //}
+               //model.MeetingPlatform= IRF.meeting
 
 
                 //assign values retrieved to the model
                 model.id = IRF.id;
+                model.MeetingPlatform = IRF.MeetingPlatform;
                 model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
                 model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
