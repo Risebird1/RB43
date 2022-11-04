@@ -144,7 +144,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: We apologise for the delay - Please wait for 5 more mins"
                         };
-                        var resultset1 = _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
+                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
                     }
                     else if (item.EmailType == "Reschedule")
                     {
@@ -169,7 +169,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: Due to some emergency, the interviewer is unable to join the interview. We apologise for the inconvenience, please reschedule."
                         };
-                        var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
+                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
                         if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))

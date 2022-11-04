@@ -56,9 +56,9 @@ namespace Risebird.CommonHelper.Interface
         Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate);
         Task<string> CandidateWaitingEINotification(Mail model, string zoomlink);
         Task<string> AppologyNotificationToCandidate(Mail model, string candidateName);
-        string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName);
-        string AppologyNotificationToCandidateSecond(Mail model, string candidateName);
-        string InstaClientNotification(Mail model, string RequiredSkill);
+        Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName);
+        Task<string> AppologyNotificationToCandidateSecond(Mail model, string candidateName);
+        Task<string> InstaClientNotification(Mail model, string RequiredSkill);
         string InstaInterviewerNotification(Mail model, string RequiredSkill);
         string InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
         string InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName);

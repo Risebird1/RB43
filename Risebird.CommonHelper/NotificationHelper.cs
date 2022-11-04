@@ -1526,7 +1526,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName)
+        public async Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName)
         {
             try
             {
@@ -1547,14 +1547,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterview.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string AppologyNotificationToCandidateSecond(Mail model, string candidateName)
+        public async Task<string> AppologyNotificationToCandidateSecond(Mail model, string candidateName)
         {
             try
             {
@@ -1576,14 +1576,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingApologyForInterviewer.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InstaClientNotification(Mail model, string RequiredSkill)
+        public async Task<string> InstaClientNotification(Mail model, string RequiredSkill)
         {
             try
             {
@@ -1599,7 +1599,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewRequest.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
