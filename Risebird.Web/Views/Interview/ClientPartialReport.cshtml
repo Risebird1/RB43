@@ -107,29 +107,30 @@
 <!--<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />-->
 
 <input type="hidden" value="@ViewBag.ClientDetails" id="hidPagestatus" />
-
+<link href="~/newassets/css/report.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
 
     <div class="mt50 col-md-12">
         @if (ViewBag.ClientDetails == "client")
         {
             <div class="pull-left mt-20">
-
-                <button style="margin-bottom: 4px; margin-left: 47px; background-color:red; font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
-                    <text style="color:white">Rate Interviewer</text>
-                </button>
-
-                <button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
-                    <text style="color:white"> Audio Feedback </text>
-                </button>
-                    
-                <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px; background-color:red; font-size: 11px">
-                    <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"><text style="color:white"> Mass Communication</text></font></span>
-                </button>
-
+                <div class="reportdropdown">
+                    <button class="reportdropbtn">Connect with the Interviewer</button>
+                    <div class="reportdropdown-content">
+                        <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                            <text>Rate Interviewer</text>
+                        </button>
+                        <button style="margin-left: 10px; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
+                            <text> Audio Feedback </text>
+                        </button>
+                        <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                            <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         }
-        
+
 
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
@@ -150,19 +151,19 @@
 
                             @*@if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
                             {
-                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
-                                <div class="clearfix text-right">
+                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+                            <div class="clearfix text-right">
 
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
-                                        <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
-                                    </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
+                            <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
+                            </button>
 
 
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
-                                        <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Select</font></span>
-                                    </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
+                            <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Select</font></span>
+                            </button>
 
-                                </div>
+                            </div>
                             }*@
 
                             <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine clearfix ng-valid form" id="Clienform">
@@ -241,7 +242,7 @@
                                                         @{
                                                             if (Model.resumeLink != null && Model.resumeLink != "")
                                                             {
-                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
+                                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
                                                             }
                                                         }
 
@@ -304,22 +305,20 @@
 
                                         <div class="col-md-6 col-sm-6 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
-                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                    @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-sm-6 pull-left">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
-                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                    @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
 
                                     </div>-->
-
-
                                     @if (ViewBag.PageReport != "Insta")
                                     {
                                         <div class="row">
@@ -340,30 +339,30 @@
                                                         {
 
                                                             @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                                                    {
-                                                                    <p></p>
-                                                                    <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
-                                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                    {
+                                                    <p></p>
+                                                    <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                                                        Your browser does not support the video tag.
-                                                                    </video>
-                                                                }
+                                                    Your browser does not support the video tag.
+                                                    </video>
+                                                    }
 
-                                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                                                {
-                                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+                                                    else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                    {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
-                                                                    </video>
-                                                                }
+                                                    </video>
+                                                    }
 
 
-                                                                else
-                                                                {
-                                                                    <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                    else
+                                                    {
+                                                    <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                                                                }*@
+                                                    }*@
                                                             string appendTime;
                                                             if (Model.ThumbnailTimeSeconds == 0)
                                                             {
@@ -419,7 +418,7 @@
                                                                 @{
                                                                     if (Model.VideoLink != null)
                                                                     {
-                                                                            <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
+                                                                        <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
                                                                     }
                                                                 }
                                                             </div>
@@ -549,7 +548,6 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="col-md-6 col-sm-6 pull-left">
-
                                                 </div>
 
 
@@ -604,10 +602,10 @@
                                                                     </td>
 
                                                                     @*<td class="action text-center">
-                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                        </td>*@
+                                                            </td>*@
 
                                                                 </tr>
                                                             }
@@ -1387,8 +1385,8 @@
     </div>
 </div>
 <!--<div id="myRaitingPopup" class="modal modal-wrap modal-bg">-->
-    <!-- Modal content -->
-    <!--<div class="modal-dialog modal-lg" role="document">
+<!-- Modal content -->
+<!--<div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
@@ -1457,12 +1455,10 @@
             </button>
             <div class="modal-body">
                 <div style="padding:10px" id="divAadhaarKYC">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
-
                         </div>
                     </div>
                 </div>
@@ -2161,7 +2157,7 @@
 
     }
 
-    function QuestionChanged(id , val ) {
+    function QuestionChanged(id, val) {
 
         var index = id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
