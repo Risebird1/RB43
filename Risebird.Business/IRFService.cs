@@ -1010,15 +1010,9 @@ namespace Risebird.Business
                 obj.AddedByUserId = userId;
                 int numberOfLetters = obj.Phone.ToCharArray().Length;
                 var phoneValidate = numberOfLetters >= 9 && int.TryParse(obj.Phone, out int value);
-                string result = string.Empty;
-                if (phoneValidate == true)
-                {
-                    result = _irfRepository.AddCandidate(obj).Result;
-                }
-                else
-                {
-                    result = string.Empty;
-                }
+                obj.Phone = phoneValidate ? obj.Phone : string.Empty;
+
+                var result = _irfRepository.AddCandidate(obj).Result;
                 if (result.Contains("successfully"))
                 {
                     //get all resume evaluators and hrs to send mails to
