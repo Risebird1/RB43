@@ -66,7 +66,7 @@ namespace Risebird.MicroService
                                 CC = "talent@risebird.io",
                                 Subject = "Open interviews are available for you, Please assign"
                             };
-                            var emailsend1 = _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total);
+                            var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total);
                             //What's App Message Send
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.EmailId;
