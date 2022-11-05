@@ -2844,7 +2844,7 @@ namespace Risebird.Business
                     {
                         oneTimeSchedulingLink1 = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
                     }
-                    _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                    await _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
@@ -2908,7 +2908,7 @@ namespace Risebird.Business
                 string primarySkill = string.Empty;
                 primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                 string oneTimeSchedulingLink = String.Empty;
-                _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
+                await _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
                 return true;
             }
             catch (Exception ex)

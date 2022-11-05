@@ -84,15 +84,15 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset);
         Task<string> SendUnassignedInterviewsNotifications(List<string> interviwers, string meetingDate);
         Task<string> SendResumeUploadCounts(Mail model, DataTable dt, string Name);
-        string SendQCFormDetails(Mail model, DataTable dt);
-        string SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt);
-        string SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name);
-        string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail);
-        string SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
-        string SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null);
-        string SendClientInterviewPublicURL(Mail model, string Name, string publicurl);
-        string SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
-        string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone);
+        Task<string> SendQCFormDetails(Mail model, DataTable dt);
+        Task<string> SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt);
+        Task<string> SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name);
+        Task<string> SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail);
+        Task<string> SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
+        Task<string> SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null);
+        Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl);
+        Task<string> SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
+        Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone);
         Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
     }
 }

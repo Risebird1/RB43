@@ -2347,7 +2347,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendQCFormDetails(Mail model, DataTable dt)
+        public async Task<string> SendQCFormDetails(Mail model, DataTable dt)
         {
             try
             {
@@ -2388,14 +2388,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCFormDetailsNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt)
+        public async Task<string> SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt)
         {
             try
             {
@@ -2432,14 +2432,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientSkillChannelStatsNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name)
+        public async Task<string> SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name)
         {
             try
             {
@@ -2461,14 +2461,14 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail)
+        public async Task<string> SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail)
         {
             try
             {
@@ -2489,14 +2489,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerRemovalNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null)
+        public async Task<string> SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null)
         {
             try
             {
@@ -2524,14 +2524,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteCandidate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception ex)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null)
+        public async Task<string> SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null)
         {
             try
             {
@@ -2558,14 +2558,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteClient.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendClientInterviewPublicURL(Mail model, string Name, string publicurl)
+        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl)
         {
             try
             {
@@ -2583,14 +2583,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublic.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null)
+        public async Task<string> SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null)
         {
             try
             {
@@ -2614,7 +2614,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
@@ -2622,7 +2622,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone)
+        public async Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone)
         {
             try
             {
@@ -2639,7 +2639,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewNoReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {

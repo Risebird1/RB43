@@ -49,7 +49,7 @@ namespace Risebird.MicroService
                             TO = item.EmailId,
                             Subject = item.ClientName + " : Candidate Verification"
                         };
-                        var emailsend = _notificationHelper.SendInterviewAadhaarVerificationNotification(_mail, uniqueurl, item.Name);
+                        var emailsend = await _notificationHelper.SendInterviewAadhaarVerificationNotification(_mail, uniqueurl, item.Name);
                     }
                     catch (Exception ex)
                     {
