@@ -142,7 +142,7 @@ namespace Risebird.MicroService
                                 CC = "talent@risebird.io",
                                 Subject = "New Interview Scheduled"
                             };
-                            var emailsend1 = _notificationHelper.SendClientCommonInterviewNotification(_mail1, dt);
+                            var emailsend1 = await _notificationHelper.SendClientCommonInterviewNotification(_mail1, dt);
                         }
                     }
                     catch (Exception ex)

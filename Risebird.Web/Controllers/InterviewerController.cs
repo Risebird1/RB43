@@ -2976,7 +2976,7 @@ namespace Risebird.Web.Controllers
                             TO = item.EmailId,
                             Subject = "Risebird: Availbility check for Upcoming Interviewes"
                         };
-                        var emailresult = _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
+                        var emailresult = await _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
                     }
                 }
                 return Json("Success");
