@@ -1766,5 +1766,112 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> AddPremiumClientUser(ClientUserVM client)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                var parameters = new DynamicParameters();
+                parameters.Add("@userFirstName", client.FirstName);
+                parameters.Add("@userLastName", client.LastName);
+                parameters.Add("@userEmailId", client.EmailId);
+                parameters.Add("@userMobileNumber", client.MobileNumber);
+                parameters.Add("@UserPassword", client.UserPassword);
+                parameters.Add("@WhatsappNumber", client.WhatsappNumber);
+                if (client.SelectedClient.HasValue)
+                    parameters.Add("@selectedClientId", client.SelectedClient);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddPremiumClientUser", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public IEnumerable<ClientUserVM> GetClientPremiumUsers(string EmailId)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@EmailId", EmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<ClientUserVM> GetClientPremiumUser(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<ClientUserVM>(con, "usp_GetClientPremiumUserById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser)
+        {
+            try
+            {
+                DynamicParameters parameters = SetStoredProcedureParameterForClientUser(clientUser);
+                parameters.Add("@id", clientUser.id);
+                parameters.Add("@userFirstName", clientUser.FirstName);
+                parameters.Add("@userLastName", clientUser.LastName);
+                parameters.Add("@userEmailId", clientUser.EmailId);
+                parameters.Add("@userMobileNumber", clientUser.MobileNumber);
+                parameters.Add("@UserPassword", clientUser.UserPassword);
+                parameters.Add("@WhatsappNumber", clientUser.WhatsappNumber);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateClientPremiumUser", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
