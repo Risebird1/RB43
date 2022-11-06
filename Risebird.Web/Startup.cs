@@ -387,6 +387,8 @@ namespace Risebird.Web
             services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
             services.AddSingleton<ITrackPublicUrlAccessor, TrackPublicUrlAccessor>();
             services.AddScoped<ISendGridRepository, SendGridRepository>();
+            services.AddScoped<IMailRepository, MailRepository>();
+            services.AddScoped<IMailService, MailService>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts
