@@ -82,5 +82,60 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsLatestActivity(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@recipientType", recipientType);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                parameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetEmailRecipientsLatestActivity", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// gets events/activities associated with a particular email sent to a recipient
+        /// </summary>
+        /// <param name="profile"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetRecipientMailActivitiesByMessageId(string recipientEmail, string messageId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@recipientEmail", recipientEmail);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@messageId", messageId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetRecipientMailActivitiesByMessageId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

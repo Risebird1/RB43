@@ -8,6 +8,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -102,7 +103,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> MailRecipients(string recipientType)
@@ -148,7 +148,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetRecipientMailActivities(string recipientEmail)
@@ -177,5 +176,76 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RecipientActivityDetails(string recipientType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
+                    {
+                        if (string.IsNullOrEmpty(recipientType))
+                        {
+                            recipientType = "Candidate";
+                        }
+
+                        ViewBag.recipientType = recipientType;
+
+                        var recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType);
+
+                        ViewBag.UserProfile = profileName;
+
+                        return View(recipients);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRecipientMailActivitiesByMessageId(string recipientEmail, string messageId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var model = (await _mailService.GetRecipientMailActivitiesByMessageId(recipientEmail, messageId))?.ToList() ;
+                    ViewBag.RecipientEmail = recipientEmail;
+                    return PartialView("GetRecipientMailActivitiesByMessageId", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
     }
 }

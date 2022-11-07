@@ -28,5 +28,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink, string zoommeetingid);
         List<string> fetchSkillChannelHRDetails(string IRFId);
         List<string> fetchSkillChannelStaffingDetails(string IRFId);
+        Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null);
     }
 }

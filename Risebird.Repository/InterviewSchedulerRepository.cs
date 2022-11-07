@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -15,10 +17,13 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        public InterviewSchedulerRepository(IConfiguration configuration)
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+
+        public InterviewSchedulerRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public List<daytimes_report> FetchEventList()
@@ -507,5 +512,37 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startTime", startTime);
+                    parameters.Add("@endTime", endTime);
+                    parameters.Add("@currentZoomAccount", currentZoomAccount != string.Empty ? currentZoomAccount : null);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetAvailableZoomAccount", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    if (result != null && result.Count() > 0)
+                    {
+                        return (result.FirstOrDefault());
+                    }
+                    else
+                        return "";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+
     }
 }
