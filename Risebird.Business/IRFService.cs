@@ -1008,6 +1008,10 @@ namespace Risebird.Business
                 }
                 var userId = _irfRepository.GetUserId(emailId?.Trim().ToLower(), profile);
                 obj.AddedByUserId = userId;
+                int numberOfLetters = obj.Phone.ToCharArray().Length;
+                var phoneValidate = numberOfLetters >= 9 && int.TryParse(obj.Phone, out int value);
+                obj.Phone = phoneValidate ? obj.Phone : string.Empty;
+
                 var result = _irfRepository.AddCandidate(obj).Result;
                 if (result.Contains("successfully"))
                 {
