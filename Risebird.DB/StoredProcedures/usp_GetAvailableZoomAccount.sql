@@ -38,7 +38,10 @@ Begin
 
 Select top 1 UserName from ZoomAccounts za
 outer apply 
-(select COUNT(id) as totalcount from InterviewMeetings where risebirdHR=za.UserName and interviewDate>=@startTime and interviewDate<=@endTime) abc
+(select COUNT(id) as totalcount from InterviewMeetings where risebirdHR=za.UserName 
+and interviewDate >= @startTime and interviewDate <= @endTime
+and charindex('zoom', zoomLink) > 0 ) abc
+where za.IsActive= 1 and (za.ConcurrencyAllowed-abc.totalcount)>0
 order by (za.ConcurrencyAllowed-abc.totalcount) desc
 
 --;with cte
