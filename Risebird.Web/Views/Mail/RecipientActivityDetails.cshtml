@@ -216,9 +216,8 @@
                                     <table id="recipientsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%" >
                                         <thead>
                                             <tr>
-                                            <tr>
                                                 <th>Recipient</th>
-                                                <th style="width:700px">Mail Subject</th>
+                                                <th style="width:20%">Mail Subject</th>
                                                 <th>Mail Content</th>
                                                 <th>Sent On</th>
                                                 <th>Sent By</th>
@@ -228,12 +227,11 @@
                                                 <th>Interview Date</th>
                                                 <th style="text-align:center">Activity Details</th>
                                             </tr>
-                                            </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
                                                 <th>Recipient</th>
-                                                <th style="width:700px">Mail Subject</th>
+                                                <th style="width:20%">Mail Subject</th>
                                                 <th>Mail Content</th>
                                                 <th>Sent On</th>
                                                 <th>Sent By</th>
@@ -247,13 +245,39 @@
                                         <tbody>
                                             @if (Model != null && Model.Count() > 0)
                                             {
+                                                int i = 1;
                                                 foreach (var item in Model)
                                                 {
                                                     var jsonObj = JsonConvert.SerializeObject(item.MailBody);
                                                     <tr>
 
                                                         <td>@item.email</td>
-                                                        <td style="width:700px" title="@item.MailSubject">@item.MailSubject</td>
+@*                                                        <td  style="white-space: break-spaces;word-break:break-word" title="@item.MailSubject">@item.MailSubject</td>
+*@                                                        <td>
+                                                            @if (item.MailSubject != null && item.MailSubject != "")
+                                                            {
+                                                                @if (item.MailSubject.Length > 40)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.MailSubject.Substring(0, 40)
+                                                                        </p>
+                                                                        <p class="moretext_@i moretext">
+                                                                            @item.MailSubject.Substring(40, @item.MailSubject.Length - 40)
+                                                                        </p>
+                                                                    </div>
+                                                                    <a onclick="moreless('@i')" class="moreless-button" value="Readmore" id="read_@i" href="#">Read more</a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+                                                                        <p>
+                                                                            @item.MailSubject.Substring(0, @item.MailSubject.Length)
+                                                                        </p>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        </td>
                                                         <td>
                                                             <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue; cursor:pointer"><u>Content</u></a>
                                                         </td>
@@ -271,6 +295,7 @@
 
                                                         </td>
                                                     </tr>
+                                                    i = i + 1;
                                                 }
                                             }
 
@@ -434,6 +459,16 @@
         let child = window.open("about:blank", "mailContent");
         child.document.write(htmlData);
         child.document.close();
+    }
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
     }
 </script>
 
