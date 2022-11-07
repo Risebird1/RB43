@@ -17,5 +17,8 @@ namespace Risebird.Entities.ViewModel
         public string SentBy { get; set; }
         public int partitionNumber{ get; set; }
         public string eventType { get; set; }
+        public string latestEvent { get; set; }
+        public DateTime ActivityDate { get; set; }
+        public DateTime SentOn { get; set; }
     }
 }

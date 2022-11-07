@@ -262,5 +262,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.GetAvailableZoomAccount(startTime, endTime, currentZoomAccount);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

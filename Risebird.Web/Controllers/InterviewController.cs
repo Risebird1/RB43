@@ -7362,6 +7362,7 @@ namespace Risebird.Web.Controllers
             //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
             //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+            accountEmail  = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
             if (string.IsNullOrEmpty(accountEmail))
                 accountEmail = "me";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
