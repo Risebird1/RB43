@@ -22,7 +22,7 @@ declare @concurrentMeetings int = 0, @concurrencyAllowed int = 0
 if(@currentZoomAccount is not null and @currentZoomAccount != '')
 Begin
 select @concurrentMeetings = count(id) from InterviewMeetings where risebirdHR = @currentZoomAccount
-and interviewDate between @startTime and @startTime
+and interviewDate between @startTime and @endTime
 
 select @concurrencyAllowed = ConcurrencyAllowed from ZoomAccounts where UserName = @currentZoomAccount
 end
@@ -35,19 +35,24 @@ End
 else
 Begin
 
-;with cte
-as
-(
-	select count(im.id) as totalConcurrentMeetings, za.UserName, za.ConcurrencyAllowed from InterviewMeetings im 
-	join ZoomAccounts za on im.risebirdHR = za.UserName
-	where (@currentZoomAccount is null or (za.UserName != @currentZoomAccount and @currentZoomAccount != ''))
-	and interviewDate between @startTime and @startTime
-	and charindex('zoom', im.zoomLink) > 0
-	group by za.UserName, za.ConcurrencyAllowed
-)
-select top 1 UserName  from cte
-where (ConcurrencyAllowed - totalConcurrentMeetings) > 0
-order by (ConcurrencyAllowed - totalConcurrentMeetings) desc
+
+Select top 1 UserName from ZoomAccounts za
+outer apply 
+(select COUNT(id) as totalcount from InterviewMeetings where risebirdHR=za.UserName and interviewDate>=@startTime and interviewDate<=@endTime) abc
+order by (za.ConcurrencyAllowed-abc.totalcount) desc
+
+--;with cte
+--as
+--(
+--	select count(im.id) as totalConcurrentMeetings, za.UserName, za.ConcurrencyAllowed from InterviewMeetings im 
+--	join ZoomAccounts za on im.risebirdHR = za.UserName
+--	where interviewDate between @startTime and @endTime
+--	and charindex('zoom', im.zoomLink) > 0
+--	group by za.UserName, za.ConcurrencyAllowed
+--)
+--select top 1 UserName  from cte
+--where (ConcurrencyAllowed - totalConcurrentMeetings) > 0
+--order by (ConcurrencyAllowed - totalConcurrentMeetings) desc
 
 End
 
