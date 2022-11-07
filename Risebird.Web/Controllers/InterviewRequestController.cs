@@ -465,7 +465,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult AssignCoordinator(int userid, int id)
+        public async Task<JsonResult> AssignCoordinator(int userid, int id)
         {
             var result = _interviewRequestService.AssignInerviewRequest(userid, id);
             if (result)
@@ -480,7 +480,7 @@ namespace Risebird.Web.Controllers
                     TO = model.Assignto,
                     Subject = "New Interview Request Assigned: " + model.JdTitle
                 };
-                var emailsend =  _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername);
+                var emailsend = await _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername);
                 return Json("Successfully assigned.");
             }
             else

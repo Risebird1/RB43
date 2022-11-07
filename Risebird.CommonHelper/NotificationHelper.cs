@@ -2052,7 +2052,7 @@ namespace Risebird.CommonHelper
                 MemoryStream stream = new MemoryStream(byteArray);
                 await msg.AddAttachmentAsync("invite.ics", stream);
                 //End: Attachment
-                return SendMail(msg).Result;
+                return await SendMail(msg);
             }
             catch (Exception)
             {
