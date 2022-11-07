@@ -23,6 +23,7 @@ CREATE Procedure usp_AddorUpdateMCQSet
 @CompanyType int = null,   
 @Clients varchar(max) = null, 
 @AadhaarVerification bit,
+@PremiumMCQ bit,
 @mcqid int output                
 AS    
 BEGIN  
@@ -35,17 +36,20 @@ END
 Update MCQSets set Title=@Title,PrimarySkills=@PrimarySkills,    
 ProfileType=@ProfileType,SecondarySkill=@SecondarySkill,Timer=@Timer,QuestionCount=@QuestionCount,  
 SeniorityLevel = @SeniorityLevel, EmploymentType =@EmploymentType,  
-CompanyType = @CompanyType, CountryType = @CountryType, Clients = @Clients,AadhaarVerification=@AadhaarVerification  
+CompanyType = @CompanyType, CountryType = @CountryType, Clients = @Clients,AadhaarVerification=@AadhaarVerification,
+PremiumMCQ=@PremiumMCQ
 where id=@id and PartitionKey=@PartitionKey     
 select @mcqid = @id     
 end    
 else     
 begin    
 Insert into MCQSets (PartitionKey,Title,PrimarySkills,ProfileType,SecondarySkill,Timer,QuestionCount,CreatedOn,  
-SeniorityLevel, EmploymentType, CompanyType, CountryType, Clients,AadhaarVerification)     
+SeniorityLevel, EmploymentType, CompanyType, CountryType, Clients,AadhaarVerification,PremiumMCQ)     
 values(@PartitionKey,@Title, @PrimarySkills,@ProfileType,@SecondarySkill,@Timer,@QuestionCount,GetDate(),  
-@SeniorityLevel, @EmploymentType, @CompanyType, @CountryType, @Clients,@AadhaarVerification)    
+@SeniorityLevel, @EmploymentType, @CompanyType, @CountryType, @Clients,@AadhaarVerification,@PremiumMCQ)    
 select @mcqid = SCOPE_IDENTITY()     
 end    
 END    
+
+
 Go

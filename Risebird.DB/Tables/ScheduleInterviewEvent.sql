@@ -67,15 +67,6 @@ IF NOT EXISTS(
 		ALTER TABLE [ScheduleInterviewEvent]
 		Add BufferTime int default 12
 	END
-	IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'MeetingPlatform')
-      AND Object_ID = Object_ID(N'ScheduleInterviewEvent'))
-	BEGIN
-		ALTER TABLE [ScheduleInterviewEvent]
-		Add MeetingPlatform varchar(25)
-	END
 GO
 
 

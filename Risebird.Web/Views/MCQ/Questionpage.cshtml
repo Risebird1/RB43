@@ -14,20 +14,20 @@
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand">
-                    MCQ Questions
-                </a>
-            </div>
-        </div>
+    <div class="container-fluid">
+    <div class="navbar-wrapper">
+    <div class="navbar-toggle">
+    <button type="button" class="navbar-toggler">
+    <span class="navbar-toggler-bar bar1"></span>
+    <span class="navbar-toggler-bar bar2"></span>
+    <span class="navbar-toggler-bar bar3"></span>
+    </button>
+    </div>
+    <a class="navbar-brand">
+    MCQ Questions
+    </a>
+    </div>
+    </div>
     </nav>*@
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"></div>-->
@@ -44,7 +44,14 @@
 
                 <div class="pull-right">
                     <div>
-                        <a href="/MCQ/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                        @if (ViewBag.Type == "16183")
+                        {
+                            <a href="/MCQ/RecruiterInterview" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                        }
+                        else
+                        {
+                            <a href="/MCQ/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                        }
                     </div>
                 </div>
             </div>

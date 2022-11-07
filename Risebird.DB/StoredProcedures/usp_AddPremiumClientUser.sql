@@ -16,8 +16,8 @@ CREATE PROCEDURE [dbo].[usp_AddPremiumClientUser]
 @userEmailId varchar(150),              
 @userMobileNumber nvarchar(200),          
 @UserPassword nvarchar(60),         
-@WhatsappNumber varchar(15),     
-@message varchar(100) OUTPUT)              
+@WhatsappNumber varchar(15),
+@MCQValidation int)              
               
 AS              
 Begin              
@@ -35,14 +35,9 @@ Begin Try
               
    set @generatedUserId = SCOPE_IDENTITY();              
               
-   INSERT INTO [dbo].[ClientPremiumUser] ([ClientId],[UserId])              
-        VALUES (@selectedClientId ,@generatedUserId)              
+   INSERT INTO [dbo].[ClientPremiumUser] ([ClientId],[UserId],[MCQValidation])              
+        VALUES (@selectedClientId ,@generatedUserId,@MCQValidation)              
   END              
-  ELSE              
-  BEGIN              
-   SET @message ='Duplicate Email ID'              
-  END              
-                
  Commit Tran AddClientUser              
               
 End Try              

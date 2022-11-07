@@ -29,7 +29,7 @@
                 <div class="mdc-card card bg-white">
 
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("EditClientUser", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("EditPremiumClientUser", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
 
                             @Html.AntiForgeryToken()
@@ -109,6 +109,13 @@
                                             @Html.ValidationMessageFor(model => model.UserPassword, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MCQValidation, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.MCQValidation,new{@class = "form-control", @type = "number",@Required="required"})
+                                            @Html.ValidationMessageFor(model => model.MCQValidation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                 </div>
                                 @Html.HiddenFor(x => x.SelectedClient)
                                 @Html.HiddenFor(x => x.id)
@@ -117,7 +124,7 @@
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back", "Clientusers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        @Html.ActionLink("Back", "PremiumClientUsers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
                                     </div>
                                 </div>

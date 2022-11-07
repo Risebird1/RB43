@@ -18,7 +18,8 @@ Create PROCEDURE [dbo].[usp_UpdateClientPremiumUser]
 @userEmailId varchar(150),   
 @userMobileNumber nvarchar(200),  
 @UserPassword nvarchar(60),
-@WhatsappNumber varchar(15))    
+@WhatsappNumber varchar(15),
+@MCQValidation int)    
 AS    
 Begin Try    
   BEGIN TRAN UpdateUser     
@@ -41,7 +42,7 @@ Begin Try
     
        IF EXISTS( SELECT 1 FROM UserList ul JOIN [dbo].[ClientPremiumUSer] cu on ul.id = cu.UserId where cu.id = @cuid )    
        BEGIN    
-    set @userId= (select userid from ClientUser where id=@cuid)  
+    set @userId= (select userid from ClientPremiumUser where id=@cuid)  
              UPDATE UserList SET FirstName =  @firstName,     
                            LastName =  @lastName,    
                            EmailID =   @email,    
@@ -49,7 +50,7 @@ Begin Try
          UserPassword =@password,
 		 WhatsappNumber=@WhatsappNumber
     where id= @userId   
-     
+     update ClientPremiumUser set MCQValidation=@MCQValidation where id=@cuid
        END    
      
  Commit TRAN UpdateUser;    

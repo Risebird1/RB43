@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[ClientPremiumUser](
 			[ClientId] [int] NOT NULL,		
 			[UserId] [int] NOT NULL,
 			[IsPasswordReset][bit] NULL,
+			[MCQValidation][int] NULL,
 			CONSTRAINT [FK_CLPrUser_User] FOREIGN KEY (UserId) REFERENCES UserList(id),
 			CONSTRAINT [FK_CLPrUser_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
  CONSTRAINT [PK_ClientPremiumUser] PRIMARY KEY CLUSTERED 					

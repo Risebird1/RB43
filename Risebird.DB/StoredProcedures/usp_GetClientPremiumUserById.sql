@@ -16,7 +16,7 @@ Begin
  Declare @cid int  
  SET @cid = @id  
    SELECT [FirstName], [LastName], [EmailId], [MobileNumber] ,   
-   cl.Name as ClientName, cl.id as SelectedClient, UserPassword,ul.WhatsappNumber  
+   cl.Name as ClientName, cl.id as SelectedClient, UserPassword,ul.WhatsappNumber,cu.MCQValidation  
    FROM [dbo].[UserList] ul JOIN [dbo].[ClientPremiumUser] cu on ul.id = cu.UserId  
    JOIN [dbo].[Client] cl on cu.ClientId= cl.id WHERE cu.id = @cid  
 End  

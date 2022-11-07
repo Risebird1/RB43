@@ -82,5 +82,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<ClientUserVM> GetClientPremiumUsers(string EmailId);
         Task<ClientUserVM> GetClientPremiumUser(int id);
         Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser);
+        Task<ClientUserVM> GetClientPremiumUserDetails(string emailID);
     }
 }

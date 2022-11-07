@@ -1778,6 +1778,7 @@ namespace Risebird.Repository
                 parameters.Add("@userMobileNumber", client.MobileNumber);
                 parameters.Add("@UserPassword", client.UserPassword);
                 parameters.Add("@WhatsappNumber", client.WhatsappNumber);
+                parameters.Add("@MCQValidation", client.MCQValidation);
                 if (client.SelectedClient.HasValue)
                     parameters.Add("@selectedClientId", client.SelectedClient);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1855,6 +1856,7 @@ namespace Risebird.Repository
                 parameters.Add("@userMobileNumber", clientUser.MobileNumber);
                 parameters.Add("@UserPassword", clientUser.UserPassword);
                 parameters.Add("@WhatsappNumber", clientUser.WhatsappNumber);
+                parameters.Add("@MCQValidation", clientUser.MCQValidation);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateClientPremiumUser", parameters,
@@ -1872,6 +1874,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+        public async Task<ClientUserVM> GetClientPremiumUserDetails(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("Email", emailID);
+                    var result = await SqlMapper.QueryAsync<ClientUserVM>(con, "sp_ClientPremiumUserDetail", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -91,12 +91,13 @@
                                             @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    @*<div class="col-md-4 col-sm-4 pr-1 pull-left">
-                                <div class="form-group">
-                                @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.CheckBoxFor(model => model.IsPasswordReset) Password Reset after first login/Password aging
-                                </div>
-                                </div>*@
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MCQValidation, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.MCQValidation,new{@class = "form-control", @type = "number",@Required="required"})
+                                            @Html.ValidationMessageFor(model => model.MCQValidation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-footer">
