@@ -11,5 +11,7 @@ namespace Risebird.Business.Interface
     {
         Task<IEnumerable<SendgridEventData>> GetRecipients(string profile, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientActivities(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
+        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsLatestActivity(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
+        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetRecipientMailActivitiesByMessageId(string recipientType, string messageId, DateTime? startDate = null, DateTime? endDate = null);
     }
 }

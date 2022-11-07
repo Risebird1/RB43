@@ -50,6 +50,11 @@ namespace Risebird.Entities.ViewModel
         //[Required]
         public string CurrentEmployer { get; set; }
         [Required]
+        //[RegularExpression(@"^[0-9]{9}$", ErrorMessage = "Minimum 9 Digits are required")]
+        [MinLength(9, ErrorMessage = "Minimum 9 Digits are required")]
+        //[Required(ErrorMessage = "Phone number is required")]
+        //[StringLength(13, ErrorMessage = "Minimum 9 Digits are required", MinimumLength = 9)]
+
         public string Phone { get; set; }
 
         [DisplayName("Total Experience(years)")]
