@@ -46,5 +46,30 @@ namespace Risebird.Business
             }
             return null;
         }
+
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsLatestActivity(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                return await _mailRepository.GetEmailRecipientsLatestActivity(recipientType, startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetRecipientMailActivitiesByMessageId(string recipientType, string messageId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                return await _mailRepository.GetRecipientMailActivitiesByMessageId(recipientType, messageId, startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

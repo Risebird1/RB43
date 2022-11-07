@@ -78,7 +78,7 @@
     })
 
 </script>
-
+<link href="~/newassets/css/report.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
 
     <div class="mt50">
@@ -88,11 +88,14 @@
             <div class="col-md-12">
                 <div class="p15">
                     <div class="pull-left mt-20">
-
-                        <button style="margin-bottom: 4px; margin-left: 8px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
-                            <text style="color:white">Rate Interviewer</text>
-                        </button>
-
+                        <div class="reportdropdown">
+                            <button class="reportdropbtn">Connect with the Interviewer</button>
+                            <div class="reportdropdown-content">
+                                <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                    <text> Rate Interviewer </text>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
                     @if (ViewBag.PageStatus == "Mainurl")
