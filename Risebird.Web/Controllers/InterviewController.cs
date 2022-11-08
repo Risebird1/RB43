@@ -7364,7 +7364,7 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
             accountEmail  = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
             if (string.IsNullOrEmpty(accountEmail))
-                accountEmail = "me";
+                accountEmail = "hire@risebird.io";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;
             var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);

@@ -373,7 +373,12 @@ namespace Risebird.Web.Controllers
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
-
+                        if(zoomLink == null)
+                        {
+                            ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
+                            return View(model);
+                        }
+                        
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
@@ -462,7 +467,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Please change the interview date time, selected time slots are not available.");
+                    ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
                     return View(model);
                 }
             }
@@ -752,7 +757,9 @@ namespace Risebird.Web.Controllers
             //var accountEmail = await _interviewSchedulerservice.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
             var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
             if (string.IsNullOrEmpty(accountEmail))
-                accountEmail = "me";
+            {
+                return null;
+            }
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;
             var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
