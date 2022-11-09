@@ -1424,7 +1424,7 @@ namespace Risebird.Web.Controllers
                 TO = Emailaddress,
                 Subject = "Risebird: Interview video is shortlisted"
             };
-            var result = _notificationHelper.CandidateShortlistNotification(_mail, currenturl, comment, email, videoidlist);
+            var result = await _notificationHelper.CandidateShortlistNotification(_mail, currenturl, comment, email, videoidlist);
             if (result.Contains("Mail sent successfully"))
             {
                 return Json("ShortListed Successfully.");

@@ -1111,7 +1111,7 @@ namespace Risebird.Business
                     if (irf.BussinessType == "B2B")
                     {
                         //_notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
-                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
+                        await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
 
                     }
                     else
@@ -1972,7 +1972,7 @@ namespace Risebird.Business
 
                                    if (irf.BussinessType == "B2B")
                                    {
-                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
+                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;                                      
                                    }
                                    else
                                    {
@@ -2831,7 +2831,7 @@ namespace Risebird.Business
                     {
                         oneTimeSchedulingLink1 = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
                     }
-                    _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
+                    await _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
@@ -2895,7 +2895,7 @@ namespace Risebird.Business
                 string primarySkill = string.Empty;
                 primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                 string oneTimeSchedulingLink = String.Empty;
-                _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
+                await _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
                 return true;
             }
             catch (Exception ex)

@@ -891,7 +891,7 @@ namespace Risebird.Business
                         if (interviewers != null)
                         {
                             interviewers.Remove(email);
-                            _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString());
+                            _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(), meeting.irfIntId, meetingid);
 
                         }
                         //var hrs = _userService.GetAllHrsEmailld()?.ToList();
@@ -3170,7 +3170,7 @@ namespace Risebird.Business
 
                 _ = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId);
                 _ = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfId, meetingId);
-                _ = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                _ = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, irfId, meetingId);
                 return true;
             }
             catch (Exception ex)

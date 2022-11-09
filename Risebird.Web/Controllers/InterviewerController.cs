@@ -2739,7 +2739,7 @@ namespace Risebird.Web.Controllers
                     CC = "talent@risebird.io",
                     Subject = "Open Interviews URL"
                 };
-                var emailsend1 = _notificationHelper.SendPublicUrlToInterviewer(_mail1, sendreporturl);
+                var emailsend1 = await _notificationHelper.SendPublicUrlToInterviewer(_mail1, sendreporturl);
                 if (emailsend1.Contains("successfully"))
                     return Json("Success");
                 else
@@ -2982,7 +2982,7 @@ namespace Risebird.Web.Controllers
                             TO = item.EmailId,
                             Subject = "Risebird: Availbility check for Upcoming Interviewes"
                         };
-                        var emailresult = _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
+                        var emailresult = await _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
                     }
                 }
                 return Json("Success");

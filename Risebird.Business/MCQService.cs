@@ -327,5 +327,161 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<MCQVMShare> GetShareMCQEmailListByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                return _mCQRepository.GetShareMCQEmailListByMCQIdPremium(MCQPId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string UpdateShareMCQEmailStatusByidPremium(int id, int status)
+        {
+            try
+            {
+                return _mCQRepository.UpdateShareMCQEmailStatusByidPremium(id, status).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CandidateDetailsForTest> GetMCQCandidateListByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQCandidateListByMCQIdPremium(MCQPId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddMCQCandidatesPremium(CandidateDetailsForTest _list)
+        {
+            try
+            {
+                return _mCQRepository.AddMCQCandidatesPremium(_list).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddMCQCandidateQuestionsPremium(List<MCQVM> _question)
+        {
+            try
+            {
+                return _mCQRepository.AddMCQCandidateQuestionsPremium(_question).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddMCQSetShareListPremium(MCQVMShare _list)
+        {
+            try
+            {
+                return _mCQRepository.AddMCQSetShareListPremium(_list).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<MCQVMset> FetchAllMCQSetsPremium(string clientname, string profileName, bool requesttype)
+        {
+            try
+            {
+                return _mCQRepository.FetchAllMCQSetsPremium(clientname, profileName, requesttype).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQCandidateDetailsByMCQIdPremium(MCQPId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQReportByMCQIdPremium(MCQPId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<MCQVM> GetMCQCandidateQuestionsPremium(string CandidateId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQCandidateQuestionsPremium(CandidateId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string UpdateVideoURLForCandidatePremium(CandidateDetailsForTestDuplicate model)
+        {
+            try
+            {
+                return _mCQRepository.UpdateVideoURLForCandidatePremium(model).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public int FetchTotalInviteAllowed(string clientemail)
+        {
+            try
+            {
+                return _mCQRepository.FetchTotalInviteAllowed(clientemail).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public int FetchTotalInviteSent(string clientemail)
+        {
+            try
+            {
+                return _mCQRepository.FetchTotalInviteSent(clientemail).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
     }
 }

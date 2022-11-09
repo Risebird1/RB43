@@ -401,7 +401,7 @@ namespace Risebird.Web.Controllers
                                     TO = emaildids,
                                     Subject = "Interview Request has been updated: " + meeting.JdTitle
                                 };
-                                var emailsend = _notificationHelper.InterviewRequestEditNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
+                                var emailsend = await _notificationHelper.InterviewRequestEditNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
                                 TempData["SuccessErrorMessageInterview"] = "Request has been updated Successfully!";
                                 return RedirectToAction("Index");
                             }
@@ -465,7 +465,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult AssignCoordinator(int userid, int id)
+        public async Task<JsonResult> AssignCoordinator(int userid, int id)
         {
             var result = _interviewRequestService.AssignInerviewRequest(userid, id);
             if (result)
@@ -480,7 +480,7 @@ namespace Risebird.Web.Controllers
                     TO = model.Assignto,
                     Subject = "New Interview Request Assigned: " + model.JdTitle
                 };
-                var emailsend = _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername);
+                var emailsend = await _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername);
                 return Json("Successfully assigned.");
             }
             else

@@ -974,13 +974,13 @@ namespace Risebird.Web.Controllers
                                     TO = emailid,
                                     Subject = "Risebird: Insta interview has been scheduled for " + CandidateName
                                 };
-                                var emailsend = _notificationHelper.InstaInterviewwithzoomlink(_mail, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
+                                var emailsend = await _notificationHelper.InstaInterviewwithzoomlink(_mail, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
                                 Mail _mail1 = new Mail
                                 {
                                     TO = clientname,
                                     Subject = "Risebird: Insta interview has been confirmed for " + CandidateName
                                 };
-                                var emailsend1 = _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
+                                var emailsend1 = await _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
 
                             }
                             TempData["SuccessErrorMessage"] = result;
@@ -1268,7 +1268,7 @@ namespace Risebird.Web.Controllers
                                     TO = model.RequestedBy,
                                     Subject = "Insta Report URL of " + model.CandidateName + " - for Insta Interview"
                                 };
-                                var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                                var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                             }
                             TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });

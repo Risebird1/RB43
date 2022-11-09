@@ -31,5 +31,18 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetails(string MCQId, string ApplyingCompany);
         Task<IEnumerable<MCQVMset>> FetchMCQSetsForApi(MCQApiVM model);
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQReportByMCQId(string MCQPId);
+        Task<IEnumerable<MCQVMShare>> GetShareMCQEmailListByMCQIdPremium(string MCQPId);
+        Task<string> UpdateShareMCQEmailStatusByidPremium(int id, int status);
+        Task<IEnumerable<CandidateDetailsForTest>> GetMCQCandidateListByMCQIdPremium(string MCQPId);
+        Task<string> AddMCQCandidatesPremium(CandidateDetailsForTest _list);
+        Task<string> AddMCQCandidateQuestionsPremium(List<MCQVM> _question);
+        Task<string> AddMCQSetShareListPremium(MCQVMShare _list);
+        Task<IEnumerable<MCQVMset>> FetchAllMCQSetsPremium(string clientname, string profileName, bool requesttype);
+        Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQIdPremium(string MCQPId);
+        Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQReportByMCQIdPremium(string MCQPId);
+        Task<IEnumerable<MCQVM>> GetMCQCandidateQuestionsPremium(string CandidateId);
+        Task<string> UpdateVideoURLForCandidatePremium(CandidateDetailsForTestDuplicate model);
+        Task<int> FetchTotalInviteAllowed(string clientemail);
+        Task<int> FetchTotalInviteSent(string clientemail);
     }
 }

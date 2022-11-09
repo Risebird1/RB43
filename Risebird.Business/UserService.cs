@@ -862,5 +862,67 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool AddPremiumClientUser(ClientUserVM clientUser)
+        {
+            try
+            {
+                var userDetails = new UserDetails
+                {
+                    FirstName = clientUser.FirstName.Replace(" ", ""),
+                    LastName = clientUser.LastName.Replace(" ", ""),
+                    EmailId = clientUser.EmailId.Replace(" ", "")
+                };
+                var isPasswordReset = _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value).Result;
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset).Result;
+                return _userRepository.AddPremiumClientUser(clientUser).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public List<ClientUserVM> GetClientPremiumUsers(string EmailId)
+        {
+            try
+            {
+                return _userRepository.GetClientPremiumUsers(EmailId).ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public ClientUserVM GetClientPremiumUser(int id)
+        {
+            try
+            {
+                var clientUser = _userRepository.GetClientPremiumUser(id);
+                if (clientUser == null)
+                    return null;
+                else
+                    return clientUser.Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool UpdateClientPremiumUser(ClientUserVM clientUser)
+        {
+            try
+            {
+                return _userRepository.UpdateClientPremiumUser(clientUser).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

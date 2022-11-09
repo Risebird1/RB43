@@ -43,9 +43,9 @@ namespace Risebird.MicroService
                     Mail _mail1 = new Mail
                     {
                         TO = clientlist,
-                        Subject = "Risebird: Password is expired"
+                        Subject = "Risebird: Password has expired!"
                     };
-                    var emailsend1 = _notificationHelper.SendPasswordresetNotification(_mail1);
+                    var emailsend1 = await _notificationHelper.SendPasswordresetNotification(_mail1);
                 }
             }
             catch (Exception ex)

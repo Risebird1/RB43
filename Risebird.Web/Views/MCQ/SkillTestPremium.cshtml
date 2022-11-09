@@ -1,0 +1,65 @@
+﻿@model Risebird.Entities.ViewModel.CandidateDetailsForTest
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
+    <title>Skill Test</title>
+</head>
+<body>
+    <div class="text-center" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
+        <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
+    </div>
+    <div class="container">
+        @using (Html.BeginForm("CandidateQuestionpagePremium", "MCQ", FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="callno" style="margin-bottom:10px;">
+                        <h2>Fill up the details</h2>
+                    </div>
+                    <div class="col-md-6 col-sm-12" style="float:left">
+                        <div>
+                            @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "calloption text-box single-line", @required = "required" })
+                            @Html.ValidationMessageFor(m => m.CandidateEmail, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12" style="float:left">
+                        <div>
+                            @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.Skills, new { @class = "calloption text-box single-line", @required = "required" })
+                            @Html.ValidationMessageFor(m => m.Skills, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12" style="float:left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TotalExprience, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.TotalExprience, new { @class = "calloption text-box single-line", @type = "number", @required = "required" })
+                            @Html.ValidationMessageFor(m => m.TotalExprience, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    @Html.HiddenFor(m => m.Name)
+                    @Html.HiddenFor(m => m.Address)
+                    @Html.HiddenFor(m => m.Gender)
+                    @Html.HiddenFor(m => m.DOB)
+                    @Html.HiddenFor(m => m.CandidateImage)
+                    @Html.HiddenFor(m => m.uniqueid)
+                    <input type="hidden" id="MCQId" name="MCQId" value="@ViewBag.Questionsetid" />
+                    <div>
+                        <input type="submit" id="btnSubmitDetails" style="width:120px !important" value="Start Test >>" class="callsubmit" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>
+<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>

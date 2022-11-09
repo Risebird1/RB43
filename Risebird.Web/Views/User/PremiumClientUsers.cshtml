@@ -1,0 +1,504 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ClientUserVM>
+@{
+    ViewData["Title"] = "Freemium Client Users";
+    ViewBag.PageHeader = "Freemium Client Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Freemium Client Users</h4></div>
+                </div>
+
+                <div class="pull-right">
+
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add premium client user" onclick="location.href='@Url.Action("AddPremiumClientUser","User")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add User</font></span>
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="table-responsive">
+                                <table id="clientduser" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email Id</th>
+                                            <th>Client name</th>
+                                            <th>Role</th>
+                                            <th>Mobile Number</th>
+                                            <th>Password</th>
+                                            <th class="disabled-sorting text-center">Actions</th>
+                                            <th hidden></th>
+                                            <th hidden></th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email Id</th>
+                                            <th>Client name</th>
+                                            <th>Role</th>
+                                            <th>Mobile Number</th>
+                                            <th>Password</th>
+                                            <th class="disabled-sorting text-center">Actions</th>
+                                            <th hidden></th>
+                                            <th hidden></th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr id=@item.id>
+                                                <td>@item.FirstName</td>
+                                                <td>@item.LastName</td>
+                                                <td>@item.EmailId</td>
+                                                <td>@item.ClientName</td>
+                                                <td>@item.Role</td>
+                                                <td>@item.MobileNumber</td>
+                                                <td>
+                                                    <div class="mobile-view">
+                                                        <div>
+                                                            <span> @item.UserPassword</span>
+                                                            @*Password:   <input type='password' id='test-input' /> Show password <input type='checkbox' id='check'/>*@
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="desktop-view">
+                                                        <div style="position:relative">
+                                                            <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                            @if (item.UserPassword != null && item.UserPassword != "")
+                                                            {
+                                                                <span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                                <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span toggle="#password-field_@item.id" class="toggle-password" id="toggle-password_@item.id"></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+
+
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
+                                                        <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+                                                </td>
+
+                                                <td hidden>@item.id</td>
+                                                <td hidden>@item.idProfile</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
+
+
+<script>
+    function searchResult() {
+        $('#clientduser').DataTable();
+    }
+
+    function RefreshSearch() {
+        $('#clientduser').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
+        $('#clientduser').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()' ><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+
+
+
+
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+    function DeleteEntityfromEnvironment(clientUserId, EmailId) {
+
+
+
+        swal.fire({
+            title: 'Are you sure you want to delete client user ' + EmailId + '?',
+            text: "It will be permanently deleted !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/User/DeleteClientUser',
+                        data: { 'id': clientUserId },
+                        type: 'get',
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>Your record has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/User/ClientUsers";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
+
+    function ResetNavigation(userId, emailId) {
+
+
+        swal.fire({
+            title: 'Are you sure you want to reset navigation history for client user ' + emailId + '?',
+            text: "Navigation history will be reset!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, reset it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/User/ResetNavigation',
+                        data: { 'userId': userId },
+                        type: 'get',
+                        success: function (result) {
+                            if (result == true) {
+                                resolve(result);
+                            }
+                            else {
+                                swal.fire("Failed performing reset!", "Please try again", "error");
+
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error performing reset!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Successful!',
+                    type: 'success',
+                    html: '<p>Navigation history was reset.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/User/ClientUsers";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Action cancelled!',
+                    'error'
+                )
+            }
+        })
+    }
+
+    function SendPublicURL(EmailId) {
+        swal.fire({
+            title: 'Are you sure you want to send Public Url for client user ' + EmailId + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Send it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Client/SendPublicURLClientUser',
+                        data: { 'Emailid': EmailId },
+                        type: 'POST',
+                        success: function (result) {
+                            if (result == "Success") {
+                                swal.fire({
+                                    title: 'Sent!',
+                                    type: 'success',
+                                    html: '<p>Public URL send successfully.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            } else {
+                                swal.fire({
+                                    title: 'Fail to sent!',
+                                    type: 'error',
+                                    html: '<p>Fail to send the public URL, Please try again.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error Sending!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        })
+    }
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#clientduser").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#clientduser").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#clientduser").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+
+<script>
+
+    function showhidepass(id) {
+        var value = document.getElementById("password-field_" + id);
+        if (value.getAttribute("type") == "text") {
+
+            value.setAttribute("type", "password");
+            $("#secret_" + id).addClass('show');
+            $("#secret_" + id).removeClass('hide');
+            $("#password-field_" + id).addClass('passshow');
+
+            $("#toggle-password_" + id).removeClass("fa-eye-slash");
+        }
+        else {
+
+            value.setAttribute("type", "text");
+            $("#password-field_" + id).removeClass('passshow');
+            $("#toggle-password_" + id).addClass("fa-eye-slash");
+            $("#secret_" + id).addClass('hide');
+            $("#secret_" + id).removeClass('show');
+
+        }
+
+    }
+    function CopyPublicUrl(EmailId) {
+        $.ajax({
+            url: '/Client/CopyPublicURLClientUser',
+            data: { 'Emailid': EmailId },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtvideoUrls").text(result);
+            }
+        });
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+
+</script>
+
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
+<script>
+    $('#check').on('click', function () {
+        if (document.getElementById('check').checked) {
+            $('#test-input').get(0).type = 'text';
+        } else {
+            $('#test-input').get(0).type = 'password';
+        }
+    });
+</script>

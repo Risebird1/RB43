@@ -6182,7 +6182,7 @@ namespace Risebird.Web.Controllers
                         var clientHr = await _candidateService.FetchChannelOwnerByInterviewid(meetingid);
                         var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
                         var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
-                        var _result = _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                        var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                     }
                     if (status == 2 || status == 3 || (status == 4 && response == false))
                     {
@@ -6212,9 +6212,9 @@ namespace Risebird.Web.Controllers
                         {
                             interviewers.Add(result.EmailId);
                         }
-                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid);
-                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid);
-                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
+                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
                         return Json("Successfully status updated, " + value);
                     }
@@ -7351,7 +7351,7 @@ namespace Risebird.Web.Controllers
                 CC = "hire@risebird.io",
                 Subject = "Invitation: " + meetingToUpdate.candidateName + " @ " + meetingToUpdate.interviewDate + "(" + timezonevalue + ")"
             };
-            _ = _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset);
+            _ = await _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset);
             return Json(zoomLink.join_url);
         }
         public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, string accountEmail)

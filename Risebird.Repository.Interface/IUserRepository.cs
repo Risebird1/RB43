@@ -78,5 +78,10 @@ namespace Risebird.Repository.Interface
         Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null);
         Task<IEnumerable<CallRecordingDataVM>> GetRecordingDataToUpdate();
         Task<bool> UpdateRecordingData(CallRecordingDataVM obj);
+        Task<bool> AddPremiumClientUser(ClientUserVM client);
+        IEnumerable<ClientUserVM> GetClientPremiumUsers(string EmailId);
+        Task<ClientUserVM> GetClientPremiumUser(int id);
+        Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser);
+        Task<ClientUserVM> GetClientPremiumUserDetails(string emailID);
     }
 }

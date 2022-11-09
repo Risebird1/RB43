@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -45,6 +46,7 @@ namespace Risebird.Repository
                     parameters.Add("@CompanyType", _lstset.CompanyType != 0 ? _lstset.CompanyType : null);
                     parameters.Add("@Clients", _lstset.Clients);
                     parameters.Add("@AadhaarVerification", _lstset.AadhaarVerification);
+                    parameters.Add("@PremiumMCQ", _lstset.PremiumMCQ);
                     //parameters.Add("@PerHourRate", _lstset.PerHourRate);
                     parameters.Add("@mcqid", dbType: DbType.Int32, direction: ParameterDirection.Output);
                     await SqlMapper.QueryAsync(con, "usp_AddorUpdateMCQSet", parameters,
@@ -767,6 +769,364 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<IEnumerable<MCQVMShare>> GetShareMCQEmailListByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                var query = "Select * From MCQShareListPremium where MCQId=@MCQPId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@MCQPId", MCQPId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MCQVMShare>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> UpdateShareMCQEmailStatusByidPremium(int id, int status)
+        {
+            try
+            {
+                string query = "Update MCQShareListPremium set status=@status where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@status", status);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultset = con.Query(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "Fail";
+        }
+        public async Task<IEnumerable<CandidateDetailsForTest>> GetMCQCandidateListByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                var query = "Select * From MCQCandidatesPremium where MCQId=@MCQPId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@MCQPId", MCQPId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<CandidateDetailsForTest>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> AddMCQCandidatesPremium(CandidateDetailsForTest _list)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@PartitionKey", _list.PartitionKey);
+                    parameters.Add("@MCQId", _list.MCQId);
+                    parameters.Add("@Skills", _list.Skills);
+                    parameters.Add("@TotalExprience", _list.TotalExprience);
+                    parameters.Add("@CandidateEmail", _list.CandidateEmail);
+                    parameters.Add("@ApplyingCompany", _list.ApplyingCompany);
+                    parameters.Add("@ClientHR", _list.ClientHR);
+                    parameters.Add("@CandidateScore", _list.CandidateScore);
+                    parameters.Add("@TotalQuestions", _list.TotalQuestions);
+                    parameters.Add("@VideoLink", _list.VideoLink);
+                    parameters.Add("@FeedbackComment", _list.FeedbackComment);
+                    parameters.Add("@Feedbackreating", _list.Feedbackreating);
+
+                    await SqlMapper.QueryAsync(con, "usp_AddMCQCandidatesPremium", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> AddMCQCandidateQuestionsPremium(List<MCQVM> _question)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable mcqQuestions = new DataTable();
+                    mcqQuestions.Columns.Add("PartitionKey", typeof(string));
+                    mcqQuestions.Columns.Add("QuestionType", typeof(string));
+                    mcqQuestions.Columns.Add("Question", typeof(string));
+                    mcqQuestions.Columns.Add("Option1", typeof(string));
+                    mcqQuestions.Columns.Add("Option2", typeof(string));
+                    mcqQuestions.Columns.Add("Option3", typeof(string));
+                    mcqQuestions.Columns.Add("Option4", typeof(string));
+                    mcqQuestions.Columns.Add("Answer", typeof(string));
+                    mcqQuestions.Columns.Add("Explanation", typeof(string));
+                    mcqQuestions.Columns.Add("MCQId", typeof(string));
+                    mcqQuestions.Columns.Add("QuestionNumber", typeof(int));
+                    mcqQuestions.Columns.Add("CandidateID", typeof(string));
+                    mcqQuestions.Columns.Add("MultiAnswerOption1", typeof(bool));
+                    mcqQuestions.Columns.Add("MultiAnswerOption2", typeof(bool));
+                    mcqQuestions.Columns.Add("MultiAnswerOption3", typeof(bool));
+                    mcqQuestions.Columns.Add("MultiAnswerOption4", typeof(bool));
+                    mcqQuestions.Columns.Add("QuestionId", typeof(string));
+                    mcqQuestions.Columns.Add("Rating", typeof(int));
+                    mcqQuestions.Columns.Add("QuestionAnswer", typeof(string));
+                    mcqQuestions.Columns.Add("SingleAnswer", typeof(string));
+                    foreach (var item in _question)
+                    {
+                        mcqQuestions.Rows.Add(item.PartitionKey, item.QuestionType, item.Question, item.Option1, item.Option2, item.Option3, item.Option4, item.Answer, item.Explanation, item.MCQId, item.QuestionNumber,
+                            item.CandidateID, item.MultiAnswerOption1, item.MultiAnswerOption2, item.MultiAnswerOption3, item.MultiAnswerOption4, item.QuestionId, item.Rating, item.QuestionAnswer, item.SingleAnswer);
+                    }
+                    SqlCommand cmd = new SqlCommand("usp_MCQCandidateQuestionsBulkInsertPremium", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@MCQCandidateQuestionsBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@MCQCandidateQuestionsBulkData"].Value = mcqQuestions;
+                    con.Open();
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> AddMCQSetShareListPremium(MCQVMShare _list)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@PartitionKey", _list.PartitionKey);
+                    parameters.Add("@ApplyingCompany", _list.ApplyingCompany);
+                    parameters.Add("@ClientHR", _list.ClientHR);
+                    parameters.Add("@EmailAddress", _list.EmailAddress);
+                    parameters.Add("@MCQId", _list.MCQId);
+                    parameters.Add("@MCQSet", _list.MCQSet);
+                    parameters.Add("@Videorecording", 0);
+                    parameters.Add("@status", _list.status);
+                    parameters.Add("@roomId", _list.roomId);
+                    parameters.Add("@Expiretime", _list.Expiretime);
+                    parameters.Add("@WhoShared", _list.WhoShared);
+                    parameters.Add("@ShareDate", DateTime.Now);
+                    await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidatePremium", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSetsPremium(string clientname, string profileName, bool requesttype)
+        {
+            try
+            {
+                //var query = "Select * From MCQSets";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@profileName", profileName);
+                    parameters.Add("@clientname", clientname);
+                    parameters.Add("@requesttype", requesttype);
+                    var result = await SqlMapper.QueryAsync<MCQVMset>(con, "usp_GetMCQSetsPremium", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MCQPId", MCQPId);
+                    var result = await SqlMapper.QueryAsync<CandidateDetailsForTestDuplicate>(con, "usp_MCQCandidateDetailsByMCQIdPremium", parameters,
+                                                commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQReportByMCQIdPremium(string MCQPId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@MCQPId", MCQPId);
+                    var result = await SqlMapper.QueryAsync<CandidateDetailsForTestDuplicate>(con, "usp_MCQReportByMCQIdPremium", parameters,
+                                                commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MCQVM>> GetMCQCandidateQuestionsPremium(string CandidateId)
+        {
+            try
+            {
+                var query = "Select * From MCQCandidateQuestionAnswerPremium where CandidateId=@CandidateId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CandidateId", CandidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MCQVM>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> UpdateVideoURLForCandidatePremium(CandidateDetailsForTestDuplicate model)
+        {
+            try
+            {
+                var query = "Update MCQCandidatesPremium set VideoLink=@VideoLink where PartitionKey=@PartitionKey";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@PartitionKey", model.Id);
+                dynamicParameters.Add("@VideoLink", model.VideoLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<int> FetchTotalInviteAllowed(string clientemail)
+        {
+            try
+            {
+                var query = "Select cu.MCQValidation from  ClientPremiumUser cu join UserList ul on ul.id=cu.UserId where ul.EmailId=@clientemail";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@clientemail", clientemail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
+        public async Task<int> FetchTotalInviteSent(string clientemail)
+        {
+            try
+            {
+                var query = "Select Count(id) totalcount from MCQShareListPremium where ClientHR=@clientemail";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@clientemail", clientemail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
         }
     }
 }
