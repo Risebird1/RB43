@@ -60,7 +60,7 @@ namespace Risebird.MicroService
                         {
                             dt.Rows.Add(_redflag.interviewDate, _redflag.candidateName, _redflag.ClientName, _redflag.Redflags);
                         }
-                        var emailresult = _notificationHelper.SendQCFormDetails(_mail, dt);
+                        var emailresult = await _notificationHelper.SendQCFormDetails(_mail, dt);
                     }
                     catch (Exception ex)
                     {

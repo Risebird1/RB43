@@ -57,7 +57,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -79,7 +79,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
+                        var emailresult =await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send  WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -100,7 +100,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -145,7 +145,7 @@ namespace Risebird.MicroService
 
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder"
                         };
-                        var emailresult = _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST");
                     }
                 }
                 catch (Exception ex)
