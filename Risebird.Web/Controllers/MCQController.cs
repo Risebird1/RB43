@@ -387,6 +387,7 @@ namespace Risebird.Web.Controllers
             var CompanyType = Convert.ToInt32(Request.Form["CompanyType"].ToString());
             var CountryType = Convert.ToInt32(Request.Form["CountryType"].ToString());
             var AadhaarVerification = Convert.ToBoolean(Request.Form["AadhaarVerification"]);
+            var PremiumMCQ = Convert.ToBoolean(Request.Form["PremiumMCQ"]);
             var clients = Request.Form["Clients"].ToString();
             //var PerHourRate = Convert.ToInt32(Request.Form["PerHourRate"].ToString());
             //var id = Convert.ToInt32(Request.Form["id"].ToString());
@@ -406,6 +407,7 @@ namespace Risebird.Web.Controllers
             _lstset.CompanyType = CompanyType;
             _lstset.CountryType = CountryType;
             _lstset.AadhaarVerification = AadhaarVerification;
+            _lstset.PremiumMCQ = PremiumMCQ;
             _lstset.Clients = clients;
             //_lstset.PerHourRate = PerHourRate;
             if (status == "Edit")
@@ -507,16 +509,17 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Questionpage(string Id)
+        public async Task<IActionResult> Questionpage(string Id, string Type)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SupportAdmin")
                 {
                     var questions = _mCQService.GetMCQquestionsByMCQId(Id);
                     var model = questions.Where(x => x.MCQId == Id).OrderBy(x => x.QuestionNumber).ToList();
+                    ViewBag.Type = Type;
                     return View(model);
                 }
                 else
@@ -1756,6 +1759,817 @@ namespace Risebird.Web.Controllers
             IRestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
             return convertedResponse;
+        }
+        #endregion
+        #region MCQ For Premium Client
+        //Client Premium With Limit Share or attempt
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RecruiterInterview()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Premium Client" || profileName == "SupportAdmin")
+                {
+                    string clientname = string.Empty;
+                    if (profileName == "Premium Client")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var client = _userRepository.GetClientPremiumUserDetails(emailid);
+                        if (client != null)
+                        {
+                            clientname = client.Result.ClientName.ToUpper();
+                        }
+                    }
+                    var result = _mCQService.FetchAllMCQSetsPremium(clientname, profileName, false);
+                    if (profileName == "Client")
+                    {
+                        List<MCQVMset> filteredByClient = new List<MCQVMset>();
+                        foreach (var item in result)
+                        {
+                            if (!string.IsNullOrEmpty(item.Clients))
+                            {
+                                var clientsMapped = item.Clients.Split(",");
+                                if (clientsMapped != null && clientsMapped.Any(x => !string.IsNullOrEmpty(x) && x.ToLower() == clientname?.ToLower()))
+                                {
+                                    filteredByClient.Add(item);
+                                }
+                            }
+                        }
+                        result = filteredByClient;
+                    }
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    var skillset = _skillService.GetSkills();
+                    var resultset = new MCQDropdowndetails();
+                    resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+                    resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
+                    resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
+                    resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
+                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    foreach (var item in result ?? new List<MCQVMset>())
+                    {
+                        if (!string.IsNullOrEmpty(item.ProfileType))
+                        {
+                            var listProfileTypes = new List<string>();
+                            foreach (var profile in item.ProfileType.Split(','))
+                            {
+                                var name = Enum.GetName(typeof(Heuristicsscorelevel), Convert.ToInt16(profile));
+                                listProfileTypes.Add(name);
+                            }
+                            item.ProfileTypeName = string.Join(",", listProfileTypes);
+                        }
+                    }
+                    if (HttpContext.Session.GetString("MCQPremiumSetList") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<MCQFilter>(HttpContext.Session.GetString("MCQPremiumSetList"));
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = result.Select(x => x.PrimarySkills).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.SecondarySkill = filter.SecondarySkill == null ? filter.SecondarySkill = result.Select(x => x.SecondarySkill).ToArray() : filter.SecondarySkill = filter.SecondarySkill;
+                        if (result != null && result.Count() > 0)
+                        {
+                            bool continueApplyingFilter = true;
+                            if (filter.PrimarySkill != null)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByPrimarySkill = null;
+
+                                resultFilteredByPrimarySkill = result.Where(c => filter.PrimarySkill.Contains(c.PrimarySkills));
+                                if (resultFilteredByPrimarySkill != null)
+                                {
+                                    result = resultFilteredByPrimarySkill;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.CountryType))
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByCountryType = null;
+                                resultFilteredByCountryType = result.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
+                                if (resultFilteredByCountryType != null && resultFilteredByCountryType.Count() > 0)
+                                {
+                                    result = resultFilteredByCountryType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.CompanyType) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByCompanyType = null;
+                                resultFilteredByCompanyType = result.Where(c => c.CompanyType.HasValue && c.CompanyType.Value == Convert.ToInt16(filter.CompanyType));
+                                if (resultFilteredByCompanyType != null && resultFilteredByCompanyType.Count() > 0)
+                                {
+                                    result = resultFilteredByCompanyType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.SeniorityLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredBySeniority = null;
+                                resultFilteredBySeniority = result.Where(c => c.SeniorityLevel != null && c.SeniorityLevel.Contains(filter.SeniorityLevel));
+                                if (resultFilteredBySeniority != null && resultFilteredBySeniority.Count() > 0)
+                                {
+                                    result = resultFilteredBySeniority;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.DifficultyLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByDifficulty = null;
+                                resultFilteredByDifficulty = result.Where(c => c.ProfileType != null && c.ProfileType.Contains(filter.DifficultyLevel));
+                                if (resultFilteredByDifficulty != null && resultFilteredByDifficulty.Count() > 0)
+                                {
+                                    result = resultFilteredByDifficulty;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(filter.EmploymentType) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByEmploymentType = null;
+                                resultFilteredByEmploymentType = result.Where(c => c.EmploymentType != null && c.EmploymentType.Contains(filter.EmploymentType));
+                                if (resultFilteredByEmploymentType != null && resultFilteredByEmploymentType.Count() > 0)
+                                {
+                                    result = resultFilteredByEmploymentType;
+                                }
+                            }
+                        }
+                        result = result?.ToList();
+                    }
+                    resultset._MCQVMset = result.Count() != 0 ? (List<MCQVMset>)result : new List<MCQVMset>();
+                    ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
+                    ViewBag.profile = profileName;
+                    return View(resultset);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RecruiterInterview(MCQFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("MCQPremiumSetList", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("RecruiterInterview");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetRecruiterInterviewFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("MCQPremiumSetList");
+                    return RedirectToAction("RecruiterInterview");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> SharePerimumTestLink(string Emailids, string Id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    string ClientEmail = emailid;
+                    string ClientName = "";
+                    var totalinviteallowed = _mCQService.FetchTotalInviteAllowed(emailid);
+                    var totalinvitesent = _mCQService.FetchTotalInviteSent(emailid);
+                    if (Emailids.Split(";").Count() + totalinvitesent <= totalinviteallowed)
+                    {
+                        if (profileName == "Premium Client")
+                        {
+                            var client = _userRepository.GetClientPremiumUserDetails(emailid);
+                            if (client != null)
+                            {
+                                ClientName = client.Result.ClientName.ToUpper();
+                            }
+                        }
+                        var resultset = _mCQService.FetchMCQSetById(Id);
+                        var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
+                        var timmer = details.Timer + " min";
+                        string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTestPremium?Id=" + Id;
+                        var botlinkslist = new MCQBotResponse();
+                        var aadharverificationflag = "N";
+                        if (details.AadhaarVerification)
+                        {
+                            aadharverificationflag = "Y";
+                        }
+                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl);
+                        MCQVMShare _list = new MCQVMShare();
+                        _list.status = 0;
+                        _list.MCQSet = details.Title;
+                        _list.ClientHR = ClientEmail;
+                        _list.ApplyingCompany = ClientName;
+                        _list.WhoShared = emailid;
+
+                        foreach (var item in Emailids.Split(";"))
+                        {
+                            try
+                            {
+                                var result = string.Empty;
+                                var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                                var _meetinglinks = new ShareMCQRisebirdMeetingResponse();
+                                var _testurl = botlinkslist.emailBotUrls.Where(x => x.email == item).FirstOrDefault().botTestLink;
+                                _meetinglinks.roomId = _testurl.Split("/").LastOrDefault();
+                                Mail _mail = new Mail
+                                {
+                                    TO = item,
+                                    Subject = "Invitation for " + details.Title + " : " + ClientName
+                                };
+                                //Check Mail to send
+                                result = await _notificationHelper.SharedBotTestLink(_mail, details.Title, timmer, _testurl, ClientName);
+                                if (result.Contains("Mail sent successfully"))
+                                {
+                                    _list.PartitionKey = date1;
+                                    _list.MCQId = Id;
+                                    _list.EmailAddress = item.Trim();
+                                    _list.roomId = _meetinglinks.roomId;
+                                    _list.Expiretime = 48;
+                                    _mCQService.AddMCQSetShareListPremium(_list);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+                        }
+                        return Json("success");
+                    }
+                    else
+                    {
+                        return Json("You can not send more than 10 invite. Already send " + totalinvitesent + "/" + totalinviteallowed);
+                    }
+                }
+                else
+                {
+                    return Json("success");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult SkillTestPremium(string Id)
+        {
+            var result = _mCQService.FetchMCQSetById(Id);
+            ViewBag.Questionsetid = Id;
+            var model = new CandidateDetailsForTest();
+            model.MCQId = Id;
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CandidateQuestionpagePremium(CandidateDetailsForTest values)
+        {
+            string Id = values.MCQId;
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Questionsetid = Id;
+                return View("SkillTestPremium", values);
+            }
+            var candidateShare = _mCQService.GetShareMCQEmailListByMCQIdPremium(Id);
+            if (candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.MCQId == Id).Count() == 0)
+            {
+                return RedirectToAction("TestCompletePremium", new { status = "Unauthorized" });
+            }
+
+            var itemshareupdate = candidateShare.FirstOrDefault();
+            _mCQService.UpdateShareMCQEmailStatusByidPremium(itemshareupdate.id, 1);
+
+            values.ApplyingCompany = itemshareupdate.ApplyingCompany;
+            values.ClientHR = itemshareupdate.ClientHR;
+            var candidateDetails = _mCQService.GetMCQCandidateListByMCQIdPremium(Id);
+            if (candidateDetails.Where(x => x.MCQId == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
+            {
+                return RedirectToAction("TestCompletePremium", new { status = "TestCompleted" });
+            }
+            //Check Time Validation
+            var _candidate = candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.MCQId == Id).FirstOrDefault();
+            if (_candidate.Expiretime > 0)
+            {
+                if (_candidate.ShareDate.AddHours(_candidate.Expiretime) <= DateTime.Now)
+                {
+                    return RedirectToAction("TestCompletePremium", new { status = "TimeExpired" });
+                }
+            }
+            HttpContext.Session.SetString("TestCandidateDetailsPremium", JsonConvert.SerializeObject(values));
+            var questions = _mCQService.GetMCQquestionsByMCQId(Id);
+            var questionstimmer = _mCQService.FetchMCQSetById(Id);
+            var model = questions.OrderBy(x => x.QuestionNumber).ToList();
+            foreach (var item in model)
+            {
+                item.QuestionId = item.PartitionKey;
+            }
+            QuestionDetailsList modelset = new QuestionDetailsList();
+            modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
+            modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
+            if (HttpContext.Session.GetString("QuestionSetPremium") != null)
+            {
+                modelset._timmerdetails.Timer = "";
+            }
+            else
+            {
+                HttpContext.Session.SetString("QuestionSetPremium", JsonConvert.SerializeObject(model));
+            }
+            ViewBag.VideoRecording = itemshareupdate.Videorecording;
+            return View(modelset);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CandidateSelectQuestionsDPremium(string id)
+        {
+            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSetPremium"));
+            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetailsPremium"));
+            HttpContext.Session.SetString("TestCandidateDetailsPremium", JsonConvert.SerializeObject(values));
+
+            HttpContext.Session.SetString("QuestionSetPremium", JsonConvert.SerializeObject(resultset));
+
+            var questionvalue = Convert.ToInt32(id);
+            if (HttpContext.Session.GetString("TestCandidateQuestionPremium") != null && questionvalue == 1)
+            {
+                questionvalue = JsonConvert.DeserializeObject<int>(HttpContext.Session.GetString("TestCandidateQuestionPremium"));
+            }
+            var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
+            if (resultset.Count() == questionvalue)
+            {
+                result.final = "true";
+            }
+            QuestionDetailsList modeldetailset = new QuestionDetailsList();
+            var _questionlist = (from _Q in resultset
+                                 select new QuestionList
+                                 {
+                                     QuestionNumber = _Q.QuestionNumber,
+                                     QuestionAnswered = string.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                 }).ToList();
+            modeldetailset._question = result;
+            modeldetailset._questionlist = _questionlist;
+            return Json(modeldetailset);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CandidateQuestionsDPremium()
+        {
+            var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
+            var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
+            var Option3 = Convert.ToBoolean(Request.Form["Option3"].ToString());
+            var Option4 = Convert.ToBoolean(Request.Form["Option4"].ToString());
+            var SingleAnswer = Request.Form["SingleAnswer"].ToString();
+            var QuestionNumber = Convert.ToInt32(Request.Form["QuestionNumber"].ToString());
+            var final = Request.Form["final"].ToString();
+            var QuestionType = Request.Form["QuestionType"].ToString();
+
+            HttpContext.Session.SetString("TestCandidateQuestionPremium", JsonConvert.SerializeObject(QuestionNumber));
+            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSetPremium"));
+            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetailsPremium"));
+            HttpContext.Session.SetString("TestCandidateDetailsPremium", JsonConvert.SerializeObject(values));
+            foreach (var item in resultset.Where(x => x.QuestionNumber == QuestionNumber))
+            {
+                item.MultiAnswerOption1 = Option1;
+                item.MultiAnswerOption2 = Option2;
+                item.MultiAnswerOption3 = Option3;
+                item.MultiAnswerOption4 = Option4;
+                item.SingleAnswer = SingleAnswer;
+                if (QuestionType == "Single")
+                {
+                    item.QuestionAnswer = SingleAnswer;
+                    if (SingleAnswer.ToUpper() == item.Answer.ToUpper())
+                    {
+                        item.Rating = 1;
+                    }
+                }
+                else
+                {
+                    var flag = true;
+                    if (Option1 == true)
+                    {
+                        item.QuestionAnswer = "1";
+                        if (!item.Answer.ToUpper().Contains("1"))
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (Option2 == true)
+                    {
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
+                            item.QuestionAnswer = "2";
+                        else
+                            item.QuestionAnswer = item.QuestionAnswer + ",2";
+                        if (!item.Answer.ToUpper().Contains("2"))
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (Option3 == true)
+                    {
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
+                            item.QuestionAnswer = "3";
+                        else
+                            item.QuestionAnswer = item.QuestionAnswer + ",3";
+                        if (!item.Answer.ToUpper().Contains("3"))
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (Option4 == true)
+                    {
+                        if (string.IsNullOrEmpty(item.QuestionAnswer))
+                            item.QuestionAnswer = "4";
+                        else
+                            item.QuestionAnswer = item.QuestionAnswer + ",4";
+                        if (!item.Answer.ToUpper().Contains("4"))
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (Option1 == false && Option2 == false && Option3 == false && Option4 == false)
+                    {
+                        flag = false;
+                    }
+                    if (flag == true)
+                    {
+                        item.Rating = 1;
+                    }
+                    else
+                    {
+                        item.Rating = 0;
+                    }
+                }
+                break;
+            }
+
+
+            if (final == "true")
+            {
+                HttpContext.Session.SetString("TestCandidateDetailsPremium", JsonConvert.SerializeObject(values));
+                HttpContext.Session.SetString("QuestionSetPremium", JsonConvert.SerializeObject(resultset));
+                return Json("");
+            }
+            HttpContext.Session.SetString("QuestionSetPremium", JsonConvert.SerializeObject(resultset));
+            var questionvalue = QuestionNumber + 1;
+            var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
+            if (resultset.Count() == questionvalue)
+            {
+                result.final = "true";
+            }
+            QuestionDetailsList modeldetailset = new QuestionDetailsList();
+            var _questionlist = (from _Q in resultset
+                                 select new QuestionList
+                                 {
+                                     QuestionNumber = _Q.QuestionNumber,
+                                     QuestionAnswered = string.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                 }).ToList();
+            modeldetailset._question = result;
+            modeldetailset._questionlist = _questionlist;
+            return Json(modeldetailset);
+        }
+
+        [HttpGet]
+        public IActionResult TestCompletePremium(string status)
+        {
+            ViewBag.Action = status;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SubmitTestPremium()
+        {
+            try
+            {
+                var rating = Convert.ToInt32(Request.Form["rating"].ToString());
+                var comments = Request.Form["comments"].ToString();
+
+                var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSetPremium"));
+                var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetailsPremium"));
+                var _list = new CandidateDetailsForTest();
+                var _id = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                _list.PartitionKey = _id;
+                //_list.RowKey = Guid.NewGuid().ToString();
+                _list.MCQId = values.MCQId;
+                _list.Skills = values.Skills;
+                _list.TotalExprience = values.TotalExprience;
+                _list.CandidateEmail = values.CandidateEmail;
+                _list.ApplyingCompany = values.ApplyingCompany;
+                _list.ClientHR = values.ClientHR;
+                _list.CandidateScore = resultset.Sum(x => x.Rating);
+                _list.TotalQuestions = resultset.Count();
+                _list.VideoLink = values.VideoLink;
+                _list.FeedbackComment = comments;
+                _list.Feedbackreating = rating;
+                _mCQService.AddMCQCandidatesPremium(_list);
+                foreach (var item in resultset)
+                {
+                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    item.PartitionKey = date1;
+                    item.CandidateID = _id;
+                }
+                _mCQService.AddMCQCandidateQuestionsPremium(resultset);
+                //Send mail to support team
+                var HrEmailaddresslist = _supportService.GetAllSupportHR();
+                string HrEmailaddress = string.Empty;
+                foreach (var item in HrEmailaddresslist)
+                {
+                    if (string.IsNullOrEmpty(HrEmailaddress))
+                    {
+                        HrEmailaddress = item.EmailId;
+                    }
+                    else
+                    {
+                        HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
+                    }
+                }
+                int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
+                Mail _mail = new Mail
+                {
+                    TO = values.ClientHR,
+                    CC = HrEmailaddress,
+                    Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
+                };
+                var resultretrun = await _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+                HttpContext.Session.Remove("TestCandidateQuestionPremium");
+                return Json("TestSubmit");
+            }
+            catch (Exception)
+            {
+                return Json("Failed to submit Test");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CandidateTestDetailsPremium(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var isclient = false;
+                var clientname = string.Empty;
+                var candidateset = new List<CandidateDetailsForTestDuplicate>();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Premium Client" || profileName == "SupportAdmin")
+                {
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQIdPremium(id);
+                    if (candidateset != null)
+                    {
+                        if (profileName == "Premium Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            var client = _userRepository.GetClientPremiumUserDetails(emailid);
+                            if (client != null)
+                            {
+                                clientname = client.Result.ClientName.ToUpper();
+                                isclient = true;
+                                var clientemailid = emailid.ToUpper();
+                                candidateset = candidateset.Where(x => x.ClientHR.ToUpper() == clientemailid).ToList();
+                            }
+                        }
+                        if (HttpContext.Session.GetString("MCQCandidateListPremium") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQCandidateListPremium"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
+                            }
+                            if (profileName != "Premium Client")
+                            {
+                                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
+                                filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                                candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
+                                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
+                            }
+                        }
+                        ViewBag.ID = id;
+                        ViewBag.Isclient = isclient;
+                        ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
+                        ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
+                        return View(candidateset);
+                    }
+                }
+                return View(candidateset);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CandidateTestDetailsPremium(InterviewFilter filter, string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Premium Client" || profileName == "SupportAdmin")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("MCQCandidateListPremium", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("CandidateTestDetailsPremium", new { id = id });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public IActionResult ResetMCQCandidatePremiumFilter(string id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("MCQCandidateListPremium");
+                    return RedirectToAction("CandidateTestDetailsPremium", new { id = id });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+        }
+        public async Task<IActionResult> CandidateMCQReportPremium(string MCQId, string CMCQId, string SMCQId)
+        {
+            try
+            {
+                ViewBag.PublicLayout = false;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    ViewBag.PublicLayout = true;
+                }
+                else
+                {
+                    HttpContext.Session.SetString("Logo", "");
+                }
+                var _candidate = new CandidateDetailsForTestDuplicate();
+                var candidateset = _mCQService.GetMCQReportByMCQIdPremium(MCQId);
+                if (!string.IsNullOrWhiteSpace(CMCQId))
+                {
+                    _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
+                }
+                else
+                {
+                    _candidate = candidateset.Where(x => x.SMCQId == SMCQId).FirstOrDefault();
+                }
+                if (_candidate == null)
+                {
+                    _candidate = new CandidateDetailsForTestDuplicate();
+                }
+                var questions = _mCQService.GetMCQCandidateQuestionsPremium(_candidate.Id);
+                if (questions == null)
+                {
+                    questions = new List<MCQVM>();
+                }
+                _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
+                _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+                _candidate.SelectabilityEvaluatorReportCollection = new List<SelectabilityEvaluatorReport>();
+                _candidate.JoinabilityHRReportCollection = new List<JoinabilityHRReport>();
+                if (string.IsNullOrEmpty(_candidate.VideoLink))
+                {
+                    if (!string.IsNullOrEmpty(_candidate.roomId))
+                    {
+                        if (_candidate.botactive)
+                        {
+                            var _meeting = new RestClient("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId);
+                            var request = new RestRequest(Method.GET);
+                            IRestResponse response = _meeting.Execute(request);
+                            var content = response.Content;
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                            }
+                            try
+                            {
+                                var convertedResponse = JsonConvert.DeserializeObject<MCQBotReport>(content).responseBody;
+                                _candidate.VideoLink = convertedResponse.recording;
+                                if (_candidate != null && _candidate.VideoLink != null)
+                                {
+                                    _mCQService.UpdateVideoURLForCandidatePremium(_candidate);
+                                }
+                                //save aadhaar face details
+                                if (!string.IsNullOrWhiteSpace(convertedResponse.aadharVerification.data.name))
+                                {
+                                    var values = convertedResponse.aadharVerification.data;
+                                    var _face = convertedResponse.faceVerification.data;
+                                    var aadhaarKYCmodel = new AadhaarData();
+                                    aadhaarKYCmodel.Name = values.name;
+                                    aadhaarKYCmodel.Address = values.address;
+                                    aadhaarKYCmodel.gender = values.gender;
+                                    aadhaarKYCmodel.dob = values.dob;
+                                    aadhaarKYCmodel.doc_face = values.faceBase64;
+                                    aadhaarKYCmodel.email = _candidate.CandidateEmail;
+                                    aadhaarKYCmodel.reference_id = _candidate.SameID;
+                                    aadhaarKYCmodel.verified_using = "BOT";
+                                    aadhaarKYCmodel.matchPercentage = _face.score;
+                                    aadhaarKYCmodel.passport_image = _face.liveImage;
+                                    await _aadhaarService.SaveAadhaarDetails(aadhaarKYCmodel);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+                        else
+                        {
+                            var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
+                            var request = new RestRequest(Method.GET);
+                            //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                            request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
+                            IRestResponse response = _meeting.Execute(request);
+                            var content = response.Content;
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                            }
+                            try
+                            {
+                                var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+                                _candidate.VideoLink = convertedResponse.videoUrl;
+                                if (_candidate != null && _candidate.VideoLink != null)
+                                {
+                                    _mCQService.UpdateVideoURLForCandidatePremium(_candidate);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+                    }
+                }
+                return View(_candidate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         #endregion
     }

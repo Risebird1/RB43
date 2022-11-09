@@ -1,0 +1,149 @@
+﻿@model Risebird.Entities.ViewModel.ClientUserVM
+@{
+    ViewData["Title"] = "PremiumClientUserUpdate";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool isPasswordPresent = true;
+    if (string.IsNullOrEmpty(Model.UserPassword))
+    {
+        isPasswordPresent = false;
+    }
+
+}
+
+<script>
+    var Header = "<a href='/User/ClientUsers'>Premium Client User</a>&nbsp;/&nbsp;Update Client Premium User";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="mt50">
+    </div>
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-white">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("EditPremiumClientUser", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add User</h4></div>
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
+                                @Html.HiddenFor(model=>model.SelectedClientRole)
+                                <div class="form-horizontal w-full">
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(x => Model.SelectedClient, Model.Clients, "Select Client", htmlAttributes: new { @class = "select-css form-control", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>  <font style=" color: #696969d1; padding-left: 10px;">(Name should be atleast of 4 characters)</font>
+                                            </div>
+                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Please enter Whatsapp no. without country code.Ex: 999999999" })
+                                            @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.UserPassword, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @if (isPasswordPresent)
+                                            {
+                                                @Html.EditorFor(model => model.UserPassword, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly = "readonly" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.EditorFor(model => model.UserPassword, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                            }
+                                            @Html.ValidationMessageFor(model => model.UserPassword, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MCQValidation, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.MCQValidation,new{@class = "form-control", @type = "number",@Required="required"})
+                                            @Html.ValidationMessageFor(model => model.MCQValidation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @Html.HiddenFor(x => x.SelectedClient)
+                                @Html.HiddenFor(x => x.id)
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back", "PremiumClientUsers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    </div>
+
+
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+
+
+

@@ -157,7 +157,7 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
+                    List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Premium Client" };
                     List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
                     if (profileName != "Admin")
                     {
@@ -2027,7 +2027,7 @@ namespace Risebird.Web.Controllers
                 //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
                 var callbackUrl = "";
                 var recordingSid = await _twiliohelper.callrecording(sid, callbackUrl);
-                if(!string.IsNullOrEmpty(recipientType) && recipientType ==  "Interviewer")
+                if (!string.IsNullOrEmpty(recipientType) && recipientType == "Interviewer")
                 {
                     var resultset = _userService.SaveCallRecordingInterviewer(CandidateEmail, currentUserEmailId, sid, recordingSid);
                 }
@@ -2155,6 +2155,216 @@ namespace Risebird.Web.Controllers
         {
             var resultset = _userService.AddInstaZoomAccount(AccountEmail);
             return Json(resultset);
+        }
+        #endregion
+
+        #region Premium Client
+        [HttpGet]
+        public IActionResult PremiumClientUsers()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    if (TempData["SuccessErrorMessagePremiumClientUser"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessagePremiumClientUser"].ToString();
+                        TempData.Remove("SuccessErrorMessagePremiumClientUser");
+
+                    }
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    return View(_userService.GetClientPremiumUsers(emailid));
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddPremiumClientUser()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var model = new ClientUserVM();
+                    model.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                    model.SelectedClientRole = 2;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PremiumClientUsers");
+            }
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddPremiumClientUser(ClientUserVM clientUserVM)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        if (ModelState.IsValid)
+                        {
+                            if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                            {
+                                clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                            }
+                            if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                            {
+                                clientUserVM.LastName = clientUserVM.LastName.Trim();
+                            }
+                            if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                            {
+                                clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
+                            }
+                            if (_userService.AddPremiumClientUser(clientUserVM))
+                            {
+                                TempData["SuccessErrorMessagePremiumClientUser"] = "Client User is added Successfully";
+                                return RedirectToAction("PremiumClientUsers");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessagePremiumClientUser"] = "Client User addition is Failed";
+                                return RedirectToAction("PremiumClientUsers");
+                            }
+                        }
+                        else
+                        {
+                            var model = new ClientUserVM();
+                            model.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                            model.SelectedClientRole = 2;
+                            return View(model);
+                        }
+                    }
+                    return RedirectToAction("PremiumClientUsers");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessagePremiumClientUser"] = "Client User addition is Failed";
+                return RedirectToAction("PremiumClientUsers");
+            }
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditPremiumClientUser(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    ClientUserVM clientUserVM = _userService.GetClientPremiumUser(id);
+                    if (clientUserVM != null)
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                        profileName = profileName.Replace("\"", "");
+                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                        clientUserVM.SelectedClientRole = 2;
+                        return View(clientUserVM);
+                    }
+                    else
+                        return RedirectToAction("PremiumClientUsers");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("PremiumClientUsers");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditPremiumClientUser(ClientUserVM clientUserVM)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        {
+                            clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                        {
+                            clientUserVM.LastName = clientUserVM.LastName.Trim();
+                        }
+                        if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                        {
+                            clientUserVM.EmailId = clientUserVM.EmailId.Trim();
+                            clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
+                        }
+                        if (_userService.UpdateClientPremiumUser(clientUserVM))
+                        {
+                            TempData["SuccessErrorMessagePremiumClientUser"] = "Client User is updated Successfully";
+                            return RedirectToAction("PremiumClientUsers");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessagePremiumClientUser"] = "Updating Client User Failed";
+                            return RedirectToAction("PremiumClientUsers");
+                        }
+                    }
+                    else
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                        profileName = profileName.Replace("\"", "");
+                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                        clientUserVM.SelectedClientRole = 2;
+                        return View(clientUserVM);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessagePremiumClientUser"] = "Updating Client User is Failed"; ;
+                return RedirectToAction("PremiumClientUsers");
+            }
         }
         #endregion
     }

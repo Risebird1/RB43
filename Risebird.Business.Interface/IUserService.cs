@@ -68,5 +68,9 @@ namespace Risebird.Business.Interface
         string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
         List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid);
         Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string CallSid, string RecordingSid, string callRecipientPhoneNumber = null, string IRFId = null);
+        bool AddPremiumClientUser(ClientUserVM clientUser);
+        List<ClientUserVM> GetClientPremiumUsers(string EmailId);
+        ClientUserVM GetClientPremiumUser(int id);
+        bool UpdateClientPremiumUser(ClientUserVM clientUser);
     }
 }
