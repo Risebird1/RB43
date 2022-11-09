@@ -4490,7 +4490,7 @@ namespace Risebird.Web.Controllers
                     CC = "talent@risebird.io",
                     Subject = "Interviewer Removal Request : " + _details.IRFId
                 };
-                var emailsend = _notificationHelper.SendInteviewerRemovalNotification(_mail, totalinterview, selectedinterview, rejectedinterview, interviewer, _details.ClientName, _details.IRFId, emailid);
+                var emailsend = await _notificationHelper.SendInteviewerRemovalNotification(_mail, totalinterview, selectedinterview, rejectedinterview, interviewer, _details.ClientName, _details.IRFId, emailid);
                 if (emailsend.Contains("success"))
                 {
                     return Json("Removal request succesfully sent.");

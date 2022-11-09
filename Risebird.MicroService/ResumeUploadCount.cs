@@ -55,7 +55,7 @@ namespace Risebird.MicroService
                         {
                             dt.Rows.Add(_irf.IRFId, _irf.TotalResumes);
                         }
-                        var emailresult = _notificationHelper.SendResumeUploadCounts(_mail, dt, _countdetails.FirstOrDefault().FirstName);
+                        var emailresult = await _notificationHelper.SendResumeUploadCounts(_mail, dt, _countdetails.FirstOrDefault().FirstName);
                     }
                     catch (Exception ex)
                     {

@@ -27,5 +27,18 @@ namespace Risebird.Business.Interface
         CandidateDetailsForTestDuplicate FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
         MCQVMset FetchMCQSetsForApi(MCQApiVM model);
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQId(string MCQPId);
+        IEnumerable<MCQVMShare> GetShareMCQEmailListByMCQIdPremium(string MCQPId);
+        string UpdateShareMCQEmailStatusByidPremium(int id, int status);
+        IEnumerable<CandidateDetailsForTest> GetMCQCandidateListByMCQIdPremium(string MCQPId);
+        string AddMCQCandidatesPremium(CandidateDetailsForTest _list);
+        string AddMCQCandidateQuestionsPremium(List<MCQVM> _question);
+        string AddMCQSetShareListPremium(MCQVMShare _list);
+        IEnumerable<MCQVMset> FetchAllMCQSetsPremium(string clientname, string profileName, bool requesttype);
+        IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQIdPremium(string MCQPId);
+        IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQIdPremium(string MCQPId);
+        IEnumerable<MCQVM> GetMCQCandidateQuestionsPremium(string CandidateId);
+        string UpdateVideoURLForCandidatePremium(CandidateDetailsForTestDuplicate model);
+        int FetchTotalInviteAllowed(string clientemail);
+        int FetchTotalInviteSent(string clientemail);
     }
 }

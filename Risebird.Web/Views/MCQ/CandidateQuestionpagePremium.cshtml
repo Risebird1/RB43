@@ -1,0 +1,499 @@
+﻿@model Risebird.Entities.ViewModel.QuestionDetailsList
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+    <title>Recruiter Interview Questions</title>
+    <style>
+        .star-rating {
+            /*border: solid 1px #ccc;*/
+            border: solid 1px white;
+            display: flex;
+            flex-direction: row-reverse;
+            font-size: 2.0em;
+            justify-content: space-around;
+            padding: 0 .2em;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+            background-color: lightgray;
+        }
+
+            .star-rating input {
+                display: none;
+            }
+
+            .star-rating label {
+                /*color: #ccc;*/
+                color: white;
+                cursor: pointer;
+            }
+
+            .star-rating :checked ~ label {
+                color: #f90;
+            }
+
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #fc0;
+            }
+
+        .card-title-space {
+            margin: 20px 0px;
+            float: right
+        }
+
+        .mb10 {
+            margin-bottom: 10px
+        }
+    </style>
+</head>
+<body>
+    <button id="btnStart" hidden>START RECORDING</button>
+    <button id="btnStop" hidden>STOP RECORDING</button>
+    <input type="hidden" value="@ViewBag.VideoRecording" id="txtrecordingvideo" />
+    <video controls hidden></video>
+
+    <video id="vid2" hidden controls></video>
+
+    <div class="text-center" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%); padding: 15px 5px 5px 10px; width: 100%; display: inline-block; position: relative;">
+        <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
+        <div style="float:right">
+            <div id="countdown">
+                <div id='tiles'></div>
+                <div class="labels">
+
+                    <input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="@Model._timmerdetails.Timer" type="hidden" />
+                    <li>Hours</li>
+                    <li>Mins</li>
+                    <li>Secs</li>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="loader text-center" style="position:absolute;display:none;width: 1000px;">
+                <img style="margin: 0px 15%; width: auto" src="~/Newassets/img/lazyload.gif" />
+            </div>
+
+            <div class="col-md-8 offset-md-2" id="divMCQSetdetails">
+            </div>
+            <div class="col-md-8 offset-md-2" id="divfeedback" style="display:none">
+                <p><b>Rating</b></p>
+                <input type="hidden" id="txtfeedbackreting" />
+                <div class="star-rating">
+                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
+                    <label for="Q1_5" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
+                    <label for="Q1_4" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeQuestion1(3)" />
+                    <label for="Q1_3" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeQuestion1(2)" />
+                    <label for="Q1_2" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
+                    <label for="Q1_1" class="star">&#9733;</label>
+                </div>
+
+                <input type="text" id="txtfeedbackComment" placeholder="Please Enter Comments" class="form-control" />
+                <br />
+                <input type="button" value="Submit" class="callsubmit" onclick="SubmitTest()" />
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    var target_date = new Date().getTime() + (1000 * parseInt($("#ztimmerdetails_Timer").val()));
+    var days, hours, minutes, seconds;
+    if (localStorage.getItem('localStoragefortimer') != null && $("#ztimmerdetails_Timer").val() == '') {
+        target_date = new Date().getTime() + (1000 * parseInt(localStorage.getItem('localStoragefortimer')));
+    }
+    var countdown = document.getElementById("tiles");
+    getCountdown();
+    var myVar = setInterval(function () { getCountdown(); }, 1000);
+    var timehave = 0;
+    function getCountdown() {
+        var current_date = new Date().getTime();
+        var seconds_left = (target_date - current_date) / 1000;
+        days = pad(parseInt(seconds_left / 86400));
+        seconds_left = seconds_left % 86400;
+
+        hours = pad(parseInt(seconds_left / 3600));
+        seconds_left = seconds_left % 3600;
+
+        minutes = pad(parseInt(seconds_left / 60));
+        seconds = pad(parseInt(seconds_left % 60));
+
+        countdown.innerHTML = "<span>" + hours + "</span><span>" + minutes + "</span><span>" + seconds + "</span>";
+
+        var timmertime = parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+        timehave = parseInt(timehave) + 1;
+        if (parseInt(timmertime) >= 1) {
+            //submit finally
+            $("#zquestion_final").val("true");
+            clearInterval(myVar);
+            FetchQuestion();
+            //$("#btnsubmit").click();
+        }
+        if (parseInt(timehave) == 60) {
+            document.getElementById('btnStop').click();
+        }
+        $("#ztimmerdetails_Timer").val(timmertime);
+        localStorage.setItem('localStoragefortimer', timmertime);
+    }
+    function pad(n) {
+        return (n < 10 ? '0' : '') + n;
+    }
+
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<script src="~/Newassets/js/plugins/sweetalert2.min.js"></script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    function QuestionSelect(questionnumber) {
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/CandidateSelectQuestionsDPremium",
+            data: { id: questionnumber },
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestCompletePremium?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
+    if (parseInt($("#textcallno").val()) > 20)
+        $(".sb-container").scrollBox();
+</script>
+<script>
+    $(document).ready(function () {
+        document.addEventListener('click', () => {
+            document.documentElement.requestFullscreen();
+        });
+
+        InitialLoad();
+    });
+    var file;
+    function InitialLoad() {
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/CandidateSelectQuestionsDPremium",
+            data: { id: "1" },
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestCompletePremium?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
+    function SubmitTest() {
+        var form_data = new FormData();
+        form_data.append("rating", $("#txtfeedbackreting").val());
+        form_data.append("comments", $("#txtfeedbackComment").val());
+        form_data.append("file", file);
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/SubmitTestPremium",
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $(".loader").hide();
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestCompletePremium?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
+    function FetchQuestion() {
+        var Singleanswer = "";
+        var option1 = false;
+        var option2 = false;
+        var option3 = false;
+        var option4 = false;
+        if ($("#zquestion_QuestionType").val() == "Single") {
+            if (document.getElementById("SingleAnswer1").checked) {
+                Singleanswer = "1";
+            } else if (document.getElementById("SingleAnswer2").checked) {
+                Singleanswer = "2";
+            } else if (document.getElementById("SingleAnswer3").checked) {
+                Singleanswer = "3";
+            } else if (document.getElementById("SingleAnswer4").checked) {
+                Singleanswer = "4";
+            }
+        } else {
+            if ($("#MultiAnswerOption1").is(':checked')) {
+                option1 = true;
+            }
+            if ($("#MultiAnswerOption2").is(':checked')) {
+                option2 = true;
+            }
+            if ($("#MultiAnswerOption3").is(':checked')) {
+                option3 = true;
+            }
+            if ($("#MultiAnswerOption4").is(':checked')) {
+                option4 = true;
+            }
+        }
+        if ($("#zquestion_final").val() == "true") {
+            document.getElementById('btnStop').click();
+            //if ($("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "0" || $("#txtrecordingvideo").val() == "") {
+            callquestions(option1, option2, option3, option4, Singleanswer);
+            // }
+        } else {
+            callquestions(option1, option2, option3, option4, Singleanswer);
+        }
+    }
+    function callquestions(option1, option2, option3, option4, Singleanswer) {
+        var form_data = new FormData();
+        form_data.append("Option1", option1);
+        form_data.append("Option2", option2);
+        form_data.append("Option3", option3);
+        form_data.append("Option4", option4);
+        form_data.append("SingleAnswer", Singleanswer);
+        form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
+        form_data.append("final", $("#zquestion_final").val());
+        form_data.append("QuestionType", $("#zquestion_QuestionType").val());
+
+        if ($("#zquestion_final").val() == "true") {
+            form_data.append("file", file);
+        }
+        $(".loader").show();
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/CandidateQuestionsDPremium",
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $(".loader").hide();
+                if ($("#zquestion_final").val() == "true") {
+                    callcompleteTest(data);
+                } else {
+                    if (data == "TestSubmit") {
+                        window.location.href = "/MCQ/TestCompletePremium?status=" + data;
+                    } else {
+                        binddata(data);
+                    }
+                }
+            }
+        });
+    }
+
+    function binddata(Data) {
+
+        var html = '';
+        html += '<div class="callno">';
+        html += '          <div class="sb-container ">';
+        html += '        <input type="hidden" id="textcallno" value="' + Data._questionlist.length + '" />';
+        for (var i = 0; i < Data._questionlist.length; i++) {
+            if (Data._questionlist[i].questionAnswered == true) {
+                html += '       <div class="callbox" style="background-color: #42a5f5; color: #fff;" onclick="QuestionSelect(' + Data._questionlist[i].questionNumber + ')">' + Data._questionlist[i].questionNumber + '</div>';
+            }
+            else {
+                html += ' <div class="callbox" style = "background-color:white" onclick = "QuestionSelect(' + Data._questionlist[i].questionNumber + ')" >' + Data._questionlist[i].questionNumber + '</div> ';
+            }
+        }
+        html += '</div>'; html += '</div>';
+        html += '<div class="mobpad" style="float:left;width:100%">';
+
+        html += '          <div class="callouts">';
+        html += '           <div>';
+        html += '               <input id="zquestion_QuestionType" name="_question.QuestionType" value="' + Data._question.questionType + '" type="hidden" />';
+        html += '               <div>';
+        html += '                   <div>   <span style="color: #42a5f5; font-weight: 600; font-size: 2.3rem; margin: 0 5px 0px 0px;"> ' + Data._question.questionNumber + '.</span > <span class="man"> ' + Data._question.question + '</span></div>';
+        html += '               <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="' + Data._question.questionNumber + '" type="hidden" />';
+        html += '                   <div>';
+        if (Data._question.questionType == "Multiple") {
+            if (Data._question.multiAnswerOption1 == true) {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption1" checked />' + Data._question.option1 + '</p>';
+            } else {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption1" />' + Data._question.option1 + '</p>';
+            }
+            if (Data._question.multiAnswerOption2 == true) {
+                html += '                                     <p class="calloption"><input type="checkbox" id="MultiAnswerOption2" checked /> ' + Data._question.option2 + '</p>';
+
+            } else {
+                html += '                                     <p class="calloption"><input type="checkbox" id="MultiAnswerOption2" /> ' + Data._question.option2 + '</p>';
+            }
+            if (Data._question.multiAnswerOption3 == true) {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption3" checked /> ' + Data._question.option3 + '</p>';
+
+            } else {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption3" /> ' + Data._question.option3 + '</p>';
+            }
+            if (Data._question.multiAnswerOption4 == true) {
+                html += '                 <p class="calloption"><input type="checkbox" id="MultiAnswerOption4" checked /> ' + Data._question.option4 + '</p>';
+
+            } else {
+                html += '                 <p class="calloption"><input type="checkbox" id="MultiAnswerOption4" /> ' + Data._question.option4 + '</p>';
+            }
+        }
+        else {
+            if (Data._question.singleAnswer == "1") {
+                html += '       <p class="calloption"><input type="radio" id="SingleAnswer1" name="question.SingleAnswer" value="1" checked="true" />' + Data._question.option1 + '</p>';
+            } else {
+                html += '       <p class="calloption"><input type="radio" id="SingleAnswer1" name="question.SingleAnswer" value="1" />' + Data._question.option1 + '</p>';
+            }
+            if (Data._question.singleAnswer == "2") {
+                html += ' <p class="calloption"><input type="radio" id="SingleAnswer2" name="question.SingleAnswer" value="2" checked="true" />' + Data._question.option2 + '</p>';
+            }
+            else {
+                html += ' <p class="calloption"><input type="radio" id="SingleAnswer2" name="question.SingleAnswer" value="2" />' + Data._question.option2 + '</p>';
+            } if (Data._question.singleAnswer == "3") {
+                html += '     <p class="calloption"><input type="radio" id="SingleAnswer3" name="question.SingleAnswer" value="3" checked="true" />' + Data._question.option3 + '</p>';
+            }
+            else {
+                html += '     <p class="calloption"><input type="radio" id="SingleAnswer3" name="question.SingleAnswer" value="3" />' + Data._question.option3 + '</p>';
+            } if (Data._question.singleAnswer == "4") {
+                html += '    <p class="calloption"><input type="radio" id="SingleAnswer4" name="question.SingleAnswer" value="4" checked="true" /> ' + Data._question.option4 + '</p>';
+            } else {
+                html += '    <p class="calloption"><input type="radio" id="SingleAnswer4" name="question.SingleAnswer" value="4" /> ' + Data._question.option4 + '</p>';
+            }
+        }
+        html += ' </div>';
+        html += '               </div>';
+        html += '               <input id="zquestion_final" name="_question.final" value="' + Data._question.final + '" type="hidden" />';
+        html += '               <input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="' + Data._timmerdetails.timer + '" type="hidden" />';
+        html += '           </div>';
+
+        html += '       </div>';
+        html += '       <div>';
+        html += '               <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
+
+        html += ' </div>';
+
+        html += ' </div>';
+        $("#divMCQSetdetails").empty().html(html);
+    }
+</script>
+<script>
+    if ($("#txtrecordingvideo").val() == "2" || $("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "") {
+        let vidSave = document.getElementById('vid2');
+        let chunks = [];
+
+        let constraintObj = {
+            audio: true,
+            video: true
+
+        };
+
+        if (navigator.mediaDevices === undefined) {
+            navigator.mediaDevices = {};
+            navigator.mediaDevices.getUserMedia = function (constraintObj) {
+                let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                if (!getUserMedia) {
+                    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                }
+                return new Promise(function (resolve, reject) {
+                    getUserMedia.call(navigator, constraintObj, resolve, reject);
+                });
+            }
+        } else {
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    devices.forEach(device => {
+                        console.log(device.kind.toUpperCase(), device.label);
+                        //, device.deviceId
+                    })
+                })
+                .catch(err => {
+                    console.log(err.name, err.message);
+                })
+        }
+
+        navigator.mediaDevices.getUserMedia(constraintObj)
+            .then(function (mediaStreamObj) {
+                //connect the media stream to the first video element
+                let video = document.querySelector('video');
+                video.onloadedmetadata = function (ev) {
+                    //show in the video element what is being captured by the webcam
+                    video.play();
+                };
+
+                //add listeners for saving video/audio
+                let start = document.getElementById('btnStart');
+                let stop = document.getElementById('btnStop');
+                let mediaRecorder = new MediaRecorder(mediaStreamObj);
+
+                mediaRecorder.start();
+                console.log(mediaRecorder.state);
+                document.getElementById('btnStop').addEventListener('click', (ev) => {
+                    mediaRecorder.stop();
+                    console.log(mediaRecorder.state);
+                });
+
+                mediaRecorder.ondataavailable = function (ev) {
+                    chunks.push(ev.data);
+                }
+                mediaRecorder.onstop = (ev) => {
+                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+                    chunks = [];
+                    let videoURL = window.URL.createObjectURL(blob);
+                    vidSave.src = videoURL;
+                    console.log(videoURL);
+                    file = blob;
+                    
+                }
+            })
+            .catch(function (err) {
+                console.log(err.name, err.message);
+            });
+    }
+    function ChangeQuestion1(id) {
+        $("#txtfeedbackreting").val(id);
+    }
+    function callcompleteTest(data) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to submit the test?",
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!',
+            cancelButtonText: "Don't",
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    document.getElementById("divfeedback").style.display = "block";
+                    document.getElementById("divMCQSetdetails").style.display = "none";
+                    swal.close();
+                    clearInterval(myVar);
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Aborted!',
+                    'Test yet not be submitted! :)',
+                    'error'
+                )
+                binddata(data);
+            }
+        })
+    }
+</script>

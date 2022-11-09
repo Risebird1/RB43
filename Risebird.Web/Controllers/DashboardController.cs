@@ -544,7 +544,7 @@ namespace Risebird.Web.Controllers
                         TO = Emailaddress,
                         Subject = $"Risebird: a new Channel request is created for " + model.Client
                     };
-                    var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Requester);
+                    var resultset = await _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Requester);
                     TempData["SuccessErrorMessageInterview"] = "Channel Request has been added Successfully!";
                     ViewBag.Message = "Channel Request has been updated Successfully!";
                 }
