@@ -102,7 +102,7 @@ namespace Risebird.CommonHelper
         //}
 
 
-        public async Task<string> SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate)
+        public async Task<string> SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
@@ -2059,7 +2059,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink)
+        public async Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -2079,14 +2079,14 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone)
+        public async Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -2103,14 +2103,14 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone)
+        public async Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -2127,7 +2127,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
@@ -2622,7 +2622,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone)
+        public async Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -2639,7 +2639,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewNoReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {

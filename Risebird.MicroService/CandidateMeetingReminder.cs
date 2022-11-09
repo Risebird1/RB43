@@ -57,7 +57,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.Irfid, item.Interviewid);
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -79,7 +79,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult =await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.Irfid, item.Interviewid);
                         //Send  WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -100,7 +100,7 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.Irfid, item.Interviewid);
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -131,9 +131,9 @@ namespace Risebird.MicroService
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), null, item.Interviewid);
-                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), null, item.Interviewid);
-                            var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                            var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), item.Irfid, item.Interviewid);
+                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), item.Irfid, item.Interviewid);
+                            var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, item.Irfid, item.Interviewid);
                         }
                     }
                     else if (item.Typefunction == 31)

@@ -64,7 +64,7 @@ namespace Risebird.MicroService
                             {
                                 TO = item.EmailId,
                                 CC = "talent@risebird.io",
-                                Subject = "Open interviews are available for you, Please assign"
+                                Subject = "New interviews have come up! Please assign."
                             };
                             var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total);
                             //What's App Message Send
@@ -73,7 +73,7 @@ namespace Risebird.MicroService
                             _whatsAppVM.MessageValue = item.Total.ToString();
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
                             _whatsAppVM.Event = "Interviewer Common Interview";
-                            _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                            await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
                         }
                         catch (Exception ex)
                         {
@@ -140,7 +140,7 @@ namespace Risebird.MicroService
                             {
                                 TO = item,
                                 CC = "talent@risebird.io",
-                                Subject = "New Interview Scheduled"
+                                Subject = "New Interview(s) Scheduled"
                             };
                             var emailsend1 = await _notificationHelper.SendClientCommonInterviewNotification(_mail1, dt);
                         }

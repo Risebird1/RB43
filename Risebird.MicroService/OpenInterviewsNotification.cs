@@ -42,7 +42,7 @@ namespace Risebird.MicroService
                     if (irfInterviewers != null && irfInterviewers.Count() > 0)
                     {
                         //send mails to the active irf interviewers
-                        _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString());
+                        await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
                     }
 
                 }

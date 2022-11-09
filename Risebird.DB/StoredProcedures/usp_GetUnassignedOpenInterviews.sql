@@ -25,7 +25,7 @@ set @nearestThirtyMinute = (SELECT DATEADD(MINUTE, ROUND(DATEDIFF(MINUTE, 0,  @t
 set @threeHoursFromNow = (SELECT DATEADD(MINUTE, 180, @nearestThirtyMinute))
 
 
-select im.interviewDate, irf.JDTiltle from InterviewMeetings im join IRF on IRF.IRFId  = im.IRFId
+select im.interviewDate, irf.JDTiltle, irf.id as irfIntId, im.id as imid from InterviewMeetings im join IRF on IRF.IRFId  = im.IRFId
 where im.interviewDate = @threeHoursFromNow  --DATEADD(MINUTE, 181, @timeNow)> im.interviewDate and DATEADD(MINUTE, 179, @timeNow)< im.interviewDate
 
 End

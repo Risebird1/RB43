@@ -59,7 +59,7 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.Event = "Interviewer Feedback Remainder";
                             _whatsAppVM.MessageValue = item.CandidateName;
-                            _whatsAppHelper.WhatsAppSendInterviewerFeedbackRemainder(_whatsAppVM);
+                            await _whatsAppHelper.WhatsAppSendInterviewerFeedbackRemainder(_whatsAppVM);
                         }
                     }
                     catch (Exception)
