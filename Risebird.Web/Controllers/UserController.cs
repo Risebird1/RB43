@@ -157,7 +157,7 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Premium Client" };
+                    List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Freemium Client" };
                     List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
                     if (profileName != "Admin")
                     {
@@ -2158,7 +2158,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
 
-        #region Premium Client
+        #region Freemium Client
         [HttpGet]
         public IActionResult PremiumClientUsers()
         {

@@ -1761,7 +1761,7 @@ namespace Risebird.Web.Controllers
             return convertedResponse;
         }
         #endregion
-        #region MCQ For Premium Client
+        #region MCQ For FreemiumClient
         //Client Premium With Limit Share or attempt
         [Authorize]
         [HttpGet]
@@ -1771,17 +1771,17 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Premium Client" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "FreemiumClient" || profileName == "SupportAdmin")
                 {
                     string clientname = string.Empty;
-                    if (profileName == "Premium Client")
+                    if (profileName == "FreemiumClient")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var client = _userRepository.GetClientPremiumUserDetails(emailid);
+                        var client = await _userRepository.GetClientPremiumUserDetails(emailid);
                         if (client != null)
                         {
-                            clientname = client.Result.ClientName.ToUpper();
+                            clientname = client.ClientName.ToUpper();
                         }
                     }
                     var result = _mCQService.FetchAllMCQSetsPremium(clientname, profileName, false);
@@ -1989,7 +1989,7 @@ namespace Risebird.Web.Controllers
                     var totalinvitesent = _mCQService.FetchTotalInviteSent(emailid);
                     if (Emailids.Split(";").Count() + totalinvitesent <= totalinviteallowed)
                     {
-                        if (profileName == "Premium Client")
+                        if (profileName == "FreemiumClient")
                         {
                             var client = _userRepository.GetClientPremiumUserDetails(emailid);
                             if (client != null)
@@ -2360,12 +2360,12 @@ namespace Risebird.Web.Controllers
                 var candidateset = new List<CandidateDetailsForTestDuplicate>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Premium Client" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "FreemiumClient" || profileName == "SupportAdmin")
                 {
                     candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQIdPremium(id);
                     if (candidateset != null)
                     {
-                        if (profileName == "Premium Client")
+                        if (profileName == "FreemiumClient")
                         {
                             var emailid = HttpContext.Session.GetString("email")?.Trim();
                             emailid = emailid.Replace("\"", "");
@@ -2385,7 +2385,7 @@ namespace Risebird.Web.Controllers
                             {
                                 candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
                             }
-                            if (profileName != "Premium Client")
+                            if (profileName != "FreemiumClient")
                             {
                                 filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
                                 filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
@@ -2415,7 +2415,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Premium Client" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "FreemiumClient" || profileName == "SupportAdmin")
                 {
                     if (filter != null)
                     {
