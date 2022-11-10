@@ -1488,7 +1488,12 @@
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 <script src="~/js/BroadcastMessage.js"></script>
-
+@if (ViewBag.profile == "Client")
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -1505,9 +1510,9 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        setTimeout(function () {
+        @*setTimeout(function () {
             $('button[data-toggle="ajax-modal"]').click();
-        }, 1);
+        }, 1);*@
         $('.dropques option').wrap('<span>');
 
         var selectedOption = $('.dropques').find("[selected]");

@@ -1590,17 +1590,21 @@
 
 
 </script>
-
+@if (ViewBag.profile == "Client")
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
 
 <script type="text/javascript">
 
     $(document).ready(function () {
-
-        setTimeout(function () {
+    @*setTimeout(function () {
             $('button[data-toggle="ajax-modal"]').click();
-        }, 1);
+            }, 1);*@
 
-        var meetingStatus = document.getElementById('MeetingStatus').value;
+                    var meetingStatus = document.getElementById('MeetingStatus').value;
         if (meetingStatus == null || meetingStatus == '') {
             document.getElementById('InterviewerComment').disabled = true;
             document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";

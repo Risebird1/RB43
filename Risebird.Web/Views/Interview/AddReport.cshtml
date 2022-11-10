@@ -1542,7 +1542,12 @@
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
 <script src="~/js/ModalFormServerValidation.js"></script>
-
+@if (ViewBag.profile == "Client")
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {

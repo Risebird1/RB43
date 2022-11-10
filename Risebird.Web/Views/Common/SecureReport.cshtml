@@ -61,7 +61,29 @@
         </div>
     </div>
 </div>
-
+<div id="SecureReportNotificationModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Quality Issue</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    If you have any concern with quality use above red buttons like rate, remove, audio message, red flags, redo and control your interviewers.
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeSecureReportNotificationModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="OK">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     function GenerateSecureUrl(interviewid, irfid) {
         $("#hidmodelinterviewid").val(interviewid);
@@ -104,5 +126,13 @@
         document.execCommand("copy");
         temp.remove();
         $('#Securespecial_text').text('Copied');
+    }
+    function closeSecureReportNotificationModel(){
+        var modal = document.getElementById("SecureReportNotificationModel");
+        modal.style.display = "none";
+    }
+    function openSecureReportNotificationModel(){
+        var modal = document.getElementById("SecureReportNotificationModel");
+        modal.style.display = "block";
     }
 </script>

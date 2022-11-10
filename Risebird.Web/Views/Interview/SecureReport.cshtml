@@ -1064,6 +1064,9 @@
     }
 
 </script>
+<script>
+    openSecureReportNotificationModel();
+</script>
 
 
 <script type="text/javascript">
@@ -1071,13 +1074,13 @@
     $(document).ready(function () {
     @*setTimeout(function () {
             $('button[data-toggle="ajax-modal"]').click();
-            }, 1);
+            }, 1);*@
             $('.dropques option').wrap('<span>');
 
             var selectedOption = $('.dropques').find("[selected]");
-            $(selectedOption).unwrap();*@
+            $(selectedOption).unwrap();
 
-            if ($("#txtVideostatus").val() == "Public") {
+                if ($("#txtVideostatus").val() == "Public") {
             var modal = document.getElementById("PublicShareVideo");
             modal.style.display = "block";
         }
