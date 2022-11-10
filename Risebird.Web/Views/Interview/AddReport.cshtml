@@ -106,7 +106,12 @@
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
             @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>*@
-            <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
+            @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>*@
+        }
+        @*Client or after 12 hr of interviewdatetime*@
+        @if (ViewBag.profile == "Client")
+        {
+            <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
         }
     </div>
     <div class="content dataloading client">
@@ -1534,6 +1539,7 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
 <script src="~/js/ModalFormServerValidation.js"></script>
 
@@ -1944,11 +1950,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                        // Check document for changes
-                                        //$.validator.unobtrusive.parse(document);
+                                                                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                        // Check document for changes
+                                                                                        //$.validator.unobtrusive.parse(document);
 
-                                    }
+                                                                                    }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2048,7 +2054,7 @@
             });*@
 
 
-                                    }
+                                                                                    }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2136,7 +2142,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                    return CheckLength(250);
+                                                                                    return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2296,7 +2302,7 @@
                 }
                 });*@
 
-                                        }
+                                                                                        }
 
 
     });

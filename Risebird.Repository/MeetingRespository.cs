@@ -6406,5 +6406,63 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid,int Interviewid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@uniqueid", uniqueid);
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@Interviewid", Interviewid);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_CheckClientReportShareDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    if (result.FirstOrDefault() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<string> CheckReportClientUrlSave(string Emailid, string uniqueid, int Interviewid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", Emailid);
+                parameters.Add("@uniqueid", uniqueid);
+                parameters.Add("@Interviewid", Interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveReportClientUrlSave", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

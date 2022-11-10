@@ -15,7 +15,6 @@ CREATE TABLE [dbo].[ScheduleInterviewEvent](
 	[SkillChannelRelation] [varchar](50) NULL,
 	[Concurrency] [int] NULL,
 	[BufferTime] [int] default 12,
-	[MeetingPlatform] [varchar](25) null,
  CONSTRAINT [PK_ScheduleInterviewEvent] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
