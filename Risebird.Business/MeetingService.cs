@@ -1224,6 +1224,7 @@ namespace Risebird.Business
                 reportModel.IsGeneralSkillRequired = irfDetails.IsGeneralSkillRequired;
                 reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
+                reportModel.Interviewer = interviewDetails.interviewer;
                 return reportModel;
             }
             catch (Exception e)
@@ -3743,6 +3744,31 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.CheckReportClientShareDetails(Emailid, uniqueid, Interviewid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<string> CheckReportClientUrlSave(string Emailid, string uniqueid, int Interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.CheckReportClientUrlSave(Emailid, uniqueid, Interviewid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }

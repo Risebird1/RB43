@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -24,6 +25,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -7361,7 +7364,7 @@ namespace Risebird.Web.Controllers
             //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
             //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
-            accountEmail  = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
+            accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
             if (string.IsNullOrEmpty(accountEmail))
                 accountEmail = "hire@risebird.io";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
@@ -7416,6 +7419,101 @@ namespace Risebird.Web.Controllers
             else
             {
                 return "Fail";
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> SecureReport(int interviewId, int irfId, string uniqueid, string emailid)
+        {
+            try
+            {
+                ViewBag.Id = uniqueid;
+                ViewBag.interviewid = interviewId;
+                ViewBag.irfId = irfId;
+                var email = HttpContext.Session.GetString("email");
+                email = email.Replace("\"", "");
+                if (emailid != email)
+                {
+                    return RedirectToAction("AddSecureReport", new { interviewId = interviewId, irfId = irfId, uniqueid = uniqueid });
+                }
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model == null)
+                {
+                    return RedirectToAction("AddSecureReport", new { interviewId = interviewId, irfId = irfId, uniqueid = uniqueid });
+                }
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    foreach (var question in model.QuestionsCollection)
+                    {
+                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                    }
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                GetStatusList(model, irfId, 0);
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                if (model.IsProctor)
+                {
+                    return PartialView("SecureProctorReport", model);
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AddSecureReport", new { interviewId = interviewId, irfId = irfId, uniqueid = uniqueid });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddSecureReport(int interviewId, int irfId, string uniqueid)
+        {
+            var model = new InterviewReport();
+            ViewBag.PageType = "Public";
+            ViewBag.Id = uniqueid;
+            ViewBag.interviewid = interviewId;
+            ViewBag.irfId = irfId;
+            GetStatusList(model, irfId, 0);
+            return View("SecureReport", model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AddSecureReport(string uniqueid, string Emailid, int Interviewid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            HttpContext.Session.SetString("profileName", "Client");
+            var _checkdetails = await _meetingService.CheckReportClientShareDetails(Emailid, uniqueid, Interviewid);
+            if (_checkdetails)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
+        }
+        public async Task<JsonResult> ShareSecureReport(int interviewId, string irfId, string emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _meetingService.CheckReportClientUrlSave(emailid, uniqueid.ToString(), interviewId);
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + uniqueid + "&irfId=" + irfId + "&uniqueid=" + uniqueid;
+                if (!string.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + uniqueid + "&irfId=" + irfId + "&uniqueid=" + _uniqueid;
+                }
+                return Json(sendreporturl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
             }
         }
     }

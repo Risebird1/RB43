@@ -348,6 +348,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneralSkillRequired { get; set; }
         public bool HasDistinctParticipants { get; set; }
         public bool AadhaarVerified { get; set; }
+        public string Interviewer { get; set; }
     }
     public class RBInterviewDetails
     {
