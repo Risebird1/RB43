@@ -61,6 +61,7 @@
     .mb10 {
         margin-bottom: 10px
     }
+
     .tox-notifications-container {
         display: none
     }
@@ -126,6 +127,12 @@
                         <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
                             <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
                         </button>
+                        @*@if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                        {
+                            <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                <span data-toggle="tooltip" data-placement="top" title="QC Form" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> QC Form</text></span>
+                            </button>
+                        }*@
                     </div>
                 </div>
             </div>
@@ -134,10 +141,14 @@
 
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
-            <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 50px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
+            @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 50px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>*@
 
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 10px;" value="Generate PDF" onclick="getPDF()"></div>
-            <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
+            @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>*@
+        }
+        @if (ViewBag.profile == "Client")
+        {
+            <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
         }
     </div>
     <div id="reportForm" class="content client">
@@ -1475,9 +1486,14 @@
 
 
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
-
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 <script src="~/js/BroadcastMessage.js"></script>
-
+@if (ViewBag.profile == "Client")
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -1494,9 +1510,9 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        setTimeout(function () {
+        @*setTimeout(function () {
             $('button[data-toggle="ajax-modal"]').click();
-        }, 1);
+        }, 1);*@
         $('.dropques option').wrap('<span>');
 
         var selectedOption = $('.dropques').find("[selected]");

@@ -1,0 +1,138 @@
+﻿<div id="SecureUrlModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeSecureUrlModelModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <input type="hidden" id="hidmodelinterviewid" />
+                    <input type="hidden" id="hidmodelirfId" />
+                    <input type="email" id="SecuremodelEmailid" placeholder="Enter Email Address to whom you want to sahre secure Url." class="form-control" />
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="CopyPublicUrl()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Submit">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="SecureUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeSecureUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Video Url:  <b id="txtsecurevideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtsecurevideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="Securespecial_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeSecureUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="SecureReportNotificationModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Quality Issue</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    If you have any concern with quality use above red buttons like rate, remove, audio message, red flags, redo and control your interviewers.
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeSecureReportNotificationModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="OK">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function GenerateSecureUrl(interviewid, irfid) {
+        $("#hidmodelinterviewid").val(interviewid);
+        $("#hidmodelirfId").val(irfid);
+        var modal = document.getElementById("SecureUrlModel");
+        modal.style.display = "block";
+    }
+    function CopyPublicUrl() {
+        var interviewId = $("#hidmodelinterviewid").val();
+        var EmailId = $("#SecuremodelEmailid").val();
+        var irfid = $("#hidmodelirfId").val();
+        if (EmailId.trim() != "") {
+            $.ajax({
+                url: '/Interview/ShareSecureReport',
+                data: { 'Emailid': EmailId, interviewId: interviewId, irfid: irfid },
+                type: 'POST',
+                success: function (result) {
+                    var modal = document.getElementById("SecureUrlShareModel");
+                    modal.style.display = "block";
+                    closeSecureUrlModelModel();
+                    $("#txtsecurevideoUrls").text(result);
+                }
+            });
+        } else {
+            alert("Please Enter a emailaddess");
+        }
+    }
+    function closeSecureUrlShareModel() {
+        var modal = document.getElementById("SecureUrlShareModel");
+        modal.style.display = "none";
+    }
+    function closeSecureUrlModelModel() {
+        var modal = document.getElementById("SecureUrlModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#Securespecial_text').text('Copied');
+    }
+    function closeSecureReportNotificationModel(){
+        var modal = document.getElementById("SecureReportNotificationModel");
+        modal.style.display = "none";
+    }
+    function openSecureReportNotificationModel(){
+        var modal = document.getElementById("SecureReportNotificationModel");
+        modal.style.display = "block";
+    }
+</script>

@@ -13,7 +13,7 @@ CREATE PROCEDURE [dbo].[usp_GetAadhaarDetails]
 @candidateEmail varchar(200)
 AS    
 Begin   
-Select * From AadhaarDetails where reference_id=@MCQId and email=@candidateEmail
+Select *,user_image as passport_image From AadhaarDetails where reference_id=@MCQId and email=@candidateEmail
 End  
 Go  
   

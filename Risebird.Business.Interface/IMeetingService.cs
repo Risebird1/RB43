@@ -204,5 +204,7 @@ namespace Risebird.Business.Interface
         bool CheckInterviewClerityTime(int meetingid);
         Task<string> StoreClientBroadcastMessage(BroadcastModel model);
         Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid);
+        Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid);
+        Task<string> CheckReportClientUrlSave(string Emailid, string uniqueid, int Interviewid);
     }
 }

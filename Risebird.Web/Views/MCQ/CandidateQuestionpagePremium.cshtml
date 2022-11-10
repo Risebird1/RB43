@@ -482,6 +482,7 @@
                     document.getElementById("divMCQSetdetails").style.display = "none";
                     swal.close();
                     clearInterval(myVar);
+                    setInterval(function () { SubmitTest(); }, 10000);
                 })
             },
             allowOutsideClick: false

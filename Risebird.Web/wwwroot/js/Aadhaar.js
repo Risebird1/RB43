@@ -122,11 +122,20 @@ function FetchAadhaarDetails(MCQID, candidateEmail) {
 function BindAadhaarKYCData(data) {
     var html = '';
     if (data.email != null) {
-        html += '<table style="overflow:auto" width="100%">';
-        html += '<tr><td rowspan="4"><img src="data:image/png;base64,' + data.doc_face + '" alt="Red dot" /></td><td>Name</td><td>' + data.name + '</td></tr>';
-        html += '<tr><td>Address</td><td style="max-width:375px;white-space: break-spaces;word-break:break-word">' + data.address + '</td></tr>';
-        html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
-        html += '<tr><td>DOB</td><td>' + data.dob + '</td></tr>';
+        if (data.passport_image != '' && data.passport_image != null) {
+            html += '<table style="overflow:auto" width="100%">';
+            html += '<tr><td rowspan="3"><img src="data:image/png;base64,' + data.doc_face + '" alt="Red dot" /></td><td>Name</td><td>' + data.name + '</td></tr>';
+            html += '<tr><td>Address</td><td style="max-width:375px;white-space: break-spaces;word-break:break-word">' + data.address + '</td></tr>';
+            html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
+            html += '<tr><td rowspan="2"><img src="data:image/png;base64,' + data.passport_image + '" alt="Red dot" /></td><td>DOB</td><td>' + data.dob + '</td></tr>';
+            html += '<tr><td>Face Matched</td><td>' + data.matchPercentage + '</td></tr>';
+        } else {
+            html += '<table style="overflow:auto" width="100%">';
+            html += '<tr><td rowspan="4"><img src="data:image/png;base64,' + data.doc_face + '" alt="Red dot" /></td><td>Name</td><td>' + data.name + '</td></tr>';
+            html += '<tr><td>Address</td><td style="max-width:375px;white-space: break-spaces;word-break:break-word">' + data.address + '</td></tr>';
+            html += '<tr><td>Gender</td><td>' + data.gender + '</td></tr>';
+            html += '<tr><td>DOB</td><td>' + data.dob + '</td></tr>';
+        }
         html += '</table>';
     }
     if (data.email == null) {

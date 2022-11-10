@@ -65,8 +65,12 @@
             {
                 <div class="col-md-12">
                     @*<div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
-                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Public Url" onclick="GeneratePublicUrl()"></div>
+                    @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Public Url" onclick="GeneratePublicUrl()"></div>*@
                 </div>
+            }
+            @if (ViewBag.profileName == "client")
+            {
+                <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
             }
         </div>
         <div class="row bl-bg">
@@ -107,15 +111,15 @@
 
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="form-group">
+                                            @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                        @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                            @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                                                    </div>
+                                            </div>
 
-                                                </div>*@
+                                            </div>*@
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -133,12 +137,12 @@
                                         </div>
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            <div class="form-group">
+                                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
-                                                </div>*@
+                                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                            </div>*@
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -206,7 +210,7 @@
                                             <div class="chart-box">
                                                 <div class="card-body">
                                                     @*<p class="card-text">Overall Average Score: <span id="totScore"></span></p>*@
-                                                    <p class="card-text">Tech Skill Score: <span ><strong id="totTechScore"></strong></span></p>
+                                                    <p class="card-text">Tech Skill Score: <span><strong id="totTechScore"></strong></span></p>
                                                     <div class="col-lg-6 col-md-6 col-sm-6">
                                                         <div id="scoreChart" style="height:200px; margin-left:60px"></div>
                                                     </div>
@@ -286,26 +290,26 @@
                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
                                                 @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                                    {
-                                                        <video width="320" height="320" style="width:100%" controls class="vjs-tech" controlsList="nodownload">
-                                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                            <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                            {
+                                            <video width="320" height="320" style="width:100%" controls class="vjs-tech" controlsList="nodownload">
+                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                            <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                                            Your browser does not support the video tag.
-                                                        </video>
-                                                    }
-                                                    else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                                    {
-                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                            <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+                                            Your browser does not support the video tag.
+                                            </video>
+                                            }
+                                            else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                            {
+                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                            <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
-                                                        </video>
-                                                    }
-                                                    else
-                                                    {
-                                                        <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                            </video>
+                                            }
+                                            else
+                                            {
+                                            <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                                                    }*@
+                                            }*@
                                                 string appendTime;
                                                 if (Model.ThumbnailTimeSeconds == 0)
                                                 {
@@ -323,7 +327,7 @@
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                                            </div>*@
+                                        </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -374,11 +378,11 @@
                                                             </td>
 
                                                             @*<td>
-                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                                    </button>
-                                                                </td>*@
+                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                        </button>
+                                                        </td>*@
 
                                                         </tr>
                                                     }
@@ -411,11 +415,11 @@
                                                                 </td>
 
                                                                 @*<td>
-                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                                        </button>
-                                                                    </td>*@
+                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                        </button>
+                                                        </td>*@
                                                             </tr>
 
 
@@ -1028,7 +1032,7 @@
         </div>
     </div>
 </div>
-
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -1226,7 +1230,7 @@
         if (id.includes("Tech")) {
             SetTechReportChart();
         }
-        
+
     }
 
     $(document).ready(function () {
@@ -1482,7 +1486,7 @@
         $.validator.unobtrusive.parse(document);
 
     }
-      function switchtoquestionVedio(questiontime) {
+    function switchtoquestionVedio(questiontime) {
 
         var time = 1;
         if (questiontime != '') {
@@ -1599,7 +1603,7 @@
 
     }
 
-    function QuestionChanged(id , val ) {
+    function QuestionChanged(id, val) {
 
         var index = id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
@@ -1608,7 +1612,7 @@
             //url: "/IRF/GetQuestionSkills",
             //data: { 'id': val },
             url: "/IRF/GetTechSkillofSkillChannelByQuestion",
-            data: { 'question': val, 'irfId' : '@Model.IRFId' },
+            data: { 'question': val, 'irfId': '@Model.IRFId' },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
@@ -1628,7 +1632,7 @@
                 //url: "/IRF/GetQuestionSkills",
                 //data: { 'id': val },
                 url: "/IRF/GetTechSkillofSkillChannelByQuestion",
-                data: { 'question': val, 'irfId' : '@Model.IRFId' },
+                data: { 'question': val, 'irfId': '@Model.IRFId' },
                 success: function (data) {
                     $("#QuestionsCollection_0__SkillName").val(data);
                 }
