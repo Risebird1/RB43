@@ -83,5 +83,7 @@ namespace Risebird.Repository.Interface
         Task<ClientUserVM> GetClientPremiumUser(int id);
         Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser);
         Task<ClientUserVM> GetClientPremiumUserDetails(string emailID);
+        string GetWhatsappno(string emailId);
+        string UpdateWhatsappno(string emailId, string WhatsappNumber);
     }
 }

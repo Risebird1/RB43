@@ -37,5 +37,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddUpdateClientCommentsForReport(ClientCommentsForReport model);
         Task<IEnumerable<ClientAudioInstructions>> GetClientAudioForIRF(int interviewId);
         Task<IEnumerable<ClientAudioInstructions>> GetClientInstructionsAudioForReport(int interviewId, string emailId = null, string profile = null);
+        Task<List<Clientaudiofeedback>> Getclientaudiofeedbackdetails();
     }
 }

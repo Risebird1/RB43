@@ -457,6 +457,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<Clientaudiofeedback>> Getclientaudiofeedbackdetails()
+        {
+            try
+            {
+                return await _clientRepository.Getclientaudiofeedbackdetails();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 }
