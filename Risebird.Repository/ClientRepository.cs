@@ -843,5 +843,22 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<List<Clientaudiofeedback>> Getclientaudiofeedbackdetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Clientaudiofeedback>(con, "usp_Fetchclientaudiofeedbackdetails", null,
+                   commandType: CommandType.StoredProcedure);
+                    return (List<Clientaudiofeedback>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

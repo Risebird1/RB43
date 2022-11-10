@@ -72,5 +72,7 @@ namespace Risebird.Business.Interface
         List<ClientUserVM> GetClientPremiumUsers(string EmailId);
         ClientUserVM GetClientPremiumUser(int id);
         bool UpdateClientPremiumUser(ClientUserVM clientUser);
+        string GetWhatsappno(string emailId);
+        string UpdateWhatsappno(string emailId, string WhatsappNumber);
     }
 }

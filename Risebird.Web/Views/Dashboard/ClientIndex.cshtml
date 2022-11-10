@@ -148,66 +148,66 @@
                                     </div>
                                     <div id="slotsId">
                                         @*<div class="panel-body panel-body-table">
-                                            <div class="min-h">
-                                                @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                    <div class="min-h">
+                        @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                        {
+
+                            <div class="sb-container scroller-height">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th width="30%" class="text-center"><strong>Skill</strong></th>
+                                                <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
+                                                <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
+                                                <th width="50%" class="text-center"><strong>Result</strong></th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @{
+                                                foreach (var item in Model.DailyMeetingResultsSlots)
                                                 {
+                                                    <tr>
+                                                        <td class="text-center"><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
+                                                        <td class="text-center"><strong>@item.Morning</strong></td>
+                                                        <td class="text-center"><strong>@item.Evening</strong></td>
+                                                        <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
 
-                                                    <div class="sb-container scroller-height">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-bordered table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th width="30%" class="text-center"><strong>Skill</strong></th>
-                                                                        <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
-                                                                        <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
-                                                                        <th width="50%" class="text-center"><strong>Result</strong></th>
+                                                    </tr>
 
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-
-                                                                    @{
-                                                                        foreach (var item in Model.DailyMeetingResultsSlots)
-                                                                        {
-                                                                            <tr>
-                                                                                <td class="text-center"><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
-                                                                                <td class="text-center"><strong>@item.Morning</strong></td>
-                                                                                <td class="text-center"><strong>@item.Evening</strong></td>
-                                                                                <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
-
-                                                                            </tr>
-
-                                                                        }
-                                                                    }
-
-
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-
-
-                                                    </div>
-                                                    <div class="legend">
-
-                                                        <ul>
-                                                            <li><div class="g color"></div>Selected</li>
-                                                            <li><div class="r color"></div>Rejected</li>
-                                                            <li><div class="b color"></div>BorderLine</li>
-                                                            <li><div class="pr color"></div>Proxy</li>
-                                                            <li><div class="ns color"></div>NoShow</li>
-                                                            <li><div class="sch color"></div>Schedule</li>
-                                                            <li><div class="dr color"></div>Dropped</li>
-                                                            <li><div class="pe color"></div>Pending</li>
-
-                                                        </ul>
-                                                    </div>
                                                 }
-                                                else
-                                                {
-                                                    <div>No interviews for this day!</div>
-                                                }
-                                            </div>
-                                        </div>*@
+                                            }
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+                            </div>
+                            <div class="legend">
+
+                                <ul>
+                                    <li><div class="g color"></div>Selected</li>
+                                    <li><div class="r color"></div>Rejected</li>
+                                    <li><div class="b color"></div>BorderLine</li>
+                                    <li><div class="pr color"></div>Proxy</li>
+                                    <li><div class="ns color"></div>NoShow</li>
+                                    <li><div class="sch color"></div>Schedule</li>
+                                    <li><div class="dr color"></div>Dropped</li>
+                                    <li><div class="pe color"></div>Pending</li>
+
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>No interviews for this day!</div>
+                        }
+                    </div>
+                </div>*@
                                     </div>
 
 
@@ -247,40 +247,79 @@
                                         </div>
                                     </div>
                                 </div>
+                                @using (Html.BeginForm("ClientIndex", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data", @id = "Updatewhatsapp" }))
+                                {
+                                    <div id="ClientwhatsappModel" class="modal modal-bg" style="z-index:5">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="filheader">
+                                                    <div class="filavatar">
+                                                        <span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                                                        </span>
+                                                    </div>
+                                                    <h5 class="modal-title pull-left">Add whatsapp number <span class="popup-text" id="skill_id_pop"></span></h5>
+                                                </div>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span onclick="closeClientwhatsappModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+                                                </button>
 
-                                <div class="row">
+                                                <input type="text" hidden id="txtinterviewid" />
+                                                <div class="modal-body" style="color:black">
+                                                    <div class="form-group whatsapp col-md-12 pull-left p15">
+                                                        @Html.LabelFor(model => model.WhatsappNo, htmlAttributes: new { @class = "" })
+                                                        <span class="intrqtext">( Please enter Whatsapp number. without country code.Ex: 999999999  )</span>
+                                                        @Html.TextBoxFor(model => model.WhatsappNo, new { @class = "form-control  text-box single-line", @maxlength = "10", @minlength = "10" })
+                                                        @Html.ValidationMessageFor(model => model.WhatsappNo, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 mc-button-area">
+                                                            <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Save">Save</button>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                    
+                                                
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                    <div class="row">
 
 
-                                    @*<div class="col-md-6 col-lg-6 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
-                                <div>
-                                    <div id="candidatesPieId" class="PieId"></div>
-                                </div>
+                                        @*<div class="col-md-6 col-lg-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <p style="width:100%" class="card-text">Candidates Current Status: <span><strong>@Model.CandidatesCountObj.TotalCount</strong></span></p>
+                            <div>
+                                <div id="candidatesPieId" class="PieId"></div>
                             </div>
                         </div>
+                    </div>
 
-                    </div>*@
-                                    @*<div class="col-md-6 col-lg-6 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                <div>
-                                    <div id="meetingsCountId" class="PieId"></div>
-                                </div>
+                </div>*@
+                                        @*<div class="col-md-6 col-lg-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                            <div>
+                                <div id="meetingsCountId" class="PieId"></div>
                             </div>
                         </div>
-                    </div>*@
+                    </div>
+                </div>*@
 
 
 
+
+
+                                    </div>
 
 
                                 </div>
-
-
-                            </div>
 
                         </div>
                     </div>
@@ -624,7 +663,7 @@
         setDate();
         getInterviewSlots();
     });
-    
+
 </script>
 <script>
     function setDate() {
@@ -708,7 +747,7 @@
             //});
             //chart.render();
     });
-    
+
 </script>
 <script>
     function updateInterviewTracking() {
@@ -828,7 +867,7 @@
                 $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
             })
             .catch((error) => {
-                
+
             })
 
 
@@ -848,5 +887,31 @@
         updateInterviewTracking();
     };
 </script>
+<script>
+    function changeinterviewnotificationstatus() {
+            $.ajax({
+                type: "GET",
+                url: "/Dashboard/Clientindex",
+                data: { status: 0 },
+                success: function (data) {
+                }
+            });
+        }
+    
+    function closeClientwhatsappModel() {
+        var model = document.getElementById("ClientwhatsappModel");
+        model.style.display = "none";
+    }
+    function openClientwhatsappModel() {
+        var model = document.getElementById("ClientwhatsappModel");
+        model.style.display = "block";
+    }
+</script>
+@if (ViewBag.Whatsappflag)
+{
+    <script>
+        openClientwhatsappModel();
+    </script>
+}
 @*<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>*@
 

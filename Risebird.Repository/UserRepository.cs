@@ -1898,5 +1898,44 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public string GetWhatsappno(string emailid)
+        {
+            try
+            {
+                string connectionString = _configuration["ConnectionString:DBConnectionString"];
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select WhatsappNumber from UserList where EmailId = @id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", emailid);
+                    var results = con.Query<string>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+        public string UpdateWhatsappno(string emailid,string WhatsappNumber)
+        {
+            try
+            {
+                string connectionString = _configuration["ConnectionString:DBConnectionString"];
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "update UserList set WhatsappNumber=@whatsappup where EmailId = @id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", emailid);
+                    parameters.Add("@whatsappup", WhatsappNumber);
+                    var results = con.Query<string>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
     }
 }

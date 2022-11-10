@@ -39,5 +39,6 @@ namespace Risebird.Business.Interface
         //Task<ClientFeedbackCommentVM> GetClientCommentsList(int interviewId, string emailId);
         Task<IEnumerable<ClientAudioInstructions>> GetClientAudioForIRF(int interviewId, string emailId, string profile);
         Task<IEnumerable<ClientAudioInstructions>> GetClientInstructionsAudioForReport(int interviewId, string emailId, string profile);
+        Task<List<Clientaudiofeedback>> Getclientaudiofeedbackdetails();
     }
 }

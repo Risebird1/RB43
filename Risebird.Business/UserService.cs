@@ -812,7 +812,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public string GetCurrentUsername(string emailId)
+        public string GetCurrentUsername(string emailId) 
         {
             try
             {
@@ -922,6 +922,30 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public string GetWhatsappno(string emailId)
+        {
+            try
+            {
+                return _userRepository.GetWhatsappno(emailId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string UpdateWhatsappno(string emailId,string WhatsappNumber)
+        {
+            try
+            {
+                return _userRepository.UpdateWhatsappno(emailId, WhatsappNumber);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }
