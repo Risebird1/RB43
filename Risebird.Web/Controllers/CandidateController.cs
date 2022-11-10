@@ -3909,18 +3909,20 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 30;
                 }
-                Sheet.Cells[1, 1].Value = "Candidate name";
-                Sheet.Cells[1, 2].Value = "Candidate EmailId";
-                Sheet.Cells[1, 3].Value = "JD Title";
-                Sheet.Cells[1, 4].Value = "Candidated Added On/At";
-                Sheet.Cells[1, 5].Value = "Schedule Status";
-                Sheet.Cells[1, 6].Value = "Phone";
-                Sheet.Cells[1, 7].Value = "Current Status";
-                Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
-                Sheet.Cells[1, 10].Value = "Skill Channel ID";
-                Sheet.Cells[1, 11].Value = "Client Hr";
-                Sheet.Cells[1, 12].Value = "Interview Date";
+                Sheet.Cells[1,1].Value = "Candidate name";
+                Sheet.Cells[1,2].Value = "Candidate EmailId";
+                Sheet.Cells[1,3].Value = "JD Title";
+                //Sheet.Cells[1, 4].Value = "Candidated Added On/At";
+                Sheet.Cells[1,4].Value = "Interview Date";
+                Sheet.Cells[1,5].Value = "Interview Time";
+                Sheet.Cells[1,6].Value = "Schedule Status";
+                Sheet.Cells[1,7].Value = "Phone";
+                Sheet.Cells[1,8].Value = "Current Status";
+                //Sheet.Cells[1, 8].Value = "Current Status Date";
+                Sheet.Cells[1,9].Value = "Staffing Agency EmailId";
+                Sheet.Cells[1,10].Value = "Skill Channel ID";
+                Sheet.Cells[1,11].Value = "Client Hr";
+                
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -3929,41 +3931,36 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 1].Value = item.CandidateName;
                         Sheet.Cells[i, 2].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
+                        DateTime datetime = DateTime.Parse(item.interviewDate);
+                        var s_today = datetime.ToShortDateString();
+                        Sheet.Cells[i, 4].Value = s_today;
+                        string timeString = datetime.ToLongTimeString();
+                        Sheet.Cells[i, 5].Value = timeString;
                         if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
-                        {
-                            var addedOnData = item.ScheduleStatus.Where(x => x.Status == CandidateStatusOptions.Added.GetDescription())?.FirstOrDefault();
-                            if (addedOnData != null)
-                            {
-                                Sheet.Cells[i, 4].Value = addedOnData.Date + " " + addedOnData.StatusDate + ", " + addedOnData.Time;
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, 4].Value = string.Empty;
-                            }
+                        {                           
                             if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
                             {
-                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.Scheduled.GetDescription();
+                                Sheet.Cells[i, 6].Value = ScheduleStatusTypes.Scheduled.GetDescription();
                             }
                             else
                             {
-                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                                Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                             }
                         }
                         else
-                        {
-                            Sheet.Cells[i, 4].Value = string.Empty;
-                            Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                        {                           
+                            Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                         }
-                        Sheet.Cells[i, 6].Value = item.Phone ?? string.Empty;
+                        Sheet.Cells[i, 7].Value = item.Phone ?? string.Empty;
                         if (!string.IsNullOrEmpty(item.CurrentStatus))
                         {
-                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
-                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                            Sheet.Cells[i, 8].Value = item.CurrentStatus;
+                            //Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
                         }
                         else
                         {
-                            Sheet.Cells[i, 7].Value = string.Empty;
                             Sheet.Cells[i, 8].Value = string.Empty;
+                            //Sheet.Cells[i, 8].Value = string.Empty;
                         }
                         if (!string.IsNullOrEmpty(item.ProfileSource))
                         {
@@ -3975,7 +3972,7 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 10].Value = item.IRFName;
                         Sheet.Cells[i, 11].Value = item.HREmail;
-                        Sheet.Cells[i, 12].Value = item.interviewDate;
+                      
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
