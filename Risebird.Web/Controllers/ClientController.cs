@@ -4428,5 +4428,43 @@ namespace Risebird.Web.Controllers
             model.InterviewId = interviewId;
             return model;
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ClientAudioFeedbackDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+                        if (TempData["Successfeedbackdetails"] != null)
+                        {
+                            ViewBag.Message = TempData["Successfeedbackdetails"].ToString();
+                            TempData.Remove("Successfeedbackdetails");
+                        }
+
+                        var feedbackdetails = await _clientService.Getclientaudiofeedbackdetails();
+                        return View(feedbackdetails);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

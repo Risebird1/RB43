@@ -313,6 +313,15 @@ namespace Risebird.Web.Controllers
                         model.EmailId = emailid;
                         //model.FunnelData = JsonConvert.SerializeObject(funnelData);
                         //model.DailyMeetingResultsSlots = slotsDetails;
+                        var Whatsapp = _userService.GetWhatsappno(emailid);
+                        if (Whatsapp == null)
+                        {
+                            ViewBag.Whatsappflag = true;
+                        }
+                        else
+                        {
+                            ViewBag.Whatsappflag = false;
+                        }
                         return View(model);
                     }
                     else
@@ -1705,6 +1714,29 @@ namespace Risebird.Web.Controllers
                 modelList[i] = System.Web.HttpUtility.HtmlDecode(modelList[i]);
             }
             return Json(modelList);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ClientIndex(ClientDashboardVM model)
+        {
+
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                string uploadedFileURL = string.Empty;
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                model.EmailId = emailid;
+                //var result = _userService.GetWhatsappno(model.EmailId);
+                var result = _userService.UpdateWhatsappno(model.EmailId, model.WhatsappNo);
+                TempData["SuccessupdateMessage"] = "Whatsapp added Successfully.";
+            }
+            else
+            {
+                TempData["FailedMessage"] = "Failed to update Whatsapp number!";
+                return RedirectToAction("ClientIndex");
+            }
+            return RedirectToAction("ClientIndex");
         }
     }
 }

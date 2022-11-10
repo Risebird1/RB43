@@ -10,21 +10,21 @@
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
-    string[] RFID = new string[] { };
-    string[] primarySkills = new string[] { };
-    string[] ClientHR = new string[] { };
-    string[] ClientName = new string[] { };
+    //string[] RFID = new string[] { };
+    //string[] primarySkills = new string[] { };
+    //string[] ClientHR = new string[] { };
+    //string[] ClientName = new string[] { };
 }
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("CallCataloguefilters") != null)
+@if (HttpContextAccessor.HttpContext.Session.GetString("CallRecordingsfilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("CallCataloguefilters"));
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("CallRecordingsfilters"));
     strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
-    RFID = filter.RFID != null ? filter.RFID : new string[] { };
-    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
-    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
-}*@
+    //RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    //primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    //ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    //ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+}
 <script>
     var Header = "<div>Call Recordings Details</div>";
     $('#txtpageHeader').empty().html(Header);
@@ -79,17 +79,23 @@
 @*                    <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallCatalogueExporttoExcel", "HR")'"></i></span>
 *@
                     @*<div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>*@
-                    <div class="pull-right client-ms">
-                        <div style="float:left">
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" style="margin-bottom: 18px">
-                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Archived Data</font></span>
-                            </button>
-                            @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
-                            {
-                                <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallRecordingExporttoExcel", "HR", new { type = ViewBag.Type })'"></i></span>
-                            }
-                        </div>
-                    </div>                    
+                <div class="pull-right client-ms">
+                    <div style="float:left">
+                        @*<div class="filter-note" style="text-align:right;right:290px;"> Note: To visualize data older than 30 days, please apply filter</div>*@
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+                        @*<span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ReScheduleMeetingstoExcel", "Client")'"></i></span>*@
+                    </div>
+                    <div style="float:left">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Archived Data</font></span>
+                        </button>
+
+                    </div>
+                </div>
+                    
                 </div>
             </div>
         </div>
@@ -103,7 +109,7 @@
                                 <img src="~/Newassets/img/lazyload.gif" />
                             </div>
                             
-@*                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                           <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="filheader">
@@ -115,7 +121,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("CallCatalogue","HR",new { type=ViewBag.type})" method="post" id="form">
+                                        <form action="@Url.Action("CallRecordingsDetails","HR",new { type=ViewBag.type})" method="post" id="form">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -138,66 +144,70 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @if (ViewBag.type != "Interviewer")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
-                                                                    Skill Channel Id
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                    @*@if (ViewBag.type != "Interviewer")
+        {
+            <div class="col-md-6 col-sm-6 border-rv">
+                <div class="form-group">
+                    <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
+                    <div class="col-md-12 col-sm-12">
+                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                            @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                            {
+                                @if (item != null && item != "")
+                                {
+                                    <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
+                        Skill Channel Id
+                    </label>
+                    <div class="col-md-12 col-sm-12">
+                        <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                            @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                            {
+                                @if (item != null && item != "")
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        }*@
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
                                                         </div>
-                                                    }
+                                                    </div>
 
                                                     <div class="col-md-6 col-sm-6">
-                                                        @if (ViewBag.profile != "Client")
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
-                                                                    Client Name
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
+                                                        @*@if (ViewBag.profile != "Client")
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
+                        Client Name
+                    </label>
+                    <div class="col-md-12 col-sm-12">
+                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                            @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                            {
+                                @if (item != null && item != "")
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            }*@
                                                         <div class="form-group">
                                                             <div>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
+                                                                    <button type="button" onclick="ResetFilter('@ViewBag.Type')" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
                                                                         <font style="font-size:12px;"> Reset Filter</font>
                                                                     </button>
                                                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 10px;float:right">
@@ -213,7 +223,7 @@
                                     </div>
                                 </div>
                             </div>
-*@
+
                         
                             <div @*style="overflow-x:scroll" class="scrollbar" id="style-2"*@>
 
@@ -380,9 +390,7 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        $("#ResetFilter").click(function () {
-            ResetFilter();
-        })
+       
         if ('@filter' != "") {
             ApplySessionFilter();
         }
@@ -415,24 +423,24 @@
         //    });
 
     });
-    function ResetFilter() {
-        window.location.href = "/HR/ResetCallCatalogueFilter";
+    function ResetFilter(type) {
+        window.location.href = "/HR/ResetCallRecordingsDetails?type=" + type;
     }
 
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
         var endDte = '@endDte';
-        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        @*var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
         var clientHR = @Html.Raw(Json.Serialize(ClientHR));
         var clientName = @Html.Raw(Json.Serialize(ClientName));
-        var rFID = @Html.Raw(Json.Serialize(RFID));
+        var rFID = @Html.Raw(Json.Serialize(RFID));*@
 
-        $('input[name=StartDate]').val(strtDte);
-        $('input[name=EndDate]').val(endDte);
-        $("#PrimarySkill").val(primarySkillsArr);
-        $("#ClientHR").val(clientHR);
-        $("#ClientName").val(clientName);
-        $("#RFID").val(rFID);
+        $('input[name=startdate]').val(strtDte);
+        $('input[name=enddate]').val(endDte);
+        //$("#PrimarySkill").val(primarySkillsArr);
+        //$("#ClientHR").val(clientHR);
+        //$("#ClientName").val(clientName);
+        //$("#RFID").val(rFID);
         var form = $("#form").serialize();
     }
 
