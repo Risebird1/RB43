@@ -7351,7 +7351,7 @@ namespace Risebird.Web.Controllers
             Mail _mail = new Mail
             {
                 TO = meetingToUpdate.candidateEmail,
-                CC = "hire@risebird.io",
+                //CC = "hire@risebird.io",
                 Subject = "Invitation: " + meetingToUpdate.candidateName + " @ " + meetingToUpdate.interviewDate + "(" + timezonevalue + ")"
             };
             _ = await _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset);

@@ -2011,11 +2011,11 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                if (!string.IsNullOrWhiteSpace(HRCoordinator))
-                {
-                    var hrEmail = HRCoordinator.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
-                }
+                //if (!string.IsNullOrWhiteSpace(HRCoordinator))
+                //{
+                //    var hrEmail = HRCoordinator.Split("@");
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
+                //}
                 if (!string.IsNullOrWhiteSpace(StaffingAgiencies))
                 {
                     var staffingEmail = StaffingAgiencies.Split("@");
