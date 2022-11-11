@@ -3340,6 +3340,10 @@ namespace Risebird.Web.Controllers
                     model.IsQCRequired = client.IsQCRequired;
                     model.IsRedoInterview = client.IsRedoInterview;
                 }
+                else
+                {
+                    model.IsQCRequired = false;
+                }
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;

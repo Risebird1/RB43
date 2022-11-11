@@ -11,18 +11,18 @@ GO
 
     
     
-Create PROCEDURE [dbo].[usp_SaveReportClientUrlSave]      
-      
-@emailId varchar(150),  
-@uniqueid varchar(50),  
-@Interviewid int      
-AS      
-Begin      
-
-If Not Exists (Select 1 from ClientReportShareDetails where ClientEmailid=@emailId and Interviewid=@Interviewid)    
-Begin
-Insert into ClientReportShareDetails(uniqueid,ClientEmailid,Interviewid) values(@uniqueid,@emailId,@Interviewid)  
+Create PROCEDURE [dbo].[usp_SaveReportClientUrlSave]        
+        
+@emailId varchar(150),    
+@uniqueid varchar(50),    
+@Interviewid int        
+AS        
+Begin        
+  
+If Not Exists (Select 1 from ClientReportShareDetails where ClientEmailid=@emailId and Interviewid=@Interviewid)      
+Begin  
+Insert into ClientReportShareDetails(uniqueid,ClientEmailid,Interviewid,SharedOn) values(@uniqueid,@emailId,@Interviewid,GetDate())    
+End  
+Select uniqueid from ClientReportShareDetails where ClientEmailid=@emailId and Interviewid=@Interviewid  
 End
-Select uniqueid from ClientReportShareDetails where ClientEmailid=@emailId and Interviewid=@Interviewid
-End 
 GO
