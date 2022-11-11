@@ -1242,7 +1242,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
-
+                currentUser = currentUser?.Replace("\"", "");
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);

@@ -37,13 +37,16 @@ Begin
   left join IRF on smd.IRFId = irf.id 
   left join InterviewMeetings im on im.id = smd.InterviewId
   where sge.id in (select id from #latestActivityRowId) 
+  and sge.email != 'hire@risebird.io'
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY, -1, @timeNow) as date)) or
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))
   and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3) or (@recipientType = 'Client' and ul.idProfile=4))
-
+  order by smd.CreatedAt desc
   drop table #latestActivityRowId
  
 End  
   
 GO
+
+
 
