@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SeniorHR")
                 {
                     string clientname = string.Empty;
                     if (profileName == "Client")
@@ -279,7 +279,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SeniorHR")
                     {
                         if (filter != null)
                         {
@@ -515,7 +515,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SupportAdmin" || profileName == "SeniorHR")
                 {
                     var questions = _mCQService.GetMCQquestionsByMCQId(Id);
                     var model = questions.Where(x => x.MCQId == Id).OrderBy(x => x.QuestionNumber).ToList();

@@ -340,6 +340,7 @@ namespace Risebird.Entities.ViewModel
         public int IndiaProductRate { get; set; }
         public int OutsideIndiaProductRate { get; set; }
         public bool IsQCRequired { get; set; }
+        public bool IsRedoInterview { get; set; }
         public bool IsJoinabilitySelectabilityRequired { get; set; }
         public string ProctorReport { get; set; }
         public bool IsProctor { get; set; }

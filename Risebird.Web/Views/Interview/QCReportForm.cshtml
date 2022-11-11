@@ -45,6 +45,7 @@
                             @Html.HiddenFor(m => m.Isedit)
                             @Html.HiddenFor(m => m.Type)
                             @Html.HiddenFor(m => m.uniqueid)
+                            @Html.HiddenFor(m => m.IRFId)
                             <div class="canvas_div_pdf">
                                 <div class="report-full-wrap">
                                     <div class="row">
@@ -331,9 +332,21 @@
                                             {
                                                 <a href="/Candidate/PublicCandidateStatus?emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
                                             }
+                                            else if (Model.Type == "ClientAddReport")
+                                            {
+                                                <a href="/Client/Report?interviewId=@Model.Interviewid&irfId=@Model.IRFId" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else if (Model.Type == "InterviewAddReport")
+                                            {
+                                                <a href="/Interview/AddReport?interviewId=@Model.Interviewid&irfId=@Model.IRFId" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
                                             else
                                             {
                                                 <a href="/Interview/ResolvedRedFlagsInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else if (Model.Type == "SecureAddReport")
+                                            {
+                                            <a href="/Interview/SecureReport?interviewId=@Model.Interviewid&irfId=@Model.IRFId&emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
                                             }
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
                                         </div>
