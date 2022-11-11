@@ -8,9 +8,11 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -49,8 +51,9 @@ namespace Risebird.MicroService
 
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
 
-                var pendingZoomMeetings = pendingVideoMeetings?.Where(x => x.MeetingPlatform == null || x.MeetingPlatform == MeetingPlatforms.Zoom);
-                var pendingRBMeetings = pendingVideoMeetings?.Where(x => x.MeetingPlatform == MeetingPlatforms.RisebirdMeet);
+                var pendingRBMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, "[a-zA-Z]")).ToList();
+
+                var pendingZoomMeetings = pendingVideoMeetings.Except(pendingRBMeetings).ToList();  
 
                 //get jwt authentication token 
                 //string token = ZoomToken();

@@ -2,7 +2,11 @@
 @using Newtonsoft.Json
 @using Risebird.Entities.ViewModel
 <style>
-
+    
+    .modal-xl {
+        width: 80%;
+        max-width:1200px;
+    }
     /*table.fixedSize {
             table-layout: fixed;
             width: 100%;
@@ -47,30 +51,30 @@
                                     for (int i = 0; i <= maxCount; i++)
                                     {
                                         var jsonObj = JsonConvert.SerializeObject(Model[i].MailBody);
-                                            <tr>
-                                                @if (i == 0)
+                                                <tr>
+                                                    @if (i == 0)
                                             {
-                                                    <td rowspan="@rowSpan" title="@Html.Raw(Model[i].MailSubject)">@Model[i].MailSubject</td>
-                                                    <td rowspan="@rowSpan" >
-                                                        <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue; cursor:pointer"><u>Content</u></a>
-                                                    </td>
+                                                        <td rowspan="@rowSpan" title="@Html.Raw(Model[i].MailSubject)">@Model[i].MailSubject</td>
+                                                        <td rowspan="@rowSpan" >
+                                                            <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue; cursor:pointer"><u>Content</u></a>
+                                                        </td>
                                             }
-                                                <td>@Model[i].eventType</td>
-                                                <td>@Model[i].CreatedAt</td>
+                                                    <td>@Model[i].eventType</td>
+                                                    <td>@Model[i].CreatedAt</td>
 
-                                                <td>@Model[i].SkillChannelName</td>
-                                                <td>@Model[i].interviewDate</td>
-                                                @if (!string.IsNullOrEmpty(Model[i].url))
+                                                    <td>@Model[i].SkillChannelName</td>
+                                                    <td>@Model[i].interviewDate</td>
+                                                    @if (!string.IsNullOrEmpty(Model[i].url))
                                             {
-                                                    <td title="@Model[i].url">URL</td>
+                                                        <td title="@Model[i].url">URL</td>
 
                                             }
                                             else
                                             {
-                                                    <td>NA</td>
+                                                        <td>NA</td>
                                             }
-                                                <td>@Model[i].SentBy</td>
-                                            </tr>
+                                                    <td>@Model[i].SentBy</td>
+                                                </tr>
                                     }
                                 }
 

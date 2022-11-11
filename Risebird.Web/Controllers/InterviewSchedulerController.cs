@@ -444,7 +444,7 @@ namespace Risebird.Web.Controllers
                         Mail _mail = new Mail
                         {
                             TO = model.Email,
-                            CC = accountEmail,//zoomLink.accountemail,
+                            //CC = accountEmail,//zoomLink.accountemail,
                             Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)

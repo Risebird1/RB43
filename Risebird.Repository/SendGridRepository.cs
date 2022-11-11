@@ -82,7 +82,7 @@ namespace Risebird.Repository
                     parameters.Add("@IRFId", model.IRFId);
                     parameters.Add("@InterviewId", model.InterviewId);
                     parameters.Add("@CreatedAt", DateTime.Now);
-                    parameters.Add("@SenntBy", model.SentBy);
+                    parameters.Add("@SentBy", model.SentBy);
 
                     await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
                          commandType: CommandType.StoredProcedure);
