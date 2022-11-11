@@ -392,7 +392,7 @@
                                                                 appendTime = Model.ThumbnailTimeSeconds.ToString();
                                                             }
                                                             var src = Model.VideoLink + "#t=" + appendTime;
-                                                            <video width="600" controls="controls" preload="metadata">
+                                                            <video width="600" controls="controls" preload="metadata" class="vjs-tech">
                                                                 <source src='@src' type="video/mp4">
                                                             </video>
                                                         }
@@ -591,7 +591,7 @@
                                                                 <th width="40%" class="table_heading">Questions</th>
                                                                 <th class="table_heading">Skill Name</th>
                                                                 <th width="10%" class="table_heading">Rating</th>
-                                                                <th class="table_heading">Time(Min)</th>
+                                                                <th class="table_heading">Time(Sec)</th>
                                                                 @*<th width="10%" class="action text-center">Action</th>*@
                                                             </tr>
                                                         </thead>
@@ -1776,6 +1776,15 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+     function switchtoquestionVedio(questiontime) {
+        var time = 1.0;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
     }
 </script>
 <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
