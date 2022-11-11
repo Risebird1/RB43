@@ -24,5 +24,6 @@ namespace Risebird.Entities.ViewModel
         public string ModifiedBy { get; set; }
         public string type { get; set; }
         public string uniqueid { get; set; }
+        public int IRFId { get; set; }
     }
 }

@@ -2229,7 +2229,6 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-
                 ViewBag.IsSelected = IsSelected;
                 if (model.QuestionsCollection == null)
                 {
