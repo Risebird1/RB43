@@ -1562,7 +1562,9 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-
+                        var client = _userRepository.GetClientUserDetails(emailid).Result;
+                        model.IsQCRequired = client.IsQCRequired;
+                        model.IsRedoInterview = client.IsRedoInterview;
                         if (model.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -1577,6 +1579,11 @@ namespace Risebird.Web.Controllers
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";
                         GetStatusList(model, irfId);
+                        if (TempData["SuccessErrorMessageQCForm"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                            TempData.Remove("SuccessErrorMessageQCForm");
+                        }
                         if (model.IsProctor)
                         {
                             return PartialView("ClientProctorPartialReport", model);

@@ -3334,6 +3334,16 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                if (profileName == "Client")
+                {
+                    var client = _userRepository.GetClientUserDetails(email).Result;
+                    model.IsQCRequired = client.IsQCRequired;
+                    model.IsRedoInterview = client.IsRedoInterview;
+                }
+                else
+                {
+                    model.IsQCRequired = false;
+                }
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -3362,6 +3372,11 @@ namespace Risebird.Web.Controllers
                 }
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
+                if (TempData["SuccessErrorMessageQCForm"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                    TempData.Remove("SuccessErrorMessageQCForm");
+                }
                 if (isClient || isClientSelected)
                 {
                     ViewBag.ClientDetails = "client";
@@ -6687,6 +6702,18 @@ namespace Risebird.Web.Controllers
                         {
                             return RedirectToAction("PublicCandidateStatus", "Candidate", new { emailid = model.Emailid, id = model.uniqueid });
                         }
+                        else if (model.Type == "ClientAddReport")
+                        {
+                            return RedirectToAction("Report", "Client", new { interviewId = model.Interviewid, irfId = model.IRFId });
+                        }
+                        else if (model.Type == "InterviewAddReport")
+                        {
+                            return RedirectToAction("AddReport", "Interview", new { interviewId = model.Interviewid, irfId = model.IRFId });
+                        }
+                        else if (model.Type == "SecureAddReport")
+                        {
+                            return RedirectToAction("SecureReport", "Interview", new { interviewId = model.Interviewid, irfId = model.IRFId, emailid = model.Emailid, id = model.uniqueid });
+                        }
                         else
                         {
                             return RedirectToAction("ResolvedRedFlagsInterviews");
@@ -6725,6 +6752,18 @@ namespace Risebird.Web.Controllers
                 else if (model.Type == "ClientPublic")
                 {
                     return RedirectToAction("PublicCandidateStatus", "Candidate", new { emailid = model.Emailid, id = model.uniqueid });
+                }
+                else if (model.Type == "ClientAddReport")
+                {
+                    return RedirectToAction("Report", "Client", new { interviewId = model.Interviewid, irfId = model.IRFId });
+                }
+                else if (model.Type == "InterviewAddReport")
+                {
+                    return RedirectToAction("AddReport", "Interview", new { interviewId = model.Interviewid, irfId = model.IRFId });
+                }
+                else if (model.Type == "SecureAddReport")
+                {
+                    return RedirectToAction("SecureReport", "Interview", new { interviewId = model.Interviewid, irfId = model.IRFId, emailid = model.Emailid, id = model.uniqueid });
                 }
                 else
                 {
@@ -7145,6 +7184,7 @@ namespace Risebird.Web.Controllers
                     model.CandidateFace = "Not Visible";
                     model.HandsOfCoding = "Notasperrequirement";
                 }
+                model.IRFId = interviewdetails.IRFId;
             }
             return PartialView(model);
         }
@@ -7169,7 +7209,10 @@ namespace Risebird.Web.Controllers
                     TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is successfully.";
                 }
             }
-            TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is failed.";
+            else
+            {
+                TempData["SuccessErrorMessageQCForm"] = "Interview request for redo is failed.";
+            }
             if (model.type == "Completed")
             {
                 return RedirectToAction("CompletedInterviews");
@@ -7189,6 +7232,18 @@ namespace Risebird.Web.Controllers
             else if (model.type == "ClientPublic")
             {
                 return RedirectToAction("PublicCandidateStatus", "Candidate", new { emailid = model.ModifiedBy, id = model.uniqueid });
+            }
+            else if (model.type == "ClientAddReport")
+            {
+                return RedirectToAction("Report", "Client", new { interviewId = model.interviewid, irfId = model.IRFId });
+            }
+            else if (model.type == "InterviewAddReport")
+            {
+                return RedirectToAction("AddReport", "Interview", new { interviewId = model.interviewid, irfId = model.IRFId });
+            }
+            else if (model.type == "SecureAddReport")
+            {
+                return RedirectToAction("SecureReport", "Interview", new { interviewId = model.interviewid, irfId = model.IRFId, emailid = model.ModifiedBy, id = model.uniqueid });
             }
             return RedirectToAction("CompletedInterviews");
         }
@@ -7455,6 +7510,14 @@ namespace Risebird.Web.Controllers
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                var client = _userRepository.GetClientUserDetails(email).Result;
+                model.IsQCRequired = client.IsQCRequired;
+                model.IsRedoInterview = client.IsRedoInterview;
+                if (TempData["SuccessErrorMessageQCForm"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                    TempData.Remove("SuccessErrorMessageQCForm");
+                }
                 if (model.IsProctor)
                 {
                     return PartialView("SecureProctorReport", model);
@@ -7503,10 +7566,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _meetingService.CheckReportClientUrlSave(emailid, uniqueid.ToString(), interviewId);
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + uniqueid + "&irfId=" + irfId + "&uniqueid=" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + uniqueid;
                 if (!string.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + uniqueid + "&irfId=" + irfId + "&uniqueid=" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + _uniqueid;
                 }
                 return Json(sendreporturl);
             }

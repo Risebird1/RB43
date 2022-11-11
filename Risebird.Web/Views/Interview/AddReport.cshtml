@@ -95,12 +95,25 @@
                     <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
                         <text> Rate Interviewer </text>
                     </button>
+                    @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                    {
+                        <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                            <span data-toggle="tooltip" data-placement="top" title="QC Form" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> QC Form</text></span>
+                        </button>
+                    }
+                    @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                    {
+                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style="margin-left: 10px;font-size: 11px">
+                            <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                <text> Redo Interview</text>
+                            </span>
+                        </button>
+                    }
                 </div>
             </div>
             @*<button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
             <text style="color:white"> Audio Feedback </text>
             </button>*@
-
         </div>
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
@@ -1542,6 +1555,23 @@
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
 <script src="~/js/ModalFormServerValidation.js"></script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
 @if (ViewBag.profile == "Client")
 {
     <script>
@@ -1955,11 +1985,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                        // Check document for changes
-                                                                                        //$.validator.unobtrusive.parse(document);
+                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                            // Check document for changes
+                                                                                            //$.validator.unobtrusive.parse(document);
 
-                                                                                    }
+                                                                                        }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2059,7 +2089,7 @@
             });*@
 
 
-                                                                                    }
+                                                                                        }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2147,7 +2177,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                                                                    return CheckLength(250);
+                                                                                        return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2307,7 +2337,7 @@
                 }
                 });*@
 
-                                                                                        }
+                                                                                            }
 
 
     });

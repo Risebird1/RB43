@@ -127,12 +127,20 @@
                         <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
                             <span data-toggle="tooltip" data-placement="top" title="The message you broadcast here pops-up as an instruction on Interviewer's portal.(No Email will be sent.)" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.id', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
                         </button>
-                        @*@if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                        @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                         {
                             <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
                                 <span data-toggle="tooltip" data-placement="top" title="QC Form" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> QC Form</text></span>
                             </button>
-                        }*@
+                        }
+                        @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                        {
+                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style="margin-left: 10px;font-size: 11px">
+                                <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                    <text> Redo Interview</text>
+                                </span>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -384,7 +392,7 @@
                                                                 appendTime = Model.ThumbnailTimeSeconds.ToString();
                                                             }
                                                             var src = Model.VideoLink + "#t=" + appendTime;
-                                                            <video width="600" controls="controls" preload="metadata">
+                                                            <video width="600" controls="controls" preload="metadata" class="vjs-tech">
                                                                 <source src='@src' type="video/mp4">
                                                             </video>
                                                         }
@@ -583,7 +591,7 @@
                                                                 <th width="40%" class="table_heading">Questions</th>
                                                                 <th class="table_heading">Skill Name</th>
                                                                 <th width="10%" class="table_heading">Rating</th>
-                                                                <th class="table_heading">Time(Min)</th>
+                                                                <th class="table_heading">Time(Sec)</th>
                                                                 @*<th width="10%" class="action text-center">Action</th>*@
                                                             </tr>
                                                         </thead>
@@ -1488,6 +1496,23 @@
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 <script src="~/js/BroadcastMessage.js"></script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful", '@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
 @if (ViewBag.profile == "Client")
 {
     <script>
@@ -1510,10 +1535,10 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        @*setTimeout(function () {
+    @*setTimeout(function () {
             $('button[data-toggle="ajax-modal"]').click();
-        }, 1);*@
-        $('.dropques option').wrap('<span>');
+            }, 1);*@
+            $('.dropques option').wrap('<span>');
 
         var selectedOption = $('.dropques').find("[selected]");
         $(selectedOption).unwrap();
@@ -1751,6 +1776,15 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+     function switchtoquestionVedio(questiontime) {
+        var time = 1.0;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
     }
 </script>
 <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>

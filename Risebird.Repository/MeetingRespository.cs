@@ -5645,7 +5645,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * From Trans_QCFormReport where Interviewid=@Interviewid";
+                var query = "Select tq.*,IRF.id as IRFId From Trans_QCFormReport tq left join InterviewMeetings im on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where tq.Interviewid=@Interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6162,7 +6162,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select cl.InterviewDuration as RequiredDuration,ic.VideoDuration as ActualDuration from  InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@id";
+                var query = "Select cl.InterviewDuration as RequiredDuration,ic.VideoDuration as ActualDuration,IRF.id as IRFId from  InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6406,7 +6406,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid,int Interviewid)
+        public async Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid)
         {
             try
             {
