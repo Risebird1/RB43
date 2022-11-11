@@ -1243,7 +1243,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
-
+                currentUser = currentUser?.Replace("\"", "");
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -2012,11 +2012,11 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                if (!string.IsNullOrWhiteSpace(HRCoordinator))
-                {
-                    var hrEmail = HRCoordinator.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
-                }
+                //if (!string.IsNullOrWhiteSpace(HRCoordinator))
+                //{
+                //    var hrEmail = HRCoordinator.Split("@");
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
+                //}
                 if (!string.IsNullOrWhiteSpace(StaffingAgiencies))
                 {
                     var staffingEmail = StaffingAgiencies.Split("@");

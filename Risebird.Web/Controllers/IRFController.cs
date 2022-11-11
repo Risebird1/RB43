@@ -1958,6 +1958,11 @@ namespace Risebird.Web.Controllers
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         }
+
+                        if (string.IsNullOrEmpty(model.MeetingPlatform))
+                        {
+                            model.MeetingPlatform = MeetingPlatforms.Zoom;
+                        }
                         //else
                         //{
                         //    model.id = 0;
