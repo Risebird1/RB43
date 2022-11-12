@@ -235,6 +235,7 @@ namespace Risebird.Web
                        .Allow("https://sp.tinymce.com/")
                        .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("https://cdnjs.com/libraries/material-components-web/")
+                       .Allow("https://imgur.com/")
                        .Allow("data:")
                        //.Allow("data:image/svg+xml,%3csvg")
                        .Allow("'unsafe-inline'");
@@ -258,6 +259,7 @@ namespace Risebird.Web
                        .Allow("https://cdn.tiny.cloud/1/no-api-key/")
                        .Allow("https://app.shuftipro.com/")
                        .Allow("https://cdnjs.com/libraries/material-components-web/")
+                       //.Allow("https://portal.risebird.io/")
                        .Allow("*.webpush.freshchat.com/")
                        .Allow("data:");
                 //builder.Object

@@ -2006,11 +2006,11 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
-                foreach (var mail in ccMails)
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-                }
+                //var ccMails = model.CC.Split(";");
+                //foreach (var mail in ccMails)
+                //{
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                //}
                 //if (!string.IsNullOrWhiteSpace(HRCoordinator))
                 //{
                 //    var hrEmail = HRCoordinator.Split("@");
