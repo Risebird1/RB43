@@ -7511,8 +7511,11 @@ namespace Risebird.Web.Controllers
                 GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var client = _userRepository.GetClientUserDetails(email).Result;
-                model.IsQCRequired = client.IsQCRequired;
-                model.IsRedoInterview = client.IsRedoInterview;
+                if (client != null)
+                {
+                    model.IsQCRequired = client.IsQCRequired;
+                    model.IsRedoInterview = client.IsRedoInterview;
+                }
                 if (TempData["SuccessErrorMessageQCForm"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();

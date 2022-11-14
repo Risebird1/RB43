@@ -172,10 +172,10 @@ namespace Risebird.Web.Controllers
                             model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection.Take(500).ToList();
 
                         }
-                        if (profileName == "Admin" && model.InterviewerCollection != null && model.InterviewerCollection.Count() > 100)
-                        {
-                            model.InterviewerCollection = model.InterviewerCollection.Take(100).ToList();
-                        }
+                        //if (profileName == "Admin" && model.InterviewerCollection != null && model.InterviewerCollection.Count() > 100)
+                        //{
+                        //    model.InterviewerCollection = model.InterviewerCollection.Take(100).ToList();
+                        //}
                         model.Profile = profileName;
                         model.UserId = _irfService.GetUserId(emailid);
                         return View(model);
