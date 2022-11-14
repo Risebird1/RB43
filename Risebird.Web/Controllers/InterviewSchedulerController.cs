@@ -753,7 +753,7 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
             //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
             //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
-            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddTHH:mm:ss");
             //var accountEmail = await _interviewSchedulerservice.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
             var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
             if (string.IsNullOrEmpty(accountEmail))
