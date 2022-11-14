@@ -23,6 +23,7 @@ if(@currentZoomAccount is not null and @currentZoomAccount != '')
 Begin
 select @concurrentMeetings = count(id) from InterviewMeetings where risebirdHR = @currentZoomAccount
 and interviewDate between @startTime and @endTime
+and charindex('zoom', zoomLink) > 0
 
 select @concurrencyAllowed = ConcurrencyAllowed from ZoomAccounts where UserName = @currentZoomAccount
 end
@@ -36,26 +37,24 @@ else
 Begin
 
 
-Select top 1 UserName from ZoomAccounts za
-outer apply 
-(select COUNT(id) as totalcount from InterviewMeetings where risebirdHR=za.UserName 
-and interviewDate >= @startTime and interviewDate <= @endTime
-and charindex('zoom', zoomLink) > 0 ) abc
-where za.IsActive= 1 and (za.ConcurrencyAllowed-abc.totalcount)>0
-order by (za.ConcurrencyAllowed-abc.totalcount) desc
+--Select top 1 UserName from ZoomAccounts za
+--outer apply 
+--(select COUNT(id) as totalcount from InterviewMeetings where risebirdHR=za.UserName 
+--and interviewDate >= @startTime and interviewDate <= @endTime
+--and charindex('zoom', zoomLink) > 0 ) abc
+--where za.IsActive= 1 and (za.ConcurrencyAllowed-abc.totalcount)>0
+--order by (za.ConcurrencyAllowed-abc.totalcount) desc
 
---;with cte
---as
---(
---	select count(im.id) as totalConcurrentMeetings, za.UserName, za.ConcurrencyAllowed from InterviewMeetings im 
---	join ZoomAccounts za on im.risebirdHR = za.UserName
---	where interviewDate between @startTime and @endTime
---	and charindex('zoom', im.zoomLink) > 0
---	group by za.UserName, za.ConcurrencyAllowed
---)
---select top 1 UserName  from cte
---where (ConcurrencyAllowed - totalConcurrentMeetings) > 0
---order by (ConcurrencyAllowed - totalConcurrentMeetings) desc
+;with cte
+as
+(
+	select dbo.fn_GetConcurrentInterviewsForZoomAccount(UserName, @startTime, @endTime) as totalConcurrentMeetings, UserName, ConcurrencyAllowed from ZoomAccounts 
+	where IsActive = 1
+	group by UserName, ConcurrencyAllowed
+)
+select top 1 UserName from cte
+where (ConcurrencyAllowed - totalConcurrentMeetings) > 0
+order by (ConcurrencyAllowed - totalConcurrentMeetings) desc
 
 End
 
