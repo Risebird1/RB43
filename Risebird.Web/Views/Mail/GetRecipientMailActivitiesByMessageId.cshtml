@@ -73,7 +73,10 @@
                                             {
                                                         <td>NA</td>
                                             }
-                                                    <td>@Model[i].SentBy</td>
+                                                    @if (i == 0)
+                                            {
+                                                <td rowspan="@rowSpan">@Model[i].SentBy</td>
+                                            }
                                                 </tr>
                                     }
                                 }
