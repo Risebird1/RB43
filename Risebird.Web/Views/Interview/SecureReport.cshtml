@@ -1986,7 +1986,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Interview/AddSecureReport",
-                data: { uniqueid: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
+                data: { uniqueid: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val(), irfId: $("#hidtxtirfid").val() },
                 success: function (data) {
                     if (data == "success") {
                         window.location = "/Interview/SecureReport?emailid=" + $("#txtvideoemailid").val() + "&uniqueid=" + $("#hidtxtid").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
