@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -14,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Risebird.Web.Controllers
 {
@@ -25,13 +28,15 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IAadhaarService _aadhaarService;
+        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService)
         {
             _configuration = configuration;
             _meetingService = meetingService;
             _notificationHelper = notificationHelper;
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _aadhaarService = aadhaarService;
         }
 
         [HttpGet]
@@ -821,6 +826,89 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> InterviewsReview(string uniqueid)
+        {
+            var _list = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            ViewBag.Emailid = _list.EmailId;
+            return View();
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveInterviewsReview(int rating, string comments, string Emailid)
+        {
+            if (string.IsNullOrWhiteSpace(comments))
+            {
+                comments = "";
+            }
+            var resultset = await _meetingService.SaveInterviewsReview(rating, comments, Emailid);
+            return Json("success");
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ClientInterviewsReview()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "SupportAdmin" || emailid.ToLower() == "vaibhaw_sachan@risebird.io")
+                {
+                    var model = await _meetingService.FetchInterviewsReview();
+                    ViewBag.Clients = model.Select(x => x.ClientName).Distinct().ToList();
+                    if (HttpContext.Session.GetString("ClientInterviewReviewList") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ClientInterviewReviewList"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            model = model.Where(x => x.CreatedOn >= filter.StartDate && x.CreatedOn < filter.EndDate).ToList();
+                        }
+                        filter.Client = filter.Client == null ? filter.Client = model.Select(x => x.ClientName).ToArray() : filter.Client = filter.Client;
+                        model = model.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.ClientName) : c.ClientName == null)).ToList();
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ClientInterviewsReview(InterviewFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("ClientInterviewReviewList", JsonConvert.SerializeObject(filter));
+                }
+                return RedirectToAction("ClientInterviewsReview");
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetClientInterviewsReview()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                HttpContext.Session.Remove("ClientInterviewReviewList");
+                return RedirectToAction("ClientInterviewsReview");
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

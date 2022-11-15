@@ -20,8 +20,9 @@ namespace Risebird.MicroService
         private readonly IClientService _clientService;
         private readonly IIRFService _irfService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly IAadhaarService _aadhaarService;
 
-        public ClientCompleteInterviewNotification(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IIRFService irfService, IWhatsAppHelper whatsAppHelper)
+        public ClientCompleteInterviewNotification(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IIRFService irfService, IWhatsAppHelper whatsAppHelper, IAadhaarService aadhaarService)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -29,6 +30,7 @@ namespace Risebird.MicroService
             _clientService = clientService;
             _irfService = irfService;
             _whatsAppHelper = whatsAppHelper;
+            _aadhaarService = aadhaarService;
         }
         [FunctionName("ClientCompleteInterviewNotification")]
         public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//Every day
@@ -54,7 +56,9 @@ namespace Risebird.MicroService
                             CC = "talent@risebird.io",
                             Subject = "Public URL for completed interview details"
                         };
-                        var emailsend =await _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl);
+                        var _clientuniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item.EmailId);
+                        var ReviewURL = "https://portal.risebird.io/Survey/InterviewsReview?uniqueid=" + _clientuniqueid;
+                        var emailsend = await _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl, ReviewURL);
                         //Send on whatsApp
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.EmailId;
