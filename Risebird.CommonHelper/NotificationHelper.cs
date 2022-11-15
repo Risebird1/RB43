@@ -2564,7 +2564,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl)
+        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl,string ReviewURL)
         {
             try
             {
@@ -2578,7 +2578,7 @@ namespace Risebird.CommonHelper
                 }
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
-                object[] parameters = new object[] { Name, publicurl };
+                object[] parameters = new object[] { Name, publicurl , ReviewURL };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublic.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;

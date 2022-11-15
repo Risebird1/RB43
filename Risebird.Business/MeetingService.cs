@@ -3771,6 +3771,43 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<bool> SaveInterviewsReview(int rating, string comments, string Emailid)
+        {
+            try
+            {
+                return await _meetingRespository.SaveInterviewsReview(rating, comments, Emailid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<ClientReviewVM>> FetchInterviewsReview()
+        {
+            try
+            {
+                return await _meetingRespository.FetchInterviewsReview();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> BacklinkFailInterviewStatusUpdate(int id)
+        {
+            try
+            {
+                var result = await _meetingRespository.BacklinkFailInterviewStatusUpdate(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 

@@ -206,5 +206,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid);
         Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid);
         Task<string> CheckReportClientUrlSave(string Emailid, string uniqueid, int Interviewid);
+        Task<bool> SaveInterviewsReview(int rating, string comments, string Emailid);
+        Task<IEnumerable<ClientReviewVM>> FetchInterviewsReview();
+        Task<bool> BacklinkFailInterviewStatusUpdate(int id);
     }
 }

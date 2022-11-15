@@ -7374,12 +7374,18 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
-        public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId, string clientname)
+        public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId, string clientname, int irfIntId)
         {
             AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(interviewid);
             var JDTitle = _interviewSchedulerservice.FetchJDTitle(IRFId);
             var zoomLink = new InstaZoomMeetingResponse();
             zoomLink = await CreateZoomMeeting(meetingToUpdate.candidateName, JDTitle.Result, meetingToUpdate.interviewDate, meetingToUpdate.risebirdHR);
+            if (zoomLink == null)
+            {
+                //Send Rescheule mail to candidtae
+                await SendbackupRescheduleMeetingInvite(irfIntId, meetingToUpdate.candidateEmail, interviewid);
+                return Json("FailToSet");
+            }
             _ = _interviewSchedulerservice.UpdateMeetingLinkDetails(interviewid, zoomLink.join_url, zoomLink.id.ToString());
             string timezonevalue = string.Empty;
             var offset = -330;
@@ -7421,7 +7427,9 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
             accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
             if (string.IsNullOrEmpty(accountEmail))
-                accountEmail = "hire@risebird.io";
+            {
+                return null;
+            }
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;
             var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
@@ -7580,6 +7588,28 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Failed");
+            }
+        }
+        public async Task<string> SendbackupRescheduleMeetingInvite(int irfId, string CandidateemailId, int interviewid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
+                var linkurl = "https://" + Request.Host.ToString();
+                if (await _iRFService.SendRedoInvite(irfId, CandidateemailId, loggedInUserEmail, linkurl))
+                {
+                    var result = await _meetingService.BacklinkFailInterviewStatusUpdate(interviewid);
+                    return "Success";
+                }
+                else
+                {
+                    return "Fail";
+                }
+            }
+            else
+            {
+                return "Fail";
             }
         }
     }
