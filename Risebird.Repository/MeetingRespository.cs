@@ -6464,5 +6464,62 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<bool> SaveInterviewsReview(int rating, string comments, string Emailid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", Emailid);
+                parameters.Add("@rating", rating);
+                parameters.Add("@comments", comments);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_saveClientreviewdetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<ClientReviewVM>> FetchInterviewsReview()
+        {
+            try
+            {
+                var query = "Select cr.*,cl.Name as ClientName From ClientReviewDetails cr join UserList ul on cr.ClientEmailid=ul.EmailId left join ClientUser cu on cu.UserId=ul.id left join Client cl on cl.id=cu.ClientId";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ClientReviewVM>(query, null);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> BacklinkFailInterviewStatusUpdate(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_BacklinkFailInterviewStatusUpdate", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
