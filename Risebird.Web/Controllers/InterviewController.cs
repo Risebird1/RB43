@@ -6005,6 +6005,9 @@ namespace Risebird.Web.Controllers
                 if (isClient || isClientSelected)
                 {
                     ViewBag.ClientDetails = "client";
+                    var client = _userRepository.GetClientDetailsByIRFId(model.IRFName).Result;
+                    model.IsQCRequired = client.IsQCRequired;
+                    model.IsRedoInterview = client.IsRedoInterview;
                     if (model.IsProctor)
                     {
                         return PartialView("ClientProctorReport", model);

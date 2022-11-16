@@ -1031,11 +1031,16 @@ namespace Risebird.Web.Controllers
                     {
                         currenturl = currenturl + "&uniqueid=322";
                         var aadharverificationflag = "N";
+                        var _interviewerflag = "N";
                         if (details.AadhaarVerification)
                         {
                             aadharverificationflag = "Y";
                         }
-                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl);
+                        //if (Candidate)
+                        //{
+                        //    _interviewerflag = "Y";
+                        //}
+                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl, _interviewerflag);
                     }
                     else
                     {
@@ -1740,13 +1745,14 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region BotLinks
-        public async Task<MCQBotResponse> GenerateBotLink(string emailds, string AadhaarVerificationRequired, string MCQTestlink)
+        public async Task<MCQBotResponse> GenerateBotLink(string emailds, string AadhaarVerificationRequired, string MCQTestlink, string _interviewerflag)
         {
             var model = new MCQBotRequest();
             model.tenantUuid = "e5f37005-42a3-4510-b211-0a3c0ee675b7";
             model.email = emailds;
             model.aadharVerification = AadhaarVerificationRequired;
-            model.faceVerification = "N";
+            model.faceVerification = "Y";
+            model.interviewerTraining = _interviewerflag;
             model.companyEmailVerification = "N";
             model.videoBio = "N";
             model.careerQuestions = "N";
@@ -2007,7 +2013,7 @@ namespace Risebird.Web.Controllers
                         {
                             aadharverificationflag = "Y";
                         }
-                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl);
+                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl,"N");
                         MCQVMShare _list = new MCQVMShare();
                         _list.status = 0;
                         _list.MCQSet = details.Title;

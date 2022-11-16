@@ -389,6 +389,7 @@ namespace Risebird.Web
             services.AddScoped<ISendGridRepository, SendGridRepository>();
             services.AddScoped<IMailRepository, MailRepository>();
             services.AddScoped<IMailService, MailService>();
+            services.AddScoped<IWhatsappRepository, WhatsappRepository>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts
