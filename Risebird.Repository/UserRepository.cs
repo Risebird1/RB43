@@ -1917,7 +1917,7 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public string UpdateWhatsappno(string emailid,string WhatsappNumber)
+        public string UpdateWhatsappno(string emailid, string WhatsappNumber)
         {
             try
             {
@@ -1936,6 +1936,29 @@ namespace Risebird.Repository
             {
                 return "";
             }
+        }
+        public async Task<ClientUserVM> GetClientDetailsByIRFId(string IRFId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select cl.IsQCRequired,cl.IsRedoInterview from Client cl join IRF on IRF.ClientId=cl.id where IRF.IRFId=@IRFId";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", IRFId);
+                    var results = con.Query<ClientUserVM>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

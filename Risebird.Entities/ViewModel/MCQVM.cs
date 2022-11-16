@@ -219,6 +219,7 @@ namespace Risebird.Entities.ViewModel
         public string companyEmailVerification { get; set; }
         public string videoBio { get; set; }
         public string careerQuestions { get; set; }
+        public string interviewerTraining { get; set; }
         public MCQTestLinkDetails testLink { get; set; }
     }
     public class MCQTestLinkDetails

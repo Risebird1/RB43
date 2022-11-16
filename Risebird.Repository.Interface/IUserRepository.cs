@@ -85,5 +85,6 @@ namespace Risebird.Repository.Interface
         Task<ClientUserVM> GetClientPremiumUserDetails(string emailID);
         string GetWhatsappno(string emailId);
         string UpdateWhatsappno(string emailId, string WhatsappNumber);
+        Task<ClientUserVM> GetClientDetailsByIRFId(string IRFId);
     }
 }

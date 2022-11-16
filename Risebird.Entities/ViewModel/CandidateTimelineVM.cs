@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -45,6 +46,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsQCRequired { get; set; }
         public string Interviewer { get; set; }
         public bool IsRedoInterview { get; set; }
+        [Display(Name = "Whatsapp Number")]
+        public string WhatsappNo { get; set; }
     }
 
     public class TimelineStatus
@@ -56,6 +59,7 @@ namespace Risebird.Entities.ViewModel
         public string Day { get; set; }
         public string Time { get; set; }
         public DateTime ActualDate { get; set; }
+        
     }
 
 
@@ -65,6 +69,7 @@ namespace Risebird.Entities.ViewModel
         public string Name { get; set; }
         public string JobCountry { get; set; }
         public string CompanyType { get; set; }
+        
     }
 
 

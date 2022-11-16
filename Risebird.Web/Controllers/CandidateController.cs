@@ -3568,6 +3568,7 @@ namespace Risebird.Web.Controllers
                     //add candidate to final model
                     model.Add(candidateTimeline);
                 }
+               
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 ViewBag.profile = "Client";
@@ -3575,6 +3576,15 @@ namespace Risebird.Web.Controllers
                 if (Emailid != emailid)
                 {
                     return RedirectToAction("PublicAllMeetings", new { id = id });
+                }
+                var Whatsapp = _userService.GetWhatsappno(emailid);
+                if (Whatsapp == null)
+                {
+                    ViewBag.Whatsappflag = true;
+                }
+                else
+                {
+                    ViewBag.Whatsappflag = false;
                 }
                 return View(model);
             }
@@ -3590,6 +3600,7 @@ namespace Risebird.Web.Controllers
         {
             ViewBag.emailid = emailid;
             ViewBag.id = id;
+            ViewBag.Whatsappflag = false;
             try
             {
                 var client = await _userRepository.GetClientUserDetails(emailid);
@@ -3744,6 +3755,7 @@ namespace Risebird.Web.Controllers
             ViewBag.PageType = "Public";
             ViewBag.Id = id;
             ViewBag.Status = "Client";
+            ViewBag.Whatsappflag = false;
             var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {

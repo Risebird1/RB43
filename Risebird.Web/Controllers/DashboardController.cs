@@ -1718,25 +1718,25 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ClientIndex(ClientDashboardVM model)
+        public async Task<JsonResult> SaveWhatsappNumber(string whatsappnumber)
         {
 
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                string uploadedFileURL = string.Empty;
+                
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                model.EmailId = emailid;
+                
                 //var result = _userService.GetWhatsappno(model.EmailId);
-                var result = _userService.UpdateWhatsappno(model.EmailId, model.WhatsappNo);
-                TempData["SuccessupdateMessage"] = "Whatsapp added Successfully.";
+                var result = _userService.UpdateWhatsappno(emailid,whatsappnumber);
+                return Json("Whatsapp added Successfully.");
             }
             else
             {
-                TempData["FailedMessage"] = "Failed to update Whatsapp number!";
-                return RedirectToAction("ClientIndex");
+                
+                return Json("Failed to update Whatsapp number!");
             }
-            return RedirectToAction("ClientIndex");
+            
         }
     }
 }
