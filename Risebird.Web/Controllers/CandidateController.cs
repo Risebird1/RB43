@@ -3927,13 +3927,13 @@ namespace Risebird.Web.Controllers
                 //Sheet.Cells[1, 4].Value = "Candidated Added On/At";
                 Sheet.Cells[1,4].Value = "Interview Date";
                 Sheet.Cells[1,5].Value = "Interview Time";
-                Sheet.Cells[1,6].Value = "Schedule Status";
-                Sheet.Cells[1,7].Value = "Phone";
-                Sheet.Cells[1,8].Value = "Current Status";
+                //Sheet.Cells[1,6].Value = "Schedule Status";
+                Sheet.Cells[1,6].Value = "Phone";
+                Sheet.Cells[1,7].Value = "Current Status";
                 //Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1,9].Value = "Staffing Agency EmailId";
-                Sheet.Cells[1,10].Value = "Skill Channel ID";
-                Sheet.Cells[1,11].Value = "Client Hr";
+                Sheet.Cells[1,8].Value = "Staffing Agency EmailId";
+                Sheet.Cells[1,9].Value = "Skill Channel ID";
+                Sheet.Cells[1,10].Value = "Client Hr";
                 
                 int i = 2;
                 if (model.Count() > 0)
@@ -3948,42 +3948,42 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 4].Value = s_today;
                         string timeString = datetime.ToLongTimeString();
                         Sheet.Cells[i, 5].Value = timeString;
-                        if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
-                        {                           
-                            if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
-                            {
-                                Sheet.Cells[i, 6].Value = ScheduleStatusTypes.Scheduled.GetDescription();
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
-                            }
-                        }
-                        else
-                        {                           
-                            Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
-                        }
-                        Sheet.Cells[i, 7].Value = item.Phone ?? string.Empty;
+                        //if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
+                        //{                           
+                        //    if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
+                        //    {
+                        //        Sheet.Cells[i, 6].Value = ScheduleStatusTypes.Scheduled.GetDescription();
+                        //    }
+                        //    else
+                        //    {
+                        //        Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                        //    }
+                        //}
+                        //else
+                        //{                           
+                        //    Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                        //}
+                        Sheet.Cells[i, 6].Value = item.Phone ?? string.Empty;
                         if (!string.IsNullOrEmpty(item.CurrentStatus))
                         {
-                            Sheet.Cells[i, 8].Value = item.CurrentStatus;
+                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
                             //Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
                         }
                         else
                         {
-                            Sheet.Cells[i, 8].Value = string.Empty;
+                            Sheet.Cells[i, 7].Value = string.Empty;
                             //Sheet.Cells[i, 8].Value = string.Empty;
                         }
                         if (!string.IsNullOrEmpty(item.ProfileSource))
                         {
-                            Sheet.Cells[i, 9].Value = item.ProfileSource;
+                            Sheet.Cells[i, 8].Value = item.ProfileSource;
                         }
                         else
                         {
-                            Sheet.Cells[i, 9].Value = string.Empty;
+                            Sheet.Cells[i, 8].Value = string.Empty;
                         }
-                        Sheet.Cells[i, 10].Value = item.IRFName;
-                        Sheet.Cells[i, 11].Value = item.HREmail;
+                        Sheet.Cells[i, 9].Value = item.IRFName;
+                        Sheet.Cells[i, 10].Value = item.HREmail;
                       
                         i++;
                     }

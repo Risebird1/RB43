@@ -1568,9 +1568,16 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_GetClientPasswordResetEnableStatus", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetClientPasswordResetEnableStatus", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return true;
+                    if (result.FirstOrDefault() == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
 
