@@ -272,6 +272,8 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
                 List<MeetingVM> modelList = new List<MeetingVM>();
                 if (HttpContext.Session.GetString("Interviewfilters") != null)
                 {
@@ -285,7 +287,8 @@ namespace Risebird.Web.Controllers
                     {
                         x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                         //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                        x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        x.MeetingStatusStatusDesc
+                        = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                         x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
                         //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
                         return x;
@@ -423,6 +426,10 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 35].Value = "Coordinating HR";
                 Sheet.Cells[1, 36].Value = "Job Country";
                 Sheet.Cells[1, 37].Value = "Billing Owner";
+                if (profileName == "Client")
+                {
+                    Sheet.Cells[1, 38].Value = "Executive URL";
+                }
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -566,6 +573,21 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 35].Value = item.HRCoordinatorEmailId;
                         Sheet.Cells[i, 36].Value = item.JobCountry;
                         Sheet.Cells[i, 37].Value = item.BillingOwner;
+                        if (profileName == "Client")
+                        {
+                            var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId + "&isClient=true";
+                            try
+                            {
+                                Sheet.Cells[i, 38].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                                Sheet.Cells[i, 38].Value = "Executive Report";
+                                Sheet.Cells[i, 38].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 38].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 38].Value = "No Report";
+                            }
+                        }
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

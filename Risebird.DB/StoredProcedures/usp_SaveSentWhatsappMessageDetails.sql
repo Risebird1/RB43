@@ -24,9 +24,44 @@ CREATE PROCEDURE [dbo].[usp_SaveSentWhatsappMessageDetails]
 @SentBy varchar(100) =null
 AS    
 Begin  
+begin try
+	begin tran
 
-Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy)  
-values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @IRFId, @InterviewId, @InterviewDate, @Header, @CreatedAt, @SentBy)  
+		Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy)  
+		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @IRFId, @InterviewId, @InterviewDate, @Header, @CreatedAt, @SentBy)  
+
+		declare @recipientProfile varchar(50)
+		set @recipientProfile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id = ul.idProfile)
+		if(@recipientProfile = 'Candidate' and @InterviewDate is not null)
+		begin
+			declare @interviewIdComputed int
+			set @interviewIdComputed= (select top 1 id from InterviewMeetings where interviewDate = @InterviewDate and candidateEmail = @Recipient)
+			if(@interviewIdComputed  is not null and @interviewIdComputed > 0)
+			Begin
+				if exists( select id from RisebirdCandidateCommunicationCount where InterviewId = @InterviewId)
+					Begin
+						Insert into RisebirdCandidateCommunicationCount (InterviewId, WhatsappCount, CreatedOn) values (@interviewIdComputed, 1, DATEADD(MINUTE, 330, getdate()))
+					End
+					Else
+					Begin
+						Update RisebirdCandidateCommunicationCount set WhatsappCount = (WhatsappCount + 1), ModifiedOn = DATEADD(MINUTE, 330, getdate()) where InterviewId = @interviewIdComputed
+					End
+			End
+		end
+
+	commit tran
+
+end try
+
+begin catch
+	rollback transaction
+	DECLARE @ErrorMessage varchar(MAX) = ERROR_MESSAGE(),    
+	@Severity int = ERROR_SEVERITY(),    
+	@State smallint = ERROR_STATE()    
+	RAISERROR (@ErrorMessage, @Severity, @State)
+end catch
+
+
 
 End
 GO
