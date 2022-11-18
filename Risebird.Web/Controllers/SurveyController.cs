@@ -11,6 +11,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,8 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IAadhaarService _aadhaarService;
-        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService)
+        private readonly ISurveyRepository _surveyRepository;
+        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, ISurveyRepository surveyRepository)
         {
             _configuration = configuration;
             _meetingService = meetingService;
@@ -37,6 +39,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _aadhaarService = aadhaarService;
+            _surveyRepository = surveyRepository;
         }
 
         [HttpGet]
@@ -911,5 +914,24 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ClientFeedbacks()
+        {
+            ViewBag.PageName = "ClientFeedbacks";
+            ViewBag.type = "Audio Feedback";
+            ViewBag.profileName = "";
+            var results = await _surveyRepository.FetchClientAudioFeedbackDetails();
+            return View("ClientFeedbacks", results);
+        }
+        [HttpGet]
+        public async Task<IActionResult> BroadCastMessages()
+        {
+            ViewBag.PageName = "ClientFeedbacks";
+            ViewBag.type = "Broadcast Messages";
+            ViewBag.profileName = "";
+            var results = await _surveyRepository.FetchBroadcastMessages();
+            return View("ClientFeedbacks", results);
+        }
+
     }
 }
