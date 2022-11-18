@@ -4,6 +4,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -39,7 +40,7 @@ namespace Risebird.Repository
             _candidateRepository = candidateRepository;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact,int TimeZoneoffset, string TimeZonesValue, string zoomAccountEmail = null)
+            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact,int TimeZoneoffset, string TimeZonesValue, out int interviewIdOut, string zoomAccountEmail = null)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -82,6 +83,7 @@ namespace Risebird.Repository
             //string textreminder = string.Empty;
             //long zoommeetingId = 0;
             int interviewId = 0;
+            interviewIdOut = interviewId;
             var interviewDatestr = interviewDate.Hour;
             if (interviewDatestr < 12)
             {
@@ -131,6 +133,7 @@ namespace Risebird.Repository
                 {
                     cmd.ExecuteScalar();
                     interviewId = (int)cmd.Parameters["@interviewIdOutput"].Value;
+                    interviewIdOut = interviewId;
                 }
                 catch (Exception ex)
                 {
@@ -158,20 +161,21 @@ namespace Risebird.Repository
                         var masg = new SendGridMessage();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
                         masg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHrContact, null));
-                        masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                        masg.Subject = "Interview has been Cancelled for date: " + interviewDate;
 
                         StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("Your interview has been cancelled on interview date " + interviewDate + ". As you have already completed interview for this particular requirement.");
+                        msgBody.AppendLine("Your interview has been cancelled for interview date " + interviewDate + ". As you have already completed interview for this particular requirement.");
                         msgBody.AppendLine("Please contact to your HR or Recruiter about your interview.");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
                         masg.PlainTextContent = msgBody.ToString();
-                        CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
+                        //CommonSendMail _common = new CommonSendMail();
+                        //_common.SendMail(masg);
+                        _notificationHelper.SendMail(masg, null, interviewId != 0 ? interviewId : new int?(), IRFID);
                     }
                 }
             }
@@ -195,7 +199,7 @@ namespace Risebird.Repository
                         {
                             masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                        masg.Subject = $"Interview for date: {interviewDate} has been Cancelled.";
 
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
@@ -208,8 +212,9 @@ namespace Risebird.Repository
                         msgBody.AppendLine("Thank You, Team Risebird");
 
                         masg.PlainTextContent = msgBody.ToString();
-                        CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
+                        //CommonSendMail _common = new CommonSendMail();
+                        //_common.SendMail(masg);
+                        _notificationHelper.SendMail(masg, null, interviewId != 0 ? interviewId : new int?(), IRFID);
                         //log.Info("Interview cancelled mail sent to interviewer.");
                     }
                 }
@@ -309,35 +314,36 @@ namespace Risebird.Repository
                     msgBody.AppendLine("Thank You, Team Risebird");
 
                     masg.PlainTextContent = msgBody.ToString();
-                    CommonSendMail _common = new CommonSendMail();
-                    _common.SendMail(masg);
+                    //CommonSendMail _common = new CommonSendMail();
+                    //_common.SendMail(masg);
+                    _notificationHelper.SendMail(masg, null, interviewid != 0 ? interviewid : new int?(), IRFName);
                 }
             }
         }
     }
-    public class CommonSendMail
-    {
-        private readonly string _sendGridClientKey = "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";
-        public string SendMail(SendGridMessage msg)
-        {
-            try
-            {
-                var mailFrom = "notification@risebird.io";
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                var client = new SendGridClient(_sendGridClientKey);
+    //public class CommonSendMail
+    //{
+    //    private readonly string _sendGridClientKey = "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";
+    //    public string SendMail(SendGridMessage msg)
+    //    {
+    //        try
+    //        {
+    //            var mailFrom = "notification@risebird.io";
+    //            msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+    //            var client = new SendGridClient(_sendGridClientKey);
 
-                var response = client.SendEmailAsync(msg).Result;
-                if (response.StatusCode != HttpStatusCode.Accepted)
-                {
-                    return "Failed to send mail. Please check all fields and try again.";
+    //            var response = client.SendEmailAsync(msg).Result;
+    //            if (response.StatusCode != HttpStatusCode.Accepted)
+    //            {
+    //                return "Failed to send mail. Please check all fields and try again.";
 
-                }
-                return "Mail sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                return "Failed to send mail. Please check all fields and try again.";
-            }
-        }
-    }
+    //            }
+    //            return "Mail sent successfully.";
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            return "Failed to send mail. Please check all fields and try again.";
+    //        }
+    //    }
+    //}
 }

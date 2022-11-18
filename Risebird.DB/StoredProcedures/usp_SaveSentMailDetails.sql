@@ -19,15 +19,36 @@ CREATE PROCEDURE [dbo].[usp_SaveSentMailDetails]
 @IRFId int = null,
 @InterviewId int = null,
 @CreatedAt datetime,
-@SentBy varchar(100)
+@SentBy varchar(100),
+@IRFName varchar(20) = null
 AS    
 Begin  
 
 begin try
 	begin tran
 
+	declare @irfIntId int
+
+	if(@InterviewId is not null  and @InterviewId > 0)
+	Begin
+		set @irfIntId = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @InterviewId))
+	End
+	Else
+	Begin
+		if((@IRFId is null or @IRFId = 0) and @IRFName is not null)
+		Begin
+			set @irfIntId = (select id from IRF where IRFId = @IRFName)
+		End
+		Else
+		Begin
+			set @irfIntId = @IRFId
+		End
+	End
+
+	
+
 	Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt, SentBy)  
-	values(@To, @Cc, @Bcc, @MailBody, @MailSubject, @sg_message_id, @IRFId, @InterviewId, @CreatedAt, @SentBy)  
+	values(@To, @Cc, @Bcc, @MailBody, @MailSubject, @sg_message_id, @irfIntId, @InterviewId, @CreatedAt, @SentBy)  
 
 
 
