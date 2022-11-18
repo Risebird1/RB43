@@ -1237,7 +1237,7 @@ namespace Risebird.CommonHelper
         //    }
         //    return msg;
         //}
-        private async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null)
+        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null)
         {
             try
             {
@@ -1311,6 +1311,7 @@ namespace Risebird.CommonHelper
                 obj.IRFId = IRFId;
                 obj.InterviewId = interviewId;
                 obj.SentBy = currentUser;
+                obj.IRFName = IRFName;
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
                 return "Mail sent successfully.";
             }
@@ -1993,7 +1994,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset)
+        public async Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId)
         {
             try
             {
@@ -2051,7 +2052,7 @@ namespace Risebird.CommonHelper
                 MemoryStream stream = new MemoryStream(byteArray);
                 await msg.AddAttachmentAsync("invite.ics", stream);
                 //End: Attachment
-                return await SendMail(msg);
+                return await SendMail(msg, null, interviewId);
             }
             catch (Exception)
             {
