@@ -43,11 +43,15 @@
                             {
                                 <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
                                 <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                                <a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>
+
                             }
                             else
                             {
                                 <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
                                 <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                                <a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>
+
                             }
                         </div>
                     </div>
@@ -198,6 +202,11 @@
     }
 
 
+</script>
+<script>
+    function GetClientFeedbacks() {
+        window.location.href = "/Survey/ClientFeedbacks";
+    }
 </script>
 
 @if (ViewBag.Message != null)

@@ -79,4 +79,18 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedOn { get; set; }
         public string ClientName { get; set; }
     }
+    public class ClientAudioFeedbackDetails
+    {
+        public string SkillChannelName { get; set; }
+        public string Intervieweremail { get; set; }
+        public string candidateEmail { get; set; }
+        public string audioURL { get; set; }
+        public string createdAt { get; set; }
+        public string createdBy { get; set; }
+        public string Subject { get; set; }
+        public string Message { get; set; }
+        public string SentAt { get; set; }
+        public string SentBy { get; set; }
+
+    }
 }

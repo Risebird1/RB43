@@ -1,5 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -74,7 +75,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendPublicUrlToInterviewer(Mail model, string UrlDetails);
         Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount);
         Task<string> SendPasswordresetNotification(Mail model);
-        Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset);
+        Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId);
         Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null);
@@ -94,5 +95,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
         Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
+        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null);
     }
 }
