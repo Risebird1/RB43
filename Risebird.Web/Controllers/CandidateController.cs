@@ -2779,36 +2779,36 @@ namespace Risebird.Web.Controllers
                                             if (workSheet.Cells[rowIterator, 2].Value != null)
                                             {
                                                 try
-                                                    {
+                                                {
                                                     string str = workSheet.Cells[rowIterator, 4].Value.ToString();
                                                     int numberOfLetters = str.ToCharArray().Length;
                                                     var phoneValidate = numberOfLetters >= 9 && int.TryParse(str, out int phoneNumber);
-                                                        var candidate = new CandidateQuickAddModel
-                                                        {
-                                                            Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
-                                                            ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
-                                                  ? workSheet.Cells[rowIterator, 3].Value.ToString()
-                                                  : string.Empty,
-                                                            Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
-                                                  ? ("+" + workSheet.Cells[rowIterator, 4].Value)
-                                                  : string.Empty,
-                                                            WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                                  ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                                  : string.Empty,
-                                                            //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                                            //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
-                                                            //    : string.Empty,
-                                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
+                                                    var candidate = new CandidateQuickAddModel
+                                                    {
+                                                        Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
+                                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
+                                              ? workSheet.Cells[rowIterator, 3].Value.ToString()
+                                              : string.Empty,
+                                                        Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
+                                              ? ("+" + workSheet.Cells[rowIterator, 4].Value)
+                                              : string.Empty,
+                                                        WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                              ? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                              : string.Empty,
+                                                        //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                                        //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
+                                                        //    : string.Empty,
+                                                        ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
 
-                                                            ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
-                                                            IRFId = IRFId
+                                                        ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
+                                                        IRFId = IRFId
 
-                                                        };
-                                                        if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
-                                                        {
-                                                            candidateList.Add(candidate);
-                                                        }                                                                                                       
+                                                    };
+                                                    if (!candidate.EmailId.Split("@").Contains("risebird.io") && !candidate.EmailId.Split("@").Contains(ClientDomain))//(!EmailId.Split("@").Contains("risebird.io"))
+                                                    {
+                                                        candidateList.Add(candidate);
+                                                    }
                                                 }
                                                 catch (Exception ex)
                                                 {
@@ -3568,7 +3568,7 @@ namespace Risebird.Web.Controllers
                     //add candidate to final model
                     model.Add(candidateTimeline);
                 }
-               
+
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 ViewBag.profile = "Client";
@@ -3921,20 +3921,21 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 30;
                 }
-                Sheet.Cells[1,1].Value = "Candidate name";
-                Sheet.Cells[1,2].Value = "Candidate EmailId";
-                Sheet.Cells[1,3].Value = "JD Title";
+                Sheet.Cells[1, 1].Value = "Candidate name";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "JD Title";
                 //Sheet.Cells[1, 4].Value = "Candidated Added On/At";
-                Sheet.Cells[1,4].Value = "Interview Date";
-                Sheet.Cells[1,5].Value = "Interview Time";
+                Sheet.Cells[1, 4].Value = "Interview Date";
+                Sheet.Cells[1, 5].Value = "Interview Time";
                 //Sheet.Cells[1,6].Value = "Schedule Status";
-                Sheet.Cells[1,6].Value = "Phone";
-                Sheet.Cells[1,7].Value = "Current Status";
+                Sheet.Cells[1, 6].Value = "Phone";
+                Sheet.Cells[1, 7].Value = "Current Status";
                 //Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1,8].Value = "Staffing Agency EmailId";
-                Sheet.Cells[1,9].Value = "Skill Channel ID";
-                Sheet.Cells[1,10].Value = "Client Hr";
-                
+                Sheet.Cells[1, 8].Value = "Staffing Agency EmailId";
+                Sheet.Cells[1, 9].Value = "Skill Channel ID";
+                Sheet.Cells[1, 10].Value = "Client Hr";
+                Sheet.Cells[1, 11].Value = "Executive URL";
+
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -3984,7 +3985,19 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 9].Value = item.IRFName;
                         Sheet.Cells[i, 10].Value = item.HREmail;
-                      
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.InterviewId + "&irfId=" + item.IRFId + "&isClient=true";
+                        try
+                        {
+                            Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 11].Value = "Executive Report";
+                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        }
+                        catch (Exception)
+                        {
+                            Sheet.Cells[i, 11].Value = "No Report";
+                        }
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
