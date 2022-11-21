@@ -1255,12 +1255,7 @@
             else {
                 html += '<td></td>';
             }
-            if (data[i].isinstaavailable) {
-                html += '    <td>Yes</td>';
-            }
-            else {
-                html += '   <td>No</td>';
-            }
+            
             html += '<td class="interview-com">';
             html += ' <div id="section">';
             if (data[i].assessmentGroupId != null && data[i].assessmentGroupId != "") {
@@ -1287,7 +1282,19 @@
                 html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
             }
             html += '<td><b>' + data[i].nickName + '</b></td>';
-            html += '<td>' + data[i].availableDetails + '</td>';
+           
+            if (data[i].AvailableDetails != "0") {
+                html += '    <td>Available</td>';
+            }
+            else {
+                html += '   <td>Not Available</td>';
+            }
+            if (data[i].IsActive) {
+                html += '    <td>Active</td>';
+            }
+            else {
+                html += '   <td>Inactive</td>';
+            }
             html += '   <td class="text-center action">';
             html += '  <button class="mdc-fab app-fab--absolute mb-40" aria-label="Recommendation">';
             html += '   <a href="/Interviewer/InterviewerRecommendation?id=' + data[i].userId + '" title="Recommendation" class="mdc-fab__icon material-icons">';
