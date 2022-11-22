@@ -48,6 +48,10 @@ namespace Risebird.Entities.ViewModel
         public bool IsRedoInterview { get; set; }
         [Display(Name = "Whatsapp Number")]
         public string WhatsappNo { get; set; }
+
+        public int MailCount { get; set; }
+        public int WhatsappCount { get; set; }
+        public int CallsCount { get; set; }
     }
 
     public class TimelineStatus

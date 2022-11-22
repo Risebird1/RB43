@@ -16,11 +16,11 @@
 @*<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>*@
 
 <!-- Modal -->
-<div class="modal fade" style="height:1000px" id="modalRecipientActivity" tabindex="-1" role="dialog" aria-labelledby="addCommentLabel" aria-hidden="true">
+<div class="modal fade" style="height:1000px" id="modalRecipientActivity" tabindex="-1" role="dialog" aria-labelledby="modalRecipientLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCommentLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
+                <h5 class="modal-title" id="modalRecipientLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -117,11 +117,12 @@
     </div>
 </div>
 
-<script>
+@*<script>
 
     function OpenHtmlDocument(htmlData) {
         let child = window.open("about:blank", "mailContent");
         child.document.write(htmlData);
         child.document.close();
     }
-</script>
+</script>*@
+<script src="~/js/modalformservervalidation.js"></script>
