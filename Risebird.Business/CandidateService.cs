@@ -425,5 +425,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateCommunicationDetails(interviewId, communicationMedium);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

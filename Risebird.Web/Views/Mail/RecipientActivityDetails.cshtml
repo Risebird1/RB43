@@ -444,25 +444,6 @@
         window.location.href = "/Mail/RecipientActivityDetails?recipientType=" + recipientType;
     }
 </script>
-<script>
-
-    function OpenHtmlDocument(htmlData) {
-       
-        let child = window.open("about:blank", "mailContent");
-        child.document.write(htmlData);
-        child.document.close();
-    }
-    function moreless(id) {
-        $('.moretext_' + id).slideToggle();
-        if ($('#read_' + id).val() == 'Readmore') {
-            $('#read_' + id).empty().html('Read more');
-            $('#read_' + id).val('Readless');
-        } else {
-            $('#read_' + id).empty().html('Read less');
-            $('#read_' + id).val('Readmore');
-        }
-    }
-</script>
-
+<script src="~/js/common.js"></script>
 
 

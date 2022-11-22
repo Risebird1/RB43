@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -923,9 +924,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidatesJson(int id, string searchValue)
+        public async Task<IActionResult> CandidatesJson(int id, string searchValue)
         {
-            int Page = 1;
+            int? Page = 1;
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -986,9 +987,12 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
 
-                return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
+              
+                return PartialView(candidateList.ToPagedList(Page ?? 1, 10));
             }
-            else { return Json("Failed"); }
+            else { var candidateList = new List<Candidate>();
+                return PartialView(candidateList.ToPagedList(Page ?? 1, 10));
+            }
         }
 
         [Authorize]
@@ -3515,6 +3519,9 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.NickName = firstData.InterviewerNickName;
                     candidateTimeline.reportcount = _datavalue;
                     candidateTimeline.Interviewer = firstData.Interviewer;
+                    candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                    candidateTimeline.MailCount = firstData.MailCount;
+                    candidateTimeline.CallsCount = firstData.CallsCount;
                     //candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3586,6 +3593,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Whatsappflag = false;
                 }
+                model = model.OrderByDescending(x => x.interviewDate).ToList();
                 return View(model);
             }
             catch (Exception ex)
@@ -3666,7 +3674,9 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.reportcount = _datavalue;
                     candidateTimeline.Interviewer = firstData.Interviewer;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
-
+                    candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                    candidateTimeline.MailCount = firstData.MailCount;
+                    candidateTimeline.CallsCount = firstData.CallsCount;
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
@@ -3739,6 +3749,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 ViewBag.profile = "Client";
                 ViewBag.PageStatus = "Public";
+                model = model.OrderByDescending(x => x.interviewDate).ToList();
                 return View(model);
             }
             catch (Exception ex)
@@ -4537,5 +4548,23 @@ namespace Risebird.Web.Controllers
             }
             return Json(flags);
         }
+
+        public async Task<IActionResult> GetCommunicationDetails(int interviewId, int communicationMedium)
+        {
+            try
+            {
+                var model = new CommunicationDetailsWrapperVM();
+                var communicationList = await _candidateService.GetCandidateCommunicationDetails(interviewId, communicationMedium);
+                model.CommunicationList = communicationList;
+                model.CommunicationMedium = communicationMedium;
+                return PartialView("GetCommunicationDetails", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+
     }
 }
