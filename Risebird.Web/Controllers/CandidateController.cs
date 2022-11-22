@@ -924,9 +924,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidatesJson(int id, string searchValue)
+        public async Task<IActionResult> CandidatesJson(int id, string searchValue)
         {
-            int Page = 1;
+            int? Page = 1;
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -987,9 +987,12 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
 
-                return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
+              
+                return PartialView(candidateList.ToPagedList(Page ?? 1, 10));
             }
-            else { return Json("Failed"); }
+            else { var candidateList = new List<Candidate>();
+                return PartialView(candidateList.ToPagedList(Page ?? 1, 10));
+            }
         }
 
         [Authorize]
