@@ -79,6 +79,13 @@ $(document).ready(function () {
 
     });
 
+    var candidateCommunicationDetails_placeholderElement = $('#modal_candidateCommunicationDetails_placeholder');
+
+
+    $('a[data-toggle="ajax-modal-CommunicationDetails"]').click(function (event) {
+        OpenPopUp(event, candidateCommunicationDetails_placeholderElement);
+    });
+
 });
 
 function ChangeClientFeedbackRating(value) {

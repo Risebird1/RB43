@@ -48,6 +48,10 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
+
 <style>
     .star-rating {
         border: solid 1px white;
@@ -318,7 +322,8 @@
                                                                     <th id="status_8">Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
-                                                                    <th>Interviewer</th>
+                                                                    <th title="Communication attempts count">Risebird Communications</th>
+                                                                    @*<th>Interviewer</th>*@
                                                                     <th>Action</th>
                                                                     <th id="status_9">Report</th>
                                                                 </tr>
@@ -331,7 +336,8 @@
                                                                     <th>Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
-                                                                    <th>Interviewer</th>
+                                                                    <th title="Communication attempts count">Risebird Communications</th>
+                                                                    @*<th>Interviewer</th>*@
                                                                     <th>Action</th>
                                                                     <th>Report</th>
 
@@ -435,7 +441,24 @@
                                                                         <td>@item.HREmail</td>
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         <td>@item.ProfileSource</td>
-                                                                        <td>@item.NickName</td>
+                                                                        <td>
+                                                                            <div class="row">
+                                                                                <a href="#!1" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                    @item.MailCount
+                                                                                </a>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <a href="#!2" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                    @item.CallsCount
+                                                                                </a>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <a href="#!3" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                    @item.WhatsappCount
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+                                                                        @*<td>@item.NickName</td>*@
                                                                         <td>
                                                                             @if (item.CurrentStatus != "Scheduled")
                                                                             {
@@ -768,7 +791,12 @@
         </div>
     </div>
 </div>
+
+<div id="modal_recipientActivity_placeholder"></div>
+
 <div id="modal_clientComment_placeholder"></div>
+
+<div id="modal_candidateCommunicationDetails_placeholder"></div>
 
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
@@ -778,6 +806,8 @@
 <script src="~/Newassets/js/scrollBar.js"></script>
 
 <script src="~/js/ModalFormServerValidation.js"></script>
+
+<script src="~/js/common.js"></script>
 <script>
     $(document).ready(function () {
         if ($("#txtVideostatus").val() == "Public") {

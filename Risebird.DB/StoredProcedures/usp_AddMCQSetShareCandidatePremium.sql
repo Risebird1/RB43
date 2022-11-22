@@ -24,7 +24,7 @@ CREATE PROCEDURE usp_AddMCQSetShareCandidatePremium
 AS            
 BEGIN           
 Declare @MCQShareCount int        
-Select @MCQShareCount=Count(*) From MCQShareList where EmailAddress=@EmailAddress and MCQId=@MCQId        
+Select @MCQShareCount=Count(*) From MCQShareListPremium where EmailAddress=@EmailAddress and MCQId=@MCQId        
 if(@MCQShareCount>0)        
 begin        
 Update MCQShareListPremium set ShareDate=@ShareDate,Expiretime=@Expiretime,WhoShared=@WhoShared,roomId=@roomId where EmailAddress=@EmailAddress and MCQId=@MCQId         

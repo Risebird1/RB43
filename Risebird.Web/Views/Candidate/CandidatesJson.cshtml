@@ -1,0 +1,504 @@
+﻿@using Risebird.Entities.Enum
+@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.Candidate>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@using X.PagedList.Mvc.Core;
+
+<div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+    <div class="clearfix"></div>
+    <div class="col-sm-12 nopad">
+        <div class="table-responsive">
+
+            <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th style="border-right: 0px !important;"></th>
+
+                        <th>Candidate Email</th>
+                        @if (ViewBag.profile != "Client")
+                        {
+                            <th id="getstatus_2">RB Attempts</th>
+                        }
+                        <th id="getstatus_3">Resume</th>
+
+                        <th id="getstatus_4">Invite Sent</th>
+                        <th id="getstatus_5">Confirmation</th>
+                        @*<th>Fitment Score</th>*@
+                        @if (ViewBag.profile != "Client")
+                        {
+                            <th id="getstatus_6">Joinability</th>
+                            <th id="getstatus_7">Selectability</th>
+                        }
+                        <th width="25%"> Actions </th>
+                        <th style="text-align:center">Schedule Call</th>
+                        <th style="text-align:center">Call</th>
+
+
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th style="border-right: 0px !important;"></th>
+                        <th>Candidate Email</th>
+                        @if (ViewBag.profile != "Client")
+                        {
+                            <th>RB Attempts</th>
+                        }
+                        <th>Resume</th>
+
+                        <th>Invite Sent</th>
+                        <th>Confirmation</th>
+                        @*<th>Fitment Score</th>*@
+                        @if (ViewBag.profile != "Client")
+                        {
+                            <th>Joinability</th>
+                            <th>Selectability </th>
+                        }
+                        <th style="width:25%"> Actions </th>
+                        <th style="text-align:center">Schedule Call</th>
+
+                        <th style="text-align:center">Call</th>
+
+                    </tr>
+                </tfoot>
+                <tbody id="tblbodyCandidate">
+
+                    @foreach (var item in Model)
+                    {
+                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                        string joinabilityColor;
+                        string selectabilityColor;
+                        if (item.JoinabilityScore >= 70)
+                        {
+                            joinabilityColor = "green";
+                        }
+                        else if (item.JoinabilityScore >= 40 && item.JoinabilityScore < 70)
+                        {
+                            joinabilityColor = "orange";
+                        }
+                        else
+                        {
+                            joinabilityColor = "red";
+                        }
+                        if (item.SelectabilityScore >= 70)
+                        {
+                            selectabilityColor = "green";
+                        }
+                        else if (item.SelectabilityScore >= 40 && item.SelectabilityScore < 70)
+                        {
+                            selectabilityColor = "orange";
+                        }
+                        else
+                        {
+                            selectabilityColor = "red";
+                        }
+                        <tr id="@item.id" data-changes="1">
+                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+
+
+                            @if (item.EmailId != null && item.EmailId != "")
+                            {
+                                @if (item.EmailId.Length > 18)
+                                {
+
+
+                                    <td class="cadEmail">
+                                        <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
+
+                                    </td>
+                                }
+
+
+                                else
+                                {
+                                    <td class="cadEmail">
+                                        <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+
+                            @if (ViewBag.profile != "Client")
+                            {
+                                <td class="text-center">@item.AttemptsCount</td>
+                            }
+
+                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                            {
+                                @if (item.ResumeLink != null && item.ResumeLink != "")
+                                {
+                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                }
+                                else
+                                {
+                                    <td>No Resume</td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+
+
+
+
+                            <td class="text-center">@item.TotalInvites</td>
+                            <td class="text-center">@item.InviteConfirmation</td>
+                            @*<td class="text-center">@((@item.JoinabilityScore+@item.SelectabilityScore)/2)</td>*@
+                            @if (ViewBag.profile != "Client")
+                            {
+                                <td class="text-center" style="color:@joinabilityColor;">
+                                    <b>@item.JoinabilityScore</b>
+                                </td>
+                                <td class="text-center" style="color:@selectabilityColor; ">
+                                    <b>@item.SelectabilityScore</b>
+                                </td>
+                            }
+
+
+
+
+                            @*<td>@item.Phone</td>*@
+
+
+
+
+
+
+                            <td class="text-left action">
+
+                                @if (ViewBag.profile != "Recruiter")
+
+                                {
+
+                                    if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
+                                    {
+                                        <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                            <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                            </span>
+                                        </button>
+                                    }
+
+                                    else
+                                    {
+                                        <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                            <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                            </span>
+                                        </button>
+
+                                    }
+
+
+
+
+                                    <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                    </span>
+
+
+                                    @if (ViewBag.profile != "Client")
+                                    {
+                                        @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary mb-40" aria-label="Audio files">
+                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
+
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
+                                                </span>
+                                            </button>*@
+
+                                        <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
+                                            <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                        </button>
+
+                                    }
+
+
+                                }
+                                @if (ViewBag.profile == "Admin")
+                                {
+                                    <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
+                                        <span onclick="FetchRecording('@item.EmailId')" title="Call Record" class="mdc-fab__icon material-icons">
+                                            <i class="fa fa-dot-circle"></i>
+
+                                        </span>
+                                    </button>
+                                }
+
+
+
+                                <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit" style="top:-2px">
+                                    <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                    </span>
+                                </button>
+
+
+                                @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
+{
+<button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+    <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+    </span>
+</button>
+}
+
+@*@if (ViewBag.profile != "Client")
+    {
+        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+            <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+            </span>
+        </button>
+    }*@
+
+@*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
+    {
+        <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">
+            <span onclick="location.href = '@Url.Action("FitmentReport", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Fitment Report" class="mdc-fab__icon material-icons">
+                <img style="width:75%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA8ElEQVRIid2VTQ6CMBBGp8ZDqPFAJngEj0F0a4ILL4UX0FPIDcQFrp4LpoZAW6DExPglBFK+mTf9mVTk7wRsgIJ+HWMB9wHJ4yE2cohHdf42YBwkEjAcMgHghBhXsIiIMabzr+1xqR03D1U6NEkIOosBjNHXAVFL5JJvz35/iYAtkANPoNTvJBTQ2wcN7ynQE9kkgFYOUAEpsHRAujMZAbioNW3HNpRPAZRqXQQAjymbbIv4HE+jEpG19bgAhaea9syu+t45ctixW7es+sr03moNX6JDFbAHVvocgJd3k8cIyHyF4DumEZCEurlKHI32BprPJ5GLOEwZAAAAAElFTkSuQmCC" />
+            </span>
+        </button>
+    }*@
+
+
+
+@*@if (ViewBag.profile != "Client")
+    {
+
+        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+            <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+            </span>
+        </button>
+    }*@
+
+
+                            </td>
+
+                            <td class="text-center">
+                                @if (item.Phone != null && item.Phone != string.Empty)
+                                {
+                                    <span id="getstatus_11" class="call" data-toggle="tooltip" data-placement="top" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
+                                }
+
+                            </td>
+
+                            <td>
+                                @if (item.Phone != null && item.Phone != string.Empty)
+                                {
+                                    <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                }
+
+                            </td>
+
+
+
+
+
+                        </tr>
+
+                        <tr class="collapse @item.id">
+
+                            <td colspan="999" class="child-section table-responsive">
+                                <table class="table table-striped" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <th style="border-left: 0px !important;">Candidate Name</th>
+                                        <th>Client HR</th>
+                                        <th>Staffing Agency EmailId</th>
+                                        <th>Coded Resume</th>
+                                        <th>Type</th>
+                                        <th>Location(Applied for)</th>
+                                        @*<th>Skill</th>*@
+                                        <th>Work Auth</th>
+                                        <th>Current Location</th>
+                                        <th>Current Employer</th>
+                                        <th>Total Experience</th>
+                                        <th>Current Salary</th>
+                                        <th>Expected Salary</th>
+                                        <th>Notice</th>
+                                        <th>Confirmation Status</th>
+                                        <th>Video Link</th>
+                                        <th>Meeting Status</th>
+                                        <th>Interview Status</th>
+                                        <th>Interview Date</th>
+                                        <th>Cost Estimate</th>
+                                        <th>Profile Type</th>
+                                        <th>Available for Full-time</th>
+                                        <th>Available for Freelancing</th>
+                                    </tr>
+                                    <tr>
+                                        @if (item.Name != null && item.Name != "")
+                                        {
+                                            @if (item.Name.Length > 20)
+                                            {
+
+
+                                                <td class="cadName">
+                                                    <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
+                                                </td>
+                                            }
+
+
+                                            else
+                                            {
+                                                <td class="cadName">
+                                                    <a onclick=""> @item.Name </a>
+                                                </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
+                                        {
+                                            <td data-tooltip="@item.ClientHRAttemptContact" class="text-center"><span class="cname">@item.ClientHRAttemptContact</span> </td>
+
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+
+
+
+                                        @if (item.ProfileSource != null && item.ProfileSource.Length > 13)
+                                        {
+                                            <td data-tooltip="@item.ProfileSource" class="text-center"><span class="cname">@item.ProfileSource</span> </td>
+
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+
+
+                                        @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                        {
+                                            <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                        }
+                                        else
+                                        {
+                                            <td>No Coded Resume</td>
+                                        }
+
+                                        <td>@item.Type</td>
+
+                                        <td>@item.Location</td>
+                                        @*<td>@item.Skill</td>*@
+
+                                        <td>@item.WorkAuth</td>
+                                        <td>@item.CurrentLocation</td>
+                                        <td>@item.CurrentEmployer</td>
+                                        <td>@item.TotalExperience</td>
+                                        <td>@item.CurrentSalary</td>
+                                        <td>@item.ExpectedSalary</td>
+                                        <td>@item.Notice</td>
+                                        @if (item.confirmationStatusDesc != "0")
+                                        {
+                                            <td>@item.confirmationStatusDesc</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                        {
+                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                        }
+                                        else
+                                        {
+                                            <td>No Video</td>
+                                        }
+                                        @if (item.MeetingStatusDesc != "0")
+                                        {
+                                            <td>@item.MeetingStatusDesc</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        @if (item.InterviewStatusDesc != "0")
+                                        {
+                                            <td>@item.InterviewStatusDesc</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+
+
+
+
+                                        @if (item.interviewDate != null)
+                                        {
+                                            <td>@item.interviewDate</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        @if (item.CostEstimate != null)
+                                        {
+                                            <td>@item.CostEstimate</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td>@item.HeuristicsscoreDesc</td>
+                                        @if (item.AvailableFullTime)
+                                        {
+                                            <td>Yes</td>
+
+                                        }
+                                        else
+                                        {
+                                            <td>No</td>
+
+
+                                        }
+                                        @if (item.AvailableFreeLancing)
+                                        {
+                                            <td>Yes</td>
+
+                                        }
+                                        else
+                                        {
+                                            <td>No</td>
+                                        }
+
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+
+
+
+
+
+
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
+        Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
+    </div>
+
+    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
+        @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
+    </div>
+
+</div>

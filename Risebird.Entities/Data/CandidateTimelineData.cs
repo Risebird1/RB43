@@ -40,5 +40,8 @@ namespace Risebird.Entities.Data
         public string ClientAction { get; set; }
         public string InterviewerNickName { get; set; }
         public string Interviewer { get; set; }
+        public int CallsCount { get; set; }
+        public int MailCount { get; set; }
+        public int WhatsappCount { get; set; }
     }
 }

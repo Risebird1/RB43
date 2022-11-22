@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Risebird.CommonHelper.Interface\Risebird.CommonHelper.Interface.csproj" />
+    <ProjectReference Include="..\Risebird.CommonHelper\Risebird.CommonHelper.csproj" />
     <ProjectReference Include="..\Risebird.Entities\Risebird.Entities.csproj" />
     <ProjectReference Include="..\Risebird.Repository.Interface\Risebird.Repository.Interface.csproj" />
   </ItemGroup>
