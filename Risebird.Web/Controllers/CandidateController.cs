@@ -3590,6 +3590,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Whatsappflag = false;
                 }
+                model = model.OrderByDescending(x => x.interviewDate).ToList();
                 return View(model);
             }
             catch (Exception ex)
@@ -3745,6 +3746,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                 ViewBag.profile = "Client";
                 ViewBag.PageStatus = "Public";
+                model = model.OrderByDescending(x => x.interviewDate).ToList();
                 return View(model);
             }
             catch (Exception ex)

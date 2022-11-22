@@ -105,7 +105,7 @@ namespace Risebird.Web.Controllers
                             var _lastdate = item.Date.AddMonths(2).AddDays(-(item.Date.AddMonths(1).Day + 1));
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
-                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)")
+                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)" && item.MeetingStatusDetails != "No Show")
                         {
                             item.MeetingStatusDetails = "Unassign Meeting within 1/2 hr";
                             item.InterviewStatusDetails = "";
@@ -204,7 +204,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                 }
-                                if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5)
+                                if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                                 {
                                     item.MeetingStatusDetails = "Unassign Meeting within 1/2 hr";
                                     item.InterviewStatusDetails = "";
@@ -874,7 +874,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
-                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5)
+                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                                     {
                                         Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
                                         Sheet.Cells[i, 12].Value = "";
@@ -1053,7 +1053,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
-                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5)
+                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                                     {
                                         Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
                                         Sheet.Cells[i, 12].Value = "";
