@@ -322,7 +322,7 @@
                                                                     <th id="status_8">Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
-                                                                    <th title="Communication attempts count">Risebird Communications</th>
+                                                                    @*<th title="Communication attempts count">Risebird Communications</th>*@
                                                                     @*<th>Interviewer</th>*@
                                                                     <th>Action</th>
                                                                     <th id="status_9">Report</th>
@@ -336,7 +336,7 @@
                                                                     <th>Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
-                                                                    <th title="Communication attempts count">Risebird Communications</th>
+                                                                    @*<th title="Communication attempts count">Risebird Communications</th>*@
                                                                     @*<th>Interviewer</th>*@
                                                                     <th>Action</th>
                                                                     <th>Report</th>
@@ -441,7 +441,7 @@
                                                                         <td>@item.HREmail</td>
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         <td>@item.ProfileSource</td>
-                                                                        <td>
+                                                                        @*<td>
                                                                             <div class="row">
                                                                                 <a href="#!1" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
                                                                                     @item.MailCount
@@ -457,7 +457,7 @@
                                                                                     @item.WhatsappCount
                                                                                 </a>
                                                                             </div>
-                                                                        </td>
+                                                                        </td>*@
                                                                         @*<td>@item.NickName</td>*@
                                                                         <td>
                                                                             @if (item.CurrentStatus != "Scheduled")
