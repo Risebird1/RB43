@@ -515,7 +515,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SupportAdmin" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "FreemiumClient")
                 {
                     var questions = _mCQService.GetMCQquestionsByMCQId(Id);
                     var model = questions.Where(x => x.MCQId == Id).OrderBy(x => x.QuestionNumber).ToList();
@@ -2013,7 +2013,7 @@ namespace Risebird.Web.Controllers
                         {
                             aadharverificationflag = "Y";
                         }
-                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl,"N");
+                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl, "N");
                         MCQVMShare _list = new MCQVMShare();
                         _list.status = 0;
                         _list.MCQSet = details.Title;

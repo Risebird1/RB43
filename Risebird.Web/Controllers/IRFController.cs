@@ -7086,7 +7086,7 @@ namespace Risebird.Web.Controllers
                 //flag = CheckUniqueness(skillChannelName, false);
                 flag = _irfService.CheckUniqueness(skillChannelName, false);
             }
-            skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
+            skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-").Replace("+", "s").Replace("&", "o");
             return skillChannelName;
         }
 
