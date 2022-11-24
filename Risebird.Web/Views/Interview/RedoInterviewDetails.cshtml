@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.RedoInterviewVM
 
 
-@using (Html.BeginForm("RedoInterviewDetails", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @id = "reportForm" }))
+@using (Html.BeginForm("RedoInterviewDetails", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @id = "SecurereportForm" }))
 {
     @Html.AntiForgeryToken()
     <div class="form-horizontal w-full">
@@ -90,7 +90,7 @@
     function Checkvalidation() {
         var comments = $("#Comments").val();
         if ($("input[name='CandidateFace']:checked").val() != undefined && $("input[name='HandsOfCoding']:checked").val() != undefined && comments != '' && comments != null) {
-            document.getElementById("reportForm").submit();
+            document.getElementById("SecurereportForm").submit();
         } else {
             swal.fire("All fields are required.");
         }
