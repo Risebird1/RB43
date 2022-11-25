@@ -18,6 +18,18 @@ CREATE TABLE [dbo].[RisebirdCandidateCommunicationCount](
 ) ON [PRIMARY]
 
 End
+Else
+Begin
+	IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IRFId')
+      AND Object_ID = Object_ID(N'RisebirdCandidateCommunicationCount'))
+BEGIN
+    ALTER TABLE RisebirdCandidateCommunicationCount
+    Add IRFId INT 
+END
+End
 
 GO
 
