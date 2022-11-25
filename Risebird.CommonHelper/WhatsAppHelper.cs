@@ -90,7 +90,7 @@ namespace Risebird.CommonHelper
                 request.AddParameter("application/json", "{\r\n    \"userId\": \"" + _whatsAppVM.Userid + "\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"Interview Notification\",\r\n    \"traits\": {\r\n        \"productName\": \"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                 IRestResponse response = await client.ExecuteAsync(request);
                 var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                if (response != null && response.IsSuccessful)
+                if (obj != null)
                 {
                     _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                 }
@@ -134,7 +134,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -172,7 +172,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -214,7 +214,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -252,7 +252,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -293,7 +293,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -331,7 +331,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -440,7 +440,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null )
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -480,7 +480,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + name + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -518,7 +518,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -561,7 +561,7 @@ namespace Risebird.CommonHelper
                                 request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
                                 IRestResponse response = await client.ExecuteAsync(request);
                                 var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                                if (response != null && response.IsSuccessful)
+                                if (obj != null)
                                 {
                                     _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                                 }
@@ -611,7 +611,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"TotalCount\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -649,7 +649,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"TimeZone\":\"" + _whatsAppVM.timezone + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -687,7 +687,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"UserName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if(response != null && response.IsSuccessful)
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -706,18 +706,23 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                return await _whatsappRepository.SaveSentWhatsappMessageDetails(new SentWhatsAppMessageDetails
+                if(_whatsAppVM != null)
                 {
-                    Recipient = _whatsAppVM.Emailid,
-                    CountryCode = _whatsAppVM.CountryCode,
-                    WhatsappNumber = _whatsAppVM.WhatsAppNumber,
-                    Message = _whatsAppVM.MessageValue,
-                    ButtonLink = _whatsAppVM.buttonlink,
-                    Event = _whatsAppVM.Event,
-                    InterviewDate = !string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
-                    Header = _whatsAppVM.Header
+                    return await _whatsappRepository.SaveSentWhatsappMessageDetails(new SentWhatsAppMessageDetails
+                    {
+                        Recipient = _whatsAppVM.Emailid,
+                        CountryCode = _whatsAppVM.CountryCode,
+                        WhatsappNumber = _whatsAppVM.WhatsAppNumber,
+                        Message = _whatsAppVM.MessageValue,
+                        ButtonLink = _whatsAppVM.buttonlink,
+                        Event = _whatsAppVM.Event,
+                        InterviewDate = !string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
+                        Header = _whatsAppVM.Header
 
-                });
+                    });
+                }
+                return false;
+                
 
             }
             catch (Exception ex)

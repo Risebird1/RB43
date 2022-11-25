@@ -109,6 +109,12 @@
     /*.mob_h {
                             display: none !important
                         }*/
+    .modal-backdrop {
+        visibility: hidden !important;
+    }
+    .modal.in {
+        background-color: rgba(0,0,0,0.5);
+    }
 </style>
 
 <script>
@@ -442,21 +448,32 @@
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         <td>@item.ProfileSource</td>
                                                                         <td>
-                                                                            <div class="row">
-                                                                                <a href="#!1" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
-                                                                                    @item.MailCount
-                                                                                </a>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <a href="#!2" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
-                                                                                    @item.CallsCount
-                                                                                </a>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <a href="#!3" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
-                                                                                    @item.WhatsappCount
-                                                                                </a>
-                                                                            </div>
+                                                                            @if(item.MailCount != 0)
+                                                                            {
+                                                                                <div class="row">
+                                                                                    <a href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                        Emails :  @item.MailCount
+                                                                                    </a>
+                                                                                </div>
+                                                                            }
+                                                                            @if(item.CallsCount != 0)
+                                                                            {
+                                                                                <div class="row">
+                                                                                    <a href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                        Voice Calls : @item.CallsCount
+                                                                                    </a>
+                                                                                </div>
+                                                                            }
+                                                                            
+                                                                            @if(item.WhatsappCount != 0)
+                                                                            {
+                                                                                <div class="row">
+                                                                                    <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                        Whatsapp Messages : @item.WhatsappCount
+                                                                                    </a>
+                                                                                </div>
+                                                                            }
+                                                                            
                                                                         </td>
                                                                         @*<td>@item.NickName</td>*@
                                                                         <td>
@@ -809,6 +826,11 @@
 
 <script src="~/js/common.js"></script>
 <script>
+    $(document).on('hidden.bs.modal', function (event) {
+      if ($('.modal:visible').length) {
+        $('body').addClass('modal-open');
+      }
+    });
     $(document).ready(function () {
         if ($("#txtVideostatus").val() == "Public") {
             var modal = document.getElementById("PublicShareVideo");

@@ -21,9 +21,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalRecipientLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                @*<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
                     <span aria-hidden="true">×</span>
-                </button>
+                </button>*@
             </div>
             <div class="modal-body" id="recipientActivity_modal_body" style="max-height:400px; overflow:auto">
 
@@ -88,31 +88,20 @@
                                     
                                     
                             </tbody>
-                            @*<tfoot>
-                        <tr>
-                        @if (Model.Profile != "Interviewer")
-                        {
-                        <th>User</th>
-                        }
-                        <th>Rating</th>
-                        <th>Comment</th>
-                        </tr>
-                        </tfoot>*@
+                            
                         </table>
                     </div>
 
                 }
             </div>
-            <div class="modal-footer">
-                @*<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>*@
-                @*@if (Model.Profile == "Client")
-                {
-                <div class="col-md-12 text-right clearfix">
-                <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save">
-                </div>
+            @if (ViewBag.isNestedPopUp)
+            {
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-target="#modalCommunicationDetails" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
 
-                }*@
-            </div>
+                </div>
+            }
+            
         </div>
     </div>
 </div>
