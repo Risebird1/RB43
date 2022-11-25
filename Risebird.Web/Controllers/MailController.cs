@@ -312,7 +312,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRecipientMailActivitiesByMessageId(string recipientEmail, string messageId)
+        public async Task<IActionResult> GetRecipientMailActivitiesByMessageId(string recipientEmail, string messageId, bool isNestedPopUp = false)
         {
             try
             {
@@ -324,6 +324,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     var model = (await _mailService.GetRecipientMailActivitiesByMessageId(recipientEmail, messageId))?.ToList() ;
                     ViewBag.RecipientEmail = recipientEmail;
+                    ViewBag.isNestedPopUp = isNestedPopUp;
                     return PartialView("GetRecipientMailActivitiesByMessageId", model);
                 }
                 else

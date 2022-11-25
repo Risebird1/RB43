@@ -440,7 +440,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
+                        if (obj != null )
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -706,18 +706,23 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                return await _whatsappRepository.SaveSentWhatsappMessageDetails(new SentWhatsAppMessageDetails
+                if(_whatsAppVM != null)
                 {
-                    Recipient = _whatsAppVM.Emailid,
-                    CountryCode = _whatsAppVM.CountryCode,
-                    WhatsappNumber = _whatsAppVM.WhatsAppNumber,
-                    Message = _whatsAppVM.MessageValue,
-                    ButtonLink = _whatsAppVM.buttonlink,
-                    Event = _whatsAppVM.Event,
-                    InterviewDate = !string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
-                    Header = _whatsAppVM.Header
+                    return await _whatsappRepository.SaveSentWhatsappMessageDetails(new SentWhatsAppMessageDetails
+                    {
+                        Recipient = _whatsAppVM.Emailid,
+                        CountryCode = _whatsAppVM.CountryCode,
+                        WhatsappNumber = _whatsAppVM.WhatsAppNumber,
+                        Message = _whatsAppVM.MessageValue,
+                        ButtonLink = _whatsAppVM.buttonlink,
+                        Event = _whatsAppVM.Event,
+                        InterviewDate = !string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
+                        Header = _whatsAppVM.Header
 
-                });
+                    });
+                }
+                return false;
+                
 
             }
             catch (Exception ex)

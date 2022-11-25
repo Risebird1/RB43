@@ -40,24 +40,32 @@ Begin try
 		End
 		End
 
+		declare @irfIntId int = @numericIRFId
+			
+		if(@InterviewId is not null and @InterviewId > 0 and (@irfIntId is null or @irfIntId = 0))
+		Begin
+			set @irfIntId = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @InterviewId))
+		End
 
 		if not Exists (Select 1 from CallRecordingData where [CallSid]= @CallSid)
 		BEGIN
 
 			Insert into CallRecordingData(InterviewId, IRFId, RecordingSid, [CallSid], CallRecipient, [Caller], RecipientProfileType, DateCreated, RecipientPhoneNumber)   
-			values(@interviewId, @numericIRFId, @RecordingSid, @CallSid, @callRecipient,  @caller, @recipientProfileType, @timeNow, @callRecipientPhoneNumber) 
+			values(@interviewId, @irfIntId, @RecordingSid, @CallSid, @callRecipient,  @caller, @recipientProfileType, @timeNow, @callRecipientPhoneNumber) 
 
 
-			if(@InterviewId is not null and @InterviewId > 0 and @recipientProfileType = 23)
+			
+
+			if(@irfIntId is not null and @irfIntId > 0 and @recipientProfileType = 23)--@InterviewId is not null and @InterviewId > 0 
 			Begin
 
-				if exists( select id from RisebirdCandidateCommunicationCount where InterviewId = @InterviewId)
+				if not exists( select top 1 id from RisebirdCandidateCommunicationCount where IRFId = @irfIntId)
 					Begin
-						Insert into RisebirdCandidateCommunicationCount (InterviewId, CallsCount, CreatedOn) values (@InterviewId, 1, DATEADD(MINUTE, 330, getdate()))
+						Insert into RisebirdCandidateCommunicationCount (IRFId, CallsCount, CreatedOn) values (@irfIntId, 1, DATEADD(MINUTE, 330, getdate()))
 					End
 					Else
 					Begin
-						Update RisebirdCandidateCommunicationCount set CallsCount = (CallsCount + 1), ModifiedOn = DATEADD(MINUTE, 330, getdate()) where InterviewId = @InterviewId
+						Update RisebirdCandidateCommunicationCount set CallsCount = (CallsCount + 1), ModifiedOn = DATEADD(MINUTE, 330, getdate()) where IRFId = @irfIntId
 					End
 
 			End

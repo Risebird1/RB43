@@ -52,7 +52,7 @@ begin try
 
 
 
-	if(@To is not null and @InterviewId is not null and @InterviewId > 0)
+	if(@To is not null and @irfIntId is not null and @irfIntId > 0) --@InterviewId is not null and @InterviewId > 0
 		Begin
 
 		if exists (select top 1 ul.EmailId from UserList ul 
@@ -62,13 +62,13 @@ begin try
 		) Rcp
 		where ul.idProfile = 23)
 		Begin
-			if exists( select id from RisebirdCandidateCommunicationCount where InterviewId = @InterviewId)
+			if not exists( select top 1 id from RisebirdCandidateCommunicationCount where IRFId = @irfIntId)
 			Begin
-				Insert into RisebirdCandidateCommunicationCount (InterviewId, MailCount, CreatedOn) values (@InterviewId, 1, DATEADD(MINUTE, 330, getdate()))
+				Insert into RisebirdCandidateCommunicationCount (IRFId, MailCount, CreatedOn) values (@irfIntId, 1, DATEADD(MINUTE, 330, getdate()))
 			End
 			Else
 			Begin
-				Update RisebirdCandidateCommunicationCount set MailCount = (MailCount + 1), ModifiedOn = DATEADD(MINUTE, 330, getdate()) where InterviewId = @InterviewId
+				Update RisebirdCandidateCommunicationCount set MailCount = (MailCount + 1), ModifiedOn = DATEADD(MINUTE, 330, getdate()) where IRFId = @irfIntId
 			End
 		
 		End
