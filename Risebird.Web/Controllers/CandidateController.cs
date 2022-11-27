@@ -3511,7 +3511,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
-                    candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
+                    candidateTimeline.interviewDate = firstData.interviewDate == null? firstData.interviewDate: new DateTime();
                     candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
@@ -3665,7 +3665,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
-                    candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
+                    candidateTimeline.interviewDate = firstData.interviewDate == null ? firstData.interviewDate : new DateTime();
                     candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
@@ -3866,7 +3866,8 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.IRFName = firstData.IRFName;
                     candidateTimeline.Phone = firstData.Phone;
-                    candidateTimeline.interviewDate = firstData.interviewDate.ToString();
+                    candidateTimeline.interviewDate = firstData.interviewDate == null ? firstData.interviewDate : new DateTime();
+                   
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
@@ -3955,10 +3956,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 1].Value = item.CandidateName;
                         Sheet.Cells[i, 2].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
-                        DateTime datetime = DateTime.Parse(item.interviewDate);
-                        var s_today = datetime.ToShortDateString();
+                        //DateTime datetime = DateTime.Parse(item.interviewDate);
+                        var s_today = item.interviewDate?.ToShortDateString();
                         Sheet.Cells[i, 4].Value = s_today;
-                        string timeString = datetime.ToLongTimeString();
+                        string timeString = item.interviewDate?.ToLongTimeString();
                         Sheet.Cells[i, 5].Value = timeString;
                         //if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                         //{                           
