@@ -987,10 +987,12 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
 
-              
+
                 return PartialView(candidateList.ToPagedList(Page ?? 1, 10));
             }
-            else { var candidateList = new List<Candidate>();
+            else
+            {
+                var candidateList = new List<Candidate>();
                 return PartialView(candidateList.ToPagedList(Page ?? 1, 10));
             }
         }
@@ -3511,7 +3513,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
-                    candidateTimeline.interviewDate = firstData.interviewDate == null? firstData.interviewDate: new DateTime();
+                    candidateTimeline.interviewDate = firstData.interviewDate;
                     candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
@@ -3665,7 +3667,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
-                    candidateTimeline.interviewDate = firstData.interviewDate == null ? firstData.interviewDate : new DateTime();
+                    candidateTimeline.interviewDate = firstData.interviewDate;
                     candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
@@ -3866,8 +3868,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.IRFName = firstData.IRFName;
                     candidateTimeline.Phone = firstData.Phone;
-                    candidateTimeline.interviewDate = firstData.interviewDate == null ? firstData.interviewDate : new DateTime();
-                   
+                    candidateTimeline.interviewDate = firstData.interviewDate;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
@@ -3957,10 +3958,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 2].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
                         //DateTime datetime = DateTime.Parse(item.interviewDate);
-                        var s_today = item.interviewDate?.ToShortDateString();
-                        Sheet.Cells[i, 4].Value = s_today;
-                        string timeString = item.interviewDate?.ToLongTimeString();
-                        Sheet.Cells[i, 5].Value = timeString;
+                       // var s_today = datetime.ToShortDateString();
+                        Sheet.Cells[i, 4].Value = item.interviewDate.ToShortDateString();
+                        //string timeString = datetime.ToLongTimeString();
+                        Sheet.Cells[i, 5].Value = item.interviewDate.ToLongTimeString();
                         //if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                         //{                           
                         //    if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
