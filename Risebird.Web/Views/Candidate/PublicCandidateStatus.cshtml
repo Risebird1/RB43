@@ -398,7 +398,7 @@
                                                                             }
                                                                             <p style="font-size:11px" hidden> @item.CandidateEmailId </p>
                                                                         </td>
-                                                                        @if (item.interviewDate != null && item.interviewDate != "")
+                                                                        @if (item.interviewDate != DateTime.MinValue)
                                                                         {
                                                                             <td class="cadEmail text-left pl15">
                                                                                 @item.interviewDate
