@@ -716,10 +716,10 @@ namespace Risebird.CommonHelper
                         Message = _whatsAppVM.MessageValue,
                         ButtonLink = _whatsAppVM.buttonlink,
                         Event = _whatsAppVM.Event,
-                        InterviewDate = !string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
+                        InterviewDate = _whatsAppVM.InterviewDate,//!string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
                         Header = _whatsAppVM.Header
 
-                    });
+                    }) ;
                 }
                 return false;
                 

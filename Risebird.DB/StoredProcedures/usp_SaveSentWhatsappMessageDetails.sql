@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[usp_SaveSentWhatsappMessageDetails]
 @Event varchar(500) = null,
 @IRFId int = null,
 @InterviewId int = null,
-@InterviewDate datetime = null,
+@InterviewDate varchar(100) = null,
 @Header varchar(500) = null,
 @CreatedAt datetime,
 @SentBy varchar(100) =null
@@ -31,12 +31,21 @@ begin try
 		set @recipientProfile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id = ul.idProfile where ul.EmailId =@Recipient)
 		if(@recipientProfile = 'Candidate' and @InterviewDate is not null)
 		Begin
-		set @interviewIdComputed= (select top 1 id from InterviewMeetings where interviewDate = @InterviewDate and candidateEmail = @Recipient)
-			if(@interviewIdComputed is not null and @interviewIdComputed>0 and (@IRFId is null or @IRFId = 0))
-			Begin
-				set @irfIntId = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @interviewIdComputed))
+
+			declare @computedInterviewDate datetime
+
+			select @computedInterviewDate = TRY_CONVERT(datetime, @InterviewDate)
+
+			if(@computedInterviewDate is not null)
+			begin
+				set @interviewIdComputed= (select top 1 id from InterviewMeetings where interviewDate = @InterviewDate and candidateEmail = @Recipient)
+					if(@interviewIdComputed is not null and @interviewIdComputed>0 and (@IRFId is null or @IRFId = 0))
+					Begin
+						set @irfIntId = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @interviewIdComputed))
+					End
 			End
 		End
+		
 
 		Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy)  
 		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @irfIntId, @interviewIdComputed, @InterviewDate, @Header, @CreatedAt, @SentBy)  

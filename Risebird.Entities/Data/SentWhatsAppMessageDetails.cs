@@ -15,7 +15,8 @@ namespace Risebird.Entities.Data
         public string Event { get; set; }
         public int? IRFId { get; set; }
         public int? InterviewId { get; set; }
-        public DateTime? InterviewDate { get; set; }
+        //public DateTime? InterviewDate { get; set; }
+        public string InterviewDate { get; set; }
         public string Header { get; set; }
         public DateTime CreatedAt { get; set; }
         public string SentBy { get; set; }
