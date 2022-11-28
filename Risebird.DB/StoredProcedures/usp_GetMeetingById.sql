@@ -72,6 +72,7 @@ SELECT [InterviewMeetings].id as imid
   ,HasDistinctParticipants
   ,ul.AadhaarVerified
   ,IRF.MeetingPlatform
+  ,IRF.JDTiltle 
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    
