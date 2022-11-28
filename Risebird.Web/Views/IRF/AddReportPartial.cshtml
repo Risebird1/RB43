@@ -179,31 +179,39 @@
                                                 </div>
                                             </div>
                                         }
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 border-rv">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                    @{
-                                                        if (Model.resumeLink != null && Model.resumeLink != "")
-                                                        {
-                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
-                                                        }
+                                                @{
+                                                    if (Model.resumeLink != null && Model.resumeLink != "")
+                                                    {
+                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
                                                     }
+                                                }
 
+                                            </div>
+                                        </div>
+
+                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                        {
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                 </div>
                                             </div>
+                                        }
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @if (ViewBag.PageStatus != "PublicExternal")
-                                            {
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
-                                                </div>
-                                            }
+                                                @Html.TextBoxFor(m => m.JDTiltle, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                            </div>
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                                 <!--<div class="row">

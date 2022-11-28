@@ -23,6 +23,7 @@ namespace Risebird.Entities.ViewModel
         //ErrorMessage = "Please Enter Correct Email Address")]
         ////[Required]
         public string CandidateName { get; set; }
+        public string JDTiltle { get; set; }
 
         [DisplayName("Confirmation Status")]
         ////[Required]

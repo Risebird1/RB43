@@ -1136,6 +1136,7 @@ namespace Risebird.Business
                     model.JoiningBiometryScore = interviewDetails.JoiningBiometryScore;
                     model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
                     model.VideoLink = interviewDetails.VideoLink;
+                    model.JDTiltle = interviewDetails.JDTiltle;
                     reportModel = model;
                 }
                 // joinability and Selectability
@@ -1225,6 +1226,7 @@ namespace Risebird.Business
                 reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 reportModel.Interviewer = interviewDetails.interviewer;
+                reportModel.JDTiltle = interviewDetails.JDTiltle;
                 return reportModel;
             }
             catch (Exception e)
