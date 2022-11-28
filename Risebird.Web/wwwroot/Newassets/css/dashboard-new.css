@@ -1213,6 +1213,7 @@ table tr td.relatedvideo:hover {
     padding-bottom: 10px;
     color: #b9b4b4;
     font-size: 12.3px;
+    font-weight: bold;
 }
 
 .marquee {
