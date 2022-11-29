@@ -1242,7 +1242,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                string currentUser= string.Empty;
+                string currentUser = string.Empty;
                 try
                 {
                     currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
@@ -1252,7 +1252,7 @@ namespace Risebird.CommonHelper
                 {
                     await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
-                
+
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -1397,7 +1397,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
 
             }
@@ -2575,7 +2575,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl,string ReviewURL)
+        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl)
         {
             try
             {
@@ -2589,7 +2589,7 @@ namespace Risebird.CommonHelper
                 }
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
-                object[] parameters = new object[] { Name, publicurl , ReviewURL };
+                object[] parameters = new object[] { Name, publicurl };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublic.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2671,6 +2671,53 @@ namespace Risebird.CommonHelper
 
                 object[] parameters = new object[] { title, timeduration, url, ClientName };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateBotInvitationTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public async Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { Name, reviewurl };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientRisebirdReview.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public async Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string url, string ClientName, DateTime Expiretime)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                var _Expiretime = Expiretime.ToString() + " (IST)";
+                object[] parameters = new object[] { title, timeduration, url, ClientName, _Expiretime };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateReminderInvitationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);

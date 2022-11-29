@@ -119,6 +119,9 @@ namespace Risebird.Entities.ViewModel
         public string WhoShared { get; set; }
         public bool ShareType { get; set; }
         public bool botactive { get; set; }
+
+        public string Title { get; set; }
+        public int Timer { get; set; }
     }
     public class ProfileTypeSkills
     {
