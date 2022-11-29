@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
@@ -9,6 +10,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
+using Twilio.TwiML.Messaging;
 
 namespace Risebird.CommonHelper
 {
@@ -708,18 +710,16 @@ namespace Risebird.CommonHelper
             {
                 if(_whatsAppVM != null)
                 {
-                    return await _whatsappRepository.SaveSentWhatsappMessageDetails(new SentWhatsAppMessageDetails
-                    {
-                        Recipient = _whatsAppVM.Emailid,
-                        CountryCode = _whatsAppVM.CountryCode,
-                        WhatsappNumber = _whatsAppVM.WhatsAppNumber,
-                        Message = _whatsAppVM.MessageValue,
-                        ButtonLink = _whatsAppVM.buttonlink,
-                        Event = _whatsAppVM.Event,
-                        InterviewDate = _whatsAppVM.InterviewDate,//!string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
-                        Header = _whatsAppVM.Header
-
-                    }) ;
+                    var obj = new SentWhatsAppMessageDetails();
+                    obj.Recipient = _whatsAppVM.Emailid;
+                    obj.CountryCode = _whatsAppVM.CountryCode;
+                    obj.WhatsappNumber = _whatsAppVM.WhatsAppNumber;
+                    obj.Message = _whatsAppVM.MessageValue;
+                    obj.ButtonLink = _whatsAppVM.buttonlink;
+                    obj.Event = _whatsAppVM.Event;
+                    obj.InterviewDate = _whatsAppVM.InterviewDate;//!string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
+                    obj.Header = _whatsAppVM.Header;
+                    return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj) ;
                 }
                 return false;
                 
