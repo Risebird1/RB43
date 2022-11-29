@@ -2334,11 +2334,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult InterviewerProfileJson(string searchValue)
+        public IActionResult InterviewerProfileJson(string searchValue)
         {
             try
             {
-                int Page = 1;
+                int? Page = 1;
                 //var model = _modelDetails;
                 var model = _interviewerService.GetInterviewers();
                 model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
@@ -2447,7 +2447,8 @@ namespace Risebird.Web.Controllers
                     Pagestart = 0;
                     Pageend = 0;
                 }
-                return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+                //return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
+                return PartialView(model.ToPagedList(Page ?? 1, 10));
             }
             catch (Exception ex)
             {
