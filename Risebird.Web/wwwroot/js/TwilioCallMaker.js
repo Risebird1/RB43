@@ -36,8 +36,11 @@ Twilio.Device.ready(function (device) {
 
 function callRecipient(phoneNumber) {
     callRecipientPhoneNumber = phoneNumber;
-    var params = {"phoneNumber": phoneNumber };
-    Twilio.Device.connect(params);
+    var params = { "phoneNumber": phoneNumber };
+    if (phoneNumber != null && phoneNumber.length >= 9) {
+        Twilio.Device.connect(params);
+    }
+    
 }
 
 function hangUp() {
