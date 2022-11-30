@@ -10,7 +10,10 @@ Twilio.Device.ready(function (device) {
 
 function callMember(phoneNumber) {
     var params = { "phoneNumber": phoneNumber };
-    Twilio.Device.connect(params);
+    if(phoneNumber !=null && phoneNumber.length >= 9)
+    {
+        Twilio.Device.connect(params);
+    }
 }
 function hangUp() {
     Twilio.Device.disconnectAll();

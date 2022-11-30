@@ -1245,8 +1245,11 @@ namespace Risebird.CommonHelper
                 string currentUser = string.Empty;
                 try
                 {
-                    currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
-                    currentUser = currentUser?.Replace("\"", "");
+                    if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
+                    {
+                        currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
+                        currentUser = currentUser?.Replace("\"", "");
+                    }
                 }
                 catch (Exception ex)
                 {
