@@ -347,6 +347,8 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
+
         //public string WhatsAppSendCandidateReminder(WhatsAppVM _whatsAppVM)
         //{
         //    try
@@ -725,7 +727,7 @@ namespace Risebird.CommonHelper
                     }
                     else
                     {
-                        await _errorLogger.LogMessage(LogLevelInfo.Error, "dependency null exception");
+                        await _errorLogger.LogMessage(LogLevelInfo.Error,  "dependency null exception");
                     }
                 }
                 return false;

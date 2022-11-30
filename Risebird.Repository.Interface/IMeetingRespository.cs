@@ -250,5 +250,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInterviewsReview(int rating, string comments, string Emailid);
         Task<IEnumerable<ClientReviewVM>> FetchInterviewsReview();
         Task<bool> BacklinkFailInterviewStatusUpdate(int id);
+        Task<bool> UpdateProbableNoShowCandidates();
+        Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates();
     }
 }

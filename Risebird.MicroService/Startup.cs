@@ -1,5 +1,4 @@
 ﻿using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -129,7 +128,7 @@ namespace Risebird.MicroService
 
 
             builder.Services.AddSingleton<HttpClientHelper>();
-            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
             builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             builder.Services.AddScoped<IUserService, UserService>();

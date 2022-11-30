@@ -3810,6 +3810,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates()
+        {
+            try
+            {
+                return await _meetingRespository.GetProbableNoShowCandidates();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

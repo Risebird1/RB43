@@ -55,7 +55,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
     .tox-notifications-container {
@@ -105,6 +105,9 @@
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
+                            </button>
+                            <button style="width:250px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span @*class="fa-regular fa-person-circle-question"*@ data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("ProbableNoShowCandidates", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Probable No Show Candidates</font></span>
                             </button>
                         }
 

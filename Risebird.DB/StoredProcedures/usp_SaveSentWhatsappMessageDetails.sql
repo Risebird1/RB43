@@ -48,7 +48,7 @@ begin try
 		
 
 		Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy)  
-		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @irfIntId, @interviewIdComputed, @InterviewDate, @Header, @CreatedAt, @SentBy)  
+		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @irfIntId, @interviewIdComputed, @computedInterviewDate, @Header, @CreatedAt, @SentBy)  
 
 		
 		if(@recipientProfile = 'Candidate' and @InterviewDate is not null)
