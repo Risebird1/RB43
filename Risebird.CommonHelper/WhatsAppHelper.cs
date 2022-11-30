@@ -18,8 +18,8 @@ namespace Risebird.CommonHelper
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IConfiguration _configuration;
         private readonly string accesskey;
-        private IUserService _userService;
-        private IWhatsappRepository _whatsappRepository;
+        private readonly IUserService _userService;
+        private readonly IWhatsappRepository _whatsappRepository;
 
         public WhatsAppHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger,
             IUserService userService, IWhatsappRepository whatsappRepository)
@@ -345,6 +345,8 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+
+
         //public string WhatsAppSendCandidateReminder(WhatsAppVM _whatsAppVM)
         //{
         //    try
@@ -708,18 +710,23 @@ namespace Risebird.CommonHelper
             {
                 if(_whatsAppVM != null)
                 {
-                    return await _whatsappRepository.SaveSentWhatsappMessageDetails(new SentWhatsAppMessageDetails
+                    var obj = new SentWhatsAppMessageDetails();
+                    obj.Recipient = _whatsAppVM.Emailid;
+                    obj.CountryCode = _whatsAppVM.CountryCode;
+                    obj.WhatsappNumber = _whatsAppVM.WhatsAppNumber;
+                    obj.Message = _whatsAppVM.MessageValue;
+                    obj.ButtonLink = _whatsAppVM.buttonlink;
+                    obj.Event = _whatsAppVM.Event;
+                    obj.InterviewDate = _whatsAppVM.InterviewDate;//!string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
+                    obj.Header = _whatsAppVM.Header;
+                    if(_whatsappRepository != null)
                     {
-                        Recipient = _whatsAppVM.Emailid,
-                        CountryCode = _whatsAppVM.CountryCode,
-                        WhatsappNumber = _whatsAppVM.WhatsAppNumber,
-                        Message = _whatsAppVM.MessageValue,
-                        ButtonLink = _whatsAppVM.buttonlink,
-                        Event = _whatsAppVM.Event,
-                        InterviewDate = !string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
-                        Header = _whatsAppVM.Header
-
-                    });
+                        return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj);
+                    }
+                    else
+                    {
+                        await _errorLogger.LogMessage(LogLevelInfo.Error,  "dependency null exception");
+                    }
                 }
                 return false;
                 

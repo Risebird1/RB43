@@ -164,7 +164,7 @@ join SeniorHr sh on sh.Clientid=IRF.ClientId
 left join Userlist ulsh on ulsh.id=sh.Userid    
 join InterviewComments ic on ic.Interviewid=im.id   
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id
-OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.IRFId, ul.Emailid) as CountTable
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 where ulsh.EmailId=@EmailId and im.interviewDate>=@startDate and im.interviewDate<=@endDate     
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                          
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                          
@@ -199,7 +199,7 @@ inner join TransClientUser tcu on IRF.id=tcu.IRFId
 left join UserList ulc on tcu.ClientUserId = ulc.id     
 join InterviewComments ic on ic.Interviewid=im.id    
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id
-OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.IRFId, ul.Emailid) as CountTable
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and ca.ClientHRAttemptContact=@EmailId    
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate     
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                          
@@ -233,7 +233,7 @@ inner join TransClientUser tcu on IRF.id=tcu.IRFId
 left join UserList ulc on tcu.ClientUserId = ulc.id     
 join InterviewComments ic on ic.Interviewid=im.id 
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id
-OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.IRFId, ul.Emailid) as CountTable
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and (ca.ProfileSource=@EmailId or im.staffingAgency= @EmailId)                           
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate     
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                          
@@ -269,7 +269,7 @@ inner join TransClientUser tcu on IRF.id=tcu.IRFId
 left join UserList ulc on tcu.ClientUserId = ulc.id     
 join InterviewComments ic on ic.Interviewid=im.id    
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id
-OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.IRFId, ul.Emailid) as CountTable
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0    
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate     
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                          
@@ -304,7 +304,7 @@ inner join TransClientUser tcu on IRF.id=tcu.IRFId
 left join UserList ulc on tcu.ClientUserId = ulc.id     
 join InterviewComments ic on ic.Interviewid=im.id   
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id
-OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.IRFId, ul.Emailid) as CountTable
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 where im.interviewDate>=@startDate and im.interviewDate<=@endDate     
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                          
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                          
