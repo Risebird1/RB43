@@ -56,9 +56,7 @@ namespace Risebird.MicroService
                             CC = "talent@risebird.io",
                             Subject = "Public URL for completed interview details"
                         };
-                        var _clientuniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item.EmailId);
-                        var ReviewURL = "https://portal.risebird.io/Survey/InterviewsReview?uniqueid=" + _clientuniqueid;
-                        var emailsend = await _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl, ReviewURL);
+                        var emailsend = await _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl);
                         //Send on whatsApp
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.EmailId;
