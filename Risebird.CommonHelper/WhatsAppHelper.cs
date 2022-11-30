@@ -20,8 +20,8 @@ namespace Risebird.CommonHelper
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IConfiguration _configuration;
         private readonly string accesskey;
-        private IUserService _userService;
-        private IWhatsappRepository _whatsappRepository;
+        private readonly IUserService _userService;
+        private readonly IWhatsappRepository _whatsappRepository;
 
         public WhatsAppHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger,
             IUserService userService, IWhatsappRepository whatsappRepository)
@@ -719,7 +719,14 @@ namespace Risebird.CommonHelper
                     obj.Event = _whatsAppVM.Event;
                     obj.InterviewDate = _whatsAppVM.InterviewDate;//!string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
                     obj.Header = _whatsAppVM.Header;
-                    return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj) ;
+                    if(_whatsappRepository != null)
+                    {
+                        return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj);
+                    }
+                    else
+                    {
+                        await _errorLogger.LogMessage(LogLevelInfo.Error, "dependency null exception");
+                    }
                 }
                 return false;
                 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Risebird.Business;
@@ -110,6 +111,21 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IMCQService, MCQService>();
             builder.Services.AddScoped<IMCQRepository, MCQRepository>();
             builder.Services.AddScoped<ISendGridRepository, SendGridRepository>();
+            builder.Services.AddScoped<IWhatsappRepository, WhatsappRepository>();
+            builder.Services.AddScoped<IRBMeetHelper, RBMeetHelper>();
+            builder.Services.AddScoped<IAadhaarService, AadhaarService>();
+            builder.Services.AddScoped<IAadhaarRepository, AadhaarRepository>();
+            builder.Services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
+            builder.Services.AddSingleton<ITrackPublicUrlAccessor, TrackPublicUrlAccessor>();
+            builder.Services.AddScoped<IMailRepository, MailRepository>();
+            builder.Services.AddScoped<IMailService, MailService>();
+            builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
+            builder.Services.AddScoped<ISurveyService, SurveyService>();
+            builder.Services.AddScoped<IRecommendedIRFService, RecommendedIRFService>();
+            builder.Services.AddScoped<IRecommendedIRFRepository, RecommendedIRFRepository>();
+            builder.Services.AddScoped<IClonableSkillChannelTemplateService, ClonableSkillChannelTemplateService>();
+            builder.Services.AddScoped<IClonableSkillChannelTemplateRepository, ClonableSkillChannelTemplateRepository>();
+
         }
 
 
