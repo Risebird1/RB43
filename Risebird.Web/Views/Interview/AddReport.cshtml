@@ -98,7 +98,7 @@
                     @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                     {
                         <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
-                            <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> QC Form</text></span>
+                            <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
                         </button>
                     }
                     @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
