@@ -214,7 +214,9 @@
     function callCandidate(phoneNumber) {
         //  phoneNumber = '+918126991790';
         var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
+        if (phoneNumber != null && phoneNumber.length >= 9) {
+            Twilio.Device.connect(params);
+        }
     }
     function hangUp() {
         Twilio.Device.disconnectAll();

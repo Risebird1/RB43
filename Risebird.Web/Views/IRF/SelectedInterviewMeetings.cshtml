@@ -772,44 +772,7 @@
 
     }
 </script>
-@*<script>
 
-    $(document).ready(function () {
-
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
-
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
-
-
-    });
-
-    function callCandidate(phoneNumber, interviewid) {
-        imid = interviewid;
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        startCallRecording(connection.parameters.CallSid);
-    });
-
-    Twilio.Device.disconnect(function (connection) {
-
-    });
-    function callCandidateJson(interviewid) {
-        var phonenumber = $("#txtmobile_" + interviewid).val();
-        callCandidate(phonenumber, interviewid);
-    }
-
-</script>*@
 <script>
     var imid = "";
     var span = document.getElementById("feedbackPopUp");
