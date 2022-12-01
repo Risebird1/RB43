@@ -73,23 +73,23 @@
                                             {
                                                 <thead>
                                                     <tr>
+                                                        <th>Skill Channel Name</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>AudioURL</th>
                                                         <th>Created At</th>
                                                         <th>Created By</th>
-                                                        <th>Skill Channel Name</th>
 
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
                                                     <tr>
+                                                        <th>Skill Channel Name</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>AudioURL</th>
                                                         <th>Created At</th>
                                                         <th>Created By</th>
-                                                        <th>Skill Channel Name</th>
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -99,12 +99,12 @@
                                                     @foreach (var item in Model)
                                                     {
                                                         <tr>
+                                                            <td>@item.SkillChannelName</td>
                                                             <td class="candidate-details">@item.Intervieweremail</td>
                                                             <td>@item.candidateEmail</td>
                                                             <td>@item.audioURL</td>
                                                             <td>@item.createdAt</td>
                                                             <td>@item.createdBy</td>
-                                                            <td>@item.SkillChannelName</td>
                                                         </tr>
                                                         i++;
                                                     }
@@ -114,6 +114,7 @@
                                             {
                                                 <thead>
                                                     <tr>
+                                                        <th>Skill Channel Name</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>Subject</th>
@@ -124,6 +125,7 @@
                                                 </thead>
                                                 <tfoot>
                                                     <tr>
+                                                        <th>Skill Channel Name</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>Subject</th>
@@ -140,6 +142,7 @@
                                                     {
                                                         var jsonObj = JsonConvert.SerializeObject(item.Message);
                                                         <tr>
+                                                            <td>@item.SkillChannelName</td>
                                                             <td class="interviewer-details">@item.Intervieweremail</td>
                                                             <td>@item.candidateEmail</td>
                                                             <td>@item.Subject</td>
