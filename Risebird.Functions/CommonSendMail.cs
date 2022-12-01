@@ -38,7 +38,7 @@ namespace Risebird.Functions
         //        return "Failed to send mail. Please check all fields and try again.";
         //    }
         //}
-        public async Task<string> SendMail(SendGridMessage msg,  int? IRFId = null, int? interviewId = null, TraceWriter log = null)
+        public async Task<string> SendMail(SendGridMessage msg,  int? IRFId = null, int? interviewId = null)
         {
             try
             {
@@ -115,11 +115,11 @@ namespace Risebird.Functions
             }
             catch (Exception ex)
             {
-                log?.Error(ex.Message);
+                //log?.Error(ex.Message);
                 return "Failed to send mail!";
             }
         }
-        public async Task<bool> SaveSentMailDetails(SentMailDetails model, TraceWriter log = null)
+        public async Task<bool> SaveSentMailDetails(SentMailDetails model)
         {
             try
             {
@@ -144,13 +144,15 @@ namespace Risebird.Functions
             }
             catch (SqlException ex)
             {
-                log?.Error(ex.Message);
+                return false;
+                //log?.Error(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception exe)
             {
-                log?.Error(ex.Message);
+                return false;
+                //log?.Error(ex.Message);
             }
-            return false;
+            
         }
     }
 }

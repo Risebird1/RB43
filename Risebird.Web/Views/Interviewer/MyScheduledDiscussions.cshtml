@@ -213,7 +213,8 @@
 
     function callInterviewer(phoneNumber) {
         var params = { "phoneNumber": phoneNumber };
-        if (phoneNumber != null && phoneNumber.length >= 9) {
+        if(phoneNumber !=null && phoneNumber.length >= 9)
+        {
             Twilio.Device.connect(params);
         }
     }
