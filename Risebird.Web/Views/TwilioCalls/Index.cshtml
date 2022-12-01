@@ -63,7 +63,9 @@
         //updateCallStatus("Calling " + phoneNumber + "...");
 
         var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
+        if (phoneNumber != null && phoneNumber.length >= 9) {
+            Twilio.Device.connect(params);
+        }
         startRecording();
     }
     function hangUp() {

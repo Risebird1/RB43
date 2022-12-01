@@ -145,7 +145,7 @@ namespace Risebird.MicroService
 
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST");
+                        var emailresult = await _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST", item.Irfid, item.Interviewid);
                     }
                 }
                 catch (Exception ex)

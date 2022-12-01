@@ -490,7 +490,7 @@ namespace Risebird.Functions
 
                         masg.PlainTextContent = msgBody.ToString();
                         CommonSendMail _common = new CommonSendMail();
-                        _ = _common.SendMail(masg, null, meetId.HasValue && meetId.Value != 0 ? meetId : null, log).Result;
+                        _ = _common.SendMail(masg, null, meetId.HasValue && meetId.Value != 0 ? meetId : null).Result;
                         log.Info("Interview cancelled mail sent to interviewer.");
                     }
                 }

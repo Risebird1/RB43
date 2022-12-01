@@ -406,7 +406,7 @@ namespace Risebird.Functions
 
                 masg.HtmlContent = msgBody;
                 CommonSendMail _common = new CommonSendMail();
-                _ = _common.SendMail(masg, irfId, interviewId, log).Result;
+                _ = _common.SendMail(masg, irfId, interviewId).Result;
                 return;
             }
             catch (Exception e)

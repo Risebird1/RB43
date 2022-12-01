@@ -81,8 +81,9 @@ Twilio.Device.incoming(function (connection) {
 function callCustomer(phoneNumber) {
     updateCallStatus("Calling " + phoneNumber + "...");
 
-    var params = { "phoneNumber": phoneNumber };
-    Twilio.Device.connect(params);
+    if (phoneNumber != null && phoneNumber.length >= 9) {
+        Twilio.Device.connect(params);
+    }
 }
 
 /* Call the support_agent from the home page */

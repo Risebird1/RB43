@@ -98,7 +98,7 @@ namespace Risebird.Functions
 
                 masg.PlainTextContent = msgBody.ToString();
                 CommonSendMail _common = new CommonSendMail();
-                _ = _common.SendMail(masg, irfId, interviewId, log).Result;
+                _ = _common.SendMail(masg, irfId, interviewId).Result;
                 //return "Mail sent successfully.";
             }
             catch (Exception ex)
