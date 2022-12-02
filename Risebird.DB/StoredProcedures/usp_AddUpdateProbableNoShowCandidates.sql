@@ -19,7 +19,7 @@ Begin
   
 
 delete from ProbableNoShowCandidates where id in  
-(select pns.id from ProbableNoShowCandidates pns join InterviewMeetings im on im.id = pns.InterviewId where im.confirmationStatus = 2)  
+(select pns.id from ProbableNoShowCandidates pns join InterviewMeetings im on im.id = pns.InterviewId where im.confirmationStatus = 2 or im.interviewDate < @currentTime)  
   
   
 declare @Enumerator table (id int)  
@@ -41,22 +41,24 @@ begin
   where smd.InterviewId = @interviewId and sge.email = @candidateEmailId and sge.[event] = 'open')  
   Begin  
   
-  delete from ProbableNoShowCandidates where InterviewId = @interviewId  
-  delete from @Enumerator where id = @interviewId  
+	  delete from ProbableNoShowCandidates where InterviewId = @interviewId  
+	  delete from @Enumerator where id = @interviewId  
   continue  
   End  
   Else if exists(select top 1 id from CallRecordingData crd where CallRecipient = @candidateEmailId and InterviewId = @interviewId and [Status] = 'completed' and Duration > 0 )--and RecordingUri is not null  
   Begin  
-  delete from ProbableNoShowCandidates where InterviewId = @interviewId  
-  delete from @Enumerator where id = @interviewId  
+	  delete from ProbableNoShowCandidates where InterviewId = @interviewId  
+	  delete from @Enumerator where id = @interviewId  
   continue  
   End  
     
   --if the mail has not been delivered or a call could not be connected, then the chances of no show are high  
   
      delete from @Enumerator where id = @interviewId  
-  
-  insert into ProbableNoShowCandidates values ((select id from IRF where IRFId = (select IRFId from InterviewMeetings where id =@interviewId)), (select id from UserList where EmailId = @candidateEmailId and idProfile =23), @interviewId, dateadd(MINUTE, 330, getdate()), null)  
+  if not exists(select top 1 id from ProbableNoShowCandidates where interviewId = @interviewId)
+  Begin
+    insert into ProbableNoShowCandidates values ((select id from IRF where IRFId = (select IRFId from InterviewMeetings where id =@interviewId)), (select id from UserList where EmailId = @candidateEmailId and idProfile =23), @interviewId, dateadd(MINUTE, 330, getdate()), null)  
+  End
   --set @isProbableNoShow = 1  
 end  
   
