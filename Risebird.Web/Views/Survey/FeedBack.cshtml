@@ -9,8 +9,17 @@
     ViewData["Title"] = "FeedBack";
     ViewBag.PageHeader = "FeedBack";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
 }
-
+@if (HttpContextAccessor.HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>
+        (HttpContextAccessor.HttpContext.Session.GetString("CandidateFeedBackfilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+}
 <input type="hidden" id="txtrate" value="@Model.Count()" />
 
 <link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
@@ -37,44 +46,36 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title"> FeedBack</h4></div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            @if (ViewBag.type == "Client")
-                            {
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
-                                <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
-                                <a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>
-
-                            }
-                            else
-                            {
-                                <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
-                                <a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>
-
-                            }
-                        </div>
+                    <div class="col-md-12">
+                        @if (ViewBag.type == "Client")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                            @*<a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>*@
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                            @*<a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>*@
+                        }
                     </div>
-
                     <div class="pull-right">
-
-
+                        <a href="/Survey/ClientFeedbacks" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="GetClientFeedbacks()" style="position:relative;float:right;">Client Feedbacks</a>
+                    </div>
+                    <div class="pull-right" style="padding-right:10px">
                         @if (ViewBag.PageName == "IRF")
                         {
                             <input type="hidden" value="@ViewBag.IRFId" id="_hidIRF" />
                             <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back</a>
-                            @*<i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>*@
                         }
-                        @*else
-                            {
-                                <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                    <div class="mdc-button__ripple"></div>
-                                </button>
-                                <span id="cfeedback_3">
-                                    <i id="allinterview_3" data-intro='Click here to export the Candidate data in excel sheet' data-position='left' type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i>
-                                </span>
-                            }*@
+                        else
+                        {
+                            <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -89,6 +90,61 @@
                             </div>
                             <div id="candidatefeedback_table" data-intro="<span style='font-size:16px;'>Overview the summary of Candidate Feedback</span><hr class='btop' />1. Candidate Name<br/> 2. JD Title<br/> 3. Rating <br/> 4. Comment <br/><a href='/CommonPool/Index' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
                                 <div class="dataloading">
+                                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="filheader">
+                                                    <div class="filavatar">
+                                                        <span class="fa fa-filter"></span>
+                                                    </div>
+                                                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                                </div>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <form action="@Url.Action("CandidateFeedBack", "Survey",new{type=@ViewBag.type})" method="post" id="form">
+                                                    <div class="modal-body survey">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float: right; margin-bottom: 10px;">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div style="overflow-x:scroll;overflow-y:hidden" class="scrollbar survey" id="style-2">
                                         <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
@@ -112,7 +168,9 @@
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                @{var i = 0; }
+                                                @{
+                                                    var i = 0;
+                                                }
                                                 @foreach (var item in Model)
                                                 {
                                                     <tr>
@@ -242,8 +300,7 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
+                    function () {
                         window.location.href = '/User/Interviewers';
                     }
                 )
@@ -434,5 +491,30 @@
         } else {
             window.location.href = "/Survey/CandidateFeedBack?type=" + type;
         }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+    })
+    function ResetFilter() {
+        window.location.href = "/Survey/ResetCandidateFeedBackFilter";
+
+    }
+    function ApplySessionFilter() {
+
+        var _strtDte = @Html.Raw(Json.Serialize(strtDte));
+        var _endDte = @Html.Raw(Json.Serialize(endDte));
+        $("#StartDate").val(_strtDte);
+        $("#EndDate").val(_endDte);
+        var form = $("#form").serialize();
+
     }
 </script>
