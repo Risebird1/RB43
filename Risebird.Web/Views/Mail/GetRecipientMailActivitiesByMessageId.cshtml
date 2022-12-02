@@ -12,6 +12,9 @@
             width: 100%;
         }*/
 </style>
+@{
+    bool isNestedPopUp = ((bool)(ViewBag.isNestedPopUp ?? false));
+}
 
 @*<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>*@
 
@@ -21,9 +24,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalRecipientLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
-                @*<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
-                    <span aria-hidden="true">×</span>
-                </button>*@
+                
+                @if (!isNestedPopUp)
+                {
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                }
+                
             </div>
             <div class="modal-body" id="recipientActivity_modal_body" style="max-height:400px; overflow:auto">
 
@@ -94,7 +102,7 @@
 
                 }
             </div>
-            @if (ViewBag.isNestedPopUp)
+            @if (isNestedPopUp)
             {
                 <div class="modal-footer">
                     <button class="btn btn-primary" data-bs-target="#modalCommunicationDetails" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>

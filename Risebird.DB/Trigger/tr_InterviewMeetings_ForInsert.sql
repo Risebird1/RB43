@@ -16,8 +16,16 @@ ON InterviewMeetings
 FOR INSERT
 AS
 BEGIN
- Declare @id int
+ Declare @id int, @candidateEmailId varchar(200)
+
  Select @id = Id from inserted
+
+ select @candidateEmailId = Trim(candidateEmail) from InterviewMeetings where id = @id
+
+ if(@candidateEmailId != (select candidateEmail from InterviewMeetings where id = @id))
+ Begin
+	 update InterviewMeetings set candidateEmail  = @candidateEmailId where id = @id
+ End
  
  insert into InterviewMeetingsHistory 
  (id,	IRFId,	interviewDate,	interviewSlot,	interviewDuration,	candidateEmail,	ClientHrContact, resumeLink,
@@ -29,7 +37,7 @@ BEGIN
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
  IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, ActionType, PerformedAt, PerformedBy)
 
- (select id,	IRFId,	interviewDate,	interviewSlot,	interviewDuration,	candidateEmail,	ClientHrContact, resumeLink,
+ (select id,	IRFId,	interviewDate,	interviewSlot,	interviewDuration,	@candidateEmailId,	ClientHrContact, resumeLink,
  confirmationStatus,	zoomLink,	risebirdHR,	interviewer,	IntervIewOnDevice,	PreferredLocation,
  ExpectedPerHourRate,	staffingAgency,	joiningTime,	sCreatedBy,	dtCreatedOn,	sModifiedBy,
  dtModifiedOn,	candidateName,	currentEmployerName	,MobileNumber,	QCInterviewer,	IsEmergency,

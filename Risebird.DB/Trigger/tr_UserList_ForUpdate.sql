@@ -16,15 +16,24 @@ ON UserList
 FOR UPDATE
 AS
 BEGIN
- Declare @id int
+ Declare @id int, @emailId varchar(150)
+
  Select @id = Id from inserted
+
+ select @emailId = Trim(EmailId) from UserList where id = @id
+
+ if(@emailId != (select EmailId from UserList where id = @id))
+ Begin
+	  update UserList set EmailId  = @emailId where id = @id
+ End
+
  
  insert into UserListHistory 
  (id,	idProfile,	FirstName,	LastName,	EmailId,	LastLogin,	LastLogout, IsActive,
  ImageURL,	MobileNumber, Isonline, Usertheme, UserPassword, WhatsappNumber, PasswordCreation, uniqueid, AadhaarVerified, ActionType, 
  PerformedAt)
 
- (select id, idProfile,	FirstName,	LastName,	EmailId,	LastLogin,	LastLogout, IsActive,
+ (select id, idProfile,	FirstName,	LastName,	@emailId,	LastLogin,	LastLogout, IsActive,
  ImageURL,	MobileNumber, Isonline, Usertheme, UserPassword, WhatsappNumber, PasswordCreation, uniqueid, AadhaarVerified,
  'Updated', DATEADD(MINUTE, 330, getdate())
  from UserList where id = @id)
