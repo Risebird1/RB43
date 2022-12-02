@@ -1967,5 +1967,25 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<ClientUserVM> GetClientUsersForReviewNotification()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[usp_RisebirdClientUsersForNotification]", null,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

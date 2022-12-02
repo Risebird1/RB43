@@ -35,10 +35,10 @@ namespace Risebird.MicroService
             _userService = userService;
         }
         [FunctionName("ClientRisebirdReview")]
-        public async Task Run([TimerTrigger("0 0 0 * * 2,6")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 10 * * 2,5")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            var _interviewsdetails = _userService.GetClientUsers("talent@risebird.io");
+            var _interviewsdetails = _userService.GetClientUsersForReviewNotification();
             foreach (var item in _interviewsdetails)
             {
                 try
@@ -48,12 +48,8 @@ namespace Risebird.MicroService
                         TO = item.EmailId,
                         Subject = "Feedback Risebird Services"
                     };
-                    var _clientuniqueid = await _aadhaarService.FetchUniqueIdByEmailid(item.EmailId);
-                    if (string.IsNullOrEmpty(_clientuniqueid))
-                    {
-                        var ReviewURL = "https://portal.risebird.io/Survey/InterviewsReview?uniqueid=" + _clientuniqueid;
-                        var emailsend = await _notificationHelper.SendClientRisebirdReview(_mail, item.ClientName, ReviewURL);
-                    }
+                    var ReviewURL = "https://portal.risebird.io/Survey/InterviewsReview?uniqueid=" + item.uniqueid;
+                    var emailsend = await _notificationHelper.SendClientRisebirdReview(_mail, item.ClientName, ReviewURL);
                 }
                 catch (Exception ex)
                 {

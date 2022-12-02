@@ -948,5 +948,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<ClientUserVM> GetClientUsersForReviewNotification()
+        {
+            try
+            {
+                return _userRepository.GetClientUsersForReviewNotification().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
