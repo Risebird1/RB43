@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetClientAudioFeedback]
 AS
 Begin   
   
- select im.IRFId AS SkillChannelName, im.interviewer as Intervieweremail, im.candidateEmail, AudioURL, CreatedAt, CreatedBy from ClientAudioFeedbackForReport CAF 
+ select im.IRFId AS SkillChannelName, im.interviewer as Intervieweremail, im.candidateEmail, AudioURL, CreatedAt, CreatedBy, im.interviewDate from ClientAudioFeedbackForReport CAF 
 left join
 InterviewMeetings im  on 
 im.Id  = CAF.InterviewId 

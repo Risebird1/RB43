@@ -69,7 +69,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.UserName = item.candidateName;
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.Event = "Interviewer Waiting";
-                            _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
+                            _whatsAppVM.irfId = item.irfId;
+                            _ = await _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                             if (!string.IsNullOrEmpty(item.ClientHrContact))
                             {
                                 if (!CCEmails.Contains(item.ClientHrContact))
@@ -101,7 +102,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.UserName = item.candidateName;
                             _whatsAppVM.Event = "Candidate Waiting";
-                            _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
+                            _whatsAppVM.irfId = item.irfId;
+                            _ = await _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                         }
                     }
                     else if (item.EmailType == "EI")
@@ -120,7 +122,8 @@ namespace Risebird.MicroService
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
                         _whatsAppVM.UserName = item.candidateName;
                         _whatsAppVM.Event = "Emergency Notification";
-                        _whatsAppHelper.WhatsAppSendEInterviewer(_whatsAppVM);
+                        _whatsAppVM.irfId = item.irfId;
+                        _ = await _whatsAppHelper.WhatsAppSendEInterviewer(_whatsAppVM);
 
                         Mail _mail1 = new Mail
                         {
@@ -134,7 +137,8 @@ namespace Risebird.MicroService
                         _whatsAppVMC.Emailid = item.candidateEmail;
                         _whatsAppVMC.UserName = item.candidateName;
                         _whatsAppVMC.Event = "Apology Notification";
-                        _whatsAppHelper.WhatsAppSendApology(_whatsAppVMC);
+                        _whatsAppVM.irfId = item.irfId;
+                        _ = await _whatsAppHelper.WhatsAppSendApology(_whatsAppVMC);
                     }
                     else if (item.EmailType == "CApology")
                     {
@@ -167,7 +171,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Due to some emergency, the interviewer is unable to join the interview. We apologise for the inconvenience, please reschedule."
+                            Subject = $"Risebird: Due to unforeseen circmstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
                         };
                         var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
@@ -192,7 +196,8 @@ namespace Risebird.MicroService
                         {
                             _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
                         }
-                        _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
+                        _whatsapp.irfId = item.irfId;
+                        _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
                 }
             }
