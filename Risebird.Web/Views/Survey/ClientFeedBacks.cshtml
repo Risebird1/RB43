@@ -74,6 +74,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Skill Channel Name</th>
+                                                        <th>Interview Date</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>AudioURL</th>
@@ -84,7 +85,8 @@
                                                 </thead>
                                                 <tfoot>
                                                     <tr>
-                                                        <th>Skill Channel Name</th>
+                                                        <th>Skill Channel Name</th>'
+                                                        <th>Interview Date</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>AudioURL</th>
@@ -93,20 +95,25 @@
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
-                                                    @{
-                                                        var i = 0;
-                                                    }
+                                                   
                                                     @foreach (var item in Model)
                                                     {
                                                         <tr>
                                                             <td>@item.SkillChannelName</td>
+                                                            <td>@item.interviewDate</td>
                                                             <td class="candidate-details">@item.Intervieweremail</td>
                                                             <td>@item.candidateEmail</td>
                                                             <td>@item.audioURL</td>
+                                                            <td>
+                                                                <audio controls>
+                                                                    <source src="@item.audioURL" type="audio/ogg">
+                                                                    <source src="@item.audioURL" type="audio/mpeg">
+                                                                    Your browser does not support the audio tag.
+                                                                </audio>
+                                                            </td>
                                                             <td>@item.createdAt</td>
                                                             <td>@item.createdBy</td>
                                                         </tr>
-                                                        i++;
                                                     }
                                                 </tbody>
                                             }
@@ -115,6 +122,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Skill Channel Name</th>
+                                                        <th>Interview Date</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>Subject</th>
@@ -126,6 +134,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th>Skill Channel Name</th>
+                                                        <th>Interview Date</th>
                                                         <th>Interviewer Email</th>
                                                         <th>Candidate Email</th>
                                                         <th>Subject</th>
@@ -135,24 +144,22 @@
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
-                                                    @{
-                                                        var i = 0;
-                                                    }
+                                                    
                                                     @foreach (var item in Model)
                                                     {
                                                         var jsonObj = JsonConvert.SerializeObject(item.Message);
                                                         <tr>
                                                             <td>@item.SkillChannelName</td>
+                                                            <td>@item.interviewDate</td>
                                                             <td class="interviewer-details">@item.Intervieweremail</td>
                                                             <td>@item.candidateEmail</td>
                                                             <td>@item.Subject</td>
-                                                            <td rowspan="1">
+                                                            <td>
                                                                 <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue"><u>Content</u></a>
                                                             </td>
                                                             <td>@item.SentAt</td>
                                                             <td>@item.SentBy</td>
                                                         </tr>
-                                                        i++;
                                                     }
                                                 </tbody>
                                             }

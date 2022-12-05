@@ -91,6 +91,7 @@ namespace Risebird.Entities.ViewModel
         public string Message { get; set; }
         public string SentAt { get; set; }
         public string SentBy { get; set; }
+        public DateTime interviewDate { get; set; }
 
     }
 }

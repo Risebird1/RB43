@@ -1141,7 +1141,8 @@ namespace Risebird.Business
                     {
                         _whatsapp.buttonlink = !string.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
                     }
-                    _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
+                    _whatsapp.irfId = irfId;
+                    _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
@@ -2853,7 +2854,8 @@ namespace Risebird.Business
                     {
                         _whatsapp.buttonlink = !string.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
                     }
-                    _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
+                    _whatsapp.irfId = irfId;
+                    _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));

@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetClientBroadcastMessages]
 AS
 Begin   
   
-select im.IRFId AS SkillChannelName, im.interviewer as Intervieweremail, im.candidateEmail, Subject, Message, SentAt, SentBy from ClientBroadcastMessages CAF 
+select im.IRFId AS SkillChannelName, im.interviewer as Intervieweremail, im.candidateEmail, Subject, Message, SentAt, SentBy, im.interviewDate from ClientBroadcastMessages CAF 
 left join InterviewMeetings im  on 
 im.Id  = CAF.InterviewId 
  
