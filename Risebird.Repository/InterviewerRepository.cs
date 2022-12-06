@@ -53,8 +53,179 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
+        //public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupLi)
+        //{
+        //    try
+        //    {
+        //        int ProfileId;
+
+        //        DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
+        //        parameters.Add("@loggedInUser", loggedInUser);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+
+        //            await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            ProfileId = parameters.Get<int>("@InterviewerProfileId");
+
+        //        }
+
+        //        //To Add Skills
+        //        foreach (var item in interviewerProfile.InterviewerSkill)
+        //        {
+        //            DynamicParameters Params = new DynamicParameters();
+        //            Params.Add("@InterviewerProfileId", ProfileId);
+        //            Params.Add("@SkillId", item.SkillId);
+        //            Params.Add("@Category", item.Category);
+        //            Params.Add("@Ip", item.Ip);
+        //            Params.Add("@Level", item.Level);
+        //            Params.Add("@SkillExperience", item.SkillExperience);
+        //            Params.Add("@Nature", item.Nature);
+
+        //            using (SqlConnection con = new SqlConnection(connectionString))
+        //            {
+        //                await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            }
+        //        }
+
+        //        foreach (var item in interviewerProfile.InterviewerCertificateDetails)
+        //        {
+        //            DynamicParameters Params = new DynamicParameters();
+        //            Params.Add("@InterviewerProfileId", ProfileId);
+        //            Params.Add("@CertificateID", item.CertificateID);
+        //            Params.Add("@CertificateName", item.CertificateName);
+        //            Params.Add("@Version", item.Version);
+        //            Params.Add("@ExpiryDate", item.Expirydate);
+
+        //            using (SqlConnection con = new SqlConnection(connectionString))
+        //            {
+        //                await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            }
+        //        }
+
+        //        //foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
+        //        //{
+        //        //    DynamicParameters Params = new DynamicParameters();
+        //        //    Params.Add("@InterviewerProfileId", ProfileId);
+        //        //    Params.Add("@CompanyName", item.CompanyName);
+        //        //    Params.Add("@Type", item.Type);
+        //        //    Params.Add("@CompanyStage", item.CompanyStage);
+        //        //    Params.Add("@Size", item.Size);
+        //        //    Params.Add("@JobFunction", item.JobFunction);
+        //        //    Params.Add("@Industry", item.Industry);
+        //        //    Params.Add("@Headquarters", item.Headquarters);
+        //        //    Params.Add("@Role", item.Role);
+        //        //    Params.Add("@Domain", item.Domain);
+        //        //    Params.Add("@SeniorityLevel", item.SeniorityLevel);
+        //        //    Params.Add("@Experience", item.Experience);
+        //        //    Params.Add("@WorkNature", item.WorkNature);
+        //        //    Params.Add("@PrimaryResponsibility", item.PrimaryResponsibility);
+        //        //    Params.Add("@CompanyLinkedinPage", item.CompanyLinkedinPage);
+        //        //    Params.Add("@CompanyWebsite", item.CompanyWebsite);
+
+        //        //    using (SqlConnection con = new SqlConnection(connectionString))
+        //        //    {
+        //        //        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfessional", Params,
+        //        //       commandType: CommandType.StoredProcedure);
+
+        //        //    }
+        //        //}
+
+        //        foreach (var item in interviewerProfile.InterviewerEducationDetails)
+        //        {
+        //            DynamicParameters Params = new DynamicParameters();
+        //            Params.Add("@InterviewerProfileId", ProfileId);
+        //            Params.Add("@EducationType", item.EducationType);
+        //            Params.Add("@Degree", item.Degree);
+        //            Params.Add("@EducationMode", item.EducationMode);
+        //            Params.Add("@CollegeType", item.CollegeType);
+        //            Params.Add("@UniversityName", item.UniversityName);
+        //            Params.Add("@PassOutYear", item.PassOutYear);
+        //            Params.Add("@AnyGap", item.AnyGap);
+
+        //            using (SqlConnection con = new SqlConnection(connectionString))
+        //            {
+        //                await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            }
+        //        }
+
+        //        foreach (var item in interviewerProfile.InterviewerProjectsDetails)
+        //        {
+        //            DynamicParameters Params = new DynamicParameters();
+        //            Params.Add("@InterviewerProfileId", ProfileId);
+        //            Params.Add("@TechnologyEnvironment", item.TechnologyEnvironment);
+        //            Params.Add("@IsPrimarySkillUsed", item.IsPrimarySkillUsed);
+        //            Params.Add("@Description", item.Description);
+        //            Params.Add("@IsCommercialProject", item.IsCommercialProject);
+        //            Params.Add("@NatureOfProject", item.NatureOfProject);
+
+        //            using (SqlConnection con = new SqlConnection(connectionString))
+        //            {
+        //                await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            }
+        //        }
+
+        //        foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+        //        {
+        //            DynamicParameters Params = new DynamicParameters();
+        //            Params.Add("@InterviewerProfileId", ProfileId);
+        //            Params.Add("@Weekday", item.Weekday);
+        //            Params.Add("@Weekend", item.Weekend);
+        //            Params.Add("@IsAvailableOnPublicHolidays", item.IsAvailableOnPublicHolidays);
+
+        //            using (SqlConnection con = new SqlConnection(connectionString))
+        //            {
+        //                await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            }
+        //        }
+
+        //        //add interviewer account details
+        //        DynamicParameters paramsAccount = new DynamicParameters();
+        //        paramsAccount.Add("@InterviewerProfileId", ProfileId);
+        //        paramsAccount.Add("@AccountName", interviewerProfile.InterviewerAccDetails.AccountName);
+        //        paramsAccount.Add("@AccountNumber", interviewerProfile.InterviewerAccDetails.AccountNumber);
+        //        paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
+        //        paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
+        //        paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
+
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+        //           commandType: CommandType.StoredProcedure);
+
+        //        }
+
+        //        return true;
+
+        //    }
+
+        //    catch (SqlException e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+
+        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
         {
+            assessmentGroupList = String.Empty;
             try
             {
                 int ProfileId;
@@ -64,10 +235,17 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    _ = SqlMapper.Query<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    ProfileId = parameters.Get<int>("@InterviewerProfileId");
+                    //ProfileId = parameters.Get<int?>("@InterviewerProfileId");
+                    int? profileOut = (int?)parameters.Get<int?>("@InterviewerProfileId");
+                    ProfileId = profileOut.HasValue ? profileOut.Value : 0;
+                    assessmentGroupList = parameters.Get<string>("@assessmentGroupList");
+                    if(!string.IsNullOrEmpty(assessmentGroupList))
+                    {
+                        return false;
+                    }
 
                 }
 
@@ -85,8 +263,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
-                       commandType: CommandType.StoredProcedure);
+                       _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
+                       commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -102,8 +280,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
-                       commandType: CommandType.StoredProcedure);
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
+                       commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -150,8 +328,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
-                       commandType: CommandType.StoredProcedure);
+                       _ = SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
+                       commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -168,8 +346,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
-                       commandType: CommandType.StoredProcedure);
+                       _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
+                       commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -184,8 +362,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
-                       commandType: CommandType.StoredProcedure);
+                       _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
+                       commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -201,8 +379,8 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
-                   commandType: CommandType.StoredProcedure);
+                   _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+                   commandType: CommandType.StoredProcedure).Result;
 
                 }
 
@@ -212,13 +390,13 @@ namespace Risebird.Repository
 
             catch (SqlException e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -268,6 +446,9 @@ namespace Risebird.Repository
             parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
             parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);
             parameters.Add("@OutsideIndiaProductRate", entity.OutsideIndiaProductRate);
+            //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
+            parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+
             return parameters;
         }
         private DynamicParameters SetSPParametersForSkills(InterviewerProfileVM entity)
