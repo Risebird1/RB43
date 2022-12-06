@@ -15,7 +15,15 @@
 @{
     bool isNestedPopUp = ((bool)(ViewBag.isNestedPopUp ?? false));
 }
-
+@*@if(!isNestedPopUp)
+{
+    <style>
+        .modal-backdrop {
+            /* bug fix - no overlay */
+            display: none;
+        }
+    </style>
+}*@
 @*<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>*@
 
 <!-- Modal -->

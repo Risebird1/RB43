@@ -43,11 +43,11 @@
 
         if(currentMeetingStatus != (int)MeetingStatus.DroppedBorderLine)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() || x.Value == ((int)MeetingStatus.NoShowStatus).ToString() || x.Value == ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
+            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString() && x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
         }
         else
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() || x.Value == ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
 
         if(currentInterviewStatus != (int)InterviewStatus.BorderLine)
@@ -65,7 +65,7 @@
 
         if(currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() || x.Value == ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
         else
         {
@@ -78,7 +78,7 @@
 
     if (Model.HasDistinctParticipants == false)
     {
-        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value == ((int)MeetingStatus.NoShowInterviewer).ToString() || x.Value == ((int)MeetingStatus.NoShow).ToString() || x.Value == ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
 
     }
 }
@@ -142,7 +142,7 @@
     <div class="mt50 col-md-12">
         <div class="pull-left mt-20">
             <div class="reportdropdown">
-                <button class="reportdropbtn">Report Quality Issue</button>
+                <button class="reportdropbtn">Connect with the Interviewer</button>
                 <div class="reportdropdown-content">
                     <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
                         <text> Rate Interviewer </text>
@@ -405,7 +405,8 @@
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                        @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @*@Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })*@
+                                                        @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                         @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group" style="margin-bottom:0px;">
@@ -1593,7 +1594,7 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span class="mdc-fab__icon material-icons">
-                        <img src="~/img/Aadhaar/verificationlogo.png" />
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
                     </span>
                 </div>
                 <h5 class="modal-title pull-left">Candidate Verified Data</h5>
