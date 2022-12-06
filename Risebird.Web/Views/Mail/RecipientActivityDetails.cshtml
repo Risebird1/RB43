@@ -350,6 +350,11 @@
         }
 
     });
+    $(document).on('hidden.bs.modal', function (event) {
+        $('.modal').remove();
+        $('.modal-backdrop').remove();
+        $('body').removeClass("modal-open");
+    });
     function ResetFilter() {
         window.location.href = "/Mail/ResetRecipientActivityDetails";
     }
