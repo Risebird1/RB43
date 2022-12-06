@@ -548,15 +548,22 @@ namespace Risebird.Web.Controllers
                         {
                             interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
                         }
-
-                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId).Result)
+                        string assessmentGroupList;
+                        if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
                         {
                             TempData["MessageInterviewer"] = "Interviewer Profile has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile addition has been Failed";
+                            if(!string.IsNullOrEmpty(assessmentGroupList))
+                            {
+                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s).- \n '{assessmentGroupList.Split(',')}' ";
+                            }
+                            else
+                            {
+                                TempData["MessageInterviewer"] = "Failed to add Interviewer Profile.";
+                            }
                             return RedirectToAction("Index");
                         }
                     }
@@ -664,15 +671,23 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-
-                        if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId).Result)
+                        string assessmentGroupList;
+                        if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
                         {
                             TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+                            if (!string.IsNullOrEmpty(assessmentGroupList))
+                            {
+                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) - \n '{assessmentGroupList}' ";
+                            }
+                            else
+                            {
+                                TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+
+                            }
                             return RedirectToAction("Index");
                         }
                     }

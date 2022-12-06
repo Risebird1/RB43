@@ -44,8 +44,51 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
+        //public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
+        //{
+        //    try
+        //    {
+        //        UserDetails userDetails = new UserDetails
+        //        {
+        //            FirstName = interviewerProfile.FirstName.Replace(" ", ""),
+        //            LastName = interviewerProfile.LastName.Replace(" ", ""),
+        //            EmailId = interviewerProfile.EmailId.Replace(" ", "")
+        //        };
+        //        interviewerProfile.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails);
+        //        var NickNamesList = GetNickNames(0);
+        //        if (string.IsNullOrEmpty(interviewerProfile.NickName))
+        //        {
+        //            var lastnamelength = !string.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Length : 0;
+        //            var NickName = (!string.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2).Trim() : "Ri") + "" + (!string.IsNullOrEmpty(interviewerProfile.LastName) ? lastnamelength >= 2 ? interviewerProfile.LastName.Substring(0, 2).Trim().Replace(".", "") : interviewerProfile.LastName.Substring(0, 1).Trim().Replace(".", "") : "se") + "" + (!string.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1145");
+        //            int i = 0;
+        //            while (i <= 4)
+        //            {
+        //                if (NickNamesList.Contains(NickName))
+        //                {
+        //                    NickName = NickName + (!string.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber[interviewerProfile.MobileNumber.Length - 1].ToString() : "5");
+        //                }
+        //                else
+        //                {
+        //                    break;
+        //                }
+        //                i++;
+        //            }
+        //            interviewerProfile.NickName = NickName;
+        //        }
+        //        interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
+        //        interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
+        //        return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser).Result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+
+        public bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
         {
+            assessmentGroupList = string.Empty;
             try
             {
                 UserDetails userDetails = new UserDetails
@@ -54,7 +97,7 @@ namespace Risebird.Business
                     LastName = interviewerProfile.LastName.Replace(" ", ""),
                     EmailId = interviewerProfile.EmailId.Replace(" ", "")
                 };
-                interviewerProfile.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails);
+                interviewerProfile.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
                 var NickNamesList = GetNickNames(0);
                 if (string.IsNullOrEmpty(interviewerProfile.NickName))
                 {
@@ -77,16 +120,36 @@ namespace Risebird.Business
                 }
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser).Result;
+                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
             }
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
+
+        //public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
+        //{
+        //    try
+        //    {
+        //        //Edit Method
+        //        interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
+        //        interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
+        //        interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
+        //        interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
+        //        interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
+        //        return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser).Result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+        public bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
         {
+            assessmentGroupList = string.Empty;
             try
             {
                 //Edit Method
@@ -95,11 +158,11 @@ namespace Risebird.Business
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser).Result;
+                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
             }
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

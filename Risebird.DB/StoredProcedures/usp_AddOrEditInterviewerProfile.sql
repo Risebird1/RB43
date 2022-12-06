@@ -48,11 +48,32 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IndiaProductRate int,  
 @OutsideIndiaServiceRate int,  
 @OutsideIndiaProductRate int,
-@loggedInUser varchar(50)
+@loggedInUser varchar(50),
+@assessmentGroupList varchar(max) out 
             
 AS            
-            
-If Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId)            
+
+Begin
+  set @assessmentGroupList = ''
+  if(@AssessmentGroupId is not null and @AssessmentGroupId != '')
+  Begin
+  declare @temp table(assessmentGroupId varchar(5), TotalInterviewers int)
+  
+	  insert into @temp
+
+	  select a.value, b.TotalInterviewers from string_split(@AssessmentGroupId,',') a
+	  outer apply
+	  (select count(id) as TotalInterviewers from InterviewerProfile ipr cross apply string_split(ipr.AssessmentGroupId, ',') where a.value = value  group by value  ) b
+
+
+	  if exists(select top 1 assessmentGroupId from @temp where TotalInterviewers >=100)
+	  Begin
+		set @assessmentGroupList = (select STRING_AGG(asg.AssessmentGroup, ',') from @temp tp join AssessmentGroup asg on asg.id = tp.assessmentGroupId where TotalInterviewers >= 100)
+	  End
+  End
+if(@assessmentGroupList is null or @assessmentGroupList = '')
+Begin
+	If Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId)            
 -- Edit in both the tables            
 Begin            
             
@@ -251,7 +272,11 @@ Declare @v_User_Id int;
   end  
            
 End  
- 
+End
+
+
+
+End 
 GO
 
 
