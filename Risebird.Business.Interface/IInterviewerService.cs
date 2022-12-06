@@ -9,8 +9,10 @@ namespace Risebird.Business.Interface
     public interface IInterviewerService
     {
         List<InterviewerProfileVM> GetInterviewers();
-        Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
-        Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
+        //Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
+        bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList);
+        //Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
+        bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList);
         Task<bool> DeleteInterviewerProfile(int id);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);

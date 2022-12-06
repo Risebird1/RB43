@@ -9,7 +9,9 @@ namespace Risebird.Repository.Interface
     public interface IInterviewerRepository
     {
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewers();
-        Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
+        //Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
+        bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList);
+
         Task<bool> DeleteInterviewerProfile(int UserId);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
