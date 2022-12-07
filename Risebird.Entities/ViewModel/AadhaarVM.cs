@@ -46,6 +46,9 @@ namespace Risebird.Entities.ViewModel
         public string consent { get; set; }
         public string otp { get; set; }
         public string share_code { get; set; }
+        public string purpose { get; set; }
+        public string image_1 { get; set; }
+        public string image_2 { get; set; }
     }
     public class AadhaarResponse
     {
@@ -88,6 +91,7 @@ namespace Risebird.Entities.ViewModel
         public string nationality { get; set; }
         public string passportNumber { get; set; }
         public string passport_image { get; set; }
+        public int score { get; set; }
     }
     public class AadhaarStatus
     {

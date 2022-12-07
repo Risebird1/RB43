@@ -9,6 +9,8 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -394,7 +396,8 @@ namespace Risebird.Web.Controllers
                 var extractresponse = await Verification_Passport_extraction(model, identityResonse);
                 var faceurl = await Verification_Passport_Faceextraction(model, identityResonse);
                 var verification = await Verification_Passport_verification(model, extractresponse, identityResonse.id);
-                var resultset = await Verification_FaceMatch(model, loginresponse, faceurl.response.result.cropped);
+                //var resultset = await Verification_FaceMatch(model, loginresponse, faceurl.response.result.cropped);
+                var resultset = await Verification_FaceMatch_veri5(model.Passportfrontlink, faceurl.response.result.cropped);
                 //End: Passport Verification
                 modelsave.name = extractresponse.response.result.name;
                 modelsave.passportNumber = extractresponse.response.result.passportNumber;
@@ -403,7 +406,7 @@ namespace Risebird.Web.Controllers
                 modelsave.birthDate = extractresponse.response.result.birthDate;
                 modelsave.address = extractresponse.response.result.address;
                 modelsave.email = model.email;
-                modelsave.matchPercentage = resultset.result.matchPercentage;
+                modelsave.matchPercentage = resultset.ToString();
                 modelsave.doc_face = ConvertImageURLToBase64(faceurl.response.result.cropped);
                 modelsave.passport_image = ConvertImageURLToBase64(model.CandidateImagelink);
                 //save in db
@@ -531,6 +534,38 @@ namespace Risebird.Web.Controllers
                 buf = null;
             }
             return (buf);
+        }
+        public async Task<int> Verification_FaceMatch_veri5(string imagefirst, string secondinamge)
+        {
+            var model = new AadhaarVM();
+            var datenow = GetCurrentUnixTimestampMillis();
+            SetHeaderValue(model.headers, datenow);
+            model.request.api_key = api_key;
+            model.request.request_id = Guid.NewGuid().ToString();
+            model.request.purpose = "VERIFY";
+            model.request.image_1 = ConvertImageURLToBase64(imagefirst);
+            model.request.image_2 = ConvertImageURLToBase64(secondinamge);
+            var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
+            model.request.hash = getHashSha256(hashstring);
+            var client = new RestClient(apiendpoint + "getCaptcha");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
+            if (convertedResponse.response_status.status.ToLower() == "fail")
+            {
+                return 0;
+            }
+            return convertedResponse.response_data.score;
+        }
+        public string GetCurrentUnixTimestampMillis()
+        {
+            DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime localDateTime, univDateTime;
+            localDateTime = DateTime.Now;
+            univDateTime = localDateTime.ToUniversalTime();
+            return ((univDateTime - UnixEpoch).TotalMilliseconds).ToString();
         }
     }
 }

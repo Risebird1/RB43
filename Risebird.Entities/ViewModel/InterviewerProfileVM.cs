@@ -163,6 +163,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Assessment Group")]
         public string AssessmentGroupId { get; set; }
         [Required]
+        public string[] PreviousAssessmentGroupArray { get; set; }
         public string[] AssessmentGroupArray { get; set; }
         public List<SelectListItem> AssessmentGroupList { get; set; }
         public string Senioritylevel { get; set; }
