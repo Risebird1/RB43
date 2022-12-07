@@ -9,8 +9,6 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;

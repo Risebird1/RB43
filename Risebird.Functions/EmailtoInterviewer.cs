@@ -86,6 +86,6 @@ namespace Risebird.Functions
     {
         public int id { get; set; }
         public string interviewer { get; set; }
-        
+
     }
 }

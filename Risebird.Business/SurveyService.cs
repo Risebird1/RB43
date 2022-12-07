@@ -5,7 +5,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -14,12 +13,12 @@ namespace Risebird.Business
     {
         private readonly ISurveyRepository _surveyRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-       
+
         public SurveyService(ISurveyRepository surveyRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _surveyRepository = surveyRepository;
             _applicationErrorLogger = applicationErrorLogger;
-        
+
         }
         public async Task<List<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails()
         {

@@ -499,7 +499,7 @@ namespace Risebird.Business
                 var transHR = _irfRepository.GetTransHR(id);
                 var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
-               //model.MeetingPlatform= IRF.meeting
+                //model.MeetingPlatform= IRF.meeting
 
 
                 //assign values retrieved to the model
@@ -1973,7 +1973,7 @@ namespace Risebird.Business
 
                                    if (irf.BussinessType == "B2B")
                                    {
-                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;                                      
+                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;
                                    }
                                    else
                                    {

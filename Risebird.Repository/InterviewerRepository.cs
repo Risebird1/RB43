@@ -1,7 +1,5 @@
 ﻿using Dapper;
-using Microsoft.CognitiveServices.Speech.Transcription;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -12,8 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 

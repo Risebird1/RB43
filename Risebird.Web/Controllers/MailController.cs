@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -261,7 +260,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        
+
                         if (filter != null)
                         {
                             filter.RecipientType = recipientType;
@@ -322,7 +321,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    var model = (await _mailService.GetRecipientMailActivitiesByMessageId(recipientEmail, messageId))?.ToList() ;
+                    var model = (await _mailService.GetRecipientMailActivitiesByMessageId(recipientEmail, messageId))?.ToList();
                     ViewBag.RecipientEmail = recipientEmail;
                     ViewBag.isNestedPopUp = isNestedPopUp;
                     return PartialView("GetRecipientMailActivitiesByMessageId", model);

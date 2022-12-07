@@ -812,7 +812,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public string GetCurrentUsername(string emailId) 
+        public string GetCurrentUsername(string emailId)
         {
             try
             {
@@ -936,7 +936,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string UpdateWhatsappno(string emailId,string WhatsappNumber)
+        public string UpdateWhatsappno(string emailId, string WhatsappNumber)
         {
             try
             {

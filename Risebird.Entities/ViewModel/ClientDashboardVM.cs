@@ -15,7 +15,7 @@ namespace Risebird.Entities.ViewModel
         //public CandidatesCount CandidatesCountObj { get; set; }
         public MeetingResultCount MeetingResultCountObj { get; set; }
         public CandidateCurrentStatusCount CandidatesCountObj { get; set; }
-        [Display(Name ="Whatsapp Number")]
+        [Display(Name = "Whatsapp Number")]
         public string WhatsappNo { get; set; }
 
 

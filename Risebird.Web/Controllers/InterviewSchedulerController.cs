@@ -369,12 +369,12 @@ namespace Risebird.Web.Controllers
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
-                        if(zoomLink == null)
+                        if (zoomLink == null)
                         {
                             ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
                             return View(model);
                         }
-                        
+
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {

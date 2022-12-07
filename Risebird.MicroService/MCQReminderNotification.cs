@@ -1,17 +1,15 @@
-using System;
 using Dapper;
-using System.Data.SqlClient;
-using System.Data;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using System.Linq;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {

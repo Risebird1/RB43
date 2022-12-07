@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
@@ -10,7 +9,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
-using Twilio.TwiML.Messaging;
 
 namespace Risebird.CommonHelper
 {
@@ -444,7 +442,7 @@ namespace Risebird.CommonHelper
                         request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
                         IRestResponse response = await client.ExecuteAsync(request);
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null )
+                        if (obj != null)
                         {
                             _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
                         }
@@ -710,7 +708,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                if(_whatsAppVM != null)
+                if (_whatsAppVM != null)
                 {
                     var obj = new SentWhatsAppMessageDetails();
                     obj.Recipient = _whatsAppVM.Emailid;
@@ -721,17 +719,17 @@ namespace Risebird.CommonHelper
                     obj.Event = _whatsAppVM.Event;
                     obj.InterviewDate = _whatsAppVM.InterviewDate;//!string.IsNullOrWhiteSpace(_whatsAppVM.InterviewDate) ? Convert.ToDateTime(_whatsAppVM.InterviewDate) : new DateTime?(),
                     obj.Header = _whatsAppVM.Header;
-                    if(_whatsappRepository != null)
+                    if (_whatsappRepository != null)
                     {
                         return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj);
                     }
                     else
                     {
-                        await _errorLogger.LogMessage(LogLevelInfo.Error,  "dependency null exception");
+                        await _errorLogger.LogMessage(LogLevelInfo.Error, "dependency null exception");
                     }
                 }
                 return false;
-                
+
 
             }
             catch (Exception ex)

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper;
+﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -9,7 +7,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1149,7 +1146,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

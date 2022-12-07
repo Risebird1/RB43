@@ -63,7 +63,7 @@ namespace Risebird.Entities.ViewModel
         public string Day { get; set; }
         public string Time { get; set; }
         public DateTime ActualDate { get; set; }
-        
+
     }
 
 
@@ -73,7 +73,7 @@ namespace Risebird.Entities.ViewModel
         public string Name { get; set; }
         public string JobCountry { get; set; }
         public string CompanyType { get; set; }
-        
+
     }
 
 

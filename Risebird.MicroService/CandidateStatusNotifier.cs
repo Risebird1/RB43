@@ -92,7 +92,7 @@ namespace Risebird.MicroService
                             }
                             var details = data.Where(x => x.IRFintId == irf).FirstOrDefault();
                             var primarySkill = details.JDTitle.Split('|')[0];
-                           await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), candidates, details.IRFId, primarySkill);
+                            await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), candidates, details.IRFId, primarySkill);
                         }
                     }
 

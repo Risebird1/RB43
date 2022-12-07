@@ -45,7 +45,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsRecruiterActive { get; set; }
         public bool IsQCRequired { get; set; }
         public bool IsRedoInterview { get; set; }
-        [Display(Name="MCQ Interiew Invite Allowed Limit")]
+        [Display(Name = "MCQ Interiew Invite Allowed Limit")]
         public int MCQValidation { get; set; }
         public string uniqueid { get; set; }
     }

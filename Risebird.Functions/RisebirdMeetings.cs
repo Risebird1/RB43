@@ -449,7 +449,7 @@ namespace Risebird.Functions
                         var results = con.Query(query, dynamicParameters);
                     }
                     int? meetId = 0;
-                    var queryMeetingId= "Select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId";
+                    var queryMeetingId = "Select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId";
 
                     using (SqlConnection con = new SqlConnection(str))
                     {
@@ -457,7 +457,7 @@ namespace Risebird.Functions
                         parameters.Add("@candidateEmail", candidateEmail);
                         parameters.Add("@IRFId", IRFID);
                         parameters.Add("@interviewDate", interviewDate);
-                        var resultMeetingId= con.Query<int>(queryMeetingId, parameters);
+                        var resultMeetingId = con.Query<int>(queryMeetingId, parameters);
                         meetId = resultMeetingId.FirstOrDefault();
                     }
                     var masg = new SendGridMessage();

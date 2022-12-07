@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -3958,7 +3957,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 2].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
                         //DateTime datetime = DateTime.Parse(item.interviewDate);
-                       // var s_today = datetime.ToShortDateString();
+                        // var s_today = datetime.ToShortDateString();
                         Sheet.Cells[i, 4].Value = item.interviewDate.ToShortDateString();
                         //string timeString = datetime.ToLongTimeString();
                         Sheet.Cells[i, 5].Value = item.interviewDate.ToLongTimeString();

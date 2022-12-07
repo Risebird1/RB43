@@ -1723,20 +1723,20 @@ namespace Risebird.Web.Controllers
 
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                
+
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                
+
                 //var result = _userService.GetWhatsappno(model.EmailId);
-                var result = _userService.UpdateWhatsappno(emailid,whatsappnumber);
+                var result = _userService.UpdateWhatsappno(emailid, whatsappnumber);
                 return Json("Whatsapp added Successfully.");
             }
             else
             {
-                
+
                 return Json("Failed to update Whatsapp number!");
             }
-            
+
         }
     }
 }

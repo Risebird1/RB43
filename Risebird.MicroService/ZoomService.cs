@@ -8,7 +8,6 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -53,7 +52,7 @@ namespace Risebird.MicroService
 
                 var pendingRBMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, "[a-zA-Z]")).ToList();
 
-                var pendingZoomMeetings = pendingVideoMeetings.Except(pendingRBMeetings).ToList();  
+                var pendingZoomMeetings = pendingVideoMeetings.Except(pendingRBMeetings).ToList();
 
                 //get jwt authentication token 
                 //string token = ZoomToken();

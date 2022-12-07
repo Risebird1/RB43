@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using System;
 using System.Threading.Tasks;
 
@@ -36,7 +35,7 @@ namespace Risebird.MicroService
             try
             {
                 //Remove All 90 days data from History table
-              
+
                 var value = await _interviewerService.DeleteAllHistorybefore90days();
 
             }

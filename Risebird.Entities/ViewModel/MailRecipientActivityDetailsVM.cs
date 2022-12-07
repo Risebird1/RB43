@@ -1,7 +1,5 @@
 ﻿using Risebird.Entities.Data;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -15,7 +13,7 @@ namespace Risebird.Entities.ViewModel
         public string MailSubject { get; set; }
         public string MailBody { get; set; }
         public string SentBy { get; set; }
-        public int partitionNumber{ get; set; }
+        public int partitionNumber { get; set; }
         public string eventType { get; set; }
         public string latestEvent { get; set; }
         public DateTime ActivityDate { get; set; }

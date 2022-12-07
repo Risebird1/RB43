@@ -3,14 +3,13 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Configuration;
-using Microsoft.Azure.WebJobs.Host;
 
 namespace Risebird.Functions
 {
@@ -38,7 +37,7 @@ namespace Risebird.Functions
         //        return "Failed to send mail. Please check all fields and try again.";
         //    }
         //}
-        public async Task<string> SendMail(SendGridMessage msg,  int? IRFId = null, int? interviewId = null)
+        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null)
         {
             try
             {
@@ -152,7 +151,7 @@ namespace Risebird.Functions
                 return false;
                 //log?.Error(ex.Message);
             }
-            
+
         }
     }
 }
