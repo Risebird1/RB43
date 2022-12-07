@@ -22,7 +22,9 @@ CREATE Procedure usp_InsertCodeInviteDetails
 @invite_UrL varchar(200),
 @CreatedAt varchar (20),
 @CreatedBy varchar (20),
-@ModifiedBy varchar (20) NULL
+@ModifiedBy varchar (20) NULL,
+@candidateEmail varchar(200),
+@botURL varchar(max)
 AS  
 BEGIN  
 insert into CodeInviteDetails (
@@ -33,7 +35,7 @@ DifficultyLevel,
 InviteStartTime,
 InviteEndTime ,
 TimeZone,
-inviteId, invite_UrL,CreatedAt,CreatedBy,ModifiedAt,ModifiedBy )values(       
+inviteId, invite_UrL,CreatedAt,CreatedBy,ModifiedAt,ModifiedBy,candidateEmail,botURL )values(       
 @UserName,
 @Experience,
 @ProgrammingLanguage,
@@ -42,9 +44,11 @@ inviteId, invite_UrL,CreatedAt,CreatedBy,ModifiedAt,ModifiedBy )values(
 @InviteEndTime,
 @TimeZone,
 @invite_id,
-@invite_UrL,@CreatedAt, @CreatedBy,@CreatedAt, @ModifiedBy )
+@invite_UrL,@CreatedAt, @CreatedBy,@CreatedAt, @ModifiedBy,@candidateEmail,@botURL )
 
 END
+
+
 GO
 
 

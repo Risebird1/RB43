@@ -2448,6 +2448,8 @@ namespace Risebird.Repository
                     parameters.Add("@ModifiedBy", loggedinUser);
                     parameters.Add("@invite_id", codeInviteVM.inviteId);
                     parameters.Add("@invite_UrL", codeInviteVM.invite_UrL);
+                    parameters.Add("@candidateEmail", codeInviteVM.candidateEmail);
+                    parameters.Add("@botURL", codeInviteVM.botURL);
 
                     var results = await SqlMapper.QueryAsync(con, "usp_InsertCodeInviteDetails", parameters,
                            commandType: CommandType.StoredProcedure);

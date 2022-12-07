@@ -12,10 +12,10 @@
             <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
                 <div class="form-group">
                     <div class="mandate">
-                        @Html.LabelFor(model => model.userName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.LabelFor(model => model.candidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                     </div>
-                    @Html.EditorFor(model => model.userName, new { htmlAttributes = new { id = "txt_username", @class = "form-control text-box single-line", @type="email" } })
-                    @Html.ValidationMessageFor(model => model.userName, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.candidateEmail, new { htmlAttributes = new { id = "txt_username", @class = "form-control text-box single-line", @type="email" } })
+                    @Html.ValidationMessageFor(model => model.candidateEmail, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.experience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -62,3 +62,13 @@
         </div>
     }
 </div>
+<script>
+    $(document).ready(function () {
+        var currentdate = new Date();
+        var datetime = currentdate.getFullYear() + "-" + String(currentdate.getMonth() + 1).padStart(2, '0') + "-" + String(currentdate.getDate() + 1).padStart(2, '0') + "T" +
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+        document.getElementById("inviteStartTime").setAttribute("min", datetime);
+        document.getElementById("inviteEndTime").setAttribute("min", datetime);
+    })
+</script>

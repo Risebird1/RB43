@@ -15,10 +15,11 @@ namespace Risebird.Entities.ViewModel
         }
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter User Name")]
+        [Required(ErrorMessage = "Please enter Candidate Email")]
         [Display(Name = "User Name")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
-        ErrorMessage = "Please Enter Correct User Name")]
+        ErrorMessage = "Please Enter Correct Candidate Email")]
+        public string candidateEmail { get; set; }
         public string userName { get; set; }
 
         //[DataType(DataType.Date)]
@@ -50,6 +51,7 @@ namespace Risebird.Entities.ViewModel
         public string invite_UrL { get; set; }
         public string inviteId { get; set; }
         public SelectList ProgrammingLanguageList { get; set; }
+        public string botURL { get; set; }
     }
     public class CodeInviteURLRequest
     {
@@ -60,6 +62,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime inviteStartTime { get; set; }
         public DateTime inviteEndTime { get; set; }
         public string zone { get; set; }
+        public string candidateEmail { get; set; }
     }
     public class CodeInviteURLResponse
     {

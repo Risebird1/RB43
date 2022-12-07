@@ -3122,6 +3122,7 @@ namespace Risebird.Web.Controllers
                 {
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
+                    codeInviteVM.userName = emailId;
                     var programmingLanguage = from ProgrammingLanguageenum s in Enum.GetValues(typeof(ProgrammingLanguageenum))
                                               select new { ID = s.GetDescription(), Name = s.GetDescription() };
                     codeInviteVM.ProgrammingLanguageList = new SelectList(programmingLanguage, "ID", "Name");
@@ -3195,6 +3196,7 @@ namespace Risebird.Web.Controllers
         {
             var model = new CodeInviteURLRequest();
             model.userName = _codeinvite.userName;
+            model.candidateEmail = _codeinvite.candidateEmail;
             model.programmingLanguage = _codeinvite.programmingLanguage;
             model.experience = _codeinvite.experience;
             model.inviteStartTime = _codeinvite.inviteStartTime;
@@ -3209,6 +3211,9 @@ namespace Risebird.Web.Controllers
             var convertedResponse = JsonConvert.DeserializeObject<CodeInviteURLResponse>(response.Content);
             _codeinvite.invite_UrL = convertedResponse.inviteUrl;
             _codeinvite.inviteId = convertedResponse.inviteUrl.Split("/").LastOrDefault();
+            var botcodeurl = await GenerateBotCodeLink(_codeinvite.candidateEmail, _codeinvite.invite_UrL);
+            if (botcodeurl != null)
+                _codeinvite.botURL = botcodeurl.emailBotUrls.FirstOrDefault().botTestLink;
         }
         public async Task<CodeInviteReportVM> GetReportSummary(string inviteid)
         {
@@ -3226,6 +3231,27 @@ namespace Risebird.Web.Controllers
             request.AddHeader("content-type", "application/json");
             IRestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<List<CodeInviteReportDetails>>(response.Content);
+            return convertedResponse;
+        }
+        public async Task<MCQBotResponse> GenerateBotCodeLink(string emailds, string CodeTestLink)
+        {
+            var model = new MCQBotRequest();
+            model.tenantUuid = "e5f37005-42a3-4510-b211-0a3c0ee675b7";
+            model.email = emailds;
+            model.aadharVerification = "Y";
+            model.faceVerification = "Y";
+            model.interviewerTraining = "N";
+            model.companyEmailVerification = "Y";
+            model.videoBio = "N";
+            model.careerQuestions = "N";
+            model.testLink.mcq = "";
+            model.testLink.code = CodeTestLink;
+            var client = new RestClient("https://bot.risebird.io/api/v1/bot/invite");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
             return convertedResponse;
         }
         #endregion

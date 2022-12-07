@@ -24,7 +24,8 @@ CREATE TABLE [dbo].[CodeInviteDetails](
 	[totalAssignmentScore] [int] NULL,
 	[percentageScore] [int] NULL,
 	[status] [varchar] (20) NULL,
-
+	[candidateEmail] [varchar] (200) NULL,
+	[botURL] [varchar] (max) NULL,
  CONSTRAINT [PK_CodeInviteDetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
