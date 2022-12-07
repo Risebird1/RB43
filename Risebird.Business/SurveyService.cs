@@ -12,16 +12,14 @@ namespace Risebird.Business
 {
     public class SurveyService : ISurveyService
     {
-        private readonly ISurveyService _surveyRepository;
+        private readonly ISurveyRepository _surveyRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        private readonly ICandidateRepository _candidateRepository;
-        private readonly ICandidateService _candidateService;
-        public SurveyService(ISurveyService surveyRepository, IApplicationErrorLogger applicationErrorLogger, ICandidateRepository candidateRepository, ICandidateService candidateService)
+       
+        public SurveyService(ISurveyRepository surveyRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _surveyRepository = surveyRepository;
             _applicationErrorLogger = applicationErrorLogger;
-            _candidateRepository = candidateRepository;
-            _candidateService = candidateService;
+        
         }
         public async Task<List<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails()
         {

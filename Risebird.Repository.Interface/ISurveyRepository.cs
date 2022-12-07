@@ -6,8 +6,8 @@ namespace Risebird.Repository.Interface
 {
     public interface ISurveyRepository
     {
-        Task<IEnumerable<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails();
-        Task<IEnumerable<ClientAudioFeedbackDetails>> FetchBroadcastMessages();
+        Task<List<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails();
+        Task<List<ClientAudioFeedbackDetails>> FetchBroadcastMessages();
 
     }
 }

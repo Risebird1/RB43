@@ -25,7 +25,7 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
-        public async Task<IEnumerable<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails()
+        public async Task<List<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails()
         {
             try
             {
@@ -34,7 +34,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<ClientAudioFeedbackDetails>(con, "usp_GetClientAudioFeedback",
                         commandType: CommandType.StoredProcedure);
-                    return result;
+                    return result?.ToList();
                 }
 
             }
@@ -44,7 +44,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<ClientAudioFeedbackDetails>> FetchBroadcastMessages()
+        public async Task<List<ClientAudioFeedbackDetails>> FetchBroadcastMessages()
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<ClientAudioFeedbackDetails>(con, "usp_GetClientBroadcastMessages",
                         commandType: CommandType.StoredProcedure);
-                    return result;
+                    return result?.ToList();
                 }
 
             }
