@@ -83,5 +83,6 @@ namespace Risebird.Repository.Interface
         Task<CodeInviteReportVM> CheckCodeConsoleReport(string inviteid);
         Task<bool> AddCodeConsoleReport(CodeInviteReportVM model);
         Task<bool> AddCodeConsoleReportDetails(CodeInviteReportVM model);
+        Task<bool> DeleteAllHistorybefore90days();
     }
 }

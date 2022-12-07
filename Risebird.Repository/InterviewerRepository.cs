@@ -2592,5 +2592,24 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<bool> DeleteAllHistorybefore90days()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    var results = await SqlMapper.QueryAsync<int>(con, "usp_DeleteAllHistorybefore90days",
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

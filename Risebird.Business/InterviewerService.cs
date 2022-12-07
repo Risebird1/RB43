@@ -1139,5 +1139,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> DeleteAllHistorybefore90days()
+        {
+            try
+            {
+                var comments = await _interviewerRepository.DeleteAllHistorybefore90days();
+                return comments;
+            }
+            catch (Exception e)
+            {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
