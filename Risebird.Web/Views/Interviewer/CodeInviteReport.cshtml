@@ -1,0 +1,127 @@
+﻿@model Risebird.Entities.ViewModel.CodeInviteReportVM
+
+@{
+    ViewData["Title"] = "Code Invite Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<div>Code Invite Report</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+    document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+</script>
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Code Invite Report</h4></div>
+                </div>
+                <div class="pull-right">
+                    <div>
+                        @*<a href="/MCQ/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content dataloading client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="ng-pristine ng-valid form" id="reportForm">
+                            <div class="canvas_div_pdf">
+                                 <div class="report-full-wrap">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Candidate Details</span></h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-wrap">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.score, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.score, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ProgrammingLanguage, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.ProgrammingLanguage, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.totalAssignmentScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.totalAssignmentScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="report-full-wrap">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Questions Report</span></h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-wrap">
+                                            <div class="col-md-8 offset-md-2">
+                                                <div class="mdc-card card  bl-bg">
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        @foreach (var item in Model.codeinvitereport)
+                                                        {
+                                                            <div>
+                                                                <div class="man">@item.questionid ) @item.questionName </div>
+                                                                <div>@item.questionDescription</div>
+                                                                <div>@item.candidateSolution</div>
+                                                                <div>@item.achievedScore / @item.questionScore</div>
+                                                            </div>
+                                                        <div class="col-md-10 offset-md-1">
+                                                            @{
+                                                                var i = 1;
+                                                            }
+                                                                @foreach(var testcase in item.testCaseResults){
+                                                                    <div>Test Case @i</div>
+                                                                    <div>@testcase.input</div>
+                                                                    <div>@testcase.expectedOutput</div>
+                                                                    <div>@testcase.actualOutput</div>
+                                                                    <div>@testcase.status</div>
+                                                                }                
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

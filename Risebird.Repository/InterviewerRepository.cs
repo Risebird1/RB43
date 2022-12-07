@@ -1,5 +1,7 @@
 ﻿using Dapper;
+using Microsoft.CognitiveServices.Speech.Transcription;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -10,6 +12,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 
@@ -20,12 +24,14 @@ namespace Risebird.Repository
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
         private IApplicationErrorLogger _applicationErrorLogger;
+        private ICodeInviteRequest _codeinviteRequest;
 
-        public InterviewerRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        public InterviewerRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, ICodeInviteRequest codeinviteRequest)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _codeinviteRequest = codeinviteRequest;
         }
 
 
@@ -236,7 +242,7 @@ namespace Risebird.Repository
                 {
 
                     _ = SqlMapper.Query<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
-                       commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure);
 
                     //ProfileId = parameters.Get<int?>("@InterviewerProfileId");
                     int? profileOut = (int?)parameters.Get<int?>("@InterviewerProfileId");
@@ -263,8 +269,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                       _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
-                       commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerSkills", Params,
+                        commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -280,8 +286,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
-                       commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerCertificate", Params,
+                         commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -346,8 +352,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                       _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
-                       commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
+                         commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -362,8 +368,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                       _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
-                       commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
+                          commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -1039,7 +1045,6 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        #endregion
 
         #region Interviewer My Profile Repository function
         public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
@@ -2392,7 +2397,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        #endregion
         #region Client Feed
         public async Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate, int? interviewId)
         {
@@ -2424,5 +2429,168 @@ namespace Risebird.Repository
         }
 
         #endregion
+        public async Task<bool> SendInviteCode(CodeInviteVM codeInviteVM, string loggedinUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserName", codeInviteVM.userName);
+                    parameters.Add("@Experience", codeInviteVM.experience);
+                    parameters.Add("@ProgrammingLanguage", codeInviteVM.programmingLanguage);
+                    parameters.Add("@DifficultyLevel", codeInviteVM.difficultyLevel);
+                    parameters.Add("@InviteStartTime", codeInviteVM.inviteStartTime);
+                    parameters.Add("@InviteEndTime", codeInviteVM.inviteEndTime);
+                    parameters.Add("@TimeZone", "IST");
+                    parameters.Add("@CreatedBy", loggedinUser);
+                    parameters.Add("@CreatedAt", DateTime.Now);
+                    parameters.Add("@ModifiedBy", loggedinUser);
+                    parameters.Add("@invite_id", codeInviteVM.inviteId);
+                    parameters.Add("@invite_UrL", codeInviteVM.invite_UrL);
+
+                    var results = await SqlMapper.QueryAsync(con, "usp_InsertCodeInviteDetails", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<CodeInviteVM>> GetAllIntviteDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<CodeInviteVM>(con, "usp_FetchAllCodeInviteDetails", null,
+                           commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<CodeInviteReportVM> CheckCodeConsoleReport(string inviteid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@inviteid", inviteid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CodeInviteReportVM>(
+                        con, "Select * From CodeInviteDetails where inviteId=@inviteid", parameters, commandType: Text);
+                    var resultsets = result.FirstOrDefault();
+                    if (!string.IsNullOrEmpty(resultsets.submissionId))
+                    {
+                        DynamicParameters parameters1 = new DynamicParameters();
+                        parameters1.Add("@inviteid", inviteid);
+                        parameters1.Add("@submissionId", resultsets.submissionId);
+                        var resultquestions = await SqlMapper.QueryAsync<CodeInviteReportDetails>(
+                           con, "Select * From CodeInviteReports where inviteId=@inviteid and submissionId=@submissionId", parameters1, commandType: Text);
+                        resultsets.codeinvitereport = (List<CodeInviteReportDetails>)resultquestions;
+                    }
+                    return resultsets;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+        public async Task<bool> AddCodeConsoleReport(CodeInviteReportVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@inviteid", model.inviteId);
+                dynamicParameters.Add("@submissionId", model.submissionId);
+                dynamicParameters.Add("@assignmentId", model.assignmentId);
+                dynamicParameters.Add("@submittedBy", model.submittedBy);
+                dynamicParameters.Add("@submittedTime", model.submittedTime);
+                dynamicParameters.Add("@score", model.score);
+                dynamicParameters.Add("@percentageScore", model.percentageScore);
+                dynamicParameters.Add("@totalAssignmentScore", model.totalAssignmentScore);
+                dynamicParameters.Add("@status", model.status);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateCodeInviteReport", dynamicParameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
+        public async Task<bool> AddCodeConsoleReportDetails(CodeInviteReportVM model)
+        {
+            try
+            {
+                DataTable ReportDt = new DataTable();
+                ReportDt.Columns.Add("inviteId", typeof(string));
+                ReportDt.Columns.Add("submissionId", typeof(string));
+                ReportDt.Columns.Add("questionid", typeof(int));
+                ReportDt.Columns.Add("questionName", typeof(string));
+                ReportDt.Columns.Add("questionDescription", typeof(string));
+                ReportDt.Columns.Add("candidateSolution", typeof(string));
+                ReportDt.Columns.Add("achievedScore", typeof(int));
+                ReportDt.Columns.Add("questionScore", typeof(int));
+                ReportDt.Columns.Add("questionstatus", typeof(string));
+                ReportDt.Columns.Add("input", typeof(string));
+                ReportDt.Columns.Add("expectedOutput", typeof(string));
+                ReportDt.Columns.Add("actualOutput", typeof(string));
+                ReportDt.Columns.Add("testcasestatus", typeof(string));
+                int questionnumber = 1;
+                foreach (var item in model.codeinvitereport)
+                {
+                    foreach (var testcase in item.testCaseResults)
+                    {
+                        ReportDt.Rows.Add(model.inviteId, model.submissionId, questionnumber, item.questionName, item.questionDescription, item.candidateSolution,
+                        item.achievedScore, item.questionScore, item.status, testcase.input, testcase.expectedOutput, testcase.actualOutput, testcase.status);
+                    }
+                    questionnumber++;
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmdReport = new SqlCommand("usp_CodeReportBulkInsert", con);
+                    cmdReport.CommandType = CommandType.StoredProcedure;
+                    cmdReport.Parameters.Add(new SqlParameter("@CodeReportBulkData", SqlDbType.Structured));
+                    cmdReport.Parameters["@CodeReportBulkData"].Value = ReportDt;
+                    con.Open();
+                    if (cmdReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
     }
 }
