@@ -1,0 +1,64 @@
+﻿@model Risebird.Entities.ViewModel.CodeInviteVM
+@using Risebird.Entities.Enum
+
+
+<div class="mdc-card-wrapper__text-section interviewer">
+    @using (Html.BeginForm("SendInviteCode", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <!-- Add Interviewer personal Details Start-->
+        <div class="row">
+            <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                <div class="form-group">
+                    <div class="mandate">
+                        @Html.LabelFor(model => model.userName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    </div>
+                    @Html.EditorFor(model => model.userName, new { htmlAttributes = new { id = "txt_username", @class = "form-control text-box single-line", @type="email" } })
+                    @Html.ValidationMessageFor(model => model.userName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.experience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    @Html.EditorFor(model => model.experience, new { htmlAttributes = new { id = "txt_Experience", @class = "form-control text-box single-line", @type = "number" } })
+                    @Html.ValidationMessageFor(model => model.experience, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group dob">
+                    <div class="mandate">
+                        @Html.LabelFor(model => model.inviteStartTime, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                    </div>
+                    @Html.EditorFor(m => m.inviteStartTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type="datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.inviteStartTime, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group dob">
+                    <div class="mandate">
+                        @Html.LabelFor(model => model.inviteEndTime, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                    </div>
+                    @Html.EditorFor(m => m.inviteEndTime, new { htmlAttributes = new { @class = "form-control text-box single-line",@type="datetime-local" } })
+                    @Html.ValidationMessageFor(model => model.inviteEndTime, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <div class="mandate">
+                        @Html.LabelFor(model => model.programmingLanguage, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                    </div>
+                    @Html.DropDownListFor(x => Model.programmingLanguage, (SelectList)Model.ProgrammingLanguageList, htmlAttributes: new { @class = "select-css form-control webkitEnabled",@style="padding:0px" })
+                    @*@Html.EditorFor(model => model.programmingLanguage, new { htmlAttributes = new { id = "txt_ProgrammingLanguage", @class = "form-control text-box single-line", @type = "text" } })*@
+                    @Html.ValidationMessageFor(model => model.programmingLanguage, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <div class="mandate">
+                        @Html.LabelFor(model => model.difficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                    </div>
+                    @Html.EditorFor(model => model.difficultyLevel, new { htmlAttributes = new { id = "txt_DifficultyLevel", @class = "form-control text-box single-line", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.difficultyLevel, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="card-footer ">
+            <div class="row">
+                <div class="col-md-12 mc-button-area">
+                    <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Submit</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

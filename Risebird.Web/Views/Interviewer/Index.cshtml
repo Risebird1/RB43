@@ -79,6 +79,12 @@
                     <div class="pull-left" style="margin-right:10px;">
                         @if (ViewBag.profile == "Admin")
                         {
+                            @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("SendInviteCode", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Send InviteCode</font></span>
+                            </button>*@
+                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InviteCodeList", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Send InviteCode</font></span>
+                            </button>
                             <span class="interviewer_3">
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Check Interviewer availability using Email" onclick="SendIntervieweravailability()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Interviewer availability</font></span>
@@ -1460,6 +1466,15 @@
     function SendIntervieweravailability() {
         $.ajax({
             url: '/Interviewer/CheckAllIntervieweravailbility',
+            type: "POST",
+            success: function (data) {
+                swal.fire('Emails sent successfully.');
+            }
+        });
+    }
+    function SendInviteCode() {
+        $.ajax({
+            url: '/Interviewer/InviteCodeList',
             type: "POST",
             success: function (data) {
                 swal.fire('Emails sent successfully.');

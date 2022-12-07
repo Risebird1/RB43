@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using EllipticCurve.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -44,6 +47,7 @@ namespace Risebird.Web.Controllers
         private static string Searchvalueprofile;
         private static string SearchvalueInterviewer;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly string codeapiendpoint;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
                                 ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper)
@@ -64,6 +68,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _userRepository = userRepository;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            codeapiendpoint = _configuration["CodeApiEndPoint"];
         }
 
 
@@ -558,7 +563,7 @@ namespace Risebird.Web.Controllers
                         {
                             if(!string.IsNullOrEmpty(assessmentGroupList))
                             {
-                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s).- \n '{assessmentGroupList.Split(',')}' ";
+                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                             }
                             else
                             {
@@ -681,7 +686,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (!string.IsNullOrEmpty(assessmentGroupList))
                             {
-                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) - \n '{assessmentGroupList}' ";
+                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                             }
                             else
                             {
@@ -3063,7 +3068,162 @@ namespace Risebird.Web.Controllers
                 return Json("Error retrieving data! Please try again.");
             }
         }
+        #region CodeConsole
+        [HttpGet]
+        public async Task<IActionResult> SendInviteCode()
+        {
+            try
+            {
+                CodeInviteVM model = new CodeInviteVM();
+                var programmingLanguage = from ProgrammingLanguageenum s in Enum.GetValues(typeof(ProgrammingLanguageenum))
+                                          select new { ID = s.GetDescription(), Name = s.GetDescription() };
+                model.ProgrammingLanguageList = new SelectList(programmingLanguage, "ID", "Name");
+                return PartialView("InviteCode", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["MessageInterviewerCode"] = "Invitecode has been failed";
+                return RedirectToAction("InviteCodeList");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> InviteCodeList()
+        {
+            try
+            {
+                var model = await _interviewerService.GetAllIntviteDetails();
+                if (TempData["MessageInterviewerCode"] != null)
+                {
+                    ViewBag.Message = TempData["MessageInterviewerCode"].ToString();
+                    TempData.Remove("MessageInterviewerCode");
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendInviteCode(CodeInviteVM codeInviteVM)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var programmingLanguage = from ProgrammingLanguageenum s in Enum.GetValues(typeof(ProgrammingLanguageenum))
+                                              select new { ID = s.GetDescription(), Name = s.GetDescription() };
+                    codeInviteVM.ProgrammingLanguageList = new SelectList(programmingLanguage, "ID", "Name");
+                    await GenerateCodeInviteURL(codeInviteVM);
+                    if (await _interviewerService.SendInviteCode(codeInviteVM, emailId))
+                    {
+                        TempData["MessageInterviewerCode"] = "Invitecode has been sent Successfully!";
+                        return RedirectToAction("InviteCodeList");
+                    }
+                    else
+                    {
+                        TempData["MessageInterviewerCode"] = "Invitecode has been failed";
+                        return RedirectToAction("InviteCodeList");
+                    }
+                }
+                else
+                {
+                    TempData["MessageInterviewerCode"] = "Invitecode has been failed";
+                    return RedirectToAction("InviteCodeList");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["MessageInterviewerCode"] = "InviteCode is Failed";
+                return RedirectToAction("InviteCodeList");
+            }
+        }
+
+        public async Task<IActionResult> CodeInviteReport(string inviteid, int Id)
+        {
+            var _reportmodel = await _interviewerService.CheckCodeConsoleReport(inviteid);
+            if (string.IsNullOrWhiteSpace(_reportmodel.submissionId))
+            {
+                var resultset = await GetReportSummary(inviteid);
+                _reportmodel = resultset;
+                await _interviewerService.AddCodeConsoleReport(resultset);
+                var resultreport = await GetReportDetails(resultset.submissionId);
+                _reportmodel.codeinvitereport = resultreport;
+                await _interviewerService.AddCodeConsoleReportDetails(_reportmodel);
+            }
+            else
+            {
+                var resultreport = new List<CodeInviteReportDetails>();
+                var questions = _reportmodel.codeinvitereport.Select(x => x.questionid).ToList();
+                foreach (var item in questions)
+                {
+                    var modeltestcase = new List<CodeInviteReportTestCases>();
+                    var testcases = _reportmodel.codeinvitereport.Where(x => x.questionid == item).ToList();
+                    var questiondetails = testcases.FirstOrDefault();
+                    foreach (var _testcase in testcases)
+                    {
+                        modeltestcase.Add(new CodeInviteReportTestCases { input = _testcase.input, expectedOutput = _testcase.expectedOutput, actualOutput = _testcase.actualOutput, status = _testcase.testcasestatus });
+                    }
+                    resultreport.Add(new CodeInviteReportDetails
+                    {
+                        questionName = questiondetails.questionName,
+                        questionDescription = questiondetails.questionDescription,
+                        candidateSolution = questiondetails.candidateSolution,
+                        achievedScore = questiondetails.achievedScore,
+                        questionScore = questiondetails.questionScore,
+                        status = questiondetails.questionstatus,
+                        testCaseResults = modeltestcase
+                    });
+                }
+                _reportmodel.codeinvitereport = resultreport;
+            }
+            return View(_reportmodel);
+        }
+        public async Task GenerateCodeInviteURL(CodeInviteVM _codeinvite)
+        {
+            var model = new CodeInviteURLRequest();
+            model.userName = _codeinvite.userName;
+            model.programmingLanguage = _codeinvite.programmingLanguage;
+            model.experience = _codeinvite.experience;
+            model.inviteStartTime = _codeinvite.inviteStartTime;
+            model.inviteEndTime = _codeinvite.inviteEndTime;
+            model.zone = "IST";
+            model.difficultyLevel = _codeinvite.difficultyLevel.ToLower();
+            var client = new RestClient(codeapiendpoint + "invited-assignment");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<CodeInviteURLResponse>(response.Content);
+            _codeinvite.invite_UrL = convertedResponse.inviteUrl;
+            _codeinvite.inviteId = convertedResponse.inviteUrl.Split("/").LastOrDefault();
+        }
+        public async Task<CodeInviteReportVM> GetReportSummary(string inviteid)
+        {
+            var client = new RestClient(codeapiendpoint + "submissions/invite/" + inviteid);
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<CodeInviteReportVM>(response.Content);
+            return convertedResponse;
+        }
+        public async Task<List<CodeInviteReportDetails>> GetReportDetails(string submissionid)
+        {
+            var client = new RestClient(codeapiendpoint + "submissions/" + submissionid);
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            IRestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<List<CodeInviteReportDetails>>(response.Content);
+            return convertedResponse;
+        }
+        #endregion
     }
 }
 

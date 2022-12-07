@@ -57,113 +57,114 @@ Begin
   set @assessmentGroupList = ''
   if(@AssessmentGroupId is not null and @AssessmentGroupId != '')
   Begin
-  declare @temp table(assessmentGroupId varchar(5), TotalInterviewers int)
+    declare @temp table(assessmentGroupId varchar(5), TotalInterviewers int)
   
 	  insert into @temp
 
 	  select a.value, b.TotalInterviewers from string_split(@AssessmentGroupId,',') a
 	  outer apply
-	  (select count(id) as TotalInterviewers from InterviewerProfile ipr cross apply string_split(ipr.AssessmentGroupId, ',') where a.value = value  group by value  ) b
+	  (select count(ipr.Id) as TotalInterviewers from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId cross apply string_split(ipr.AssessmentGroupId, ',') where a.value = value and ul.IsActive=1 group by value) b
 
 
 	  if exists(select top 1 assessmentGroupId from @temp where TotalInterviewers >=100)
 	  Begin
 		set @assessmentGroupList = (select STRING_AGG(asg.AssessmentGroup, ',') from @temp tp join AssessmentGroup asg on asg.id = tp.assessmentGroupId where TotalInterviewers >= 100)
+		return
 	  End
   End
 if(@assessmentGroupList is null or @assessmentGroupList = '')
 Begin
 	If Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId)            
 -- Edit in both the tables            
-Begin            
+	Begin            
             
-Declare @v_ProfileId int;            
+	Declare @v_ProfileId int;            
             
-  Update [dbo].[UserList]            
-  SET            
-   [FirstName] = @FirstName,            
-   [LastName] = @LastName,            
-   [EmailId] = @EmailId,            
-   [IsActive] = @IsActive,            
-   [MobileNumber] = @MobileNumber,             
-    [WhatsappNumber]=@WhatsappNumber        
-   where Id = @UserId;            
+	  Update [dbo].[UserList]            
+	  SET            
+	   [FirstName] = @FirstName,            
+	   [LastName] = @LastName,            
+	   [EmailId] = @EmailId,            
+	   [IsActive] = @IsActive,            
+	   [MobileNumber] = @MobileNumber,             
+		[WhatsappNumber]=@WhatsappNumber        
+	   where Id = @UserId;            
             
-  Update [dbo].[InterviewerProfile]            
-  Set            
-   [NickName] = @NickName,             
-   [AltEmailID] = @AltEmailId,            
-   [DOB] = @DOB,            
-   [Gender] = @Gender,            
-   [AnnualSalary] = @AnnualSalary,            
-   [Country] = @Country,            
-   [City] = @City,            
-   [AltMobileNumber] = @AltMobileNumber,            
-   [CurrentRole] = @CurrentRole,            
-   [Experience] = @Experience,            
-   [PreferredDomain] = @PreferredDomain,            
-   [ResumeLink] = @ResumeLink,            
-   [CodedResumeLink] = @CodedResumeLink,            
-   [GitHubLink] = @GitHubLink,            
-   [StackOverflowLink] = @StackOverflowLink,            
-   [LinkedinLink] = @LinkedinLink,            
-   [Blog] = @Blog,            
-   [IsLeadInterviewer] = @IsLeadInterviewer,            
-   [IsApproved] = @IsApproved,            
-   [AssessmentGroupId]=@AssessmentGroupId,  
-   [Isinstaavailable]=@Isinstaavailable,
-   [ModifiedBy] = @loggedInUser,
-   [ModifiedOn] = dateadd(MINUTE, 330, getdate())
-   --[IsServiceDomain] =@IsServiceDomain,  
-   --[IsProductDomain] = @IsProductDomain,  
-   --[IndiaServiceRate] = @IndiaServiceRate,  
-   --[IndiaProductRate] = @IndiaProductRate,  
-   --[OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,  
-   --[OutsideIndiaProductRate] = @OutsideIndiaProductRate  
- where userId = @UserId;            
+	  Update [dbo].[InterviewerProfile]            
+	  Set            
+	   [NickName] = @NickName,             
+	   [AltEmailID] = @AltEmailId,            
+	   [DOB] = @DOB,            
+	   [Gender] = @Gender,            
+	   [AnnualSalary] = @AnnualSalary,            
+	   [Country] = @Country,            
+	   [City] = @City,            
+	   [AltMobileNumber] = @AltMobileNumber,            
+	   [CurrentRole] = @CurrentRole,            
+	   [Experience] = @Experience,            
+	   [PreferredDomain] = @PreferredDomain,            
+	   [ResumeLink] = @ResumeLink,            
+	   [CodedResumeLink] = @CodedResumeLink,            
+	   [GitHubLink] = @GitHubLink,            
+	   [StackOverflowLink] = @StackOverflowLink,            
+	   [LinkedinLink] = @LinkedinLink,            
+	   [Blog] = @Blog,            
+	   [IsLeadInterviewer] = @IsLeadInterviewer,            
+	   [IsApproved] = @IsApproved,            
+	   [AssessmentGroupId]=@AssessmentGroupId,  
+	   [Isinstaavailable]=@Isinstaavailable,
+	   [ModifiedBy] = @loggedInUser,
+	   [ModifiedOn] = dateadd(MINUTE, 330, getdate())
+	   --[IsServiceDomain] =@IsServiceDomain,  
+	   --[IsProductDomain] = @IsProductDomain,  
+	   --[IndiaServiceRate] = @IndiaServiceRate,  
+	   --[IndiaProductRate] = @IndiaProductRate,  
+	   --[OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,  
+	   --[OutsideIndiaProductRate] = @OutsideIndiaProductRate  
+	 where userId = @UserId;            
       
    
   
-  select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;            
+	  select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;            
             
-  delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId            
+	  delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId            
             
-  delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId            
+	  delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId            
             
-  --delete from TransInterviewerProfessional where InterviewerProfileId=@v_ProfileId            
+	  --delete from TransInterviewerProfessional where InterviewerProfileId=@v_ProfileId            
             
-  delete from TransInterviewerProjects where InterviewerProfileId=@v_ProfileId            
+	  delete from TransInterviewerProjects where InterviewerProfileId=@v_ProfileId            
             
-  delete from TransInterviewerAvailability where InterviewerProfileId=@v_ProfileId            
+	  delete from TransInterviewerAvailability where InterviewerProfileId=@v_ProfileId            
             
-  delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId            
+	  delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId            
             
-  delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId         
+	  delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId         
         
-  select @InterviewerProfileId=@v_ProfileId   
+	  select @InterviewerProfileId=@v_ProfileId   
     
-  select * from InterviewerRecommendation  
+	  select * from InterviewerRecommendation  
   
-  if exists(select id from InterviewerRecommendation where Userid = @UserId)  
-  begin  
- update InterviewerRecommendation set   
- PerHourRateIndia = @IndiaServiceRate,  
- PerHourRateOutside =@OutsideIndiaServiceRate,  
- IndiaProductRate =@IndiaProductRate,  
- OutsideIndiaProductRate =@OutsideIndiaProductRate  
- where Userid =@UserId  
-  end  
-  else  
-  begin  
- insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)  
- values (@UserId, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)  
-  end  
+	  if exists(select id from InterviewerRecommendation where Userid = @UserId)  
+	  begin  
+	 update InterviewerRecommendation set   
+	 PerHourRateIndia = @IndiaServiceRate,  
+	 PerHourRateOutside =@OutsideIndiaServiceRate,  
+	 IndiaProductRate =@IndiaProductRate,  
+	 OutsideIndiaProductRate =@OutsideIndiaProductRate  
+	 where Userid =@UserId  
+	  end  
+	  else  
+	  begin  
+	 insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)  
+	 values (@UserId, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)  
+	  end  
             
-End            
+	End            
             
-Else            
+	Else            
 --Insert new record for Add request            
-Begin            
+	Begin            
 Declare @v_User_Id int;            
             
  INSERT INTO [dbo].[UserList]            
@@ -254,22 +255,22 @@ Declare @v_User_Id int;
    --@OutsideIndiaServiceRate,  
    --@OutsideIndiaProductRate            
       
- select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)  
+	select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)  
    
- if exists(select id from InterviewerRecommendation where Userid = @v_User_Id)  
-  begin  
- update InterviewerRecommendation set   
- PerHourRateIndia = @IndiaServiceRate,  
- PerHourRateOutside =@OutsideIndiaServiceRate,  
- IndiaProductRate =@IndiaProductRate,  
- OutsideIndiaProductRate =@OutsideIndiaProductRate  
- where Userid =@UserId  
-  end  
-  else  
-  begin  
- insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)  
- values (@v_User_Id, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)  
-  end  
+	if exists(select id from InterviewerRecommendation where Userid = @v_User_Id)  
+	begin  
+	 update InterviewerRecommendation set   
+	 PerHourRateIndia = @IndiaServiceRate,  
+	 PerHourRateOutside =@OutsideIndiaServiceRate,  
+	 IndiaProductRate =@IndiaProductRate,  
+	 OutsideIndiaProductRate =@OutsideIndiaProductRate  
+	 where Userid =@UserId  
+	end  
+	else  
+	begin  
+	insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)  
+	values (@v_User_Id, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)  
+	end  
            
 End  
 End

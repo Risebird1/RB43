@@ -78,5 +78,10 @@ namespace Risebird.Repository.Interface
         bool UpdateAllIntervieweravailbilityStatus(int status, string uniqueid);
         Task<List<CommonInterviewDetailsVM>> FetchAllStaffingAgencyAndClientHRwithTime(DateTime stdt, DateTime etdt);
         Task<IEnumerable<ClientFeedDataVM>> GetClientFeedForInterviewer(string interviewerEmail, DateTime? postWhichDate, int? interviewId);
+        Task<bool> SendInviteCode(CodeInviteVM codeInviteVM, string loggedinUser);
+        Task<IEnumerable<CodeInviteVM>> GetAllIntviteDetails();
+        Task<CodeInviteReportVM> CheckCodeConsoleReport(string inviteid);
+        Task<bool> AddCodeConsoleReport(CodeInviteReportVM model);
+        Task<bool> AddCodeConsoleReportDetails(CodeInviteReportVM model);
     }
 }

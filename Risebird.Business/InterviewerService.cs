@@ -1,4 +1,6 @@
-﻿using Risebird.Business.Interface;
+﻿using Newtonsoft.Json;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -6,6 +8,8 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1072,6 +1076,67 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<bool> SendInviteCode(CodeInviteVM codeInviteVM, string loggedinUser)
+        {
+            try
+            {
+                return await _interviewerRepository.SendInviteCode(codeInviteVM, loggedinUser);
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<CodeInviteVM>> GetAllIntviteDetails()
+        {
+            try
+            {
+                return await _interviewerRepository.GetAllIntviteDetails();
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<CodeInviteReportVM> CheckCodeConsoleReport(string inviteid)
+        {
+            try
+            {
+                return await _interviewerRepository.CheckCodeConsoleReport(inviteid);
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> AddCodeConsoleReport(CodeInviteReportVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.AddCodeConsoleReport(model);
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> AddCodeConsoleReportDetails(CodeInviteReportVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.AddCodeConsoleReportDetails(model);
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

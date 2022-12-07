@@ -30,8 +30,8 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IAadhaarService _aadhaarService;
-        private readonly ISurveyRepository _surveyRepository;
-        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, ISurveyRepository surveyRepository)
+        private readonly ISurveyService _surveyService;
+        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, ISurveyService surveyService)
         {
             _configuration = configuration;
             _meetingService = meetingService;
@@ -39,7 +39,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _aadhaarService = aadhaarService;
-            _surveyRepository = surveyRepository;
+            _surveyService = surveyService;
         }
 
         [HttpGet]
@@ -822,20 +822,72 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ClientFeedbacks()
         {
-            ViewBag.PageName = "ClientFeedbacks";
-            ViewBag.type = "Audio Feedback";
-            ViewBag.profileName = "";
-            var results = await _surveyRepository.FetchClientAudioFeedbackDetails();
-            return View("ClientFeedbacks", results);
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Admin")
+                    {
+                        ViewBag.PageName = "ClientFeedbacks";
+                        ViewBag.type = "Audio Feedback";
+                        ViewBag.profileName = "";
+                        var results = await _surveyService.FetchClientAudioFeedbackDetails();
+                        return View("ClientFeedbacks", results);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
         }
         [HttpGet]
         public async Task<IActionResult> BroadCastMessages()
         {
-            ViewBag.PageName = "ClientFeedbacks";
-            ViewBag.type = "Broadcast Messages";
-            ViewBag.profileName = "";
-            var results = await _surveyRepository.FetchBroadcastMessages();
-            return View("ClientFeedbacks", results);
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Admin")
+                    {
+                        ViewBag.PageName = "ClientFeedbacks";
+                        ViewBag.type = "Broadcast Messages";
+                        ViewBag.profileName = "";
+                        var results = await _surveyService.FetchBroadcastMessages();
+                        return View("ClientFeedbacks", results);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
         }
 
     }
