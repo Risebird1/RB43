@@ -558,7 +558,7 @@ namespace Risebird.Web.Controllers
                         {
                             if(!string.IsNullOrEmpty(assessmentGroupList))
                             {
-                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s).- \n '{assessmentGroupList.Split(',')}' ";
+                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                             }
                             else
                             {
@@ -681,7 +681,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (!string.IsNullOrEmpty(assessmentGroupList))
                             {
-                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) - \n '{assessmentGroupList}' ";
+                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                             }
                             else
                             {
