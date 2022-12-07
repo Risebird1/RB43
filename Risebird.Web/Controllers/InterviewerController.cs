@@ -564,7 +564,14 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile addition has been Failed";
+                            if (!string.IsNullOrEmpty(assessmentGroupList))
+                            {
+                                TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                            }
+                            else
+                            {
+                                TempData["MessageInterviewer"] = "Failed to add Interviewer Profile.";
+                            }
                             return RedirectToAction("Index");
                         }
                     }
@@ -680,7 +687,15 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+                            if (!string.IsNullOrEmpty(assessmentGroupList))
+                            {
+                                TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                            }
+                            else
+                            {
+                                TempData["MessageInterviewer"] = "Failed to update the Interviewer";
+
+                            }
                             return RedirectToAction("Index");
                         }
                     }

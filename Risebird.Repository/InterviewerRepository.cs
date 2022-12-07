@@ -231,7 +231,7 @@ namespace Risebird.Repository
 
         public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
         {
-            assessmentGroupList = String.Empty;
+            assessmentGroupList = string.Empty;
             try
             {
                 int ProfileId;
@@ -241,14 +241,14 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    _ = SqlMapper.Query<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
                     //ProfileId = parameters.Get<int?>("@InterviewerProfileId");
                     int? profileOut = (int?)parameters.Get<int?>("@InterviewerProfileId");
                     ProfileId = profileOut.HasValue ? profileOut.Value : 0;
                     assessmentGroupList = parameters.Get<string>("@assessmentGroupList");
-                    if(!string.IsNullOrEmpty(assessmentGroupList))
+                    if (!string.IsNullOrEmpty(assessmentGroupList))
                     {
                         return false;
                     }
@@ -269,8 +269,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
-                       commandType: CommandType.StoredProcedure);
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
+                        commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -286,8 +286,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
-                       commandType: CommandType.StoredProcedure);
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
+                       commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -334,8 +334,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                       _ = SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
-                       commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
+                        commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -352,8 +352,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
-                       commandType: CommandType.StoredProcedure);
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
+                        commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -368,8 +368,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
-                       commandType: CommandType.StoredProcedure);
+                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
+                        commandType: CommandType.StoredProcedure).Result;
 
                     }
                 }
@@ -385,8 +385,8 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                   _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
-                   commandType: CommandType.StoredProcedure).Result;
+                    _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+                    commandType: CommandType.StoredProcedure).Result;
 
                 }
 
