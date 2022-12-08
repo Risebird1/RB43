@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
@@ -29,7 +30,8 @@ namespace Risebird.CommonHelper
         private readonly IConfiguration _configuration;
         private readonly string _sendGridClientKey = string.Empty;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly IValidationHelper _validationHelper;
+        public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -40,6 +42,7 @@ namespace Risebird.CommonHelper
             _errorLogger = errorLogger;
             _sendGridRepository = sendGridRepository;
             _httpContextAccessor = httpContextAccessor;
+            _validationHelper = validationHelper;
         }
 
         public async Task<string> SendHelpsupportMail(Mail model)
@@ -238,12 +241,12 @@ namespace Risebird.CommonHelper
                     {
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
                     }
-                    if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency))
+                    if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency) && _validationHelper.ValidateEmailAddress(staffingAgency))
                     {
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                     }
                 }
-                else if (!string.IsNullOrEmpty(clientHREmail))
+                else if (!string.IsNullOrEmpty(clientHREmail) && _validationHelper.ValidateEmailAddress(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
@@ -1043,11 +1046,11 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Interview Invite");
                 msg.Subject = ClientName + " - Video Interview - " + primarySkill;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, "Candidate"));
-                if (!string.IsNullOrEmpty(clientHREmail))
+                if (!string.IsNullOrEmpty(clientHREmail) && _validationHelper.ValidateEmailAddress(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
-                if (!string.IsNullOrEmpty(staffingAgency))
+                if (!string.IsNullOrEmpty(staffingAgency) && _validationHelper.ValidateEmailAddress(staffingAgency))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                 }

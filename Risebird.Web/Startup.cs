@@ -402,6 +402,7 @@ namespace Risebird.Web
             services.AddScoped<ISurveyRepository, SurveyRepository>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
+            services.AddScoped<IValidationHelper, ValidationHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts
