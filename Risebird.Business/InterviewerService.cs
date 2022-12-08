@@ -7,6 +7,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1082,7 +1083,7 @@ namespace Risebird.Business
                 return await _interviewerRepository.SendInviteCode(codeInviteVM, loggedinUser);
 
             }
-            catch (SqlException ex)
+            catch (SqlTypeException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -1094,7 +1095,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.GetAllIntviteDetails();
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
@@ -1106,7 +1107,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.CheckCodeConsoleReport(inviteid);
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
@@ -1118,7 +1119,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.AddCodeConsoleReport(model);
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -1130,7 +1131,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.AddCodeConsoleReportDetails(model);
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;

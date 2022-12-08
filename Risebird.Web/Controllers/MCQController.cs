@@ -1144,10 +1144,10 @@ namespace Risebird.Web.Controllers
             var datetime1 = currentTime.ToString("yyyy-MM-dd'T'HH:mm:ss.000Z");
             _model.datetime = datetime1;
             var _meeting = new RestClient("https://meet.risebird.io/api/v1/room");
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest("https://meet.risebird.io/api/v1/room", Method.Post);
             request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
             request.AddBody(_model);
-            IRestResponse response = _meeting.Execute(request);
+            RestResponse response = _meeting.Execute(request);
             var content = response.Content;
             var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
 
@@ -1202,8 +1202,8 @@ namespace Risebird.Web.Controllers
                         if (_candidate.botactive)
                         {
                             var _meeting = new RestClient("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId);
-                            var request = new RestRequest(Method.GET);
-                            IRestResponse response = _meeting.Execute(request);
+                            var request = new RestRequest("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId, Method.Get);
+                            RestResponse response = _meeting.Execute(request);
                             var content = response.Content;
                             if (!string.IsNullOrEmpty(content))
                             {
@@ -1244,10 +1244,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                            var request = new RestRequest(Method.GET);
+                            var request = new RestRequest("https://meet.risebird.io/api/v1/room/" + _candidate.roomId, Method.Get);
                             //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
                             request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
-                            IRestResponse response = _meeting.Execute(request);
+                            RestResponse response = _meeting.Execute(request);
                             var content = response.Content;
                             if (!string.IsNullOrEmpty(content))
                             {
@@ -1758,10 +1758,10 @@ namespace Risebird.Web.Controllers
             model.testLink.mcq = MCQTestlink;
             model.testLink.code = "";
             var client = new RestClient("https://bot.risebird.io/api/v1/bot/invite");
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest("https://bot.risebird.io/api/v1/bot/invite", Method.Post);
             request.AddHeader("content-type", "application/json");
             request.AddJsonBody(model);
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
             return convertedResponse;
         }
@@ -2501,8 +2501,8 @@ namespace Risebird.Web.Controllers
                         if (_candidate.botactive)
                         {
                             var _meeting = new RestClient("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId);
-                            var request = new RestRequest(Method.GET);
-                            IRestResponse response = _meeting.Execute(request);
+                            var request = new RestRequest("https://bot.risebird.io/api/v1/bot/invite/" + _candidate.roomId, Method.Get);
+                            RestResponse response = _meeting.Execute(request);
                             var content = response.Content;
                             if (!string.IsNullOrEmpty(content))
                             {
@@ -2543,10 +2543,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                            var request = new RestRequest(Method.GET);
+                            var request = new RestRequest("https://meet.risebird.io/api/v1/room/" + _candidate.roomId, Method.Get);
                             //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
                             request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
-                            IRestResponse response = _meeting.Execute(request);
+                            RestResponse response = _meeting.Execute(request);
                             var content = response.Content;
                             if (!string.IsNullOrEmpty(content))
                             {

@@ -9,7 +9,9 @@ using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using System;
+using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -54,8 +56,8 @@ namespace Risebird.MicroService
                 script = script
 
             };
-            var response = PostToAzure(credentials, requestUrl, Method.POST, requestBody);
-            var trackUrl = response.Headers[3].Value;
+            var response = PostToAzure(credentials, requestUrl, Method.Post, requestBody);
+            var trackUrl = response.Headers?.ToList()[3].Value; //response.Headers[3].Value;
             if ((response.StatusCode == HttpStatusCode.OK ||
                  response.StatusCode == HttpStatusCode.Accepted))
             {
@@ -73,21 +75,20 @@ namespace Risebird.MicroService
             return message;
 
         }
-        public IRestResponse PostToAzure(AzureCredentials credentials, string requestUrl, Method method,
+        public RestResponse PostToAzure(AzureCredentials credentials, string requestUrl, Method method,
            object postData)
         {
-            var tcs = new TaskCompletionSource<IRestResponse>();
+            var tcs = new TaskCompletionSource<RestResponse>();
             var client =
                 CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
                     credentials);
             var request = CreateRequest(requestUrl, method, postData);
-            client.ExecuteAsync(request, (response) =>
-            {
-                if (response.ErrorException != null)
-                    tcs.TrySetException(response.ErrorException);
-                else
-                    tcs.TrySetResult(response);
-            });
+            var response = client.ExecuteAsync(request).Result;
+            if (response.ErrorException != null)
+                tcs.TrySetException(response.ErrorException);
+            else
+                tcs.TrySetResult(response);
+            
 
             return tcs.Task.Result;
         }

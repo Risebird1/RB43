@@ -72,7 +72,7 @@ namespace Risebird.MicroService
                     credentials);
             var requestUrl =
                 $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
-            var request = CreateRequest(requestUrl, Method.POST);
+            var request = CreateRequest(requestUrl, Method.Post);
             var response = client.Execute(request);
 
             if (response.StatusCode == HttpStatusCode.Accepted)

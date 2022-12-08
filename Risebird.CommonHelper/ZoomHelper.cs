@@ -71,10 +71,10 @@ namespace Risebird.CommonHelper
         {
             //string token = ZoomToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingId));
-            var request = new RestRequest(Method.GET);
+            var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingId), Method.Get);
             request.AddHeader("content-type", "application/json");
             request.AddHeader("authorization", "Bearer " + token);
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             //var content = response.Content;
             return response.StatusCode;
 

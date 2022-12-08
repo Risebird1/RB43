@@ -49,10 +49,10 @@ namespace Risebird.MicroService
         {
             string token = ZoomToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
-            var request = new RestRequest(Method.DELETE);
+            var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid), Method.Delete);
             request.AddHeader("content-type", "application/json");
             request.AddHeader("authorization", "Bearer " + token);
-            IRestResponse response = client.Execute(request);
+            RestResponse response = client.Execute(request);
             var content = response.Content;
             return "Delete successfully";
         }

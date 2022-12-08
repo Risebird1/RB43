@@ -77,10 +77,10 @@ namespace Risebird.MicroService
                         var clientDeleteMeeting = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}"));
 
                         //create HTTP Request 
-                        var requestDeleteMeeting = new RestRequest(Method.DELETE);
+                        var requestDeleteMeeting = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}"), Method.Delete);
                         requestDeleteMeeting.AddHeader("content-type", "application/json");
                         requestDeleteMeeting.AddHeader("authorization", "Bearer " + token);
-                        IRestResponse responseDeleteMeeting = clientDeleteMeeting.Execute(requestDeleteMeeting);
+                        RestResponse responseDeleteMeeting = clientDeleteMeeting.Execute(requestDeleteMeeting);
 
                         //var content = response.Content;
                         if (responseDeleteMeeting != null && responseDeleteMeeting.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
@@ -98,10 +98,10 @@ namespace Risebird.MicroService
 
                         var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"));
 
-                        var requestDeleteMeetingRecordings = new RestRequest(Method.DELETE);
+                        var requestDeleteMeetingRecordings = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"), Method.Delete);
                         requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");
                         requestDeleteMeetingRecordings.AddHeader("authorization", "Bearer " + token);
-                        IRestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
+                        RestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
                         //var content = response.Content;
                         if (responseDeleteMeetingRecordings.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
                         {

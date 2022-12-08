@@ -154,7 +154,7 @@ namespace Risebird.MicroService
                 var client = CreateClient(string.Format(endpoint, credentials.SubscriptionId), credentials);
 
 
-                var createRequest = CreateRequest(requestUrl, Method.GET);
+                var createRequest = CreateRequest(requestUrl, Method.Get);
                 var response = client.Execute(createRequest);
                 if (response == null || (response.StatusCode != HttpStatusCode.OK))
                 {

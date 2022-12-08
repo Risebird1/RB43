@@ -98,10 +98,10 @@ namespace Risebird.MicroService
                         var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"));
 
                         //create HTTP Request 
-                        var request = new RestRequest(Method.GET);
+                        var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"), Method.Get);
                         request.AddHeader("content-type", "application/json");
                         request.AddHeader("authorization", "Bearer " + token);
-                        IRestResponse response = client.Execute(request);
+                        RestResponse response = client.Execute(request);
                         var content = response.Content;
 
                         var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);
@@ -188,9 +188,9 @@ namespace Risebird.MicroService
                     try
                     {
                         var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + meeting.ZoomMeetingId);
-                        var request = new RestRequest(Method.GET);
+                        var request = new RestRequest("https://meet.risebird.io/api/v1/room/" + meeting.ZoomMeetingId, Method.Get);
                         request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);//"v7sy3J8cAFdEJp5S");
-                        IRestResponse response = _meeting.Execute(request);
+                        RestResponse response = _meeting.Execute(request);
                         var content = response.Content;
                         if (!string.IsNullOrEmpty(content))
                         {

@@ -3202,10 +3202,10 @@ namespace Risebird.Web.Controllers
             model.zone = "IST";
             model.difficultyLevel = _codeinvite.difficultyLevel.ToLower();
             var client = new RestClient(codeapiendpoint + "invited-assignment");
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest(codeapiendpoint + "invited-assignment", Method.Post);
             request.AddHeader("content-type", "application/json");
             request.AddJsonBody(model);
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<CodeInviteURLResponse>(response.Content);
             _codeinvite.invite_UrL = convertedResponse.inviteUrl;
             _codeinvite.inviteId = convertedResponse.inviteUrl.Split("/").LastOrDefault();
@@ -3216,18 +3216,18 @@ namespace Risebird.Web.Controllers
         public async Task<CodeInviteReportVM> GetReportSummary(string inviteid)
         {
             var client = new RestClient(codeapiendpoint + "submissions/invite/" + inviteid);
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest(codeapiendpoint + "submissions/invite/" + inviteid, Method.Post);
             request.AddHeader("content-type", "application/json");
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<CodeInviteReportVM>(response.Content);
             return convertedResponse;
         }
         public async Task<List<CodeInviteReportDetails>> GetReportDetails(string submissionid)
         {
             var client = new RestClient(codeapiendpoint + "submissions/" + submissionid);
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest(codeapiendpoint + "submissions/" + submissionid, Method.Post);
             request.AddHeader("content-type", "application/json");
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<List<CodeInviteReportDetails>>(response.Content);
             return convertedResponse;
         }
@@ -3245,10 +3245,10 @@ namespace Risebird.Web.Controllers
             model.testLink.mcq = "";
             model.testLink.code = CodeTestLink;
             var client = new RestClient("https://bot.risebird.io/api/v1/bot/invite");
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest("https://bot.risebird.io/api/v1/bot/invite", Method.Post);
             request.AddHeader("content-type", "application/json");
             request.AddJsonBody(model);
-            IRestResponse response = await client.ExecuteAsync(request);
+            RestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
             return convertedResponse;
         }

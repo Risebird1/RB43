@@ -139,24 +139,24 @@ namespace Risebird.CommonHelper
             if (string.IsNullOrEmpty(endPoint))
             {
                 var client = new RestClient(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/event_types"));
-                var request = new RestRequest(Method.GET);
+                var request = new RestRequest(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/event_types"), Method.Get);
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("authorization", "Bearer " + _calendlyToken);
                 request.AddParameter("organization", _calendlyOrganizationIdentifier, ParameterType.QueryString);
                 request.AddParameter("count", 100, ParameterType.QueryString);
 
-                IRestResponse response = client.Execute(request);
+                RestResponse response = client.Execute(request);
                 var content = response.Content;
                 convertedResponse = JsonConvert.DeserializeObject<CalendlyEventsListResponse>(content);
             }
             else
             {
                 var client = new RestClient(endPoint);
-                var request = new RestRequest(Method.GET);
+                var request = new RestRequest(endPoint, Method.Get);
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("authorization", "Bearer " + _calendlyToken);
 
-                IRestResponse response = client.Execute(request);
+                RestResponse response = client.Execute(request);
                 var content = response.Content;
                 convertedResponse = JsonConvert.DeserializeObject<CalendlyEventsListResponse>(content);
             }
@@ -206,14 +206,14 @@ namespace Risebird.CommonHelper
                 {
                     //get the scheduling link 
                     var client = new RestClient(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/scheduling_links"));
-                    var request = new RestRequest(Method.POST);
+                    var request = new RestRequest(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/scheduling_links"), Method.Post);
                     request.AddHeader("content-type", "application/json");
                     request.AddHeader("authorization", "Bearer " + _calendlyToken);
                     var postData = new CalendlySchedulingLinkRequestBodyData { max_event_count = 1, owner = resourceUri, owner_type = "EventType" };
                     request.AddParameter("application/json", JsonConvert.SerializeObject(postData),
                     ParameterType.RequestBody);
 
-                    IRestResponse response = await client.ExecuteAsync(request);
+                    RestResponse response = await client.ExecuteAsync(request);
                     if (response.StatusCode == HttpStatusCode.Created)
                     {
                         var convertedResponse = JsonConvert.DeserializeObject<CalendlyCreateLinkResponseWrapper>(response.Content);

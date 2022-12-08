@@ -87,10 +87,10 @@ namespace Risebird.MicroService
                         var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
 
                         //create HTTP Request 
-                        var request = new RestRequest(Method.GET);
+                        var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"), Method.Get);
                         request.AddHeader("content-type", "application/json");
                         request.AddHeader("authorization", "Bearer " + token);
-                        IRestResponse response = client.Execute(request);
+                        RestResponse response = client.Execute(request);
                         var content = response.Content;
 
                         var convertedResponse = JsonConvert.DeserializeObject<ZoomRecordingResponse>(content);

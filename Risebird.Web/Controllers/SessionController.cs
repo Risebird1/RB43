@@ -112,7 +112,7 @@ namespace Risebird.Web.Controllers
         public IActionResult SignOut()
         {
             string userEmailId = string.Empty;
-            CancellationToken ct;
+            CancellationToken ct = new CancellationToken();
             try
             {
                 if (User.Identity.IsAuthenticated)

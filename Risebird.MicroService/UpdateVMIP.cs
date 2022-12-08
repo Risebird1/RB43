@@ -101,7 +101,7 @@ namespace Risebird.MicroService
                 string requestUrl =
                     $"resourcegroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}?api-version={apiVersion}";
 
-                var response = PostToAzure(credentials, requestUrl, Method.GET, null);
+                var response = PostToAzure(credentials, requestUrl, Method.Get, null);
                 if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted ||
                     response.StatusCode == HttpStatusCode.NoContent)
                 {
@@ -118,21 +118,26 @@ namespace Risebird.MicroService
                 return null;
             }
         }
-        public IRestResponse PostToAzure(AzureCredentials credentials, string requestUrl, Method method,
+        public RestResponse PostToAzure(AzureCredentials credentials, string requestUrl, Method method,
           object postData)
         {
-            var tcs = new TaskCompletionSource<IRestResponse>();
+            var tcs = new TaskCompletionSource<RestResponse>();
             var client =
                 CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
                     credentials);
             var request = CreateRequest(requestUrl, method, postData);
-            client.ExecuteAsync(request, (response) =>
-            {
-                if (response.ErrorException != null)
-                    tcs.TrySetException(response.ErrorException);
-                else
-                    tcs.TrySetResult(response);
-            });
+            var response = client.ExecuteAsync(request).Result;
+            if (response.ErrorException != null)
+                tcs.TrySetException(response.ErrorException);
+            else
+                tcs.TrySetResult(response);
+            //client.ExecuteAsync(request, (response) =>
+            //{
+            //    if (response.ErrorException != null)
+            //        tcs.TrySetException(response.ErrorException);
+            //    else
+            //        tcs.TrySetResult(response);
+            //});
 
             return tcs.Task.Result;
         }
@@ -200,7 +205,7 @@ namespace Risebird.MicroService
                 var client =
                     CreateClient(string.Format(endpoint, credentials.SubscriptionId),
                         credentials);
-                var createRequest = CreateRequest(requestUrl, Method.GET);
+                var createRequest = CreateRequest(requestUrl, Method.Get);
                 var response = client.Execute(createRequest);
                 if (response == null || (response.StatusCode != HttpStatusCode.OK))
                 {

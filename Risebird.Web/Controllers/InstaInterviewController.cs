@@ -1396,12 +1396,12 @@ namespace Risebird.Web.Controllers
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"), Method.Post);
             request.AddHeader("content-type", "application/json");
             request.AddHeader("authorization", "Bearer " + token);
             var body = JsonConvert.SerializeObject(_zoommetingobject);
             request.AddParameter("application/json", body, ParameterType.RequestBody);
-            IRestResponse response = client.Execute(request);
+            RestResponse response = client.Execute(request);
             var content = response.Content;
             var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
             convertedResponse.InterviewDate = indianTime;

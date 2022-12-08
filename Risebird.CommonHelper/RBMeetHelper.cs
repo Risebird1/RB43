@@ -29,11 +29,11 @@ namespace Risebird.CommonHelper
             var datetime1 = currentTime.ToString("yyyy-MM-dd'T'HH:mm:ss.000Z");
             _model.datetime = datetime1;
             var _meeting = new RestClient("https://meet.risebird.io/api/v1/room");
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest("https://meet.risebird.io/api/v1/room", Method.Post);
             request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);//"v7sy3J8cAFdEJp5S"
             request.AddBody(_model);
             //request.AddJsonBody(_model);
-            IRestResponse response = _meeting.Execute(request);
+            RestResponse response = _meeting.Execute(request);
             var content = response.Content;
             var convertedResponse = JsonConvert.DeserializeObject<RBMeetCreateMeetingResponse>(content);
             if (convertedResponse != null)
