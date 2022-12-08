@@ -1127,15 +1127,13 @@
                                                 <h2>Account Details</h2>
                                             </div>
                                         </div>
-                                        @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
-                                        {
-                                            <div class="col-md-2 col-sm-2 pr-1">
+                                        <div class="col-md-2 col-sm-2 pr-1">
                                                 <div class="form-group">
                                                     <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
                                                     @*<input class="form-control text-box single-line" id="accountHolderNameList" name="accountHolderNameList" type="text" value="" placeholder="Slot- morning -evening- drop-down">*@
                                                     @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountHolderName" name="InterviewerAccDetails[0].AccountHolderName" type="text" value="">*@
 
-                                                    @Html.TextBox("InterviewerAccDetails[0].AccountHolderName", null, new { @class = "form-control text-box single-line" })
+                                                    @Html.TextBox("InterviewerAccDetails.AccountName", null, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
                                             <div class="col-md-2 col-sm-2 px-1">
@@ -1144,21 +1142,11 @@
                                                     @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
                                                     @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
 
-                                                    @Html.TextBox("InterviewerAccDetails[0].AccountNumber", null, new { @class = "form-control text-box single-line" })
+                                                    @Html.TextBox("InterviewerAccDetails.AccountNumber", null, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 col-sm-2 pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="confirmAccountNumber">Confirm Account number</label>
-
-                                                    @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
-
-                                                    @Html.TextBox("InterviewerAccDetails[0].AccountNumber", null, new { @class = "form-control text-box single-line" })
-
-                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                </div>
-                                            </div>
+                                            
 
                                             <div class="col-md-2 col-sm-2pr-1">
                                                 <div class="form-group">
@@ -1166,29 +1154,18 @@
 
                                                     @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_IFSCCode" name="InterviewerAccDetails[0].IFSCCode" type="text" value="" />*@
 
-                                                    @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { @class = "form-control text-box single-line" })
+                                                    @Html.TextBox("InterviewerAccDetails.IFSCCode", null, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 col-sm-2pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">Location</label>
-
-                                                    @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_Location" name="InterviewerAccDetails[0].Location" type="text" value="" />*@
-
-                                                    @Html.TextBox("InterviewerAccDetails[0].Location", null, new { @class = "form-control text-box single-line" })
-
-
-                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-md-2 col-sm-2 px-1">
                                                 <div class="form-group">
                                                     <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
                                                     @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
                                                     @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_UPIId" name="InterviewerAccDetails[0].UPIId" type="text" value="" />*@
 
-                                                    @Html.TextBox("InterviewerAccDetails[0].UPIId", null, new { @class = "form-control text-box single-line" })
+                                                    @Html.TextBox("InterviewerAccDetails.UPIId", null, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
                                             <div class="col-md-2 col-sm-2 px-1">
@@ -1197,82 +1174,10 @@
                                                     @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
                                                     @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_UPIId" name="InterviewerAccDetails[0].UPIId" type="text" value="" />*@
 
-                                                    @Html.TextBox("InterviewerAccDetails[0].PAN", null, new { @class = "form-control text-box single-line" })
+                                                    @Html.TextBox("InterviewerAccDetails.PAN", null, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
-                                        }
-                                        else
-                                        {
-                                            @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
-                                            {
-
-
-                                                <div class="col-md-2 col-sm-2 pr-1">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                                        @*<input class="form-control text-box single-line" id="accountHolderNameList" name="accountHolderNameList" type="text" value="" placeholder="Slot- morning -evening- drop-down">*@
-                                                        @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountHolderName" name="InterviewerAccDetails[0].AccountHolderName" type="text" value="">*@
-
-                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { @class = "form-control text-box single-line" })
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2 col-sm-2 px-1">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                                        @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
-                                                        @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
-
-                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { @class = "form-control text-box single-line" })
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2 col-sm-2 pr-1">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="confirmAccountNumber">Confirm Account number</label>
-
-                                                        @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
-
-                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { @class = "form-control text-box single-line" })
-
-                                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-2 col-sm-2pr-1">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-
-                                                        @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_IFSCCode" name="InterviewerAccDetails[0].IFSCCode" type="text" value="" />*@
-
-                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { @class = "form-control text-box single-line" })
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-2 col-sm-2 px-1">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                                        @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
-                                                        @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_UPIId" name="InterviewerAccDetails[0].UPIId" type="text" value="" />*@
-
-                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].UPIId, null, new { @class = "form-control text-box single-line" })
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2 col-sm-2pr-1">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-
-                                                        @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_Location" name="InterviewerAccDetails[0].Location" type="text" value="" />*@
-
-                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { @class = "form-control text-box single-line" })
-
-
-                                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                    </div>
-                                                </div>
-                                            }
-                                            <!-- Account Detilas End-->
-                                        }
+                                        
                                     </div>
 
                                     <div class="card-footer-button ">

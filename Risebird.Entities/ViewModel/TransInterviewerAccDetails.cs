@@ -9,7 +9,7 @@
         public string IFSCCode { get; set; }
         public string UPIId { get; set; }
         public string PAN { get; set; }
-        //public string AccountLocation { get; set; }
+        public string AccountLocation { get; set; }
 
     }
 }

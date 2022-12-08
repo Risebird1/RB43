@@ -95,7 +95,7 @@ builder.Services.AddDistributedRedisCache(options =>
     options.Configuration = "risebirdportal2.redis.cache.windows.net:6380,password=D61Xuo4tWZvWAckfOS4dRG+EF8WrmmY+XlxfTDzxZAA=,ssl=True,abortConnect=False";
 });
 
-builder.Services.AddMvc();
+//builder.Services.AddMvc();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddApplicationInsightsTelemetry();
 
@@ -365,9 +365,13 @@ app.UseResponseCompression();
 
 app.UseHttpsRedirection();
 
-app.UseStatusCodePagesWithReExecute("/Index");
+//app.UseStatusCodePagesWithReExecute("/Index");
 app.UseStaticFiles();
-
+//app.UseRouting();
+//app.UseEndpoints(opts =>
+//{
+//    opts.MapControllers();
+//});
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

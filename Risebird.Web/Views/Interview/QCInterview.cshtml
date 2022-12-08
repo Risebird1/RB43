@@ -80,8 +80,9 @@
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.interviewDuration </td>
                                                 <td> @item.candidateEmail</td>
-                                                <td> @item.primaryskill</td>
-                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                <td></td>
+@*                                                <td> @item.primaryskill</td>
+*@                                                @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                 }

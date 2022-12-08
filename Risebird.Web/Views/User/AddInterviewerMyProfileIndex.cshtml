@@ -183,78 +183,40 @@
                                             <h2>Account Details</h2>
                                         </div>
                                     </div>
-                                    @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
-                                    {
-                                        <div class="col-md-2 col-sm-2 pr-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                                @Html.TextBox("InterviewerAccDetails[0].AccountHolderName", null, new { @class = "form-control text-box single-line" })
-                                            </div>
+
+                                    <div class="col-md-2 col-sm-2 pr-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line" })
                                         </div>
-                                        <div class="col-md-2 col-sm-2 px-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                                @Html.TextBox("InterviewerAccDetails[0].AccountNumber", null, new { Id = "txt_AccountNumber", @class = "form-control text-box single-line" })
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 px-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { Id = "txt_AccountNumber", @class = "form-control text-box single-line" })
                                         </div>
-                                        <div class="col-md-2 col-sm-2 px-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> Confirm Account Number</label>
-                                                @Html.TextBox("ConfirmAccountNumber", null, new { Id = "txt_ConfirmAccountNumber", @class = "form-control text-box single-line" })
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 px-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Confirm Account Number</label>
+                                            @Html.TextBox("ConfirmAccountNumber", null, new { Id = "txt_ConfirmAccountNumber", @class = "form-control text-box single-line" })
                                         </div>
-                                        <div class="col-md-2 col-sm-2pr-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                                @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { @class = "form-control text-box single-line" })
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2pr-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line" })
                                         </div>
-                                        <div class="col-md-2 col-sm-2 px-1">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Location</label>
-                                                @Html.TextBox("InterviewerAccDetails[0].AccountLocation", null, new { @class = "form-control text-box single-line" })
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 px-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Location</label>
+                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountLocation, null, new { @class = "form-control text-box single-line" })
                                         </div>
+                                    </div>
 
 
-                                    }
-                                    else
-                                    {
-                                        @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
-                                        {
-                                            <div class="col-md-2 col-sm-2 pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 px-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { Id = "txt_AccountNumber", @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 px-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Confirm Account Number</label>
-                                                    @Html.TextBox("ConfirmAccountNumber", null, new { Id = "txt_ConfirmAccountNumber", @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 px-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Location</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountLocation, null, new { @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-                                        }
-                                        <!-- Account Detilas End-->
-                                    }
+                                    
                                 </div>
                                 <!-- Account Details End-->
                                 <div class="card-footer-button ">
