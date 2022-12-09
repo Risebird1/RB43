@@ -44,7 +44,7 @@ using Risebird.Web.Hepler;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "Authentication:AzureAdB2C");
 builder.Services.Configure<ConfigurationOptions>(options => builder.Configuration.Bind(options));
 
