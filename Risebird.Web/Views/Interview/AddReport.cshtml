@@ -58,6 +58,12 @@
         {
             interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
         }
+        
+        if (Model.HasDistinctParticipants == false)
+        {
+            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+
+        }
 
     }
     else
@@ -76,11 +82,7 @@
 
     }
 
-    if (Model.HasDistinctParticipants == false)
-    {
-        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
-
-    }
+   
 }
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />

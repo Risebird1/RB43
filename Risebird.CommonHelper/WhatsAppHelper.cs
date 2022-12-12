@@ -8,6 +8,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
@@ -20,9 +21,10 @@ namespace Risebird.CommonHelper
         private readonly string accesskey;
         private readonly IUserService _userService;
         private readonly IWhatsappRepository _whatsappRepository;
+        private readonly IHttpRequestHelper _httpRequestHelper;
 
         public WhatsAppHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger,
-            IUserService userService, IWhatsappRepository whatsappRepository)
+            IUserService userService, IWhatsappRepository whatsappRepository, IHttpRequestHelper httpRequestHelper)
         {
             //_errorLogger = errorLogger;
             _configuration = configuration;
@@ -31,6 +33,7 @@ namespace Risebird.CommonHelper
             accesskey = _configuration["WhatsApp:AccessKey"];
             _userService = userService;
             _whatsappRepository = whatsappRepository;
+            _httpRequestHelper = httpRequestHelper;
         }
         public async Task<string> WhatsAppTrackUser(WhatsAppVM _whatsAppVM)
         {
@@ -39,12 +42,23 @@ namespace Risebird.CommonHelper
                 _whatsAppVM.Userid = "";
                 //var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(_whatsAppVM.Emailid);
                 //_whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                var client = new RestClient("https://api.interakt.ai/v1/public/track/users/");
-                var request = new RestRequest("https://api.interakt.ai/v1/public/track/users/", Method.Post);
-                request.AddHeader("Authorization", "Basic " + accesskey);
-                request.AddHeader("Content-Type", "application/json");
-                request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                RestResponse response = await client.ExecuteAsync(request);
+                //var client = new RestClient("https://api.interakt.ai/v1/public/track/users/");
+                //var request = new RestRequest("https://api.interakt.ai/v1/public/track/users/", Method.Post);
+                //request.AddHeader("Authorization", "Basic " + accesskey);
+                //request.AddHeader("Content-Type", "application/json");
+                //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                Dictionary<string, string> headers = new Dictionary<string, string>
+                {
+                    { "Authorization", "Basic " + accesskey },
+                    { "Content-Type", "application/json" }
+                };
+                List<HttpParameters> parameters = new List<HttpParameters>();
+                {
+                    new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody};
+                }
+                var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/users/", Method.Post, null, headers, parameters);
+
+                //RestResponse response = await client.ExecuteAsync(request);
                 if (response != null)
                 {
                     var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
@@ -81,12 +95,26 @@ namespace Risebird.CommonHelper
                 //Fetch WhatsAPpNumber
                 var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(_whatsAppVM.Emailid);
                 _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                request.AddHeader("Authorization", "Basic " + accesskey);
-                request.AddHeader("Content-Type", "application/json");
-                request.AddParameter("application/json", "{\r\n    \"userId\": \"" + _whatsAppVM.Userid + "\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"Interview Notification\",\r\n    \"traits\": {\r\n        \"productName\": \"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                RestResponse response = await client.ExecuteAsync(request);
+                //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                //request.AddHeader("Authorization", "Basic " + accesskey);
+                //request.AddHeader("Content-Type", "application/json");
+                //request.AddParameter("application/json", "{\r\n    \"userId\": \"" + _whatsAppVM.Userid + "\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"Interview Notification\",\r\n    \"traits\": {\r\n        \"productName\": \"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                //RestResponse response = await client.ExecuteAsync(request);
+
+
+                Dictionary<string, string> headers = new Dictionary<string, string>
+                {
+                    { "Authorization", "Basic " + accesskey },
+                    { "Content-Type", "application/json" }
+                };
+                List<HttpParameters> parameters = new List<HttpParameters>();
+                {
+                    new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"" + _whatsAppVM.Userid + "\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"Interview Notification\",\r\n    \"traits\": {\r\n        \"productName\": \"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody};
+                }
+                var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                 var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                 if (obj != null)
                 {
@@ -124,12 +152,24 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody};
+                        }
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -161,12 +201,26 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -202,12 +256,28 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = username;
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -239,12 +309,27 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -279,12 +364,27 @@ namespace Risebird.CommonHelper
                         await WhatsAppTrackUser(_whatsAppVM);
                         name = Username;
 
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -316,12 +416,27 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + name + "\"\r\n\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -425,13 +540,28 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n    }\r\n}", ParameterType.RequestBody);
-                        request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        ////request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n        \"Role\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n    }\r\n}", ParameterType.RequestBody);
+                        //request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -465,12 +595,27 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         await WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = Username;
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + name + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + name + "\"\r\n\n    }\r\n\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + name + "\"\r\n\n    }\r\n\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -502,12 +647,27 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Authorization", "Basic " + accesskey },
+                            { "Content-Type", "application/json" }
+                        };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -544,12 +704,27 @@ namespace Risebird.CommonHelper
                                 _whatsAppVM.CountryCode = "+91";
                                 _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                                 await WhatsAppTrackUser(_whatsAppVM);
-                                var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                                var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                                request.AddHeader("Authorization", "Basic " + accesskey);
-                                request.AddHeader("Content-Type", "application/json");
-                                request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
-                                RestResponse response = await client.ExecuteAsync(request);
+                                //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                                //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                                //request.AddHeader("Authorization", "Basic " + accesskey);
+                                //request.AddHeader("Content-Type", "application/json");
+                                //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
+                                //RestResponse response = await client.ExecuteAsync(request);
+
+                                Dictionary<string, string> headers = new Dictionary<string, string>
+                                {
+                                    { "Authorization", "Basic " + accesskey },
+                                    { "Content-Type", "application/json" }
+                                };
+
+                                List<HttpParameters> parameters = new List<HttpParameters>();
+                                {
+                                    new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                                }
+
+                                var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                                 var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                                 if (obj != null)
                                 {
@@ -593,12 +768,26 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"TotalCount\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"TotalCount\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                                {
+                                    { "Authorization", "Basic " + accesskey },
+                                    { "Content-Type", "application/json" }
+                                };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"TotalCount\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"InterviewerName\":\"" + name + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -630,12 +819,25 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"TimeZone\":\"" + _whatsAppVM.timezone + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"TimeZone\":\"" + _whatsAppVM.timezone + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                                {
+                                    { "Authorization", "Basic " + accesskey },
+                                    { "Content-Type", "application/json" }
+                                };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + name + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"TimeZone\":\"" + _whatsAppVM.timezone + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
@@ -667,12 +869,26 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"UserName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                        RestResponse response = await client.ExecuteAsync(request);
+                        //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                        //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
+                        //request.AddHeader("Authorization", "Basic " + accesskey);
+                        //request.AddHeader("Content-Type", "application/json");
+                        //request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"UserName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", ParameterType.RequestBody);
+                        //RestResponse response = await client.ExecuteAsync(request);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                                {
+                                    { "Authorization", "Basic " + accesskey },
+                                    { "Content-Type", "application/json" }
+                                };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>();
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"UserName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody };
+                        }
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+
                         var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
                         if (obj != null)
                         {
