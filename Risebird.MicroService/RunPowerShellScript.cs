@@ -9,7 +9,6 @@ using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using System;
-using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -88,7 +87,7 @@ namespace Risebird.MicroService
                 tcs.TrySetException(response.ErrorException);
             else
                 tcs.TrySetResult(response);
-            
+
 
             return tcs.Task.Result;
         }

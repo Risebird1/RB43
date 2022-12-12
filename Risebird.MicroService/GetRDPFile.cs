@@ -149,7 +149,7 @@ namespace Risebird.MicroService
                 tcs.TrySetException(response.ErrorException);
             else
                 tcs.TrySetResult(response);
-            
+
             return tcs.Task.Result;
         }
 

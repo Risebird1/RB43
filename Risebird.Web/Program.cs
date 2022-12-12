@@ -19,27 +19,26 @@
 //    }
 //}
 
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
-using Risebird.Business.Interface;
-using Risebird.Business;
-using Risebird.CommonHelper.Interface;
-using Risebird.CommonHelper;
-using Risebird.Repository.Interface;
-using Risebird.Repository;
-using System.IO.Compression;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using Risebird.Business;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities;
-using Microsoft.ApplicationInsights.Extensibility;
-using Risebird.Entities.ViewModel;
+using Risebird.Repository;
+using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
 using Risebird.Web.Hepler;
+using System;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 

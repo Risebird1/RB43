@@ -2,8 +2,6 @@
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Risebird.CommonHelper
