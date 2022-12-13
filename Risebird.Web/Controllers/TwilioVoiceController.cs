@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using System;
+using System.Threading.Tasks;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 
@@ -16,9 +17,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public TwiMLResult Index(string irfId)
+        public async Task<TwiMLResult> Index(string irfId)
         {
-            var irfDetails = _irfService.GetIRFForCall(Convert.ToInt32(irfId)).Result;
+            var irfDetails = await _irfService.GetIRFForCall(Convert.ToInt32(irfId));
             var response = new VoiceResponse();
             var client = irfDetails.ClientCompName;
             var primarySkill = irfDetails.JDTiltle.Split("|")[0];

@@ -32,123 +32,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
             _clientService = clientService;
-        }
-
-        //[Authorize]
-        //[HttpGet]
-        //public async Task<IActionResult> Index()
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //            profileName = profileName.Replace("\"", "");
-        //            var emailId = HttpContext.Session.GetString("email")?.Trim();
-        //            emailId = emailId.Replace("\"", "");
-        //            if (profileName == "Admin" || profileName == "HR")
-        //            {
-        //                var model = new TemplatesListVM();
-        //                model.TemplateList = (await _templateService.GetAllTemplates(emailId/*, DateTime.Now.AddDays(-30), DateTime.Now*/)).ToList();
-        //                model.Profile = profileName;
-
-        //                if (HttpContext.Session.GetString("TemplateFilters") != null)
-        //                {
-        //                    var filter = JsonConvert.DeserializeObject<TemplateFilter>(HttpContext.Session.GetString("TemplateFilters"));
-
-        //                    filter.AssessmentGroup = filter.AssessmentGroup == null ? model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
-        //                    model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
-        //                }
-
-        //                foreach (var item in model.TemplateList)
-        //                {
-        //                    if (item.IsDeleted)
-        //                    {
-        //                        item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-        //                        item.Status = "Archived";
-        //                    }
-        //                    else
-        //                    {
-        //                        item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-        //                        item.Status = "Active";
-        //                    }
-        //                }
-        //                if (TempData["SuccessErrorMessageTemplate"] != null)
-        //                {
-        //                    model.Message = TempData["SuccessErrorMessageTemplate"].ToString();
-        //                    TempData.Remove("SuccessErrorMessageTemplate");
-        //                }
-        //                return View(model);
-
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("SignOut", "Session");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return RedirectToAction("SignOut", "Session");
-        //    }
-        //}
-
-        //[Authorize]
-        //[HttpPost]
-        //public async Task<IActionResult> Index(TemplateFilter filter)
-        //{
-        //    if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //    {
-        //        if (filter != null)
-        //        {
-        //            HttpContext.Session.SetString("TemplateFilters", JsonConvert.SerializeObject(filter));
-
-        //        }
-        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //        profileName = profileName.Replace("\"", "");
-        //        var emailId = HttpContext.Session.GetString("email")?.Trim();
-        //        emailId = emailId.Replace("\"", "");
-        //        if (profileName == "Admin" || profileName == "HR")
-        //        {
-
-        //            var model = new TemplatesListVM();
-        //            model.TemplateList = (await _templateService.GetAllTemplates(emailId)).ToList();
-        //            model.Profile = profileName;
-
-        //            filter.AssessmentGroup = filter.AssessmentGroup == null ?  model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
-        //            model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
-        //            foreach (var item in model.TemplateList)
-        //            {
-        //                if (item.IsDeleted)
-        //                {
-        //                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-        //                    item.Status = "Archived";
-        //                }
-        //                else
-        //                {
-        //                    item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-        //                    item.Status = "Active";
-        //                }
-        //            }
-
-        //            return View(model);
-
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return RedirectToAction("SignOut", "Session");
-        //    }
-        //}
+        }    
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -507,22 +391,22 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void SetEditTemplateParameters(EditSkillChannelTemplateVM model)
+        private async Task SetEditTemplateParameters(EditSkillChannelTemplateVM model)
         {
             model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
             model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
-            model.InterviewerList = new SelectList(_irfService.GetInterviewers(model.AssessmentGroupId?.ToString()), "UserId", "EmailId");
+            model.InterviewerList = new SelectList(await _irfService.GetInterviewers(model.AssessmentGroupId?.ToString()), "UserId", "EmailId");
 
         }
 
         [Authorize]
         [HttpGet]
-        public SelectList GetInterviewers(string assessmentgroupid)
+        public async Task<SelectList> GetInterviewers(string assessmentgroupid)
         {
 
             var list = new List<SelectListItem>();
-            var interviewers = _irfService.GetInterviewers(assessmentgroupid);
+            var interviewers = await _irfService.GetInterviewers(assessmentgroupid);
 
             if (interviewers != null && interviewers.Count() > 0)
             {
@@ -614,20 +498,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //public async Task<IActionResult> GetInterviewersByAssessmentGroup(string assessmentGroupId)
-        //{
-        //    try
-        //    {
-        //        var model = await _irfService.GetInterviewersByAssessmentGroup(assessmentGroupId);
-        //        return PartialView("TemplateInterviewersPartial", model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
-
         [Authorize]
         [HttpGet]
         public async Task<string> GetInterviewerSkillsByUserId(int userId)
@@ -669,7 +539,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new EditSkillChannelTemplateVM();
                         model = await _templateService.GetTemplateById(id);
-                        SetEditTemplateParameters(model);
+                        await SetEditTemplateParameters(model);
                         return View(model);
 
                     }
@@ -729,7 +599,7 @@ namespace Risebird.Web.Controllers
 
                         if (isDuplicate)
                         {
-                            SetEditTemplateParameters(templateDetails);
+                            await SetEditTemplateParameters(templateDetails);
                             return View(templateDetails);
                         }
 
@@ -749,7 +619,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            SetEditTemplateParameters(templateDetails);
+                           await SetEditTemplateParameters(templateDetails);
                             return View(templateDetails);
                         }
 

@@ -532,7 +532,7 @@ namespace Risebird.Web.Controllers
         //}
         #endregion
         [HttpGet]
-        private void SetEditIRFProperties(IRFVm model)
+        private async Task SetEditIRFProperties(IRFVm model)
         {
             string prof = HttpContext.Session.GetString("profileName");
             if (prof != null && prof.Contains("Client"))
@@ -554,7 +554,7 @@ namespace Risebird.Web.Controllers
                 }
             }
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
             var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
             model.OldAssessmentGroupId = _listassessment.FirstOrDefault().AssessmentGroup;
@@ -650,8 +650,8 @@ namespace Risebird.Web.Controllers
             model_report.duration = 60;
             model_report.Concurrency = 10;
             model_report.BufferTime = 18;
-            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
-            var model = _interviewSchedulerservice.FetchEventById(eventid);
+            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
+            var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;

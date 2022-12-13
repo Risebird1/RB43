@@ -36,24 +36,24 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public SelectList GetISCList()
+        public async Task<SelectList> GetISCList()
         {
             try
             {
-                return new SelectList(_unapprovedInterviewerMeetingsRepository.GetISCList(), "InterviewerSkillId", "InterviewerSkillId");
+                return new SelectList(await _unapprovedInterviewerMeetingsRepository.GetISCList(), "InterviewerSkillId", "InterviewerSkillId");
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public bool AddorupdateMeeting(InterviewerMeetingVM meeting)
+        public async Task<bool> AddorupdateMeeting(InterviewerMeetingVM meeting)
         {
             try
             {
-                if (_unapprovedInterviewerMeetingsRepository.AddorupdateMeeting(meeting).Result)
+                if (await _unapprovedInterviewerMeetingsRepository.AddorupdateMeeting(meeting))
                 {
                     return true;
                 }
@@ -61,24 +61,24 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
-        public InterviewerMeetingVM GetMeeting(int id)
+        public async Task<InterviewerMeetingVM> GetMeeting(int id)
         {
             try
             {
-                var meeting = _unapprovedInterviewerMeetingsRepository.GetInterviewMeetingById(id);
+                var meeting = await _unapprovedInterviewerMeetingsRepository.GetInterviewMeetingById(id);
                 if (meeting == null)
                     return null;
                 else
-                    return meeting.Result;
+                    return meeting;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

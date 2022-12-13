@@ -34,7 +34,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseUnApprovedInterviewerMeetings", parameters,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetIAllDateWiseUnApprovedInterviewerMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -49,7 +49,8 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<InterviewerSkillsVM> GetISCList()
+
+        public async Task<IEnumerable<InterviewerSkillsVM>> GetISCList()
         {
             try
             {
@@ -57,17 +58,18 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewerSkillsVM>(query);
+                    var results = await con.QueryAsync<InterviewerSkillsVM>(query);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
+
         public async Task<bool> AddorupdateMeeting(InterviewerMeetingVM meeting)
         {
             try

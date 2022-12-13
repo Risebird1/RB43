@@ -9,8 +9,8 @@ namespace Risebird.Business.Interface
     public interface IUnapprovedInterviewerMeetingsService
     {
         Task<IEnumerable<MeetingVM>> GetAllUnapprovedInterviewerMeetings(DateTime startDate, DateTime endDate);
-        SelectList GetISCList();
-        bool AddorupdateMeeting(InterviewerMeetingVM meeting);
-        InterviewerMeetingVM GetMeeting(int id);
+        Task<SelectList> GetISCList();
+        Task<bool> AddorupdateMeeting(InterviewerMeetingVM meeting);
+        Task<InterviewerMeetingVM> GetMeeting(int id);
     }
 }

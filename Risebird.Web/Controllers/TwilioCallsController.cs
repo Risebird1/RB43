@@ -12,13 +12,6 @@ namespace Risebird.Web.Controllers
 {
     public class TwilioCallsController : Controller
     {
-        //public TwiMLResult Index()
-        //{
-        //    var response = new VoiceResponse();
-        //    response.Say("Hello World");
-        //    return TwiML(response);
-
-        //}
         private IAzureStorageHelper _azureStorageHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         public TwilioCallsController(IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
@@ -61,7 +54,6 @@ namespace Risebird.Web.Controllers
         public async Task<bool> UploadAudio()
         {
             var file = Request.Form.Files;
-
             var filename = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
 
             if (file != null)
@@ -70,9 +62,7 @@ namespace Risebird.Web.Controllers
                 if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
                 {
                     await _azureStorageHelper.InsertBlob(filename, "audios", file[0]);
-
                 }
-
             }
 
             return true;

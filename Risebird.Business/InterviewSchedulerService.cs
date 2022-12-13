@@ -21,103 +21,107 @@ namespace Risebird.Business
             _interviewSchedulerRepository = interviewSchedulerRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public List<daytimes_report> FetchEventList()
+
+        public async Task<List<daytimes_report>> FetchEventList()
         {
             try
             {
-                return _interviewSchedulerRepository.FetchEventList();
+                return await _interviewSchedulerRepository.FetchEventList();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public bool CreateEvent(daytimes_report model)
+
+        public async Task<bool> CreateEvent(daytimes_report model)
         {
             try
             {
-                return _interviewSchedulerRepository.CreateEvent(model);
+                return await _interviewSchedulerRepository.CreateEvent(model);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
-        public daytimes_report FetchEventById(int eventid)
+        public async Task<daytimes_report> FetchEventById(int eventid)
         {
             try
             {
-                return _interviewSchedulerRepository.FetchEventById(eventid);
+                return await _interviewSchedulerRepository.FetchEventById(eventid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public List<daytimes_second> FetchTimeslotsByEventId(int eventid)
+
+        public async Task<List<daytimes_second>> FetchTimeslotsByEventId(int eventid)
         {
             try
             {
-                return _interviewSchedulerRepository.FetchTimeslotsByEventId(eventid);
+                return await _interviewSchedulerRepository.FetchTimeslotsByEventId(eventid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public List<daytimes_second> FetchDetailsByUniqueId(string uniqueid)
+        public async Task<List<daytimes_second>> FetchDetailsByUniqueId(string uniqueid)
         {
             try
             {
-                return _interviewSchedulerRepository.FetchDetailsByUniqueId(uniqueid);
+                return await _interviewSchedulerRepository.FetchDetailsByUniqueId(uniqueid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public bool DeactivateEventById(int eventid, int status)
+        public async Task<bool> DeactivateEventById(int eventid, int status)
         {
             try
             {
-                return _interviewSchedulerRepository.DeactivateEventById(eventid, status);
+                return await _interviewSchedulerRepository.DeactivateEventById(eventid, status);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
-        public SelectList GetIRFList()
+        public async Task<SelectList> GetIRFList()
         {
             try
             {
-                var results = _interviewSchedulerRepository.GetIRFList();
+                var results = await _interviewSchedulerRepository.GetIRFList();
                 return new SelectList(results.Where(x => x.EndDate > DateTime.Now), "IRFId", "IRFId");
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public List<daytimes_second> FetchSlots(DateTime value, string uniqueid)
+        public async Task<List<daytimes_second>> FetchSlots(DateTime value, string uniqueid)
         {
             try
             {
-                return _interviewSchedulerRepository.FetchSlots(value, uniqueid);
+                return await _interviewSchedulerRepository.FetchSlots(value, uniqueid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
+
         public async Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime)
         {
             try
@@ -130,6 +134,7 @@ namespace Risebird.Business
                 return null;
             }
         }
+
         public async Task<string> FetchJDTitle(string IRFId)
         {
             try
@@ -142,63 +147,65 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail)
+
+        public async Task<string> UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail)
         {
             try
             {
-                return _interviewSchedulerRepository.UpdateInstaZoomDetails(starttime, endtime, Accountemail);
+                return await _interviewSchedulerRepository.UpdateInstaZoomDetails(starttime, endtime, Accountemail);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public ScheculeInterviewIRFVM fetchIRFClientDetails(string IRFId)
+
+        public async Task<ScheculeInterviewIRFVM> fetchIRFClientDetails(string IRFId)
         {
             try
             {
-                return _interviewSchedulerRepository.fetchIRFClientDetails(IRFId);
+                return await _interviewSchedulerRepository.fetchIRFClientDetails(IRFId);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public int AutoCreateEvent(daytimes_report model)
+        public async Task<int> AutoCreateEvent(daytimes_report model)
         {
             try
             {
-                return _interviewSchedulerRepository.AutoCreateEvent(model);
+                return await _interviewSchedulerRepository.AutoCreateEvent(model);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
         }
-        public int FetchEventidByUniqueid(string _uniqueid)
+        public async Task<int> FetchEventidByUniqueid(string _uniqueid)
         {
             try
             {
-                return _interviewSchedulerRepository.FetchEventidByUniqueid(_uniqueid);
+                return await _interviewSchedulerRepository.FetchEventidByUniqueid(_uniqueid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
         }
-        public bool UpdateSchedulingLinkDetails(string _uniqueid)
+        public async Task<bool> UpdateSchedulingLinkDetails(string _uniqueid)
         {
             try
             {
-                return _interviewSchedulerRepository.UpdateSchedulingLinkDetails(_uniqueid);
+                return await _interviewSchedulerRepository.UpdateSchedulingLinkDetails(_uniqueid);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -238,27 +245,27 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public List<string> fetchSkillChannelHRDetails(string IRFId)
+        public async Task<List<string>> fetchSkillChannelHRDetails(string IRFId)
         {
             try
             {
-                return _interviewSchedulerRepository.fetchSkillChannelHRDetails(IRFId);
+                return await _interviewSchedulerRepository.fetchSkillChannelHRDetails(IRFId);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public List<string> fetchSkillChannelStaffingDetails(string IRFId)
+        public async Task<List<string>> fetchSkillChannelStaffingDetails(string IRFId)
         {
             try
             {
-                return _interviewSchedulerRepository.fetchSkillChannelStaffingDetails(IRFId);
+                return await _interviewSchedulerRepository.fetchSkillChannelStaffingDetails(IRFId);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -272,6 +279,49 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue)
+        {
+            try
+            {
+                int currentOffset = offset;
+                string timezonevalue = string.Empty;
+                string hh = string.Empty;
+
+                var valuecheck = (-offset / 60);
+                if (valuecheck < 10 && valuecheck > 0)
+                {
+                    hh = "0" + valuecheck;
+                }
+                if (valuecheck > -10 && valuecheck < 0)
+                {
+                    hh = "-0" + valuecheck.ToString().Replace("-", "");
+                }
+                var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
+                var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                foreach (TimeZoneInfo timeZone in timeZones)
+                {
+                    var flag = false;
+                    if (!string.IsNullOrWhiteSpace(TimeZonevalue) && timeZone.DisplayName.Contains(TimeZonevalue))
+                    {
+                        if (timeZone.DisplayName.Contains(offsetvalue))
+                        {
+                            flag = timeZone.IsDaylightSavingTime(value);
+                            if (flag)
+                            {
+                                TimeSpan currentOffsetvalue = timeZone.GetUtcOffset(value);
+                                currentOffset = -(currentOffsetvalue.Hours * 60);
+                            }
+                        }
+                    }
+                }
+                return currentOffset;
+            }
+            catch (Exception ex)
+            {
+                return offset;
             }
         }
     }

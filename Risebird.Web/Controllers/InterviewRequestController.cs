@@ -242,7 +242,7 @@ namespace Risebird.Web.Controllers
                             model.SkillCollection = meeting.TechSkills;
                             model.StartDate = DateTime.Now;
                             model.EndDate = DateTime.Now.AddMonths(3);
-                            var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                            var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                             model.CalendlyLink = _schedulinglink;
                             if (model.ClientId == 0)
                                 model.ClientId = await _clientService.GetClientByEmailId(emailid);
@@ -663,7 +663,7 @@ namespace Risebird.Web.Controllers
                     model.SkillCollection = meeting.TechSkills;
                     model.StartDate = DateTime.Now;
                     model.EndDate = DateTime.Now.AddMonths(3);
-                    var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                    var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                     model.CalendlyLink = _schedulinglink;
                     if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailId, "Client"))
                     {
@@ -757,7 +757,7 @@ namespace Risebird.Web.Controllers
         {
             return _irfService.CheckUniqueness(value, isCloneTemplate);
         }
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        public async Task<string> AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -781,8 +781,8 @@ namespace Risebird.Web.Controllers
             model_report.duration = 60;
             model_report.Concurrency = 10;
             model_report.BufferTime = 18;
-            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
-            var model = _interviewSchedulerservice.FetchEventById(eventid);
+            var eventid = await _interviewSchedulerservice.AutoCreateEvent(model_report);
+            var model = await _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;

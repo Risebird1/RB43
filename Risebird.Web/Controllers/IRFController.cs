@@ -892,19 +892,19 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void SetAddIRFProperties(IRFVm model)
+        private async Task SetAddIRFProperties(IRFVm model)
         {
             var skills = _irfRepository.GetSkills();
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
-                interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
+                interviewers = await _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString());
                 AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
             }
             else
             {
-                interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId).ToList();
+                interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
                 var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
                 var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
                 AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
@@ -1054,11 +1054,11 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public SelectList GetInterviewers(string assessmentgroupid)
+        public async Task<SelectList> GetInterviewers(string assessmentgroupid)
         {
 
             var list = new List<SelectListItem>();
-            var interviewers = _irfService.GetInterviewers(assessmentgroupid);
+            var interviewers = await _irfService.GetInterviewers(assessmentgroupid);
 
             if (interviewers != null && interviewers.Count() > 0)
             {
@@ -2084,7 +2084,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void SetEditIRFProperties(IRFVm model)
+        private async Task SetEditIRFProperties(IRFVm model)
         {
             string prof = HttpContext.Session.GetString("profileName");
             if (prof != null && prof.Contains("Client"))
@@ -2108,7 +2108,7 @@ namespace Risebird.Web.Controllers
             }
 
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
 
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
             var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
@@ -6506,8 +6506,8 @@ namespace Risebird.Web.Controllers
             model_report.Concurrency = 10;
             model_report.BufferTime = 18;
             model_report.MeetingPlatform = meetingPlatform;
-            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
-            var model = _interviewSchedulerservice.FetchEventById(eventid);
+            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
+            var model =  _interviewSchedulerservice.FetchEventById(eventid).Result;
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;

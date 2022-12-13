@@ -26,15 +26,15 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public List<daytimes_report> FetchEventList()
+        public async Task<List<daytimes_report>> FetchEventList()
         {
             try
             {
                 var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_report>(query, null);
-                    return (List<daytimes_report>)results;
+                    var result= await con.QueryAsync<daytimes_report>(query, null);
+                    return result.ToList();
                 }
             }
             catch (Exception ex)
@@ -42,7 +42,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool CreateEvent(daytimes_report model)
+        public async Task<bool> CreateEvent(daytimes_report model)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@BufferTime", model.BufferTime);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
+                    var eventids = await SqlMapper.QueryAsync<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     int eventid = eventids.FirstOrDefault();
                     //Insert bulk DayType
@@ -84,7 +84,7 @@ namespace Risebird.Repository
                     cmdTechReport.Parameters.Add(new SqlParameter("@EventTimeslotBulkData", SqlDbType.Structured));
                     cmdTechReport.Parameters["@EventTimeslotBulkData"].Value = timeslot;
                     con.Open();
-                    var changes = cmdTechReport.ExecuteNonQuery();
+                    var changes = await cmdTechReport.ExecuteNonQueryAsync();
                     if (cmdTechReport.ExecuteNonQuery() != 0)
                     {
                         con.Close();
@@ -98,7 +98,8 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public daytimes_report FetchEventById(int eventid)
+
+        public async Task<daytimes_report> FetchEventById(int eventid)
         {
             try
             {
@@ -107,7 +108,7 @@ namespace Risebird.Repository
                 dp.Add("@id", eventid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_report>(query, dp);
+                    var results = await con.QueryAsync<daytimes_report>(query, dp);
                     return results.FirstOrDefault();
                 }
             }
@@ -116,7 +117,8 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public List<daytimes_second> FetchTimeslotsByEventId(int eventid)
+
+        public async Task<List<daytimes_second>> FetchTimeslotsByEventId(int eventid)
         {
             try
             {
@@ -125,7 +127,7 @@ namespace Risebird.Repository
                 dp.Add("@Eventid", eventid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_second>(query, dp);
+                    var results = await con.QueryAsync<daytimes_second>(query, dp);
                     return (List<daytimes_second>)results;
                 }
             }
@@ -134,7 +136,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public List<daytimes_second> FetchDetailsByUniqueId(string uniqueid)
+        public async Task<List<daytimes_second>> FetchDetailsByUniqueId(string uniqueid)
         {
             try
             {
@@ -144,7 +146,7 @@ namespace Risebird.Repository
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_second>(query, dp);
+                    var results = await con.QueryAsync<daytimes_second>(query, dp);
                     return (List<daytimes_second>)results;
                 }
             }
@@ -153,7 +155,8 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool DeactivateEventById(int eventid, int status)
+
+        public async Task<bool> DeactivateEventById(int eventid, int status)
         {
             try
             {
@@ -163,7 +166,7 @@ namespace Risebird.Repository
                 dp.Add("@Status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_report>(query, dp);
+                    var results = await con.QueryAsync<daytimes_report>(query, dp);
                     return true;
                 }
             }
@@ -172,14 +175,14 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public IEnumerable<IRF> GetIRFList()
+        public async Task<IEnumerable<IRF>> GetIRFList()
         {
             try
             {
                 var query = "Select * from IRF where IsDeleted= 0";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query);
+                    var results = await con.QueryAsync<IRF>(query);
                     return results;
                     //return new SelectList(results.Where(x => x.EndDate > DateTime.Now), "IRFId", "IRFId");
                 }
@@ -189,7 +192,8 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public List<daytimes_second> FetchSlots(DateTime value, string uniqueid)
+
+        public async Task<List<daytimes_second>> FetchSlots(DateTime value, string uniqueid)
         {
             try
             {
@@ -198,7 +202,7 @@ namespace Risebird.Repository
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_second>(query, dp);
+                    var results = await con.QueryAsync<daytimes_second>(query, dp);
                     return (List<daytimes_second>)results;
                 }
             }
@@ -207,6 +211,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
         public async Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime)
         {
             try
@@ -231,6 +236,7 @@ namespace Risebird.Repository
                 return "";
             }
         }
+
         public async Task<string> FetchJDTitle(string IRFId)
         {
             try
@@ -249,7 +255,8 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail)
+
+        public async Task<string> UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail)
         {
             try
             {
@@ -259,7 +266,7 @@ namespace Risebird.Repository
                     parameters.Add("@startdate", starttime);
                     parameters.Add("@enddate", endtime);
                     parameters.Add("@Accountemail", Accountemail);
-                    var result = SqlMapper.Query<string>(con, "usp_UpdateInstaOnlineMettings", parameters,
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_UpdateInstaOnlineMettings", parameters,
                             commandType: CommandType.StoredProcedure);
                     return "success";
                 }
@@ -273,7 +280,7 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public ScheculeInterviewIRFVM fetchIRFClientDetails(string IRFId)
+        public async Task<ScheculeInterviewIRFVM> fetchIRFClientDetails(string IRFId)
         {
             try
             {
@@ -282,7 +289,7 @@ namespace Risebird.Repository
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<ScheculeInterviewIRFVM>(query, dp);
+                    var results = await con.QueryAsync<ScheculeInterviewIRFVM>(query, dp);
                     return results.FirstOrDefault();
                 }
             }
@@ -291,7 +298,8 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public int AutoCreateEvent(daytimes_report model)
+
+        public async Task<int> AutoCreateEvent(daytimes_report model)
         {
             try
             {
@@ -308,7 +316,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@BufferTime", model.BufferTime);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
+                    var eventids = await SqlMapper.QueryAsync<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     int eventid = eventids.FirstOrDefault();
                     //Insert bulk DayType
@@ -333,7 +341,7 @@ namespace Risebird.Repository
                     cmdTechReport.Parameters.Add(new SqlParameter("@EventTimeslotBulkData", SqlDbType.Structured));
                     cmdTechReport.Parameters["@EventTimeslotBulkData"].Value = timeslot;
                     con.Open();
-                    var changes = cmdTechReport.ExecuteNonQuery();
+                    var changes = await cmdTechReport.ExecuteNonQueryAsync();
                     if (cmdTechReport.ExecuteNonQuery() != 0)
                     {
                         con.Close();
@@ -347,7 +355,7 @@ namespace Risebird.Repository
             }
             return 0;
         }
-        public int FetchEventidByUniqueid(string _uniqueid)
+        public async Task<int> FetchEventidByUniqueid(string _uniqueid)
         {
             try
             {
@@ -356,7 +364,7 @@ namespace Risebird.Repository
                 dp.Add("@uniqueid", _uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, dp);
+                    var results = await con.QueryAsync<int>(query, dp);
                     return results.FirstOrDefault();
                 }
             }
@@ -365,7 +373,8 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public bool UpdateSchedulingLinkDetails(string _uniqueid)
+
+        public async Task<bool> UpdateSchedulingLinkDetails(string _uniqueid)
         {
             try
             {
@@ -374,7 +383,7 @@ namespace Risebird.Repository
                 dp.Add("@uniqueid", _uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query(query, dp);
+                    var results = await con.QueryAsync(query, dp);
                     return true;
                 }
             }
@@ -383,7 +392,8 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public string GenerateOneTimeEvent(string olduniqueid)
+
+        public async Task<string> GenerateOneTimeEvent(string olduniqueid)
         {
             try
             {
@@ -393,7 +403,7 @@ namespace Risebird.Repository
                 dp.Add("@uniqueid", olduniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<daytimes_report>(query, dp);
+                    var results = await con.QueryAsync<daytimes_report>(query, dp);
                     resultset = (daytimes_report)results.FirstOrDefault();
                 }
                 Guid _guid = Guid.NewGuid();
@@ -407,7 +417,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Concurrency", resultset.Concurrency);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var eventids = SqlMapper.Query<int>(con, "usp_GenerateOneTimeInterviewEvent", dynamicParameters,
+                    var eventids = await SqlMapper.QueryAsync<int>(con, "usp_GenerateOneTimeInterviewEvent", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     int eventid = eventids.FirstOrDefault();
                     return _guid.ToString();
@@ -476,7 +486,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public List<string> fetchSkillChannelHRDetails(string IRFId)
+        public async Task<List<string>> fetchSkillChannelHRDetails(string IRFId)
         {
             try
             {
@@ -485,7 +495,7 @@ namespace Risebird.Repository
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dp);
+                    var results = await con.QueryAsync<string>(query, dp);
                     return (List<string>)results;
                 }
             }
@@ -494,7 +504,8 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public List<string> fetchSkillChannelStaffingDetails(string IRFId)
+
+        public async Task<List<string>> fetchSkillChannelStaffingDetails(string IRFId)
         {
             try
             {
@@ -503,7 +514,7 @@ namespace Risebird.Repository
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dp);
+                    var results = await con.QueryAsync<string>(query, dp);
                     return (List<string>)results;
                 }
             }

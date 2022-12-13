@@ -41,22 +41,24 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _rBMeetHelper = rBMeetHelper;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
         }
+
         #region Scheduling Confirmation Page
-        public IActionResult SchedulerList()
+        public async Task<IActionResult> SchedulerList()
         {
             var model = new List<daytimes_report>();
-            model = _interviewSchedulerservice.FetchEventList();
+            model = await _interviewSchedulerservice.FetchEventList();
             foreach (var item in model)
             {
                 item.EventUrl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + item.Uniqueid;
             }
             return View(model);
         }
-        public IActionResult AddEvent()
+
+        public async Task<IActionResult> AddEvent()
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -76,29 +78,29 @@ namespace Risebird.Web.Controllers
             model_report.StartDate = DateTime.Now.AddHours(12);
             model_report.EndDate = DateTime.Now.AddDays(60);
             model_report.Concurrency = 10;
-            SetDropDownTime(model_report);
+            await SetDropDownTime(model_report);
             return View(model_report);
         }
         [HttpPost]
-        public IActionResult AddEvent(daytimes_report model)
+        public async Task<IActionResult> AddEvent(daytimes_report model)
         {
-            var result = _interviewSchedulerservice.CreateEvent(model);
+            var result = await _interviewSchedulerservice.CreateEvent(model);
             if (result)
             {
                 return RedirectToAction("SchedulerList");
             }
             else
             {
-                SetDropDownTime(model);
+               await SetDropDownTime(model);
                 return View(model);
             }
         }
-        public IActionResult EditEvent(int eventid, int eventtype)
+        public async Task<IActionResult> EditEvent(int eventid, int eventtype)
         {
-            var model = _interviewSchedulerservice.FetchEventById(eventid);
+            var model = await _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
             {
-                var timeslots = _interviewSchedulerservice.FetchTimeslotsByEventId(eventid);
+                var timeslots = await _interviewSchedulerservice.FetchTimeslotsByEventId(eventid);
                 var daytypes = (from data in timeslots
                                 select new daytimes_second { Daytype = data.Daytype, dayCheck = data.dayCheck }).ToList();
                 var model_Second = new List<daytimes_second>();
@@ -116,14 +118,15 @@ namespace Risebird.Web.Controllers
                 }
                 model.setvalue = model_Second;
             }
-            SetDropDownTime(model);
+            await SetDropDownTime(model);
             model.Eventtype = eventtype;
             return View(model);
         }
+
         [HttpPost]
-        public IActionResult EditEvent(daytimes_report model)
+        public async Task<IActionResult> EditEvent(daytimes_report model)
         {
-            var result = _interviewSchedulerservice.CreateEvent(model);
+            var result = await _interviewSchedulerservice.CreateEvent(model);
             if (result)
             {
                 if (model.Eventtype == 1)
@@ -137,13 +140,13 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                SetDropDownTime(model);
+                await SetDropDownTime(model);
                 return View(model);
             }
         }
-        public IActionResult DeactivateEvent(int eventid)
+        public async Task<IActionResult> DeactivateEvent(int eventid)
         {
-            if (_interviewSchedulerservice.DeactivateEventById(eventid, 0))
+            if (await _interviewSchedulerservice.DeactivateEventById(eventid, 0))
             {
 
             }
@@ -153,9 +156,9 @@ namespace Risebird.Web.Controllers
             }
             return RedirectToAction("SchedulerList");
         }
-        public IActionResult ActivateEvent(int eventid)
+        public async Task<IActionResult> ActivateEvent(int eventid)
         {
-            if (_interviewSchedulerservice.DeactivateEventById(eventid, 1))
+            if (await _interviewSchedulerservice.DeactivateEventById(eventid, 1))
             {
 
             }
@@ -165,7 +168,8 @@ namespace Risebird.Web.Controllers
             }
             return RedirectToAction("SchedulerList");
         }
-        public void SetDropDownTime(daytimes_report model)
+
+        public async Task SetDropDownTime(daytimes_report model)
         {
             var timeslot = new List<TimeslotsVM>();
             timeslot.Add(new TimeslotsVM { id = 1, Name = "1:00" });
@@ -193,7 +197,7 @@ namespace Risebird.Web.Controllers
             timeslot.Add(new TimeslotsVM { id = 23, Name = "23:00" });
             timeslot.Add(new TimeslotsVM { id = 24, Name = "24:00" });
             model.timeslots = new SelectList(timeslot, "id", "Name");
-            model.IRFList = _interviewSchedulerservice.GetIRFList();
+            model.IRFList = await _interviewSchedulerservice.GetIRFList();
             var IntervalsList = new List<TimeslotsVM>();
             IntervalsList.Add(new TimeslotsVM { id = 30, Name = "30" });
             IntervalsList.Add(new TimeslotsVM { id = 60, Name = "60" });
@@ -204,7 +208,7 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ScheduleEvent(string id)
         {
             var model = new ScheculeInterview();
-            var result = _interviewSchedulerservice.FetchDetailsByUniqueId(id);
+            var result = await _interviewSchedulerservice.FetchDetailsByUniqueId(id);
             ViewBag.id = id;
             bool isPaused = false;
             if (result != null && result.Count() > 0)
@@ -226,9 +230,9 @@ namespace Risebird.Web.Controllers
                     }
                     model.Uniqueid = result.FirstOrDefault().Uniqueid;
                     ViewBag.Start = 1;
-                    model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
-                    var _listhr = _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
-                    var _staffing = _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
+                    model._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
+                    var _listhr = await _interviewSchedulerservice.fetchSkillChannelHRDetails(model.InterviewChannelId);
+                    var _staffing = await _interviewSchedulerservice.fetchSkillChannelStaffingDetails(model.InterviewChannelId);
                     if (_staffing != null)
                     {
                         model._liststaffing = new SelectList(_staffing);
@@ -284,7 +288,7 @@ namespace Risebird.Web.Controllers
                     var _time = _date[3].Split(":");
                     DateTime value = new DateTime(Convert.ToInt32(_date[2]), Convert.ToInt32(_date[1]), Convert.ToInt32(_date[0]), Convert.ToInt32(_time[0]), Convert.ToInt32(_time[1]), 0);
                     interviewdatetime = value;
-                    model.TimeZoneoffset = FetchCurrentoffset(model.offset, value, model.TimeZonesValue);
+                    model.TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(model.offset, value, model.TimeZonesValue);
                     model.scheduleDate = value.AddMinutes(model.TimeZoneoffset);
                 }
                 if (model.ResumeFile != null)
@@ -356,7 +360,7 @@ namespace Risebird.Web.Controllers
                 {
                     interviewOnDevice = interviewOnDevice + " " + "Silent place with appropriate lighting";
                 }
-                var JDTitle = _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
+                var JDTitle = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
                 TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);
                 var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
@@ -367,7 +371,7 @@ namespace Risebird.Web.Controllers
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
+                        zoomLink = await CreateZoomMeeting(model.Name, JDTitle, indianTime);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         if (zoomLink == null)
                         {
@@ -395,7 +399,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (result)
                     {
-                        _ = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
                         var valuecheck = (-model.offset / 60);
@@ -442,7 +446,7 @@ namespace Risebird.Web.Controllers
                         {
                             TO = model.Email,
                             //CC = accountEmail,//zoomLink.accountemail,
-                            Subject = model.ClientName + " Interview - " + model.Name + " | " + JDTitle.Result + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                            Subject = model.ClientName + " Interview - " + model.Name + " | " + JDTitle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
@@ -473,7 +477,7 @@ namespace Risebird.Web.Controllers
                 return View(model);
             }
         }
-        public string GetFileMimeType(IFormFile file)
+        private string GetFileMimeType(IFormFile file)
         {
             IFileTypeInterrogator interrogator = new FileTypeInterrogator.FileTypeInterrogator();
             byte[] fileBytes;
@@ -485,17 +489,18 @@ namespace Risebird.Web.Controllers
             FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
             return fileTypeInfo.MimeType.ToLower();
         }
-        public JsonResult FetchSlots(int day, int month, int year, string id, int offset, string TimeZonevalue)
+
+        public async Task<JsonResult> FetchSlots(int day, int month, int year, string id, int offset, string TimeZonevalue)
         {
             DateTime value = new DateTime(year, month, day);
-            var result = _interviewSchedulerservice.FetchSlots(value, id);
+            var result = await _interviewSchedulerservice.FetchSlots(value, id);
             string dayofweek = value.DayOfWeek.ToString().ToLower();
             var result0 = result.Where(x => x.Daytype == dayofweek).ToList();
             string dayofweek1 = value.AddDays(1).DayOfWeek.ToString().ToLower();
             var result1 = result.Where(x => x.Daytype == dayofweek1).ToList();
             string dayofweek2 = value.AddDays(-1).DayOfWeek.ToString().ToLower();
             var result2 = result.Where(x => x.Daytype == dayofweek2).ToList();
-            offset = FetchCurrentoffset(offset, value, TimeZonevalue);
+            offset = _interviewSchedulerservice.FetchCurrentoffset(offset, value, TimeZonevalue);
             int addontime = offset + 330;
             var model = new List<string>();
 
@@ -759,7 +764,7 @@ namespace Risebird.Web.Controllers
             }
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;
-            var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
+            var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
 
@@ -825,47 +830,7 @@ namespace Risebird.Web.Controllers
             var content = response.Content;
             return "Delete successfully";
         }
-        public int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue)
-        {
-            try
-            {
-                int currentOffset = offset;
-                string timezonevalue = string.Empty;
-                string hh = string.Empty;
 
-                var valuecheck = (-offset / 60);
-                if (valuecheck < 10 && valuecheck > 0)
-                {
-                    hh = "0" + valuecheck;
-                }
-                if (valuecheck > -10 && valuecheck < 0)
-                {
-                    hh = "-0" + valuecheck.ToString().Replace("-", "");
-                }
-                var offsetvalue = (hh + ":" + ((offset % 60) < 0 ? (-offset % 60) : (offset % 60))).ToString();
-                var timeZones = TimeZoneInfo.GetSystemTimeZones();
-                foreach (TimeZoneInfo timeZone in timeZones)
-                {
-                    var flag = false;
-                    if (!string.IsNullOrWhiteSpace(TimeZonevalue) && timeZone.DisplayName.Contains(TimeZonevalue))
-                    {
-                        if (timeZone.DisplayName.Contains(offsetvalue))
-                        {
-                            flag = timeZone.IsDaylightSavingTime(value);
-                            if (flag)
-                            {
-                                TimeSpan currentOffsetvalue = timeZone.GetUtcOffset(value);
-                                currentOffset = -(currentOffsetvalue.Hours * 60);
-                            }
-                        }
-                    }
-                }
-                return currentOffset;
-            }
-            catch (Exception ex)
-            {
-                return offset;
-            }
-        }
+       
     }
 }

@@ -2960,10 +2960,10 @@ namespace Risebird.Web.Controllers
                 {
                     string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
                     var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
-                    oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                    oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
                     if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                     {
-                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
                     }
                 }
                 else

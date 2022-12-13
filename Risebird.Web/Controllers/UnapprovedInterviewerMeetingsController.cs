@@ -325,7 +325,7 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         model.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
-                        model.ISCList = _unapprovedInterviewerMeetingsService.GetISCList();
+                        model.ISCList = await _unapprovedInterviewerMeetingsService.GetISCList();
 
                         return View(model);
                     }
@@ -368,12 +368,12 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meeting.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
-                        meeting.ISCList = _unapprovedInterviewerMeetingsService.GetISCList();
+                        meeting.ISCList = await _unapprovedInterviewerMeetingsService.GetISCList();
                         if (ModelState.IsValid)
                         {
                             meeting.candidateEmail = meeting.candidateEmail.ToLower();
                             meeting.sCreatedBy = emailid;
-                            if (_unapprovedInterviewerMeetingsService.AddorupdateMeeting(meeting))
+                            if (await _unapprovedInterviewerMeetingsService.AddorupdateMeeting(meeting))
                             {
                                 if (meeting.IsEditable)
                                 {
@@ -442,7 +442,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
-                        InterviewerMeetingVM meetingToUpdate = _unapprovedInterviewerMeetingsService.GetMeeting(id);
+                        InterviewerMeetingVM meetingToUpdate = await _unapprovedInterviewerMeetingsService.GetMeeting(id);
                         if (meetingToUpdate == null)
                             return RedirectToAction("Index");
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
@@ -451,7 +451,7 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
-                        meetingToUpdate.ISCList = _unapprovedInterviewerMeetingsService.GetISCList();
+                        meetingToUpdate.ISCList = await _unapprovedInterviewerMeetingsService.GetISCList();
                         meetingToUpdate.IsEditable = true;
                         if (meetingToUpdate != null)
                         {

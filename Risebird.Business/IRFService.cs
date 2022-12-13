@@ -197,35 +197,16 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<Interviewer> GetInterviewers(string assessmentgroupid)
+        public async Task<IEnumerable<Interviewer>> GetInterviewers(string assessmentgroupid)
         {
             try
             {
-                var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
-                //var assessmentgroupidlist = assessmentgroupid.Split(",");
-                //var list = new List<Interviewer>();
-                //foreach (var item in interviewers ?? new List<Interviewer>())
-                //{
-                //    foreach (var groupid in assessmentgroupidlist ?? new List<string>().ToArray())
-                //    {
-                //        if (groupid == "" || string.IsNullOrEmpty(item.AssessmentGroupId))
-                //        {
-                //            continue;
-                //        }
-                //        if (item.AssessmentGroupId.Contains(groupid))
-                //        {
-                //            list.Add(item);
-                //            break;
-                //        }
-                //    }
-                //}
-                //list = list.Distinct().ToList();
+                var interviewers = await _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);                
                 return interviewers;
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -235,19 +216,15 @@ namespace Risebird.Business
         /// </summary>
         /// <param name="assessmentgroupid"></param>
         /// <returns></returns>
-        public IEnumerable<Interviewer> GetInterviewersForIRF(string assessmentgroupid)
+        public async Task<List<Interviewer>> GetInterviewersForIRF(string assessmentgroupid)
         {
             try
-            {
-                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
-                var interviewers = _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
-                interviewers = interviewers.Distinct().ToList();
-                return interviewers;
+            {               
+                return await _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);                
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -1098,10 +1075,10 @@ namespace Risebird.Business
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
-                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
                     }
                     else
@@ -1960,10 +1937,10 @@ namespace Risebird.Business
                                    {
                                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                                       oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                       oneTimeSchedulingLink =  _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
                                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                                        {
-                                           oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                           oneTimeSchedulingLink =  _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
                                        }
                                    }
                                    else
@@ -2821,10 +2798,10 @@ namespace Risebird.Business
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
-                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                         }
                         oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }

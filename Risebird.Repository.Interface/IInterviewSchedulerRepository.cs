@@ -7,27 +7,27 @@ namespace Risebird.Repository.Interface
 {
     public interface IInterviewSchedulerRepository
     {
-        List<daytimes_report> FetchEventList();
-        bool CreateEvent(daytimes_report model);
-        daytimes_report FetchEventById(int eventid);
-        List<daytimes_second> FetchTimeslotsByEventId(int eventid);
-        List<daytimes_second> FetchDetailsByUniqueId(string uniqueid);
-        bool DeactivateEventById(int eventid, int status);
-        IEnumerable<IRF> GetIRFList();
-        List<daytimes_second> FetchSlots(DateTime value, string uniqueid);
+        Task<List<daytimes_report>> FetchEventList();
+        Task<bool> CreateEvent(daytimes_report model);
+        Task<daytimes_report> FetchEventById(int eventid);
+        Task<List<daytimes_second>> FetchTimeslotsByEventId(int eventid);
+        Task<List<daytimes_second>> FetchDetailsByUniqueId(string uniqueid);
+        Task<bool> DeactivateEventById(int eventid, int status);
+        Task<IEnumerable<IRF>> GetIRFList();
+        Task<List<daytimes_second>> FetchSlots(DateTime value, string uniqueid);
         Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime);
         Task<string> FetchJDTitle(string IRFId);
-        string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail);
-        ScheculeInterviewIRFVM fetchIRFClientDetails(string IRFId);
-        int AutoCreateEvent(daytimes_report model);
-        int FetchEventidByUniqueid(string _uniqueid);
-        bool UpdateSchedulingLinkDetails(string _uniqueid);
-        string GenerateOneTimeEvent(string olduniqueid);
+        Task<string> UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail);
+        Task<ScheculeInterviewIRFVM> fetchIRFClientDetails(string IRFId);
+        Task<int> AutoCreateEvent(daytimes_report model);
+        Task<int> FetchEventidByUniqueid(string _uniqueid);
+        Task<bool> UpdateSchedulingLinkDetails(string _uniqueid);
+        Task<string> GenerateOneTimeEvent(string olduniqueid);
         Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
         Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink, string zoommeetingid);
-        List<string> fetchSkillChannelHRDetails(string IRFId);
-        List<string> fetchSkillChannelStaffingDetails(string IRFId);
+        Task<List<string>> fetchSkillChannelHRDetails(string IRFId);
+        Task<List<string>> fetchSkillChannelStaffingDetails(string IRFId);
         Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null);
     }
 }
