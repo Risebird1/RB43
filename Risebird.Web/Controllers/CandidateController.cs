@@ -2334,11 +2334,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult ShortListList(string IRFID)
+        public async Task<JsonResult> ShortListList(string IRFID)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
-            var model = _meetingService.ShortListedClient(emailid, IRFID);
+            var model = await _meetingService.ShortListedClient(emailid, IRFID);
             foreach (var item in model)
             {
                 item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
@@ -2348,11 +2348,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult InterestList(string IRFID)
+        public async Task<JsonResult> InterestList(string IRFID)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
-            var model = _meetingService.InterestListClient(emailid, IRFID);
+            var model = await _meetingService.InterestListClient(emailid, IRFID);
             foreach (var item in model)
             {
                 item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
@@ -4104,7 +4104,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_meetingService.PublicCancelInterview(id, emailId))
+                if (await _meetingService.PublicCancelInterview(id, emailId))
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
                     var updatedStatus = await _irfRepository.UpdateCancellationSource(id, emailId);

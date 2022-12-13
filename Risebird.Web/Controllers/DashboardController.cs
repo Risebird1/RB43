@@ -1434,7 +1434,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InterviewerDashboardVM();
                         model = await _dashboardService.GetInterviewDetailsCount(emailid);
-                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
                         model.CodedName = codedname;
                         //var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         ViewBag.isCodedResumePresent = false;

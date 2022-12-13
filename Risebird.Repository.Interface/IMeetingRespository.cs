@@ -18,7 +18,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
         Task<IEnumerable<MeetingVM>> GetAllClientInterviews(string emailId);
         Task<IEnumerable<MeetingVM>> GetClientMeetings(string emailId);
-        string AssignYourself(int meetingid, string interviewerMail);
+        Task<string> AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
         Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailId);
         Task<bool> UpdateComments(InterviewComments interviewComments);
@@ -53,10 +53,10 @@ namespace Risebird.Repository.Interface
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP);
 
         Task<int> CheckCompletedInterviews(string emailID);
-        bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
+        Task<bool> SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
         Task<IEnumerable<Meeting>> GetAllEmergencyOpenInterviews(string emailID);
         Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID, string status);
-        bool CancelInterview(int meetingid);
+        Task<bool> CancelInterview(int meetingid);
         List<string> ListInterviewersMail(string candidateEmail, string interviewDate);
         int GetCandidateId(int id, string irfName);
         bool UpdateInterviewVerificationScore(int meetingId, double confidence);

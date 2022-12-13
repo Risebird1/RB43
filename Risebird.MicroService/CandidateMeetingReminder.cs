@@ -115,7 +115,7 @@ namespace Risebird.MicroService
                     }
                     else if (item.Typefunction == 1)
                     {
-                        if (_meetingService.PublicCancelInterview(item.Interviewid))
+                        if (await _meetingService.PublicCancelInterview(item.Interviewid))
                         {
                             var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
                             var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);

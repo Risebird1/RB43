@@ -9,32 +9,32 @@ namespace Risebird.Business.Interface
 {
     public interface IMeetingService
     {
-        List<MeetingVM> GetMeetingList();
+        Task<List<MeetingVM>> GetMeetingList();
         Task<bool> AddMeeting(AddUpdateMeetingVM meeting);
-        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
+        Task<List<MeetingVM>> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites(string emailid);
         Task<AddUpdateMeetingVM> GetMeeting(int id);
-        List<Meeting> GetAllOpenInterviews(string emailID);
+        Task<List<Meeting>> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
         List<MeetingVM> GetAllClientInterviews(string emailID);
 
-        string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
-        bool UnassignYourself(int meetingid, string email, bool isPenalty);
-        List<Meeting> GetAllAssignedInterviews(string emailID);
-        bool UpdateComments(InterviewComments comments, string performedBy = null);
-        InterviewComments GetInterviewComments(int interviewId);
+        Task<string> AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
+        Task<bool> UnassignYourself(int meetingid, string email, bool isPenalty);
+        Task<List<Meeting>> GetAllAssignedInterviews(string emailID);
+        Task<bool> UpdateComments(InterviewComments comments, string performedBy = null);
+        Task<InterviewComments> GetInterviewComments(int interviewId);
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewReport(InterviewReport reportModel, string emailId);
         //IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
         Task<IEnumerable<SkillComment>> GetTechSkillComments(int irfId, int userId = 0);
         SelectList GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
-        List<MeetingVM> GetClientMeetingList(string emailId);
+        Task<List<MeetingVM>> GetClientMeetingList(string emailId);
         bool PostApproval(string imid, string value, string comment);
         bool PostSelectionStatus(string imid, string value, string comment);
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP, string clientEmailId);
-        bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus, string performedBy = null);
+        Task<bool> SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus, string performedBy = null);
         Task<List<Meeting>> GetCandidateInterviews(string emailID, string status);
         Task<bool> CancelInterview(int meetingid, string interviewDate, string candidateEmail);
         List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList);
@@ -56,8 +56,8 @@ namespace Risebird.Business.Interface
         string CandidateSuitable(int id, string email, string Comment);
         Task<VedioComments> Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
-        List<Meeting> ShortListedClient(string emailid, string IRFID);
-        List<Meeting> InterestListClient(string emailid, string IRFID);
+        Task<List<Meeting>> ShortListedClient(string emailid, string IRFID);
+        Task<List<Meeting>> InterestListClient(string emailid, string IRFID);
         string Fetchusername(string emailid);
         Task<IEnumerable<VideoCountdetail>> GetTotalViewCount(int id);
 
@@ -79,7 +79,7 @@ namespace Risebird.Business.Interface
         Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
         string AddVedioShare(string email, string vedioid, string Emailids);
-        int CheckVedioShare(string vedioid, string Emailid);
+        Task<int> CheckVedioShare(string vedioid, string Emailid);
         string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
         IEnumerable<VideoDetails> GetVideoIntrestDetails();
         IEnumerable<string> FetchShareEmails(int Interviewid);
@@ -136,9 +136,9 @@ namespace Risebird.Business.Interface
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
-        List<Meeting> FetchOpenMeetingById(string id);
+        Task<List<Meeting>> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
-        string FetchInterviewerCodedName(string emailID);
+        Task<string> FetchInterviewerCodedName(string emailID);
         Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
         Task<SelectList> GetIRFQualityControllersEmails(string irfId);
         Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
@@ -158,7 +158,7 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
         Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid);
-        bool PublicCancelInterview(int meetingid, string loggedInUser = null);
+        Task<bool> PublicCancelInterview(int meetingid, string loggedInUser = null);
         Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
@@ -175,16 +175,16 @@ namespace Risebird.Business.Interface
         bool FetchInterviewerNotificationStatus(string emailID);
         bool CheckInterviewerCodedResume(string emailID);
         Task<bool> SendsMailsAfterCancellingInterview(int meetingId, int irfId, string candidateEmail);
-        List<MeetingVM> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
-        QCFormVM FetchQCFormDetailsById(int interviewid);
-        bool AddorUpdateQCFormReport(QCFormVM model);
+        Task<List<MeetingVM>> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
+        Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
+        Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
-        bool ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags);
-        string GetClientHRContactByInterviewid(int interviewid);
+        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags);
+        Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
-        List<MeetingVM> QCReportDetailsByInterviewer(string emailId);
-        bool UpdateQCReportRedFlagsResolved(int interviewid);
-        List<MeetingVM> GetReslovedRedFlagsInterviewList();
+        Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
+        Task<bool> UpdateQCReportRedFlagsResolved(int interviewid);
+        Task<List<MeetingVM>> GetReslovedRedFlagsInterviewList();
         Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month);
         Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
@@ -200,7 +200,7 @@ namespace Risebird.Business.Interface
         Task<bool> ResetInterviewPayment(int id);
         bool CheckInterviewCancellable(int meetingid);
         Task<string> GetMeetingPlatformbyIRFId(string IRFId);
-        List<MeetingVM> GetRedoInterviewList();
+        Task<List<MeetingVM>> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);
         Task<string> StoreClientBroadcastMessage(BroadcastModel model);
         Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid);

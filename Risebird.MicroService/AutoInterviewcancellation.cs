@@ -39,7 +39,7 @@ namespace Risebird.MicroService
                 {
                     try
                     {
-                        if (_meetingService.PublicCancelInterview(item.Interviewid, "Auto cancelled by System"))
+                        if (await _meetingService.PublicCancelInterview(item.Interviewid, "Auto cancelled by System"))
                         {
                             _ = await _meetingService.SendsMailsAfterCancellingInterview(item.Interviewid, item.Irfid, item.CandidateEmail);
 

@@ -448,7 +448,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("VideoPagefilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = _meetingService.GetMeetingList();
+                                modelList = await _meetingService.GetMeetingList();
                                 modelList = modelList.Where(t => t.JDTiltle.Contains(model.JDTiltle.Split("|")[0]) && t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate && t.confirmationStatus == "1" && (t.InterviewStatus == 2 || t.InterviewStatus == 4) && t.VideoLink != null).OrderByDescending(x => x.interviewDate).ToList();
                             }
                             modelList = modelList.Select(x =>

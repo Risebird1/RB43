@@ -750,16 +750,15 @@ namespace Risebird.Business
         }
 
 
-        public List<string> GetListOfInterviwerBasedOnIRFId(string irfId)
+        public async Task<List<string>> GetListOfInterviwerBasedOnIRFId(string irfId)
         {
             try
             {
-                return _irfRepository.GetListOfInterviwerBasedOnIRFId(irfId).Result.ToList();
+                return (await _irfRepository.GetListOfInterviwerBasedOnIRFId(irfId)).ToList();
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

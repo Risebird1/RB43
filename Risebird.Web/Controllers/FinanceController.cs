@@ -1168,14 +1168,17 @@ namespace Risebird.Web.Controllers
                             string groupdetail = "";
                             foreach (var group in AssessmentGroup)
                             {
-                                int groupid = Convert.ToInt32(group);
-                                if (string.IsNullOrEmpty(groupdetail))
+                                if (group != "")
                                 {
-                                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                }
-                                else
-                                {
-                                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                    int groupid = Convert.ToInt32(group);
+                                    if (string.IsNullOrEmpty(groupdetail))
+                                    {
+                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                    }
+                                    else
+                                    {
+                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                                    }
                                 }
                             }
                             item.AssessmentGroupId = groupdetail;
@@ -1216,40 +1219,11 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    var model = await _meetingService.FetchFNPaymentHistory();
-                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                    foreach (var item in model)
-                    {
-                        if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            var AssessmentGroup = item.AssessmentGroupId.Split(",");
-                            string groupdetail = "";
-                            foreach (var group in AssessmentGroup)
-                            {
-                                int groupid = Convert.ToInt32(group);
-                                if (string.IsNullOrEmpty(groupdetail))
-                                {
-                                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                }
-                                else
-                                {
-                                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                }
-                            }
-                            item.AssessmentGroupId = groupdetail;
-                        }
-                    }
                     if (filter != null)
                     {
                         HttpContext.Session.SetString("PaymentHistoryfilters", JsonConvert.SerializeObject(filter));
                     }
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
-                    }
-                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
-                    model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
-                    return View(model);
+                    return RedirectToAction("PaymentHistory");
                 }
                 else
                 {

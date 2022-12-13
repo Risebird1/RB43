@@ -282,7 +282,7 @@ namespace Risebird.Repository
             }
             if (!flag)
             {
-                if (_meetingRespository.CancelInterview(interviewid))
+                if (_meetingRespository.CancelInterview(interviewid).Result)
                 {
                     var setvalue = _meetingRespository.UpdateCancelRecruiterInterviewDetails(interviewid);
                     var candidateId = _irfRepository.GetCandidateIdByEmail(CandidateEmailid).Result;

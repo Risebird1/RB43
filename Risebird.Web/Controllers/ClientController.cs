@@ -893,7 +893,7 @@ namespace Risebird.Web.Controllers
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
                         ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
-                        var meetings = _meetingService.GetClientMeetingList(emailid);
+                        var meetings = await _meetingService.GetClientMeetingList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                         {
@@ -978,7 +978,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Emailid = Emailid;
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
                     ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
-                    var meetings = _meetingService.GetClientMeetingList(emailid);
+                    var meetings = await _meetingService.GetClientMeetingList(emailid);
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                     {
@@ -1352,7 +1352,7 @@ namespace Risebird.Web.Controllers
                 var roleId = await _clientService.GetClientRoleByEmailId(emailid);
 
                 var selectedMeeting = new List<MeetingVM>();
-                var meetings = _meetingService.GetClientMeetingList(emailid);
+                var meetings = await _meetingService.GetClientMeetingList(emailid);
                 if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                 {
                     meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
@@ -2920,7 +2920,7 @@ namespace Risebird.Web.Controllers
                         var roleid = _clientService.GetClientRoleByEmailId(emailid).Result;
                         if (roleid != 4)
                         {
-                            var meetings = _meetingService.GetClientMeetingList(emailid);
+                            var meetings = await _meetingService.GetClientMeetingList(emailid);
                             meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                             if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
                             {
@@ -3228,7 +3228,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public FileContentResult RejectedPriorityExporttoExcel()
+        public async Task<FileContentResult> RejectedPriorityExporttoExcel()
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
@@ -3238,7 +3238,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var meetings = _meetingService.GetClientMeetingList(emailid);
+                var meetings = await _meetingService.GetClientMeetingList(emailid);
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
                 {

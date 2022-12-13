@@ -23,7 +23,7 @@ namespace Risebird.Web.Controllers.api
         [HttpGet]
         public async Task<HttpResponseMessage> IRFBasedInterviewerMail(string IRFID, string interviewDate)
         {
-            var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(IRFID);
+            var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(IRFID);
             if (interviwers != null)
             {
                 await _notificationHelper.SendIRFBasedInterviewerMail(interviwers, interviewDate);

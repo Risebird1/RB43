@@ -840,7 +840,7 @@ namespace Risebird.Repository
             }
         }
 
-        public string AssignYourself(int meetingid, string interviewerMail)
+        public async Task<string> AssignYourself(int meetingid, string interviewerMail)
         {
             try
             {
@@ -853,17 +853,17 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
 
-        public bool CancelInterview(int meetingid)
+        public async Task<bool> CancelInterview(int meetingid)
         {
             try
             {
@@ -871,20 +871,17 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 dynamicParameters.Add("@value", 2);
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<int>(query, dynamicParameters);
                     return true;
                 }
-
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
-
         }
 
         public async Task<bool> UnassignYourself(int meetingid)
@@ -1743,7 +1740,6 @@ namespace Risebird.Repository
                     var results = con.Query<TransClientUser>(query, dynamicParameters);
                     return results;
                 }
-
             }
             catch (SqlException ex)
             {
@@ -1817,7 +1813,7 @@ namespace Risebird.Repository
             }
         }
 
-        public bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
+        public async Task<bool> SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
         {
             try
             {
@@ -1826,8 +1822,6 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@InterviewId", imid);
                 dynamicParameters.Add("@QCStatus", qcStatus);
                 dynamicParameters.Add("@QCComment", comment);
-
-
                 dynamicParameters.Add("@FraudLipSync", FraudLipSync);
                 dynamicParameters.Add("@QuestionsRelevance", QuestionsRelevance);
                 dynamicParameters.Add("@HandsOnCoding", HandsOnCoding);
@@ -1835,21 +1829,13 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@TechnicalCommunicationSkills", TechnicalCommunicationSkills);
                 dynamicParameters.Add("@ChapteringCompleted", ChapteringCompleted);
                 dynamicParameters.Add("@QuestionsFilled", QuestionsFilled);
-
                 dynamicParameters.Add("@TechSkillsMetric", TechSkillsMetric);
-
                 dynamicParameters.Add("@SelectabilityMetric", SelectabilityMetric);
-
                 dynamicParameters.Add("@JoinabilityMetric", JoinabilityMetric);
-
                 dynamicParameters.Add("@GeneralSkillMetric", GeneralSkillMetric);
-
                 dynamicParameters.Add("@CommentsFilled", CommentsFilled);
-
                 dynamicParameters.Add("@MeaningfulAssessments", MeaningfulAssessments);
-
                 dynamicParameters.Add("@CorrectEnglishGrammar", CorrectEnglishGrammar);
-
                 dynamicParameters.Add("@ProctoringReportFilled", ProctoringReportFilled);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1872,12 +1858,12 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -2283,7 +2269,6 @@ namespace Risebird.Repository
         {
             try
             {
-
                 var query = "select id from UserList where EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailID);
@@ -2319,7 +2304,6 @@ namespace Risebird.Repository
         {
             try
             {
-
                 var query = "select id from UserList where EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailID);
@@ -4971,7 +4955,6 @@ namespace Risebird.Repository
                        commandType: CommandType.StoredProcedure);
                     return result?.FirstOrDefault();
                 }
-
             }
             catch (SqlException ex)
             {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -22,13 +23,20 @@ namespace Risebird.Web.Controllers
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly HttpClient _httpClient;
         private IAccountService _accountService;
-
-        public SessionController(HttpClientHelper factory, IOptions<AzureAdB2COptions> b2cOptions, IApplicationErrorLogger applicationErrorLogger, IAccountService accountService)
+        private readonly IConfiguration _configuration;
+        private readonly string TenantName;
+        private readonly string SignUpSignInPolicyId;
+        private readonly string RedirectUri;
+        public SessionController(HttpClientHelper factory, IOptions<AzureAdB2COptions> b2cOptions, IApplicationErrorLogger applicationErrorLogger, IAccountService accountService, IConfiguration configuration)
         {
             _httpClient = factory.GetHttpClient();
             AzureAdB2COptions = b2cOptions.Value;
             _applicationErrorLogger = applicationErrorLogger;
             _accountService = accountService;
+            _configuration = configuration;
+            TenantName = _configuration["Authentication:AzureAdB2C:TenantName"];
+            SignUpSignInPolicyId = _configuration["Authentication:AzureAdB2C:SignUpSignInPolicyId"];
+            RedirectUri = _configuration["Authentication:AzureAdB2C:CallbackPath"];
         }
 
         public AzureAdB2COptions AzureAdB2COptions { get; set; }
@@ -124,7 +132,7 @@ namespace Risebird.Web.Controllers
                     var updated = _accountService.Signout(emailId, sessionId);
                     var callbackUrl = Url.Action(nameof(SignedOut), "Session", values: null, protocol: Request.Scheme);
                     var token = HttpContext.Session.GetString("Token");
-                    var path = $"https://{AzureAdB2COptions.TenantName}.b2clogin.com/{AzureAdB2COptions.TenantName}.onmicrosoft.com/{AzureAdB2COptions.SignUpSignInPolicyId}/oauth2/v2.0/logout?post_logout_redirect_uri={AzureAdB2COptions.RedirectUri}";
+                    var path = $"https://{TenantName}.b2clogin.com/{TenantName}.onmicrosoft.com/{SignUpSignInPolicyId}/oauth2/v2.0/logout?post_logout_redirect_uri={RedirectUri}";
                     var request = new HttpRequestMessage(HttpMethod.Get, path);
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var response = _httpClient.SendAsync(request, ct).Result;
