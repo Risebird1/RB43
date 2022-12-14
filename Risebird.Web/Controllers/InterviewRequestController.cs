@@ -134,7 +134,7 @@ namespace Risebird.Web.Controllers
                         model.ClientId = clientId;
                         if (clientId > 0)
                         {
-                            model.ClientCompanyName = _clientService.GetClient(clientId).Name;
+                            model.ClientCompanyName = (await _clientService.GetClient(clientId))?.Name;
                         }
                         await SetBillingOwnerList(clientId);
                         if (TempData["SuccessMessageInterviewCreation"] != null)
@@ -549,7 +549,7 @@ namespace Risebird.Web.Controllers
                 model.ClientId = clientId;
                 if (clientId > 0)
                 {
-                    model.ClientCompanyName = _clientService.GetClient(clientId).Name;
+                    model.ClientCompanyName = (await _clientService.GetClient(clientId))?.Name;
                 }
                 await SetBillingOwnerList(clientId);
                 if (TempData["SuccessErrorMessageInterview"] != null)

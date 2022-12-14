@@ -6507,7 +6507,7 @@ namespace Risebird.Web.Controllers
             model_report.BufferTime = 18;
             model_report.MeetingPlatform = meetingPlatform;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
-            var model =  _interviewSchedulerservice.FetchEventById(eventid).Result;
+            var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
@@ -7284,7 +7284,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetClientDetails(int clientid)
         {
-            var _clientdetails = _clientService.GetClient(clientid);
+            var _clientdetails = await _clientService.GetClient(clientid);
             return Json(_clientdetails);
         }
     }

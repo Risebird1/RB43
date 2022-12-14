@@ -62,7 +62,7 @@ namespace Risebird.Web.Controllers
             model.ClientId = await _clientService.GetClientByEmailId(emailid);
             if (model.ClientId.HasValue)
             {
-                model.ClientCompanyName = _clientService.GetClient(model.ClientId.Value).Name;
+                model.ClientCompanyName = (await _clientService.GetClient(model.ClientId.Value))?.Name;
             }
             else
             {

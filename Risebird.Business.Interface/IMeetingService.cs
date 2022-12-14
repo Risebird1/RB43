@@ -144,12 +144,12 @@ namespace Risebird.Business.Interface
         Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
         Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid);
         Task<string> SaveRatingDetails(InterviewerRating model);
-        List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid, string Emailid);
+        Task<List<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid, string Emailid);
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
-        List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid);
+        Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
         List<string> FetchClientListByIRFID(int IRFID);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);

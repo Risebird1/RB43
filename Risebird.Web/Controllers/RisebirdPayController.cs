@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -89,7 +90,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult AddWalletPoints(int points, string comment, int ClientId)
+        public async Task<JsonResult> AddWalletPoints(int points, string comment, int ClientId)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -99,7 +100,7 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    var result = _clientService.AddWalletPoints(ClientId, emailid, points, comment);
+                    var result = await _clientService.AddWalletPoints(ClientId, emailid, points, comment);
                     if (result == "Success")
                     {
                         return Json("Success");

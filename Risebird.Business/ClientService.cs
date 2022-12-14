@@ -35,63 +35,58 @@ namespace Risebird.Business
             }
         }
 
-        public bool AddClient(Client client)
+        public async Task<bool> AddClient(Client client)
         {
             try
             {
-                return _clientRepository.AddClient(client).Result;
+                return await _clientRepository.AddClient(client);
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public Client GetClient(int id)
+        public async Task<Client> GetClient(int id)
         {
             try
             {
-                var client = _clientRepository.GetClient(id);
-
+                var client = await _clientRepository.GetClient(id);
                 if (client == null)
                     return null;
                 else
-                    return client.Result;
+                    return client;
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool UpdateClient(Client client)
+        public async Task<bool> UpdateClient(Client client)
         {
             try
             {
-                return _clientRepository.UpdateClient(client).Result;
+                return await _clientRepository.UpdateClient(client);
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool DeleteClient(int id)
+        public async Task<bool> DeleteClient(int id)
         {
             try
             {
-                return _clientRepository.DeleteClient(id).Result;
+                return await _clientRepository.DeleteClient(id);
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -113,16 +108,15 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AddClientJd(ClientJdVM _client)
+        public async Task<string> AddClientJd(ClientJdVM _client)
         {
             try
             {
-                return _clientRepository.AddClientJd(_client).Result;
+                return await _clientRepository.AddClientJd(_client);
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
             }
         }
@@ -132,7 +126,6 @@ namespace Risebird.Business
             {
                 return _clientRepository.FetchClientJd(clientid);
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -159,7 +152,6 @@ namespace Risebird.Business
                 var result = (IList<CandidateCuratedScore>)_clientRepository.GetCandidateJDScore(id);
                 return result;
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -180,17 +172,16 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AddWalletPoints(int ClientId, string emailid, int points, string comment)
+        public async Task<string> AddWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try
             {
-                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points, comment).Result;
+                var result = await _clientRepository.AddWalletPoints(ClientId, emailid, points, comment);
                 return result;
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "failed";
             }
         }
@@ -200,7 +191,6 @@ namespace Risebird.Business
             {
                 return _clientRepository.ResetCandidate(Clientjdid, candidateEmail, emailid);
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -213,7 +203,6 @@ namespace Risebird.Business
             {
                 return _clientRepository.DeleteClientJd(assessmentid);
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -285,16 +274,16 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public IEnumerable<IRF> GetRecruiterReportByClient(string emailId, DateTime st, DateTime se)
+        public async Task<IEnumerable<IRF>> GetRecruiterReportByClient(string emailId, DateTime st, DateTime se)
         {
             try
             {
-                var irfList = _clientRepository.GetRecruiterReportByClient(emailId, st, se).Result.ToList();
+                var irfList = (await _clientRepository.GetRecruiterReportByClient(emailId, st, se)).ToList();
                 return irfList;
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

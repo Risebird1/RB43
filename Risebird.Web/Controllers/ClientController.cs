@@ -86,20 +86,11 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                try
-                {
-                    var model = new Client();
-                    model.IsMeetingNotificationSend = true;
-                    model.IsCandidateavailability = true;
-                    SetBillingTypeDropDown(model);
-                    return View("ClientAdd", model);
-                }
-                catch (Exception ex)
-                {
-                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    return RedirectToAction("List");
-                }
-
+                var model = new Client();
+                model.IsMeetingNotificationSend = true;
+                model.IsCandidateavailability = true;
+                SetBillingTypeDropDown(model);
+                return View("ClientAdd", model);
             }
             catch (Exception ex)
             {
@@ -123,8 +114,7 @@ namespace Risebird.Web.Controllers
                         if (client.LogoFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.LogoFile);
-                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
-                                || fileMimeType == "image/tiff")
+                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg" || fileMimeType == "image/tiff")
                             {
                                 var fileName = client.LogoFile.FileName.Replace(" ", "_");
                                 await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
@@ -133,13 +123,11 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 client.LogoLink = uploadedFileURL;
                             }
-
                         }
                         if (client.VideoFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.VideoFile);
-                            if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg"
-                                || fileMimeType == "video/quicktime")
+                            if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg" || fileMimeType == "video/quicktime")
                             {
                                 var fileName = client.VideoFile.FileName.Replace(" ", "_");
                                 await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
@@ -148,9 +136,8 @@ namespace Risebird.Web.Controllers
                                 uploadedVideoURL = blob.Uri.ToString();
                                 client.CompanyVideoLink = uploadedVideoURL;
                             }
-
                         }
-                        if (_clientService.AddClient(client))
+                        if (await _clientService.AddClient(client))
                         {
                             TempData["SuccessErrorMessage"] = "Client has been added Successfully!";
                             return RedirectToAction("List");
@@ -187,7 +174,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    Client clientToUpdate = _clientService.GetClient(id);
+                    Client clientToUpdate = await _clientService.GetClient(id);
                     SetBillingTypeDropDown(clientToUpdate);
                     if (clientToUpdate != null)
                         return View("ClientUpdate", clientToUpdate);
@@ -220,8 +207,7 @@ namespace Risebird.Web.Controllers
                         if (client.LogoFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.LogoFile);
-                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
-                                || fileMimeType == "image/tiff")
+                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg" || fileMimeType == "image/tiff")
                             {
                                 var fileName = client.LogoFile.FileName.Replace(" ", "_");
                                 await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
@@ -230,13 +216,11 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 client.LogoLink = uploadedFileURL;
                             }
-
                         }
                         if (client.VideoFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.VideoFile);
-                            if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg"
-                                || fileMimeType == "video/quicktime")
+                            if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg" || fileMimeType == "video/quicktime")
                             {
                                 var fileName = client.VideoFile.FileName.Replace(" ", "_");
                                 await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
@@ -245,9 +229,8 @@ namespace Risebird.Web.Controllers
                                 uploadedVideoURL = blob.Uri.ToString();
                                 client.CompanyVideoLink = uploadedVideoURL;
                             }
-
                         }
-                        if (_clientService.UpdateClient(client))
+                        if (await _clientService.UpdateClient(client))
                         {
                             TempData["SuccessErrorMessage"] = "Client has been updated Successfully!";
                             return RedirectToAction("List");
@@ -284,7 +267,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_clientService.DeleteClient(id))
+                    if (await _clientService.DeleteClient(id))
                     {
                         TempData["SuccessErrorMessage"] = "Client has been deleted Successfully!";
                         return Json(new { url = Url.Action("List", "Client") });
@@ -299,7 +282,6 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-
             }
             catch (Exception ex)
             {
@@ -346,7 +328,6 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
                     model._clientjddetails.iscreated = true;
-
                     return View(model);
                 }
                 else
@@ -361,7 +342,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateJd(ClientDetails fillters)
+        public async Task<IActionResult> CreateJd(ClientDetails fillters)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -375,8 +356,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        ClientId = client.Result.ClientId;
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.ClientId;
                         isClientUser = true;
                     }
                     //Fetch ClientJds
@@ -438,7 +419,7 @@ namespace Risebird.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddCreateJd(ClientDetails model)
+        public async Task<IActionResult> AddCreateJd(ClientDetails model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -453,10 +434,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (!string.IsNullOrEmpty(model._clientjddetails.ClientEmail))
                         {
-                            var client = _userRepository.GetClientUserDetails(model._clientjddetails.ClientEmail);
-                            if (client.Result != null)
+                            var client = await _userRepository.GetClientUserDetails(model._clientjddetails.ClientEmail);
+                            if (client != null)
                             {
-                                model._clientjddetails.ClientId = client.Result.ClientId;
+                                model._clientjddetails.ClientId = client.ClientId;
                             }
                             else
                             {
@@ -469,19 +450,16 @@ namespace Risebird.Web.Controllers
                     {
                         var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model._clientjddetails.JdFile);
 
-                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        || fileMimeType == "application/pdf")
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || fileMimeType == "application/pdf")
                         {
-                            _azureStorageHelper.InsertBlob(model._clientjddetails.JdFile.FileName, "videos", model._clientjddetails.JdFile);
+                            await _azureStorageHelper.InsertBlob(model._clientjddetails.JdFile.FileName, "videos", model._clientjddetails.JdFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
                             var blob = containerRef.GetBlockBlobReference(model._clientjddetails.JdFile.FileName);
                             string uploadedvideoFileURL = blob.Uri.ToString();
                             model._clientjddetails.Filelink = uploadedvideoFileURL;
                         }
-
                     }
-
-                    var result = _clientService.AddClientJd(model._clientjddetails);
+                    var result = await _clientService.AddClientJd(model._clientjddetails);
                     if (result != "")
                     {
                         TempData["SuccessErrorMessageInterviewer"] = "Client Jd has been created Successfully!";
@@ -573,7 +551,6 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("CandidateJDScorePriority", "Client", new { id = model.IRFId });
                 }
-
             }
             else
             {
@@ -588,7 +565,7 @@ namespace Risebird.Web.Controllers
         /// <returns></returns>
         /// 
         [HttpGet]
-        public JsonResult EditJd(int assessmentid)
+        public async Task<JsonResult> EditJd(int assessmentid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -602,8 +579,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        ClientId = client.Result.ClientId;
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.ClientId;
                         isClientUser = true;
                     }
                     //Fetch ClientJds
@@ -638,7 +615,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult CandidateRelatedJD(int interviewid)
+        public async Task<IActionResult> CandidateRelatedJD(int interviewid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -652,8 +629,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        ClientId = client.Result.ClientId;
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.ClientId;
                         isClientUser = true;
                     }
                     //Fetch ClientJds
@@ -714,7 +691,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult RisebirdPay()
+        public async Task<IActionResult> RisebirdPay()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -726,8 +703,8 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    var client = _userRepository.GetClientUserDetails(emailid);
-                    ClientId = client.Result.ClientId;
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    ClientId = client.ClientId;
                     isClientUser = true;
                     return View();
                 }
@@ -743,7 +720,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult WalletDetails(string action)
+        public async Task<JsonResult> WalletDetails(string action)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -755,8 +732,8 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    var client = _userRepository.GetClientUserDetails(emailid);
-                    ClientId = client.Result.ClientId;
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    ClientId = client.ClientId;
                     isClientUser = true;
                     var model = _clientService.FetchClientWallet(ClientId);
                     if (action == "CREDIT")
@@ -786,7 +763,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddWalletPoints(int points, string comment)
+        public async Task<JsonResult> AddWalletPoints(int points, string comment)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -798,10 +775,10 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    var client = _userRepository.GetClientUserDetails(emailid);
-                    ClientId = client.Result.ClientId;
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    ClientId = client.ClientId;
                     isClientUser = true;
-                    var result = _clientService.AddWalletPoints(ClientId, emailid, points, comment);
+                    var result = await _clientService.AddWalletPoints(ClientId, emailid, points, comment);
                     if (result == "Success")
                     {
                         return Json("Success");
@@ -839,7 +816,6 @@ namespace Risebird.Web.Controllers
                     TempData["SuccessErrorMessageInterviewer"] = "Failed to reset Candidate.";
                 }
                 return RedirectToAction("CandidateJDScore", "Client", new { id = Clientjdid });
-
             }
             else
             {
@@ -952,7 +928,6 @@ namespace Risebird.Web.Controllers
                                 ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
                             }
-
                         }
                         if (meetings.Count == 0)
                         {
@@ -964,7 +939,6 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageType = "Private";
                         var allmeetingdata = JsonConvert.SerializeObject(meetings);
                         HttpContext.Session.SetString("SearchAllMeetings", allmeetingdata);
-
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -1058,7 +1032,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
-
         }
 
         [HttpPost]
@@ -1144,8 +1117,6 @@ namespace Risebird.Web.Controllers
                 {
                     m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                 }
-
-
                 if (m.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
                 {
                     if (m.interviewDate < DateTime.Now && m.MeetingStatusStatusDesc == MeetingStatus.Scheduled.GetDescription())
@@ -1161,14 +1132,11 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     m.MeetingStatusStatusDesc = string.Empty;
-
                 }
-
                 if (m.InterviewStatus.HasValue)
                 {
                     m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                 }
-
                 if (m.intervieweStatusStatDesc == null)
                 {
                     m.intervieweStatusStatDesc = string.Empty;
@@ -1328,7 +1296,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllPriorityClientMeetings");
             }
-
         }
 
 
@@ -1365,11 +1332,8 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
-
                     meetings = ApplyAllMeetingsFilter(filter, meetings);
-
                 }
-
 
                 Sheet.Cells["A1:N1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:N1"].Style.Font.Size = 12;
@@ -1395,9 +1359,6 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, 10].Value = "Video Link";
                     Sheet.Cells[1, 11].Value = "Interviewer Comment";
                 }
-
-
-
                 //Sheet.Cells[1, 11].Value = "Report Link";
 
                 int i = 2;
@@ -1471,8 +1432,6 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 9].Value = string.Empty;
                             }
 
-
-
                             //if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                             //{
                             //    Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
@@ -1511,8 +1470,6 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-
-
                         //Sheet.Cells[i, 10].Value = item.InterviewerComment;
                         //if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         //{
@@ -1536,20 +1493,17 @@ namespace Risebird.Web.Controllers
                     Rng.Value = "No data available in table !!!";
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }
-
             }
             catch (Exception)
             {
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-
             }
-
         }
 
         [HttpGet]
-        public IActionResult Report(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public async Task<IActionResult> Report(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
             {
@@ -1561,8 +1515,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                        var client = _userRepository.GetClientUserDetails(emailid).Result;
+                        var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                        var client = await _userRepository.GetClientUserDetails(emailid);
                         model.IsQCRequired = client.IsQCRequired;
                         model.IsRedoInterview = client.IsRedoInterview;
                         if (model.QuestionsCollection == null)
@@ -1596,26 +1550,19 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         return RedirectToAction("SignOut", "Session");
-
                     }
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
-
                 }
-
-
-
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
-
             }
         }
-
 
         [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
@@ -2818,15 +2765,11 @@ namespace Risebird.Web.Controllers
                     var model = await _meetingService.GetCandidateAudios(candidateId, irfId);
                     model.MeetingId = meetingId;
                     return View(model);
-
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-
-
-
             }
             catch (Exception ex)
             {
@@ -2844,8 +2787,7 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                if (HttpContext.Session.GetString("email") != null &&
-                    HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
@@ -2854,8 +2796,7 @@ namespace Risebird.Web.Controllers
                         if (model.AudioFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
-                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
-                            || fileMimeType == "audio/x-wav")
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -2871,12 +2812,10 @@ namespace Risebird.Web.Controllers
                                     model.AudioFileLink = uploadedaudioFileURL;
                                 }
                             }
-
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "joining");
                         TempData["SuccessErrorMessageInterview"] = result;
                         return RedirectToAction("SelectedMeetings");
-
                     }
                     else
                     {
@@ -2917,7 +2856,7 @@ namespace Risebird.Web.Controllers
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ViewBag.IsQCRequired = client.IsQCRequired;
-                        var roleid = _clientService.GetClientRoleByEmailId(emailid).Result;
+                        var roleid = await _clientService.GetClientRoleByEmailId(emailid);
                         if (roleid != 4)
                         {
                             var meetings = await _meetingService.GetClientMeetingList(emailid);
@@ -3012,10 +2951,9 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
-
         }
 
         [Authorize]
@@ -3042,7 +2980,6 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("RejectedMeetings");
             }
-
         }
 
         [HttpPost]
@@ -3223,7 +3160,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllPriorityClientMeetings");
             }
-
         }
 
         [Authorize]
@@ -3327,11 +3263,11 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult PublicReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public async Task<IActionResult> PublicReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
             {
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -3362,7 +3298,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
         }
@@ -3395,7 +3331,7 @@ namespace Risebird.Web.Controllers
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
-                        var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                         if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("NotScheduledMeetingsfilters"));
@@ -3414,7 +3350,6 @@ namespace Risebird.Web.Controllers
                                 filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                                 meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
                             }
-
 
                             filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                             filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
@@ -3493,11 +3428,11 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public async Task<IActionResult> ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
             {
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -3529,7 +3464,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
         }
@@ -3562,7 +3497,7 @@ namespace Risebird.Web.Controllers
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
-                        var meetings = _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                        var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
                         meetings = meetings.Select(x =>
                         {
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
@@ -3873,7 +3808,7 @@ namespace Risebird.Web.Controllers
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
                 }
-                var meetings = _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
                 meetings = meetings.Select(x =>
                 {
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
@@ -4006,7 +3941,7 @@ namespace Risebird.Web.Controllers
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
                 }
-                var meetings = _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                 if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("NotScheduledMeetingsfilters"));
@@ -4025,7 +3960,6 @@ namespace Risebird.Web.Controllers
                         filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                         meetings = meetings.Where(t => t.dtCreatedOn <= filter.EndDate).ToList();
                     }
-
 
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
@@ -4139,7 +4073,7 @@ namespace Risebird.Web.Controllers
                             se = filter.EndDate.Value.AddDays(1);
                         }
                     }
-                    var model = _clientService.GetRecruiterReportByClient(emailid, st, se);
+                    var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
                     model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
                     if (TempData["RecruiterSuccessErrorMessage"] != null)
                     {
@@ -4351,7 +4285,6 @@ namespace Risebird.Web.Controllers
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
-
                         if (ModelState.IsValid)
                         {
                             if (string.IsNullOrEmpty(model.CreatedBy))
@@ -4360,11 +4293,8 @@ namespace Risebird.Web.Controllers
                             }
 
                             await _clientService.AddUpdateClientCommentsForReport(model);
-
                         }
                         return PartialView("GetClientCommentsForReport", model);
-
-
                     }
                     else
                     {
@@ -4409,7 +4339,7 @@ namespace Risebird.Web.Controllers
                 {
                     profileName = profile;
                     emailId = currentUser.Trim('\'');
-                    var model = CreateAudioInstructionsModal(interviewId, profileName, emailId);
+                    var model = await CreateAudioInstructionsModal(interviewId, profileName, emailId);
                     return PartialView("GetClientAudioInstructionsFeedbacks", model);
                 }
                 else
@@ -4423,7 +4353,6 @@ namespace Risebird.Web.Controllers
                 return Json("Error retrieving data! Please try again.");
             }
         }
-
 
         public async Task<ClientAudioInstructionsWrapper> CreateAudioInstructionsModal(int interviewId, string profileName, string emailId)
         {

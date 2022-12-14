@@ -2910,17 +2910,16 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetClientNotScheduledMeetingList(int Clientid, string Emailid)
+        public async Task<List<MeetingVM>> GetClientNotScheduledMeetingList(int Clientid, string Emailid)
         {
             try
             {
-                var meetings = _meetingRespository.GetClientNotScheduledMeetingList(Clientid, Emailid).Result.ToList();
-
+                var meetings = (await _meetingRespository.GetClientNotScheduledMeetingList(Clientid, Emailid)).ToList();
                 return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -2977,17 +2976,16 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        public async Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid)
         {
             try
             {
-                var meetings = _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid).Result.ToList();
-
+                var meetings = (await _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid)).ToList();
                 return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
