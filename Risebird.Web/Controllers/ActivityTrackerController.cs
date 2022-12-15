@@ -42,25 +42,19 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("ActivityTrackerFilters") == null)
                         {
                             model = (await _activityTrackerService.GetAllActivities(DateTime.Now, DateTime.Now)).ToList();
-
                         }
                         else
                         {
                             var filter = JsonConvert.DeserializeObject<ActivityTrackerFilter>(HttpContext.Session.GetString("ActivityTrackerFilters"));
 
-                            model = (await _activityTrackerService.
-                                GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
-
+                            model = (await _activityTrackerService.GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
                             filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                             filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 
                             model = model.Where(c => ((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
                             && ((filter.ActivityType != null && filter.ActivityType.Count() > 0) ? filter.ActivityType.Contains(c.ActivityTypeDesc) : c.ActivityTypeDesc == null)).ToList();
-
-
                         }
-
                         ViewBag.profile = profileName;
                         return View(model);
                     }
@@ -99,10 +93,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("ActivityTrackerFilters", JsonConvert.SerializeObject(filter));
                         }
-                        var model = (await _activityTrackerService.
-                                GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
-
-
+                        var model = (await _activityTrackerService.GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
 
                         filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                         filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
@@ -151,7 +142,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
-
         }
 
         [Authorize]
@@ -171,22 +161,17 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("ActivityTrackerFilters") == null)
                 {
                     model = (await _activityTrackerService.GetAllActivities(DateTime.Now, DateTime.Now)).ToList();
-
                 }
                 else
                 {
                     var filter = JsonConvert.DeserializeObject<ActivityTrackerFilter>(HttpContext.Session.GetString("ActivityTrackerFilters"));
 
-                    model = (await _activityTrackerService.
-                                GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
-
-
+                    model = (await _activityTrackerService.GetAllActivities(filter.StartDate ?? DateTime.Now, filter.EndDate ?? DateTime.Now)).ToList();
                     filter.PerformedBy = filter.PerformedBy == null ? model.Select(x => x.PerformedBy).ToArray() : filter.PerformedBy;
                     filter.ActivityType = filter.ActivityType == null ? model.Select(x => x.ActivityTypeDesc).ToArray() : filter.ActivityType;
 
                     model = model.Where(c => ((filter.PerformedBy != null && filter.PerformedBy.Count() > 0) ? filter.PerformedBy.Contains(c.PerformedBy) : c.PerformedBy == null)
                     && ((filter.ActivityType != null && filter.ActivityType.Count() > 0) ? filter.ActivityType.Contains(c.ActivityTypeDesc) : c.ActivityTypeDesc == null)).ToList();
-
                 }
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -220,14 +205,10 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 2].Hyperlink = new Uri(item.FileUrl, UriKind.Absolute);
                             Sheet.Cells[i, 2].Style.Font.UnderLine = true;
                             Sheet.Cells[i, 2].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-
                         }
-
                         Sheet.Cells[i, 3].Value = item.Summary;
                         Sheet.Cells[i, 4].Value = item.PerformedAt.ToString("MM/dd/yyyy HH:mm");
                         Sheet.Cells[i, 5].Value = item.PerformedBy;
-
-
                         if (!string.IsNullOrEmpty(item.FileUrl))
                         {
                             try
@@ -246,8 +227,6 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 6].Value = "No file uploaded";
                         }
-
-
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -258,7 +237,6 @@ namespace Risebird.Web.Controllers
                     Rng.Value = "No data available in table !!!";
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }
-
             }
             catch (Exception)
             {
@@ -266,7 +244,6 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
-
         }
     }
 }

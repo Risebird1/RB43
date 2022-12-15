@@ -59,7 +59,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("CurrentUsername", username);
 
 
-                if (menus.Count > 0)
+                if (menus != null && menus.Count > 0)
                 {
 
                     if (string.IsNullOrEmpty(menus.FirstOrDefault().LogoLink))
@@ -79,7 +79,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));
 
                 }
-                if (menus != null)
+                if (menus != null && menus.Count > 0)
                 {
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));

@@ -48,27 +48,29 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("Currenttheme", "");
                 }
                 else
+                {
                     HttpContext.Session.SetString("Currenttheme", currenttheme);
-
+                }
 
                 if (string.IsNullOrEmpty(username))
                 {
                     HttpContext.Session.SetString("CurrentUsername", "");
                 }
                 else
-                    HttpContext.Session.SetString("CurrentUsername", username);
-
-
-                if (menus.Count > 0)
                 {
+                    HttpContext.Session.SetString("CurrentUsername", username);
+                }
 
+                if (menus != null && menus.Count > 0)
+                {
                     if (string.IsNullOrEmpty(menus.FirstOrDefault().LogoLink))
                     {
                         HttpContext.Session.SetString("Logo", "");
                     }
                     else
+                    {
                         HttpContext.Session.SetString("Logo", menus.FirstOrDefault().LogoLink);
-
+                    }
                 }
                 else
                 {
@@ -77,9 +79,8 @@ namespace Risebird.Web.Controllers
                 if (settings != null)
                 {
                     HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));
-
                 }
-                if (menus != null)
+                if (menus != null && menus.Count > 0)
                 {
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
@@ -107,13 +108,11 @@ namespace Risebird.Web.Controllers
                         if (urlArray.Length > 4)
                         {
                             return RedirectToAction(urlArray[0], urlArray[1], new { interviewId = urlArray[2], irfId = urlArray[3], isClient = urlArray[4], isClientSelected = urlArray[5] });
-
                         }
                         else
                         {
                             return RedirectToAction(urlArray[0], urlArray[1], new { interviewId = urlArray[2], irfId = urlArray[3] });
                         }
-
                     }
                     else
                     {
