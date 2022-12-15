@@ -2126,7 +2126,7 @@ namespace Risebird.Repository
 
             return "";
         }
-        public List<VedioComments> GetvedioComments(int id)
+        public async Task<List<VedioComments>> GetvedioComments(int id)
         {
             try
             {
@@ -2134,19 +2134,19 @@ namespace Risebird.Repository
                 parameters.Add("@VedioId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<VedioComments>(con, "usp_GetinterviewvedioComment", parameters,
+                    var result = await SqlMapper.QueryAsync<VedioComments>(con, "usp_GetinterviewvedioComment", parameters,
                        commandType: CommandType.StoredProcedure);
                     return (List<VedioComments>)result;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
 
         }
-        public EmailDetails GetvedioShortList(string vedioid, string email)
+        public async Task<EmailDetails> GetvedioShortList(string vedioid, string email)
         {
             try
             {
@@ -2157,18 +2157,18 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<EmailDetails>(con, "usp_AddinterviewvedioShortList", parameters,
+                    var result = await SqlMapper.QueryAsync<EmailDetails>(con, "usp_AddinterviewvedioShortList", parameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public string CandidateSuitable(int id, string email, string Comment)
+        public async Task<string> CandidateSuitable(int id, string email, string Comment)
         {
             try
             {
@@ -2181,14 +2181,14 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_AddSuitableCandidate", parameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault().ToString();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -3979,7 +3979,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        public async Task<string> LockorUnlockVideo(string imid, int islock, string emailid)
         {
             try
             {
@@ -3989,7 +3989,7 @@ namespace Risebird.Repository
                 var query = "Select id from UserList where Emailid=@Emailid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, dynamicParameters);
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
                     UserId = results.FirstOrDefault();
                 }
                 var dParameters = new DynamicParameters();
@@ -4006,17 +4006,17 @@ namespace Risebird.Repository
                 var dquery = "Update InterviewComments Set IsLock = @islock,ClientUserid=@UserId Where Interviewid=@imid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(dquery, dParameters);
+                    var result = await con.QueryAsync(dquery, dParameters);
                     return "Success";
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "fail";
         }
-        public List<string> FetchClientUsers(string ClientName)
+        public async Task<List<string>> FetchClientUsers(string ClientName)
         {
             try
             {
@@ -4025,17 +4025,17 @@ namespace Risebird.Repository
                 var dquery = "Select ul.EmailId From Client cl join ClientUser cu on cu.ClientId=cl.id join UserList ul on ul.id=cu.UserId where Name=@ClientName";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(dquery, dParameters);
+                    var result = await con.QueryAsync<string>(dquery, dParameters);
                     return (List<string>)result;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public string SetCandidateAvailability(string imid, int isavailable)
+        public async Task<string> SetCandidateAvailability(string imid, int isavailable)
         {
             try
             {
@@ -4045,17 +4045,17 @@ namespace Risebird.Repository
                 var dquery = "Update InterviewComments Set CandidateAvailable = @isavailable Where Interviewid=@imid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(dquery, dParameters);
+                    var result = await con.QueryAsync(dquery, dParameters);
                     return "Success";
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "fail";
         }
-        public string MoveToCP(string imid, int movetocp)
+        public async Task<string> MoveToCP(string imid, int movetocp)
         {
             try
             {
@@ -4065,13 +4065,13 @@ namespace Risebird.Repository
                 var dquery = "Update InterviewComments Set MoveToCP = @movetocp Where Interviewid=@imid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(dquery, dParameters);
+                    var result = await con.QueryAsync(dquery, dParameters);
                     return "Success";
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "fail";
         }
@@ -4085,7 +4085,7 @@ namespace Risebird.Repository
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
                     parameters.Add("@email", email);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

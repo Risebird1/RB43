@@ -71,9 +71,9 @@ namespace Risebird.Repository.Interface
         Task<string> VedioShare(string value, string vedioid);
         Task<string> VedioShared(string value, string vedioid, string Userid);
         Task<string> VedioComment(string value, string vedioid, string email);
-        List<VedioComments> GetvedioComments(int id);
-        EmailDetails GetvedioShortList(string vedioid, string email);
-        string CandidateSuitable(int id, string email, string Comment);
+        Task<List<VedioComments>> GetvedioComments(int id);
+        Task<EmailDetails> GetvedioShortList(string vedioid, string email);
+        Task<string> CandidateSuitable(int id, string email, string Comment);
         Task<VedioComments> Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
         Task<IEnumerable<Meeting>> ShortListedClient(string emailid, string IRFID);
@@ -142,10 +142,10 @@ namespace Risebird.Repository.Interface
         Task<List<string>> FetchInterviewerList(string searchterm);
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
-        string LockorUnlockVideo(string imid, int islock, string emailid);
-        List<string> FetchClientUsers(string ClientName);
-        string SetCandidateAvailability(string imid, int isavailable);
-        string MoveToCP(string imid, int movetocp);
+        Task<string> LockorUnlockVideo(string imid, int islock, string emailid);
+        Task<List<string>> FetchClientUsers(string ClientName);
+        Task<string> SetCandidateAvailability(string imid, int isavailable);
+        Task<string> MoveToCP(string imid, int movetocp);
         Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);

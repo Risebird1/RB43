@@ -564,7 +564,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments = _meetingService.GetvedioComments(id);
+                        var comments = await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
@@ -916,7 +916,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments = _meetingService.GetvedioComments(id);
+                        var comments = await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
@@ -978,7 +978,7 @@ namespace Risebird.Web.Controllers
         /// <param name="model"></param>
         /// <param name="irfId"></param>
         [HttpGet]
-        private void GetStatusList(InterviewReport model, int irfId = 0)
+        private async Task GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -995,21 +995,21 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            model.QuestionsList = new SelectList( await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
 
         [HttpPost]
-        public JsonResult VideoLike(string value, string videoid)
+        public async Task<JsonResult> VideoLike(string value, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList = _meetingService.VedioLike(value, videoid, email);
+            var modelList = await _meetingService.VedioLike(value, videoid, email);
             return Json(modelList);
         }
 
         [HttpPost]
         public async Task<JsonResult> VideoShare(string value, string videoid, string name, string Emailids)
         {
-            _meetingService.VedioShare(value, videoid);
+            await _meetingService.VedioShare(value, videoid);
             string Name = string.Empty;
             if (name != null && name.Length >= 2)
                 Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
@@ -1038,26 +1038,26 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult publicVideoShare(string value, string videoid)
+        public async Task<JsonResult> publicVideoShare(string value, string videoid)
         {
-            _meetingService.VedioShare(value, videoid);
+            await _meetingService.VedioShare(value, videoid);
             return Json("Success");
         }
 
         [HttpPost]
-        public JsonResult VideoComment(string comment, string videoid)
+        public async Task<JsonResult> VideoComment(string comment, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            _meetingService.VedioComment(comment, videoid, email);
+            await _meetingService.VedioComment(comment, videoid, email);
             return Json("Success");
         }
 
         [HttpPost]
-        public JsonResult UpdateVideoComment(string videoid)
+        public async Task<JsonResult> UpdateVideoComment(string videoid)
         {
             //store data in database
             int id = Convert.ToInt32(videoid);
-            var comments = _meetingService.GetvedioComments(id);
+            var comments = await _meetingService.GetvedioComments(id);
             return Json(comments);
         }
 
@@ -1065,7 +1065,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var Shortlistcount = _meetingService.GetvedioShortList(videoid, email);
+            var Shortlistcount = await _meetingService.GetvedioShortList(videoid, email);
             int result = 0;
             if (Shortlistcount != null)
             {
@@ -1092,7 +1092,7 @@ namespace Risebird.Web.Controllers
             //store data in database
             int id = Convert.ToInt32(videoid);
             var email = HttpContext.Session.GetString("email");
-            var Status = _meetingService.CandidateSuitable(id, email, Comment);
+            var Status = await _meetingService.CandidateSuitable(id, email, Comment);
             if (Status != null)
             {
                 Mail _mail = new Mail
@@ -1114,7 +1114,7 @@ namespace Risebird.Web.Controllers
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            var modelList = _meetingService.VedioShared(Emailids, videoid, email);
+            var modelList = await _meetingService.VedioShared(Emailids, videoid, email);
             string currenturl = Request.Host.ToString() + Request.Path.ToString() + "?id=" + videoid;
 
             if (!string.IsNullOrEmpty(modelList))
@@ -1172,25 +1172,25 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
+        public async Task<JsonResult> VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
         {
             //Start:Save View counts of vedio
             Emailid = Emailid.Replace("\"", "");
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
-                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
+               await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
             }
             else
             {
-                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
+               await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
             }
             //End:Save View counts of vedio
             return Json("Succecss");
         }
 
         [HttpGet]
-        public JsonResult LockorUnlockVideo(string imid, int islock, string emailid = null)
+        public async Task<JsonResult> LockorUnlockVideo(string imid, int islock, string emailid = null)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -1199,7 +1199,7 @@ namespace Risebird.Web.Controllers
                     emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                 }
-                var result = _meetingService.LockorUnlockVideo(imid, islock, emailid);
+                var result = await _meetingService.LockorUnlockVideo(imid, islock, emailid);
                 return Json(result);
             }
             else
@@ -1210,7 +1210,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SelectedCandidate()
+        public async Task<IActionResult> SelectedCandidate()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1226,11 +1226,11 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CommonPoolSelectedCandidatefilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            modelList = _meetingService.GetAllSelectedCandidateInterviewList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), email);
+                            modelList = await _meetingService.GetAllSelectedCandidateInterviewList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), email);
                         }
                         else
                         {
-                            modelList = _meetingService.GetAllSelectedCandidateInterviewList(DateTime.Now.Date.AddMonths(-1), DateTime.Now.Date.AddDays(1), email);
+                            modelList = await _meetingService.GetAllSelectedCandidateInterviewList(DateTime.Now.Date.AddMonths(-1), DateTime.Now.Date.AddDays(1), email);
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
 
@@ -1273,7 +1273,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        modelList = _meetingService.GetAllSelectedCandidateInterviewList(DateTime.Now.Date.AddMonths(-1), DateTime.Now.Date.AddDays(1), email);
+                        modelList = await _meetingService.GetAllSelectedCandidateInterviewList(DateTime.Now.Date.AddMonths(-1), DateTime.Now.Date.AddDays(1), email);
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         foreach (var item in modelList)
                         {
@@ -1348,23 +1348,23 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult FetchClientUsers(string ClientName)
+        public async Task<JsonResult> FetchClientUsers(string ClientName)
         {
-            var result = _meetingService.FetchClientUsers(ClientName);
+            var result = await _meetingService.FetchClientUsers(ClientName);
             return Json(result);
         }
 
         [HttpGet]
-        public JsonResult SetCandidateAvailability(string imid, int isavailable)
+        public async Task<JsonResult> SetCandidateAvailability(string imid, int isavailable)
         {
-            var result = _meetingService.SetCandidateAvailability(imid, isavailable);
+            var result = await _meetingService.SetCandidateAvailability(imid, isavailable);
             return Json(result);
         }
 
         [HttpGet]
-        public JsonResult MoveToCP(string imid, int movetocp)
+        public async Task<JsonResult> MoveToCP(string imid, int movetocp)
         {
-            var result = _meetingService.MoveToCP(imid, movetocp);
+            var result = await _meetingService.MoveToCP(imid, movetocp);
             return Json(result);
         }
     }

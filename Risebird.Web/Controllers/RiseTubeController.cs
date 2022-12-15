@@ -725,7 +725,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments = _meetingService.GetvedioComments(id);
+                        var comments = await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
@@ -1157,7 +1157,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments = _meetingService.GetvedioComments(id);
+                        var comments = await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
@@ -1240,17 +1240,17 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoLike(string value, string videoid)
+        public async Task<JsonResult> VideoLike(string value, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList = _meetingService.VedioLike(value, videoid, email);
+            var modelList =  await _meetingService.VedioLike(value, videoid, email);
             return Json(modelList);
         }
 
         [HttpPost]
         public async Task<JsonResult> VideoShare(string value, string videoid, string name, string Emailids)
         {
-            var modelList = _meetingService.VedioShare(value, videoid);
+            var modelList = await _meetingService.VedioShare(value, videoid);
             string Name = string.Empty;
             if (name != null && name.Length >= 2)
                 Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
@@ -1279,26 +1279,26 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult publicVideoShare(string value, string videoid)
+        public async Task<JsonResult> publicVideoShare(string value, string videoid)
         {
-            var modelList = _meetingService.VedioShare(value, videoid);
+            var modelList = await _meetingService.VedioShare(value, videoid);
             return Json("Success");
         }
 
         [HttpPost]
-        public JsonResult VideoComment(string comment, string videoid)
+        public async Task<JsonResult> VideoComment(string comment, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList = _meetingService.VedioComment(comment, videoid, email);
+            var modelList = await _meetingService.VedioComment(comment, videoid, email);
             return Json("Success");
         }
 
         [HttpPost]
-        public JsonResult UpdateVideoComment(string videoid)
+        public async Task<JsonResult> UpdateVideoComment(string videoid)
         {
             //store data in database
             int id = Convert.ToInt32(videoid);
-            var comments = _meetingService.GetvedioComments(id);
+            var comments = await _meetingService.GetvedioComments(id);
             return Json(comments);
         }
 
@@ -1306,7 +1306,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var Shortlistcount = _meetingService.GetvedioShortList(videoid, email);
+            var Shortlistcount = await _meetingService.GetvedioShortList(videoid, email);
             int result = 0;
             if (Shortlistcount != null)
             {
@@ -1333,7 +1333,7 @@ namespace Risebird.Web.Controllers
             //store data in database
             int id = Convert.ToInt32(videoid);
             var email = HttpContext.Session.GetString("email");
-            var Status = _meetingService.CandidateSuitable(id, email, Comment);
+            var Status = await _meetingService.CandidateSuitable(id, email, Comment);
             if (Status != null)
             {
                 Mail _mail = new Mail
@@ -1355,7 +1355,7 @@ namespace Risebird.Web.Controllers
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            var modelList = _meetingService.VedioShared(Emailids, videoid, email);
+            var modelList = await _meetingService.VedioShared(Emailids, videoid, email);
             string currenturl = Request.Host.ToString() + Request.Path.ToString() + "?id=" + videoid;
             var resultset = _meetingService.AddVedioShare(email, videoid, Emailids);
             if (!string.IsNullOrEmpty(modelList))
@@ -1413,7 +1413,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
+        public async Task<JsonResult> VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
         {
             //Start:Save View counts of vedio
             Emailid = Emailid.Replace("\"", "");
@@ -1424,11 +1424,11 @@ namespace Risebird.Web.Controllers
                 {
                     videoid = videoid.Split("?")[1].ToString();
                 }
-                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
+                await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
             }
             else
             {
-                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
+                await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
             }
             //End:Save View counts of vedio
             return Json("Succecss");
@@ -1734,7 +1734,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments = _meetingService.GetvedioComments(id);
+                        var comments = await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
@@ -2962,7 +2962,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments = _meetingService.GetvedioComments(id);
+                        var comments =  await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;

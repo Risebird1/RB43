@@ -1572,18 +1572,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public MeetingVM VedioLike(string value, string vedioid, string email)
+        public async Task<MeetingVM> VedioLike(string value, string vedioid, string email)
         {
             try
             {
-                var meeting = _meetingRespository.VedioLikeAsync(value, vedioid, email);
-                return meeting.Result;
+                var meeting = await _meetingRespository.VedioLikeAsync(value, vedioid, email);
+                return meeting;
 
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
 
                 return null;
             }
@@ -1602,98 +1602,95 @@ namespace Risebird.Business
 
             }
         }
-        public string VedioShare(string value, string vedioid)
+        public async Task<string> VedioShare(string value, string vedioid)
         {
             try
             {
-                var meeting = _meetingRespository.VedioShare(value, vedioid);
+                var meeting = await _meetingRespository.VedioShare(value, vedioid);
                 return "";
-
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-
-                return "";
-            }
-
-        }
-        public string VedioShared(string value, string vedioid, string Userid)
-        {
-            try
-            {
-                var meeting = _meetingRespository.VedioShared(value, vedioid, Userid);
-                return meeting.Result;
-
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-
-                return "";
-            }
-
-        }
-        public string VedioComment(string value, string vedioid, string email)
-        {
-            try
-            {
-                var meeting = _meetingRespository.VedioComment(value, vedioid, email);
-                return "";
-
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-
-                return "";
-            }
-
-        }
-        public List<VedioComments> GetvedioComments(int id)
-        {
-            try
-            {
-                var meeting = _meetingRespository.GetvedioComments(id);
-                return (List<VedioComments>)meeting;
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
-        public EmailDetails GetvedioShortList(string vedioid, string email)
+        public async Task<string> VedioShared(string value, string vedioid, string Userid)
         {
             try
             {
-                var meeting = _meetingRespository.GetvedioShortList(vedioid, email);
+                var meeting = await _meetingRespository.VedioShared(value, vedioid, Userid);
                 return meeting;
 
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
             }
 
         }
-        public string CandidateSuitable(int id, string email, string Comment)
+        public async Task<string> VedioComment(string value, string vedioid, string email)
         {
             try
             {
-                var meeting = _meetingRespository.CandidateSuitable(id, email, Comment);
+                var meeting = await _meetingRespository.VedioComment(value, vedioid, email);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+
+        }
+        public async Task<List<VedioComments>> GetvedioComments(int id)
+        {
+            try
+            {
+                var meeting = await _meetingRespository.GetvedioComments(id);
+                return meeting;
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<EmailDetails> GetvedioShortList(string vedioid, string email)
+        {
+            try
+            {
+                var meeting = await _meetingRespository.GetvedioShortList(vedioid, email);
                 return meeting;
 
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+        public async Task<string> CandidateSuitable(int id, string email, string Comment)
+        {
+            try
+            {
+                var meeting = await _meetingRespository.CandidateSuitable(id, email, Comment);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
@@ -2663,71 +2660,72 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string LockorUnlockVideo(string imid, int islock, string emailid)
+        public async Task<string> LockorUnlockVideo(string imid, int islock, string emailid)
         {
             try
             {
-                var meeting = _meetingRespository.LockorUnlockVideo(imid, islock, emailid);
+                var meeting = await _meetingRespository.LockorUnlockVideo(imid, islock, emailid);
                 return meeting;
 
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "fail";
             }
         }
-        public List<string> FetchClientUsers(string ClientName)
+        public async Task<List<string>> FetchClientUsers(string ClientName)
         {
             try
             {
-                var meeting = _meetingRespository.FetchClientUsers(ClientName);
+                var meeting = await _meetingRespository.FetchClientUsers(ClientName);
                 return meeting;
 
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string SetCandidateAvailability(string imid, int isavailable)
+        public async Task<string> SetCandidateAvailability(string imid, int isavailable)
         {
             try
             {
-                var meeting = _meetingRespository.SetCandidateAvailability(imid, isavailable);
+                var meeting = await _meetingRespository.SetCandidateAvailability(imid, isavailable);
                 return meeting;
 
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "fail";
             }
         }
-        public string MoveToCP(string imid, int movetocp)
+        public async Task<string> MoveToCP(string imid, int movetocp)
         {
             try
             {
-                var meeting = _meetingRespository.MoveToCP(imid, movetocp);
+                var meeting = await _meetingRespository.MoveToCP(imid, movetocp);
                 return meeting;
 
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "fail";
             }
         }
-        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
+        public async Task<List<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
         {
             try
             {
-                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate, email).Result.OrderByDescending(x => x.interviewDate).ToList();
+                //return await _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate, email).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return (List<MeetingVM>)await _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate, email);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
