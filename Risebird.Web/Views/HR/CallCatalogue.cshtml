@@ -66,14 +66,14 @@
                             </button>
                         </div>
                         @*<div style="float:left">
-                            @if(ViewBag.profile == "Admin")
-                            {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings Details</font></span>
-                                </button>
-                                
-                            }
-                            
+                        @if(ViewBag.profile == "Admin")
+                        {
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings Details</font></span>
+                        </button>
+
+                        }
+
                         </div>*@
                     </div>
                     <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallCatalogueExporttoExcel", "HR")'"></i></span>
@@ -103,7 +103,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("CallCatalogue","HR",new { type=ViewBag.type})" method="post" id="form">
+                                        <form action="@Url.Action("CallCatalogue","HR",new { type=ViewBag.type})" method="post" id="form" onsubmit="return checkfilterDate();">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -381,12 +381,12 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
 
         //    $("#PrimarySkill").multiselect({
         //            includeSelectAllOption: true,
@@ -424,9 +424,9 @@
         var strtDte = '@strtDte';
         var endDte = '@endDte';
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-        var clientName =  @Html.Raw(Json.Serialize(ClientName));
-        var rFID =  @Html.Raw(Json.Serialize(RFID));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var rFID = @Html.Raw(Json.Serialize(RFID));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -651,7 +651,7 @@
         window.location.href = "/HR/CallCatalogue?type=" + type;
     }
 </script>
-
+<script src="~/js/filtervalidation.js"></script>
 <loading></loading>
 
 

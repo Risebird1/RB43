@@ -146,13 +146,9 @@
                                 profileName = profileName.Replace("\"", "");
                                 @if (profileName == "Admin")
                                 {
-
-                                    @Html.ActionLink("Interest Shows Details", "VideoIntrestDetails", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                                        @Html.ActionLink("Interest Shows Details", "VideoIntrestDetails", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                 }
                             }
-
-
-
 
                         </div>
                     </div>
@@ -186,7 +182,7 @@
                                                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
-                                                <form action="@Url.Action("Index","risetube")" method="post" id="form">
+                                                <form action="@Url.Action("Index","risetube")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                     <div class="modal-body">
                                                         <div class="row">
@@ -1476,8 +1472,6 @@
         HttpContextAccessor.HttpContext.Session.SetString("NRisetubeIndex", "1");
 
     }
-
-
 }
-
+<script src="~/js/filtervalidation.js"></script>
 

@@ -63,20 +63,21 @@
 
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
-                            </button></span>
-
-                            <span id="uninterview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExportMeetingsToExcel", "UnapprovedInterviewerMeetings")'"></i></span>
-
-
-                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
-            </button>*@
-
-
-                            @*<i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>*@
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "UnapprovedInterviewerMeetings")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
                             </button>
+                        </span>
+
+                        <span id="uninterview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExportMeetingsToExcel", "UnapprovedInterviewerMeetings")'"></i></span>
+
+
+                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+                        </button>*@
+
+
+                        @*<i type="submit" class="fa fa-file-excel-o excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>*@
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "UnapprovedInterviewerMeetings")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -106,7 +107,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("Index","UnapprovedInterviewerMeetings")" method="post" id="form">
+                                            <form action="@Url.Action("Index","UnapprovedInterviewerMeetings")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -119,10 +120,6 @@
                                                                     <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-
-
-
-
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -308,7 +305,7 @@
                                                     @*<th>Nick Name</th>*@
                                                     <th>Candidate Email</th>
                                                     <th>Primary Skill</th>
-                                                    <th >Interviewer</th>
+                                                    <th>Interviewer</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
@@ -334,7 +331,7 @@
                                                             <!--<button class="mdc-fab app-fab--absolute" aria-label="Upload Videoes">-->
                                                             @*<span onclick="OpenVideoUploadPopup(@item.imid)" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>*@
                                                             <!--<span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
-    </button>-->
+                                                            </button>-->
                                                             <span id="uninterview_4">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                     <span onclick="location.href = '@Url.Action("Edit", "UnapprovedInterviewerMeetings", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
@@ -342,12 +339,13 @@
                                                             </span>
 
                                                             @*<button class="mdc-fab app-fab--absolute " aria-label="Comment">
-            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
-        </button>*@
+                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                        </button>*@
                                                             <span id="uninterview_5">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.imid, iscId = item.iscIntId, backUrl=ViewBag.CurrentUrl})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                </button></span>
+                                                                </button>
+                                                            </span>
 
 
 
@@ -551,14 +549,14 @@
 
 
                                                         @*<td>
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                    {
 
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
 
-                                                                }
+                                                    }
 
-                                                            </td>*@
+                                                    </td>*@
                                                     </tr>
                                                 }
                                             </tbody>
@@ -641,52 +639,52 @@
             ApplySessionFilter();
         }
 
-   
-//  $("#PrimarySkill").multiselect({
-             //   includeSelectAllOption: true,
-             //  selectedClass: 'active1',
-               // buttonWidth: '100%',
-               // maxHeight: 200
-        });
 
-
-      //  $("#SCID").multiselect({
-               // includeSelectAllOption: true,
-              //  selectedClass: 'active1',
-              //  buttonWidth: '100%',
-              //  maxHeight: 200
-       // });
-
-       // $("#ConfirmationStatus").multiselect({
-               // includeSelectAllOption: true,
-               // selectedClass: 'active1',
-               // buttonWidth: '100%',
-              //  maxHeight: 200
-      //});
-
-      //$("#MeetingStatus").multiselect({
-               // includeSelectAllOption: true,
-               // selectedClass: 'active1',
-               // buttonWidth: '100%',
-               // maxHeight: 200
-       //});
-
-       // $("#InterviewStatus").multiselect({
-               // includeSelectAllOption: true,
-               // selectedClass: 'active1',
-                //buttonWidth: '100%',
-               // maxHeight: 200
-        //});
-
-        //$("#Interviewer").multiselect({
-                //includeSelectAllOption: true,
-                //selectedClass: 'active1',
-                //buttonWidth: '100%',
-               // maxHeight: 200
-        //});//
-
-
+        //  $("#PrimarySkill").multiselect({
+        //   includeSelectAllOption: true,
+        //  selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
     });
+
+
+              //  $("#SCID").multiselect({
+                       // includeSelectAllOption: true,
+                      //  selectedClass: 'active1',
+                      //  buttonWidth: '100%',
+                      //  maxHeight: 200
+               // });
+
+               // $("#ConfirmationStatus").multiselect({
+                       // includeSelectAllOption: true,
+                       // selectedClass: 'active1',
+                       // buttonWidth: '100%',
+                      //  maxHeight: 200
+              //});
+
+              //$("#MeetingStatus").multiselect({
+                       // includeSelectAllOption: true,
+                       // selectedClass: 'active1',
+                       // buttonWidth: '100%',
+                       // maxHeight: 200
+               //});
+
+               // $("#InterviewStatus").multiselect({
+                       // includeSelectAllOption: true,
+                       // selectedClass: 'active1',
+                        //buttonWidth: '100%',
+                       // maxHeight: 200
+                //});
+
+                //$("#Interviewer").multiselect({
+                        //includeSelectAllOption: true,
+                        //selectedClass: 'active1',
+                        //buttonWidth: '100%',
+                       // maxHeight: 200
+                //});//
+
+
+            });
 
     function ResetFilter() {
         window.location.href = "/UnapprovedInterviewerMeetings/ResetUnapprovedInterviewsFilter";
@@ -696,11 +694,11 @@
         var strtDte = '@strtDte';
         var endDte = '@endDte';
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var scID =  @Html.Raw(Json.Serialize(SCID));
-        var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
-        var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
-        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-        var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
+        var scID = @Html.Raw(Json.Serialize(SCID));
+        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -711,7 +709,7 @@
         $("#InterviewStatus").val(interviewStatus);
         $("#Interviewer").val(interviewer);
         var form = $("#form").serialize();
-}
+    }
 
 
 </script>
@@ -750,8 +748,7 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
+                    function () {
                         location.reload();
                     }
                 )
@@ -889,7 +886,7 @@
 
         hopscotch.listen('show', function () {
             var elementObject = $(hopscotch.getCurrTarget(tour));
-             var element = $('#' + elementObject[0].id);
+            var element = $('#' + elementObject[0].id);
             //var element = $('.' + elementObject[0].className);
             element.prev().removeClass('overlay-relative');
             element.addClass('overlay-relative');
@@ -1168,28 +1165,28 @@
                 },
 
 
-               
-                
 
 
-               {
-                  title: "Admin",
-                   content: "Click on Admin menu to see its features",
-                   target: "#adminmenu",
-                  placement: "top",
-                   showPrevButton: true,
+
+
+                {
+                    title: "Admin",
+                    content: "Click on Admin menu to see its features",
+                    target: "#adminmenu",
+                    placement: "top",
+                    showPrevButton: true,
                     zindex: 999999,
-                   yOffset: 10,
-                  xOffset: -5,
-                  onNext: function () {
-                      $('#adminmenu').removeClass('overlay-relative');
-                       $('.helper').remove();
-                 },
-                   onPrev: function () {
-                       $('#adminmenu').removeClass('overlay-relative');
-                      $('.helper').remove();
-                 }
-               },
+                    yOffset: 10,
+                    xOffset: -5,
+                    onNext: function () {
+                        $('#adminmenu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#adminmenu').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
 
 
             ],
@@ -1202,3 +1199,4 @@
     </script>
 
 }
+<script src="~/js/filtervalidation.js"></script>

@@ -21,8 +21,6 @@
     filter = JsonConvert.DeserializeObject<TalentOnDemandFilter>(HttpContextAccessor.HttpContext.Session.GetString("TalentOnDemandFilter"));
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     HeuristicType = filter.HeuristicType != null ? filter.HeuristicType : new string[] { };
-
-
 }
 
 <head>
@@ -36,7 +34,7 @@
 
 
 <div class="main-panel" id="main-panel">
-  
+
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
     <div class="pt30 videocon">
@@ -128,7 +126,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        
+
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -147,7 +145,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
 
                                                     <div class="form-group col-md-12 col-sm-12">
 
@@ -225,7 +223,8 @@
                                                         }
                                                         else
                                                         {
-                                                            <span class="candidate">@item.candidateName</span>}
+                                                            <span class="candidate">@item.candidateName</span>
+                                                        }
 
 
 
@@ -239,10 +238,12 @@
                                                             <span class="designation">@item.JDTiltle</span>
                                                         }
                                                         @if (item.CostEstimate != null)
-                                                        {<div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
+                                                        {
+                                                            <div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
                                                                 <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
                                                                 {
-                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>}
+                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>
+                                                                }
 
                                                                 else
                                                                 {
@@ -296,11 +297,13 @@
                                                     <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
                                                         <span>Expected Salary:</span> @if (item.expectedPerHourRate != null && item.expectedPerHourRate.Length > 5)
                                                         {
-                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
+                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>
+                                                        }
 
                                                         else
                                                         {
-                                                            <span>@item.expectedPerHourRate</span>}
+                                                            <span>@item.expectedPerHourRate</span>
+                                                        }
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
@@ -309,9 +312,12 @@
                                                         <span>
                                                             @if (item.preferredLocation != null && item.preferredLocation.Length > 10)
                                                             {
-                                                                <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>
+                                                            }
                                                             else
-                                                            {<span>@item.preferredLocation</span>}
+                                                            {
+                                                                <span>@item.preferredLocation</span>
+                                                            }
                                                         </span>
 
                                                     </div>
@@ -411,7 +417,7 @@
                                     {
                                         <li>
                                             <a href="@Url.Action("RBOnDemandTalent", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
-                                               class="PagedList-skipToPrevious">
+                                           class="PagedList-skipToPrevious">
                                                 &laquo;
                                             </a>
                                         </li>
@@ -442,10 +448,10 @@
                                 </ul>
                             </div>
                             @*@for (int i = 1; i <= ViewBag.Pages; i++)
-                                {
-                                    @Html.ActionLink(i.ToString(), "RBOnDemandTalent", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" })
+                            {
+                            @Html.ActionLink(i.ToString(), "RBOnDemandTalent", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" })
 
-                                }*@
+                            }*@
                         </div>
 
                     </div>
@@ -572,7 +578,7 @@
         //});
 
         $("#ResetFilter").click(function () {
-                ResetFilter();
+            ResetFilter();
         })
         if ('@filter' != "") {
             ApplySessionFilter();
@@ -599,13 +605,13 @@
     }
 
     function ApplySessionFilter() {
- 
+
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var heuristicType =  @Html.Raw(Json.Serialize(HeuristicType));
-            
+        var heuristicType = @Html.Raw(Json.Serialize(HeuristicType));
+
         $("#PrimarySkill").val(primarySkillsArr);
         $("#HeuristicType").val(heuristicType);
-            
+
     }
 
 </script>

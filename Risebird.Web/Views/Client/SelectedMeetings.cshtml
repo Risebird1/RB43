@@ -156,7 +156,7 @@
 
 
 
-                                                        <form action="@Url.Action("SelectedMeetings","Client")" method="post" id="form">
+                                                        <form action="@Url.Action("SelectedMeetings","Client")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                             <div class="modal-body">
                                                                 <div class="row">
@@ -1766,7 +1766,5 @@
         modal.style.display = "none";
     }
 </script>
-
-
-
+<script src="~/js/filtervalidation.js"></script>
 <!-- PAGE CONTENT WRAPPER -->

@@ -389,7 +389,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("MyInterviews","HR")" method="post" id="form">
+                                            <form action="@Url.Action("MyInterviews","HR")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -402,10 +402,6 @@
                                                                     <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-
-
-
-
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -2635,4 +2631,4 @@
         marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
     }
 </script>
-
+<script src="~/js/filtervalidation.js"></script>

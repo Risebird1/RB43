@@ -161,7 +161,7 @@
                                         </button>
 
 
-                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal">
+                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body ">
                                                 <div class="row">
@@ -1136,7 +1136,7 @@
 <script src="~/js/twiliocallmaker.js"></script>
 
 <script>
-    
+
     function CandidateFeedback(interviewid) {
         $.ajax({
             type: "POST",
@@ -2110,3 +2110,4 @@
             openCodedResumeNotificationModel();
         </script>*@
 }
+<script src="~/js/filtervalidation.js"></script>

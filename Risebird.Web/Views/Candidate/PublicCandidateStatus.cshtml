@@ -200,7 +200,7 @@
                                                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
-                                                <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
+                                                <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid,id=ViewBag.id})" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                     <div class="modal-body publicmeeting">
                                                         <div class="row">
@@ -1363,4 +1363,4 @@
         });
     })(jQuery);
 </script>
-
+<script src="~/js/filtervalidation.js"></script>

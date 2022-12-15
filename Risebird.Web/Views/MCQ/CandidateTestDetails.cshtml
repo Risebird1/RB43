@@ -72,7 +72,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <input type="hidden" id="txtCanidateListId" value="@ViewBag.ID" />
-                                        <form action="@Url.Action("CandidateTestDetails","MCQ", new { id = @ViewBag.ID  })" method="post" id="form">
+                                        <form action="@Url.Action("CandidateTestDetails","MCQ", new { id = @ViewBag.ID  })" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -654,3 +654,4 @@
         }
     }
 </script>
+<script src="~/js/filtervalidation.js"></script>

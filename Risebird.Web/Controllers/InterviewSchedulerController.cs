@@ -344,22 +344,22 @@ namespace Risebird.Web.Controllers
                 {
                     interviewOnDevice = interviewOnDevice + " " + "Quality Headphone";
                 }
-                if (model.Checkbox3)
-                {
-                    interviewOnDevice = interviewOnDevice + " " + "High Speed Internet";
-                }
+                //if (model.Checkbox3)
+                //{
+                //    interviewOnDevice = interviewOnDevice + " " + "High Speed Internet";
+                //}
                 if (model.Checkbox4)
                 {
                     interviewOnDevice = interviewOnDevice + " " + "Working webcam";
                 }
-                if (model.Checkbox5)
-                {
-                    interviewOnDevice = interviewOnDevice + " " + "Chrome Browser";
-                }
-                if (model.Checkbox6)
-                {
-                    interviewOnDevice = interviewOnDevice + " " + "Silent place with appropriate lighting";
-                }
+                //if (model.Checkbox5)
+                //{
+                //    interviewOnDevice = interviewOnDevice + " " + "Chrome Browser";
+                //}
+                //if (model.Checkbox6)
+                //{
+                //    interviewOnDevice = interviewOnDevice + " " + "Silent place with appropriate lighting";
+                //}
                 var JDTitle = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
                 TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);

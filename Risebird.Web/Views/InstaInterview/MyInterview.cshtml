@@ -100,7 +100,7 @@
                                         </button>
 
 
-                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal">
+                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body ">
                                                 <div class="row">
@@ -700,4 +700,4 @@
         }
     </script>
 }
-
+<script src="~/js/filtervalidation.js"></script>

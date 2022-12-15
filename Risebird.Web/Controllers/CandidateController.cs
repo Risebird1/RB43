@@ -3448,7 +3448,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1), datatype, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)

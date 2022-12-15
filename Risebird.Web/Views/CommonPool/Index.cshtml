@@ -152,7 +152,7 @@
                                             </button>
 
 
-                                            <form action="@Url.Action("Index","commonpool")" method="post" id="form">
+                                            <form action="@Url.Action("Index","commonpool")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -1254,8 +1254,7 @@
                 </script>
     }*@
 <script src="~/js/twiliocallmaker.js"></script>
-
-
+<script src="~/js/filtervalidation.js"></script>
 
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
     {

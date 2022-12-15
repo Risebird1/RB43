@@ -96,7 +96,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("SelectedCandidate","CommonPool")" method="post" id="form">
+                                            <form action="@Url.Action("SelectedCandidate","CommonPool")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -109,10 +109,6 @@
                                                                     <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-
-
-
-
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -139,8 +135,6 @@
                                                                             }
                                                                         }
                                                                     </select>
-
-
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
@@ -475,7 +469,7 @@
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
                                                                 <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-                                                                @*<span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>*@                                                                
+                                                                @*<span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>*@
                                                                 <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
                                                             }
 
@@ -497,41 +491,41 @@
                     </div>
                     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
                     @*<div id="myModal" class="modal modal-bg">
-                        <!-- Modal content -->
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
+                    <!-- Modal content -->
+                    <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
 
 
 
-                                <div class="filheader">
-                                    <div class="filavatar">
-                                        <span>
+                    <div class="filheader">
+                    <div class="filavatar">
+                    <span>
 
 
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                        </span>
-                                    </div>
-                                    <h5 class="modal-title pull-left"> Call Candidate!</h5>
-                                </div>
-                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                                </button>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                    </div>
+                    <h5 class="modal-title pull-left"> Call Candidate!</h5>
+                    </div>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                    </button>
 
 
 
-                                <div class="modal-body">
-                                    <div>
-                                        <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                    <div class="modal-body">
+                    <div>
+                    <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
 
-                                    </div>
+                    </div>
 
-                                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
 
-                                </div>
+                    </div>
 
-                            </div>
+                    </div>
 
-                        </div>
+                    </div>
                     </div>*@
 
 
@@ -591,113 +585,113 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
 
-           // $("#PrimarySkill").multiselect({
-                   // includeSelectAllOption: true,
-                   // selectedClass: 'active1',
-                  //  buttonWidth: '100%',
-                  //  maxHeight: 200
-               // });
+        // $("#PrimarySkill").multiselect({
+        // includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //  buttonWidth: '100%',
+        //  maxHeight: 200
+        // });
 
 
-            //$("#RFID").multiselect({
-                    //includeSelectAllOption: true,
-                   // selectedClass: 'active1',
-                   // buttonWidth: '100%',
-                   // maxHeight: 200
-               // });
-            //$("#ClientHR").multiselect({
-                    //includeSelectAllOption: true,
-                    //selectedClass: 'active1',
-                   // buttonWidth: '100%',
-                   // maxHeight: 200
-                //});
+        //$("#RFID").multiselect({
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        // });
+        //$("#ClientHR").multiselect({
+        //includeSelectAllOption: true,
+        //selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        //});
 
-           // $("#ConfirmationStatus").multiselect({
-                    //includeSelectAllOption: true,
-                   // selectedClass: 'active1',
-                  //  buttonWidth: '100%',
-                   // maxHeight: 200
-               // });
+        // $("#ConfirmationStatus").multiselect({
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //  buttonWidth: '100%',
+        // maxHeight: 200
+        // });
 
-           // $("#MeetingStatus").multiselect({
-                  //  includeSelectAllOption: true,
-                   // selectedClass: 'active1',
-                  //  buttonWidth: '100%',
-                   // maxHeight: 200
-                //});
+        // $("#MeetingStatus").multiselect({
+        //  includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //  buttonWidth: '100%',
+        // maxHeight: 200
+        //});
 
-           // $("#InterviewStatus").multiselect({
-                   // includeSelectAllOption: true,
-                   // selectedClass: 'active1',
-                   // buttonWidth: '100%',
-                  //  maxHeight: 200
-                //});
+        // $("#InterviewStatus").multiselect({
+        // includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        //  maxHeight: 200
+        //});
 
-            //$("#Interviewer").multiselect({
-                   // includeSelectAllOption: true,
-                   // selectedClass: 'active1',
-                  //  buttonWidth: '100%',
-                  //  maxHeight: 200
-           // });
+        //$("#Interviewer").multiselect({
+        // includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //  buttonWidth: '100%',
+        //  maxHeight: 200
+        // });
 
-           // $("#ClientName").multiselect({
-               // includeSelectAllOption: true,
-                //selectedClass: 'active1',
-                //buttonWidth: '100%',
-               // maxHeight: 200
-            //});
-          // $("#Client").multiselect({
-               // includeSelectAllOption: true,
-              //  selectedClass: 'active1',
-               // buttonWidth: '100%',
-               // maxHeight: 200
-           // });
+        // $("#ClientName").multiselect({
+        // includeSelectAllOption: true,
+        //selectedClass: 'active1',
+        //buttonWidth: '100%',
+        // maxHeight: 200
+        //});
+        // $("#Client").multiselect({
+        // includeSelectAllOption: true,
+        //  selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        // });
 
 
 
     });
-         function ResetFilter() {
-             window.location.href = "/CommonPool/ResetSelectedCandidateFilter";
-         }
-        function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-            var rFID =  @Html.Raw(Json.Serialize(RFID));
-            var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-            var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
-            var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
-            var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-            var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
-            var clientName =  @Html.Raw(Json.Serialize(ClientName));
-            var client =  @Html.Raw(Json.Serialize(Client));
+    function ResetFilter() {
+        window.location.href = "/CommonPool/ResetSelectedCandidateFilter";
+    }
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var rFID = @Html.Raw(Json.Serialize(RFID));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var client = @Html.Raw(Json.Serialize(Client));
 
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#PrimarySkill").val(primarySkillsArr);
-            $("#RFID").val(rFID);
-            $("#ClientHR").val(clientHR);
-            $("#ConfirmationStatus").val(confirmationStatus);
-            $("#MeetingStatus").val(meetingStatus);
-            $("#InterviewStatus").val(interviewStatus);
-            $("#Interviewer").val(interviewer);
-            $("#ClientName").val(clientName);
-            $("#Client").val(client);
-            var form = $("#form").serialize();
-            // $.ajax({
-            //type: "POST",
-            //url: "/Interview/Index",
-            //data: form,
-            //     success: function (data) {
-            //     }
-            //    });
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#RFID").val(rFID);
+        $("#ClientHR").val(clientHR);
+        $("#ConfirmationStatus").val(confirmationStatus);
+        $("#MeetingStatus").val(meetingStatus);
+        $("#InterviewStatus").val(interviewStatus);
+        $("#Interviewer").val(interviewer);
+        $("#ClientName").val(clientName);
+        $("#Client").val(client);
+        var form = $("#form").serialize();
+        // $.ajax({
+        //type: "POST",
+        //url: "/Interview/Index",
+        //data: form,
+        //     success: function (data) {
+        //     }
+        //    });
     }
 
 
@@ -713,7 +707,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.includes("Success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                swal.fire("Successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
@@ -1045,4 +1039,4 @@
         });
     }
 </script>
-
+<script src="~/js/filtervalidation.js"></script>

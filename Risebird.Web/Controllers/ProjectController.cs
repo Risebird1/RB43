@@ -1311,7 +1311,5 @@ namespace Risebird.Web.Controllers
             return Json(new { result = selectedMeeting.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = selectedMeeting.Count });
         }
 
-
-
     }
 }

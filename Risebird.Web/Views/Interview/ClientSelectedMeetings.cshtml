@@ -49,7 +49,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-              
+
             </div>
 
         </div>
@@ -112,7 +112,7 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("ClientSelectedMeetings","Interview")" method="post" id="form">
+                                        <form action="@Url.Action("ClientSelectedMeetings","Interview")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -436,12 +436,12 @@
 
 <script>
     $(document).ready(function () {
-         $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
         $("#PrimarySkill").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
@@ -517,46 +517,46 @@
     });
     function ResetFilter() {
 
-             $.ajax({
+        $.ajax({
             type: "POST",
             url: "/Interview/ClientSelectedMeetings",
-                 success: function (data) {
-                    window.location.href = "/Interview/ResetClientSelectedMeetingsfilters";
-                 }
-                });
+            success: function (data) {
+                window.location.href = "/Interview/ResetClientSelectedMeetingsfilters";
+            }
+        });
     }
-     function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-            var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
-            var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-            var interviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
-            var clientName =  @Html.Raw(Json.Serialize(ClientName));
-            var selectionStatus = @Html.Raw(Json.Serialize(SelectionStatus));
-            var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
-            var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
-            var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var candidateName = @Html.Raw(Json.Serialize(CandidateName));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var interviewDate = @Html.Raw(Json.Serialize(InterviewDate));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var selectionStatus = @Html.Raw(Json.Serialize(SelectionStatus));
+        var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
+        var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
+        var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
 
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#PrimarySkill").val(primarySkillsArr);
-            $("#CandidateName").val(candidateName);
-            $("#ClientHR").val(clientHR);
-            $("#InterviewDate").val(interviewDate);
-            $("#ClientName").val(clientName);
-            $("#SelectionStatus").val(selectionStatus);
-            $("#ApprovalStatus").val(approvalStatus);
-            $("#JoiningStatus").val(joiningStatus);
-             $("#OfferStatus").val(offerStatus);
-            var form = $("#form").serialize();
-             $.ajax({
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#CandidateName").val(candidateName);
+        $("#ClientHR").val(clientHR);
+        $("#InterviewDate").val(interviewDate);
+        $("#ClientName").val(clientName);
+        $("#SelectionStatus").val(selectionStatus);
+        $("#ApprovalStatus").val(approvalStatus);
+        $("#JoiningStatus").val(joiningStatus);
+        $("#OfferStatus").val(offerStatus);
+        var form = $("#form").serialize();
+        $.ajax({
             type: "POST",
             url: "/Interview/ClientSelectedMeetings",
             data: form,
-                 success: function (data) {
-                 }
-                });
+            success: function (data) {
+            }
+        });
     }
 </script>
 
@@ -670,36 +670,37 @@
 <!-- Keep the Page Content Here.-->
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
 {
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-    var enjoyhint_instance = new EnjoyHint({});
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script src="~/js/filtervalidation.js"></script>
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
 
-    var enjoyhint_script_steps = [
-        {
-            'next .first': 'Selected Candidates Interviews and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Continue" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .second': 'Selected Candidates Interview Details',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'click .supportmenu': 'Click on Support menu and see its features',            
-        }
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 5000)
-</script>
+        var enjoyhint_script_steps = [
+            {
+                'next .first': 'Selected Candidates Interviews and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Selected Candidates Interview Details',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .supportmenu': 'Click on Support menu and see its features',
+            }
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
+    </script>
 }
 <loading></loading>
 

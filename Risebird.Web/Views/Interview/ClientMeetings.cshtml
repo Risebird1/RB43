@@ -131,7 +131,7 @@
 
 
 
-                                        <form action="@Url.Action("ClientMeetings","Interview")" method="post" id="form">
+                                        <form action="@Url.Action("ClientMeetings","Interview")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -651,7 +651,7 @@
 
 </script>
 
-
+<script src="~/js/filtervalidation.js"></script>
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();

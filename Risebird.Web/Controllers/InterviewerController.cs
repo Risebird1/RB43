@@ -275,7 +275,6 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Message = TempData["MessageInterviewer"].ToString();
                             TempData.Remove("MessageInterviewer");
-
                         }
                         var model = _interviewerService.GetInterviewers();
                         var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
@@ -3201,6 +3200,7 @@ namespace Risebird.Web.Controllers
             model.inviteEndTime = _codeinvite.inviteEndTime;
             model.zone = "IST";
             model.difficultyLevel = _codeinvite.difficultyLevel.ToLower();
+            model.assignmentType = "QUICK";
             var client = new RestClient(codeapiendpoint + "invited-assignment");
             var request = new RestRequest(codeapiendpoint + "invited-assignment", Method.Post);
             request.AddHeader("content-type", "application/json");

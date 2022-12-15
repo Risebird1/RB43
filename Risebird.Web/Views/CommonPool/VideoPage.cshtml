@@ -136,11 +136,7 @@
                                     </button>
 
 
-
-
-
-
-                                    <form action="@Url.Action("VideoPage", "commonpool", new { id = Model.imid })" method="post" id="form">
+                                    <form action="@Url.Action("VideoPage", "commonpool", new { id = Model.imid })" method="post" id="form" onsubmit="return checkfilterDate();">
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
@@ -4444,3 +4440,4 @@
         </script>
     }
 }
+<script src="~/js/filtervalidation.js"></script>

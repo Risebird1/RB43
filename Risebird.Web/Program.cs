@@ -376,7 +376,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.UseMiddleware<ValidateAntiForgeryTokenMiddleware>();
+//app.UseMiddleware<ValidateAntiForgeryTokenMiddleware>();
 
 app.Run();
 

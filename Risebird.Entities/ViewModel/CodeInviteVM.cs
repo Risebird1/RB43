@@ -14,7 +14,7 @@ namespace Risebird.Entities.ViewModel
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Please enter Candidate Email")]
-        [Display(Name = "User Name")]
+        [Display(Name = "Candidate Email")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Candidate Email")]
         public string candidateEmail { get; set; }
@@ -61,6 +61,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime inviteEndTime { get; set; }
         public string zone { get; set; }
         public string candidateEmail { get; set; }
+        public string assignmentType { get; set; }
     }
     public class CodeInviteURLResponse
     {

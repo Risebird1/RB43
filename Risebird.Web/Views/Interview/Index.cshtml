@@ -186,7 +186,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("Index","Interview", new { type = ViewBag.Type })" method="post" id="form">
+                                            <form action="@Url.Action("Index","Interview", new { type = ViewBag.Type })" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -199,10 +199,6 @@
                                                                     <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-
-
-
-
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
@@ -1597,7 +1593,7 @@
 
 <script src="~/js/TwilioCallMaker.js"></script>
 <script>
-    
+
     //function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
     //    $.ajax({
     //        url: '/Candidate/PublicCancelInterview',
@@ -1676,7 +1672,7 @@
 </script>
 
 <script>
-    function ValidateBroadcastFields(){
+    function ValidateBroadcastFields() {
         //var message_Value = $("#bcMessage").val();
         var message_Value = tinymce.get("bcMessage").getContent();
         var text_value = $('input[name="textField"]').val();
@@ -1716,8 +1712,8 @@
             plugins: 'link',
             height: "300",
             toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
-            setup: function(ed) {
-                ed.on('keyup', function(e) {
+            setup: function (ed) {
+                ed.on('keyup', function (e) {
                     ValidateBroadcastFields();
                 });
             }
@@ -1926,15 +1922,15 @@
 </script>
 <script>
     $(document).ready(function () {
-        
+
         $('.sendButton').attr('disabled', true);
         $('input[type="text"],textarea').on('keyup', function () {
             ValidateBroadcastFields();
         });
-        
+
     });
 
-    
+
     //new added Popup
     //function OpenVideoUploadPopup(interviewid) {
     //    var url = "/Interview/partialVideoView?id=" + interviewid;
@@ -2386,5 +2382,5 @@
 }
 
 <script src="~/js/ModalFormServerValidation.js"></script>
-
+<script src="~/js/filtervalidation.js"></script>
 @*<script src="~/js/CallTwilio.js"></script>*@

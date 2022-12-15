@@ -80,7 +80,8 @@
                             @if (Model != null && Model.AccountList.Count() != 0)
                             {
                                 @foreach (var item in Model.AccountList)
-                                {<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                {
+                                    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
                                         <div class="card-content-holder border card-blue">
 
                                             <div class="card-header">
@@ -184,7 +185,7 @@
                                     </button>
 
 
-                                    <form action="@Url.Action("Index","Account")" method="post" id="form">
+                                    <form action="@Url.Action("Index","Account")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                         <div class="modal-body">
                                             <div class="row">
@@ -331,7 +332,7 @@
         function my_code() {
             var msg = '@Model.Message';
             if (msg.includes("Success")) {
-                swal.fire("Successful",'@Model.Message', "success");
+                swal.fire("Successful", '@Model.Message', "success");
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");
@@ -418,11 +419,11 @@
     $(document).ready(function () {
 
         $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
 
         //$("#AccountId").multiselect({
         //    includeSelectAllOption: true,
@@ -454,22 +455,23 @@
     function ResetFilter() {
         window.location.href = "/Account/ResetAccountFilter";
     }
-        function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var accountId =  @Html.Raw(Json.Serialize(AccountId));
-            var clientName =  @Html.Raw(Json.Serialize(ClientName));
-            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
-            var location =  @Html.Raw(Json.Serialize(Location));
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var accountId = @Html.Raw(Json.Serialize(AccountId));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var archiveStatus = @Html.Raw(Json.Serialize(ArchiveStatus));
+        var location = @Html.Raw(Json.Serialize(Location));
 
 
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#AccountId").val(accountId);
-            $("#ClientName").val(clientName);
-            $("#ArchiveStatus").val(archiveStatus);
-            $("#Location").val(location);
-            var form = $("#form").serialize();
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        $("#AccountId").val(accountId);
+        $("#ClientName").val(clientName);
+        $("#ArchiveStatus").val(archiveStatus);
+        $("#Location").val(location);
+        var form = $("#form").serialize();
     }
 
 </script>
+<script src="~/js/filtervalidation.js"></script>

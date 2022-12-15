@@ -120,7 +120,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("NotScheduledMeetings","Client")" method="post" id="form">
+                                        <form action="@Url.Action("NotScheduledMeetings","Client")" method="post" id="form" onsubmit="return checkfilterDate();">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -803,7 +803,7 @@
     });
 </script>
 <script src="~/js/twiliocallmaker.js"></script>
-
+<script src="~/js/filtervalidation.js"></script>
 <loading></loading>
 
 

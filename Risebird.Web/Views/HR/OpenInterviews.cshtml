@@ -56,26 +56,27 @@
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
-                            </button></span>
+                            </button>
+                        </span>
 
-                            <div id="meeting_filter" class="dataTables_filter pull-left">
+                        <div id="meeting_filter" class="dataTables_filter pull-left">
 
-                                <div class="searchCon">
+                            <div class="searchCon">
 
-                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
+                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
 
-                                    <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
+                                <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
 
-                                </div>
                             </div>
-
-
-
-
-
                         </div>
+
+
+
+
+
                     </div>
+                </div>
             </div>
         </div>
     </div>
@@ -107,7 +108,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("OpenInterviews","HR")" method="post" id="form">
+                                        <form action="@Url.Action("OpenInterviews","HR")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -120,10 +121,6 @@
                                                                 <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                             </div>
                                                         </div>
-
-
-
-
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -521,11 +518,6 @@
                     </button>
 
                     <div class="modal-body" id="memberTableBody">
-
-
-
-
-
                     </div>
                 </div>
 
@@ -548,7 +540,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                swal.fire("Successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
@@ -565,53 +557,53 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
 
-            //$("#PrimarySkill").multiselect({
-            //        includeSelectAllOption: true,
-            //        selectedClass: 'active1',
-            //        buttonWidth: '100%',
-            //        maxHeight: 200
-            //    });
+        //$("#PrimarySkill").multiselect({
+        //        includeSelectAllOption: true,
+        //        selectedClass: 'active1',
+        //        buttonWidth: '100%',
+        //        maxHeight: 200
+        //    });
 
 
-            //$("#Interviewer").multiselect({
-            //        includeSelectAllOption: true,
-            //        selectedClass: 'active1',
-            //        buttonWidth: '100%',
-            //        maxHeight: 200
-            //});
+        //$("#Interviewer").multiselect({
+        //        includeSelectAllOption: true,
+        //        selectedClass: 'active1',
+        //        buttonWidth: '100%',
+        //        maxHeight: 200
+        //});
 
-            //$("#RFID").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
-            //$("#ClientHR").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
+        //$("#RFID").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#ClientHR").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
-            //$("#ClientName").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
-            //$("#Client").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
+        //$("#ClientName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#Client").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
 
 
@@ -625,11 +617,11 @@
         var strtDte = '@strtDte';
         var endDte = '@endDte';
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
-        var rFID =  @Html.Raw(Json.Serialize(RFID));
-        var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-        var clientName =  @Html.Raw(Json.Serialize(ClientName));
-        var client =  @Html.Raw(Json.Serialize(Client));
+        var interviewer = @Html.Raw(Json.Serialize(Interviewer));
+        var rFID = @Html.Raw(Json.Serialize(RFID));
+        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var clientName = @Html.Raw(Json.Serialize(ClientName));
+        var client = @Html.Raw(Json.Serialize(Client));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -876,12 +868,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
-     $('.' + id).addClass("in");
+            $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
-    $('.' + id).removeClass("in");
+            $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }
@@ -1254,3 +1246,4 @@
     </script>
 
 }
+<script src="~/js/filtervalidation.js"></script>

@@ -181,7 +181,7 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
 
-                                                    <form action="@Url.Action("AllMeetings","Client",new {Emailid=ViewBag.Emailid })" method="post" id="form">
+                                                    <form action="@Url.Action("AllMeetings","Client",new {Emailid=ViewBag.Emailid })" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -2368,7 +2368,7 @@
     function OpenRedoFormModel(interviewid, interviewstatus) {
         $.ajax({
             url: '/Interview/RedoInterviewDetails',
-            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus,'type':'ClientAll' },
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus, 'type': 'ClientAll' },
             success: function (data) {
                 $('#divredoInterview').html('');
                 $('#divredoInterview').html(data);
@@ -2385,18 +2385,7 @@
         modal.style.display = "none";
     }
 </script>
-
-
-
+<script src="~/js/filtervalidation.js"></script>
 <!-- Keep the Page Content Here.-->
-
-
-
-
-
-
-
 <loading></loading>
-
-
 <!-- PAGE CONTENT WRAPPER -->

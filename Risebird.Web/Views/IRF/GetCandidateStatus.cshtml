@@ -38,7 +38,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
-    
+
 
     <div class="pt30 videocon">
         <div class="col-md-12 nopad">
@@ -54,7 +54,7 @@
                             @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                         </span>
                         <span id="getstatus_2">
-                            <i type="submit" class="far fa-file-excel excel-file   pull-left" data-toggle="tooltip" data-placement="bottom"  data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("GetCandidateStatusExportToExcel", "IRF", new { id = ViewBag.id })'"></i>
+                            <i type="submit" class="far fa-file-excel excel-file   pull-left" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("GetCandidateStatusExportToExcel", "IRF", new { id = ViewBag.id })'"></i>
                         </span>
                         <span id="getstatus_3">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
@@ -63,12 +63,7 @@
                                 <div class="mdc-button__ripple"></div>
                             </button>
                         </span>
-
-
-
-
                     </div>
-
                 </div>
             </div>
         </div>
@@ -96,8 +91,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <input type="hidden" id="hididvalue" value="@ViewBag.id" />
-                                        <form action="@Url.Action("GetCandidateStatus","IRF",new { id= ViewBag.id})" method="post" id="form">
-
+                                        <form action="@Url.Action("GetCandidateStatus","IRF",new { id= ViewBag.id})" method="post" id="form" onsubmit="return checkfilterDate();">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -109,10 +103,6 @@
                                                                 <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                             </div>
                                                         </div>
-
-
-
-
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -372,33 +362,33 @@
 
 
                                                                 @*@if (item.OnboardingDetails != null)
-                                        {
-                                            <td style="padding:10px 0px;">
-                                                <div class="timeline-section-tl">
-                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                    <div class="circle-wrap">
-                                                        <div class="circle" id="circle0" style="left: 0%;">
+                                                            {
+                                                            <td style="padding:10px 0px;">
+                                                            <div class="timeline-section-tl">
+                                                            <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                            <div class="circle-wrap">
+                                                            <div class="circle" id="circle0" style="left: 0%;">
                                                             <div class="popupSpan">
-                                                                <div class="event2Bubble">
-                                                                    <div class="eventTime">
-                                                                        <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                                                        <div class="Day">
-                                                                            @item.OnboardingDetails.Day
-                                                                            <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
-                                                                </div>
+                                                            <div class="event2Bubble">
+                                                            <div class="eventTime">
+                                                            <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                                            <div class="Day">
+                                                            @item.OnboardingDetails.Day
+                                                            <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td></td>
-                                        }*@
+                                                            </div>
+                                                            <div class="eventTitle">@item.OnboardingDetails.Status</div>
+                                                            </div>
+                                                            </div>
+                                                            </div>
+                                                            </div>
+                                                            </div>
+                                                            </td>
+                                                            }
+                                                            else
+                                                            {
+                                                            <td></td>
+                                                            }*@
                                                                 @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                                                                 {
                                                                     <td style="padding:10px 0px;">
@@ -701,33 +691,33 @@
             ApplySessionFilter();
         }
 
-       // $("#HREmail").multiselect({
-          //includeSelectAllOption: true,
-           // selectedClass: 'active1',
-           // buttonWidth: '100%',
-           // maxHeight: 200
-      //  });
+        // $("#HREmail").multiselect({
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        //  });
 
-      // $("#MeetingStatus").multiselect({
-          //  includeSelectAllOption: true,
-           // selectedClass: 'active1',
-          //  buttonWidth: '100%',
-           // maxHeight: 200
-      //  });
+        // $("#MeetingStatus").multiselect({
+        //  includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //  buttonWidth: '100%',
+        // maxHeight: 200
+        //  });
 
-       // $("#InterviewStatus").multiselect({
-          //  includeSelectAllOption: true,
-           // selectedClass: 'active1',
-           // buttonWidth: '100%',
-           // maxHeight: 200
-      //  });
+        // $("#InterviewStatus").multiselect({
+        //  includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        //  });
 
-     //   $("#ScheduleStatus").multiselect({
-         //   includeSelectAllOption: true,
-          // selectedClass: 'active1',
-           // buttonWidth: '100%',
-           // maxHeight: 200
-       // });
+        //   $("#ScheduleStatus").multiselect({
+        //   includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        // });
 
     })
 
@@ -741,10 +731,10 @@
 
         var strtDte = '@strtDte';
         var endDte = '@endDte';
-        var hrEmail=  @Html.Raw(Json.Serialize(HREmail));
-        var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
-        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-        var scheduleStatus =  @Html.Raw(Json.Serialize(ScheduleStatus));
+        var hrEmail = @Html.Raw(Json.Serialize(HREmail));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        var scheduleStatus = @Html.Raw(Json.Serialize(ScheduleStatus));
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         $("#HREmail").val(hrEmail);
@@ -824,27 +814,23 @@
 
 
 
-    //function ExportToExcel(obj) {
+        //function ExportToExcel(obj) {
 
-    //    var data = JSON.parse(obj.replace(/&quot;/g, '"'));
+        //    var data = JSON.parse(obj.replace(/&quot;/g, '"'));
 
-    //    $.ajax({
-    //        url: '/Candidate/CandidateStatusExporttoExcel',
-    //        data: { 'modelData': JSON.stringify(data) },
-    //        method:'POST',
-    //        success: function (response) {
-    //            debugger;
-    //            return response;
+        //    $.ajax({
+        //        url: '/Candidate/CandidateStatusExporttoExcel',
+        //        data: { 'modelData': JSON.stringify(data) },
+        //        method:'POST',
+        //        success: function (response) {
+        //            debugger;
+        //            return response;
 
 
 
-    //        }
-    //    });
-    //}
+        //        }
+        //    });
+        //}
 
 </script>
-
-
-
-
-
+<script src="~/js/filtervalidation.js"></script>

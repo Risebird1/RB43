@@ -2405,8 +2405,6 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Client")
                     {
-
-
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("TalentOnDemandFilter", JsonConvert.SerializeObject(filter));
@@ -2424,8 +2422,6 @@ namespace Risebird.Web.Controllers
 
                         var primarySkills = await _iRFService.GetPrimarySkillFromIRF();
                         ViewBag.PrimarySkillList = primarySkills;
-
-
 
                         filter.PrimarySkill = filter.PrimarySkill == null ? primarySkills.ToArray() : filter.PrimarySkill;
                         filter.HeuristicType = filter.HeuristicType == null ? heuristicLevels : filter.HeuristicType;
@@ -2447,10 +2443,7 @@ namespace Risebird.Web.Controllers
 
                             }
                             item.candidateName = namemodel;
-
                         }
-
-
                         ViewBag.profileName = profileName;
                         if (!string.IsNullOrEmpty(searchvalue))
                         {
@@ -2461,7 +2454,6 @@ namespace Risebird.Web.Controllers
                             ViewBag.searchvalue = "";
                         }
 
-
                         var remainder = totalMeetings % 12;
                         if (remainder == 0)
                         {
@@ -2471,14 +2463,11 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             ViewBag.Pages = (totalMeetings / 12) + 1;
-
                         }
-
                         ViewBag.Page = Page.Value;
                         ViewBag.MeetingsCount = totalMeetings;
                         ViewBag.Remainder = remainder;
                         return View(modelList);
-
                     }
                     else
                     {
@@ -2495,7 +2484,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-
         }
 
         [Authorize]

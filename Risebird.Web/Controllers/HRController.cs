@@ -29,8 +29,6 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
 
-
-
         public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
@@ -1353,9 +1351,9 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-30));
+                            recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-7));
                         }
-                        recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-30));
+                        recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-7));
                         ViewBag.profile = profileName;
                         return View(recordings);
                     }

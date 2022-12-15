@@ -149,7 +149,7 @@
                                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
-                                                    <form action="@Url.Action("CandidateTimeline", "Candidate")" method="post" id="form">
+                                                    <form action="@Url.Action("CandidateTimeline", "Candidate")" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -162,10 +162,6 @@
                                                                             <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                         </div>
                                                                     </div>
-
-
-
-
                                                                 </div>
                                                                 <div class="col-md-6 col-sm-6">
                                                                     <div class="form-group">
@@ -461,33 +457,33 @@
 
 
                                                                             @*@if (item.OnboardingDetails != null)
-                                                                                {
-                                                                                    <td style="padding:10px 0px;">
-                                                                                        <div class="timeline-section-tl">
-                                                                                            <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                                            <div class="circle-wrap">
-                                                                                                <div class="circle" id="circle0" style="left: 0%;">
-                                                                                                    <div class="popupSpan">
-                                                                                                        <div class="event2Bubble">
-                                                                                                            <div class="eventTime">
-                                                                                                                <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                                                                                                <div class="Day">
-                                                                                                                    @item.OnboardingDetails.Day
-                                                                                                                    <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            <div class="eventTitle">@item.OnboardingDetails.Status</div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }*@
+                                                                    {
+                                                                    <td style="padding:10px 0px;">
+                                                                    <div class="timeline-section-tl">
+                                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                    <div class="circle-wrap">
+                                                                    <div class="circle" id="circle0" style="left: 0%;">
+                                                                    <div class="popupSpan">
+                                                                    <div class="event2Bubble">
+                                                                    <div class="eventTime">
+                                                                    <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                                                    <div class="Day">
+                                                                    @item.OnboardingDetails.Day
+                                                                    <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
+                                                                    </div>
+                                                                    </div>
+                                                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td></td>
+                                                                    }*@
                                                                             @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                                                                             {
                                                                                 <td style="padding:10px 0px;">
@@ -1108,33 +1104,33 @@
 
 
                                                                             @*@if (item.OnboardingDetails != null)
-                                                                                {
-                                                                                    <td style="padding:10px 0px;">
-                                                                                        <div class="timeline-section-tl">
-                                                                                            <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                                            <div class="circle-wrap">
-                                                                                                <div class="circle" id="circle0" style="left: 0%;">
-                                                                                                    <div class="popupSpan">
-                                                                                                        <div class="event2Bubble">
-                                                                                                            <div class="eventTime">
-                                                                                                                <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                                                                                                <div class="Day">
-                                                                                                                    @item.OnboardingDetails.Day
-                                                                                                                    <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            <div class="eventTitle">@item.OnboardingDetails.Status</div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }*@
+                                                                    {
+                                                                    <td style="padding:10px 0px;">
+                                                                    <div class="timeline-section-tl">
+                                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                    <div class="circle-wrap">
+                                                                    <div class="circle" id="circle0" style="left: 0%;">
+                                                                    <div class="popupSpan">
+                                                                    <div class="event2Bubble">
+                                                                    <div class="eventTime">
+                                                                    <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                                                    <div class="Day">
+                                                                    @item.OnboardingDetails.Day
+                                                                    <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
+                                                                    </div>
+                                                                    </div>
+                                                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td></td>
+                                                                    }*@
                                                                             @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                                                                             {
                                                                                 <td style="padding:10px 0px;">
@@ -1462,40 +1458,40 @@
             ApplySessionFilter();
         }
 
-      // $("#HREmail").multiselect({
-           //includeSelectAllOption: true,
-          // selectedClass: 'active1',
-          // buttonWidth: '100%',
-          // maxHeight: 200
-       //});
+        // $("#HREmail").multiselect({
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        // maxHeight: 200
+        //});
 
-       //$("#MeetingStatus").multiselect({
-         //  includeSelectAllOption: true,
-           //selectedClass: 'active1',
-          // buttonWidth: '100%',
-           //maxHeight: 200
-       //});
+        //$("#MeetingStatus").multiselect({
+        //  includeSelectAllOption: true,
+        //selectedClass: 'active1',
+        // buttonWidth: '100%',
+        //maxHeight: 200
+        //});
 
-       //$("#InterviewStatus").multiselect({
-           //includeSelectAllOption: true,
-          // selectedClass: 'active1',
-           //buttonWidth: '100%',
-           //maxHeight: 200
-       //});
+        //$("#InterviewStatus").multiselect({
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //buttonWidth: '100%',
+        //maxHeight: 200
+        //});
 
-      // $("#ScheduleStatus").multiselect({
-         //  includeSelectAllOption: true,
-          // selectedClass: 'active1',
-         //  buttonWidth: '100%',
+        // $("#ScheduleStatus").multiselect({
+        //  includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        //  buttonWidth: '100%',
         //   maxHeight: 200
-      // });
+        // });
 
-     //  $("#ProfileSource").multiselect({
-           //includeSelectAllOption: true,
-          // selectedClass: 'active1',
-          // buttonWidth: '100%',
-           //maxHeight: 200
-      //});
+        //  $("#ProfileSource").multiselect({
+        //includeSelectAllOption: true,
+        // selectedClass: 'active1',
+        // buttonWidth: '100%',
+        //maxHeight: 200
+        //});
 
     })
 
@@ -1509,11 +1505,11 @@
 
         var strtDte = '@strtDte';
         var endDte = '@endDte';
-        var hrEmail=  @Html.Raw(Json.Serialize(HREmail));
-        var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
-        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-        var scheduleStatus =  @Html.Raw(Json.Serialize(ScheduleStatus));
-        var profileSource =  @Html.Raw(Json.Serialize(ProfileSource));
+        var hrEmail = @Html.Raw(Json.Serialize(HREmail));
+        var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
+        var scheduleStatus = @Html.Raw(Json.Serialize(ScheduleStatus));
+        var profileSource = @Html.Raw(Json.Serialize(ProfileSource));
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         $("#HREmail").val(hrEmail);
@@ -1595,26 +1591,23 @@
 
 
 
-        //function ExportToExcel(obj) {
+            //function ExportToExcel(obj) {
 
-        //    var data = JSON.parse(obj.replace(/&quot;/g, '"'));
+            //    var data = JSON.parse(obj.replace(/&quot;/g, '"'));
 
-        //    $.ajax({
-        //        url: '/Candidate/CandidateStatusExporttoExcel',
-        //        data: { 'modelData': JSON.stringify(data) },
-        //        method:'POST',
-        //        success: function (response) {
-        //            debugger;
-        //            return response;
+            //    $.ajax({
+            //        url: '/Candidate/CandidateStatusExporttoExcel',
+            //        data: { 'modelData': JSON.stringify(data) },
+            //        method:'POST',
+            //        success: function (response) {
+            //            debugger;
+            //            return response;
 
 
 
-        //        }
-        //    });
-        //}
+            //        }
+            //    });
+            //}
 
 </script>
-
-
-
-
+<script src="~/js/filtervalidation.js"></script>
