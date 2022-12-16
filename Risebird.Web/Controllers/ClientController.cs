@@ -867,6 +867,7 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageQCForm");
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
+                        ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
                         ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                         var meetings = await _meetingService.GetClientMeetingList(emailid);
@@ -950,6 +951,8 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = Emailid;
                     ViewBag.Emailid = Emailid;
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
                     ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                     var meetings = await _meetingService.GetClientMeetingList(emailid);

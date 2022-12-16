@@ -18,7 +18,8 @@ CREATE TABLE [dbo].[Client](
             [InterviewDuration] [int] NULL,
             [IsMeetingAutoCancelled] [bit] NULL,
             [IsQCRequired] [bit] NULL,
-            [IsRedoInterview] [bit] NULL
+            [IsRedoInterview] [bit] NULL,
+            [IsClientCancelInterview] [bit] NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -185,6 +186,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add IsRedoInterview bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsClientCancelInterview')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add IsClientCancelInterview bit
 END
 END
 

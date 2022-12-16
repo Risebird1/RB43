@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
         public int MailCount { get; set; }
         public int WhatsappCount { get; set; }
         public int CallsCount { get; set; }
+        public bool IsClientCancelInterview { get; set; }
     }
 
     public class TimelineStatus

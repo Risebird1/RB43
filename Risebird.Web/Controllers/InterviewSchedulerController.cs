@@ -91,7 +91,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-               await SetDropDownTime(model);
+                await SetDropDownTime(model);
                 return View(model);
             }
         }
@@ -290,6 +290,12 @@ namespace Risebird.Web.Controllers
                     interviewdatetime = value;
                     model.TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(model.offset, value, model.TimeZonesValue);
                     model.scheduleDate = value.AddMinutes(model.TimeZoneoffset);
+                }
+                var _ckeckEmail = await _interviewSchedulerservice.CheckEmailAddressAllow(model.Email);
+                if (!_ckeckEmail)
+                {
+                    ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                    return View(model);
                 }
                 if (model.ResumeFile != null)
                 {
@@ -831,6 +837,6 @@ namespace Risebird.Web.Controllers
             return "Delete successfully";
         }
 
-       
+
     }
 }

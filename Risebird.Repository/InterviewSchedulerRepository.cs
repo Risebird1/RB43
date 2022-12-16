@@ -33,7 +33,7 @@ namespace Risebird.Repository
                 var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result= await con.QueryAsync<daytimes_report>(query, null);
+                    var result = await con.QueryAsync<daytimes_report>(query, null);
                     return result.ToList();
                 }
             }
@@ -554,6 +554,27 @@ namespace Risebird.Repository
                 return string.Empty;
             }
         }
-
+        public async Task<bool> CheckEmailAddressAllow(string EmailId)
+        {
+            try
+            {
+                var query = "Select Count(*) From UserList where Emailid=@EmailId and idprofile!=23";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@EmailId", EmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dp);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

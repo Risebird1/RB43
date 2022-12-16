@@ -61,5 +61,7 @@ namespace Risebird.Entities.Data
         public bool IsQCRequired { get; set; }
         [Display(Name = "Redo Interview By Client")]
         public bool IsRedoInterview { get; set; }
+        [Display(Name = "Cancel Interview")]
+        public bool IsClientCancelInterview { get; set; }
     }
 }

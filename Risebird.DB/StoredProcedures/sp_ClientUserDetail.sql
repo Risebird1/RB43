@@ -12,12 +12,12 @@ Create PROCEDURE [dbo].[sp_ClientUserDetail]
   @Email varchar(200)    
 AS    
 BEGIN    
-select cu.id, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cl.id as ClientId,cr.Name as Role,ul.id as UserId,cl.IsQCRequired,cl.IsRedoInterview
+select cu.id, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cl.id as ClientId,cr.Name as Role,ul.id as UserId,cl.IsQCRequired,cl.IsRedoInterview,cl.IsClientCancelInterview
 from [ClientUser] cu    
 inner join [dbo].[UserList] ul on cu.UserId = ul.id    
 inner join [dbo].[Client] cl on cu.ClientId= cl.id    
 inner join [ClientRole] cr on cu.RoleId= cr.id    
-where ul.IsActive =1 and ul.emailid =@Email    
+where ul.IsActive =1 and ul.emailid =@Email   
     
 END  
 GO

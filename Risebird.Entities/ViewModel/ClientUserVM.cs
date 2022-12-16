@@ -48,5 +48,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "MCQ Interiew Invite Allowed Limit")]
         public int MCQValidation { get; set; }
         public string uniqueid { get; set; }
+        public bool IsClientCancelInterview { get; set; }
     }
 }

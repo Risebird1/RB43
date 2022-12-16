@@ -30,7 +30,7 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -55,7 +55,7 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -322,6 +322,18 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 return offset;
+            }
+        }
+        public async Task<bool> CheckEmailAddressAllow(string EmailId)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckEmailAddressAllow(EmailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

@@ -3,7 +3,7 @@
 
 
 <div class="mdc-card-wrapper__text-section interviewer">
-    @using (Html.BeginForm("SendInviteCode", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
+    @using (Html.BeginForm("SendInviteCode", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return checkStartDate();", @id = "InterviewerProfileform" }))
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -14,7 +14,7 @@
                     <div class="mandate">
                         @Html.LabelFor(model => model.candidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                     </div>
-                    @Html.EditorFor(model => model.candidateEmail, new { htmlAttributes = new { id = "txt_username", @class = "form-control text-box single-line", @type="email" } })
+                    @Html.EditorFor(model => model.candidateEmail, new { htmlAttributes = new { id = "txt_username", @class = "form-control text-box single-line", @type="email",@Required="Required" } })
                     @Html.ValidationMessageFor(model => model.candidateEmail, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group">
@@ -26,13 +26,15 @@
                     <div class="mandate">
                         @Html.LabelFor(model => model.inviteStartTime, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                     </div>
-                    @Html.EditorFor(m => m.inviteStartTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type="datetime-local" } })
+                    @*@Html.EditorFor(model => model.inviteStartTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.inviteStartTime.ToString("yyyy/MM/dd") } })*@
+                    @Html.EditorFor(model => model.inviteStartTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type="datetime-local" } })
                     @Html.ValidationMessageFor(model => model.inviteStartTime, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group dob">
                     <div class="mandate">
                         @Html.LabelFor(model => model.inviteEndTime, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                     </div>
+                    @*@Html.EditorFor(model => model.inviteEndTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.inviteEndTime.ToString("yyyy/MM/dd") } })*@
                     @Html.EditorFor(m => m.inviteEndTime, new { htmlAttributes = new { @class = "form-control text-box single-line",@type="datetime-local" } })
                     @Html.ValidationMessageFor(model => model.inviteEndTime, "", new { @class = "text-danger" })
                 </div>
@@ -48,7 +50,7 @@
                     <div class="mandate">
                         @Html.LabelFor(model => model.difficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                     </div>
-                    @Html.EditorFor(model => model.difficultyLevel, new { htmlAttributes = new { id = "txt_DifficultyLevel", @class = "form-control text-box single-line", @type = "text" } })
+                    @Html.EditorFor(model => model.difficultyLevel, new { htmlAttributes = new { id = "txt_DifficultyLevel", @class = "form-control text-box single-line", @type = "text",@Required="Required" } })
                     @Html.ValidationMessageFor(model => model.difficultyLevel, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -63,12 +65,57 @@
     }
 </div>
 <script>
-    $(document).ready(function () {
+    @*$(document).ready(function () {
         var currentdate = new Date();
         var datetime = currentdate.getFullYear() + "-" + String(currentdate.getMonth() + 1).padStart(2, '0') + "-" + String(currentdate.getDate() + 1).padStart(2, '0') + "T" +
-            + currentdate.getHours() + ":"
-            + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":" + currentdate.getSeconds();
         document.getElementById("inviteStartTime").setAttribute("min", datetime);
         document.getElementById("inviteEndTime").setAttribute("min", datetime);
-    })
+        })*@
+        function checkStartDate() {
+            var val = document.getElementById("inviteStartTime").value;
+            if (val == "") {
+                return false;
+            }
+            var year = val.substring(0, 4);
+            var month = parseInt(val.substring(5, 7)) - 1;
+            var date = val.substring(8, 10);
+            var StartDate = new Date(year, month, date);
+            var d = new Date();
+            var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            if (StartDate < currentDate) {
+                alert("Start Date should be greater than or equal to Current Date");
+                document.getElementById("inviteStartTime").focus();
+                return false;
+            }
+            if (document.getElementById("inviteEndTime").value != "") {
+                return checkEndDate();
+            }
+            return true;
+        }
+    function checkEndDate() {
+        var val = document.getElementById("inviteEndTime").value;
+        if (val == "") {
+            return false;
+        }
+        var startDateValue = document.getElementById("inviteStartTime").value;
+        var d = new Date();
+        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        //end Date object creation
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var endDate = new Date(year, month, date);
+
+        var yearStart = startDateValue.substring(0, 4);
+        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+        var dateStart = startDateValue.substring(8, 10);
+        var startDate = new Date(yearStart, monthStart, dateStart);
+        if (endDate <= startDate) {
+            alert("End Date should be greater than Start Date");
+            return false;
+        }
+        return true;
+    }
 </script>

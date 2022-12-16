@@ -29,5 +29,6 @@ namespace Risebird.Repository.Interface
         Task<List<string>> fetchSkillChannelHRDetails(string IRFId);
         Task<List<string>> fetchSkillChannelStaffingDetails(string IRFId);
         Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null);
+        Task<bool> CheckEmailAddressAllow(string EmailId);
     }
 }

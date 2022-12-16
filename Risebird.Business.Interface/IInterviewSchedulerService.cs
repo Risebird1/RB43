@@ -30,5 +30,6 @@ namespace Risebird.Business.Interface
         Task<List<string>> fetchSkillChannelStaffingDetails(string IRFId);
         Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null);
         int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue);
+        Task<bool> CheckEmailAddressAllow(string EmailId);
     }
 }

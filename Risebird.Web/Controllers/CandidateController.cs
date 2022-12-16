@@ -3319,6 +3319,7 @@ namespace Risebird.Web.Controllers
                     var candidateTimeline = new CandidateTimelineVM();
                     candidateTimeline.IsQCRequired = client.IsQCRequired;
                     candidateTimeline.IsRedoInterview = client.IsRedoInterview;
+                    candidateTimeline.IsClientCancelInterview = client.IsClientCancelInterview;
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3473,6 +3474,7 @@ namespace Risebird.Web.Controllers
                     var candidateTimeline = new CandidateTimelineVM();
                     candidateTimeline.IsQCRequired = client.IsQCRequired;
                     candidateTimeline.IsRedoInterview = client.IsRedoInterview;
+                    candidateTimeline.IsClientCancelInterview = client.IsClientCancelInterview;
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
