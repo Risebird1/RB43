@@ -1798,19 +1798,19 @@ namespace Risebird.Business
                 //check the receiver and get all their emails from the db
                 var receiverEmails = await _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever);
 
-                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var supportEmails = await _supportRespository.GetAllSupportHREmails();
                 if (receiverEmails.Count() > 900)
                 {
                     var flafcounts = receiverEmails.Count() / 900;
                     for (int i = 0; i < flafcounts; i++)
                     {
                         var receiverEmailslist = receiverEmails.ToList().Skip(i * 900).Take(900).ToList();
-                        result = await _notificationHelper.SendBroadcastMail(receiverEmailslist, supportEmails.ToList(), model);
+                        result = await _notificationHelper.SendBroadcastMail(receiverEmailslist, supportEmails, model);
                     }
                 }
                 else
                 {
-                    result = await _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                    result = await _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails, model);
                 }
                 return result;
             }
@@ -1826,9 +1826,9 @@ namespace Risebird.Business
             try
             {
                 var receiverEmails = await _meetingRespository.GetIRFMembersEmails(model.IRFId);
-                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var supportEmails = await _supportRespository.GetAllSupportHREmails();
                 model.BroadcastReciever = "Interviewers";
-                var result = await _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                var result = await _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails, model);
                 if (model.Profile == ProfileEnum.Client.GetDescription() && !string.IsNullOrEmpty(result) && result.ToLower().Contains("success"))
                 {
                     await _meetingRespository.StoreClientBroadcastMessage(model);
@@ -2522,18 +2522,18 @@ namespace Risebird.Business
             }
 
         }
-        public IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst)
+        public async Task<List<SurveyDetails>> FetchSurveyInterviewer(List<SurveyDetails> _lst)
         {
             try
             {
-                var _survey = _meetingRespository.FetchSurveyInterviewer(_lst);
+                var _survey = await _meetingRespository.FetchSurveyInterviewer(_lst);
                 return _survey;
 
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -2755,16 +2755,16 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid)
+        public async Task<List<int>> FetchAllInterviewidfromIrf(string IRFid)
         {
             try
             {
-                var _survey = _meetingRespository.FetchAllInterviewidfromIrf(IRFid);
+                var _survey = await _meetingRespository.FetchAllInterviewidfromIrf(IRFid);
                 return _survey;
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

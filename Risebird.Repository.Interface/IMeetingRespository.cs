@@ -125,7 +125,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null);
         Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null);
 
-        IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst);
+        Task<List<SurveyDetails>> FetchSurveyInterviewer(List<SurveyDetails> _lst);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null);
         Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null);
         Task<IEnumerable<string>> GetIRFClientsEmails(int irfId);
@@ -149,7 +149,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
-        IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
+        Task<List<int>> FetchAllInterviewidfromIrf(string IRFid);
         IEnumerable<int> FetchAllInterviewidByClient(int Clientid, string emailid);
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);

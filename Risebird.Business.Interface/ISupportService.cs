@@ -1,14 +1,15 @@
 ﻿using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
     public interface ISupportService
     {
-        List<Support> GetAllSupportHR(string emailId = null);
-        bool AddSupportHR(Support hrDetails);
-        bool UpdateSupportHR(Support hrDetails);
-        Support GetSupportHR(int id);
-        bool DeleteSupportHR(int id);
+        Task<List<Support>> GetAllSupportHR(string emailId = null);
+        Task<bool> AddSupportHR(Support hrDetails);
+        Task<bool> UpdateSupportHR(Support hrDetails);
+        Task<Support> GetSupportHR(int id);
+        Task<bool> DeleteSupportHR(int id);
     }
 }

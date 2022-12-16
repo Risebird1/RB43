@@ -1201,7 +1201,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<int>(query, dynamicParameters);
+                    var result = await con.QueryAsync<int>(query, dynamicParameters);
                 }
             }
 

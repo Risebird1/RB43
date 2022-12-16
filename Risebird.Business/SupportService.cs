@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -21,70 +22,70 @@ namespace Risebird.Business
 
         }
 
-        public List<Support> GetAllSupportHR(string emailId = null)
+        public async Task<List<Support>> GetAllSupportHR(string emailId = null)
         {
             try
             {
-                return _supportRespository.GetAllSupportHR(emailId).ToList();
+                return await _supportRespository.GetAllSupportHR(emailId);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public bool AddSupportHR(Support hrDetails)
+        public async Task<bool> AddSupportHR(Support hrDetails)
         {
             try
             {
-                return _supportRespository.AddSupportHR(hrDetails).Result;
+                return await _supportRespository.AddSupportHR(hrDetails);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public Support GetSupportHR(int id)
+        public async Task<Support> GetSupportHR(int id)
         {
             try
             {
-                return _supportRespository.GetSupportHR(id);
+                return await _supportRespository.GetSupportHR(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool UpdateSupportHR(Support hrDetails)
+        public async Task<bool> UpdateSupportHR(Support hrDetails)
         {
             try
             {
-                return _supportRespository.UpdateSupportHR(hrDetails);
+                return await _supportRespository.UpdateSupportHR(hrDetails);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool DeleteSupportHR(int id)
+        public async Task<bool> DeleteSupportHR(int id)
         {
             try
             {
-                return _supportRespository.DeleteSupportHR(id);
+                return await _supportRespository.DeleteSupportHR(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

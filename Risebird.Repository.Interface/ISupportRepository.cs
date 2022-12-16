@@ -6,11 +6,11 @@ namespace Risebird.Repository.Interface
 {
     public interface ISupportRepository
     {
-        IEnumerable<Support> GetAllSupportHR(string emailId = null);
+        Task<List<Support>> GetAllSupportHR(string emailId = null);
         Task<bool> AddSupportHR(Support hrDetails);
-        bool UpdateSupportHR(Support hrDetails);
-        Support GetSupportHR(int id);
-        bool DeleteSupportHR(int id);
-        IEnumerable<string> GetAllSupportHREmails();
+        Task<bool> UpdateSupportHR(Support hrDetails);
+        Task<Support> GetSupportHR(int id);
+        Task<bool> DeleteSupportHR(int id);
+        Task<List<string>> GetAllSupportHREmails();
     }
 }

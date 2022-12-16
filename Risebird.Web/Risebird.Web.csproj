@@ -60,7 +60,7 @@
     <PackageReference Include="OfficeOpenXml.Extends" Version="1.0.6" />
     <PackageReference Include="RestClient" Version="3.1024.23771" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="Twilio" Version="6.1.0" />
+    <PackageReference Include="Twilio" Version="6.2.0" />
     <PackageReference Include="Twilio.AspNet.Core" Version="7.0.0" />
     <PackageReference Include="VirusTotalNet" Version="2.1.0" />
     <PackageReference Include="X.PagedList.Mvc" Version="8.0.7" />

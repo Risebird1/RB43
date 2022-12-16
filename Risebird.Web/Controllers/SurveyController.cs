@@ -135,7 +135,7 @@ namespace Risebird.Web.Controllers
                         var _resultlist = (from data in result
                                            select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
                         _resultlist = _resultlist.Distinct().ToList();
-                        var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
+                        var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
                         if (profileName == "Client")
                         {
                             var client = _userRepository.GetClientUserDetails(emailid);
@@ -321,8 +321,8 @@ namespace Risebird.Web.Controllers
                 var _resultlist = (from data in result
                                    select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
                 _resultlist = _resultlist.Distinct().ToList();
-                var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
-                var interviewerids = _meetingService.FetchAllInterviewidfromIrf(IRFId);
+                var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
+                var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
                 ViewBag.profileName = "";
                 foreach (var item in result)
                 {
@@ -359,7 +359,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public FileContentResult CandidateFeedbackExporttoExcel()
+        public async Task<FileContentResult> CandidateFeedbackExporttoExcel()
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Feedback");
@@ -385,7 +385,7 @@ namespace Risebird.Web.Controllers
                     var _resultlist = (from data in result
                                        select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
                     _resultlist = _resultlist.Distinct().ToList();
-                    var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
+                    var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
                     if (profileName == "Client")
                     {
                         foreach (var item in result)
@@ -507,7 +507,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -516,7 +516,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public FileContentResult CandidateFeedBackByIRFIdExporttoExcel(string IRFId)
+        public async Task<FileContentResult> CandidateFeedBackByIRFIdExporttoExcel(string IRFId)
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Feedback");
@@ -529,8 +529,8 @@ namespace Risebird.Web.Controllers
                 var _resultlist = (from data in result
                                    select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
                 _resultlist = _resultlist.Distinct().ToList();
-                var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
-                var interviewerids = _meetingService.FetchAllInterviewidfromIrf(IRFId);
+                var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
+                var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
                 foreach (var item in result)
                 {
                     if (interviewerids.Any(x => x == item.interviewid))
@@ -612,7 +612,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -621,7 +621,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult FetchCandidateFeedBackDetails()
+        public async Task<JsonResult> FetchCandidateFeedBackDetails()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -632,8 +632,8 @@ namespace Risebird.Web.Controllers
                 int Clientid = 0;
                 if (profileName == "Client")
                 {
-                    var client = _userRepository.GetClientUserDetails(emailid);
-                    Clientid = client.Result.ClientId;
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    Clientid = client.ClientId;
                 }
                 var modelData = new List<SurveyVM>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -732,6 +732,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> InterviewsReview(string uniqueid)
         {
@@ -739,6 +740,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Emailid = _list.EmailId;
             return View();
         }
+
         [HttpPost]
         public async Task<JsonResult> SaveInterviewsReview(int rating, string comments, string Emailid)
         {
@@ -787,7 +789,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> ClientInterviewsReview(InterviewFilter filter)
+        public IActionResult ClientInterviewsReview(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -795,6 +797,7 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("ClientInterviewReviewList", JsonConvert.SerializeObject(filter));
                 }
+
                 return RedirectToAction("ClientInterviewsReview");
             }
             else
@@ -803,7 +806,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ResetClientInterviewsReview()
+        public ActionResult ResetClientInterviewsReview()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {

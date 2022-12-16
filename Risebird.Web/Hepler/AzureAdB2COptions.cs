@@ -6,7 +6,7 @@
 
         public AzureAdB2COptions()
         {
-            AzureAdB2CInstance = "https://login.microsoftonline.com/tfp";
+            AzureAdB2CInstance = "https://risebirdportal.b2clogin.com/tfp";
         }
 
         public string ClientId { get; set; }

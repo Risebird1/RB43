@@ -5865,7 +5865,7 @@ namespace Risebird.Web.Controllers
             var modelData = new List<SurveyVM>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-            var interviewerids = _meetingService.FetchAllInterviewidfromIrf(IRFId);
+            var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
             if (interviewerids != null)
             {
                 var _resultlist = (from data in interviewerids

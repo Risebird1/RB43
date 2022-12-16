@@ -858,7 +858,7 @@ namespace Risebird.Web.Controllers
                 }
                 _mCQService.AddMCQCandidateQuestions(resultset);
                 //Send mail to support team
-                var HrEmailaddresslist = _supportService.GetAllSupportHR();
+                var HrEmailaddresslist = await _supportService.GetAllSupportHR();
                 string HrEmailaddress = string.Empty;
                 foreach (var item in HrEmailaddresslist)
                 {
@@ -2325,7 +2325,7 @@ namespace Risebird.Web.Controllers
                 }
                 _mCQService.AddMCQCandidateQuestionsPremium(resultset);
                 //Send mail to support team
-                var HrEmailaddresslist = _supportService.GetAllSupportHR();
+                var HrEmailaddresslist = await _supportService.GetAllSupportHR();
                 string HrEmailaddress = string.Empty;
                 foreach (var item in HrEmailaddresslist)
                 {

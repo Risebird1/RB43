@@ -2229,7 +2229,8 @@ namespace Risebird.Web.Controllers
                     if (result == "Success")
                     {
                         var hrlist = new List<string>();
-                        hrlist = _supportService.GetAllSupportHR(emailid).Select(x => x.EmailId).ToList();
+                        var hrlistdata = await _supportService.GetAllSupportHR(emailid);
+                          hrlist= hrlistdata.Select(x => x.EmailId).ToList();
                         var Emailids = string.Join(";", hrlist);
                         Mail _mail = new Mail
                         {

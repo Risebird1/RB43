@@ -27,7 +27,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string controllerName = null, string actMethod = null)
+        public async Task<IActionResult> Index(string controllerName = null, string actMethod = null)
         {
             try
             {
@@ -39,13 +39,12 @@ namespace Risebird.Web.Controllers
                     emailid = emailid?.Replace("\"", "");
                     if (HttpContext.Session.GetString("NavigationShow") == "true")
                     {
-
-                        _userService.UpdateUserSigInDetails(emailid);
+                        await _userService.UpdateUserSigInDetails(emailid);
                         HttpContext.Session.SetString("NavigationShow", "false");
                     }
 
                     var model = new SupportList();
-                    model.Supports = _supportService.GetAllSupportHR(emailid);
+                    model.Supports = await _supportService.GetAllSupportHR(emailid);
                     ViewBag.profile = profileName;
                     if (TempData["SuccessErrorMessageSupport"] != null)
                     {
@@ -65,7 +64,7 @@ namespace Risebird.Web.Controllers
                 {
 
                     var model = new SupportList();
-                    model.Supports = _supportService.GetAllSupportHR();
+                    model.Supports = await _supportService.GetAllSupportHR();
 
                     if (TempData["SuccessErrorMessageSupport"] != null)
                     {
@@ -101,7 +100,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = new SupportList();
-                model.Supports = _supportService.GetAllSupportHR(emailId);
+                model.Supports = await _supportService.GetAllSupportHR(emailId);
                 return PartialView("SupportIndex", model);
             }
             catch (Exception ex)
@@ -153,7 +152,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_supportService.AddSupportHR(hrDetails))
+                    if (await _supportService.AddSupportHR(hrDetails))
                     {
                         TempData["SuccessErrorMessageSupport"] = "Support HR has been added Successfully!";
                         return RedirectToAction("Index");
@@ -220,7 +219,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_supportService.UpdateSupportHR(hrDetails))
+                    if (await  _supportService.UpdateSupportHR(hrDetails))
                     {
                         TempData["SuccessErrorMessageSupport"] = "Support HR has been updated Successfully!";
                         return RedirectToAction("Index");
@@ -257,7 +256,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (_supportService.DeleteSupportHR(id))
+                        if (await _supportService.DeleteSupportHR(id))
                         {
                             //TempData["SuccessErrorMessageSupport"] = "Support HR deleted successfully.";
                             return Json(new { url = Url.Action("Index", "Support") });
