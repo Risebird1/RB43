@@ -382,6 +382,9 @@ namespace Risebird.Web.Controllers
                     }
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
                     return View(_userService.GetClientUsers(emailid));
                 }
                 else
