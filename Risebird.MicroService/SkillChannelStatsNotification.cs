@@ -34,7 +34,7 @@ namespace Risebird.MicroService
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
-                var clientusers = _userService.GetClientUsers("talent@risebird.io");
+                var clientusers = await _userService.GetClientUsers("talent@risebird.io");
                 foreach (var item in clientusers)
                 {
                     try

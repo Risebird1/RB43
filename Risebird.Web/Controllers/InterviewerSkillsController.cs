@@ -1363,7 +1363,8 @@ namespace Risebird.Web.Controllers
                     bool isQC = false;
                     NewModel.IreportModel.IsQC = isQC;
                     NewModel.irfIntId = model.irfIntId;
-                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                    var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
                     {
                         menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();

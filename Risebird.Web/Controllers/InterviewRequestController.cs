@@ -944,7 +944,7 @@ namespace Risebird.Web.Controllers
         public async Task<SelectList> GetSkillsByAssessmentGroups(int assessmentgroupid)
         {
             var list = new List<SelectListItem>();
-            var modellist = _userService.GetInterviewerEntitleById(assessmentgroupid);
+            var modellist = await _userService.GetInterviewerEntitleById(assessmentgroupid);
             var skillset = _skillService.GetSkills();
             var primaryskilllist = new List<SelectListItem>();
             foreach (var item in skillset)

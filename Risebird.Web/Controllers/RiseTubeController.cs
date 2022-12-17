@@ -854,7 +854,8 @@ namespace Risebird.Web.Controllers
 
                         ViewBag.VideoStatus = "Public";
                         //ViewBag.VideoStatus = "Private";
-                        var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                        var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
                             menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
@@ -1920,7 +1921,8 @@ namespace Risebird.Web.Controllers
                 NewModel.IreportModel.IsQC = isQC;
                 ViewBag.VideoStatus = "Public";
                 //ViewBag.VideoStatus = "Private";
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
@@ -2196,9 +2198,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = "CuratedUser";
-
                 {
-
                     var modelList = new List<MeetingVM>();
 
                     if (Page == null || Page == 0)
@@ -2221,7 +2221,6 @@ namespace Risebird.Web.Controllers
 
                         }
                         item.candidateName = namemodel;
-
                     }
 
 
@@ -2235,7 +2234,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.searchvalue = "";
                     }
 
-                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                    var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
                     {
                         menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
@@ -2648,8 +2648,8 @@ namespace Risebird.Web.Controllers
                 NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                 ViewBag.VideoStatus = "Public";
                 //ViewBag.VideoStatus = "Private";
-
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var mendudata = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = mendudata.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();

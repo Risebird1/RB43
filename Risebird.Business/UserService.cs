@@ -23,15 +23,15 @@ namespace Risebird.Business
             _passwordHelper = passwordHelper;
         }
 
-        public List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
+        public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
         {
             try
             {
-                return _userRepository.GetMenuBasedOnUserEmailld(emailId, sessionId).ToList();
+                return await _userRepository.GetMenuBasedOnUserEmailld(emailId, sessionId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -39,7 +39,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.CheckMultiSession(emailId);
+                return await _userRepository.CheckMultiSession(emailId);
             }
             catch (Exception e)
             {
@@ -52,7 +52,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.ClearSessionForOthersUsers(emailId);
+                return await _userRepository.ClearSessionForOthersUsers(emailId);
             }
             catch (Exception e)
             {
@@ -63,43 +63,43 @@ namespace Risebird.Business
 
         #region User Service Functions
 
-        public List<UserList> GetRisebirdUsers()
+        public async Task<List<UserList>> GetRisebirdUsers()
         {
             try
             {
-                return _userRepository.GetRisebirdUsers().ToList();
+                return await _userRepository.GetRisebirdUsers();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public UserList GetUser(int id)
+        public async Task<UserList> GetUser(int id)
         {
             try
             {
-                var user = _userRepository.GetUser(id);
-                var userClients = _userRepository.GetUserClients(id);
+                var user = await _userRepository.GetUser(id);
+                var userClients = await _userRepository.GetUserClients(id);
                 if (user == null)
                 {
                     return null;
                 }
                 else
                 {
-                    user.Result.ClientsArray = userClients.ToArray();
-                    return user.Result;
+                    user.ClientsArray = userClients.ToArray();
+                    return user;
                 }
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool AddUser(UserList user)
+        public async Task<bool> AddUser(UserList user)
         {
             try
             {
@@ -109,41 +109,41 @@ namespace Risebird.Business
                     LastName = user.LastName.Replace(" ", ""),
                     EmailId = user.EmailId.Replace(" ", "")
                 };
-                user.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, false).Result;
-                return _userRepository.AddUser(user).Result;
+                user.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, false);
+                return await _userRepository.AddUser(user);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool DeleteUser(int id)
+        public async Task<bool> DeleteUser(int id)
         {
             try
             {
-                return _userRepository.DeleteUser(id).Result;
+                return await _userRepository.DeleteUser(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool UpdateUser(UserList user)
+        public async Task<bool> UpdateUser(UserList user)
         {
             try
             {
-                return _userRepository.UpdateUser(user).Result;
+                return await _userRepository.UpdateUser(user);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -152,39 +152,38 @@ namespace Risebird.Business
 
         #region Client User Service Functions
 
-        public List<ClientUserVM> GetClientUsers(string EmailId)
+        public async Task<List<ClientUserVM>> GetClientUsers(string EmailId)
         {
             try
             {
-                return _userRepository.GetClientUsers(EmailId).ToList();
+                return await _userRepository.GetClientUsers(EmailId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public ClientUserVM GetClientUser(int id)
+        public async Task<ClientUserVM> GetClientUser(int id)
         {
             try
             {
-                var clientUser = _userRepository.GetClientUser(id);
+                var clientUser = await _userRepository.GetClientUser(id);
 
                 if (clientUser == null)
                     return null;
                 else
-                    return clientUser.Result;
+                    return clientUser;
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool AddClientUser(ClientUserVM clientUser)
+        public async Task<bool> AddClientUser(ClientUserVM clientUser)
         {
             try
             {
@@ -194,16 +193,16 @@ namespace Risebird.Business
                     LastName = clientUser.LastName.Replace(" ", ""),
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
-                var isPasswordReset = _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value).Result;
+                var isPasswordReset = await _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value);
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset).Result;
-                return _userRepository.AddClientUser(clientUser).Result;
+                clientUser.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                return await _userRepository.AddClientUser(clientUser);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -247,30 +246,30 @@ namespace Risebird.Business
         //    return string.Empty;
         //}
 
-        public bool DeleteClientUser(int id)
+        public async Task<bool> DeleteClientUser(int id)
         {
             try
             {
-                return _userRepository.DeleteClientUser(id).Result;
+                return await _userRepository.DeleteClientUser(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool UpdateClientUser(ClientUserVM clientUser)
+        public async Task<bool> UpdateClientUser(ClientUserVM clientUser)
         {
             try
             {
-                return _userRepository.UpdateClientUser(clientUser).Result;
+                return await _userRepository.UpdateClientUser(clientUser);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -292,87 +291,51 @@ namespace Risebird.Business
 
         #region Interviewer Service Functions
 
-        public List<InterviewerVM> GetInterviewers()
+        public async Task<List<InterviewerVM>> GetInterviewers()
         {
             try
             {
-                return _userRepository.GetInterviewers().ToList();
+                return await _userRepository.GetInterviewers();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public List<InterviewerVM> GetInterviewersDetails()
-        {
-            try
-            {
-                return _userRepository.GetInterviewersDetails().ToList();
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool AddInterviewer(InterviewerVM interviewer)
+        public async Task<List<InterviewerVM>> GetInterviewersDetails()
         {
             try
             {
-                return _userRepository.AddInterviewer(interviewer).Result;
+                return await _userRepository.GetInterviewersDetails();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddInterviewer(InterviewerVM interviewer)
+        {
+            try
+            {
+                return await _userRepository.AddInterviewer(interviewer);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public InterviewerVM GetInterviewer(int id)
+        public async Task<InterviewerVM> GetInterviewer(int id)
         {
             try
             {
-                var interviewer = _userRepository.GetInterviewer(id);
-
-                if (interviewer == null)
-                    return null;
-                else
-                    return interviewer.Result;
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public List<InterviewerVM> GetInterviewerVideos(string Emailid)
-        {
-            try
-            {
-                var interviewer = _userRepository.GetInterviewerVideos(Emailid);
-
-                if (interviewer == null)
-                    return null;
-                else
-                    return interviewer.ToList();
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-
-        }
-        public MeetingVM GetMeetingbyid(int id)
-        {
-            try
-            {
-                var interviewer = _userRepository.GetMeetingbyid(id);
+                var interviewer = await _userRepository.GetInterviewer(id);
 
                 if (interviewer == null)
                     return null;
@@ -382,35 +345,70 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-
         }
-        public bool UpdateInterviewer(InterviewerVM interviewer)
+        public async Task<List<InterviewerVM>> GetInterviewerVideos(string Emailid)
         {
             try
             {
-                return _userRepository.UpdateInterviewer(interviewer).Result;
+                var interviewer = await _userRepository.GetInterviewerVideos(Emailid);
+
+                if (interviewer == null)
+                    return null;
+                else
+                    return interviewer;
+            }
+            catch (Exception e)
+            {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<MeetingVM> GetMeetingbyid(int id)
+        {
+            try
+            {
+                var interviewer = await _userRepository.GetMeetingbyid(id);
+
+                if (interviewer == null)
+                    return null;
+                else
+                    return interviewer;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateInterviewer(InterviewerVM interviewer)
+        {
+            try
+            {
+                return await _userRepository.UpdateInterviewer(interviewer);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool DeleteInterviewer(int id)
+        public async Task<bool> DeleteInterviewer(int id)
         {
             try
             {
-                return _userRepository.DeleteInterviewer(id).Result;
+                return await _userRepository.DeleteInterviewer(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -419,76 +417,76 @@ namespace Risebird.Business
 
         #region QCInterviewer Service Functions
 
-        public List<QCInterviewerVM> GetQCInterviewers()
+        public async Task<List<QCInterviewerVM>> GetQCInterviewers()
         {
             try
             {
-                return _userRepository.GetQCInterviewers().ToList();
+                return await _userRepository.GetQCInterviewers();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool AddQCInterviewer(QCInterviewerVM qcinterviewer)
+        public async Task<bool> AddQCInterviewer(QCInterviewerVM qcinterviewer)
         {
             try
             {
-                return _userRepository.AddQCInterviewer(qcinterviewer).Result;
+                return await _userRepository.AddQCInterviewer(qcinterviewer);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public QCInterviewerVM GetQCInterviewer(int id)
+        public async Task<QCInterviewerVM> GetQCInterviewer(int id)
         {
             try
             {
-                var interviewer = _userRepository.GetQCInterviewer(id);
+                var interviewer = await _userRepository.GetQCInterviewer(id);
 
                 if (interviewer == null)
                     return null;
                 else
-                    return interviewer.Result;
+                    return interviewer;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool UpdateQCInterviewer(QCInterviewerVM qcInterviewer)
+        public async Task<bool> UpdateQCInterviewer(QCInterviewerVM qcInterviewer)
         {
             try
             {
-                return _userRepository.UpdateQCInterviewer(qcInterviewer).Result;
+                return await _userRepository.UpdateQCInterviewer(qcInterviewer);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool DeleteQCInterviewer(int id)
+        public async Task<bool> DeleteQCInterviewer(int id)
         {
             try
             {
-                return _userRepository.DeleteQCInterviewer(id).Result;
+                return await _userRepository.DeleteQCInterviewer(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -496,153 +494,150 @@ namespace Risebird.Business
 
         #endregion
 
-        public IEnumerable<string> GetAllHrsEmailld()
+        public async Task<List<string>> GetAllHrsEmailld()
         {
             try
             {
-                return _userRepository.GetAllHrsEmailld();
+                return await _userRepository.GetAllHrsEmailld();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public List<ResumeEvaluator> GetResumeEvaluators()
+        public async Task<List<ResumeEvaluator>> GetResumeEvaluators()
         {
             try
             {
-                return _userRepository.GetResumeEvaluators().ToList();
+                return await _userRepository.GetResumeEvaluators();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public bool AddResumeEvaluator(ResumeEvaluator resumeEvaluator)
-        {
-            try
-            {
-                return _userRepository.AddResumeEvaluator(resumeEvaluator).Result;
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        public ResumeEvaluator GetResumeEvaluator(int id)
-        {
-            try
-            {
-                return _userRepository.GetResumeEvaluator(id);
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        public async Task<bool> AddResumeEvaluator(ResumeEvaluator resumeEvaluator)
         {
             try
             {
-                return _userRepository.EditResumeEvaluator(resumeEvaluator);
+                return await _userRepository.AddResumeEvaluator(resumeEvaluator);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        public bool DeleteResumeEvaluator(int userId)
-        {
-            try
-            {
-                return _userRepository.DeleteResumeEvaluator(userId).Result;
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-
-        public List<Recruiter> GetRecruiters()
+        public async Task<ResumeEvaluator> GetResumeEvaluator(int id)
         {
             try
             {
-                if (_userRepository.GetRecruiters() != null)
-                    return _userRepository.GetRecruiters().ToList();
-                else
-                    return new List<Recruiter>();
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public bool AddRecruiter(Recruiter recruiter)
-        {
-            try
-            {
-                return _userRepository.AddRecruiter(recruiter).Result;
+                return await _userRepository.GetResumeEvaluator(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-
-        public Recruiter GetRecruiter(int id)
-        {
-            try
-            {
-                return _userRepository.GetRecruiter(id);
-            }
-
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public bool EditRecruiter(Recruiter recruiter)
+        public async Task<bool> EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
         {
             try
             {
-                return _userRepository.EditRecruiter(recruiter).Result;
+                return await _userRepository.EditResumeEvaluator(resumeEvaluator);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> DeleteResumeEvaluator(int userId)
+        {
+            try
+            {
+                return await _userRepository.DeleteResumeEvaluator(userId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool DeleteRecruiter(int userId)
+
+        public async Task<List<Recruiter>> GetRecruiters()
         {
             try
             {
-                return _userRepository.DeleteRecruiter(userId).Result;
+                return await _userRepository.GetRecruiters()?? new List<Recruiter>();
+               
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> AddRecruiter(Recruiter recruiter)
+        {
+            try
+            {
+                return await _userRepository.AddRecruiter(recruiter);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<Recruiter> GetRecruiter(int id)
+        {
+            try
+            {
+                return await _userRepository.GetRecruiter(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> EditRecruiter(Recruiter recruiter)
+        {
+            try
+            {
+                return await _userRepository.EditRecruiter(recruiter);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteRecruiter(int userId)
+        {
+            try
+            {
+                return await _userRepository.DeleteRecruiter(userId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -661,88 +656,89 @@ namespace Risebird.Business
             }
         }
 
-        public string GetCurrenttheme(string emailId)
+        public async Task<string> GetCurrenttheme(string emailId)
         {
             try
             {
-                return _userRepository.GetCurrenttheme(emailId);
+                return await _userRepository.GetCurrenttheme(emailId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public List<AssignmentVM> GetInterviewerEntitle()
+        public async Task<List<AssignmentVM>> GetInterviewerEntitle()
         {
             try
             {
-                return _userRepository.GetInterviewerEntitle().ToList();
+                return await _userRepository.GetInterviewerEntitle();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public List<AssignmentVM> InterviewerEntitleDetails(int id)
+        public async Task<List<AssignmentVM>> InterviewerEntitleDetails(int id)
         {
             try
             {
-                return _userRepository.InterviewerEntitleDetails(id).ToList();
+                return await _userRepository.InterviewerEntitleDetails(id);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string GetCurrentuserImage(string emailId)
+
+        public async Task<string> GetCurrentuserImage(string emailId)
         {
             try
             {
-                return _userRepository.GetCurrentuserImage(emailId);
+                return await _userRepository.GetCurrentuserImage(emailId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string FetchWhatsAppNumberByEmail(string Emailid)
+        public async Task<string> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {
-                return _userRepository.FetchWhatsAppNumberByEmail(Emailid);
+                return await _userRepository.FetchWhatsAppNumberByEmail(Emailid);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
             }
         }
-        public string FetchNameByEmail(string Emailid)
+        public async Task<string> FetchNameByEmail(string Emailid)
         {
             try
             {
-                return _userRepository.FetchNameByEmail(Emailid);
+                return await _userRepository.FetchNameByEmail(Emailid);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
             }
         }
-        public string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+        public async Task<string> SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
         {
             try
             {
-                return _userRepository.SaveCallRecording(interviewid, IRFId, CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+                return await _userRepository.SaveCallRecording(interviewid, IRFId, CandidateEmail, WhoCalled, CallSid, RecordingUrl);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Fail";
             }
         }
@@ -760,109 +756,109 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
-        public List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid)
+        public async Task<List<CallRecordingDetailsVM>> FetchCallRecording(string candidateEmailid, string irfid)
         {
             try
             {
-                return _userRepository.FetchCallRecording(candidateEmailid, irfid);
+                return await _userRepository.FetchCallRecording(candidateEmailid, irfid);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        public async Task<List<ZoomAccountDetailsVM>> FetchInstaZoomAccounts()
         {
             try
             {
-                return _userRepository.FetchInstaZoomAccounts();
+                return await _userRepository.FetchInstaZoomAccounts();
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public bool DeleteInstaZoomAccount(int Accountid)
+        public async Task<bool> DeleteInstaZoomAccount(int Accountid)
         {
             try
             {
-                return _userRepository.DeleteInstaZoomAccount(Accountid);
+                return await _userRepository.DeleteInstaZoomAccount(Accountid);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public bool AddInstaZoomAccount(string AccountEmail)
+        public async Task<bool> AddInstaZoomAccount(string AccountEmail)
         {
             try
             {
-                return _userRepository.AddInstaZoomAccount(AccountEmail);
+                return await _userRepository.AddInstaZoomAccount(AccountEmail);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public string GetCurrentUsername(string emailId)
+        public async Task<string> GetCurrentUsername(string emailId)
         {
             try
             {
-                return _userRepository.GetCurrentUsername(emailId);
+                return await _userRepository.GetCurrentUsername(emailId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public AssignmentVM GetInterviewerEntitleById(int assessmentid)
+        public async Task<AssignmentVM> GetInterviewerEntitleById(int assessmentid)
         {
             try
             {
-                return _userRepository.GetInterviewerEntitleById(assessmentid);
+                return await _userRepository.GetInterviewerEntitleById(assessmentid);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+        public async Task<string> SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
         {
             try
             {
-                return _userRepository.SaveCallRecordingInterviewer(CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+                return await _userRepository.SaveCallRecordingInterviewer(CandidateEmail, WhoCalled, CallSid, RecordingUrl);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Fail";
             }
         }
-        public List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid)
+        public async Task<List<CallRecordingDetailsVM>> FetchCallRecordingInterviewer(string Emailid)
         {
             try
             {
-                return _userRepository.FetchCallRecordingInterviewer(Emailid);
+                return await _userRepository.FetchCallRecordingInterviewer(Emailid);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public bool AddPremiumClientUser(ClientUserVM clientUser)
+        public async Task<bool> AddPremiumClientUser(ClientUserVM clientUser)
         {
             try
             {
@@ -872,91 +868,91 @@ namespace Risebird.Business
                     LastName = clientUser.LastName.Replace(" ", ""),
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
-                var isPasswordReset = _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value).Result;
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset).Result;
-                return _userRepository.AddPremiumClientUser(clientUser).Result;
+                var isPasswordReset = await _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value);
+                clientUser.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                return await _userRepository.AddPremiumClientUser(clientUser);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public List<ClientUserVM> GetClientPremiumUsers(string EmailId)
+        public async Task<List<ClientUserVM>> GetClientPremiumUsers(string EmailId)
         {
             try
             {
-                return _userRepository.GetClientPremiumUsers(EmailId).ToList();
+                return await _userRepository.GetClientPremiumUsers(EmailId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public ClientUserVM GetClientPremiumUser(int id)
+        public async Task<ClientUserVM> GetClientPremiumUser(int id)
         {
             try
             {
-                var clientUser = _userRepository.GetClientPremiumUser(id);
+                var clientUser = await _userRepository.GetClientPremiumUser(id);
                 if (clientUser == null)
                     return null;
                 else
-                    return clientUser.Result;
+                    return clientUser;
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public bool UpdateClientPremiumUser(ClientUserVM clientUser)
+        public async Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser)
         {
             try
             {
-                return _userRepository.UpdateClientPremiumUser(clientUser).Result;
+                return await _userRepository.UpdateClientPremiumUser(clientUser);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public string GetWhatsappno(string emailId)
+        public async Task<string> GetWhatsappno(string emailId)
         {
             try
             {
-                return _userRepository.GetWhatsappno(emailId);
+                return await _userRepository.GetWhatsappno(emailId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string UpdateWhatsappno(string emailId, string WhatsappNumber)
+        public async Task<string> UpdateWhatsappno(string emailId, string WhatsappNumber)
         {
             try
             {
-                return _userRepository.UpdateWhatsappno(emailId, WhatsappNumber);
+                return await _userRepository.UpdateWhatsappno(emailId, WhatsappNumber);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public List<ClientUserVM> GetClientUsersForReviewNotification()
+        public async Task<List<ClientUserVM>> GetClientUsersForReviewNotification()
         {
             try
             {
-                return _userRepository.GetClientUsersForReviewNotification().ToList();
+                return await _userRepository.GetClientUsersForReviewNotification();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

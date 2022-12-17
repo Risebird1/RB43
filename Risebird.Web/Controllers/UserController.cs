@@ -52,7 +52,7 @@ namespace Risebird.Web.Controllers
 
         #region User Fucntions
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -68,7 +68,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.profileName = profileName;
-                    var model = _userService.GetRisebirdUsers();
+                    var model = await _userService.GetRisebirdUsers();
                     List<Profile> profiles = _profileService.GetProfile();
                     List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
                     ViewBag.profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
@@ -200,7 +200,7 @@ namespace Risebird.Web.Controllers
                         {
                             user.EmailId = user.EmailId.ToLower();
                         }
-                        if (_userService.AddUser(user))
+                        if (await _userService.AddUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is added Successfully";
                             return RedirectToAction("Index");
@@ -243,7 +243,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    UserList user = _userService.GetUser(id);
+                    UserList user = await _userService.GetUser(id);
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.profileName = profileName;
@@ -291,7 +291,7 @@ namespace Risebird.Web.Controllers
                         {
                             user.EmailId = user.EmailId.ToLower();
                         }
-                        if (_userService.UpdateUser(user))
+                        if (await _userService.UpdateUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is updated Successfully";
                             return RedirectToAction("Index");
@@ -456,7 +456,7 @@ namespace Risebird.Web.Controllers
                                 clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
                             }
 
-                            if (_userService.AddClientUser(clientUserVM))
+                            if (await _userService.AddClientUser(clientUserVM))
                             {
                                 TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
                                 return RedirectToAction("ClientUsers");
@@ -502,7 +502,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (_userService.DeleteClientUser(id))
+                        if (await _userService.DeleteClientUser(id))
                         {
                             //TempData["SuccessErrorMessageClientUser"] = "Client User is deleted Successfully";
                             return Json(new { url = Url.Action("ClientUsers", "User") });
@@ -541,7 +541,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    ClientUserVM clientUserVM = _userService.GetClientUser(id);
+                    ClientUserVM clientUserVM = await _userService.GetClientUser(id);
 
                     if (clientUserVM != null)
                     {
@@ -595,7 +595,7 @@ namespace Risebird.Web.Controllers
                             clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
 
                         }
-                        if (_userService.UpdateClientUser(clientUserVM))
+                        if (await _userService.UpdateClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is updated Successfully";
                             return RedirectToAction("ClientUsers");
@@ -665,7 +665,7 @@ namespace Risebird.Web.Controllers
         #region Interviewer Functions
 
         [HttpGet]
-        public IActionResult Interviewers(int? Page, string searchValue)
+        public async Task<IActionResult> Interviewers(int? Page, string searchValue)
         {
             try
             {
@@ -681,7 +681,7 @@ namespace Risebird.Web.Controllers
 
                     }
                     ViewBag.profile = profileName;
-                    var model = _userService.GetInterviewers();
+                    var model = await _userService.GetInterviewers();
                     if (string.IsNullOrEmpty(searchValue) && Page > 1)
                     {
                         searchValue = SearchInterviewers;
@@ -816,7 +816,7 @@ namespace Risebird.Web.Controllers
                         {
                             interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
                         }
-                        if (_userService.AddInterviewer(interviewer))
+                        if (await _userService.AddInterviewer(interviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
                             return RedirectToAction("Interviewers");
@@ -849,7 +849,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    InterviewerVM interviewerVM = _userService.GetInterviewer(id);
+                    InterviewerVM interviewerVM = await _userService.GetInterviewer(id);
 
                     if (interviewerVM != null)
                     {
@@ -957,7 +957,7 @@ namespace Risebird.Web.Controllers
                         interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
                     }
 
-                    if (_userService.UpdateInterviewer(interviewer))
+                    if (await _userService.UpdateInterviewer(interviewer))
                     {
                         TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
                         return RedirectToAction("Interviewers");
@@ -1009,7 +1009,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (_userService.DeleteInterviewer(id))
+                        if (await _userService.DeleteInterviewer(id))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is deleted Successfully";
                             return Json(new { url = Url.Action("Interviewers", "User") });
@@ -1042,7 +1042,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public FileContentResult InterviewwersExporttoExcel()
+        public async Task<FileContentResult> InterviewwersExporttoExcel()
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("All Interviewers");
@@ -1050,7 +1050,7 @@ namespace Risebird.Web.Controllers
             try
             {
 
-                var interviewers = _userService.GetInterviewers();
+                var interviewers = await _userService.GetInterviewers();
 
                 Sheet.Cells["A1:K1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:K1"].Style.Font.Size = 12;
@@ -1223,7 +1223,7 @@ namespace Risebird.Web.Controllers
 
                         qcinterviewer.EmailId = qcinterviewer.EmailId.ToLower();
 
-                        if (_userService.AddQCInterviewer(qcinterviewer))
+                        if (await _userService.AddQCInterviewer(qcinterviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer is added Successfully";
                             return RedirectToAction("QCInterviewers");
@@ -1257,7 +1257,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    QCInterviewerVM qcinterviewerVM = _userService.GetQCInterviewer(id);
+                    QCInterviewerVM qcinterviewerVM = await _userService.GetQCInterviewer(id);
 
                     if (qcinterviewerVM != null)
                     {
@@ -1334,7 +1334,7 @@ namespace Risebird.Web.Controllers
                             qcInterviewer.EmailId = qcInterviewer.EmailId.ToLower();
                         }
 
-                        if (_userService.UpdateQCInterviewer(qcInterviewer))
+                        if (await _userService.UpdateQCInterviewer(qcInterviewer))
                         {
                             TempData["SuccessErrorMessageQCInterviewer"] = "QCInterviewer is Updated Successfully";
                             return RedirectToAction("QCInterviewers");
@@ -1383,7 +1383,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (_userService.DeleteQCInterviewer(id))
+                        if (await _userService.DeleteQCInterviewer(id))
                         {
                             TempData["SuccessErrorMessageQCInterviewer"] = "QC Interviewer is deleted Successfully";
                             return Json(new { url = Url.Action("QCInterviewers", "User") });
@@ -1419,10 +1419,8 @@ namespace Risebird.Web.Controllers
         #region Resume Evaluator functions
 
         [HttpGet]
-        public IActionResult ResumeEvaluators(int? Page, string searchValue)
-
+        public async Task<IActionResult> ResumeEvaluators(int? Page, string searchValue)
         {
-
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1434,7 +1432,7 @@ namespace Risebird.Web.Controllers
 
                     }
 
-                    var model = _userService.GetResumeEvaluators();
+                    var model = await _userService.GetResumeEvaluators();
                     if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
@@ -1514,7 +1512,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_userService.AddResumeEvaluator(resumeEvaluator))
+                    if (await _userService.AddResumeEvaluator(resumeEvaluator))
                     {
                         TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator is added successfully.";
                         return RedirectToAction("ResumeEvaluators");
@@ -1546,7 +1544,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var resumeEvaluator = _userService.GetResumeEvaluator(id);
+                    var resumeEvaluator = await _userService.GetResumeEvaluator(id);
                     return View(resumeEvaluator);
                 }
                 else
@@ -1570,7 +1568,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_userService.EditResumeEvaluator(resumeEvaluator))
+                    if (await _userService.EditResumeEvaluator(resumeEvaluator))
                     {
                         TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator updated successfully.";
                         return RedirectToAction("ResumeEvaluators");
@@ -1606,7 +1604,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        var result = _userService.DeleteResumeEvaluator(id);
+                        var result = await _userService.DeleteResumeEvaluator(id);
                         return Json(result);
                     }
                     else
@@ -1634,7 +1632,7 @@ namespace Risebird.Web.Controllers
         #region Recruiter functions
 
         [HttpGet]
-        public IActionResult Recruiters(int? Page, string searchValue)
+        public async Task<IActionResult> Recruiters(int? Page, string searchValue)
         {
             try
             {
@@ -1646,7 +1644,7 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageRecruiter");
 
                     }
-                    var model = _userService.GetRecruiters();
+                    var model = await _userService.GetRecruiters();
                     if (!string.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
@@ -1726,7 +1724,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_userService.AddRecruiter(recruiter))
+                    if (await _userService.AddRecruiter(recruiter))
                     {
                         TempData["SuccessErrorMessageRecruiter"] = "Recruiter is added successfully.";
                         return RedirectToAction("Recruiters");
@@ -1758,7 +1756,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var recruiter = _userService.GetRecruiter(id);
+                    var recruiter = await _userService.GetRecruiter(id);
                     return View(recruiter);
                 }
                 else
@@ -1782,7 +1780,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_userService.EditRecruiter(recruiter))
+                    if (await _userService.EditRecruiter(recruiter))
                     {
                         TempData["SuccessErrorMessageRecruiter"] = "Recruiter updated successfully.";
                         return RedirectToAction("Recruiters");
@@ -1818,7 +1816,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (_userService.DeleteRecruiter(id))
+                        if (await _userService.DeleteRecruiter(id))
                         {
                             //TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator deleted successfully.";
                             return Json(new { url = Url.Action("Recruiters", "User") });
@@ -2060,7 +2058,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult FetchRecordings(string candidateEmailid, string irfid, string type)
+        public async Task<JsonResult> FetchRecordings(string candidateEmailid, string irfid, string type)
         {
             try
             {
@@ -2068,11 +2066,11 @@ namespace Risebird.Web.Controllers
                 var resultset = new List<CallRecordingDetailsVM>();
                 if (type == "Interviewer")
                 {
-                    resultset = _userService.FetchCallRecordingInterviewer(candidateEmailid);
+                    resultset = await _userService.FetchCallRecordingInterviewer(candidateEmailid);
                 }
                 else
                 {
-                    resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
+                    resultset = await _userService.FetchCallRecording(candidateEmailid, irfid);
                 }
                 if (resultset != null)
                 {
@@ -2093,7 +2091,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void GetClientsSelectList(UserList model)
+        private async Task GetClientsSelectList(UserList model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2119,7 +2117,7 @@ namespace Risebird.Web.Controllers
 
         #region InstaZoomAccounts
         [HttpGet]
-        public IActionResult InstaZoomAccounts()
+        public async Task<IActionResult> InstaZoomAccounts()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2128,7 +2126,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin")
                 {
                     List<ZoomAccountDetailsVM> model = new List<ZoomAccountDetailsVM>();
-                    var resultset = _userService.FetchInstaZoomAccounts();
+                    var resultset = await _userService.FetchInstaZoomAccounts();
                     if (resultset != null)
                     {
                         model = resultset;
@@ -2163,7 +2161,7 @@ namespace Risebird.Web.Controllers
 
         #region Freemium Client
         [HttpGet]
-        public IActionResult PremiumClientUsers()
+        public async Task<IActionResult> PremiumClientUsers()
         {
             try
             {
@@ -2245,7 +2243,7 @@ namespace Risebird.Web.Controllers
                             {
                                 clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
                             }
-                            if (_userService.AddPremiumClientUser(clientUserVM))
+                            if (await _userService.AddPremiumClientUser(clientUserVM))
                             {
                                 TempData["SuccessErrorMessagePremiumClientUser"] = "Client User is added Successfully";
                                 return RedirectToAction("PremiumClientUsers");
@@ -2286,7 +2284,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    ClientUserVM clientUserVM = _userService.GetClientPremiumUser(id);
+                    ClientUserVM clientUserVM = await _userService.GetClientPremiumUser(id);
                     if (clientUserVM != null)
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -2335,7 +2333,7 @@ namespace Risebird.Web.Controllers
                             clientUserVM.EmailId = clientUserVM.EmailId.Trim();
                             clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
                         }
-                        if (_userService.UpdateClientPremiumUser(clientUserVM))
+                        if (await _userService.UpdateClientPremiumUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessagePremiumClientUser"] = "Client User is updated Successfully";
                             return RedirectToAction("PremiumClientUsers");

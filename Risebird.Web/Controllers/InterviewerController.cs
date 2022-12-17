@@ -2692,7 +2692,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.type = "Candidate";
                         AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                         var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                        interviewerid = _userRepository.GetInterviewerid(emailid);
+                        interviewerid = await _userRepository.GetInterviewerid(emailid);
                         result = result.Where(x => x.Interviewerid == interviewerid).ToList();
                         var _resultinterview = (from data in result
                                                 select new SurveyDetails { interviewid = data.interviewid }).ToList();

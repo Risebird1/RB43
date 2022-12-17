@@ -93,7 +93,7 @@ namespace Risebird.CommonHelper
                 _whatsAppVM.Userid = "";
                 _whatsAppVM.Event = "Interview Notification";
                 //Fetch WhatsAPpNumber
-                var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(_whatsAppVM.Emailid);
+                var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(_whatsAppVM.Emailid);
                 _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                 //var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
                 //var request = new RestRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post);
@@ -143,8 +143,8 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    var name = _userService.FetchNameByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
+                    var name = await _userService.FetchNameByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";
@@ -192,8 +192,8 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    var name = _userService.FetchNameByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
+                    var name = await _userService.FetchNameByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";
@@ -245,10 +245,10 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         var username = _whatsAppVM.UserName;
@@ -300,10 +300,10 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
                         _whatsAppVM.UserName = name;
@@ -353,10 +353,10 @@ namespace Risebird.CommonHelper
                 var Username = _whatsAppVM.UserName;
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
@@ -407,8 +407,8 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    var name = _userService.FetchNameByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
+                    var name = await _userService.FetchNameByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";
@@ -531,10 +531,10 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
@@ -585,10 +585,10 @@ namespace Risebird.CommonHelper
                 var Username = _whatsAppVM.UserName;
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
@@ -638,10 +638,10 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
@@ -695,10 +695,10 @@ namespace Risebird.CommonHelper
                     {
                         foreach (var item in Emailid)
                         {
-                            var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                            var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                             if (!string.IsNullOrEmpty(WhatsAppnumber))
                             {
-                                var name = _userService.FetchNameByEmail(item);
+                                var name = await _userService.FetchNameByEmail(item);
                                 _whatsAppVM.UserName = name;
                                 _whatsAppVM.Emailid = item;
                                 _whatsAppVM.CountryCode = "+91";
@@ -759,10 +759,10 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
@@ -810,10 +810,10 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
-                        var name = _userService.FetchNameByEmail(item);
+                        var name = await _userService.FetchNameByEmail(item);
                         _whatsAppVM.UserName = name;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
@@ -860,8 +860,8 @@ namespace Risebird.CommonHelper
                 var Emailid = _whatsAppVM.Emailid.Split(";");
                 foreach (var item in Emailid)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    var name = _userService.FetchNameByEmail(item);
+                    var WhatsAppnumber = await _userService.FetchWhatsAppNumberByEmail(item);
+                    var name = await _userService.FetchNameByEmail(item);
                     if (!string.IsNullOrEmpty(WhatsAppnumber))
                     {
                         _whatsAppVM.CountryCode = "+91";

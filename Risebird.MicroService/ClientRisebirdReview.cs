@@ -36,7 +36,7 @@ namespace Risebird.MicroService
         public async Task Run([TimerTrigger("0 0 10 * * 2,5")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            var _interviewsdetails = _userService.GetClientUsersForReviewNotification();
+            var _interviewsdetails = await _userService.GetClientUsersForReviewNotification();
             foreach (var item in _interviewsdetails)
             {
                 try

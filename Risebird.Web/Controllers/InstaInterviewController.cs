@@ -1313,7 +1313,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult PublicReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        public async Task<IActionResult> PublicReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
         {
             try
             {
@@ -1322,7 +1322,7 @@ namespace Risebird.Web.Controllers
                 string profileName = HttpContext.Session.GetString("profileName");
                 ViewBag.PageStatus = "Public";
                 ViewBag.PageReport = "";
-                var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                var model = await _instaInterviewService.GetInstaInteviewReport(interviewId);
                 var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                         select new { ID = (int)s, Name = s.GetDescription() };
                 model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
@@ -1331,7 +1331,8 @@ namespace Risebird.Web.Controllers
                 model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.isAdminHR = isAdminHR;
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
@@ -1341,13 +1342,13 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
             }
         }
 
         [HttpGet]
-        public IActionResult InstaAddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        public async Task<IActionResult> InstaAddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
         {
             try
             {
@@ -1357,7 +1358,7 @@ namespace Risebird.Web.Controllers
 
                 ViewBag.PageStatus = "Public";
                 ViewBag.PageReport = "Insta";
-                var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                var model = await _instaInterviewService.GetInstaInteviewReport(interviewId);
                 var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                         select new { ID = (int)s, Name = s.GetDescription() };
                 model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
@@ -1366,7 +1367,8 @@ namespace Risebird.Web.Controllers
                 model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.isAdminHR = isAdminHR;
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
@@ -1376,7 +1378,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
             }
         }

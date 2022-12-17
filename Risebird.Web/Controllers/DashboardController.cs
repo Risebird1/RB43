@@ -468,7 +468,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public ActionResult AddRequirement()
+        public async Task<ActionResult> AddRequirement()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -479,7 +479,8 @@ namespace Risebird.Web.Controllers
             else
             {
                 ViewBag.type = "no";
-                var menus = _userService.GetMenuBasedOnUserEmailld("Admin").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("Admin");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName == "Support").ToList();
@@ -564,7 +565,8 @@ namespace Risebird.Web.Controllers
                 }
                 if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
-                    var menus = _userService.GetMenuBasedOnUserEmailld("Admin").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    var menuData = await _userService.GetMenuBasedOnUserEmailld("Admin");
+                    var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
                     {
                         menus = menus.Where(x => x.functionName == "Support").ToList();
@@ -1472,7 +1474,7 @@ namespace Risebird.Web.Controllers
                 var Candidatemodel = new List<InterviewerRating>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                interviewerid = _userRepository.GetInterviewerid(emailid);
+                interviewerid = await _userRepository.GetInterviewerid(emailid);
                 result = result.Where(x => x.Interviewerid == interviewerid).ToList();
                 foreach (var item in result)
                 {

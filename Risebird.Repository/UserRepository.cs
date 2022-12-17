@@ -34,23 +34,20 @@ namespace Risebird.Repository
         /// Get all the Risebird User- Admin and HR
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<UserList> GetRisebirdUsers()
+        public async Task<List<UserList>> GetRisebirdUsers()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<UserList>(con, "[dbo].[sp_Risebirdusers]", null,
+                    var data = await SqlMapper.QueryAsync<UserList>(con, "[dbo].[sp_Risebirdusers]", null,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
+            }            
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -90,13 +87,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -116,12 +106,6 @@ namespace Risebird.Repository
                     return await SqlMapper.QuerySingleAsync<UserList>(con, "usp_GetUserById", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
-            }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
             }
             catch (Exception e)
             {
@@ -161,11 +145,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -188,13 +167,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -230,7 +202,7 @@ namespace Risebird.Repository
         /// Get all the Client Users
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ClientUserVM> GetClientUsers(string EmailId)
+        public async Task<List<ClientUserVM>> GetClientUsers(string EmailId)
         {
             try
             {
@@ -238,17 +210,14 @@ namespace Risebird.Repository
                 dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
+                    var data= await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -265,10 +234,6 @@ namespace Risebird.Repository
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
@@ -293,13 +258,6 @@ namespace Risebird.Repository
 
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -322,13 +280,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -349,12 +300,6 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -373,11 +318,6 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
-            }
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
             }
             catch (Exception e)
             {
@@ -430,13 +370,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -454,46 +387,42 @@ namespace Risebird.Repository
         /// Get all the Interviewer
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<InterviewerVM> GetInterviewers()
+        public async Task<List<InterviewerVM>> GetInterviewers()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[sp_RisebirdInterviewer]", null,
+                    var data = await SqlMapper.QueryAsync<InterviewerVM>(con, "[dbo].[sp_RisebirdInterviewer]", null,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public IEnumerable<InterviewerVM> GetInterviewersDetails()
+
+        public async Task<List<InterviewerVM>> GetInterviewersDetails()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_RisebirdInterviewerDetails]", null,
+                    var data = await SqlMapper.QueryAsync<InterviewerVM>(con, "[dbo].[usp_RisebirdInterviewerDetails]", null,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
+
         public async Task<bool> AddInterviewer(InterviewerVM interviewer)
         {
             try
@@ -508,13 +437,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -537,13 +459,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -564,19 +479,13 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid)
+        public async Task<List<InterviewerVM>> GetInterviewerVideos(string Emailid)
         {
             try
             {
@@ -585,21 +494,18 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
+                    var data= await SqlMapper.QueryAsync<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public MeetingVM GetMeetingbyid(int id)
+        public async Task<MeetingVM> GetMeetingbyid(int id)
         {
             try
             {
@@ -608,21 +514,18 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<MeetingVM>(con, "[dbo].[usp_GetInterviewerMeetingsbyId]", parameters,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "[dbo].[usp_GetInterviewerMeetingsbyId]", parameters,
                         commandType: StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
+
         public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
         {
             try
@@ -634,11 +537,6 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
-            }
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
             }
             catch (Exception e)
             {
@@ -671,23 +569,20 @@ namespace Risebird.Repository
 
         #region QCInterviewer Repository Functions
 
-        public IEnumerable<QCInterviewerVM> GetQCInterviewers()
+        public async Task<List<QCInterviewerVM>> GetQCInterviewers()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<QCInterviewerVM>(con, "[dbo].[sp_RisebirdQCInterviewer]", null,
+                    var data= await SqlMapper.QueryAsync<QCInterviewerVM>(con, "[dbo].[sp_RisebirdQCInterviewer]", null,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -706,13 +601,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -827,7 +715,7 @@ namespace Risebird.Repository
         /// </summary>
         /// <param name="emailId"></param>
         /// <returns></returns>
-        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId)
+        public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId)
         {
             try
             {
@@ -836,22 +724,19 @@ namespace Risebird.Repository
                 parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
+                    var data= await SqlMapper.QueryAsync<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public string GetUserProfileBasedOnEmailId(string emailId)
+        public async Task<string> GetUserProfileBasedOnEmailId(string emailId)
         {
             try
             {
@@ -859,99 +744,89 @@ namespace Risebird.Repository
                 parameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.QuerySingle<string>(con, "sp_GetUserProfileBasedOnEmailId", parameters,
+                    return await SqlMapper.QuerySingleAsync<string>(con, "sp_GetUserProfileBasedOnEmailId", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public bool CheckMultiSession(string emailId)
+        public async Task<bool> CheckMultiSession(string emailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var isOldSessionLoggedOut = SqlMapper.Query<bool>(
-                    con, "select top 1 uss.IsActive from [dbo].[UserSessions] uss join UserList us on uss.UserId= us.id where us.EmailId = @EmailId order by uss.Id desc", new { EmailId = emailId }, commandType: Text).FirstOrDefault();
-                    return isOldSessionLoggedOut;
+                    var isOldSessionLoggedOut = await SqlMapper.QueryAsync<bool>(
+                    con, "select top 1 uss.IsActive from [dbo].[UserSessions] uss join UserList us on uss.UserId= us.id where us.EmailId = @EmailId order by uss.Id desc", new { EmailId = emailId }, commandType: Text);
+                    return isOldSessionLoggedOut.FirstOrDefault();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
-        public bool ClearSessionForOthersUsers(string emailId)
+
+        public async Task<bool> ClearSessionForOthersUsers(string emailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<bool>(
+                    await SqlMapper.QueryAsync<bool>(
                        con, "update uss  set IsActive =0,Logout=GETUTCDATE()  from [dbo].[UserSessions] uss  join UserList us on uss.UserId= us.id  where us.EmailId = @emailId", new { value = true, emailId = emailId }, commandType: Text);
                     return true;
                 }
             }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
 
-        public IEnumerable<string> GetAllHrsEmailld()
+        public async Task<List<string>> GetAllHrsEmailld()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<string>(
+                    var data= await SqlMapper.QueryAsync<string>(
                         con, "select Emailid from [dbo].[UserList] where idprofile = 2", null, commandType: Text);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public IEnumerable<ResumeEvaluator> GetResumeEvaluators()
+        public async Task<List<ResumeEvaluator>> GetResumeEvaluators()
         {
             try
             {
                 var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<ResumeEvaluator>(query);
-                    return results;
+                    var results = await con.QueryAsync<ResumeEvaluator>(query);
+                    return results.ToList();
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -973,10 +848,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -985,7 +856,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public ResumeEvaluator GetResumeEvaluator(int id)
+        public async Task<ResumeEvaluator> GetResumeEvaluator(int id)
         {
             try
             {
@@ -994,19 +865,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<ResumeEvaluator>(query, dynamicParameters);
+                    var result = await con.QueryAsync<ResumeEvaluator>(query, dynamicParameters);
                     return result.FirstOrDefault();
                 }
 
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        public async Task<bool> EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
         {
             try
             {
@@ -1019,18 +890,17 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@MobileNumber", resumeEvaluator.MobileNumber);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<int>(query, dynamicParameters);
+                    var result = await con.QueryAsync<int>(query, dynamicParameters);
                     return true;
                 }
 
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
-
 
         public async Task<bool> DeleteResumeEvaluator(int userId)
         {
@@ -1047,13 +917,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -1061,7 +924,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<Recruiter> GetRecruiters()
+        public async Task<List<Recruiter>> GetRecruiters()
         {
             try
             {
@@ -1069,12 +932,12 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<Recruiter>(query);
-                    return results;
+                    return results.ToList();
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1097,10 +960,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -1109,7 +968,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public Recruiter GetRecruiter(int id)
+        public async Task<Recruiter> GetRecruiter(int id)
         {
             try
             {
@@ -1118,14 +977,13 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<Recruiter>(query, dynamicParameters);
+                    var result = await con.QueryAsync<Recruiter>(query, dynamicParameters);
                     return result.FirstOrDefault();
                 }
-
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1147,11 +1005,6 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
-            }
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
             }
             catch (Exception e)
             {
@@ -1175,13 +1028,6 @@ namespace Risebird.Repository
                     return true;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -1204,20 +1050,13 @@ namespace Risebird.Repository
                     var result = await con.QueryAsync<int>(query, dynamicParameters);
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
 
             }
         }
-        public string GetCurrenttheme(string emailid)
+        public async Task<string> GetCurrenttheme(string emailid)
         {
             try
             {
@@ -1227,7 +1066,7 @@ namespace Risebird.Repository
                     var query = "Select Usertheme  from UserList where EmailId = @id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", emailid);
-                    var results = con.Query<string>(query, parameters);
+                    var results = await con.QueryAsync<string>(query, parameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -1236,7 +1075,7 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public IEnumerable<AssignmentVM> GetInterviewerEntitle()
+        public async Task<List<AssignmentVM>> GetInterviewerEntitle()
         {
             try
             {
@@ -1245,21 +1084,18 @@ namespace Risebird.Repository
                     // var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill,Count(*) as NoOfInterview from Skill sk join TransInterviewerSkill tis on sk.id=tis.SkillId group by sk.Name,sk.id order by LTRIM(RTRIM(sk.Name))";
                     var query = "select ag.id,AssessmentGroup,PrimarySkills,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate,(Select count(ipr.id) from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId cross Apply string_split(AssessmentGroupId,',') where value =ag.id and ul.IsActive = 1 ) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName,Count(IRF.id) as IrfCount from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid left join IRF on IRF.AssessmentGroupId=ag.id group by ag.id,AssessmentGroup,PrimarySkills,ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate";
                     var parameters = new DynamicParameters();
-                    var results = con.Query<AssignmentVM>(query, parameters);
-                    return results;
+                    var results = await con.QueryAsync<AssignmentVM>(query, parameters);
+                    return results.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public IEnumerable<AssignmentVM> InterviewerEntitleDetails(int id)
+
+        public async Task<List<AssignmentVM>> InterviewerEntitleDetails(int id)
         {
             try
             {
@@ -1268,28 +1104,18 @@ namespace Risebird.Repository
                 finaldynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<AssignmentVM>(finalquery, finaldynamicParameters);
-                    return result;
-                }
-                //using (SqlConnection con = new SqlConnection(connectionString))
-                //{
-                //    var parameters = new DynamicParameters();
-                //    parameters.Add("@id", id);
-                //    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_RisebirdInterviewerEntitleDetails]", parameters,
-                //        commandType: StoredProcedure);
-                //}
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    var result = await con.QueryAsync<AssignmentVM>(finalquery, finaldynamicParameters);
+                    return result.ToList();
+                }               
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public string GetCurrentuserImage(string emailid)
+
+        public async Task<string> GetCurrentuserImage(string emailid)
         {
             try
             {
@@ -1299,7 +1125,7 @@ namespace Risebird.Repository
                     var query = "Select ImageURL  from UserList where EmailId = @id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", emailid);
-                    var results = con.Query<string>(query, parameters);
+                    var results = await con.QueryAsync<string>(query, parameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -1308,7 +1134,8 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public string FetchWhatsAppNumberByEmail(string Emailid)
+
+        public async Task<string> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {
@@ -1317,21 +1144,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Emailid", Emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(query, dynamicParameters);
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
                     return result.FirstOrDefault();
                 }
             }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "";
         }
-        public string FetchNameByEmail(string Emailid)
+
+        public async Task<string> FetchNameByEmail(string Emailid)
         {
             try
             {
@@ -1340,21 +1164,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Emailid", Emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(query, dynamicParameters);
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
                     return result.FirstOrDefault();
                 }
             }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "";
         }
-        public int GetInterviewerid(string emailid)
+
+        public async Task<int> GetInterviewerid(string emailid)
         {
             try
             {
@@ -1363,17 +1184,18 @@ namespace Risebird.Repository
                 _dp.Add("@Emailid", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, _dp);
+                    var results = await con.QueryAsync<int>(query, _dp);
                     return results.FirstOrDefault();
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return 0;
         }
-        public string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+
+        public async Task<string> SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
         {
             try
             {
@@ -1387,19 +1209,14 @@ namespace Risebird.Repository
                 parameters.Add("@WhoCalled", WhoCalled);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(con, "usp_AddorUpdateCallRecording", parameters,
+                    await SqlMapper.QueryAsync<string>(con, "usp_AddorUpdateCallRecording", parameters,
                        commandType: CommandType.StoredProcedure);
                     return "success";
                 }
             }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return "Fail";
-            }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Fail";
             }
         }
@@ -1437,7 +1254,7 @@ namespace Risebird.Repository
             }
         }
 
-        public List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid)
+        public async Task<List<CallRecordingDetailsVM>> FetchCallRecording(string candidateEmailid, string irfid)
         {
             try
             {
@@ -1452,17 +1269,14 @@ namespace Risebird.Repository
                     return (List<CallRecordingDetailsVM>)result;
                 }
             }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-            }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
         }
-        public List<string> GetUserClients(int id)
+
+        public async Task<List<string>> GetUserClients(int id)
         {
             try
             {
@@ -1471,17 +1285,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(query, dynamicParameters);
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
                     return (List<string>)result;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return new List<string>();
         }
-        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+
+        public async Task<List<ZoomAccountDetailsVM>> FetchInstaZoomAccounts()
         {
             try
             {
@@ -1489,17 +1304,18 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<ZoomAccountDetailsVM>(query, dynamicParameters);
+                    var result = await con.QueryAsync<ZoomAccountDetailsVM>(query, dynamicParameters);
                     return (List<ZoomAccountDetailsVM>)result;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public bool DeleteInstaZoomAccount(int Accountid)
+
+        public async Task<bool> DeleteInstaZoomAccount(int Accountid)
         {
             try
             {
@@ -1507,18 +1323,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", Accountid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<int>(con, "usp_DeleteInstaZoomAccount", dynamicParameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteInstaZoomAccount", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
-        public bool AddInstaZoomAccount(string AccountEmail)
+        public async Task<bool> AddInstaZoomAccount(string AccountEmail)
         {
             try
             {
@@ -1526,19 +1342,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@AccountEmail", AccountEmail);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query(con, "usp_InsertInstaZoomAccount", dynamicParameters,
+                    await SqlMapper.QueryAsync(con, "usp_InsertInstaZoomAccount", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
 
-        public string GetCurrentUsername(string emailid)
+        public async Task<string> GetCurrentUsername(string emailid)
         {
             try
             {
@@ -1548,7 +1364,7 @@ namespace Risebird.Repository
                     var query = "Select firstname  from UserList where EmailId = @id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", emailid);
-                    var results = con.Query<string>(query, parameters);
+                    var results = await con.QueryAsync<string>(query, parameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -1580,13 +1396,6 @@ namespace Risebird.Repository
                     }
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -1609,19 +1418,13 @@ namespace Risebird.Repository
                     return (int)BooleanResultsEnum.True;
                 }
             }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return (int)BooleanResultsEnum.Failed;
-            }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return (int)BooleanResultsEnum.Failed;
             }
         }
+
         public async Task<ClientUserVM> GetClientUserDetailsByIRF(string emailID, int irfid)
         {
             try
@@ -1636,17 +1439,14 @@ namespace Risebird.Repository
                     return result.FirstOrDefault();
                 }
             }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public AssignmentVM GetInterviewerEntitleById(int assessmentid)
+
+        public  async Task<AssignmentVM> GetInterviewerEntitleById(int assessmentid)
         {
             try
             {
@@ -1655,21 +1455,18 @@ namespace Risebird.Repository
                     var query = "select ag.id,AssessmentGroup,PrimarySkills,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel, ag.SeniorityLevel, ag.Country,ag.PerHourRate,(Select count(*) from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where value =ag.id ) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName,Count(IRF.id) as IrfCount, ag.EmploymentType from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid left join IRF on IRF.AssessmentGroupId=ag.id where ag.id=@assessmentid group by ag.id,AssessmentGroup,PrimarySkills,ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate, ag.SeniorityLevel, ag.EmploymentType";
                     var parameters = new DynamicParameters();
                     parameters.Add("@assessmentid", assessmentid);
-                    var results = con.Query<AssignmentVM>(query, parameters);
+                    var results = await con.QueryAsync<AssignmentVM>(query, parameters);
                     return results.FirstOrDefault();
                 }
             }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+
+        public async Task<string> SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
         {
             try
             {
@@ -1686,18 +1483,13 @@ namespace Risebird.Repository
                     return "success";
                 }
             }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return "Fail";
-            }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Fail";
             }
         }
-        public List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid)
+        public async Task<List<CallRecordingDetailsVM>> FetchCallRecordingInterviewer(string Emailid)
         {
             try
             {
@@ -1706,22 +1498,19 @@ namespace Risebird.Repository
                 parameters.Add("@Emailid", Emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<CallRecordingDetailsVM>(con, "usp_FetchCallRecordingInterviewer", parameters,
+                    var result = await SqlMapper.QueryAsync<CallRecordingDetailsVM>(con, "usp_FetchCallRecordingInterviewer", parameters,
                        commandType: CommandType.StoredProcedure);
                     return (List<CallRecordingDetailsVM>)result;
                 }
             }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-            }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
         }
-        public async Task<IEnumerable<CallRecordingDataVM>> GetRecordingDataToUpdate()
+
+        public async Task<List<CallRecordingDataVM>> GetRecordingDataToUpdate()
         {
             try
             {
@@ -1729,13 +1518,10 @@ namespace Risebird.Repository
                 dp.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<CallRecordingDataVM>(con, "[dbo].[usp_GetRecordingDataToUpdate]", dp,
+                    var data = await SqlMapper.QueryAsync<CallRecordingDataVM>(con, "[dbo].[usp_GetRecordingDataToUpdate]", dp,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
@@ -1743,6 +1529,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
         public async Task<bool> UpdateRecordingData(CallRecordingDataVM obj)
         {
             try
@@ -1806,7 +1593,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public IEnumerable<ClientUserVM> GetClientPremiumUsers(string EmailId)
+        public async Task<List<ClientUserVM>> GetClientPremiumUsers(string EmailId)
         {
             try
             {
@@ -1814,17 +1601,14 @@ namespace Risebird.Repository
                 dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
+                    var data= SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1905,7 +1689,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public string GetWhatsappno(string emailid)
+        public async Task<string> GetWhatsappno(string emailid)
         {
             try
             {
@@ -1915,7 +1699,7 @@ namespace Risebird.Repository
                     var query = "Select WhatsappNumber from UserList where EmailId = @id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", emailid);
-                    var results = con.Query<string>(query, parameters);
+                    var results = await con.QueryAsync<string>(query, parameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -1924,7 +1708,7 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public string UpdateWhatsappno(string emailid, string WhatsappNumber)
+        public async Task<string> UpdateWhatsappno(string emailid, string WhatsappNumber)
         {
             try
             {
@@ -1935,7 +1719,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", emailid);
                     parameters.Add("@whatsappup", WhatsappNumber);
-                    var results = con.Query<string>(query, parameters);
+                    var results = await con.QueryAsync<string>(query, parameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -1953,13 +1737,9 @@ namespace Risebird.Repository
                     var query = "Select cl.IsQCRequired,cl.IsRedoInterview from Client cl join IRF on IRF.ClientId=cl.id where IRF.IRFId=@IRFId";
                     var parameters = new DynamicParameters();
                     parameters.Add("@IRFId", IRFId);
-                    var results = con.Query<ClientUserVM>(query, parameters);
+                    var results = await con.QueryAsync<ClientUserVM>(query, parameters);
                     return results.FirstOrDefault();
                 }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
@@ -1967,23 +1747,20 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<ClientUserVM> GetClientUsersForReviewNotification()
+        public async Task<List<ClientUserVM>> GetClientUsersForReviewNotification()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[usp_RisebirdClientUsersForNotification]", null,
+                    var data= await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[usp_RisebirdClientUsersForNotification]", null,
                         commandType: StoredProcedure);
+                    return data.ToList();
                 }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

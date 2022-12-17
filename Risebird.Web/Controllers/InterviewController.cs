@@ -4714,8 +4714,8 @@ namespace Risebird.Web.Controllers
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
                         ViewBag.VideoStatus = "Public";
-                        //ViewBag.VideoStatus = "Private";
-                        var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                        var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
                             menus = menus.Where(x => x.functionName != "Support").ToList();
@@ -5323,7 +5323,8 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ReassignMeetingByEI(string id)
         {
             var meetings = await _meetingService.FetchOpenMeetingById(id);
-            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+            var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {
                 menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
@@ -5366,7 +5367,8 @@ namespace Risebird.Web.Controllers
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 GetStatusList(model, irfId, 0);
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
@@ -5430,7 +5432,8 @@ namespace Risebird.Web.Controllers
                     model.PreviousMeetingStatus = model.MeetingStatus;
                     model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                     GetStatusList(model, irfId, 0);
-                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                    var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
                     {
                         menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
@@ -5498,7 +5501,8 @@ namespace Risebird.Web.Controllers
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
@@ -5598,7 +5602,8 @@ namespace Risebird.Web.Controllers
                         }, "ID", "Name", "All");
 
             ViewData["list"] = list;
-            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+            var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {
                 menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();

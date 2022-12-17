@@ -3779,7 +3779,7 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageInterviewer");
 
                         }
-                        var model = _userService.GetInterviewersDetails();
+                        var model = await _userService.GetInterviewersDetails();
                         if (!string.IsNullOrEmpty(Searchvalue))
                         {
                             model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
@@ -3846,15 +3846,15 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         // code for fetch data or any thing else
-                        InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+                        InterviewerVM interviewerVM = await _userService.GetInterviewer(Convert.ToInt32(Id));
                         interviewerVM.id = Convert.ToInt32(Id);
                         if (!string.IsNullOrEmpty(Videoid))
                         {
                             //fetch vediolink wth details
-                            var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
+                            var model = await _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
                             interviewerVM.VideoLink = model.VideoLink;
                         }
-                        interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
+                        interviewerVM.SubVideo_List = await _userService.GetInterviewerVideos(interviewerVM.EmailId);
                         if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
                         {
                             interviewerVM.SubVideo_List = new List<InterviewerVM>();
@@ -4372,7 +4372,7 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageInterviewer");
                         }
                         var model = new Assessment();
-                        var modellist = _userService.GetInterviewerEntitle();
+                        var modellist = await _userService.GetInterviewerEntitle();
                         if (modellist == null)
                         {
                             modellist = new List<AssignmentVM>();
@@ -4438,10 +4438,10 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditAssessment(int assessmentid)
+        public async Task<ActionResult> EditAssessment(int assessmentid)
         {
             var model = new Assessment();
-            var modellist = _userService.GetInterviewerEntitleById(assessmentid);
+            var modellist = await _userService.GetInterviewerEntitleById(assessmentid);
             if (modellist == null)
             {
                 modellist = new AssignmentVM();
@@ -4586,7 +4586,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
                             TempData.Remove("SuccessErrorMessageInterviewer");
                         }
-                        var model = _userService.InterviewerEntitleDetails(id);
+                        var model = await _userService.InterviewerEntitleDetails(id);
 
                         //if (!string.IsNullOrEmpty(Searchvalue))
                         //{
@@ -5905,11 +5905,11 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult PublicAddReport(int interviewId, int irfId, bool IsSelected = false)
+        public async Task<IActionResult> PublicAddReport(int interviewId, int irfId, bool IsSelected = false)
         {
             try
             {
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 ViewBag.IsSelected = IsSelected;
                 if (model.QuestionsCollection == null)
                 {
@@ -5922,7 +5922,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.profileName = "";
                 ViewBag.PageStatus = "Public";
                 GetStatusList(model, irfId);
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
@@ -5947,7 +5948,7 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult ExecutiveReport(int interviewId, int irfId, bool IsSelected = false)
+        public async Task<IActionResult> ExecutiveReport(int interviewId, int irfId, bool IsSelected = false)
         {
             try
             {
@@ -5965,7 +5966,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "";
                 GetStatusList(model, irfId);
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
@@ -6068,11 +6070,11 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult InstaAddReport(int interviewId, int irfId, bool IsSelected = false)
+        public async Task<IActionResult> InstaAddReport(int interviewId, int irfId, bool IsSelected = false)
         {
             try
             {
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 ViewBag.IsSelected = IsSelected;
                 if (model.QuestionsCollection == null)
                 {
@@ -6086,7 +6088,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "Insta";
                 GetStatusList(model, irfId);
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();

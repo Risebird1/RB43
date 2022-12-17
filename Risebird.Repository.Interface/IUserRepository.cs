@@ -7,14 +7,14 @@ namespace Risebird.Repository.Interface
 {
     public interface IUserRepository
     {
-        IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId);
-        IEnumerable<UserList> GetRisebirdUsers();
-        IEnumerable<InterviewerVM> GetInterviewers();
-        IEnumerable<InterviewerVM> GetInterviewersDetails();
+        Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId);
+        Task<List<UserList>> GetRisebirdUsers();
+        Task<List<InterviewerVM>> GetInterviewers();
+        Task<List<InterviewerVM>> GetInterviewersDetails();
 
-        IEnumerable<ClientUserVM> GetClientUsers(string EmailId);
+        Task<List<ClientUserVM>> GetClientUsers(string EmailId);
         Task<ClientUserVM> GetClientUserDetails(string emailID);
-        IEnumerable<QCInterviewerVM> GetQCInterviewers();
+        Task<List<QCInterviewerVM>> GetQCInterviewers();
         Task<bool> AddUser(UserList user);
         Task<bool> DeleteUser(int id);
         Task<UserList> GetUser(int id);
@@ -29,63 +29,63 @@ namespace Risebird.Repository.Interface
         Task<bool> AddQCInterviewer(QCInterviewerVM interviewer);
         Task<bool> DeleteInterviewer(int id);
         Task<InterviewerVM> GetInterviewer(int id);
-        IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid);
-        MeetingVM GetMeetingbyid(int id);
+        Task<List<InterviewerVM>> GetInterviewerVideos(string Emailid);
+        Task<MeetingVM> GetMeetingbyid(int id);
 
         Task<bool> UpdateInterviewer(InterviewerVM Interviewer);
 
         Task<QCInterviewerVM> GetQCInterviewer(int id);
         Task<bool> UpdateQCInterviewer(QCInterviewerVM qcInterviewer);
-        IEnumerable<string> GetAllHrsEmailld();
+        Task<List<string>> GetAllHrsEmailld();
 
         Task<bool> DeleteQCInterviewer(int id);
-        IEnumerable<ResumeEvaluator> GetResumeEvaluators();
+        Task<List<ResumeEvaluator>> GetResumeEvaluators();
         Task<bool> AddResumeEvaluator(ResumeEvaluator resumeEvaluator);
-        ResumeEvaluator GetResumeEvaluator(int id);
-        bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator);
+        Task<ResumeEvaluator> GetResumeEvaluator(int id);
+        Task<bool> EditResumeEvaluator(ResumeEvaluator resumeEvaluator);
         Task<bool> DeleteResumeEvaluator(int userId);
-        IEnumerable<Recruiter> GetRecruiters();
+        Task<List<Recruiter>> GetRecruiters();
         Task<bool> AddRecruiter(Recruiter recruiter);
         Task<bool> EditRecruiter(Recruiter recruiter);
-        Recruiter GetRecruiter(int id);
+        Task<Recruiter> GetRecruiter(int id);
         Task<bool> DeleteRecruiter(int userId);
         Task UpdateUserSigInDetails(string emailId);
-        string GetCurrenttheme(string emailId);
-        IEnumerable<AssignmentVM> GetInterviewerEntitle();
-        IEnumerable<AssignmentVM> InterviewerEntitleDetails(int id);
+        Task<string> GetCurrenttheme(string emailId);
+        Task<List<AssignmentVM>> GetInterviewerEntitle();
+        Task<List<AssignmentVM>> InterviewerEntitleDetails(int id);
         Task<bool> ResetNavigation(int userId);
-        string GetCurrentuserImage(string emailId);
+        Task<string> GetCurrentuserImage(string emailId);
 
-        string FetchWhatsAppNumberByEmail(string Emailid);
-        string FetchNameByEmail(string Emailid);
-        int GetInterviewerid(string emailid);
-        string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
-        List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid);
-        List<string> GetUserClients(int id);
-        List<ZoomAccountDetailsVM> FetchInstaZoomAccounts();
-        bool DeleteInstaZoomAccount(int Accountid);
-        bool AddInstaZoomAccount(string AccountEmail);
-        string GetCurrentUsername(string emailId);
-        bool CheckMultiSession(string emailId);
-        bool ClearSessionForOthersUsers(string emailId);
+        Task<string> FetchWhatsAppNumberByEmail(string Emailid);
+        Task<string> FetchNameByEmail(string Emailid);
+        Task<int> GetInterviewerid(string emailid);
+        Task<string> SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
+        Task<List<CallRecordingDetailsVM>> FetchCallRecording(string candidateEmailid, string irfid);
+        Task<List<string>> GetUserClients(int id);
+        Task<List<ZoomAccountDetailsVM>> FetchInstaZoomAccounts();
+        Task<bool> DeleteInstaZoomAccount(int Accountid);
+        Task<bool> AddInstaZoomAccount(string AccountEmail);
+         Task<string> GetCurrentUsername(string emailId);
+        Task<bool> CheckMultiSession(string emailId);
+         Task<bool> ClearSessionForOthersUsers(string emailId);
         Task<bool> GetClientPasswordResetEnableStatus(int clientId);
         Task<int> DisableInactiveUser();
-        string GetUserProfileBasedOnEmailId(string emailId);
+        Task<string> GetUserProfileBasedOnEmailId(string emailId);
         Task<ClientUserVM> GetClientUserDetailsByIRF(string emailID, int irfid);
-        AssignmentVM GetInterviewerEntitleById(int assessmentid);
-        string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
-        List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid);
+        Task<AssignmentVM> GetInterviewerEntitleById(int assessmentid);
+        Task<string> SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
+        Task<List<CallRecordingDetailsVM>> FetchCallRecordingInterviewer(string Emailid);
         Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null);
-        Task<IEnumerable<CallRecordingDataVM>> GetRecordingDataToUpdate();
+        Task<List<CallRecordingDataVM>> GetRecordingDataToUpdate();
         Task<bool> UpdateRecordingData(CallRecordingDataVM obj);
         Task<bool> AddPremiumClientUser(ClientUserVM client);
-        IEnumerable<ClientUserVM> GetClientPremiumUsers(string EmailId);
+        Task<List<ClientUserVM>> GetClientPremiumUsers(string EmailId);
         Task<ClientUserVM> GetClientPremiumUser(int id);
         Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser);
         Task<ClientUserVM> GetClientPremiumUserDetails(string emailID);
-        string GetWhatsappno(string emailId);
-        string UpdateWhatsappno(string emailId, string WhatsappNumber);
+        Task<string> GetWhatsappno(string emailId);
+         Task<string> UpdateWhatsappno(string emailId, string WhatsappNumber);
         Task<ClientUserVM> GetClientDetailsByIRFId(string IRFId);
-        IEnumerable<ClientUserVM> GetClientUsersForReviewNotification();
+        Task<List<ClientUserVM>> GetClientUsersForReviewNotification();
     }
 }

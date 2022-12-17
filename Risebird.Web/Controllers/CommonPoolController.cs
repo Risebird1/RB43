@@ -571,7 +571,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                           await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
 
@@ -689,8 +689,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IreportModel.IsQC = isQC;
                         NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         ViewBag.VideoStatus = "Public";
-                        //ViewBag.VideoStatus = "Private";
-                        var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                        var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
                             menus = menus.Where(x => x.functionName != "Support" && x.functionName != "RiseTube").ToList();
@@ -698,7 +698,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);

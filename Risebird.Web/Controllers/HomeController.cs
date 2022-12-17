@@ -8,6 +8,7 @@ using Risebird.Entities.Enum;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -25,7 +26,7 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
         }
 
-        public IActionResult Index(string url = null)
+        public async Task<IActionResult> Index(string url = null)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -34,15 +35,16 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-                if (_userService.CheckMultiSession(emailId).Result)
+                if (await _userService.CheckMultiSession(emailId))
                 {
                     return RedirectToAction("Index", "MultiSession");
                 }
                 var sessionId = HttpContext.Session.Id;
-                var menus = _userService.GetMenuBasedOnUserEmailld(emailId, sessionId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menuData = await _userService.GetMenuBasedOnUserEmailld(emailId, sessionId);
+                var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
-                var currenttheme = _userService.GetCurrenttheme(emailId);
-                var username = _userService.GetCurrentUsername(emailId);
+                var currenttheme = await _userService.GetCurrenttheme(emailId);
+                var username = await _userService.GetCurrentUsername(emailId);
                 if (string.IsNullOrEmpty(currenttheme))
                 {
                     HttpContext.Session.SetString("Currenttheme", "");
