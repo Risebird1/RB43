@@ -292,7 +292,7 @@ namespace Risebird.Web.Controllers
                     model.scheduleDate = value.AddMinutes(model.TimeZoneoffset);
                 }
                 var _ckeckEmail = await _interviewSchedulerservice.CheckEmailAddressAllow(model.Email);
-                if (!_ckeckEmail)
+                if (_ckeckEmail)
                 {
                     ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
                     return View(model);
