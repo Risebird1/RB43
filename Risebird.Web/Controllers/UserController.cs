@@ -410,8 +410,8 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var model = new ClientUserVM();
-                    model.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
-                    model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
+                    model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                    model.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
                     return View("ClientUserAdd", model);
                 }
                 else
@@ -470,8 +470,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var model = new ClientUserVM();
-                            model.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
-                            model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
+                            model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                            model.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
                             return View("ClientUserAdd", model);
                         }
                     }
@@ -549,8 +549,8 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                         profileName = profileName.Replace("\"", "");
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
-                        clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
+                        clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                        clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserUpdate", clientUserVM);
                     }
                     else
@@ -612,8 +612,8 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                         profileName = profileName.Replace("\"", "");
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
-                        clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
+                        clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                        clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserUpdate", clientUserVM);
                     }
                 }
@@ -2085,7 +2085,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(ex);
             }
         }
@@ -2099,7 +2099,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                var Clients = _clientService.GetClients(emailid, profileName);
+                var Clients = await _clientService.GetClients(emailid, profileName);
                 var _ClientList = new List<SelectListItem>();
                 foreach (var item in Clients)
                 {
@@ -2199,7 +2199,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var model = new ClientUserVM();
-                    model.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                    model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
                     model.SelectedClientRole = 2;
                     return View(model);
                 }
@@ -2257,7 +2257,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var model = new ClientUserVM();
-                            model.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                            model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
                             model.SelectedClientRole = 2;
                             return View(model);
                         }
@@ -2291,7 +2291,7 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                         profileName = profileName.Replace("\"", "");
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                        clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
                         clientUserVM.SelectedClientRole = 2;
                         return View(clientUserVM);
                     }
@@ -2350,7 +2350,7 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                         profileName = profileName.Replace("\"", "");
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                        clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
                         clientUserVM.SelectedClientRole = 2;
                         return View(clientUserVM);
                     }

@@ -42,13 +42,13 @@ namespace Risebird.MicroService
             //{
             //    mcqid = _mcqsets.FirstOrDefault().PartitionKey;
             //}
-            var _candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQTitle(mcqtitle);
+            var _candidateset = (List<CandidateDetailsForTestDuplicate>)await _mCQService.GetMCQCandidateDetailsByMCQTitle(mcqtitle);
             if (!string.IsNullOrEmpty(emailid))
             {
                 emailid = emailid.ToUpper();
                 candidateset = _candidateset.Where(x => x.CandidateEmail.ToUpper() == emailid).FirstOrDefault();
             }
-            var Questions = (List<MCQVM>)_mCQService.GetMCQCandidateQuestions(candidateset.Id);
+            var Questions = (List<MCQVM>)await _mCQService.GetMCQCandidateQuestions(candidateset.Id);
             candidateset.QuestionDetails = Questions;
             //var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
             //var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");

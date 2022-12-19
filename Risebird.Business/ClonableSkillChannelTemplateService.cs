@@ -136,7 +136,7 @@ namespace Risebird.Business
                 //}
                 //model.IRFRecommendations.EmploymentTypeList = selectListforEmployementTypes;
 
-                PopulateDropDownsForTemplate(model);
+                await PopulateDropDownsForTemplate(model);
 
                 return model;
             }
@@ -147,7 +147,7 @@ namespace Risebird.Business
             }
         }
 
-        public ClonableSkillChannelVM PopulateDropDownsForTemplate(ClonableSkillChannelVM model, bool isEdit = false)
+        public async Task<ClonableSkillChannelVM> PopulateDropDownsForTemplate(ClonableSkillChannelVM model, bool isEdit = false)
         {
             if (!isEdit)
             {
@@ -180,10 +180,10 @@ namespace Risebird.Business
             //                       select new { ID = (int)s, Name = s.GetDescription() };
             //model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");//Heuristicsscorelevel
 
-            model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-            model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            model.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
 
-            var Skillset = _irfRepository.GetSkills();
+            var Skillset = await _irfRepository.GetSkills();
             if (Skillset != null)
             {
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
@@ -446,11 +446,11 @@ namespace Risebird.Business
             }
         }
 
-        public IRFVm PopulateDropDownsForSkillChannel(IRFVm model, string clientEmailId = null)
+        public async Task<IRFVm> PopulateDropDownsForSkillChannel(IRFVm model, string clientEmailId = null)
         {
             try
             {
-                model.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+                model.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
 
                 if (string.IsNullOrEmpty(clientEmailId))
                 {
@@ -460,7 +460,7 @@ namespace Risebird.Business
                 {
                     if (model.ClientId == 0)
                     {
-                        model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
+                        model.ClientId = await _clientRepository.GetClientByEmailId(clientEmailId);
                     }
                     model.ClientUser = new SelectList(_irfRepository.GetClientUser(model.ClientId), "id", "EmailId");
                     int clientUserId = _irfRepository.GetUserId(clientEmailId);
@@ -468,13 +468,13 @@ namespace Risebird.Business
                     model.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = clientEmailId, Role = _irfRepository.GetClientUserRole(clientUserId) });
                     model.BillingOwner = clientUserId;
                 }
-                model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                model.SkillsList = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                model.SkillsList = new SelectList(await _irfRepository.GetSkills(), "id", "Name");
                 return model;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }

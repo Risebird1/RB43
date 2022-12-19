@@ -75,7 +75,7 @@ namespace Risebird.Web.Controllers
                             clientname = client.Result.ClientName.ToUpper();
                         }
                     }
-                    var result = _mCQService.FetchAllMCQSets(clientname, profileName, false);
+                    var result = await _mCQService.FetchAllMCQSets(clientname, profileName, false);
                     if (profileName == "Client")
                     {
                         List<MCQVMset> filteredByClient = new List<MCQVMset>();
@@ -516,7 +516,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "FreemiumClient")
                 {
-                    var questions = _mCQService.GetMCQquestionsByMCQId(Id);
+                    var questions = await _mCQService.GetMCQquestionsByMCQId(Id);
                     var model = questions.Where(x => x.MCQId == Id).OrderBy(x => x.QuestionNumber).ToList();
                     ViewBag.Type = Type;
                     return View(model);
@@ -542,7 +542,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin")
                 {
-                    _mCQService.DeleteMCQSet(Id);
+                    await _mCQService.DeleteMCQSet(Id);
                     return Json("Successfully deleted");
                 }
                 else
@@ -559,9 +559,9 @@ namespace Risebird.Web.Controllers
 
         #region CandidateSkillTest
         [HttpGet]
-        public IActionResult SkillTest(string Id, string uniqueid)
+        public async Task<IActionResult> SkillTest(string Id, string uniqueid)
         {
-            var result = _mCQService.FetchMCQSetById(Id);
+            var result = await _mCQService.FetchMCQSetById(Id);
             ViewBag.Questionsetid = Id;
             var model = new CandidateDetailsForTest();
             model.MCQId = Id;
@@ -578,18 +578,18 @@ namespace Risebird.Web.Controllers
                 ViewBag.Questionsetid = Id;
                 return View("SkillTest", values);
             }
-            var candidateShare = _mCQService.GetShareMCQEmailListByMCQId(Id);
+            var candidateShare = await _mCQService.GetShareMCQEmailListByMCQId(Id);
             if (candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.MCQId == Id).Count() == 0)
             {
                 return RedirectToAction("TestComplete", new { status = "Unauthorized" });
             }
 
             var itemshareupdate = candidateShare.FirstOrDefault();
-            _mCQService.UpdateShareMCQEmailStatusByid(itemshareupdate.id, 1);
+            await _mCQService.UpdateShareMCQEmailStatusByid(itemshareupdate.id, 1);
 
             values.ApplyingCompany = itemshareupdate.ApplyingCompany;
             values.ClientHR = itemshareupdate.ClientHR;
-            var candidateDetails = _mCQService.GetMCQCandidateListByMCQId(Id);
+            var candidateDetails = await _mCQService.GetMCQCandidateListByMCQId(Id);
             if (candidateDetails.Where(x => x.MCQId == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
             {
                 return RedirectToAction("TestComplete", new { status = "TestCompleted" });
@@ -604,8 +604,8 @@ namespace Risebird.Web.Controllers
                 }
             }
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
-            var questions = _mCQService.GetMCQquestionsByMCQId(Id);
-            var questionstimmer = _mCQService.FetchMCQSetById(Id);
+            var questions = await _mCQService.GetMCQquestionsByMCQId(Id);
+            var questionstimmer = await _mCQService.FetchMCQSetById(Id);
             var model = questions.OrderBy(x => x.QuestionNumber).ToList();
             foreach (var item in model)
             {
@@ -903,7 +903,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
-                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id, false);
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)await _mCQService.GetMCQCandidateDetailsByMCQId(id, false);
                     if (candidateset != null)
                     {
                         if (profileName == "Client")
@@ -1001,7 +1001,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                _mCQService.DeleteMCQCandidate(id, indexid);
+                await _mCQService.DeleteMCQCandidate(id, indexid);
                 return Json("success");
             }
             catch (Exception ex)
@@ -1021,7 +1021,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    var resultset = _mCQService.FetchMCQSetById(Id);
+                    var resultset = await _mCQService.FetchMCQSetById(Id);
                     var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
                     var timmer = details.Timer + " min";
                     string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
@@ -1171,7 +1171,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("Logo", "");
                 }
                 var _candidate = new CandidateDetailsForTestDuplicate();
-                var candidateset = _mCQService.GetMCQReportByMCQId(MCQId);
+                var candidateset = await _mCQService.GetMCQReportByMCQId(MCQId);
                 if (!string.IsNullOrWhiteSpace(CMCQId))
                 {
                     _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
@@ -1184,16 +1184,16 @@ namespace Risebird.Web.Controllers
                 {
                     _candidate = new CandidateDetailsForTestDuplicate();
                 }
-                var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
+                var questions = await _mCQService.GetMCQCandidateQuestions(_candidate.Id);
                 if (questions == null)
                 {
                     questions = new List<MCQVM>();
                 }
                 _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
-                _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+                _candidate.Level = new SelectList(await _iRFRepository.GetLevels(), "id", "Name");
                 _candidate.SelectabilityEvaluatorReportCollection = new List<SelectabilityEvaluatorReport>();
                 _candidate.JoinabilityHRReportCollection = new List<JoinabilityHRReport>();
-                _candidate = _mCQService.FetchMCQReportDetails(_candidate);
+                _candidate = await _mCQService.FetchMCQReportDetails(_candidate);
                 SetSelectabilityorJoniblity(_candidate);
                 if (string.IsNullOrEmpty(_candidate.VideoLink))
                 {
@@ -1215,7 +1215,7 @@ namespace Risebird.Web.Controllers
                                 _candidate.VideoLink = convertedResponse.recording;
                                 if (_candidate != null && _candidate.VideoLink != null)
                                 {
-                                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                    await _mCQService.UpdateVideoURLForCandidate(_candidate);
                                 }
                                 //save aadhaar face details
                                 if (!string.IsNullOrWhiteSpace(convertedResponse.aadharVerification.data.name))
@@ -1259,7 +1259,7 @@ namespace Risebird.Web.Controllers
                                 _candidate.VideoLink = convertedResponse.videoUrl;
                                 if (_candidate != null && _candidate.VideoLink != null)
                                 {
-                                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                    await _mCQService.UpdateVideoURLForCandidate(_candidate);
                                 }
                             }
                             catch (Exception ex)
@@ -1296,7 +1296,7 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("Logo", "");
                 }
-                if (_mCQService.SaveMCQReportDetails(_candidate))
+                if (await _mCQService.SaveMCQReportDetails(_candidate))
                 {
                     TempData["SuccessErrorMCQMessage"] = "Report has been saved Successfully!";
                     return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, CMCQId = _candidate.Id });
@@ -1346,7 +1346,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
-                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetails();
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)await _mCQService.GetMCQCandidateDetails();
                     if (candidateset != null)
                     {
                         if (profileName == "Client")
@@ -1447,7 +1447,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                 {
                     string clientname = string.Empty;
-                    var result = _mCQService.FetchAllMCQSets(clientname, profileName, true);
+                    var result = await _mCQService.FetchAllMCQSets(clientname, profileName, true);
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -1650,7 +1650,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                 {
-                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQId(id, true);
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)await _mCQService.GetMCQCandidateDetailsByMCQId(id, true);
                     if (candidateset != null)
                     {
                         if (profileName == "Client")
@@ -1789,7 +1789,7 @@ namespace Risebird.Web.Controllers
                             clientname = client.ClientName.ToUpper();
                         }
                     }
-                    var result = _mCQService.FetchAllMCQSetsPremium(clientname, profileName, false);
+                    var result = await _mCQService.FetchAllMCQSetsPremium(clientname, profileName, false);
                     if (profileName == "Client")
                     {
                         List<MCQVMset> filteredByClient = new List<MCQVMset>();
@@ -1990,8 +1990,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     string ClientEmail = emailid;
                     string ClientName = "";
-                    var totalinviteallowed = _mCQService.FetchTotalInviteAllowed(emailid);
-                    var totalinvitesent = _mCQService.FetchTotalInviteSent(emailid);
+                    var totalinviteallowed = await _mCQService.FetchTotalInviteAllowed(emailid);
+                    var totalinvitesent = await _mCQService.FetchTotalInviteSent(emailid);
                     if (Emailids.Split(";").Count() + totalinvitesent <= totalinviteallowed)
                     {
                         if (profileName == "FreemiumClient")
@@ -2002,7 +2002,7 @@ namespace Risebird.Web.Controllers
                                 ClientName = client.Result.ClientName.ToUpper();
                             }
                         }
-                        var resultset = _mCQService.FetchMCQSetById(Id);
+                        var resultset = await _mCQService.FetchMCQSetById(Id);
                         var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
                         var timmer = details.Timer + " min";
                         string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTestPremium?Id=" + Id;
@@ -2071,9 +2071,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult SkillTestPremium(string Id)
+        public async Task<IActionResult> SkillTestPremium(string Id)
         {
-            var result = _mCQService.FetchMCQSetById(Id);
+            var result = await _mCQService.FetchMCQSetById(Id);
             ViewBag.Questionsetid = Id;
             var model = new CandidateDetailsForTest();
             model.MCQId = Id;
@@ -2088,18 +2088,18 @@ namespace Risebird.Web.Controllers
                 ViewBag.Questionsetid = Id;
                 return View("SkillTestPremium", values);
             }
-            var candidateShare = _mCQService.GetShareMCQEmailListByMCQIdPremium(Id);
+            var candidateShare = await _mCQService.GetShareMCQEmailListByMCQIdPremium(Id);
             if (candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.MCQId == Id).Count() == 0)
             {
                 return RedirectToAction("TestCompletePremium", new { status = "Unauthorized" });
             }
 
             var itemshareupdate = candidateShare.FirstOrDefault();
-            _mCQService.UpdateShareMCQEmailStatusByidPremium(itemshareupdate.id, 1);
+            await _mCQService.UpdateShareMCQEmailStatusByidPremium(itemshareupdate.id, 1);
 
             values.ApplyingCompany = itemshareupdate.ApplyingCompany;
             values.ClientHR = itemshareupdate.ClientHR;
-            var candidateDetails = _mCQService.GetMCQCandidateListByMCQIdPremium(Id);
+            var candidateDetails = await _mCQService.GetMCQCandidateListByMCQIdPremium(Id);
             if (candidateDetails.Where(x => x.MCQId == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
             {
                 return RedirectToAction("TestCompletePremium", new { status = "TestCompleted" });
@@ -2114,8 +2114,8 @@ namespace Risebird.Web.Controllers
                 }
             }
             HttpContext.Session.SetString("TestCandidateDetailsPremium", JsonConvert.SerializeObject(values));
-            var questions = _mCQService.GetMCQquestionsByMCQId(Id);
-            var questionstimmer = _mCQService.FetchMCQSetById(Id);
+            var questions = await _mCQService.GetMCQquestionsByMCQId(Id);
+            var questionstimmer = await _mCQService.FetchMCQSetById(Id);
             var model = questions.OrderBy(x => x.QuestionNumber).ToList();
             foreach (var item in model)
             {
@@ -2367,7 +2367,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "FreemiumClient" || profileName == "SupportAdmin")
                 {
-                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetailsByMCQIdPremium(id);
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)await _mCQService.GetMCQCandidateDetailsByMCQIdPremium(id);
                     if (candidateset != null)
                     {
                         if (profileName == "FreemiumClient")
@@ -2472,7 +2472,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("Logo", "");
                 }
                 var _candidate = new CandidateDetailsForTestDuplicate();
-                var candidateset = _mCQService.GetMCQReportByMCQIdPremium(MCQId);
+                var candidateset = await _mCQService.GetMCQReportByMCQIdPremium(MCQId);
                 if (!string.IsNullOrWhiteSpace(CMCQId))
                 {
                     _candidate = candidateset.Where(x => x.Id == CMCQId).FirstOrDefault();
@@ -2485,13 +2485,13 @@ namespace Risebird.Web.Controllers
                 {
                     _candidate = new CandidateDetailsForTestDuplicate();
                 }
-                var questions = _mCQService.GetMCQCandidateQuestionsPremium(_candidate.Id);
+                var questions = await _mCQService.GetMCQCandidateQuestionsPremium(_candidate.Id);
                 if (questions == null)
                 {
                     questions = new List<MCQVM>();
                 }
                 _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
-                _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+                _candidate.Level = new SelectList(await _iRFRepository.GetLevels(), "id", "Name");
                 _candidate.SelectabilityEvaluatorReportCollection = new List<SelectabilityEvaluatorReport>();
                 _candidate.JoinabilityHRReportCollection = new List<JoinabilityHRReport>();
                 if (string.IsNullOrEmpty(_candidate.VideoLink))

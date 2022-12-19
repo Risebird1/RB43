@@ -76,15 +76,15 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<IrfProgress> GetProgressOptions()
+        public async Task<IEnumerable<IrfProgress>> GetProgressOptions()
         {
             try
             {
-                return _dashboardRespository.GetProgressOptions();
+                return await _dashboardRespository.GetProgressOptions();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }

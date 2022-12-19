@@ -9,14 +9,14 @@ namespace Risebird.Repository.Interface
 {
     public interface IClientRepository
     {
-        IEnumerable<Client> GetClients(string emailid, string profileName);
+        Task<IEnumerable<Client>> GetClients(string emailid, string profileName);
         Task<bool> AddClient(Client client);
         Task<bool> UpdateClient(Client entity);
         Task<Client> GetClient(int id);
         Task<bool> DeleteClient(int id);
         Task<IEnumerable<ClientRole>> GetClientRoles();
         Task<string> AddClientJd(ClientJdVM _client);
-        IEnumerable<ClientJdVM> FetchClientJd(int clientid);
+        Task<IEnumerable<ClientJdVM>> FetchClientJd(int clientid);
         string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile);
         IEnumerable<CandidateCuratedScore> GetCandidateJDScore(int id);
         IEnumerable<Wallet> FetchClientWallet(int clientid);
@@ -30,7 +30,7 @@ namespace Risebird.Repository.Interface
         Task<string> Fetchlogoforclient(string emailId, string id);
         Task<IEnumerable<IRF>> GetRecruiterReportByClient(string emailID, DateTime st, DateTime se);
         Task<int> GetClientByEmailId(string emailId);
-        bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
+        Task<bool> UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
         Task<int> GetClientBillingType(int Clientid);
         Task<IEnumerable<Client>> GetAllClients();
         Task<IEnumerable<ClientCommentsForReport>> GetClientCommentsForReport(int interviewId);

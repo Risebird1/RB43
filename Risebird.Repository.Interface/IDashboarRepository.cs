@@ -13,7 +13,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date, string Emailid);
         Task<DashboardInterviewerCount> GetInterviewerCount();
         Task<IEnumerable<IRF>> GetIRFProgress(DateTime date, string Emailid);
-        IEnumerable<IrfProgress> GetProgressOptions();
+        Task<IEnumerable<IrfProgress>> GetProgressOptions();
         Task<bool> UpdateIRFProgress(IList<IRF> irfProgressList);
         Task<MeetingResultCount> GetMeetingResultCount(string Emailid);
         Task<CandidatesCount> GetCandidatesCount(string Emailid);

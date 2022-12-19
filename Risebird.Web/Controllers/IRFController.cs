@@ -894,7 +894,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetAddIRFProperties(IRFVm model)
         {
-            var skills = _irfRepository.GetSkills();
+            var skills = await _irfRepository.GetSkills();
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
@@ -919,7 +919,7 @@ namespace Risebird.Web.Controllers
             var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
                                 select new { ID = (int)s, Name = s.GetDescription() };
             model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
-            var clients = _irfRepository.GetClients();
+            var clients = await _irfRepository.GetClients();
             ViewBag.Clients = new SelectList(clients, "id", "Name");
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
@@ -929,10 +929,10 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 model.LoggedEmail = emailid;
                 if (profileName == "SeniorHR" || profileName == "SupportAdmin")
-                    ViewBag.Clients = new SelectList(_clientService.GetClients(emailid, profileName), "id", "Name");
+                    ViewBag.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
             }
-            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
             var Skillset = skills;
             if (Skillset != null)
             {
@@ -1189,7 +1189,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SampleQuestions(int id, string irf = null)
+        public async Task<IActionResult> SampleQuestions(int id, string irf = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1204,7 +1204,7 @@ namespace Risebird.Web.Controllers
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
                     //var techSkills = new List<Skill>();
-                    var skills = _irfService.GetTechSkills(id);
+                    var skills = await _irfService.GetTechSkills(id);
 
                     //foreach (var skill in skills)
                     //{
@@ -1245,7 +1245,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
-        public IActionResult SampleQuestions(TechSkillComments model)
+        public async Task<IActionResult> SampleQuestions(TechSkillComments model)
         {
             try
             {
@@ -1263,7 +1263,7 @@ namespace Risebird.Web.Controllers
                             {
                                 //duplicates exist
                                 ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
-                                var skills = _irfService.GetTechSkills(model.IRFId);
+                                var skills = await _irfService.GetTechSkills(model.IRFId);
                                 ViewBag.Skills = new SelectList(skills, "id", "Name");
                                 //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
                                 model.Profile = profileName;
@@ -1283,7 +1283,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            var skills = _irfService.GetTechSkills(model.IRFId);
+                            var skills = await _irfService.GetTechSkills(model.IRFId);
                             ViewBag.Skills = new SelectList(skills, "id", "Name");
                             //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
 
@@ -2118,16 +2118,16 @@ namespace Risebird.Web.Controllers
                 AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
             }
 
-            ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
+            ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
 
-            var Skillset = _irfRepository.GetSkills();
-            if (Skillset != null)
+            var skillset = await _irfRepository.GetSkills();
+            if (skillset != null)
             {
-                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+                skillset = skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
-            ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+            ViewBag.Skill = new SelectList(skillset, "id", "Name");
             if (!model.IsClone)
             {
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
@@ -2373,7 +2373,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void GetStatusList(InterviewReport model, int irfId = 0)
+        private async Task GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -2384,8 +2384,8 @@ namespace Risebird.Web.Controllers
 
             model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
 
-            model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-            model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            model.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
@@ -6356,11 +6356,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult FetchSkillDetails(int id)
+        public async Task<JsonResult> FetchSkillDetails(int id)
         {
-            var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
-            var level = _irfRepository.GetLevelTech();
-            var Skillset = _irfRepository.GetSkills();
+            var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
+            var level = await _irfRepository.GetLevelTech();
+            var Skillset = await _irfRepository.GetSkills();
             if (Skillset != null)
             {
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
@@ -6528,7 +6528,7 @@ namespace Risebird.Web.Controllers
                 if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)
                 {
                     await _irfService.UpdateIntervieweravailbilityDetails(irfId);
-                    var skills = _irfService.GetTechSkillswithWeightage(irfId);
+                    var skills = await _irfService.GetTechSkillswithWeightage(irfId);
                     StringBuilder sb = new StringBuilder();
                     sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
                     sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");

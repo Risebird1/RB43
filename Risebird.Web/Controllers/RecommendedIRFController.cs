@@ -563,12 +563,12 @@ namespace Risebird.Web.Controllers
             {
                 AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
             }
-            ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
+            ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
             ViewBag.Skills = new SelectList(model.SkillCollection, "SkillId", "SkillName");
 
-            var Skillset = _irfRepository.GetSkills();
+            var Skillset = await _irfRepository.GetSkills();
             if (Skillset != null)
             {
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
