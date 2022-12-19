@@ -5,10 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -31,8 +34,11 @@ namespace Risebird.Web.Controllers
         private readonly string password;
         private readonly string passportUrl;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IHttpRequestHelper _httpRequestHelper;
 
-        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, 
+            IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
+            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -46,6 +52,7 @@ namespace Risebird.Web.Controllers
             user_name = _configuration["CandidatePassportVerfication:username"];
             password = _configuration["CandidatePassportVerfication:password"];
             passportUrl = _configuration["CandidatePassportVerfication:endPoint"];
+            _httpRequestHelper = httpRequestHelper;
         }
 
         public IActionResult Index()
@@ -61,11 +68,20 @@ namespace Risebird.Web.Controllers
             model.request.request_id = Guid.NewGuid().ToString();
             var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
             model.request.hash = getHashSha256(hashstring);
-            var client = new RestClient(apiendpoint + "getCaptcha");
-            var request = new RestRequest(apiendpoint + "getCaptcha", Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddJsonBody(model);
-            RestResponse response = await client.ExecuteAsync(request);
+            //var client = new RestClient(apiendpoint + "getCaptcha");
+            //var request = new RestRequest(apiendpoint + "getCaptcha", Method.Post);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddJsonBody(model);
+            //RestResponse response = await client.ExecuteAsync(request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
+
+
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
             {
@@ -83,11 +99,19 @@ namespace Risebird.Web.Controllers
             model.request.captcha = aadharcaptcha;
             model.request.verification_type = "OTP";
             model.request.consent = "YES";
-            var client = new RestClient(apiendpoint + "enterAadhaar");
-            var request = new RestRequest(apiendpoint + "enterAadhaar", Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddJsonBody(model);
-            RestResponse response = await client.ExecuteAsync(request);
+            //var client = new RestClient(apiendpoint + "enterAadhaar");
+            //var request = new RestRequest(apiendpoint + "enterAadhaar", Method.Post);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddJsonBody(model);
+            //RestResponse response = await client.ExecuteAsync(request);
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "enterAadhaar", Method.Post, model, headers);
+
+
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
             {
@@ -103,11 +127,20 @@ namespace Risebird.Web.Controllers
             model.request.uuid = uuid;
             model.request.otp = otp;
             model.request.share_code = "1234";
-            var client = new RestClient(apiendpoint + "enterOtp");
-            var request = new RestRequest(apiendpoint + "enterOtp", Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddJsonBody(model);
-            RestResponse response = await client.ExecuteAsync(request);
+            //var client = new RestClient(apiendpoint + "enterOtp");
+            //var request = new RestRequest(apiendpoint + "enterOtp", Method.Post);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddJsonBody(model);
+            //RestResponse response = await client.ExecuteAsync(request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "enterOtp", Method.Post, model, headers);
+
+
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             return Json("");
         }
@@ -120,11 +153,20 @@ namespace Risebird.Web.Controllers
             model.request.api_key = api_key;
             var hashstring = model.headers.client_code + "|" + model.request.uuid + "|" + api_key + "|" + salt;
             model.request.hash = getHashSha256(hashstring);
-            var client = new RestClient(apiendpoint + "fetchKYCData");
-            var request = new RestRequest(apiendpoint + "fetchKYCData", Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddJsonBody(model);
-            RestResponse response = await client.ExecuteAsync(request);
+            //var client = new RestClient(apiendpoint + "fetchKYCData");
+            //var request = new RestRequest(apiendpoint + "fetchKYCData", Method.Post);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddJsonBody(model);
+            //RestResponse response = await client.ExecuteAsync(request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "fetchKYCData", Method.Post, model, headers);
+
+
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
             {
@@ -241,11 +283,20 @@ namespace Risebird.Web.Controllers
             var model = new AadhaarVM();
             SetHeaderValue(model.headers, datenow);
             model.request.uuid = uuid;
-            var client = new RestClient(apiendpoint + "getNewCaptcha");
-            var request = new RestRequest(apiendpoint + "getNewCaptcha", Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddJsonBody(model);
-            RestResponse response = await client.ExecuteAsync(request);
+            //var client = new RestClient(apiendpoint + "getNewCaptcha");
+            //var request = new RestRequest(apiendpoint + "getNewCaptcha", Method.Post);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddJsonBody(model);
+            //RestResponse response = await client.ExecuteAsync(request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/json" }
+                };
+
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getNewCaptcha", Method.Post, model, headers);
+
+
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse != null)
             {
@@ -384,11 +435,21 @@ namespace Risebird.Web.Controllers
                 var modellist = new CandidatePassportRequest();
                 modellist.username = user_name;
                 modellist.password = password;
-                var client = new RestClient(passportUrl + "patrons/login");
-                var request = new RestRequest(passportUrl + "patrons/login", Method.Post);
-                request.AddHeader("content-type", "application/json");
-                request.AddJsonBody(modellist);
-                RestResponse response = await client.ExecuteAsync(request);
+                //var client = new RestClient(passportUrl + "patrons/login");
+                //var request = new RestRequest(passportUrl + "patrons/login", Method.Post);
+                //request.AddHeader("content-type", "application/json");
+                //request.AddJsonBody(modellist);
+                //RestResponse response = await client.ExecuteAsync(request);
+
+                Dictionary<string, string> headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/json" }
+                };
+
+                var response = await _httpRequestHelper.MakeHttpRequest(passportUrl + "patrons/login", Method.Post, modellist, headers);
+
+
+
                 var loginresponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(response.Content);
                 var identityResonse = await Verification_Identityflow(model, loginresponse);
                 var extractresponse = await Verification_Passport_extraction(model, identityResonse);
@@ -423,12 +484,21 @@ namespace Risebird.Web.Controllers
             modellist.callbackUrl = "https://portal.risebird.io/Aadhaar/Getshuftipro";
             modellist.images.Add(model.Passportfrontlink);
             modellist.images.Add(model.Passportbacklink);
-            var clientrequest = new RestClient(passportUrl + "patrons/" + convertedResponse.userId + "/identities");
-            var _request = new RestRequest(passportUrl + "patrons/" + convertedResponse.userId + "/identities", Method.Post);
-            _request.AddHeader("content-type", "application/json");
-            _request.AddHeader("Authorization", convertedResponse.id);
-            _request.AddJsonBody(modellist);
-            RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            //var clientrequest = new RestClient(passportUrl + "patrons/" + convertedResponse.userId + "/identities");
+            //var _request = new RestRequest(passportUrl + "patrons/" + convertedResponse.userId + "/identities", Method.Post);
+            //_request.AddHeader("content-type", "application/json");
+            //_request.AddHeader("Authorization", convertedResponse.id);
+            //_request.AddJsonBody(modellist);
+            //RestResponse _response = await clientrequest.ExecuteAsync(_request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" },
+                { "Authorization", convertedResponse.id }
+            };
+
+            var _response = await _httpRequestHelper.MakeHttpRequest(passportUrl + "patrons/" + convertedResponse.userId + "/identities", Method.Post, modellist, headers);
+
             var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
             return _convertedResponse;
         }
@@ -440,11 +510,19 @@ namespace Risebird.Web.Controllers
             modellist.task = "autoRecognition";
             modellist.essentials = new candidateverificationessentials();
             modellist.accessToken = convertedResponse.accessToken;
-            var clientrequest = new RestClient(passportUrl + "snoops");
-            var _request = new RestRequest(passportUrl + "snoops", Method.Post);
-            _request.AddHeader("content-type", "application/json");
-            _request.AddJsonBody(modellist);
-            RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            //var clientrequest = new RestClient(passportUrl + "snoops");
+            //var _request = new RestRequest(passportUrl + "snoops", Method.Post);
+            //_request.AddHeader("content-type", "application/json");
+            //_request.AddJsonBody(modellist);
+            //RestResponse _response = await clientrequest.ExecuteAsync(_request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var _response = await _httpRequestHelper.MakeHttpRequest(passportUrl + "snoops", Method.Post, modellist, headers);
+
             var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
             return _convertedResponse;
         }
@@ -457,11 +535,19 @@ namespace Risebird.Web.Controllers
             modellist.essentials = new candidateverificationessentials();
             modellist.essentials.url = model.Passportfrontlink;
             modellist.accessToken = convertedResponse.accessToken;
-            var clientrequest = new RestClient(passportUrl + "snoops");
-            var _request = new RestRequest(passportUrl + "snoops", Method.Post);
-            _request.AddHeader("content-type", "application/json");
-            _request.AddJsonBody(modellist);
-            RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            //var clientrequest = new RestClient(passportUrl + "snoops");
+            //var _request = new RestRequest(passportUrl + "snoops", Method.Post);
+            //_request.AddHeader("content-type", "application/json");
+            //_request.AddJsonBody(modellist);
+            //RestResponse _response = await clientrequest.ExecuteAsync(_request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var _response = await _httpRequestHelper.MakeHttpRequest(passportUrl + "snoops", Method.Post, modellist, headers);
+
             var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
             return _convertedResponse;
         }
@@ -476,11 +562,18 @@ namespace Risebird.Web.Controllers
             modellist.essentials.dob = convertedResponse.response.result.birthDate;
             modellist.essentials.name = convertedResponse.response.result.name;
             modellist.accessToken = convertedResponse.accessToken;
-            var clientrequest = new RestClient(passportUrl + "snoops");
-            var _request = new RestRequest(passportUrl + "snoops", Method.Post);
-            _request.AddHeader("content-type", "application/json");
-            _request.AddJsonBody(modellist);
-            RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            //var clientrequest = new RestClient(passportUrl + "snoops");
+            //var _request = new RestRequest(passportUrl + "snoops", Method.Post);
+            //_request.AddHeader("content-type", "application/json");
+            //_request.AddJsonBody(modellist);
+            //RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var _response = await _httpRequestHelper.MakeHttpRequest(passportUrl + "snoops", Method.Post, modellist, headers);
+
             var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
             return _convertedResponse;
         }
@@ -491,12 +584,20 @@ namespace Risebird.Web.Controllers
             modellist.essentials.firstImage = model.Passportfrontlink;
             modellist.essentials.secondImage = secondinamge;
             modellist.accessToken = convertedResponse.accessToken;
-            var clientrequest = new RestClient(passportUrl + "patrons/" + convertedResponse.userId + "/facematches");
-            var _request = new RestRequest(passportUrl + "patrons/" + convertedResponse.userId + "/facematches", Method.Post);
-            _request.AddHeader("content-type", "application/json");
-            _request.AddHeader("Authorization", convertedResponse.id);
-            _request.AddJsonBody(modellist);
-            RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            //var clientrequest = new RestClient(passportUrl + "patrons/" + convertedResponse.userId + "/facematches");
+            //var _request = new RestRequest(passportUrl + "patrons/" + convertedResponse.userId + "/facematches", Method.Post);
+            //_request.AddHeader("content-type", "application/json");
+            //_request.AddHeader("Authorization", convertedResponse.id);
+            //_request.AddJsonBody(modellist);
+            //RestResponse _response = await clientrequest.ExecuteAsync(_request);
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Authorization", convertedResponse.id },
+                { "Content-Type", "application/json" }
+            };
+
+            var _response = await _httpRequestHelper.MakeHttpRequest(passportUrl + "patrons/" + convertedResponse.userId + "/facematches", Method.Post, modellist, headers);
+
             var _convertedResponse = JsonConvert.DeserializeObject<CandidatePassportResponse>(_response.Content);
             return _convertedResponse;
         }
@@ -545,11 +646,20 @@ namespace Risebird.Web.Controllers
             model.request.image_2 = ConvertImageURLToBase64(secondinamge);
             var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
             model.request.hash = getHashSha256(hashstring);
-            var client = new RestClient(apiendpoint + "getCaptcha");
-            var request = new RestRequest(apiendpoint + "getCaptcha", Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddJsonBody(model);
-            RestResponse response = await client.ExecuteAsync(request);
+            //var client = new RestClient(apiendpoint + "getCaptcha");
+            //var request = new RestRequest(apiendpoint + "getCaptcha", Method.Post);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddJsonBody(model);
+            //RestResponse response = await client.ExecuteAsync(request);
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                //{ "Authorization", "Basic " + accesskey },
+                { "Content-Type", "application/json" }
+            };
+            
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post,  model, headers);
+
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
             {

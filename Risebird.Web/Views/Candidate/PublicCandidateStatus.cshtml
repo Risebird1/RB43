@@ -1097,15 +1097,65 @@
         });
     }
     function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
-        $.ajax({
-            url: '/Candidate/PublicCancelInterview',
-            type: 'POST',
-            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
-            success: function (data) {
-                swal.fire(data);
-                window.location.href = "/Candidate/PublicCandidateStatus?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Interview for " + CandidateEmail + " scheduled for date: " + interviewdate + " will be cancelled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText:'No',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/PublicCancelInterview',
+                        type: 'POST',
+                        data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success') ) {
+                                resolve(true);
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+
+                        },
+                        error: function () {
+
+                            swal.fire("Error cancelling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Cancelled!',
+                    type: 'success',
+                    html: '<p>Interview cancelled successfully.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location.href = "/Candidate/PublicCandidateStatus?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+                    //location.reload(true);
+                })
             }
-        });
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Not cancelled',
+                    'The Interview has not been cancelled! :)',
+                    'error'
+                )
+            }
+        })
+
+
     }
     function openSchedulingLinks(emailid) {
         $.ajax({

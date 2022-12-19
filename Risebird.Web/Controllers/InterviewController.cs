@@ -47,6 +47,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
+        private readonly IZoomHelper _zoomHelper;
 
 
         //private static List<MeetingVM> _modelDetails;
@@ -56,7 +57,11 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, 
+            ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, 
+            INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
+            IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
+            IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, IZoomHelper zoomHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -75,6 +80,7 @@ namespace Risebird.Web.Controllers
             _candidateService = candidateService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _interviewSchedulerservice = interviewSchedulerservice;
+            _zoomHelper = zoomHelper;
         }
 
 
@@ -5905,34 +5911,34 @@ namespace Risebird.Web.Controllers
         #endregion
         public string DeleteMeetingLink(string meetingid)
         {
-            string token = ZoomToken();
+            string token = _zoomHelper.ZoomToken();//ZoomToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
             var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid), Method.Delete);
             request.AddHeader("content-type", "application/json");
             request.AddHeader("authorization", "Bearer " + token);
             RestResponse response = client.Execute(request);
             var content = response.Content;
-            return "Delete successfully";
+            return "Deleted successfully";
         }
-        public string ZoomToken()
-        {
-            DateTime Expiry = DateTime.UtcNow.AddDays(1);
-            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
-            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
-            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var header = new JwtHeader(credentials);
-            var payload = new JwtPayload
-            {
-                { "iss", ApiKey},
-                { "exp", ts },
-            };
-            var secToken = new JwtSecurityToken(header, payload);
-            var handler = new JwtSecurityTokenHandler();
-            var tokenString = handler.WriteToken(secToken);
-            return tokenString;
-        }
+        //public string ZoomToken()
+        //{
+        //    DateTime Expiry = DateTime.UtcNow.AddDays(1);
+        //    string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+        //    string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+        //    int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+        //    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+        //    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        //    var header = new JwtHeader(credentials);
+        //    var payload = new JwtPayload
+        //    {
+        //        { "iss", ApiKey},
+        //        { "exp", ts },
+        //    };
+        //    var secToken = new JwtSecurityToken(header, payload);
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var tokenString = handler.WriteToken(secToken);
+        //    return tokenString;
+        //}
         [HttpPost]
         public JsonResult ChangeInterviewernotificationStatus(int status)
         {
@@ -6943,7 +6949,7 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.settings.join_before_host = true;
             _zoommetingobject.settings.jbh_time = 5;
             _zoommetingobject.settings.auto_recording = "cloud";
-            string token = ZoomToken();
+            string token = _zoomHelper.ZoomToken();//ZoomToken();
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 

@@ -438,6 +438,7 @@ namespace Risebird.Repository
                 entity.AssessmentGroupId = string.Join(',', entity.AssessmentGroupArray);
             }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
+            parameters.Add("@AssessmentGroupDifference", entity.AssessmentGroupDifference);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
             parameters.Add("@Isinstaavailable", entity.Isinstaavailable);

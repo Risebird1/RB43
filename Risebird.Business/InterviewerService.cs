@@ -92,6 +92,10 @@ namespace Risebird.Business
             assessmentGroupList = string.Empty;
             try
             {
+                if (interviewerProfile.AssessmentGroupArray != null)
+                {
+                    interviewerProfile.AssessmentGroupDifference = string.Join(",", interviewerProfile.AssessmentGroupArray);
+                }
                 UserDetails userDetails = new UserDetails
                 {
                     FirstName = interviewerProfile.FirstName.Replace(" ", ""),
@@ -153,6 +157,18 @@ namespace Risebird.Business
             assessmentGroupList = string.Empty;
             try
             {
+                List<string> assessmentGroupDiffArray = new List<string>();
+                foreach (var item in interviewerProfile.AssessmentGroupArray)
+                {
+                    if (!interviewerProfile.AssessmentGroupArrayOld.Contains(item))
+                    {
+                        assessmentGroupDiffArray.Add(item);
+                    }
+                }
+                if (assessmentGroupDiffArray != null && assessmentGroupDiffArray.Count() > 0)
+                {
+                    interviewerProfile.AssessmentGroupDifference = string.Join(",", assessmentGroupDiffArray);
+                }
                 //Edit Method
                 interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
                 interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
@@ -279,6 +295,7 @@ namespace Risebird.Business
                 if (!string.IsNullOrEmpty(ProfileModel.AssessmentGroupId))
                 {
                     ProfileModel.AssessmentGroupArray = ProfileModel.AssessmentGroupId.Split(',');
+                    ProfileModel.AssessmentGroupArrayOld = ProfileModel.AssessmentGroupArray;
                 }
                 return ProfileModel;
 
