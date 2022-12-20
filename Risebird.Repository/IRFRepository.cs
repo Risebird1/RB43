@@ -72,14 +72,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<Client> GetClients()
+        public async Task<IEnumerable<Client>> GetClients()
         {
             IEnumerable<Client> client = new List<Client>();
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    client = SqlMapper.Query<Client>(
+                    client = await SqlMapper.QueryAsync<Client>(
                         con, "select * from Client", null, commandType: Text);
                 }
                 return client;
@@ -149,36 +149,36 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<Level> GetLevels()
+        public async Task<IEnumerable<Level>> GetLevels()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Level>(
+                    return await SqlMapper.QueryAsync<Level>(
                         con, "select * from Level", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
 
-        public IEnumerable<LevelTech> GetLevelTech()
+        public async Task<IEnumerable<LevelTech>> GetLevelTech()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<LevelTech>(
+                    return await SqlMapper.QueryAsync<LevelTech>(
                         con, "select * from LevelTech", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -325,19 +325,19 @@ namespace Risebird.Repository
             return users;
         }
 
-        public IEnumerable<Skill> GetSkills()
+        public async Task<IEnumerable<Skill>> GetSkills()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Skill>(
+                    return await SqlMapper.QueryAsync<Skill>(
                         con, "select id, Trim([Name]) as Name, [Description] from Skill order by [Name]", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -2222,7 +2222,7 @@ namespace Risebird.Repository
                    commandType: CommandType.StoredProcedure);
             }
         }
-        public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
+        public async Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id)
         {
             try
             {
@@ -2231,14 +2231,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransSkill>(query, dynamicParameters);
+                    var results = await con.QueryAsync<TransSkill>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

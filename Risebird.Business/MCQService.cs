@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -18,7 +19,7 @@ namespace Risebird.Business
             _mCQRepository = mCQRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public string AddorUpdateMCQSet(MCQVMset _lstset)
+        public async Task<string> AddorUpdateMCQSet(MCQVMset _lstset)
         {
             try
             {
@@ -26,234 +27,234 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQQuestions(List<MCQVM> _lstMCQ, string MCQId)
+        public async Task<string> AddMCQQuestions(List<MCQVM> _lstMCQ, string MCQId)
         {
             try
             {
-                return _mCQRepository.AddMCQQuestions(_lstMCQ, MCQId).Result;
+                return await _mCQRepository.AddMCQQuestions(_lstMCQ, MCQId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName, bool requesttype)
+        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSets(string clientname, string profileName, bool requesttype)
         {
             try
             {
-                return _mCQRepository.FetchAllMCQSets(clientname, profileName, requesttype).Result;
+                return await  _mCQRepository.FetchAllMCQSets(clientname, profileName, requesttype);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchMCQSetById(string MCQPId)
+        public async Task<IEnumerable<MCQVMset>> FetchMCQSetById(string MCQPId)
         {
             try
             {
-                return _mCQRepository.FetchMCQSetById(MCQPId).Result;
+                return await _mCQRepository.FetchMCQSetById(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQSetShareList(MCQVMShare _list)
+        public async Task<string> AddMCQSetShareList(MCQVMShare _list)
         {
             try
             {
-                return _mCQRepository.AddMCQSetShareList(_list).Result;
+                return await _mCQRepository.AddMCQSetShareList(_list);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVMShare> GetShareMCQEmailListByMCQId(string MCQPId)
+        public async Task<IEnumerable<MCQVMShare>> GetShareMCQEmailListByMCQId(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetShareMCQEmailListByMCQId(MCQPId).Result;
+                return await _mCQRepository.GetShareMCQEmailListByMCQId(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string UpdateShareMCQEmailStatusByid(int id, int status)
+        public async Task<string> UpdateShareMCQEmailStatusByid(int id, int status)
         {
             try
             {
-                return _mCQRepository.UpdateShareMCQEmailStatusByid(id, status).Result;
+                return await _mCQRepository.UpdateShareMCQEmailStatusByid(id, status);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTest> GetMCQCandidateListByMCQId(string MCQPId)
+        public async Task<IEnumerable<CandidateDetailsForTest>> GetMCQCandidateListByMCQId(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateListByMCQId(MCQPId).Result;
+                return await _mCQRepository.GetMCQCandidateListByMCQId(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVM> GetMCQquestionsByMCQId(string MCQPId)
+        public async Task<IEnumerable<MCQVM>> GetMCQquestionsByMCQId(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetMCQquestionsByMCQId(MCQPId).Result;
+                return await _mCQRepository.GetMCQquestionsByMCQId(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQCandidates(CandidateDetailsForTest _list)
+        public async Task<string> AddMCQCandidates(CandidateDetailsForTest _list)
         {
             try
             {
-                return _mCQRepository.AddMCQCandidates(_list).Result;
+                return await _mCQRepository.AddMCQCandidates(_list);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQCandidateQuestions(List<MCQVM> _question)
+        public async Task<string> AddMCQCandidateQuestions(List<MCQVM> _question)
         {
             try
             {
-                return _mCQRepository.AddMCQCandidateQuestions(_question).Result;
+                return await _mCQRepository.AddMCQCandidateQuestions(_question);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string DeleteMCQCandidate(string CSPId, string CPId)
+        public async Task<string> DeleteMCQCandidate(string CSPId, string CPId)
         {
             try
             {
-                return _mCQRepository.DeleteMCQCandidate(CSPId, CPId).Result;
+                return await _mCQRepository.DeleteMCQCandidate(CSPId, CPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string DeleteMCQSet(string MCQPId)
+        public async Task<string> DeleteMCQSet(string MCQPId)
         {
             try
             {
-                return _mCQRepository.DeleteMCQSet(MCQPId).Result;
+                return await _mCQRepository.DeleteMCQSet(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId, bool requesttype)
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQId(string MCQPId, bool requesttype)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateDetailsByMCQId(MCQPId, requesttype).Result;
+                return await _mCQRepository.GetMCQCandidateDetailsByMCQId(MCQPId, requesttype);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQTitle(string MCQtitle)
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQTitle(string MCQtitle)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateDetailsByMCQTitle(MCQtitle).Result;
+                return await _mCQRepository.GetMCQCandidateDetailsByMCQTitle(MCQtitle);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId)
+        public async Task<IEnumerable<MCQVM>> GetMCQCandidateQuestions(string CandidateId)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateQuestions(CandidateId).Result;
+                return await _mCQRepository.GetMCQCandidateQuestions(CandidateId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model)
+        public async Task<string> UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model)
         {
             try
             {
-                return _mCQRepository.UpdateVideoURLForCandidate(model).Result;
+                return await _mCQRepository.UpdateVideoURLForCandidate(model);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetails()
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetails()
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateDetails().Result;
+                return await _mCQRepository.GetMCQCandidateDetails();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public bool SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
+        public async Task<bool> SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
         {
             try
             {
-                return _mCQRepository.SaveMCQReportDetails(_candidate).Result;
+                return await _mCQRepository.SaveMCQReportDetails(_candidate);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public CandidateDetailsForTestDuplicate FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
+        public async Task<CandidateDetailsForTestDuplicate> FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
         {
             try
             {
                 var selectibity = _mCQRepository.FetchMCQReportDetailsByCMCQId(_candidate.Id).Result;
                 if (selectibity == null || selectibity.Count() == 0)
                 {
-                    var selectibity2 = _mCQRepository.FetchMCQReportDetails(_candidate.SameID, _candidate.ApplyingCompany).Result;
+                    var selectibity2 = await _mCQRepository.FetchMCQReportDetails(_candidate.SameID, _candidate.ApplyingCompany);
                     var Selectvalue = selectibity2.Select(x => x.CMCQId).FirstOrDefault();
                     selectibity2 = selectibity2.Where(x => x.CMCQId == Selectvalue).ToList();
                     _candidate.SelectabilityEvaluatorReportCollection = (List<SelectabilityEvaluatorReport>)selectibity2;
@@ -267,10 +268,10 @@ namespace Risebird.Business
                 {
                     _candidate.SelectabilityEvaluatorReportCollection = (List<SelectabilityEvaluatorReport>)selectibity;
                 }
-                var joinability = _mCQRepository.FetchMCQjoinabilityDetailsByCMCQId(_candidate.Id).Result;
+                var joinability = await _mCQRepository.FetchMCQjoinabilityDetailsByCMCQId(_candidate.Id);
                 if (joinability == null || joinability.Count() == 0)
                 {
-                    var joinability2 = _mCQRepository.FetchMCQjoinabilityDetails(_candidate.SameID, _candidate.ApplyingCompany).Result;
+                    var joinability2 = await _mCQRepository.FetchMCQjoinabilityDetails(_candidate.SameID, _candidate.ApplyingCompany);
                     var joinvalue = joinability2.Select(x => x.CMCQId).FirstOrDefault();
                     joinability2 = joinability2.Where(x => x.CMCQId == joinvalue).ToList();
                     _candidate.JoinabilityHRReportCollection = (List<JoinabilityHRReport>)joinability2;
@@ -288,15 +289,16 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return _candidate;
             }
         }
-        public MCQVMset FetchMCQSetsForApi(MCQApiVM model)
+        public async Task<MCQVMset> FetchMCQSetsForApi(MCQApiVM model)
         {
             try
             {
-                var _mcqset = _mCQRepository.FetchMCQSetsForApi(model).Result.ToList();
+                var _mcqsetdata = await _mCQRepository.FetchMCQSetsForApi(model);
+                var _mcqset = _mcqsetdata.ToList();
                 if (_mcqset.Count() > 1 && model.SeniorityLevel > 0)
                 {
                     _mcqset = _mcqset.Where(x => !string.IsNullOrWhiteSpace(x.SeniorityLevel) ? x.SeniorityLevel.Contains(model.SeniorityLevel.ToString()) : x.SeniorityLevel == null).ToList();
@@ -311,175 +313,175 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQId(string MCQPId)
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQReportByMCQId(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetMCQReportByMCQId(MCQPId).Result;
+                return await _mCQRepository.GetMCQReportByMCQId(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVMShare> GetShareMCQEmailListByMCQIdPremium(string MCQPId)
+        public async Task<IEnumerable<MCQVMShare>> GetShareMCQEmailListByMCQIdPremium(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetShareMCQEmailListByMCQIdPremium(MCQPId).Result;
+                return await _mCQRepository.GetShareMCQEmailListByMCQIdPremium(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string UpdateShareMCQEmailStatusByidPremium(int id, int status)
+        public async Task<string> UpdateShareMCQEmailStatusByidPremium(int id, int status)
         {
             try
             {
-                return _mCQRepository.UpdateShareMCQEmailStatusByidPremium(id, status).Result;
+                return await _mCQRepository.UpdateShareMCQEmailStatusByidPremium(id, status);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTest> GetMCQCandidateListByMCQIdPremium(string MCQPId)
+        public async Task<IEnumerable<CandidateDetailsForTest>> GetMCQCandidateListByMCQIdPremium(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateListByMCQIdPremium(MCQPId).Result;
+                return await _mCQRepository.GetMCQCandidateListByMCQIdPremium(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQCandidatesPremium(CandidateDetailsForTest _list)
+        public async Task<string> AddMCQCandidatesPremium(CandidateDetailsForTest _list)
         {
             try
             {
-                return _mCQRepository.AddMCQCandidatesPremium(_list).Result;
+                return await _mCQRepository.AddMCQCandidatesPremium(_list);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQCandidateQuestionsPremium(List<MCQVM> _question)
+        public async Task<string> AddMCQCandidateQuestionsPremium(List<MCQVM> _question)
         {
             try
             {
-                return _mCQRepository.AddMCQCandidateQuestionsPremium(_question).Result;
+                return await _mCQRepository.AddMCQCandidateQuestionsPremium(_question);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string AddMCQSetShareListPremium(MCQVMShare _list)
+        public async Task<string> AddMCQSetShareListPremium(MCQVMShare _list)
         {
             try
             {
-                return _mCQRepository.AddMCQSetShareListPremium(_list).Result;
+                return await _mCQRepository.AddMCQSetShareListPremium(_list);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchAllMCQSetsPremium(string clientname, string profileName, bool requesttype)
+        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSetsPremium(string clientname, string profileName, bool requesttype)
         {
             try
             {
-                return _mCQRepository.FetchAllMCQSetsPremium(clientname, profileName, requesttype).Result;
+                return await _mCQRepository.FetchAllMCQSetsPremium(clientname, profileName, requesttype);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQIdPremium(string MCQPId)
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQIdPremium(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateDetailsByMCQIdPremium(MCQPId).Result;
+                return await _mCQRepository.GetMCQCandidateDetailsByMCQIdPremium(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQReportByMCQIdPremium(string MCQPId)
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQReportByMCQIdPremium(string MCQPId)
         {
             try
             {
-                return _mCQRepository.GetMCQReportByMCQIdPremium(MCQPId).Result;
+                return await _mCQRepository.GetMCQReportByMCQIdPremium(MCQPId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public IEnumerable<MCQVM> GetMCQCandidateQuestionsPremium(string CandidateId)
+        public async Task<IEnumerable<MCQVM>> GetMCQCandidateQuestionsPremium(string CandidateId)
         {
             try
             {
-                return _mCQRepository.GetMCQCandidateQuestionsPremium(CandidateId).Result;
+                return await _mCQRepository.GetMCQCandidateQuestionsPremium(CandidateId);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public string UpdateVideoURLForCandidatePremium(CandidateDetailsForTestDuplicate model)
+        public async Task<string> UpdateVideoURLForCandidatePremium(CandidateDetailsForTestDuplicate model)
         {
             try
             {
-                return _mCQRepository.UpdateVideoURLForCandidatePremium(model).Result;
+                return await _mCQRepository.UpdateVideoURLForCandidatePremium(model);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
-        public int FetchTotalInviteAllowed(string clientemail)
+        public async Task<int> FetchTotalInviteAllowed(string clientemail)
         {
             try
             {
-                return _mCQRepository.FetchTotalInviteAllowed(clientemail).Result;
+                return await _mCQRepository.FetchTotalInviteAllowed(clientemail);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
             }
         }
-        public int FetchTotalInviteSent(string clientemail)
+        public async Task<int> FetchTotalInviteSent(string clientemail)
         {
             try
             {
-                return _mCQRepository.FetchTotalInviteSent(clientemail).Result;
+                return await _mCQRepository.FetchTotalInviteSent(clientemail);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
             }
         }

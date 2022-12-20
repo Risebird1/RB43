@@ -64,7 +64,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var model = _clientService.GetClients(emailid, profileName);
+                    var model = await _clientService.GetClients(emailid, profileName);
                     ViewBag.LoggedEmail = emailid.ToLower();
                     ViewBag.profile = profileName;
                     return View(model);
@@ -315,7 +315,7 @@ namespace Risebird.Web.Controllers
                         isClientUser = true;
                     }
                     //Fetch ClientJds
-                    var result = _clientService.FetchClientJd(ClientId);
+                    var result = await _clientService.FetchClientJd(ClientId);
                     var resultset = _interviewerService.FetchAssessmentGroups();
                     //bind Dropdown values
                     var model = new ClientDetails();
@@ -361,7 +361,7 @@ namespace Risebird.Web.Controllers
                         isClientUser = true;
                     }
                     //Fetch ClientJds
-                    var result = _clientService.FetchClientJd(ClientId);
+                    var result = await _clientService.FetchClientJd(ClientId);
                     var resultset = _interviewerService.FetchAssessmentGroups();
                     fillters.fillter.AssessmentGroupName = fillters.fillter.AssessmentGroupName == null ? fillters.fillter.AssessmentGroupName = result.Select(x => x.AssessmentGroupName).ToArray() : fillters.fillter.AssessmentGroupName = fillters.fillter.AssessmentGroupName;
                     fillters.fillter.ClientEmail = fillters.fillter.ClientEmail == null ? fillters.fillter.ClientEmail = result.Select(x => x.ClientEmail).ToArray() : fillters.fillter.ClientEmail = fillters.fillter.ClientEmail;
@@ -584,7 +584,7 @@ namespace Risebird.Web.Controllers
                         isClientUser = true;
                     }
                     //Fetch ClientJds
-                    var result = _clientService.FetchClientJd(ClientId);
+                    var result = await _clientService.FetchClientJd(ClientId);
                     var resultset = _interviewerService.FetchAssessmentGroups();
                     //bind Dropdown values
                     //var model = new ClientDetails();
@@ -634,7 +634,7 @@ namespace Risebird.Web.Controllers
                         isClientUser = true;
                     }
                     //Fetch ClientJds
-                    var result = _clientService.FetchClientJd(ClientId);
+                    var result = await _clientService.FetchClientJd(ClientId);
                     var resultset = _interviewerService.FetchAssessmentGroups();
                     //bind Dropdown values
                     var model = new ClientDetails();
@@ -868,8 +868,7 @@ namespace Risebird.Web.Controllers
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
-                        var role = await _clientService.GetClientRoleByEmailId(emailid);
-                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                        ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                         var meetings = await _meetingService.GetClientMeetingList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
@@ -953,8 +952,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Emailid = Emailid;
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                    ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                     var meetings = await _meetingService.GetClientMeetingList(emailid);
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
@@ -1569,7 +1567,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
+        private async Task GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -1580,8 +1578,8 @@ namespace Risebird.Web.Controllers
 
             model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
 
-            model.Level = new SelectList(_irfService.GetLevels(), "id", "Name");
-            model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
+            model.Level = new SelectList(await _irfService.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(await _irfService.GetLevelTech(), "id", "Name");
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
 
@@ -2860,8 +2858,7 @@ namespace Risebird.Web.Controllers
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ViewBag.IsQCRequired = client.IsQCRequired;
-                        var roleid = await _clientService.GetClientRoleByEmailId(emailid);
-                        if (roleid != 4)
+                        if (client?.RoleId != 4)
                         {
                             var meetings = await _meetingService.GetClientMeetingList(emailid);
                             meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -3331,10 +3328,9 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
-                            var role = await _clientService.GetClientRoleByEmailId(emailid);
-                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
+                            ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty;
                         }
                         var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                         if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
@@ -3498,10 +3494,9 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
-                            var role = await _clientService.GetClientRoleByEmailId(emailid);
-                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
+                            ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                         }
                         var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
                         meetings = meetings.Select(x =>
@@ -3811,10 +3806,9 @@ namespace Risebird.Web.Controllers
                 int ClientId = 0;
                 if (profileName == "Client")
                 {
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
+                    ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
                 var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
                 meetings = meetings.Select(x =>
@@ -3944,10 +3938,9 @@ namespace Risebird.Web.Controllers
                 int ClientId = 0;
                 if (profileName == "Client")
                 {
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
+                    ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
                 var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                 if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
@@ -4151,7 +4144,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public JsonResult DisableRecruiter(int userid, int clientid, int Irfid)
+        public async Task<JsonResult> DisableRecruiter(int userid, int clientid, int Irfid)
         {
             try
             {
@@ -4161,7 +4154,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        if (_clientService.UpdateRecruiterStatus(userid, clientid, Irfid, false))
+                        if (await _clientService.UpdateRecruiterStatus(userid, clientid, Irfid, false))
                         {
                             TempData["RecruiterSuccessErrorMessage"] = "Recruiter has been disabled Successfully!";
                             return Json("success");
@@ -4191,7 +4184,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public JsonResult ActiveRecruiter(int userid, int clientid, int Irfid)
+        public async Task<JsonResult> ActiveRecruiter(int userid, int clientid, int Irfid)
         {
             try
             {
@@ -4201,7 +4194,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        if (_clientService.UpdateRecruiterStatus(userid, clientid, Irfid, true))
+                        if (await _clientService.UpdateRecruiterStatus(userid, clientid, Irfid, true))
                         {
                             TempData["RecruiterSuccessErrorMessage"] = "Recruiter has been actived Successfully!";
                             return Json("success");
@@ -4224,7 +4217,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["RecruiterSuccessErrorMessage"] = "Recruiter active Failed";
                 return Json("Failed");
             }

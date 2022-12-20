@@ -9,7 +9,7 @@
     <PackageReference Include="FileTypeInterrogator" Version="1.1.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech.Remoteconversation" Version="1.24.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
     <PackageReference Include="Sendgrid" Version="9.28.1" />

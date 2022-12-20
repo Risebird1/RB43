@@ -28,7 +28,7 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public IEnumerable<Client> GetClients(string emailid, string profileName)
+        public async Task<IEnumerable<Client>> GetClients(string emailid, string profileName)
         {
             try
             {
@@ -50,11 +50,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -268,7 +268,7 @@ namespace Risebird.Repository
             }
             return "";
         }
-        public IEnumerable<ClientJdVM> FetchClientJd(int clientid)
+        public async Task<IEnumerable<ClientJdVM>> FetchClientJd(int clientid)
         {
             try
             {
@@ -277,7 +277,7 @@ namespace Risebird.Repository
                     var query = "Select ul.Emailid as ClientEmail,c.Name,cl.*,cl.AssessmentGroupid as AssessmentGroup, ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id join Client c on c.id=cl.Clientid left join UserList ul on ul.id=cl.Createdby";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var result = con.Query<ClientJdVM>(query, null);
+                        var result = await con.QueryAsync<ClientJdVM>(query, null);
                         return result;
                     }
                 }
@@ -289,18 +289,14 @@ namespace Risebird.Repository
                     parameters.Add("@ClientId", clientid);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var result = con.Query<ClientJdVM>(query, parameters);
+                        var result = await con.QueryAsync<ClientJdVM>(query, parameters);
                         return result;
                     }
                 }
-            }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-            }
+            }           
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
         }
@@ -664,7 +660,7 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
+        public async Task<bool> UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
         {
             try
             {
@@ -675,13 +671,13 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", Irfid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, dynamicParameters);
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
                     return true;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

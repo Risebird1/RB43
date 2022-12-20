@@ -285,13 +285,13 @@ namespace Risebird.Business
         }
 
 
-        public IEnumerable<Skill> GetTechSkills(int id)
+        public async Task<IEnumerable<Skill>> GetTechSkills(int id)
         {
             try
             {
                 List<Skill> list = new List<Skill>();
-                var skills = _irfRepository.GetSkillsbyIRFid(id);
-                var result = _irfRepository.GetSkills();
+                var skills = await _irfRepository.GetSkillsbyIRFid(id);
+                var result = await _irfRepository.GetSkills();
                 foreach (var item in skills ?? new List<TransSkill>())
                 {
 
@@ -463,7 +463,7 @@ namespace Risebird.Business
                         IRF.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
                     }
                 }
-                var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
+                var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
                 var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 var transJoinability = _irfRepository.GetTransJoinability(id);
                 //var transClientUser = _irfRepository.GetTransClientUser(id);
@@ -1757,30 +1757,30 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<Level> GetLevels()
+        public async Task<IEnumerable<Level>> GetLevels()
         {
             try
             {
-                return _irfRepository.GetLevels();
+                return await _irfRepository.GetLevels();
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
 
-        public IEnumerable<LevelTech> GetLevelTech()
+        public async Task<IEnumerable<LevelTech>> GetLevelTech()
         {
             try
             {
-                return _irfRepository.GetLevelTech();
+                return await _irfRepository.GetLevelTech();
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -2099,16 +2099,16 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<Skill> GetSkills()
+        public async Task<IEnumerable<Skill>> GetSkills()
         {
             try
             {
-                return _irfRepository.GetSkills();
+                return await _irfRepository.GetSkills();
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -2259,16 +2259,16 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IEnumerable<TransSkill> GetTechSkillswithWeightage(int id)
+        public async Task<IEnumerable<TransSkill>> GetTechSkillswithWeightage(int id)
         {
             try
             {
-                var skills = _irfRepository.GetSkillsbyIRFid(id);
+                var skills = await _irfRepository.GetSkillsbyIRFid(id);
                 return skills;
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

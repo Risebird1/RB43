@@ -112,14 +112,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<IrfProgress> GetProgressOptions()
+        public async Task<IEnumerable<IrfProgress>> GetProgressOptions()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    return SqlMapper.Query<IrfProgress>(con, "usp_GetProgressOptions", commandType: CommandType.StoredProcedure);
+                    return await SqlMapper.QueryAsync<IrfProgress>(con, "usp_GetProgressOptions", commandType: CommandType.StoredProcedure);
 
                 }
 

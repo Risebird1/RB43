@@ -383,19 +383,19 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void SetTemplateParameters(SkillChannelTemplateVM model)
+        private async Task SetTemplateParameters(SkillChannelTemplateVM model)
         {
             model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
-            model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
-            model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
+            model.Skills = new SelectList(await _irfService.GetSkills(), "id", "Name");
+            model.LevelTech = new SelectList(await _irfService.GetLevelTech(), "id", "Name");
         }
 
         [HttpGet]
         private async Task SetEditTemplateParameters(EditSkillChannelTemplateVM model)
         {
             model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
-            model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
-            model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
+            model.Skills = new SelectList(await _irfService.GetSkills(), "id", "Name");
+            model.LevelTech = new SelectList(await _irfService.GetLevelTech(), "id", "Name");
             model.InterviewerList = new SelectList(await _irfService.GetInterviewers(model.AssessmentGroupId?.ToString()), "UserId", "EmailId");
 
         }

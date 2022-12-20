@@ -23,11 +23,12 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public List<Client> GetClients(string emailid, string profileName)
+        public async Task<List<Client>> GetClients(string emailid, string profileName)
         {
             try
             {
-                return _clientRepository.GetClients(emailid, profileName).ToList();
+                var resultdata = await _clientRepository.GetClients(emailid, profileName);
+                return resultdata?.ToList();
             }
             catch (Exception)
             {
@@ -91,20 +92,20 @@ namespace Risebird.Business
             }
         }
 
-        public List<ClientRole> GetClientRoles()
+        public async Task<List<ClientRole>> GetClientRoles()
         {
             try
             {
-                var clientRoles = _clientRepository.GetClientRoles();
+                var clientRoles = await _clientRepository.GetClientRoles();
                 if (clientRoles != null)
-                    return clientRoles.Result.ToList();
+                    return clientRoles.ToList();
                 else
                     return null;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -120,15 +121,15 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public IEnumerable<ClientJdVM> FetchClientJd(int clientid)
+        public async Task<IEnumerable<ClientJdVM>> FetchClientJd(int clientid)
         {
             try
             {
-                return _clientRepository.FetchClientJd(clientid);
+                return await _clientRepository.FetchClientJd(clientid);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -287,15 +288,15 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
+        public async Task<bool> UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
         {
             try
             {
-                return _clientRepository.UpdateRecruiterStatus(userid, clientid, Irfid, status);
+                return await _clientRepository.UpdateRecruiterStatus(userid, clientid, Irfid, status);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

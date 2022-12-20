@@ -9,10 +9,10 @@ namespace Risebird.Repository.Interface
 {
     public interface IIRFRepository
     {
-        IEnumerable<Level> GetLevels();
-        IEnumerable<Skill> GetSkills();
+        Task<IEnumerable<Level>> GetLevels();
+        Task<IEnumerable<Skill>> GetSkills();
         IEnumerable<Users> GetCientUsers();
-        IEnumerable<Client> GetClients();
+        Task<IEnumerable<Client>> GetClients();
         IEnumerable<Users> GetUsers();
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<ClientRole> GetClientRoles();
@@ -20,7 +20,7 @@ namespace Risebird.Repository.Interface
         bool AddIRFDetails(IRFVm irfDetails, out int irfID);
         IEnumerable<IRF> GetAllIRF(string emailid, string profileName);
         IEnumerable<Interviewer> GetInterviewerSkills();
-        IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
+        Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         IEnumerable<TransClientUser> GetTransClientUser(int id);
         IEnumerable<TransInterviewer> GetTransInterviewer(int id);
         IEnumerable<TransJoinability> GetTransJoinability(int id);
@@ -34,7 +34,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
         IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
-        IEnumerable<LevelTech> GetLevelTech();
+        Task<IEnumerable<LevelTech>> GetLevelTech();
         //bool CheckUniqueness(string value);
         Task<bool> CheckUniqueness(string value, bool isCloneTemplate = false);
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();

@@ -34,7 +34,7 @@ namespace Risebird.MicroService
             MCQApiVM data = JsonConvert.DeserializeObject<MCQApiVM>(requestBody);
             if (!string.IsNullOrEmpty(data.CandidateEmailid) && !string.IsNullOrEmpty(data.PrimarySkill))
             {
-                var mcqset = _mCQService.FetchMCQSetsForApi(data);
+                var mcqset = await _mCQService.FetchMCQSetsForApi(data);
                 if (mcqset != null)
                 {
                     var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -49,7 +49,7 @@ namespace Risebird.MicroService
                     _list.EmailAddress = data.CandidateEmailid.Trim();
                     _list.roomId = "";
                     _list.Expiretime = 24;
-                    _mCQService.AddMCQSetShareList(_list);
+                    await _mCQService.AddMCQSetShareList(_list);
                     string currenturl = "https://portal.risebird.io/MCQ/SkillTest?Id=" + mcqset.PartitionKey;
                     return new OkObjectResult(currenturl);
                 }

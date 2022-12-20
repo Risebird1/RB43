@@ -122,7 +122,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InterviewRequestVM();
                         model.RequestedBy = emailid;
-                        var skills = _irfRepository.GetSkills();
+                        var skills = await _irfRepository.GetSkills();
                         await SetInterviewRequestSelectLists();
                         var Skillset = skills;
                         if (Skillset != null)
@@ -297,8 +297,7 @@ namespace Risebird.Web.Controllers
                         var model = new InterviewRequestVM();
                         model = _interviewRequestService.FetchInterviewRequestById(id);
                         await SetInterviewRequestSelectLists();
-                        var skills = _irfRepository.GetSkills();
-                        var Skillset = skills;
+                        var Skillset = await _irfRepository.GetSkills();                       
                         if (Skillset != null)
                         {
                             Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
@@ -438,7 +437,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task SetInterviewRequestSelectLists()
         {
-            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
             var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                             select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
@@ -452,9 +451,9 @@ namespace Risebird.Web.Controllers
             var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");
-            var skills = _irfRepository.GetSkills();
+            var skills = await _irfRepository.GetSkills();
             ViewBag.Skill = new SelectList(skills, "id", "Name");
-            var clients = _irfRepository.GetClients();
+            var clients = await _irfRepository.GetClients();
             ViewBag.Clients = new SelectList(clients, "id", "Name");
         }
         [HttpPost]
@@ -537,9 +536,9 @@ namespace Risebird.Web.Controllers
                 var model = new InterviewRequestVM();
                 model.uniqueid = id;
                 model.RequestedBy = emailid;
-                var skills = _irfRepository.GetSkills();
+                var Skillset = await _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
-                var Skillset = skills;
+                
                 if (Skillset != null)
                 {
                     Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();

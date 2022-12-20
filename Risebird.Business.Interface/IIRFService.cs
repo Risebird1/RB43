@@ -13,7 +13,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddIRFDetails(IRFVm irfDetails, string loggedInUser, string domain);
         IEnumerable<Users> GetRiseBirdHR();
         string GetInterviewerSkills(int id);
-        IEnumerable<Skill> GetTechSkills(int id);
+        Task<IEnumerable<Skill>> GetTechSkills(int id);
         bool AddSkillComments(TechSkillComments skillComments);
         Task<List<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> ArchiveIRF(int id);
@@ -79,8 +79,8 @@ namespace Risebird.Business.Interface
         Task<CandidateStatus> GetCandidateStatusById(int id);
         Task<bool> EditCandidateStatus(CandidateStatus model);
         Task<bool> DeleteCandidateStatus(int id);
-        IEnumerable<Level> GetLevels();
-        IEnumerable<LevelTech> GetLevelTech();
+        Task<IEnumerable<Level>> GetLevels();
+        Task<IEnumerable<LevelTech>> GetLevelTech();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
@@ -92,14 +92,14 @@ namespace Risebird.Business.Interface
         bool CheckChannelOwnerByIrfid(string IRFId, string emailid);
         Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);
         Task<string> GetInterviewerSkillsByUserId(int userId);
-        IEnumerable<Skill> GetSkills();
+        Task<IEnumerable<Skill>> GetSkills();
         Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
         IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails();
         Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email);
         Task<int> GetInterviewerQCRate(int userId);
         Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null);
         Task<bool> IsQuestionUsedInReport(string question);
-        IEnumerable<TransSkill> GetTechSkillswithWeightage(int id);
+        Task<IEnumerable<TransSkill>> GetTechSkillswithWeightage(int id);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);

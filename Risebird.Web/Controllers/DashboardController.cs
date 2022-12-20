@@ -91,7 +91,7 @@ namespace Risebird.Web.Controllers
                         //model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
                         //CandidatesCountObj model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
-                        model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
+                        model.ProgressOptions = new SelectList(await _dashboardService.GetProgressOptions(), "id", "Name");
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
@@ -279,7 +279,7 @@ namespace Risebird.Web.Controllers
                 }
                 var model = new DashboardVM();
                 model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(date, Emailid));
-                model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
+                model.ProgressOptions = new SelectList(await _dashboardService.GetProgressOptions(), "id", "Name");
                 model.ProgressDate = date;
                 TempData["ProgressDate"] = date;
                 return PartialView("IRFProgressPartial", model);

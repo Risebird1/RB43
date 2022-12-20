@@ -8,14 +8,14 @@ namespace Risebird.Business.Interface
 {
     public interface IClientService
     {
-        List<Client> GetClients(string emailid, string profileName);
+        Task<List<Client>> GetClients(string emailid, string profileName);
         Task<bool> AddClient(Client client);
         Task<bool> UpdateClient(Client client);
         Task<Client> GetClient(int id);
         Task<bool> DeleteClient(int id);
-        List<ClientRole> GetClientRoles();
+        Task<List<ClientRole>> GetClientRoles();
         Task<string> AddClientJd(ClientJdVM _client);
-        IEnumerable<ClientJdVM> FetchClientJd(int clientid);
+        Task<IEnumerable<ClientJdVM>> FetchClientJd(int clientid);
         string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile);
         IList<CandidateCuratedScore> GetCandidateJDScore(int id);
         IList<Wallet> FetchClientWallet(int clientid);
@@ -29,7 +29,7 @@ namespace Risebird.Business.Interface
         Task<string> Fetchlogoforclient(string emailId, string id);
         Task<IEnumerable<IRF>> GetRecruiterReportByClient(string emailId, DateTime st, DateTime se);
         //bool UpdateRecruiterStatus(int userid, int clientid, bool status);
-        bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
+        Task<bool> UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
         Task<int> GetClientByEmailId(string emailId);
         Task<int> GetClientBillingType(int Clientid);
         Task<IEnumerable<Client>> GetAllClients();

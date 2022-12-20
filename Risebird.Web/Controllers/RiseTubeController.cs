@@ -1220,7 +1220,7 @@ namespace Risebird.Web.Controllers
         /// <param name="model"></param>
         /// <param name="irfId"></param>
         [HttpGet]
-        private void GetStatusList(InterviewReport model, int irfId = 0)
+        private async Task GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -1231,8 +1231,8 @@ namespace Risebird.Web.Controllers
 
             model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
 
-            model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
-            model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
+            model.Level = new SelectList(await _iRFRepository.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(await _iRFRepository.GetLevelTech(), "id", "Name");
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");

@@ -49,19 +49,20 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @OutsideIndiaServiceRate int,  
 @OutsideIndiaProductRate int,
 @loggedInUser varchar(50),
+@AssessmentGroupDifference varchar(100),
 @assessmentGroupList varchar(max) out 
             
 AS            
 
 Begin
   set @assessmentGroupList = ''
-  if(@AssessmentGroupId is not null and @AssessmentGroupId != '')
+  if(@AssessmentGroupDifference is not null and @AssessmentGroupDifference != '')
   Begin
     declare @temp table(assessmentGroupId varchar(5), TotalInterviewers int)
   
 	  insert into @temp
 
-	  select a.value, b.TotalInterviewers from string_split(@AssessmentGroupId,',') a
+	  select a.value, b.TotalInterviewers from string_split(@AssessmentGroupDifference,',') a
 	  outer apply
 	  (select count(ipr.Id) as TotalInterviewers from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId cross apply string_split(ipr.AssessmentGroupId, ',') where a.value = value and ul.IsActive=1 group by value) b
 
