@@ -368,7 +368,7 @@ namespace Risebird.Web.Controllers
 
         #region Client User Functions
         [HttpGet]
-        public IActionResult ClientUsers()
+        public async Task<IActionResult> ClientUsers()
         {
             try
             {
@@ -385,7 +385,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    return View(_userService.GetClientUsers(emailid));
+                    return View(await _userService.GetClientUsers(emailid));
                 }
                 else
                 {
@@ -2175,7 +2175,7 @@ namespace Risebird.Web.Controllers
                     }
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    return View(_userService.GetClientPremiumUsers(emailid));
+                    return View(await _userService.GetClientPremiumUsers(emailid));
                 }
                 else
                 {

@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[TechSkillReport](
 	[ActualLevelId] [int] NOT NULL,
 	[WeightageRequired] [float] NULL,
 	[WeightageActual] [float] NULL,
-	[TechComments] [varchar](100) NULL,
+	[TechComments] [varchar](500) NULL,
  CONSTRAINT [PK_TechSkillReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -39,7 +39,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'TechSkillReport'))
 BEGIN
     ALTER TABLE TechSkillReport
-    Add [TechComments] varchar(100)
+    Add [TechComments] varchar(500)
 END
 END
 GO

@@ -49,5 +49,6 @@ namespace Risebird.Entities.ViewModel
         public int MCQValidation { get; set; }
         public string uniqueid { get; set; }
         public bool IsClientCancelInterview { get; set; }
+        public int RoleId { get; set; }
     }
 }

@@ -868,8 +868,7 @@ namespace Risebird.Web.Controllers
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
-                        var role = await _clientService.GetClientRoleByEmailId(emailid);
-                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                        ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                         var meetings = await _meetingService.GetClientMeetingList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
@@ -953,8 +952,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Emailid = Emailid;
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
+                    ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                     var meetings = await _meetingService.GetClientMeetingList(emailid);
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
@@ -2860,8 +2858,7 @@ namespace Risebird.Web.Controllers
                         }
                         var client = await _userRepository.GetClientUserDetails(emailid);
                         ViewBag.IsQCRequired = client.IsQCRequired;
-                        var roleid = await _clientService.GetClientRoleByEmailId(emailid);
-                        if (roleid != 4)
+                        if (client?.RoleId != 4)
                         {
                             var meetings = await _meetingService.GetClientMeetingList(emailid);
                             meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -3331,10 +3328,9 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
-                            var role = await _clientService.GetClientRoleByEmailId(emailid);
-                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
+                            ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty;
                         }
                         var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                         if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
@@ -3498,10 +3494,9 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
-                            var role = await _clientService.GetClientRoleByEmailId(emailid);
-                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
+                            ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                         }
                         var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
                         meetings = meetings.Select(x =>
@@ -3811,10 +3806,9 @@ namespace Risebird.Web.Controllers
                 int ClientId = 0;
                 if (profileName == "Client")
                 {
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
+                    ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
                 var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
                 meetings = meetings.Select(x =>
@@ -3944,10 +3938,9 @@ namespace Risebird.Web.Controllers
                 int ClientId = 0;
                 if (profileName == "Client")
                 {
-                    var role = await _clientService.GetClientRoleByEmailId(emailid);
-                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty;
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
+                    ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
                 var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
                 if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)

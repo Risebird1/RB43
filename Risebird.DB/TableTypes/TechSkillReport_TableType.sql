@@ -10,7 +10,7 @@ CREATE TYPE [dbo].[TechSkillReport_TableType] AS TABLE(
 	[ActualLevelId] [int] NOT NULL,
 	[WeightageRequired] [int] NOT NULL,
 	[WeightageActual] [int] NOT NULL,
-	[TechComments] [varchar](200) 
+	[TechComments] [varchar](500) 
 )
 
 
