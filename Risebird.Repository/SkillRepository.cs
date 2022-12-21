@@ -30,23 +30,19 @@ namespace Risebird.Repository
 
         #region Skill CRUD
 
-        public IEnumerable<Skill> GetSkills()
+        public async Task<IEnumerable<Skill>> GetSkills()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Skill>(
+                    return await SqlMapper.QueryAsync<Skill>(
                         con, "select * from Skill where Name is not null", null, commandType: Text);
                 }
             }
-            catch (SqlException ex)
-            {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -322,19 +318,19 @@ namespace Risebird.Repository
         }
 
         #endregion
-        public IEnumerable<Skill> GetAssessmentGroupCategory()
+        public async Task<IEnumerable<Skill>> GetAssessmentGroupCategory()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Skill>(
+                    return await SqlMapper.QueryAsync<Skill>(
                         con, "select id,CategoryName as Name from AssessmentGroupCategory", null, commandType: Text);
                 }
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

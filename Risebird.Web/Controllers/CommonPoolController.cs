@@ -571,7 +571,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
-                           await GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
 
@@ -995,7 +995,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList( await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+            model.QuestionsList = new SelectList(await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
 
         [HttpPost]
@@ -1179,11 +1179,11 @@ namespace Risebird.Web.Controllers
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
-               await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
+                await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
             }
             else
             {
-               await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
+                await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
             }
             //End:Save View counts of vedio
             return Json("Succecss");

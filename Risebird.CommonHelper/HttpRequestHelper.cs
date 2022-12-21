@@ -1,17 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RestSharp;
-using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using Risebird.Repository.Interface;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
@@ -49,7 +42,7 @@ namespace Risebird.CommonHelper
                 {
                     request.AddJsonBody(jsonBody);
                 }
-                if( parameters != null)
+                if (parameters != null)
                 {
                     foreach (var item in parameters)
                     {

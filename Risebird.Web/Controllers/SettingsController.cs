@@ -49,7 +49,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            return View(_settingsService.GetAllSettings());
+                            return View(await _settingsService.GetAllSettings());
                         }
                     }
                     else
@@ -82,7 +82,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (_settingsService.UpdateSettings(settings))
+                        if (await _settingsService.UpdateSettings(settings))
                         {
                             HttpContext.Session.Remove("settings");
                             HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));

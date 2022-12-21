@@ -55,11 +55,11 @@ namespace Risebird.MicroService
                 //    await _userRepository.UpdateRecordingData(obj);
                 //}
 
-                Parallel.ForEach(recordingDataToBeUpdated, recording =>
+                Parallel.ForEach(recordingDataToBeUpdated, async recording =>
                 {
                     try
                     {
-                        var recordingData = _twilioHelper.FetchCallRecordingDetails(recording.RecordingSid).Result;
+                        var recordingData = await _twilioHelper.FetchCallRecordingDetails(recording.RecordingSid);
                         //update the data recieved to the database
                         CallRecordingDataVM obj = new CallRecordingDataVM();
                         obj.id = recording.id;
@@ -73,12 +73,12 @@ namespace Risebird.MicroService
 
                         obj.Status = recordingData.Status.ToString();
 
-                        _ = _userRepository.UpdateRecordingData(obj).Result;
+                        _ = await _userRepository.UpdateRecordingData(obj);
 
                     }
                     catch (Exception ex)
                     {
-                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                       await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"FetchTwilioCallRecordingData : Error fetching/updating recording data for Recording with id: {recording.RecordingSid}  at: {DateTime.Now}, Message : {ex.Message}");
                         return;
                     }

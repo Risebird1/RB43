@@ -42,7 +42,7 @@ namespace Risebird.Web.Controllers
                 var sessionId = HttpContext.Session.Id;
                 var menuData = await _userService.GetMenuBasedOnUserEmailld(emailId, sessionId);
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
-                var settings = _settingsService.GetAllSettings();
+                var settings = await _settingsService.GetAllSettings();
                 var currenttheme = await _userService.GetCurrenttheme(emailId);
                 var username = await _userService.GetCurrentUsername(emailId);
                 if (string.IsNullOrEmpty(currenttheme))

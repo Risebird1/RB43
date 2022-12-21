@@ -4,6 +4,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -19,40 +20,40 @@ namespace Risebird.Business
 
         }
 
-        public Settings GetAllSettings()
+        public async Task<Settings> GetAllSettings()
         {
             try
             {
-                return _settingsRespository.GetAllSettings();
+               return await _settingsRespository.GetAllSettings();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public bool UpdateSettings(Settings settings)
+        public async Task<bool> UpdateSettings(Settings settings)
         {
             try
             {
-                return _settingsRespository.UpdateSettings(settings);
+                return await _settingsRespository.UpdateSettings(settings);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-        public int GetInterviewUnassignedMinutes()
+        public async Task<int> GetInterviewUnassignedMinutes()
         {
             try
             {
-                return _settingsRespository.GetInterviewUnassignedMinutes();
+                return await _settingsRespository.GetInterviewUnassignedMinutes();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
         }

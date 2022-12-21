@@ -1,20 +1,19 @@
+using Dapper;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Auth;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Auth;
-using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
-using SendGrid.Helpers.Mail;
 
 namespace Risebird.MicroService
 {
@@ -37,7 +36,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("SetUpReminder")]
-        public async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"SetUpReminder : C# Timer trigger function started executing at: {DateTime.Now}");
 
@@ -117,7 +116,7 @@ namespace Risebird.MicroService
                 string msgBody = string.Format(rawEmail, parameters);
 
                 masg.HtmlContent = msgBody;
-                
+
                 _ = _notificationHelper.SendMail(masg, irfId, interviewId).Result;
             }
             catch (Exception)

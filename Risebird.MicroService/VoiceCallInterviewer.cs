@@ -1,18 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
-using Twilio.Types;
-using Twilio;
 using Risebird.Entities.Enum;
-using Twilio.Rest.Api.V2010.Account;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace Risebird.MicroService
 {
@@ -33,7 +32,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("VoiceCallInterviewer")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"VoiceCallInterviewer : C# Timer trigger function started executing at: {DateTime.Now}");
 
@@ -72,7 +71,7 @@ namespace Risebird.MicroService
                     }
                     );
 
-                    
+
                 }
 
             }

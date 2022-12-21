@@ -44,7 +44,7 @@ namespace Risebird.Repository
                         commandType: StoredProcedure);
                     return data.ToList();
                 }
-            }            
+            }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -210,7 +210,7 @@ namespace Risebird.Repository
                 dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
+                    var data = await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }
@@ -494,7 +494,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= await SqlMapper.QueryAsync<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
+                    var data = await SqlMapper.QueryAsync<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }
@@ -575,7 +575,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= await SqlMapper.QueryAsync<QCInterviewerVM>(con, "[dbo].[sp_RisebirdQCInterviewer]", null,
+                    var data = await SqlMapper.QueryAsync<QCInterviewerVM>(con, "[dbo].[sp_RisebirdQCInterviewer]", null,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }
@@ -724,7 +724,7 @@ namespace Risebird.Repository
                 parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= await SqlMapper.QueryAsync<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
+                    var data = await SqlMapper.QueryAsync<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }
@@ -801,7 +801,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= await SqlMapper.QueryAsync<string>(
+                    var data = await SqlMapper.QueryAsync<string>(
                         con, "select Emailid from [dbo].[UserList] where idprofile = 2", null, commandType: Text);
                     return data.ToList();
                 }
@@ -872,7 +872,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1090,7 +1090,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1106,7 +1106,7 @@ namespace Risebird.Repository
                 {
                     var result = await con.QueryAsync<AssignmentVM>(finalquery, finaldynamicParameters);
                     return result.ToList();
-                }               
+                }
             }
             catch (Exception ex)
             {
@@ -1446,7 +1446,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public  async Task<AssignmentVM> GetInterviewerEntitleById(int assessmentid)
+        public async Task<AssignmentVM> GetInterviewerEntitleById(int assessmentid)
         {
             try
             {
@@ -1601,7 +1601,7 @@ namespace Risebird.Repository
                 dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
+                    var data = SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }
@@ -1753,7 +1753,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data= await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[usp_RisebirdClientUsersForNotification]", null,
+                    var data = await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[usp_RisebirdClientUsersForNotification]", null,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }

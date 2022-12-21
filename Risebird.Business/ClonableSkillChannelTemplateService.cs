@@ -153,12 +153,12 @@ namespace Risebird.Business
             {
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
 
-                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                model.IRFRecommendations.CategoryList = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
 
-                model.IRFRecommendations.CategoryId = _skillService.GetAssessmentGroupCategory(model.IRFRecommendations.AssessmentGroupId.Value).Result;
+                model.IRFRecommendations.CategoryId = await _skillService.GetAssessmentGroupCategory(model.IRFRecommendations.AssessmentGroupId.Value);
                 if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
                 {
-                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(await _skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value), "id", "AssessmentGroup");
                     model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
                 }
 
@@ -282,17 +282,17 @@ namespace Risebird.Business
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
 
-                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                model.IRFRecommendations.CategoryList = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                 if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
                 {
-                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(await _skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value), "id", "AssessmentGroup");
                     //model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
                 }
 
                 SetSelectListForMultiSelectRecommendationValues(model.IRFRecommendations);
 
                 IEnumerable<ClonableTemplateQuestion> transQuestions = new List<ClonableTemplateQuestion>();
-                transQuestions = _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value).Result;
+                transQuestions = await _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
                 //transQuestions = (IEnumerable<ClonableTemplateQuestion>)transQuestions?.Select(x => ( x.Question, x.SkillId, x.SkillName, x.IsSelected ))?.Distinct();
                 foreach (var question in templateQuestions)
                 {

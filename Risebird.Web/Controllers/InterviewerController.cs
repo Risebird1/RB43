@@ -715,7 +715,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void GetAllSelectList(InterviewerProfileVM model)
+        private async Task GetAllSelectList(InterviewerProfileVM model)
         {
             //=========Availability============
 
@@ -755,7 +755,7 @@ namespace Risebird.Web.Controllers
             { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
 
-            var Skillset = _skillService.GetSkills();
+            var Skillset = await _skillService.GetSkills();
             if (Skillset != null)
             {
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
@@ -2230,7 +2230,7 @@ namespace Risebird.Web.Controllers
                     {
                         var hrlist = new List<string>();
                         var hrlistdata = await _supportService.GetAllSupportHR(emailid);
-                          hrlist= hrlistdata.Select(x => x.EmailId).ToList();
+                        hrlist = hrlistdata.Select(x => x.EmailId).ToList();
                         var Emailids = string.Join(";", hrlist);
                         Mail _mail = new Mail
                         {

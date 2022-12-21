@@ -24,15 +24,16 @@ namespace Risebird.Business
 
         #region Skill Functions
 
-        public List<Skill> GetSkills()
+        public async Task<List<Skill>> GetSkills()
         {
             try
             {
-                return _skillRepository.GetSkills().ToList();
+                var data= await _skillRepository.GetSkills();
+                return data.ToList();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -169,15 +170,17 @@ namespace Risebird.Business
         }
 
         #endregion
-        public List<Skill> GetAssessmentGroupCategory()
+        public async Task<List<Skill>> GetAssessmentGroupCategory()
         {
             try
             {
-                return _skillRepository.GetAssessmentGroupCategory().ToList();
+                var data = await _skillRepository.GetAssessmentGroupCategory();
+                return data.ToList();
+
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

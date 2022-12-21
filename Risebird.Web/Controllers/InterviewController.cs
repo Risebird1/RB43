@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -17,7 +16,6 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -57,8 +55,8 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, 
-            ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, 
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
+            ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService,
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, IZoomHelper zoomHelper)
@@ -4299,9 +4297,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public int GetInterviewUnassignedMinutes()
+        public async Task<int> GetInterviewUnassignedMinutes()
         {
-            return _settingsService.GetInterviewUnassignedMinutes();
+            return await _settingsService.GetInterviewUnassignedMinutes();
         }
 
         [HttpPost]

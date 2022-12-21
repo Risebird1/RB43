@@ -13,12 +13,12 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateSkillLevel(SkillLevel entity);
         Task<bool> DeleteSkillLevel(int id);
 
-        IEnumerable<Skill> GetSkills();
+        Task<IEnumerable<Skill>> GetSkills();
         Task<bool> AddSkill(Skill skill);
         Task<Skill> GetSkill(int id);
         Task<bool> UpdateSkill(Skill entity);
         Task<bool> DeleteSkill(int id);
-        IEnumerable<Skill> GetAssessmentGroupCategory();
+        Task<IEnumerable<Skill>> GetAssessmentGroupCategory();
 
         Task<IEnumerable<AssignmentVM>> GetAssessmentGroupsByCategory(int categoryId);
         Task<int?> GetAssessmentGroupCategory(int assessmentGroupId);

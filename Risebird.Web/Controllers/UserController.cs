@@ -744,7 +744,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new InterviewerVM();
-                    model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                    model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
@@ -774,7 +774,7 @@ namespace Risebird.Web.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "Please upload a resume.");
                         var model = new InterviewerVM();
-                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
                         model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
@@ -796,13 +796,13 @@ namespace Risebird.Web.Controllers
                     else
                         uploadedFileURL = interviewer.ResumeLink;
 
-                    List<Skill> skills = _skillService.GetSkills();
+                    List<Skill> skills = await _skillService.GetSkills();
 
                     if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                     {
                         ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                         var model = new InterviewerVM();
-                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                         return View("AddInterviewer", model);
                     }
@@ -853,7 +853,7 @@ namespace Risebird.Web.Controllers
 
                     if (interviewerVM != null)
                     {
-                        interviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        interviewerVM.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
                         interviewerVM.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
@@ -901,7 +901,7 @@ namespace Risebird.Web.Controllers
                         {
                             ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                             var model = new InterviewerVM();
-                            model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                            model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                              select new { ID = (int)s, Name = s.GetDescription() };
                             model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
@@ -920,13 +920,13 @@ namespace Risebird.Web.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "Please mention Skill");
                         var model = new InterviewerVM();
-                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
                         model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         return View("InterviewerUpdate", model);
                     }
-                    List<Skill> skills = _skillService.GetSkills();
+                    List<Skill> skills = await _skillService.GetSkills();
                     if (interviewer.SelectedSkillIds != null)
                     {
                         List<string> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id))
@@ -1158,7 +1158,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = new QCInterviewerVM();
-                model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                 return View("AddQCInterviewer", model);
 
@@ -1181,7 +1181,7 @@ namespace Risebird.Web.Controllers
                     if (qcinterviewer.File == null && qcinterviewer.ResumeLink == null)
                     {
                         ModelState.AddModelError(string.Empty, "Please upload a resume.");
-                        qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        qcinterviewer.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                         return View("AddQCInterviewer", qcinterviewer);
                     }
@@ -1205,12 +1205,12 @@ namespace Risebird.Web.Controllers
                         uploadedFileURL = qcinterviewer.ResumeLink;
                     }
 
-                    List<Skill> skills = _skillService.GetSkills();
+                    List<Skill> skills = await _skillService.GetSkills();
 
                     if (uploadedFileURL == null)
                     {
                         ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
-                        qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        qcinterviewer.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                         return View("AddQCInterviewer", qcinterviewer);
                     }
@@ -1237,7 +1237,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                    qcinterviewer.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                     return View("AddQCInterviewer", qcinterviewer);
                 }
 
@@ -1261,7 +1261,7 @@ namespace Risebird.Web.Controllers
 
                     if (qcinterviewerVM != null)
                     {
-                        qcinterviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        qcinterviewerVM.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
                         TempData["ResumeLink"] = qcinterviewerVM.ResumeLink;
                         return View("QCInterviewerUpdate", qcinterviewerVM);
                     }
@@ -1308,7 +1308,7 @@ namespace Risebird.Web.Controllers
                             {
                                 ModelState.AddModelError(string.Empty, "Resume Upload is failed.");
                                 var model = new InterviewerVM();
-                                model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                                model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                                 return View("QCInterviewerUpdate", model);
                             }
@@ -1324,7 +1324,7 @@ namespace Risebird.Web.Controllers
                         {
                             ModelState.AddModelError(string.Empty, "Please mention Skill");
                             var model = new InterviewerVM();
-                            model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                            model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                             return View("QCInterviewerUpdate", model);
                         }
@@ -1349,7 +1349,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         var model = new InterviewerVM();
-                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        model.PrimarySkills = new SelectList(await _skillService.GetSkills(), "id", "Name");
 
                         //ModelStateEntry i;
                         //ModelState.TryGetValue("SelectedSkillIds", out i);

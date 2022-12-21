@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface ISkillService
     {
-        List<Skill> GetSkills();
+        Task<List<Skill>> GetSkills();
         bool AddSkill(Skill skill);
         Skill GetSkill(int id);
         bool UpdateSkill(Skill skillToUpdate);
@@ -18,7 +18,7 @@ namespace Risebird.Business.Interface
         SkillLevel GetSkillLevel(int id);
         bool UpdateSkillLevel(SkillLevel skillLevelToUpdate);
         bool DeleteSkillLevel(int id);
-        List<Skill> GetAssessmentGroupCategory();
+        Task<List<Skill>> GetAssessmentGroupCategory();
 
         Task<IEnumerable<AssignmentVM>> GetAssessmentGroupsByCategory(int categoryId);
         Task<int?> GetAssessmentGroupCategory(int assessmentGroupId);

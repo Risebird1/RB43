@@ -35,7 +35,7 @@ namespace Risebird.MicroService
             try
             {
                 //Fetch All 90 days data for expire records and Customize from appsetting
-                var _list = _interviewerService.FetchAllPasswordResetDetails(Convert.ToInt32(PasswordTimePeriod));
+                var _list = await _interviewerService.FetchAllPasswordResetDetails(Convert.ToInt32(PasswordTimePeriod));
                 if (_list != null)
                 {
                     var clientlist = string.Join(";", _list);

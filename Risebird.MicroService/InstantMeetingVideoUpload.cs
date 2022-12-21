@@ -53,7 +53,7 @@ namespace Risebird.MicroService
                 //string token = ZoomToken();
                 string token = _zoomHelper.ZoomToken();
 
-                Parallel.ForEach(pendingVideoMeetings, meeting =>
+                Parallel.ForEach(pendingVideoMeetings, async meeting =>
                 {
 
                     try
@@ -117,12 +117,12 @@ namespace Risebird.MicroService
 
                                     try
                                     {
-                                        uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream);
 
                                     }
                                     catch (Exception ex)
                                     {
-                                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                         log.LogError($"Zoom : Error while inserting blob for Insta meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
                                         return;
                                     }
@@ -156,7 +156,7 @@ namespace Risebird.MicroService
                     }
                     catch (Exception ex)
                     {
-                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
                         return;
                     }

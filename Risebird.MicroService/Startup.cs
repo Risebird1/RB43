@@ -34,7 +34,7 @@ namespace Risebird.MicroService
             builder.Services.AddSingleton<IConfiguration>(configuration);
 
             builder.Services.AddSingleton<AuthenticationService>();
-            
+
             builder.Services.AddSingleton<HttpClientHelper>();
             //builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddScoped<INotificationHelper, NotificationHelper>();

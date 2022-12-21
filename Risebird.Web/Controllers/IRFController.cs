@@ -4378,7 +4378,7 @@ namespace Risebird.Web.Controllers
                             modellist = new List<AssignmentVM>();
                         }
                         model._assessment = modellist;
-                        var skillset = _skillService.GetSkills();
+                        var skillset = await _skillService.GetSkills();
                         model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
 
                         //    return View("AddInterviewer", model);
@@ -4449,10 +4449,11 @@ namespace Risebird.Web.Controllers
             //var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
             var modeldata = modellist;
             //model._assessment = modellist.Where(x => x.id == assessmentid).ToList();
-            var _Category = _skillService.GetAssessmentGroupCategory().OrderBy(x => x.Name);
+            var resultData = await _skillService.GetAssessmentGroupCategory();
+            var _Category = resultData.OrderBy(x => x.Name);
             model._skilldetails.CategoryNameList = new SelectList(_Category, "id", "Name");
 
-            var skillset = _skillService.GetSkills();
+            var skillset = await _skillService.GetSkills();
             var primaryskilllist = new List<SelectListItem>();
             model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
             foreach (var item in skillset)
@@ -4646,9 +4647,9 @@ namespace Risebird.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult InterviewerEntitle(Assessment model)
+        public async Task<IActionResult> InterviewerEntitle(Assessment model)
         {
-            List<Skill> skills = _skillService.GetSkills();
+            List<Skill> skills = await _skillService.GetSkills();
             List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
             model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
             var result = _irfService.Addassignmentgroup(model._skilldetails);
