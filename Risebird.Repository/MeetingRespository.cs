@@ -96,7 +96,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
                         parameters.Add("Emailid", Emailid);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUser", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUser", parameters, commandTimeout: 600,
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -108,7 +108,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
                         parameters.Add("Emailid", Emailid);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters, commandTimeout: 600,
                                 commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -119,7 +119,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@clientid", clientId);
                         parameters.Add("@Emailid", Emailid);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -148,7 +148,7 @@ namespace Risebird.Repository
                         parameters.Add("@endWith", Page * 12);
                         parameters.Add("Emailid", Emailid);
                         parameters.Add("@searchValue", searchValue);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeIndexMeetingsForCuratedUserPaged", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeIndexMeetingsForCuratedUserPaged", parameters, commandTimeout: 600,
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -163,7 +163,7 @@ namespace Risebird.Repository
                         parameters.Add("@startFromParam", ((Page - 1) * 12));
                         parameters.Add("@endWithParam", Page * 12);
                         parameters.Add("@searchValueParam", searchValue);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsPaged", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsPaged", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -196,7 +196,7 @@ namespace Risebird.Repository
                         parameters.Add("@searchValueParam", searchValue);
                         parameters.Add("@startDateParam", startDate);
                         parameters.Add("@endDateParam", endDate);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeIndexMeetingsForCuratedUserFilteredDup", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeIndexMeetingsForCuratedUserFilteredDup", parameters, commandTimeout: 600,
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -214,7 +214,7 @@ namespace Risebird.Repository
                         parameters.Add("@startDateParam", startDate);
                         parameters.Add("@endDateParam", endDate);
                         //parameters.Add("@timeNow", DateTime.Now);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsFilteredDup", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsFilteredDup", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -244,7 +244,7 @@ namespace Risebird.Repository
                         parameters.Add("@IRFId", irfId);
                         parameters.Add("@startDate", startDate);
                         parameters.Add("@endDate", endDate);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByIRFIdForCuratedUser", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByIRFIdForCuratedUser", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -258,7 +258,7 @@ namespace Risebird.Repository
                         parameters.Add("@IRFId", irfId);
                         parameters.Add("@startDate", startDate);
                         parameters.Add("@endDate", endDate);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByIRFId", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByIRFId", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -290,7 +290,7 @@ namespace Risebird.Repository
                         parameters.Add("@JDpattern", JDpattern);
                         parameters.Add("@startDate", startDate);
                         parameters.Add("@endDate", endDate);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJDforCuratedUser", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJDforCuratedUser", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -304,7 +304,7 @@ namespace Risebird.Repository
                         parameters.Add("@JDpattern", JDpattern);
                         parameters.Add("@startDate", startDate);
                         parameters.Add("@endDate", endDate);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJD", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJD", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -337,7 +337,7 @@ namespace Risebird.Repository
                     parameters.Add("@EmailId", EmailId);
                     parameters.Add("@actionStatus", actionStatus);
                     parameters.Add("@irfId", irfId);
-                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUserByIRF", parameters,
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUserByIRF", parameters, commandTimeout: 600,
                              commandType: CommandType.StoredProcedure);
                 }
             }
@@ -365,7 +365,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
                         parameters.Add("Emailid", Emailid);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters, commandTimeout: 600,
                                 commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -3143,7 +3143,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUser", null,
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUser", null, commandTimeout: 600,
                              commandType: CommandType.StoredProcedure);
                 }
             }
@@ -3170,7 +3170,7 @@ namespace Risebird.Repository
                         parameters.Add("@startFromParam", ((page - 1) * 12));
                         parameters.Add("@endWithParam", page * 12);
                         parameters.Add("@searchValueParam", searchValue);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPaged", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPaged", parameters, commandTimeout: 600,
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -3182,7 +3182,7 @@ namespace Risebird.Repository
                         parameters.Add("@startFromParam", ((page - 1) * 12));
                         parameters.Add("@endWithParam", page * 12);
                         parameters.Add("@searchValueParam", searchValue);
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUserPaged", parameters,
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUserPaged", parameters, commandTimeout: 600,
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -3211,7 +3211,7 @@ namespace Risebird.Repository
                     parameters.Add("@searchValueParam", searchValue);
                     parameters.Add("@primarySkillsParam", primarySkills);
                     parameters.Add("@heuristicLevelsParam", heuristicLevels);
-                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPagedFiltered", parameters,
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPagedFiltered", parameters, commandTimeout: 600,
                              commandType: CommandType.StoredProcedure);
                 }
 
@@ -3323,7 +3323,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Clientjdid", Clientjdid);
                     parameters.Add("@id", Userid);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForJd", parameters,
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForJd", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -3458,7 +3458,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@searchValue", searchValue);
                         parameters.Add("@Emailid", Emailid);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRiseTubeIndexMeetingsCountForCuratedUser", parameters,
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRiseTubeIndexMeetingsCountForCuratedUser", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();
                     }
@@ -3472,7 +3472,7 @@ namespace Risebird.Repository
                         parameters.Add("@searchValueParam", searchValue);
                         parameters.Add("@EmailIdParam", Emailid);
                         parameters.Add("@clientIdParam", clientId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRisetubeIndexMeetingsCount", parameters,
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRisetubeIndexMeetingsCount", parameters, commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();
                     }

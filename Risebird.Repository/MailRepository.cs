@@ -93,7 +93,7 @@ namespace Risebird.Repository
                 parameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetEmailRecipientsLatestActivity", parameters,
+                    var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetEmailRecipientsLatestActivity", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

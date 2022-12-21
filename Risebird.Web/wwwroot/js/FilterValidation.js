@@ -14,7 +14,7 @@
     var startDate = new Date(yearStart, monthStart, dateStart);
 
     if (((endDate - startDate) / (1000 * 3600 * 24)) > 7) {
-        alert("End Date & Current Date difference should not be greater than 7 days");
+        alert("Start Date & End Date difference can't be greater than 7 days.");
         document.getElementById("EndDate").focus();
         return false;
     }

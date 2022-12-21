@@ -2145,17 +2145,15 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteInstaZoomAccount(int Accountid)
+        public async Task DeleteInstaZoomAccount(int Accountid)
         {
-            var resultset = _userService.DeleteInstaZoomAccount(Accountid);
-            return Json(resultset);
+            await _userService.DeleteInstaZoomAccount(Accountid);           
         }
 
         [HttpPost]
-        public JsonResult AddInstaZoomAccount(string AccountEmail)
+        public async Task AddInstaZoomAccount(string AccountEmail)
         {
-            var resultset = _userService.AddInstaZoomAccount(AccountEmail);
-            return Json(resultset);
+            var resultset = await _userService.AddInstaZoomAccount(AccountEmail);            
         }
         #endregion
 

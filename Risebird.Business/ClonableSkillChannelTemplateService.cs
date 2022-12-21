@@ -54,7 +54,7 @@ namespace Risebird.Business
                 ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                 model.id = irfId;
                 //get tech skills, general skills, joinability, selectability from the irf
-                model.SkillCollection = (IList<TransSkill>)_irfRepository.GetSkillsbyIRFid(irfId);
+                model.SkillCollection = (IList<TransSkill>)await _irfRepository.GetSkillsbyIRFid(irfId);
                 model.SkillGeneral = (IList<TransSkillGeneral>)_irfRepository.GetSkillsGeneralbyIRFid(irfId);
                 model.Joinability = (IList<TransJoinability>)_irfRepository.GetTransJoinability(irfId);
                 model.Selectability = (IList<TransSelectability>)_irfRepository.GetTransSelectability(irfId);
