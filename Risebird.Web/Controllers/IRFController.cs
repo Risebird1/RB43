@@ -2206,7 +2206,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddReport(int interviewId, int irfId, bool IsSelected = false)
+        public async Task <IActionResult> AddReport(int interviewId, int irfId, bool IsSelected = false)
         {
             try
             {
@@ -2223,7 +2223,7 @@ namespace Risebird.Web.Controllers
                     prof = prof.Replace("\"", "");
                 }
 
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
 
                 if (model == null)
                 {
@@ -2240,7 +2240,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.profileName = prof.ToLower();
 
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 ViewBag.PageStatus = "Mainurl";
                 if (model.IsProctor)
                 {
@@ -2253,7 +2253,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -2327,7 +2327,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedvideoFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -2392,7 +2392,7 @@ namespace Risebird.Web.Controllers
             var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name");
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            model.QuestionsList = new SelectList(await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 
         }
 

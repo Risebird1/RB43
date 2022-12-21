@@ -1029,10 +1029,10 @@ namespace Risebird.Business
             try
             {
                 var reportModel = new InterviewReport();
-                var irfDetails = _meetingRespository.GetIRFDetails(irfId);
+                var irfDetails = await _meetingRespository.GetIRFDetails(irfId);
                 var levels = await _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
-                var check = _meetingRespository.GetIRFbyId(irfId);
+                var check = await _meetingRespository.GetIRFbyId(irfId);
                 var interviewDetails = await _meetingRespository.GetInterviewMeetingById(interviewId);
 
                 if (!check)
@@ -1040,7 +1040,7 @@ namespace Risebird.Business
                     return null;
                 }
                 // check whether a feedback for the interviewId has already been submitted
-                var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
+                var interviewReport = await _meetingRespository.GetInterviewReportById(interviewId, irfId);
                 if (interviewReport != null && interviewReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
@@ -1124,7 +1124,7 @@ namespace Risebird.Business
                 // joinability and Selectability
 
                 //get candidateId
-                reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
+                reportModel.CandidateId = await _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = interviewDetails.candidateName;
                 reportModel.TotalExperience = interviewDetails.TotalExperience + " Years";
                 reportModel.SelectabilityComments = await _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
@@ -1990,19 +1990,19 @@ namespace Risebird.Business
             try
             {
                 var reportModel = new InterviewReport();
-                var irfDetails = _meetingRespository.GetIRFDetails(irfId);
+                var irfDetails = await _meetingRespository.GetIRFDetails(irfId);
                 var levels = await _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
-                var check = _meetingRespository.GetIRFbyId(irfId);
-                var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
-                var candidatedetails = _meetingRespository.GetCandidateSharedDetails(id);
+                var check = await _meetingRespository.GetIRFbyId(irfId);
+                var interviewDetails =  await _meetingRespository.GetInterviewMeetingById(interviewId);
+                var candidatedetails = await _meetingRespository.GetCandidateSharedDetails(id);
 
                 if (!check)
                 {
                     return null;
                 }
                 // check whether a feedback for the interviewId has already been submitted
-                var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
+                var interviewReport = await _meetingRespository.GetInterviewReportById(interviewId, irfId);
                 if (interviewReport != null && interviewReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
@@ -2083,7 +2083,7 @@ namespace Risebird.Business
                 // joinability and Selectability
 
                 //get candidateId
-                reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
+                reportModel.CandidateId = await _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = candidatedetails.Name;
                 reportModel.SelectabilityComments = await _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = candidatedetails.EmailId;
