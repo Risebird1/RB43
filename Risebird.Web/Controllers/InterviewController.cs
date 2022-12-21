@@ -6881,9 +6881,10 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId, string clientname, int irfIntId)
         {
             AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(interviewid);
-            var JDTitle = _interviewSchedulerservice.FetchJDTitle(IRFId);
+            var jdDetails = (await _interviewSchedulerservice.FetchJDTitle(IRFId));
+            //var JDTitle = (await  _interviewSchedulerservice.FetchJDTitle(IRFId)).JDTiltle;
             var zoomLink = new InstaZoomMeetingResponse();
-            zoomLink = await CreateZoomMeeting(meetingToUpdate.candidateName, JDTitle.Result, meetingToUpdate.interviewDate, meetingToUpdate.risebirdHR);
+            zoomLink = await CreateZoomMeeting(meetingToUpdate.candidateName, jdDetails.JDTiltle, meetingToUpdate.interviewDate, meetingToUpdate.risebirdHR);
             if (zoomLink == null)
             {
                 //Send Rescheule mail to candidtae
@@ -6919,7 +6920,7 @@ namespace Risebird.Web.Controllers
                 //CC = "hire@risebird.io",
                 Subject = "Invitation: " + meetingToUpdate.candidateName + " @ " + meetingToUpdate.interviewDate + "(" + timezonevalue + ")"
             };
-            _ = await _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset, interviewid != 0 ? interviewid : new int?());
+            _ = await _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset, interviewid != 0 ? interviewid : new int?(), jdDetails.JDLink);
             return Json(zoomLink.join_url);
         }
         public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, string accountEmail)

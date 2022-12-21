@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -237,22 +238,22 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> FetchJDTitle(string IRFId)
+        public async Task<JDDetails> FetchJDTitle(string IRFId)
         {
             try
             {
-                var query = "Select JDTiltle from IRF where IRFId=@IRFId";
+                var query = "Select JDTiltle, JDLink from IRF where IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<string>(query, dp);
+                    var results = await con.QueryAsync<JDDetails>(query, dp);
                     return results.FirstOrDefault();
                 }
             }
             catch (Exception ex)
             {
-                return "";
+                return null;
             }
         }
 
