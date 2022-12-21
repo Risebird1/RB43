@@ -2147,13 +2147,13 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task DeleteInstaZoomAccount(int Accountid)
         {
-            await _userService.DeleteInstaZoomAccount(Accountid);           
+            await _userService.DeleteInstaZoomAccount(Accountid);
         }
 
         [HttpPost]
         public async Task AddInstaZoomAccount(string AccountEmail)
         {
-            var resultset = await _userService.AddInstaZoomAccount(AccountEmail);            
+            var resultset = await _userService.AddInstaZoomAccount(AccountEmail);
         }
         #endregion
 

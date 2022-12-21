@@ -28,7 +28,7 @@ namespace Risebird.Business
         {
             try
             {
-                var data= await _skillRepository.GetSkills();
+                var data = await _skillRepository.GetSkills();
                 return data.ToList();
             }
             catch (Exception e)

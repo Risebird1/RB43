@@ -78,7 +78,7 @@ namespace Risebird.MicroService
                     }
                     catch (Exception ex)
                     {
-                       await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"FetchTwilioCallRecordingData : Error fetching/updating recording data for Recording with id: {recording.RecordingSid}  at: {DateTime.Now}, Message : {ex.Message}");
                         return;
                     }

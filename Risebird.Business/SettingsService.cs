@@ -24,7 +24,7 @@ namespace Risebird.Business
         {
             try
             {
-               return await _settingsRespository.GetAllSettings();
+                return await _settingsRespository.GetAllSettings();
             }
             catch (Exception ex)
             {

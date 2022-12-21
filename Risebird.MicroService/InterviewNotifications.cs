@@ -53,7 +53,7 @@ namespace Risebird.MicroService
                     var noScheduleCandidatesData = await con.QueryAsync<NoScheduleCandidate>(queryCandidate);
                     unfilteredCandidate = noScheduleCandidatesData.Where(x => x.EndDate > DateTime.Now).ToList();
                 }
-               
+
                 foreach (var item in unfilteredCandidate)
                 {
                     int checkScheduleCount = 0;
@@ -79,7 +79,7 @@ namespace Risebird.MicroService
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var todayMeetingsdata = await con.QueryAsync<ScheduledCandidate>(queryToday);
-               
+
                     if (todayMeetingsdata != null)
                     {
                         todayMeetings = todayMeetingsdata.Where(x => x.interviewDate.Date == DateTime.Today.Date).ToList();
