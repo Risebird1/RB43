@@ -46,12 +46,7 @@ namespace Risebird.MicroService
 
                 if (dataList != null)
                 {
-                    //foreach (var data in dataList)
-                    //{
-
-                    //    await _sendGridRepository.SaveSendGridEventDetails(data);
-                    //}
-                    Parallel.ForEach(dataList, data =>
+                    Parallel.ForEach(dataList, async data =>
                     {
                         try
                         {
@@ -59,11 +54,11 @@ namespace Risebird.MicroService
                             {
                                 data.Split_Message_Id = data.sg_message_id.Split(".")[0];
                             }
-                            _ = _sendGridRepository.SaveSendGridEventDetails(data).Result;
+                            _ = await _sendGridRepository.SaveSendGridEventDetails(data);
                         }
                         catch (Exception ex)
                         {
-                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             log.LogError($"CaptureSendgridEvents : Error at: {DateTime.Now}, Message : {ex.Message}");
                             return;
                         }

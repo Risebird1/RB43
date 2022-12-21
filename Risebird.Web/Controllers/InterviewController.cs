@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -17,7 +16,6 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -57,8 +55,8 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, 
-            ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, 
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
+            ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService,
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, IZoomHelper zoomHelper)
@@ -4299,9 +4297,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public int GetInterviewUnassignedMinutes()
+        public async Task<int> GetInterviewUnassignedMinutes()
         {
-            return _settingsService.GetInterviewUnassignedMinutes();
+            return await _settingsService.GetInterviewUnassignedMinutes();
         }
 
         [HttpPost]
@@ -6881,9 +6879,10 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> GenerateZoomMeeting(int interviewid, string IRFId, string clientname, int irfIntId)
         {
             AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(interviewid);
-            var JDTitle = _interviewSchedulerservice.FetchJDTitle(IRFId);
+            var jdDetails = (await _interviewSchedulerservice.FetchJDTitle(IRFId));
+            //var JDTitle = (await  _interviewSchedulerservice.FetchJDTitle(IRFId)).JDTiltle;
             var zoomLink = new InstaZoomMeetingResponse();
-            zoomLink = await CreateZoomMeeting(meetingToUpdate.candidateName, JDTitle.Result, meetingToUpdate.interviewDate, meetingToUpdate.risebirdHR);
+            zoomLink = await CreateZoomMeeting(meetingToUpdate.candidateName, jdDetails.JDTiltle, meetingToUpdate.interviewDate, meetingToUpdate.risebirdHR);
             if (zoomLink == null)
             {
                 //Send Rescheule mail to candidtae
@@ -6919,7 +6918,7 @@ namespace Risebird.Web.Controllers
                 //CC = "hire@risebird.io",
                 Subject = "Invitation: " + meetingToUpdate.candidateName + " @ " + meetingToUpdate.interviewDate + "(" + timezonevalue + ")"
             };
-            _ = await _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset, interviewid != 0 ? interviewid : new int?());
+            _ = await _notificationHelper.SendInterviewInvite(_mail, meetingToUpdate.candidateEmail, zoomLink.join_url, meetingToUpdate.staffingAgency, meetingToUpdate.ClientHrContact, "hire@risebird.io", meetingToUpdate.interviewDate, meetingToUpdate.candidateName, timezonevalue, clientname, offset, interviewid != 0 ? interviewid : new int?(), jdDetails.JDLink);
             return Json(zoomLink.join_url);
         }
         public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, string accountEmail)

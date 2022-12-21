@@ -71,7 +71,7 @@
                             if (profileName == "Admin" || profileName == "SupportAdmin")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Recruiter Interview</font></span>
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Phone Screen+</font></span>
                                 </button>
                                 <a href="/MCQ/CandidateListDetails" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Candidates List</a>
                             }
@@ -350,7 +350,7 @@
                         <i class="fa fa-file" aria-hidden="true" style="font-size:21px"></i>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Recruiter Interview Set </h5>
+                <h5 class="modal-title pull-left">Phone Screen+ Set </h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeCreatePopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
@@ -934,7 +934,7 @@
     }
     function DeleteEntityMCQ(Id) {
         swal.fire({
-            title: 'Are you sure you want to delete Recruiter Interview?',
+            title: 'Are you sure you want to delete Phone Screen+?',
             text: "It will be permanently deleted!",
             type: 'warning',
             showCancelButton: true,
@@ -968,7 +968,7 @@
                 swal.fire({
                     title: 'Deleted!',
                     type: 'success',
-                    html: '<p>The Recruiter Interview has been deleted.</p>',
+                    html: '<p>The Phone Screen+ has been deleted.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',

@@ -2206,7 +2206,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddReport(int interviewId, int irfId, bool IsSelected = false)
+        public async Task<IActionResult> AddReport(int interviewId, int irfId, bool IsSelected = false)
         {
             try
             {
@@ -2223,7 +2223,7 @@ namespace Risebird.Web.Controllers
                     prof = prof.Replace("\"", "");
                 }
 
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
 
                 if (model == null)
                 {
@@ -2240,7 +2240,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.profileName = prof.ToLower();
 
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 ViewBag.PageStatus = "Mainurl";
                 if (model.IsProctor)
                 {
@@ -2253,7 +2253,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -2327,7 +2327,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedvideoFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -2392,7 +2392,7 @@ namespace Risebird.Web.Controllers
             var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name");
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            model.QuestionsList = new SelectList(await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 
         }
 
@@ -4378,7 +4378,7 @@ namespace Risebird.Web.Controllers
                             modellist = new List<AssignmentVM>();
                         }
                         model._assessment = modellist;
-                        var skillset = _skillService.GetSkills();
+                        var skillset = await _skillService.GetSkills();
                         model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
 
                         //    return View("AddInterviewer", model);
@@ -4449,10 +4449,11 @@ namespace Risebird.Web.Controllers
             //var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
             var modeldata = modellist;
             //model._assessment = modellist.Where(x => x.id == assessmentid).ToList();
-            var _Category = _skillService.GetAssessmentGroupCategory().OrderBy(x => x.Name);
+            var resultData = await _skillService.GetAssessmentGroupCategory();
+            var _Category = resultData.OrderBy(x => x.Name);
             model._skilldetails.CategoryNameList = new SelectList(_Category, "id", "Name");
 
-            var skillset = _skillService.GetSkills();
+            var skillset = await _skillService.GetSkills();
             var primaryskilllist = new List<SelectListItem>();
             model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
             foreach (var item in skillset)
@@ -4646,9 +4647,9 @@ namespace Risebird.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult InterviewerEntitle(Assessment model)
+        public async Task<IActionResult> InterviewerEntitle(Assessment model)
         {
-            List<Skill> skills = _skillService.GetSkills();
+            List<Skill> skills = await _skillService.GetSkills();
             List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
             model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
             var result = _irfService.Addassignmentgroup(model._skilldetails);

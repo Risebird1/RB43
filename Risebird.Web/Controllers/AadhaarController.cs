@@ -5,9 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
@@ -36,7 +34,7 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IHttpRequestHelper _httpRequestHelper;
 
-        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper, 
+        public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
             IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper)
         {
@@ -657,8 +655,8 @@ namespace Risebird.Web.Controllers
                 //{ "Authorization", "Basic " + accesskey },
                 { "Content-Type", "application/json" }
             };
-            
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post,  model, headers);
+
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
 
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")

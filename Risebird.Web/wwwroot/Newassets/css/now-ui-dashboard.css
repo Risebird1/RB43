@@ -3173,6 +3173,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 
     .alert.alert-with-icon {
         padding-left: 65px;
+        width: 50%;
     }
 
 img {

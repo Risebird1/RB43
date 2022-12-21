@@ -132,7 +132,7 @@ namespace Risebird.Repository
                 }
 
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;

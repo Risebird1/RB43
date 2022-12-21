@@ -47,7 +47,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await  _mCQRepository.FetchAllMCQSets(clientname, profileName, requesttype);
+                return await _mCQRepository.FetchAllMCQSets(clientname, profileName, requesttype);
             }
             catch (Exception e)
             {
@@ -207,7 +207,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

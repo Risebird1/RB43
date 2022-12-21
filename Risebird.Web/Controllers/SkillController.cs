@@ -36,7 +36,7 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessage");
 
                     }
-                    return View(_skillService.GetSkills());
+                    return View(await _skillService.GetSkills());
                 }
                 else
                 {

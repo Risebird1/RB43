@@ -2657,7 +2657,7 @@ namespace Risebird.Business
             try
             {
                 var irfList = await _irfRepository.GetAllIRFDetailsIRF(startDate, endDate, profile, emailid);
-                foreach (var irf in irfList)
+                foreach (var irf in irfList ?? new List<IRF>())
                 {
                     if (irf.CandidateCount > 0)
                     {

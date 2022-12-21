@@ -888,7 +888,7 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75",@style="font-weight: bold !important;" })</td>
+                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250",@style="font-weight: bold !important;" })</td>
                                                             </tr>
                                                         }
                                                     }
@@ -2210,7 +2210,7 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills()); //&& CheckQuestionsTiming()
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount()); //&& CheckQuestionsTiming()
     }
 
     function CheckLength(length) {
@@ -2242,7 +2242,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                                                                        return CheckLength(250);
+           return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2323,6 +2323,31 @@
         //}
         document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
         return true;
+    }
+
+    function CheckQuestionsCount()
+    {
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        if(meetingStatusValue == 4)
+        {
+
+            var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+            if(questionItems != null && questionItems.length>=5)
+            {
+                return true;
+            }
+            else
+            {
+                alert('A minimum of 5 questions should be added.');
+                return false;
+            }
+        }
+        else
+        {
+            return true;
+        }
+        
+
     }
 
 

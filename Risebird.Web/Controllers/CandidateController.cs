@@ -1062,7 +1062,11 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
+                        //TODO to check in future
                         var model = await _irfService.GetCandidate(id, Convert.ToInt32(irfId));
+                        if (model == null)
+                            return RedirectToAction("GetCandidates", new { id = irfId, irfName = irfName });
+
                         model.IRFName = irfName;
                         //var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                         //                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -1099,7 +1103,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-
+                    
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         if (!string.IsNullOrEmpty(model.EmailId))

@@ -1244,7 +1244,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> VideoLike(string value, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList =  await _meetingService.VedioLike(value, videoid, email);
+            var modelList = await _meetingService.VedioLike(value, videoid, email);
             return Json(modelList);
         }
 
@@ -2962,7 +2962,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments =  await _meetingService.GetvedioComments(id);
+                        var comments = await _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;

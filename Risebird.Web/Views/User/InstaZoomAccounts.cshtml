@@ -202,16 +202,13 @@
                         data: { 'Accountid': id },
                         type: 'Delete',
                         method: 'POST',
-                        success: function (result) {
-                            if (result == true) {
-                                resolve(result)
-                            }
-                            else {
-                                swal.fire("Error deleting!", "Please try again", "error");
-                            }
+                        success: function (result) {                           
+                            swal.fire("success", "Deleted Successfully", "success");
+                            window.location = "/User/InstaZoomAccounts";
                         },
                         error: function () {
                             swal.fire("Error deleting!", "Please try again", "error");
+                             window.location = "/User/InstaZoomAccounts";
                         }
                     })
                 })
@@ -256,12 +253,12 @@
                 method: 'POST',
                 success: function (result) {
                     if (result == true) {
-                        swal.fire("success", "Added Successfully", "success").then(function () {
-                            window.location = "/User/InstaZoomAccounts";
-                        });
+                        swal.fire("success", "Added Successfully", "success");
+                        window.location = "/User/InstaZoomAccounts";
                     }
                     else {
                         swal.fire("Error deleting!", "Please try again", "error");
+                        window.location = "/User/InstaZoomAccounts";
                     }
                 }
             });

@@ -297,7 +297,7 @@ namespace Risebird.Web.Controllers
                         var model = new InterviewRequestVM();
                         model = _interviewRequestService.FetchInterviewRequestById(id);
                         await SetInterviewRequestSelectLists();
-                        var Skillset = await _irfRepository.GetSkills();                       
+                        var Skillset = await _irfRepository.GetSkills();
                         if (Skillset != null)
                         {
                             Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
@@ -444,7 +444,7 @@ namespace Risebird.Web.Controllers
             var _country = from InterviewRequestCountry s in Enum.GetValues(typeof(InterviewRequestCountry))
                            select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CountryList = new SelectList(_country, "ID", "Name");
-            ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+            ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
@@ -538,7 +538,7 @@ namespace Risebird.Web.Controllers
                 model.RequestedBy = emailid;
                 var Skillset = await _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
-                
+
                 if (Skillset != null)
                 {
                     Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
@@ -944,7 +944,7 @@ namespace Risebird.Web.Controllers
         {
             var list = new List<SelectListItem>();
             var modellist = await _userService.GetInterviewerEntitleById(assessmentgroupid);
-            var skillset = _skillService.GetSkills();
+            var skillset = await _skillService.GetSkills();
             var primaryskilllist = new List<SelectListItem>();
             foreach (var item in skillset)
             {

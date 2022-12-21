@@ -6,7 +6,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -362,7 +361,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -580,8 +579,8 @@ namespace Risebird.Business
         {
             try
             {
-                return await _userRepository.GetRecruiters()?? new List<Recruiter>();
-               
+                return await _userRepository.GetRecruiters() ?? new List<Recruiter>();
+
             }
             catch (Exception e)
             {
@@ -688,7 +687,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -713,7 +712,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
             }
         }
@@ -725,7 +724,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
             }
         }
@@ -875,7 +874,7 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -887,7 +886,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -903,7 +902,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

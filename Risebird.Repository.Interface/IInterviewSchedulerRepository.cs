@@ -1,4 +1,5 @@
-﻿using Risebird.Entities.ViewModel;
+﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetIRFList();
         Task<List<daytimes_second>> FetchSlots(DateTime value, string uniqueid);
         Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime);
-        Task<string> FetchJDTitle(string IRFId);
+        Task<JDDetails> FetchJDTitle(string IRFId);
         Task<string> UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail);
         Task<ScheculeInterviewIRFVM> fetchIRFClientDetails(string IRFId);
         Task<int> AutoCreateEvent(daytimes_report model);

@@ -1,23 +1,21 @@
-using System;
 using Dapper;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Logging;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
-using System.Threading.Tasks;
-using SendGrid.Helpers.Mail;
-using System.Data;
-using System.IO;
-using System.Text;
-using Risebird.Entities.ViewModel;
-using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Auth;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using SendGrid.Helpers.Mail;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -40,7 +38,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("InterviewNotifications")]
-        public async Task Run([TimerTrigger("0 0 1 * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 1 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"InterviewNotifications : C# Timer trigger function started executing at: {DateTime.Now}");
             try
@@ -52,9 +50,10 @@ namespace Risebird.MicroService
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    unfilteredCandidate = con.Query<NoScheduleCandidate>(queryCandidate).ToList();
+                    var noScheduleCandidatesData = await con.QueryAsync<NoScheduleCandidate>(queryCandidate);
+                    unfilteredCandidate = noScheduleCandidatesData.Where(x => x.EndDate > DateTime.Now).ToList();
                 }
-                unfilteredCandidate = unfilteredCandidate.Where(x => x.EndDate > DateTime.Now).ToList();
+
                 foreach (var item in unfilteredCandidate)
                 {
                     int checkScheduleCount = 0;
@@ -65,7 +64,7 @@ namespace Risebird.MicroService
                     dynamicParameters.Add("@timeNow", DateTime.Now);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var scheduleResult = con.Query<int>(checkQuery, dynamicParameters).ToList();
+                        var scheduleResult = await con.QueryAsync<int>(checkQuery, dynamicParameters);
                         checkScheduleCount = scheduleResult.Count();
                     }
                     if (checkScheduleCount == 0)
@@ -79,12 +78,13 @@ namespace Risebird.MicroService
                 var queryToday = "select InterviewMeetings.*, IRF.id as IRFintId, IRF.JDTiltle,Client.[Name] as Client from InterviewMeetings join IRF on InterviewMeetings.IRFId=IRF.IRFId join Client on Client.id=IRF.ClientId  where confirmationStatus=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    todayMeetings = con.Query<ScheduledCandidate>(queryToday).ToList();
-                }
-                if (todayMeetings != null)
-                {
-                    todayMeetings = todayMeetings.Where(x => x.interviewDate.Date == DateTime.Today.Date).ToList();
+                    var todayMeetingsdata = await con.QueryAsync<ScheduledCandidate>(queryToday);
 
+                    if (todayMeetingsdata != null)
+                    {
+                        todayMeetings = todayMeetingsdata.Where(x => x.interviewDate.Date == DateTime.Today.Date).ToList();
+
+                    }
                 }
 
                 //Completed yesterday
@@ -92,11 +92,12 @@ namespace Risebird.MicroService
                 var queryCompleted = "select im.*, ic.MeetingStatus,irf.id as IRFintId, irf.JDTiltle,Client.[Name] as Client  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join irf on irf.irfId = im.IRFId join Client on Client.id = irf.ClientId where MeetingStatus in (1,4)";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    completedMeetings = con.Query<CompletedMeetings>(queryCompleted).ToList();
-                }
-                if (completedMeetings != null)
-                {
-                    completedMeetings = completedMeetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
+                    var completedMeetingsdata = await con.QueryAsync<CompletedMeetings>(queryCompleted);
+
+                    if (completedMeetingsdata != null)
+                    {
+                        completedMeetings = completedMeetingsdata.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
+                    }
                 }
 
                 //selection status
@@ -104,15 +105,16 @@ namespace Risebird.MicroService
                 var querySelected = "select im.*, ic.MeetingStatus, ic.InterviewStatus,irf.id as IRFintId, irf.JDTiltle,Client.[Name] as Client  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join irf on irf.irfId = im.IRFId join Client on Client.id = irf.ClientId where MeetingStatus in (4)";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    meetingsSelected = con.Query<MeetingSelectionStatus>(querySelected).ToList();
-                }
-                if (meetingsSelected != null)
-                {
-                    var meetings1 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date && x.interviewDate.Hour <= 9).ToList();
-                    var meetings2 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-2).Date && x.interviewDate.Hour > 9).ToList();
-                    meetings1.AddRange(meetings2);
-                    meetingsSelected = meetings1;
-                    //meetingsSelected = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
+                    meetingsSelected = (List<MeetingSelectionStatus>)await con.QueryAsync<MeetingSelectionStatus>(querySelected);
+
+                    if (meetingsSelected != null)
+                    {
+                        var meetings1 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date && x.interviewDate.Hour <= 9).ToList();
+                        var meetings2 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-2).Date && x.interviewDate.Hour > 9).ToList();
+                        meetings1.AddRange(meetings2);
+                        meetingsSelected = meetings1;
+                        //meetingsSelected = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
+                    }
                 }
 
 
@@ -187,21 +189,22 @@ namespace Risebird.MicroService
 
                     }
                     // Get HR mails
-                    var hrMailList = new List<string>();
                     var checkQuery = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (1,4)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", irf.id);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        hrMailList = con.Query<string>(checkQuery, dynamicParameters).ToList();
-                    }
-                    if (hrMailList == null || hrMailList.Count() == 0)
-                    {
-                        continue;
-                    }
+                        var hrMailListdata = await con.QueryAsync<string>(checkQuery, dynamicParameters);
 
-                    //pass the data to send Email
-                    SendMailToHR(hrMailList, noScheduleCandidateEmails, todayCandidateEmails, completedCandidateEmails, selectedCandidatesEmails, irf.IRFId, irf.Client, irf.JDTiltle.Split('|')[0], irf.id, null);
+                        if (hrMailListdata == null || hrMailListdata.Count() == 0)
+                        {
+                            continue;
+                        }
+
+                        //pass the data to send Email
+                        await SendMailToHR(hrMailListdata.ToList(), noScheduleCandidateEmails, todayCandidateEmails, completedCandidateEmails, selectedCandidatesEmails, irf.IRFId, irf.Client, irf.JDTiltle.Split('|')[0], irf.id, null);
+
+                    }
                     log.LogInformation($"Interview notifications Timer trigger function executed for IRFId: {irf.IRFId}");
 
                 }
@@ -214,7 +217,7 @@ namespace Risebird.MicroService
             log.LogInformation($"InterviewNotifications : C# Timer trigger function finished executing at: {DateTime.Now}");
 
         }
-        private void SendMailToHR(List<string> hrEmails, List<string> noScheduleCandidateEmails, List<string> todayCandidateEmails, List<string> completedCandidateEmails, List<string> selectedCandidatesEmails, string irfName, string client, string primarySkill, int? irfId = null, int? interviewId = null)
+        private async Task SendMailToHR(List<string> hrEmails, List<string> noScheduleCandidateEmails, List<string> todayCandidateEmails, List<string> completedCandidateEmails, List<string> selectedCandidatesEmails, string irfName, string client, string primarySkill, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -420,13 +423,13 @@ namespace Risebird.MicroService
 
                 object[] parameters = new object[] { irfName, client, primarySkill, sbNotScheduled, sbToday, sbCompleted, sbSelected };
                 masg.Subject = "Interview Meeting Status Update.";//+ DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy");
-                string rawEmail = GetBlobData("mailtemplate", "ConsolidatedInterviewNotifications.html");
+                string rawEmail = await GetBlobData("mailtemplate", "ConsolidatedInterviewNotifications.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 masg.HtmlContent = msgBody;
                 //CommonSendMail _common = new CommonSendMail();
                 //_ = _common.SendMail(masg, irfId, interviewId).Result;
-                _ =  _notificationHelper.SendMail(masg, irfId, interviewId).Result;
+                _ = await _notificationHelper.SendMail(masg, irfId, interviewId);
 
                 return;
             }
@@ -436,11 +439,11 @@ namespace Risebird.MicroService
 
             }
         }
-        private string GetBlobData(string containerName, string fileName)
+        private async Task<string> GetBlobData(string containerName, string fileName)
         {
             try
             {
-                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
+                CloudBlobContainer blobContainer = await GetCloudBlobContainer(containerName);
                 CloudBlob blob = blobContainer.GetBlobReference(fileName);
                 string contents; /* content to append */
                 if (!blob.ExistsAsync().Result)
@@ -461,17 +464,17 @@ namespace Risebird.MicroService
                 return null;
             }
         }
-        private CloudBlobContainer GetCloudBlobContainer(string containerName)
+        private async Task<CloudBlobContainer> GetCloudBlobContainer(string containerName)
         {
             CloudStorageAccount account = GetStorageAccount();
             CloudBlobClient blobClient = account.CreateCloudBlobClient();
             CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-            if (!blobContainer.ExistsAsync().Result)
+            if (!(await blobContainer.ExistsAsync()))
             {
-                blobContainer.CreateIfNotExistsAsync();
+                await blobContainer.CreateIfNotExistsAsync();
                 var permission = new BlobContainerPermissions();
                 permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                blobContainer.SetPermissionsAsync(permission);
+                await blobContainer.SetPermissionsAsync(permission);
             }
             return blobContainer;
         }

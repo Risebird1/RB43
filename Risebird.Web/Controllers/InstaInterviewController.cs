@@ -114,7 +114,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new InstaMeetingVM();
-                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                        ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                         //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                         //Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         //model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
@@ -211,7 +211,7 @@ namespace Risebird.Web.Controllers
                                                 //if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                                                 //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                                 //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                                ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                                 return View(meeting);
                                             }
@@ -240,7 +240,7 @@ namespace Risebird.Web.Controllers
                                         //if (profileName == "SeniorHR")
                                         //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                         //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                        ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                         ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                         return View(meeting);
                                     }
@@ -252,7 +252,7 @@ namespace Risebird.Web.Controllers
                                     //if (profileName == "SeniorHR" )
                                     //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                     //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                    ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                    ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                     ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                     return View(meeting);
                                 }
@@ -264,7 +264,7 @@ namespace Risebird.Web.Controllers
                                 //if (profileName == "SeniorHR")
                                 //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                 //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                 return View(meeting);
                             }
@@ -286,7 +286,7 @@ namespace Risebird.Web.Controllers
                             //if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                             //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                            ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                            ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                             ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                             return View("CreateRequest", meeting);
                         }
@@ -323,7 +323,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
-                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                        ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
 
                         //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                         //Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
@@ -420,7 +420,7 @@ namespace Risebird.Web.Controllers
                                                 //if (profileName == "SeniorHR")
                                                 //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                                 //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                                ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                                 return View(meeting);
                                             }
@@ -448,7 +448,7 @@ namespace Risebird.Web.Controllers
                                         //if (profileName == "SeniorHR")
                                         //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                         //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                        ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                         ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                         return View("EditRequest", meeting);
                                     }
@@ -460,7 +460,7 @@ namespace Risebird.Web.Controllers
                                     //if (profileName == "SeniorHR")
                                     //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                     //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                    ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                    ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                     ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                     return View("EditRequest", meeting);
                                 }
@@ -472,7 +472,7 @@ namespace Risebird.Web.Controllers
                                 //if (profileName == "SeniorHR")
                                 //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                                 //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                                 return View(meeting);
                             }
@@ -494,7 +494,7 @@ namespace Risebird.Web.Controllers
                             //if (profileName == "SeniorHR" || profileName == "SupportAdmin")
                             //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                            ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                            ViewBag.AssessmentCategory = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                             ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                             return View("EditRequest", meeting);
                         }

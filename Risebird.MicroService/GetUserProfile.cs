@@ -34,7 +34,7 @@ namespace Risebird.MicroService
             string name = req.Query["name"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var profileName = _userRepository.GetUserProfileBasedOnEmailId(requestBody);
+            var profileName = await _userRepository.GetUserProfileBasedOnEmailId(requestBody);
 
 
             return new OkObjectResult(profileName);

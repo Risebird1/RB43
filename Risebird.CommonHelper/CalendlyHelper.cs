@@ -182,7 +182,7 @@ namespace Risebird.CommonHelper
                     { "Authorization", "Bearer " + _calendlyToken },
                     { "Content-Type", "application/json" }
                 };
-                
+
                 var response = _httpRequestHelper.MakeHttpRequest(endPoint, Method.Post, null, headers).Result;
 
                 //var content = response.Content;

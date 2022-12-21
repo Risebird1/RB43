@@ -219,7 +219,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (await  _supportService.UpdateSupportHR(hrDetails))
+                    if (await _supportService.UpdateSupportHR(hrDetails))
                     {
                         TempData["SuccessErrorMessageSupport"] = "Support HR has been updated Successfully!";
                         return RedirectToAction("Index");

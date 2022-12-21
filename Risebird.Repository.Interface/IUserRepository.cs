@@ -65,9 +65,9 @@ namespace Risebird.Repository.Interface
         Task<List<ZoomAccountDetailsVM>> FetchInstaZoomAccounts();
         Task<bool> DeleteInstaZoomAccount(int Accountid);
         Task<bool> AddInstaZoomAccount(string AccountEmail);
-         Task<string> GetCurrentUsername(string emailId);
+        Task<string> GetCurrentUsername(string emailId);
         Task<bool> CheckMultiSession(string emailId);
-         Task<bool> ClearSessionForOthersUsers(string emailId);
+        Task<bool> ClearSessionForOthersUsers(string emailId);
         Task<bool> GetClientPasswordResetEnableStatus(int clientId);
         Task<int> DisableInactiveUser();
         Task<string> GetUserProfileBasedOnEmailId(string emailId);
@@ -84,7 +84,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateClientPremiumUser(ClientUserVM clientUser);
         Task<ClientUserVM> GetClientPremiumUserDetails(string emailID);
         Task<string> GetWhatsappno(string emailId);
-         Task<string> UpdateWhatsappno(string emailId, string WhatsappNumber);
+        Task<string> UpdateWhatsappno(string emailId, string WhatsappNumber);
         Task<ClientUserVM> GetClientDetailsByIRFId(string IRFId);
         Task<List<ClientUserVM>> GetClientUsersForReviewNotification();
     }

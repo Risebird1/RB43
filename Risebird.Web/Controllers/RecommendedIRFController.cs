@@ -618,10 +618,10 @@ namespace Risebird.Web.Controllers
             model.IRFRecommendations = new IRFRecommendations();
             if (model.UseAsCloneTemplate)
             {
-                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                model.IRFRecommendations.CategoryList = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
                 if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
                 {
-                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(await _skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value), "id", "AssessmentGroup");
                 }
             }
             return;

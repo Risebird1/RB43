@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
@@ -23,24 +24,24 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public Settings GetAllSettings()
+        public async Task<Settings> GetAllSettings()
         {
             try
             {
                 var query = "Select * from Settings";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Settings>(query);
+                    var results = await con.QueryAsync<Settings>(query);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
-        public bool UpdateSettings(Settings settings)
+        public async Task<bool> UpdateSettings(Settings settings)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query(con, "usp_UpdateSettings", parameters,
+                    await SqlMapper.QueryAsync(con, "usp_UpdateSettings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
 
@@ -64,30 +65,30 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
 
             return false;
         }
 
-        public int GetInterviewUnassignedMinutes()
+        public async Task<int> GetInterviewUnassignedMinutes()
         {
             try
             {
                 var query = "Select InterviewerUnassignedMinutes from Settings";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query);
+                    var results = await con.QueryAsync<int>(query);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
 

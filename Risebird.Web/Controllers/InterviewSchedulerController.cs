@@ -366,7 +366,8 @@ namespace Risebird.Web.Controllers
                 //{
                 //    interviewOnDevice = interviewOnDevice + " " + "Silent place with appropriate lighting";
                 //}
-                var JDTitle = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
+                var jdDetails = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
+                //var JDTitle = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
                 TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);
                 var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
@@ -377,7 +378,7 @@ namespace Risebird.Web.Controllers
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        zoomLink = await CreateZoomMeeting(model.Name, JDTitle, indianTime);
+                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         if (zoomLink == null)
                         {
@@ -452,15 +453,15 @@ namespace Risebird.Web.Controllers
                         {
                             TO = model.Email,
                             //CC = accountEmail,//zoomLink.accountemail,
-                            Subject = model.ClientName + " Interview - " + model.Name + " | " + JDTitle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                            Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
-                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?());
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink);
                         }
                         else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                         {
-                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?());
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink);
                         }
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;

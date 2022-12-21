@@ -31,7 +31,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Skill>> GetSkills();
         Task<bool> AddInterviewReport(InterviewReport reportDetails, string loggedInEmailId);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
-        IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId = 0);
+        Task<IEnumerable<InterviewReport>> GetInterviewReportById(int id, int irfId = 0);
 
         IEnumerable<JoinabilityReport> GetJoinabilityReport(int id);
         IEnumerable<SelectabilityReport> GetSelectabilityReport(int id);
@@ -41,8 +41,8 @@ namespace Risebird.Repository.Interface
         ProctoringReport GetProctoringReport(int id);
         Task<IEnumerable<LevelTech>> GetLevelTech();
         Task<IEnumerable<string>> GetIRFName(int id);
-        IRFDetails GetIRFDetails(int id);
-        bool GetIRFbyId(int irfId);
+        Task<IRFDetails> GetIRFDetails(int id);
+        Task<bool> GetIRFbyId(int irfId);
         IEnumerable<IRF> GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
         IEnumerable<ClientUser> GetClientDetails(string emailId);
@@ -58,7 +58,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID, string status);
         Task<bool> CancelInterview(int meetingid);
         List<string> ListInterviewersMail(string candidateEmail, string interviewDate);
-        int GetCandidateId(int id, string irfName);
+        Task<int> GetCandidateId(int id, string irfName);
         bool UpdateInterviewVerificationScore(int meetingId, double confidence);
         bool UpdateJoiningVerificationScore(int meetingId, double confidence);
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
@@ -100,7 +100,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
         Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
-        Candidate GetCandidateSharedDetails(int id);
+        Task<Candidate> GetCandidateSharedDetails(int id);
         Task<string> AddVedioShare(string email, string vedioid, string Emailids);
         Task<int> CheckVedioShare(string vedioid, string Emailid);
         string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);

@@ -100,7 +100,7 @@ namespace Risebird.Web.Controllers
                                           select new { ID = (int)s, Name = s.GetDescription() };
                     //var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                     //                  select new { ID = (int)s, Name = s.GetDescription() };
-                    var skillset = _skillService.GetSkills();
+                    var skillset = await _skillService.GetSkills();
 
                     var resultset = new MCQDropdowndetails();
 
@@ -1454,7 +1454,7 @@ namespace Risebird.Web.Controllers
                                           select new { ID = (int)s, Name = s.GetDescription() };
                     var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
                                           select new { ID = (int)s, Name = s.GetDescription() };
-                    var skillset = _skillService.GetSkills();
+                    var skillset = await _skillService.GetSkills();
 
                     var resultset = new MCQDropdowndetails();
 
@@ -1812,7 +1812,7 @@ namespace Risebird.Web.Controllers
                                           select new { ID = (int)s, Name = s.GetDescription() };
                     var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
                                           select new { ID = (int)s, Name = s.GetDescription() };
-                    var skillset = _skillService.GetSkills();
+                    var skillset = await _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                     resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");

@@ -40,7 +40,7 @@ namespace Risebird.MicroService
                 string token = _zoomHelper.ZoomToken();
 
                 // delete zoom meeting and its recording from Zoom
-                Parallel.ForEach(meetingsToBeDeleted, meeting =>
+                Parallel.ForEach(meetingsToBeDeleted, async meeting =>
                 {
                     try
                     {
@@ -115,7 +115,7 @@ namespace Risebird.MicroService
                     }
                     catch (Exception ex)
                     {
-                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
                         return;
                     }
