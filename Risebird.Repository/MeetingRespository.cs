@@ -1489,7 +1489,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId = 0)
+        public async Task<IEnumerable<InterviewReport>> GetInterviewReportById(int id, int irfId = 0)
         {
             try
             {
@@ -1498,14 +1498,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IrfId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewReportById", dynamicParameters,
+                    return await SqlMapper.QueryAsync<InterviewReport>(con, "usp_GetInterviewReportById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1595,7 +1595,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IRFDetails GetIRFDetails(int id)
+        public async Task<IRFDetails> GetIRFDetails(int id)
         {
             try
             {
@@ -1604,14 +1604,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRFDetails>(query, dynamicParameters);
+                    var results = await con.QueryAsync<IRFDetails>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1697,7 +1697,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool GetIRFbyId(int irfId)
+        public async Task<bool> GetIRFbyId(int irfId)
         {
             try
             {
@@ -1706,7 +1706,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<IRF>(query, dynamicParameters);
+                    var result = await con.QueryAsync<IRF>(query, dynamicParameters);
                     if (result.Count() > 0)
                     {
                         return true;
@@ -1717,13 +1717,13 @@ namespace Risebird.Repository
             }
             catch (SqlException e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -1918,7 +1918,7 @@ namespace Risebird.Repository
             return parameters;
         }
 
-        public int GetCandidateId(int id, string irfName)
+        public async Task<int> GetCandidateId(int id, string irfName)
         {
             int result = 0;
             try
@@ -1930,14 +1930,14 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    result = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    result = (await con.QueryAsync<int>(query, dynamicParameters)).FirstOrDefault();
                     return result;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return result;
             }
         }
@@ -2908,7 +2908,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public Candidate GetCandidateSharedDetails(int id)
+        public async Task<Candidate> GetCandidateSharedDetails(int id)
         {
             try
             {
