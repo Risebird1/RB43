@@ -1148,6 +1148,14 @@
             }
         });
     }
+    function openCandidateFeedbackModel() {
+        var modal = document.getElementById("CandidateFeedbackModel");
+        modal.style.display = "block";
+    }
+    function closeCandidateFeedbackModel() {
+        var modal = document.getElementById("CandidateFeedbackModel");
+        modal.style.display = "none";
+    }
     function BindCandidateFeedback(Data) {
         var html = '';
         if (Data == null) {
