@@ -829,7 +829,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Admin")
+                    if (profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         ViewBag.PageName = "ClientFeedbacks";
                         ViewBag.type = "Audio Feedback";
@@ -864,7 +864,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Admin")
+                    if (profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         ViewBag.PageName = "ClientFeedbacks";
                         ViewBag.type = "Broadcast Messages";

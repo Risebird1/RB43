@@ -888,7 +888,7 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75",@style="font-weight: bold !important;" })</td>
+                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250",@style="font-weight: bold !important;" })</td>
                                                             </tr>
                                                         }
                                                     }

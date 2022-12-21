@@ -232,7 +232,7 @@ namespace Risebird.CommonHelper
 
                 TwilioClient.Init(accountSid, authToken);
 
-                var recordingData = RecordingResource.Fetch(
+                var recordingData = await RecordingResource.FetchAsync(
                     pathSid: recordingSid
                 );
 
