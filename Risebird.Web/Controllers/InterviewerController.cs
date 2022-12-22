@@ -862,8 +862,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult IsEmailIdExists(string EmailId, int UserId)
+        public JsonResult IsEmailIdExists(string EmailId, int UserId, bool IsEdit)
         {
+            if(IsEdit)
+            {
+
+                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
+            }
             //check if the Email Id exists
             IEnumerable<string> EmailIdList = _interviewerService.GetEmailIds(UserId);
             if (EmailIdList.Contains(EmailId.ToUpper()))

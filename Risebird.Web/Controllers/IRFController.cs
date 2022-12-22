@@ -1270,7 +1270,7 @@ namespace Risebird.Web.Controllers
                                 return View(model);
                             }
 
-                            if (_irfService.AddSkillComments(model))
+                            if (await _irfService.AddSkillComments(model))
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
                                 return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });

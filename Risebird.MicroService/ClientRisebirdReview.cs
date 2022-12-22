@@ -33,7 +33,7 @@ namespace Risebird.MicroService
             _userService = userService;
         }
         [FunctionName("ClientRisebirdReview")]
-        public async Task Run([TimerTrigger("0 0 10 * * 2,5")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 10 * * 2")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _interviewsdetails = await _userService.GetClientUsersForReviewNotification();
