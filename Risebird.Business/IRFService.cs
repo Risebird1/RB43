@@ -92,9 +92,6 @@ namespace Risebird.Business
         {
             try
             {
-
-                //var call = _twilioHelper.MakePhoneCall("+919284487005");
-
                 var hrList = new List<Users>();
                 var users = _irfRepository.GetUsers();
                 foreach (var item in users ?? new List<Users>())
@@ -310,16 +307,16 @@ namespace Risebird.Business
             }
         }
 
-        public bool AddSkillComments(TechSkillComments skillComments)
+        public async Task<bool> AddSkillComments(TechSkillComments skillComments)
         {
             try
             {
-                return _irfRepository.AddSkillComments(skillComments).Result;
+                return await _irfRepository.AddSkillComments(skillComments);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -342,7 +339,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.ArchiveIRF(id).Result;
+                return await _irfRepository.ArchiveIRF(id);
             }
 
             catch (Exception e)
@@ -355,7 +352,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.UnArchiveIRF(id).Result;
+                return await _irfRepository.UnArchiveIRF(id);
             }
 
             catch (Exception e)
@@ -368,7 +365,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.DeleteCandidate(id).Result;
+                return await _irfRepository.DeleteCandidate(id);
             }
 
             catch (Exception e)
@@ -973,7 +970,7 @@ namespace Risebird.Business
                 var phoneValidate = numberOfLetters >= 9 && int.TryParse(obj.Phone, out int value);
                 obj.Phone = phoneValidate ? obj.Phone : string.Empty;
 
-                var result = _irfRepository.AddCandidate(obj).Result;
+                var result = await _irfRepository.AddCandidate(obj);
                 if (result.Contains("successfully"))
                 {
                     //get all resume evaluators and hrs to send mails to
@@ -1189,7 +1186,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.AddUpdateInterviewPlanner(model).Result;
+                return await _irfRepository.AddUpdateInterviewPlanner(model);
             }
 
             catch (Exception e)
@@ -1206,8 +1203,8 @@ namespace Risebird.Business
                 int waste = 0;
                 var emailList = new List<string>();
                 var funnelData = new IRFFunnel();
-                var candidates = _irfRepository.GetIRFCandidates(irfId);
-                if (candidates.Result.Count() == 0)
+                var candidates = await _irfRepository.GetIRFCandidates(irfId);
+                if (candidates.Count() == 0)
                 {
                     //get candidates from Meeting table by passing IRFId
                     emailList = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
@@ -1216,9 +1213,9 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    emailList = candidates.Result.Select(x => x.EmailId).ToList();
-                    funnelData.TotalCandidates = candidates.Result.Count();
-                    funnelData.TotalInvites = candidates.Result.Where(x => x.TotalInvites > 0).Count();
+                    emailList = candidates.Select(x => x.EmailId).ToList();
+                    funnelData.TotalCandidates = candidates.Count();
+                    funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
                 }
 
                 //get interviewMeetings where candidateEmail and irfName matches
@@ -1330,7 +1327,7 @@ namespace Risebird.Business
             try
             {
                 //update meeting status
-                var updatedMeetings = _irfRepository.UpdateMeetingStatus(irfName).Result.ToList();
+                var updatedMeetings = await _irfRepository.UpdateMeetingStatus(irfName);
 
                 //send mails
                 if (updatedMeetings != null && updatedMeetings.Count() != 0)
@@ -1415,7 +1412,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.SubscribeCuratedGroup(id, emailId, profile).Result;
+                return await _irfRepository.SubscribeCuratedGroup(id, emailId, profile);
             }
 
             catch (Exception e)
@@ -1428,7 +1425,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.UnSubscribeCuratedGroup(id, emailId, profile).Result;
+                return await _irfRepository.UnSubscribeCuratedGroup(id, emailId, profile);
             }
 
             catch (Exception e)
@@ -1481,7 +1478,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.AddCuratedGroup(irfList, cgName).Result;
+                return await _irfRepository.AddCuratedGroup(irfList, cgName);
             }
 
             catch (Exception e)
@@ -1904,7 +1901,7 @@ namespace Risebird.Business
             try
             {
                 var userId = _irfRepository.GetUserId(emailId, profile);
-                var data = _irfRepository.AddQuickMultipleCandidates(candidateList, userId).Result;
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, userId);
 
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 var inviteCount = irf.TotalInvites;
@@ -1922,7 +1919,7 @@ namespace Risebird.Business
 
                         //int i = 0;
 
-                        Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), row =>
+                        Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
                        {
                            string value = row.ItemArray[1].ToString();
                            if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
@@ -1931,22 +1928,22 @@ namespace Risebird.Business
 
                                if (candidateEmail != null && calendlyLink != null)
                                {
-                                   var candidate = _irfRepository.GetCandidateByIRF(irfId, candidateEmail).Result;
+                                   var candidate = await _irfRepository.GetCandidateByIRF(irfId, candidateEmail);
                                    string mailResult = string.Empty;
                                    string oneTimeSchedulingLink = string.Empty;
                                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                                    {
                                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                                       oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
+                                       oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                                        {
-                                           oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
+                                           oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
                                        }
                                    }
                                    else
                                    {
-                                       oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                                       oneTimeSchedulingLink = await _calendlyHelper.GenerateOneTimeSchedulingLink(irfId);
                                    }
 
                                    if (irf.BussinessType == "B2B")
@@ -1984,12 +1981,12 @@ namespace Risebird.Business
                                    //auto call candidate here
                                    try
                                    {
-                                       _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
+                                      await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
 
                                    }
                                    catch (Exception ex)
                                    {
-                                       _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                      await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                        return;
                                    }
 
@@ -2808,7 +2805,7 @@ namespace Risebird.Business
                     }
                     else
                     {
-                        oneTimeSchedulingLink1 = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                        oneTimeSchedulingLink1 = await _calendlyHelper.GenerateOneTimeSchedulingLink(irfId);
                     }
                     await _notificationHelper.SendRedoCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                     WhatsAppVM _whatsapp = new WhatsAppVM();
