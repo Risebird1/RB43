@@ -1643,7 +1643,7 @@ namespace Risebird.Web.Controllers
                             //filter.InterviewDuration.Contains(c.interviewDuration)
                             myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
                             && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                            && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
                         }
@@ -1802,7 +1802,7 @@ namespace Risebird.Web.Controllers
                             //filter.InterviewDuration.Contains(c.interviewDuration)
                             myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
                             && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                            && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
@@ -2306,7 +2306,7 @@ namespace Risebird.Web.Controllers
 
                             selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                             && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                             && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
                             && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
@@ -2705,7 +2705,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (comments == null)
                         comments = new InterviewComments();
-                    await GetStatusList(comments);
+                     GetStatusList(comments);
                     return View("InterviewComments", comments);
                 }
                 else
@@ -2750,7 +2750,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedAadharFileURL == null)
                                     {
                                         ModelState.AddModelError(string.Empty, "Aadhar Upload has failed.");
-                                        await GetStatusList(interviewComments);
+                                        GetStatusList(interviewComments);
                                         return View("InterviewComments", interviewComments);
                                     }
                                     else
@@ -2771,7 +2771,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedaudioFileURL == null)
                                     {
                                         ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                        await GetStatusList(interviewComments);
+                                        GetStatusList(interviewComments);
                                         return View("InterviewComments", interviewComments);
                                     }
                                     else
@@ -2793,7 +2793,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedvideoFileURL == null)
                                     {
                                         ModelState.AddModelError(string.Empty, "Video Upload has been Failed.");
-                                        await GetStatusList(interviewComments);
+                                        GetStatusList(interviewComments);
                                         //return View("InterviewComments", interviewComments);
                                     }
                                     else
@@ -2823,7 +2823,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         InterviewComments comments = new InterviewComments();
-                        await GetStatusList(comments);
+                         GetStatusList(comments);
                         return View("InterviewComments", comments);
                     }
                 }
@@ -3231,7 +3231,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private async Task GetStatusList(InterviewComments model)
+        private void GetStatusList(InterviewComments model)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -3791,7 +3791,7 @@ namespace Risebird.Web.Controllers
                     //filter.InterviewDuration.Contains(c.interviewDuration)
                     myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
                     && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                   && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                   && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                    && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                    && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
@@ -6149,7 +6149,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         model.Emailid = emailId;
-                        var redflag = await CheckFlagCount(model);
+                        var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
@@ -6277,7 +6277,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Save QCForm
-        public async Task<int> CheckFlagCount(QCFormVM model)
+        public int CheckFlagCount(QCFormVM model)
         {
             int flags = 0;
             if (!model.IsCodingPresent)

@@ -134,9 +134,9 @@ namespace Risebird.CommonHelper
 
                 return blob.ExistsAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -263,9 +263,9 @@ namespace Risebird.CommonHelper
 
                 return insertResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -526,9 +526,9 @@ namespace Risebird.CommonHelper
                 var table = GetTable(tableName);
                 table.ExecuteBatchAsync(tableBatchOperation);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 

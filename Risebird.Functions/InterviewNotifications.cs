@@ -409,10 +409,9 @@ namespace Risebird.Functions
                 _ = _common.SendMail(masg, irfId, interviewId).Result;
                 return;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
-
             }
         }
         public static string GetBlobData(string containerName, string fileName)

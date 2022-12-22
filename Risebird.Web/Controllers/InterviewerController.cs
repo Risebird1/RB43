@@ -114,7 +114,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     catch (Exception ex)
                                     {
-
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                     }
                                 }
                                 try
@@ -123,7 +123,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 }
                             }
                         }
@@ -2875,10 +2875,10 @@ namespace Risebird.Web.Controllers
                         selectListforsize.Add(selectItem);
                     }
                     model.TdsYears = selectListforsize;
-                    var _listcollection = _interviewerService.FetchTdsCertificatesbyEmailid(emailid);
+                    var _listcollection = await _interviewerService.FetchTdsCertificatesbyEmailid(emailid);
                     if (_listcollection != null)
                     {
-                        model.TdsCertificateCollection = _listcollection.Result.Where(x => x.year == year).ToList();
+                        model.TdsCertificateCollection = _listcollection.Where(x => x.year == year).ToList();
                     }
                     model.InterviewerEmailid = emailid;
                     return View(model);
@@ -2894,7 +2894,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AddTdsCertificate(int certificateid, string interviewerid, string year)
+        public IActionResult AddTdsCertificate(int certificateid, string interviewerid, string year)
         {
             TdsCertificateReport model = new TdsCertificateReport();
             if (certificateid != 0)
@@ -2913,6 +2913,7 @@ namespace Risebird.Web.Controllers
             model.id = certificateid;
             return PartialView(model);
         }
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]

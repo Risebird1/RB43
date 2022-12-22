@@ -1209,7 +1209,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> PaymentHistory(CandidateTimelineFilter filter)
+        public IActionResult PaymentHistory(CandidateTimelineFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {

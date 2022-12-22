@@ -6267,7 +6267,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CloneSkillChannnel()
+        public IActionResult CloneSkillChannnel()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -6303,7 +6303,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CloneSkillChannnel(InterviewFilter filter)
+        public IActionResult CloneSkillChannnel(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {

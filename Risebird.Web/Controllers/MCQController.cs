@@ -627,7 +627,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateSelectQuestionsD(string id)
+        public JsonResult CandidateSelectQuestionsD(string id)
         {
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
@@ -658,7 +658,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateQuestionsD()
+        public JsonResult CandidateQuestionsD()
         {
             var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
             var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
@@ -950,7 +950,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CandidateTestDetails(InterviewFilter filter, string id)
+        public IActionResult CandidateTestDetails(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1118,7 +1118,7 @@ namespace Risebird.Web.Controllers
                         }
                         catch (Exception ex)
                         {
-
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
                     return Json("success");
@@ -1391,7 +1391,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CandidateListDetails(InterviewFilter filter)
+        public IActionResult CandidateListDetails(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1697,7 +1697,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> InterviewerTestDetails(InterviewFilter filter, string id)
+        public IActionResult InterviewerTestDetails(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2048,7 +2048,7 @@ namespace Risebird.Web.Controllers
                             }
                             catch (Exception ex)
                             {
-
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             }
 
                         }
@@ -2137,7 +2137,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateSelectQuestionsDPremium(string id)
+        public JsonResult CandidateSelectQuestionsDPremium(string id)
         {
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSetPremium"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetailsPremium"));
@@ -2168,7 +2168,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateQuestionsDPremium()
+        public JsonResult CandidateQuestionsDPremium()
         {
             var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
             var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
@@ -2414,7 +2414,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CandidateTestDetailsPremium(InterviewFilter filter, string id)
+        public IActionResult CandidateTestDetailsPremium(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
