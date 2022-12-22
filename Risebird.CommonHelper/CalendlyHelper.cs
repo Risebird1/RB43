@@ -157,11 +157,11 @@ namespace Risebird.CommonHelper
                     { "Content-Type", "application/json" }
                 };
 
-                List<HttpParameters> parameters = new List<HttpParameters>();
+                List<HttpParameters> parameters = new List<HttpParameters>
                 {
-                    new HttpParameters() { name = "organization", value = _calendlyOrganizationIdentifier, parameterType = ParameterType.QueryString };
-                    new HttpParameters() { name = "application/json", value = 100, parameterType = ParameterType.QueryString };
-                }
+                    new HttpParameters() { name = "organization", value = _calendlyOrganizationIdentifier, parameterType = ParameterType.QueryString },
+                    new HttpParameters() { name = "application/json", value = 100, parameterType = ParameterType.QueryString }
+                };
 
                 var response = _httpRequestHelper.MakeHttpRequest(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/event_types"), Method.Get, null, headers, parameters).Result;
 
@@ -248,10 +248,10 @@ namespace Risebird.CommonHelper
                         { "Authorization", "Bearer " + _calendlyToken },
                         { "Content-Type", "application/json" }
                     };
-                    List<HttpParameters> parameters = new List<HttpParameters>();
+                    List<HttpParameters> parameters = new List<HttpParameters>
                     {
-                        new HttpParameters() { name = "application/json", value = JsonConvert.SerializeObject(postData), parameterType = ParameterType.RequestBody };
-                    }
+                        new HttpParameters() { name = "application/json", value = JsonConvert.SerializeObject(postData), parameterType = ParameterType.RequestBody }
+                    };
                     var response = await _httpRequestHelper.MakeHttpRequest(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/scheduling_links"), Method.Post, null, headers, parameters);
 
 

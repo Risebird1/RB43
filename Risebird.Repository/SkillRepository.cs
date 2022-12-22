@@ -183,13 +183,9 @@ namespace Risebird.Repository
                         con, "select * from Level", null, commandType: Text);
                 }
             }
-            catch (SqlException ex)
-            {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
             catch (Exception ex)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

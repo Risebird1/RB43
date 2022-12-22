@@ -1534,7 +1534,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientSelected = isClientSelected;
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";
-                        GetStatusList(model, irfId);
+                        await GetStatusList(model, irfId);
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
@@ -2016,7 +2016,7 @@ namespace Risebird.Web.Controllers
 
                             selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                             && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                              && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
                             && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
@@ -2507,7 +2507,7 @@ namespace Risebird.Web.Controllers
 
                     selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                    && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                    && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                     && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                      && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
                     && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
@@ -3280,7 +3280,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -3445,7 +3445,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -3671,7 +3671,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -3692,7 +3692,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
         }
@@ -4095,7 +4095,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RecruiterReport(InterviewFilter filter)
+        public IActionResult RecruiterReport(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -4177,7 +4177,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["RecruiterSuccessErrorMessage"] = "Recruiter disable Failed";
                 return Json("Failed");
             }

@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.ClientCompanyName = (await _clientService.GetClient(clientId))?.Name;
                         }
-                        await SetBillingOwnerList(clientId);
+                        SetBillingOwnerList(clientId);
                         if (TempData["SuccessMessageInterviewCreation"] != null)
                         {
                             ViewBag.Message = TempData["SuccessMessageInterviewCreation"].ToString();
@@ -199,7 +199,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                         await SetInterviewRequestSelectLists();
-                                        await SetBillingOwnerList(meeting.ClientId);
+                                        SetBillingOwnerList(meeting.ClientId);
                                         return View(meeting);
                                     }
                                 }
@@ -207,7 +207,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                     await SetInterviewRequestSelectLists();
-                                    await SetBillingOwnerList(meeting.ClientId);
+                                    SetBillingOwnerList(meeting.ClientId);
                                     return View(meeting);
                                 }
                             }
@@ -215,14 +215,14 @@ namespace Risebird.Web.Controllers
                             {
                                 ModelState.AddModelError("JDFile", "Jd File is required.");
                                 await SetInterviewRequestSelectLists();
-                                await SetBillingOwnerList(meeting.ClientId);
+                                SetBillingOwnerList(meeting.ClientId);
                                 return View(meeting);
                             }
                             if (meeting.TechSkills.Count() < 2)
                             {
                                 ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
                                 await SetInterviewRequestSelectLists();
-                                await SetBillingOwnerList(meeting.ClientId);
+                                SetBillingOwnerList(meeting.ClientId);
                                 return View(meeting);
                             }
                             var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(meeting.Categoryid);
@@ -550,7 +550,7 @@ namespace Risebird.Web.Controllers
                 {
                     model.ClientCompanyName = (await _clientService.GetClient(clientId))?.Name;
                 }
-                await SetBillingOwnerList(clientId);
+                SetBillingOwnerList(clientId);
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -619,7 +619,7 @@ namespace Risebird.Web.Controllers
                             {
                                 ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                 await SetInterviewRequestSelectLists();
-                                await SetBillingOwnerList(meeting.ClientId);
+                                SetBillingOwnerList(meeting.ClientId);
                                 return View(meeting);
                             }
                         }
@@ -627,7 +627,7 @@ namespace Risebird.Web.Controllers
                         {
                             ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                             await SetInterviewRequestSelectLists();
-                            await SetBillingOwnerList(meeting.ClientId);
+                            SetBillingOwnerList(meeting.ClientId);
                             return View(meeting);
                         }
                     }
@@ -635,14 +635,14 @@ namespace Risebird.Web.Controllers
                     {
                         ModelState.AddModelError("JDFile", "Jd File is required.");
                         await SetInterviewRequestSelectLists();
-                        await SetBillingOwnerList(meeting.ClientId);
+                        SetBillingOwnerList(meeting.ClientId);
                         return View(meeting);
                     }
                     if (meeting.TechSkills.Count() < 2)
                     {
                         ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
                         await SetInterviewRequestSelectLists();
-                        await SetBillingOwnerList(meeting.ClientId);
+                        SetBillingOwnerList(meeting.ClientId);
                         return View(meeting);
                     }
                     var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(meeting.Categoryid);
@@ -691,7 +691,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
             }
         }
-        public async Task SetBillingOwnerList(int ClientId)
+        public void SetBillingOwnerList(int ClientId)
         {
             var clientUsers = _irfService.GetClientUser(ClientId);
             if (clientUsers != null && clientUsers.Count() > 0)

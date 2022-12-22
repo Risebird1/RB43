@@ -501,7 +501,7 @@ namespace Risebird.Web.Controllers
                 System.IO.File.Delete(path);
                 _lstset.QuestionCount = _lstMCQ.Count();
                 var MCQId = _mCQService.AddorUpdateMCQSet(_lstset);
-                _mCQService.AddMCQQuestions(_lstMCQ, _lstset.PartitionKey);
+                await _mCQService.AddMCQQuestions(_lstMCQ, _lstset.PartitionKey);
             }
             return Json("Successfully Uploaded");
         }
@@ -627,7 +627,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateSelectQuestionsD(string id)
+        public JsonResult CandidateSelectQuestionsD(string id)
         {
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
@@ -658,7 +658,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateQuestionsD()
+        public JsonResult CandidateQuestionsD()
         {
             var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
             var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
@@ -836,7 +836,7 @@ namespace Risebird.Web.Controllers
                 //        _list.VideoLink = uploadedvideoFileURL;
                 //    }
                 //}
-                _mCQService.AddMCQCandidates(_list);
+                await _mCQService.AddMCQCandidates(_list);
                 if (!string.IsNullOrWhiteSpace(values.Name))
                 {
                     var aadhaarKYCmodel = new AadhaarData();
@@ -856,7 +856,7 @@ namespace Risebird.Web.Controllers
                     item.PartitionKey = date1;
                     item.CandidateID = _id;
                 }
-                _mCQService.AddMCQCandidateQuestions(resultset);
+                await _mCQService.AddMCQCandidateQuestions(resultset);
                 //Send mail to support team
                 var HrEmailaddresslist = await _supportService.GetAllSupportHR();
                 string HrEmailaddress = string.Empty;
@@ -950,7 +950,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CandidateTestDetails(InterviewFilter filter, string id)
+        public IActionResult CandidateTestDetails(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1113,12 +1113,12 @@ namespace Risebird.Web.Controllers
                                 _list.Expiretime = Expiretime;
                                 _list.ShareType = Candidate;
                                 _list.botactive = botactive;
-                                _mCQService.AddMCQSetShareList(_list);
+                                await _mCQService.AddMCQSetShareList(_list);
                             }
                         }
                         catch (Exception ex)
                         {
-
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
                     return Json("success");
@@ -1391,7 +1391,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CandidateListDetails(InterviewFilter filter)
+        public IActionResult CandidateListDetails(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1697,7 +1697,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> InterviewerTestDetails(InterviewFilter filter, string id)
+        public IActionResult InterviewerTestDetails(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2043,12 +2043,12 @@ namespace Risebird.Web.Controllers
                                     _list.EmailAddress = item.Trim();
                                     _list.roomId = _meetinglinks.roomId;
                                     _list.Expiretime = 48;
-                                    _mCQService.AddMCQSetShareListPremium(_list);
+                                   await _mCQService.AddMCQSetShareListPremium(_list);
                                 }
                             }
                             catch (Exception ex)
                             {
-
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             }
 
                         }
@@ -2137,7 +2137,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateSelectQuestionsDPremium(string id)
+        public JsonResult CandidateSelectQuestionsDPremium(string id)
         {
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSetPremium"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetailsPremium"));
@@ -2168,7 +2168,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> CandidateQuestionsDPremium()
+        public JsonResult CandidateQuestionsDPremium()
         {
             var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
             var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
@@ -2316,14 +2316,14 @@ namespace Risebird.Web.Controllers
                 _list.VideoLink = values.VideoLink;
                 _list.FeedbackComment = comments;
                 _list.Feedbackreating = rating;
-                _mCQService.AddMCQCandidatesPremium(_list);
+                await _mCQService.AddMCQCandidatesPremium(_list);
                 foreach (var item in resultset)
                 {
                     var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                     item.PartitionKey = date1;
                     item.CandidateID = _id;
                 }
-                _mCQService.AddMCQCandidateQuestionsPremium(resultset);
+                await _mCQService.AddMCQCandidateQuestionsPremium(resultset);
                 //Send mail to support team
                 var HrEmailaddresslist = await _supportService.GetAllSupportHR();
                 string HrEmailaddress = string.Empty;
@@ -2414,7 +2414,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CandidateTestDetailsPremium(InterviewFilter filter, string id)
+        public IActionResult CandidateTestDetailsPremium(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2514,7 +2514,7 @@ namespace Risebird.Web.Controllers
                                 _candidate.VideoLink = convertedResponse.recording;
                                 if (_candidate != null && _candidate.VideoLink != null)
                                 {
-                                    _mCQService.UpdateVideoURLForCandidatePremium(_candidate);
+                                    await _mCQService.UpdateVideoURLForCandidatePremium(_candidate);
                                 }
                                 //save aadhaar face details
                                 if (!string.IsNullOrWhiteSpace(convertedResponse.aadharVerification.data.name))
@@ -2558,7 +2558,7 @@ namespace Risebird.Web.Controllers
                                 _candidate.VideoLink = convertedResponse.videoUrl;
                                 if (_candidate != null && _candidate.VideoLink != null)
                                 {
-                                    _mCQService.UpdateVideoURLForCandidatePremium(_candidate);
+                                    await _mCQService.UpdateVideoURLForCandidatePremium(_candidate);
                                 }
                             }
                             catch (Exception ex)

@@ -733,7 +733,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
 
                         ViewBag.VideoStatus = "Private";
@@ -863,7 +863,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);
@@ -1163,7 +1163,7 @@ namespace Risebird.Web.Controllers
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
                         NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
-                        GetStatusList(IRListModel, model.irfIntId);
+                        await GetStatusList(IRListModel, model.irfIntId);
                         ViewBag.VideoStatus = "Private";
                         return View(NewModel);
                     }
@@ -1741,7 +1741,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IreportModel.IsQC = isQC;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
 
@@ -1930,7 +1930,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (IRListModel != null)
                 {
-                    GetStatusList(IRListModel, model.irfIntId);
+                    await GetStatusList(IRListModel, model.irfIntId);
                 }
                 //desible Like and dilisk button and share button and comment opetion
                 return View("VideoPage", NewModel);
@@ -1944,7 +1944,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VideoDetailView(int? Page)
+        public IActionResult VideoDetailView(int? Page)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2657,7 +2657,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (IRListModel != null)
                 {
-                    GetStatusList(IRListModel, model.irfIntId);
+                    await GetStatusList(IRListModel, model.irfIntId);
                 }
                 //desible Like and dilisk button and share button and comment opetion
                 return View(NewModel);
@@ -2969,7 +2969,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
 
@@ -3165,7 +3165,7 @@ namespace Risebird.Web.Controllers
                 _whatsAppVM.InterviewDate = resultset.interviewDate.ToString();
                 _whatsAppVM.UserName = resultset.CandidateName;
                 _whatsAppVM.MessageValue = rating.ToString();
-                _whatsAppHelper.WhatsAppSendRatingNotification(_whatsAppVM);
+                await _whatsAppHelper.WhatsAppSendRatingNotification(_whatsAppVM);
                 return Json(result);
             }
             else

@@ -626,8 +626,9 @@ namespace Risebird.Web.Controllers
                 stream.Close();
                 response.Close();
             }
-            catch (Exception exp)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 buf = null;
             }
             return (buf);

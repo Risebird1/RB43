@@ -137,7 +137,7 @@
                                                                 <select id="InterviewDate" name="InterviewDate" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.RequestedDate).Distinct().ToList())
                                                                     {
-                                                                        @if (item != null)
+                                                                        @if (item != DateTime.MinValue)
                                                                         {
                                                                             <option value="@item">@item</option>
                                                                         }

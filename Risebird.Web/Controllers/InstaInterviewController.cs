@@ -1058,7 +1058,7 @@ namespace Risebird.Web.Controllers
                             filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.RequestedDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                             filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.CandidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                             //filter.InterviewDuration.Contains(c.interviewDuration)
-                            myInterview = myInterview.Where(c => (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.RequestedDate)) : c.RequestedDate == null)
+                            myInterview = myInterview.Where(c => (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.RequestedDate)) : c.RequestedDate == DateTime.MinValue)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.CandidateName) : c.CandidateName == null)).ToList();
                         }
                         if (TempData["SuccessErrorMessage"] != null)
@@ -1189,7 +1189,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
             }
         }

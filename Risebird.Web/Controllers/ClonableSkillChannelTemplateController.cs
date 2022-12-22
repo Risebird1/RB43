@@ -121,7 +121,7 @@ namespace Risebird.Web.Controllers
                         //}
                         if (isTemplateInvalid)
                         {
-                            _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model);
+                            await _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model);
                             return View(model);
                         }
                         if (await _clonableSkillChannelTemplateService.CreateClonableSkillChannel(model, emailId))
@@ -247,7 +247,7 @@ namespace Risebird.Web.Controllers
 
                         if (isTemplateInvalid)
                         {
-                            _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model, true);
+                            await _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model, true);
                             return View(model);
                         }
                         if (await _clonableSkillChannelTemplateService.UpdateClonableSkillChannel(model, emailId))

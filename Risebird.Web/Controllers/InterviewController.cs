@@ -1643,7 +1643,7 @@ namespace Risebird.Web.Controllers
                             //filter.InterviewDuration.Contains(c.interviewDuration)
                             myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
                             && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                            && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
                         }
@@ -1802,7 +1802,7 @@ namespace Risebird.Web.Controllers
                             //filter.InterviewDuration.Contains(c.interviewDuration)
                             myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
                             && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                           && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                            && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
@@ -2306,7 +2306,7 @@ namespace Risebird.Web.Controllers
 
                             selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                             && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                             && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
                             && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
@@ -2705,7 +2705,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (comments == null)
                         comments = new InterviewComments();
-                    GetStatusList(comments);
+                     GetStatusList(comments);
                     return View("InterviewComments", comments);
                 }
                 else
@@ -2823,7 +2823,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         InterviewComments comments = new InterviewComments();
-                        GetStatusList(comments);
+                         GetStatusList(comments);
                         return View("InterviewComments", comments);
                     }
                 }
@@ -2997,7 +2997,7 @@ namespace Risebird.Web.Controllers
                 model.Userid = _iRFService.GetUserId(email, profileName);
                 if (model.Userid != 0)
                 {
-                    GetStatusList(model, irfId, model.Userid);
+                    await GetStatusList(model, irfId, model.Userid);
                 }
                 else
                 {
@@ -3075,7 +3075,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedaudioFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -3101,7 +3101,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedvideoFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -3791,7 +3791,7 @@ namespace Risebird.Web.Controllers
                     //filter.InterviewDuration.Contains(c.interviewDuration)
                     myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
                     && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                   && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                   && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == DateTime.MinValue)
                    && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                    && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
@@ -4646,7 +4646,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IreportModel.IsQC = isQC;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
                         return View(NewModel);
@@ -4727,7 +4727,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);
@@ -5370,7 +5370,7 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                GetStatusList(model, irfId, 0);
+                await GetStatusList(model, irfId, 0);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -5435,7 +5435,7 @@ namespace Risebird.Web.Controllers
                     model.IsInterviewer = isInterviewer;
                     model.PreviousMeetingStatus = model.MeetingStatus;
                     model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                    GetStatusList(model, irfId, 0);
+                    await GetStatusList(model, irfId, 0);
                     var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                     var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
@@ -5503,7 +5503,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId, 0);
+                await GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -5804,7 +5804,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedaudioFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("ProctorReport", model);
                                 }
                                 else
@@ -5827,7 +5827,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedvideoFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("ProctorReport", model);
                                 }
                                 else
@@ -6149,7 +6149,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         model.Emailid = emailId;
-                        var redflag = await CheckFlagCount(model);
+                        var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
@@ -6277,7 +6277,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Save QCForm
-        public async Task<int> CheckFlagCount(QCFormVM model)
+        public int CheckFlagCount(QCFormVM model)
         {
             int flags = 0;
             if (!model.IsCodingPresent)
@@ -7019,7 +7019,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId, 0);
+                await GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var client = await _userRepository.GetClientUserDetails(email);
                 if (client != null)
@@ -7055,7 +7055,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Id = uniqueid;
             ViewBag.interviewid = interviewId;
             ViewBag.irfId = irfId;
-            GetStatusList(model, irfId, 0);
+            await GetStatusList(model, irfId, 0);
             return View("SecureReport", model);
         }
 
