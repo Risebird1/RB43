@@ -323,7 +323,7 @@ namespace Risebird.Business
                     model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
                 }
 
-                PopulateDropDownsForTemplate(model, true);
+                await PopulateDropDownsForTemplate(model, true);
 
                 return model;
 
@@ -433,7 +433,7 @@ namespace Risebird.Business
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
 
-                PopulateDropDownsForSkillChannel(model, clientEmailId);
+                await PopulateDropDownsForSkillChannel(model, clientEmailId);
 
                 return model;
 

@@ -1701,6 +1701,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "No data available in table !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -1730,7 +1731,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 //var result = _userService.GetWhatsappno(model.EmailId);
-                var result = _userService.UpdateWhatsappno(emailid, whatsappnumber);
+                _= await _userService.UpdateWhatsappno(emailid, whatsappnumber);
                 return Json("Whatsapp added Successfully.");
             }
             else

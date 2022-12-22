@@ -361,7 +361,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new SkillChannelTemplateVM();
-                        SetTemplateParameters(model);
+                        await SetTemplateParameters(model);
                         return View(model);
 
                     }
@@ -455,7 +455,7 @@ namespace Risebird.Web.Controllers
 
                         if (isDuplicate)
                         {
-                            SetTemplateParameters(templateDetails);
+                            await SetTemplateParameters(templateDetails);
                             return View(templateDetails);
                         }
 
@@ -475,7 +475,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            SetTemplateParameters(templateDetails);
+                            await SetTemplateParameters(templateDetails);
                             return View(templateDetails);
                         }
 

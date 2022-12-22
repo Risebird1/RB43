@@ -40,6 +40,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -96,6 +97,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
@@ -115,6 +117,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -134,6 +137,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -153,6 +157,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -173,6 +178,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
         }
@@ -188,8 +194,9 @@ namespace Risebird.Repository
                     //return new SelectList(results.Where(x => x.EndDate > DateTime.Now), "IRFId", "IRFId");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -209,6 +216,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -234,6 +242,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
             }
         }
@@ -253,6 +262,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -272,12 +282,9 @@ namespace Risebird.Repository
                     return "success";
                 }
             }
-            catch (SqlException e)
+            catch (Exception ex)
             {
-                return "";
-            }
-            catch (Exception e)
-            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
             }
         }
@@ -296,6 +303,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -353,6 +361,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return 0;
         }
@@ -371,6 +380,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
         }
@@ -390,6 +400,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -426,6 +437,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -446,6 +458,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -464,6 +477,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -484,6 +498,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -502,6 +517,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -521,6 +537,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -574,6 +591,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

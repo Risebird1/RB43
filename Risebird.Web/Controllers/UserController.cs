@@ -169,7 +169,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => profilesToInclude.Contains(x.Name.ToString())).ToList();
                     }
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
-                    GetClientsSelectList(model);
+                    await GetClientsSelectList(model);
                     return View("UserAdd", model);
                 }
                 else
@@ -219,7 +219,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-                        GetClientsSelectList(user);
+                        await GetClientsSelectList(user);
                         return View("UserAdd", user);
                     }
                 }
@@ -255,7 +255,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-                        GetClientsSelectList(user);
+                        await GetClientsSelectList(user);
                         return View("UserUpdate", user);
                     }
                     else
@@ -311,7 +311,7 @@ namespace Risebird.Web.Controllers
                         profileName = profileName.Replace("\"", "");
                         ViewBag.profileName = profileName;
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-                        GetClientsSelectList(user);
+                        await GetClientsSelectList(user);
                         return View("UserUpdate", user);
                     }
                 }

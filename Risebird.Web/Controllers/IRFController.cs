@@ -785,7 +785,7 @@ namespace Risebird.Web.Controllers
                         model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value });
                     }
                 }
-                SetAddIRFProperties(model);
+               await  SetAddIRFProperties(model);
                 model.PerMintuteRate = 0;
                 model.TotalBudget = 0;
                 model.NoOfPosition = 0;
@@ -1307,7 +1307,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
                 return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
             }
@@ -1884,12 +1884,12 @@ namespace Risebird.Web.Controllers
                     model.Profile = profileName;
                     if (profileName == "Client" && templateId != null)
                     {
-                        _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailid);
+                        await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailid);
                         return View("Edit", model);
                     }
                     else
                     {
-                        SetEditIRFProperties(model);
+                        await SetEditIRFProperties(model);
                         return View(model);
                     }
                 }
@@ -1950,7 +1950,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.isDuplicateEntries = isDuplicate;
 
-                            SetEditIRFProperties(model);
+                            await SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
 
@@ -2289,7 +2289,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedaudioFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -2303,7 +2303,7 @@ namespace Risebird.Web.Controllers
                         if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
                             ModelState.AddModelError(string.Empty, "Video file/link not found.");
-                            GetStatusList(model);
+                           await GetStatusList(model);
                             return View("AddReport", model);
                         }
 
@@ -5922,7 +5922,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.profileName = "";
                 ViewBag.PageStatus = "Public";
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -5941,7 +5941,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -5966,7 +5966,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.profileName = "";
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "";
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -5985,7 +5985,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -6088,7 +6088,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.profileName = "";
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "Insta";
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -6107,7 +6107,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -6267,7 +6267,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CloneSkillChannnel()
+        public IActionResult CloneSkillChannnel()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -6303,7 +6303,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CloneSkillChannnel(InterviewFilter filter)
+        public IActionResult CloneSkillChannnel(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -6850,12 +6850,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (profileName == "Client")
                             {
-                                _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
+                                await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
 
                             }
                             else
                             {
-                                _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model);
+                                await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model);
 
                             }
                             return View(model);
@@ -7131,7 +7131,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (!isValid)
                         {
-                            _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
+                            await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
                             return View(model);
                         }
                         string uploadedFileURL = string.Empty;

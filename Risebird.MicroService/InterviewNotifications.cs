@@ -433,8 +433,9 @@ namespace Risebird.MicroService
 
                 return;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return;
 
             }

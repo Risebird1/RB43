@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -26,8 +27,10 @@ namespace Risebird.Repository
         private readonly IIRFRepository _irfRepository;
         private readonly IMeetingRespository _meetingRespository;
         private readonly ICandidateRepository _candidateRepository;
+        private IApplicationErrorLogger _applicationErrorLogger;
 
-        public RisebirdMeetingsRepository(IConfiguration configuration, INotificationHelper notificationHelper, IIRFRepository irfRepository, IMeetingRespository meetingRespository, ICandidateRepository candidateRepository)
+        public RisebirdMeetingsRepository(IConfiguration configuration, INotificationHelper notificationHelper, IIRFRepository irfRepository,
+            IMeetingRespository meetingRespository, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
@@ -35,6 +38,7 @@ namespace Risebird.Repository
             _irfRepository = irfRepository;
             _meetingRespository = meetingRespository;
             _candidateRepository = candidateRepository;
+            _applicationErrorLogger = applicationErrorLogger;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
             string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, int TimeZoneoffset, string TimeZonesValue, out int interviewIdOut, string zoomAccountEmail = null)
@@ -134,6 +138,7 @@ namespace Risebird.Repository
                 }
                 catch (Exception ex)
                 {
+                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     return false;
                 }
                 //log.Info("Interview update in database ended.");
@@ -215,9 +220,9 @@ namespace Risebird.Repository
                         //log.Info("Interview cancelled mail sent to interviewer.");
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //log.Error($"Failed to send mail. Please check all filled and try again.");
+                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
             }
             RecruiterStatusCheck(interviewId, candidateEmail, IRFID, interviewDate);

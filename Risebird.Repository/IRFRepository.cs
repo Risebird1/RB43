@@ -86,7 +86,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -5219,7 +5219,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Cancellationsource", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
+                    var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, dynamicParameters);
                     return true;
                 }
             }

@@ -57,8 +57,8 @@ namespace Risebird.Entities.ViewModel
         public int experience { get; set; }
         public string difficultyLevel { get; set; }
         public string userName { get; set; }
-        public DateTime inviteStartTime { get; set; }
-        public DateTime inviteEndTime { get; set; }
+        public string inviteStartTime { get; set; }
+        public string inviteEndTime { get; set; }
         public string zone { get; set; }
         public string candidateEmail { get; set; }
         public string assignmentType { get; set; }

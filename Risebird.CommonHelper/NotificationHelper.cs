@@ -1065,6 +1065,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
@@ -1194,6 +1195,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
@@ -1441,6 +1443,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
@@ -2543,6 +2546,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }

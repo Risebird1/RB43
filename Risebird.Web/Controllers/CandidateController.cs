@@ -717,6 +717,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -2362,7 +2363,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IreportModel.IsQC = isQC;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
                         return View(NewModel);
@@ -2446,7 +2447,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                           await GetStatusList(IRListModel, model.irfIntId);
                         }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);

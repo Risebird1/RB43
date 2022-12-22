@@ -867,7 +867,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
                 return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
             }
@@ -1205,7 +1205,7 @@ namespace Risebird.Web.Controllers
                         NewModel.irfIntId = model.irfIntId;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
 
                         ViewBag.VideoStatus = "Private";
@@ -1372,7 +1372,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (IRListModel != null)
                     {
-                        GetStatusList(IRListModel, model.irfIntId);
+                        await GetStatusList(IRListModel, model.irfIntId);
                     }
 
                     ViewBag.VideoStatus = "Public";
