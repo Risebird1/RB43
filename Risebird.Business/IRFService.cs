@@ -667,7 +667,7 @@ namespace Risebird.Business
                     }
                 }
 
-                var result = _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null).Result;
+                var result = await _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
