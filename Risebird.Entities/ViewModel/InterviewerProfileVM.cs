@@ -28,11 +28,14 @@ namespace Risebird.Entities.ViewModel
         //[Remote("IsNickNameExists", "Interviewer", AdditionalFields = "UserId", ErrorMessage = "Coded Name already in use")]
         public string NickName { get; set; }
 
+        public bool IsEdit { get; set; }
+
+
         [Display(Name = "Email ID")]
         [Required(ErrorMessage = "Please Enter Email ID")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
-        [Remote("IsEmailIdExists", "Interviewer", AdditionalFields = "UserId", ErrorMessage = "EmailId already in use")]
+        //[Remote("IsEmailIdExists", "Interviewer", AdditionalFields = "UserId,IsEdit", ErrorMessage = "EmailId already in use", HttpMethod = "POST")]
         public string EmailId { get; set; }
 
         [Display(Name = "Alternate Email ID")]

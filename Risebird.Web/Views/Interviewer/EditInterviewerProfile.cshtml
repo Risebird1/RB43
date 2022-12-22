@@ -38,7 +38,8 @@
                                     @Html.HiddenFor(m => m.AssessmentGroupArrayOld[i])
                                 }
                             }
-                            
+                            @Html.HiddenFor(m => m.IsEdit)
+
                             <!-- Add Interviewer personal Details Start-->
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -978,7 +979,7 @@
         </div>
     </div>
 
-
+</div>
 
     <script>
         //====== Age CalculationFunctiopn======//
@@ -1494,7 +1495,7 @@
 
             }
             document.getElementById('SkillCollection_Error').innerHTML = "";
-
+            return true;
             //if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
             //    return true;
             //}

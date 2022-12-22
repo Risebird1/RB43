@@ -292,6 +292,7 @@ namespace Risebird.Business
                 ProfileModel.InterviewerProjectsDetails = ProjectsList;
                 ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
                 ProfileModel.InterviewerAccDetails = AccDetailsList;
+                ProfileModel.IsEdit = true;
                 if (!string.IsNullOrEmpty(ProfileModel.AssessmentGroupId))
                 {
                     ProfileModel.AssessmentGroupArray = ProfileModel.AssessmentGroupId.Split(',');

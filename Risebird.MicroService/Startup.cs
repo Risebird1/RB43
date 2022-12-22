@@ -127,7 +127,9 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IWhatsappRepository, WhatsappRepository>();
             builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
             builder.Services.AddScoped<ISurveyService, SurveyService>();
-
+            builder.Services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
+            builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
+            builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
         }
 
 

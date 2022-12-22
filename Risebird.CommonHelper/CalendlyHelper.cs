@@ -163,7 +163,7 @@ namespace Risebird.CommonHelper
                     new HttpParameters() { name = "application/json", value = 100, parameterType = ParameterType.QueryString }
                 };
 
-                var response = _httpRequestHelper.MakeHttpRequest(string.Concat(_configuration["CalendlyDetails:endPoint"], $"/event_types"), Method.Get, null, headers, parameters).Result;
+                var response = _httpRequestHelper.MakeHttpRequest("https://api.calendly.com/event_types", Method.Get, null, headers, parameters).Result;
 
                 //var content = response.Content;
                 convertedResponse = JsonConvert.DeserializeObject<CalendlyEventsListResponse>(response.Content);
