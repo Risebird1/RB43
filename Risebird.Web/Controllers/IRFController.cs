@@ -785,7 +785,7 @@ namespace Risebird.Web.Controllers
                         model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value });
                     }
                 }
-               await  SetAddIRFProperties(model);
+                await SetAddIRFProperties(model);
                 model.PerMintuteRate = 0;
                 model.TotalBudget = 0;
                 model.NoOfPosition = 0;
@@ -1861,6 +1861,8 @@ namespace Risebird.Web.Controllers
                     IRFVm model = new IRFVm();
                     //model.UseAsCloneTemplate = useAsCloneTemplate;
                     model = await _irfService.GetEditIRF(id, templateId, isClone);
+                    if (model == null)
+                        return RedirectToAction("Index");
                     model.IsClone = isClone;
 
                     int abc;
@@ -2303,7 +2305,7 @@ namespace Risebird.Web.Controllers
                         if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
                             ModelState.AddModelError(string.Empty, "Video file/link not found.");
-                           await GetStatusList(model);
+                            await GetStatusList(model);
                             return View("AddReport", model);
                         }
 
@@ -5941,7 +5943,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -5985,7 +5987,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -6107,7 +6109,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
