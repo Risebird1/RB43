@@ -920,7 +920,7 @@ namespace Risebird.Web.Controllers
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
-                        GetStatusList(IRListModel, model.irfIntId);
+                        await GetStatusList(IRListModel, model.irfIntId);
                         ViewBag.VideoStatus = "Private";
 
 

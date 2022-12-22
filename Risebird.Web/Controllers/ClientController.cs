@@ -1534,7 +1534,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientSelected = isClientSelected;
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";
-                        GetStatusList(model, irfId);
+                        await GetStatusList(model, irfId);
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
@@ -3280,7 +3280,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -3445,7 +3445,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -3671,7 +3671,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId);
+                await GetStatusList(model, irfId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -3692,7 +3692,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
         }
@@ -4177,7 +4177,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["RecruiterSuccessErrorMessage"] = "Recruiter disable Failed";
                 return Json("Failed");
             }

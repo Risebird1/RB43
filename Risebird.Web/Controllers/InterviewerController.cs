@@ -459,7 +459,7 @@ namespace Risebird.Web.Controllers
                     {
                         InterviewerProfileVM model = new InterviewerProfileVM();
                         // Get all the select Lists
-                        GetAllSelectList(model);
+                        await GetAllSelectList(model);
 
                         return View("AddInterviewerProfile", model);
                     }
@@ -537,7 +537,7 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "Please add a Resume File");
                             InterviewerProfileVM model = new InterviewerProfileVM();
                             // Get all the select Lists
-                            GetAllSelectList(model);
+                            await GetAllSelectList(model);
                             return View("AddInterviewerProfile", model);
                         }
 
@@ -603,7 +603,7 @@ namespace Risebird.Web.Controllers
                     {
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
                         // Get all the select Lists
-                        GetAllSelectList(model);
+                        await GetAllSelectList(model);
 
                         return View("EditInterviewerProfile", model);
                     }
@@ -1138,7 +1138,7 @@ namespace Risebird.Web.Controllers
 
                         }
                         // Get all the select Lists
-                        GetAllSelectList(model);
+                        await GetAllSelectList(model);
 
                         return View("MyProfile", model);
                     }
@@ -1832,7 +1832,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         [HttpGet]
-        public IActionResult AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string backUrl = null)
+        public async Task<IActionResult> AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string backUrl = null)
         {
             try
             {
@@ -1845,7 +1845,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
                         model.profileName = profileName;
-                        GetStatusList(model, iscId);
+                        await GetStatusList(model, iscId);
                         model.BackUrl = backUrl;
                         return View(model);
 
@@ -1865,7 +1865,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
                 return RedirectToAction("MyInterviewerAssessment");
 
@@ -1904,7 +1904,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedaudioFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -1927,7 +1927,7 @@ namespace Risebird.Web.Controllers
                             if (uploadedvideoFileURL == null)
                             {
                                 ModelState.AddModelError(string.Empty, "Video Upload has failed.");
-                                GetStatusList(model);
+                                await GetStatusList(model);
                                 return View("AddReport", model);
                             }
                             else
@@ -2575,7 +2575,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.AssessmentGroupIdArray = model.AssessmentGroupId.Split(',');
                     }
-                    GetStatusList(model);
+                    await GetStatusList(model);
                     ViewBag.indexid = id;
                     return View(model);
                 }

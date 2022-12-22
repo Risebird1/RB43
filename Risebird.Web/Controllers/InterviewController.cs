@@ -2705,7 +2705,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (comments == null)
                         comments = new InterviewComments();
-                    GetStatusList(comments);
+                    await GetStatusList(comments);
                     return View("InterviewComments", comments);
                 }
                 else
@@ -2750,7 +2750,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedAadharFileURL == null)
                                     {
                                         ModelState.AddModelError(string.Empty, "Aadhar Upload has failed.");
-                                        GetStatusList(interviewComments);
+                                        await GetStatusList(interviewComments);
                                         return View("InterviewComments", interviewComments);
                                     }
                                     else
@@ -2771,7 +2771,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedaudioFileURL == null)
                                     {
                                         ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                        GetStatusList(interviewComments);
+                                        await GetStatusList(interviewComments);
                                         return View("InterviewComments", interviewComments);
                                     }
                                     else
@@ -2793,7 +2793,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedvideoFileURL == null)
                                     {
                                         ModelState.AddModelError(string.Empty, "Video Upload has been Failed.");
-                                        GetStatusList(interviewComments);
+                                        await GetStatusList(interviewComments);
                                         //return View("InterviewComments", interviewComments);
                                     }
                                     else
@@ -2823,7 +2823,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         InterviewComments comments = new InterviewComments();
-                        GetStatusList(comments);
+                        await GetStatusList(comments);
                         return View("InterviewComments", comments);
                     }
                 }
@@ -2997,7 +2997,7 @@ namespace Risebird.Web.Controllers
                 model.Userid = _iRFService.GetUserId(email, profileName);
                 if (model.Userid != 0)
                 {
-                    GetStatusList(model, irfId, model.Userid);
+                    await GetStatusList(model, irfId, model.Userid);
                 }
                 else
                 {
@@ -3075,7 +3075,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedaudioFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -3101,7 +3101,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedvideoFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("AddReport", model);
                                 }
                                 else
@@ -3231,7 +3231,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        private void GetStatusList(InterviewComments model)
+        private async Task GetStatusList(InterviewComments model)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -4646,7 +4646,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IreportModel.IsQC = isQC;
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
                         return View(NewModel);
@@ -4727,7 +4727,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (IRListModel != null)
                         {
-                            GetStatusList(IRListModel, model.irfIntId);
+                            await GetStatusList(IRListModel, model.irfIntId);
                         }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);
@@ -5370,7 +5370,7 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                GetStatusList(model, irfId, 0);
+                await GetStatusList(model, irfId, 0);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
@@ -5435,7 +5435,7 @@ namespace Risebird.Web.Controllers
                     model.IsInterviewer = isInterviewer;
                     model.PreviousMeetingStatus = model.MeetingStatus;
                     model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                    GetStatusList(model, irfId, 0);
+                    await GetStatusList(model, irfId, 0);
                     var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                     var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
@@ -5503,7 +5503,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId, 0);
+                await GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -5804,7 +5804,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedaudioFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Audio Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("ProctorReport", model);
                                 }
                                 else
@@ -5827,7 +5827,7 @@ namespace Risebird.Web.Controllers
                                 if (uploadedvideoFileURL == null)
                                 {
                                     ModelState.AddModelError(string.Empty, "Video Upload is failed.");
-                                    GetStatusList(model);
+                                    await GetStatusList(model);
                                     return View("ProctorReport", model);
                                 }
                                 else
@@ -7019,7 +7019,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                GetStatusList(model, irfId, 0);
+                await GetStatusList(model, irfId, 0);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var client = await _userRepository.GetClientUserDetails(email);
                 if (client != null)
@@ -7055,7 +7055,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Id = uniqueid;
             ViewBag.interviewid = interviewId;
             ViewBag.irfId = irfId;
-            GetStatusList(model, irfId, 0);
+            await GetStatusList(model, irfId, 0);
             return View("SecureReport", model);
         }
 

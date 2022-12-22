@@ -674,7 +674,7 @@ namespace Risebird.Web.Controllers
                 _whatsApp.Emailid = Interviewer;
                 _whatsApp.InterviewDate = Amount.ToString();
                 _whatsApp.Event = "Payment Notification";
-                _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
+               await  _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
             }
             else if (model == "Failed")
             {
