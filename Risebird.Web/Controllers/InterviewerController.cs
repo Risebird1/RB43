@@ -3197,8 +3197,8 @@ namespace Risebird.Web.Controllers
             model.candidateEmail = _codeinvite.candidateEmail;
             model.programmingLanguage = _codeinvite.programmingLanguage;
             model.experience = _codeinvite.experience;
-            model.inviteStartTime = _codeinvite.inviteStartTime;
-            model.inviteEndTime = _codeinvite.inviteEndTime;
+            model.inviteStartTime = _codeinvite.inviteStartTime.ToString("yyyy-MM-dd HH:mm:ss");
+            model.inviteEndTime = _codeinvite.inviteEndTime.ToString("yyyy-MM-dd HH:mm:ss");
             model.zone = "IST";
             model.difficultyLevel = _codeinvite.difficultyLevel.ToLower();
             model.assignmentType = "QUICK";
