@@ -452,6 +452,8 @@ namespace Risebird.Business
 
                 //get all values from database
                 var IRF = _irfRepository.EditIRF(id);
+                if (IRF == null)
+                    return null;
                 var IRFConfiguration = _irfRepository.EditIRFConfiguration(id);
                 if (!IRFConfiguration)
                 {
