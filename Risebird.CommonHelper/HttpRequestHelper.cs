@@ -14,6 +14,7 @@ namespace Risebird.CommonHelper
 
         private readonly IApplicationErrorLogger _errorLogger;
         private readonly IConfiguration _configuration;
+        private static readonly RestClient client = new RestClient();
 
 
         public HttpRequestHelper(IConfiguration configuration, IApplicationErrorLogger errorLogger)
@@ -29,7 +30,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var client = new RestClient(endPoint);
+                //var client = new RestClient();
                 var request = new RestRequest(endPoint, method);
                 if (headers != null)
                 {
