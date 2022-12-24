@@ -36,16 +36,16 @@ if(@roleId=1)
       when ulc.LastName is null then ulc.FirstName      
    else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
    end as candidateName,        
-   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+   im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
    IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
    ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
    from InterviewMeetings im         
    inner join IRF on im.IRFId = IRF.IRFId         
    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-   left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+  left join Trans_QCFormReport tqr on tqr.Interviewid=im.id         
    left join UserList ulc on im.candidateEmail= ulc.EmailId        
    join CandidatesMaster cm on ulc.id= cm.UserId        
    join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -71,16 +71,16 @@ if(@roleId=1)
       when ulc.LastName is null then ulc.FirstName      
       else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
    end as candidateName,        
-   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,    
+   im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,    
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
    IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
    ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
    from InterviewMeetings im         
    inner join IRF on im.IRFId = IRF.IRFId         
    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-   left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+   left join Trans_QCFormReport tqr on tqr.Interviewid=im.id          
    left join UserList ulc on im.candidateEmail= ulc.EmailId        
    join CandidatesMaster cm on ulc.id= cm.UserId        
    join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -109,16 +109,16 @@ if(@roleId=1)
       when ulc.LastName is null then ulc.FirstName      
       else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
    end as candidateName,       
-   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+   im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
    IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
    ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
    from InterviewMeetings im         
    inner join IRF on im.IRFId = IRF.IRFId         
    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-   left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+   left join Trans_QCFormReport tqr on tqr.Interviewid=im.id     
    left join UserList ulc on im.candidateEmail= ulc.EmailId        
    join CandidatesMaster cm on ulc.id= cm.UserId        
    join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -150,16 +150,16 @@ else if(@roleId=4)
   when ulc.LastName is null then ulc.FirstName      
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
     end as candidateName,       
-    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
     cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName ,im.RedoInterview       
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-    left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id           
     left join UserList ulc on im.candidateEmail= ulc.EmailId        
     join CandidatesMaster cm on ulc.id= cm.UserId        
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -186,16 +186,16 @@ else if(@roleId=4)
        when ulc.LastName is null then ulc.FirstName      
        else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
     end as candidateName,        
-    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,    
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP,tqr.IsReportBlocked,        
     cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-    left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id     
     left join UserList ulc on im.candidateEmail= ulc.EmailId        
     join CandidatesMaster cm on ulc.id= cm.UserId        
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -222,16 +222,16 @@ else if(@roleId=4)
   when ulc.LastName is null then ulc.FirstName      
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
     end as candidateName,        
-    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
     cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-    left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id 
     left join UserList ulc on im.candidateEmail= ulc.EmailId        
     join CandidatesMaster cm on ulc.id= cm.UserId        
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -264,16 +264,16 @@ else
   when ulc.LastName is null then ulc.FirstName      
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
     end as candidateName,        
-    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
     cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-    left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id          
     left join UserList ulc on im.candidateEmail= ulc.EmailId        
     join CandidatesMaster cm on ulc.id= cm.UserId        
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -301,16 +301,16 @@ else
   when ulc.LastName is null then ulc.FirstName      
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
     end as candidateName,         
-    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
     cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview       
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-    left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id           
     left join UserList ulc on im.candidateEmail= ulc.EmailId        
     join CandidatesMaster cm on ulc.id= cm.UserId        
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
@@ -341,12 +341,12 @@ else
     ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
     IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
     ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
-    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP,   tqr.IsReportBlocked,     
     cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
     from InterviewMeetings im         
     inner join IRF on im.IRFId = IRF.IRFId         
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
-    left join QCFeedbackReport QCF on im.id=QCF.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id      
     left join UserList ulc on im.candidateEmail= ulc.EmailId        
     join CandidatesMaster cm on ulc.id= cm.UserId        
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        

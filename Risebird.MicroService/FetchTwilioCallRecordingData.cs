@@ -59,21 +59,24 @@ namespace Risebird.MicroService
                 {
                     try
                     {
-                        var recordingData = await _twilioHelper.FetchCallRecordingDetails(recording.RecordingSid);
-                        //update the data recieved to the database
-                        CallRecordingDataVM obj = new CallRecordingDataVM();
-                        obj.id = recording.id;
-                        obj.RecordingSid = recording.RecordingSid;
-                        obj.StartTime = recordingData.StartTime;
-                        obj.Price = recordingData.Price;
-                        obj.Duration = recordingData.Duration;
-                        obj.PriceUnit = recordingData.PriceUnit;
-                        obj.RecordingUri = recordingData.Uri;
-                        obj.RecordingUri = "https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/" + recording.RecordingSid;
+                        if (recording != null)
+                        {
+                            var recordingData = await _twilioHelper.FetchCallRecordingDetails(recording.RecordingSid);
+                            //update the data recieved to the database
+                            CallRecordingDataVM obj = new CallRecordingDataVM();
+                            obj.id = recording.id;
+                            obj.RecordingSid = recording.RecordingSid;
+                            obj.StartTime = recordingData.StartTime;
+                            obj.Price = recordingData.Price;
+                            obj.Duration = recordingData.Duration;
+                            obj.PriceUnit = recordingData.PriceUnit;
+                            obj.RecordingUri = recordingData.Uri;
+                            obj.RecordingUri = "https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/" + recording.RecordingSid;
 
-                        obj.Status = recordingData.Status.ToString();
+                            obj.Status = recordingData.Status.ToString();
 
-                        _ = await _userRepository.UpdateRecordingData(obj);
+                            _ = await _userRepository.UpdateRecordingData(obj);
+                        }
 
                     }
                     catch (Exception ex)

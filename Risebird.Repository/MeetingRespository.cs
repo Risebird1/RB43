@@ -5682,6 +5682,7 @@ namespace Risebird.Repository
 
                     parameters.Add("@IsSuspiciousappfound", model.IsSuspiciousappfound);
                     parameters.Add("@IsLipsyncissue", model.IsLipsyncissue);
+                    parameters.Add("@IsReportBlocked", model.IsReportBlocked);
 
                     var result = SqlMapper.Query(con, "usp_AddorUpdateQCFormReport", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
