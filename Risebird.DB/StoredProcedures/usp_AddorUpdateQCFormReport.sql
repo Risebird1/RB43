@@ -32,7 +32,8 @@ CREATE PROCEDURE usp_AddorUpdateQCFormReport
 @IsBiasedView bit,      
 @IsLettingcandidatespeak bit,      
 @IsSuspiciousappfound bit,      
-@IsLipsyncissue bit      
+@IsLipsyncissue bit,
+@IsReportBlocked bit   
 AS      
 BEGIN      
 Declare @Userid int       
@@ -43,7 +44,8 @@ Update Trans_QCFormReport set IsCodingPresent=@IsCodingPresent,IsVideoClearQuali
 IsSufficientVideoDuration=@IsSufficientVideoDuration,IsInterviewStructured=@IsInterviewStructured,IsScoringrubriccorrect=@IsScoringrubriccorrect,      
 IsQuestionswithtime=@IsQuestionswithtime,IsCommentfilled=@IsCommentfilled,IsMeetingStatusfilled=@IsMeetingStatusfilled,      
 IsRelevancequestions=@IsRelevancequestions,IsDelayresuminginterview=@IsDelayresuminginterview,IsBackgroundnoise=@IsBackgroundnoise,      
-IsPoorinterviewerinfrastructure=@IsPoorinterviewerinfrastructure,IsPoorhandlingcandidatequery=@IsPoorhandlingcandidatequery,      
+IsPoorinterviewerinfrastructure=@IsPoorinterviewerinfrastructure,IsPoorhandlingcandidatequery=@IsPoorhandlingcandidatequery, 
+IsReportBlocked=@IsReportBlocked,
 IsPersonalquestions=@IsPersonalquestions,IsAugmenting=@IsAugmenting,IsBiasedView=@IsBiasedView,IsLettingcandidatespeak=@IsLettingcandidatespeak,      
 IsSuspiciousappfound=@IsSuspiciousappfound,IsLipsyncissue=@IsLipsyncissue,Redflags=@Redflags,ModifiedOn=GetDate(),ModifiedBy=@Userid,InterviewerAction=0 Where Interviewid=@Interviewid      
 end      
@@ -52,10 +54,10 @@ begin
 Insert into Trans_QCFormReport(Interviewid,Userid,IsCodingPresent,IsVideoClearQuality,IsInterviewerCommunicationClear,IsSufficientVideoDuration,      
 IsInterviewStructured,IsScoringrubriccorrect,IsQuestionswithtime,IsCommentfilled,IsMeetingStatusfilled,IsRelevancequestions,IsDelayresuminginterview,      
 IsBackgroundnoise,IsPoorinterviewerinfrastructure,IsPoorhandlingcandidatequery,IsPersonalquestions,IsAugmenting,IsBiasedView,IsLettingcandidatespeak,      
-IsSuspiciousappfound,IsLipsyncissue,Addedon,Redflags,ModifiedOn,ModifiedBy,InterviewerAction) values(@Interviewid,@Userid,@IsCodingPresent,@IsVideoClearQuality,@IsInterviewerCommunicationClear,@IsSufficientVideoDuration,      
+IsSuspiciousappfound,IsLipsyncissue,Addedon,Redflags,ModifiedOn,ModifiedBy,InterviewerAction,IsReportBlocked) values(@Interviewid,@Userid,@IsCodingPresent,@IsVideoClearQuality,@IsInterviewerCommunicationClear,@IsSufficientVideoDuration,      
 @IsInterviewStructured,@IsScoringrubriccorrect,@IsQuestionswithtime,@IsCommentfilled,@IsMeetingStatusfilled,@IsRelevancequestions,@IsDelayresuminginterview,      
 @IsBackgroundnoise,@IsPoorinterviewerinfrastructure,@IsPoorhandlingcandidatequery,@IsPersonalquestions,@IsAugmenting,@IsBiasedView,@IsLettingcandidatespeak,      
-@IsSuspiciousappfound,@IsLipsyncissue,GetDate(),@Redflags,GetDate(),@Userid,0)      
+@IsSuspiciousappfound,@IsLipsyncissue,GetDate(),@Redflags,GetDate(),@Userid,0,@IsReportBlocked)      
 end      
 END     
 

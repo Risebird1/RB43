@@ -19,6 +19,8 @@ namespace Risebird.Entities.ViewModel
         public string Type { get; set; }
         public string uniqueid { get; set; }
 
+        [Display(Name = "Report Blocked for Client")]
+        public bool IsReportBlocked { get; set; }
         //Video Quality Check
         [Display(Name = "Whether hands-on coding is present")]
         public bool IsCodingPresent { get; set; }

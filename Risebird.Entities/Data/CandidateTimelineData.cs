@@ -43,5 +43,6 @@ namespace Risebird.Entities.Data
         public int CallsCount { get; set; }
         public int MailCount { get; set; }
         public int WhatsappCount { get; set; }
+        public bool IsReportBlocked { get; set; }
     }
 }

@@ -1270,7 +1270,7 @@ namespace Risebird.Web.Controllers
                                 return View(model);
                             }
 
-                            if (_irfService.AddSkillComments(model))
+                            if (await _irfService.AddSkillComments(model))
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
                                 return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
@@ -1913,7 +1913,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (model != null && HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");

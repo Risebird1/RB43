@@ -32,7 +32,7 @@ namespace Risebird.MicroService
             _aadhaarService = aadhaarService;
         }
         [FunctionName("ClientCompleteInterviewNotification")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//Every day
+        public async Task Run([TimerTrigger("0 0 9 * * *")] TimerInfo myTimer, ILogger log)//Every day
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _interviewsdetails = (await _irfService.GetCompletedInterviewCountMappedClient(DateTime.Now.AddDays(-1), DateTime.Now))?.ToList();

@@ -821,9 +821,9 @@ namespace Risebird.Web.Controllers
             return tokenString;
         }
         #endregion
-        public IActionResult IRFSchedulerEventEdit(string id)
+        public async Task<IActionResult> IRFSchedulerEventEdit(string id)
         {
-            var eventid = _interviewSchedulerservice.FetchEventidByUniqueid(id);
+            var eventid = await _interviewSchedulerservice.FetchEventidByUniqueid(id);
             return RedirectToAction("EditEvent", new { eventid = eventid, eventtype = 1 });
         }
         public string DeleteMeetingLink(string meetingid)

@@ -5,6 +5,7 @@ CREATE TABLE [dbo].[Trans_QCFormReport](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[Interviewid] [int] NULL,
 	[Userid] [int] NULL,
+	[IsReportBlocked] [bit] NULL,
 	[IsCodingPresent] [bit] NULL,
 	[IsVideoClearQuality] [bit] NULL,
 	[IsInterviewerCommunicationClear] [bit] NULL,
@@ -74,6 +75,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Trans_QCFormReport
     Add InterviewerAction bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsReportBlocked')
+      AND Object_ID = Object_ID(N'Trans_QCFormReport'))
+BEGIN
+    ALTER TABLE Trans_QCFormReport
+    Add IsReportBlocked bit
 END
 END
 GO
