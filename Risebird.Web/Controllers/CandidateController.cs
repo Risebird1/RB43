@@ -3517,6 +3517,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.WhatsappCount = firstData.WhatsappCount;
                     candidateTimeline.MailCount = firstData.MailCount;
                     candidateTimeline.CallsCount = firstData.CallsCount;
+                    candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
