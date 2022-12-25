@@ -612,7 +612,7 @@
                                                                                 </td>
                                                                                 @if (!item.RedoInterview)
                                                                                 {
-                                                                                    @if ((item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                                                    @if (!item.IsReportBlocked &&  (item.InterviewStatus == 4 || item.InterviewStatus == 2))
                                                                                     {
                                                                                         <td>
                                                                                             <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
@@ -1523,7 +1523,7 @@
             else { html += '<td></td>'; } if ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 8) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
             html += '<td class="interview-com">'; html += ' <div id="section">'; if (data[i].interviewerComment != null && data[i].interviewerComment != "") { if (data[i].interviewerComment.length > 28) { html += ' <div class="article">'; html += ' <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 28) + '</p>'; html += '<p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(28, data[i].interviewerComment.length - 28) + '</p>'; html += '</div>'; } else { html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>'; } }
             else { html += '<div></div>'; } html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>'; html += '</div>'; html += ' </td>';
-            if (data[i].interviewStatus == 4 || data[i].interviewStatus == 2) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; }
+            if (!data[i].IsReportBlocked && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2)) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; }
             else { html += '   <td>No Report</td>'; }
             html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
             html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>';

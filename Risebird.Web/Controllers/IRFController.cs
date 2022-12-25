@@ -1913,7 +1913,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (model != null && HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");

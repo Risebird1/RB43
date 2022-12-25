@@ -541,14 +541,14 @@
                                                                                 }*@
                                                                         </td>
                                                                         <td>
-                                                                            @if ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
+                                                                            @if (!item.IsReportBlocked && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
                                                                             {
 
                                                                                 <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })'" title="Feedback Report">Report</a>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <p></p>
+                                                                                <p>No Report</p>
                                                                             }
                                                                         </td>
                                                                     </tr>
