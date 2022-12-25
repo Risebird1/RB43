@@ -16,8 +16,10 @@ Create PROCEDURE [dbo].[usp_GetCandidateStatusList]
 AS    
 Begin  
   
- select cs.*, csom.StatusValue, csom.IsManuallyDeletable,ic.MeetingStatus,im.confirmationStatus from CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id 
- left join InterviewMeetings im on im.id=cs.InterviewId left join InterviewComments ic on ic.InterviewId=cs.InterviewId
+ select cs.*, csom.StatusValue, csom.IsManuallyDeletable,ic.MeetingStatus,im.confirmationStatus,tqr.IsReportBlocked  from CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id 
+ left join InterviewMeetings im on im.id=cs.InterviewId 
+ left join InterviewComments ic on ic.InterviewId=cs.InterviewId
+ left join Trans_QCFormReport tqr on tqr.interviewid=im.id
  where cs.IRFId=@IRFId and CandidateId = @CandidateId  
   
 End  
