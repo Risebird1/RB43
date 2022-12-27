@@ -6249,6 +6249,11 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateRejectRedoInterviewDetails", dynamicParameters,
                       commandType: CommandType.StoredProcedure);
+                    //Re-update amount
+                    DynamicParameters parametersPoints = new DynamicParameters();
+                    parametersPoints.Add("@interviewId", model.interviewid);
+                    var updateset = await SqlMapper.QueryAsync(con, "usp_InsertOrUpdateInterviewPoints", parametersPoints,
+                                    commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
