@@ -777,6 +777,7 @@ namespace Risebird.Web.Controllers
                             candidateList = candidateList.Where(x => x.AddedByUserId == userId).ToList();
                         }
                         ViewBag.ButtonAccess = true;
+                        ViewBag.IsClientCancelInterview = true;
                         if (profileName == "Client")
                         {
                             var client = await _userRepository.GetClientUserDetailsByIRF(emailid, id);
@@ -784,6 +785,7 @@ namespace Risebird.Web.Controllers
                             {
                                 ViewBag.ButtonAccess = false;
                             }
+                            ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
                         }
                         if (candidateList != null && candidateList.Count > 0)
                         {
@@ -866,13 +868,23 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-
+                ViewBag.profile = profileName;
                 var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                 var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                 if (profileName == "Recruiter")
                 {
                     var userId = _irfService.GetUserId(emailid, profileName);
                     candidateList = candidateList.Where(x => x.AddedByUserId == userId).ToList();
+                }
+                ViewBag.IsClientCancelInterview = true;
+                if (profileName == "Client")
+                {
+                    var client = await _userRepository.GetClientUserDetailsByIRF(emailid, id);
+                    if (client == null || (client != null && !client.IsRecruiterActive))
+                    {
+                        ViewBag.ButtonAccess = false;
+                    }
+                    ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
                 }
                 if (candidateList != null && candidateList.Count > 0)
                 {

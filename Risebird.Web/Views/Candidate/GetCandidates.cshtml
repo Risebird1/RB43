@@ -33,13 +33,13 @@
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-                            </button>*@
+                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
+                        </button>*@
 
 
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
-                            </button>*@
+                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
+                        </button>*@
                         @if (ViewBag.ButtonAccess)
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -47,8 +47,8 @@
                             </button>
 
                             @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName })'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
-                                </button>*@
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName })'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
+                        </button>*@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="javascript:AddCandidate('@ViewBag.IRFId', '@ViewBag.IRFName');" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
                             </button>
@@ -304,21 +304,21 @@
                                                                         }
 
 
-
-
-                                                                        <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
-                                                                        </span>
-
+                                                                        @if ((ViewBag.profile == "Client" && ViewBag.IsClientCancelInterview) || ViewBag.profile != "Client")
+                                                                        {
+                                                                            <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                                                            </span>
+                                                                        }
 
                                                                         @if (ViewBag.profile != "Client")
                                                                         {
                                                                             @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary mb-40" aria-label="Audio files">
-                                                                            <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
+                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
 
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
-                                                                            </span>
-                                                                        </button>*@
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
+                                                                </span>
+                                                                </button>*@
 
                                                                             <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                 <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
@@ -348,43 +348,43 @@
 
 
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
-{
-        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-            <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-            </span>
-        </button>
-    }
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
 
-        @*@if (ViewBag.profile != "Client")
-    {
-        <button class="mdc-fab app-fab--absolute" aria-label="Report">
-            <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
-            </span>
-        </button>
-    }*@
+                                                                    @*@if (ViewBag.profile != "Client")
+                                                                {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                                                </span>
+                                                                </button>
+                                                                }*@
 
-        @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
-    {
-        <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">
-            <span onclick="location.href = '@Url.Action("FitmentReport", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Fitment Report" class="mdc-fab__icon material-icons">
-                <img style="width:75%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA8ElEQVRIid2VTQ6CMBBGp8ZDqPFAJngEj0F0a4ILL4UX0FPIDcQFrp4LpoZAW6DExPglBFK+mTf9mVTk7wRsgIJ+HWMB9wHJ4yE2cohHdf42YBwkEjAcMgHghBhXsIiIMabzr+1xqR03D1U6NEkIOosBjNHXAVFL5JJvz35/iYAtkANPoNTvJBTQ2wcN7ynQE9kkgFYOUAEpsHRAujMZAbioNW3HNpRPAZRqXQQAjymbbIv4HE+jEpG19bgAhaea9syu+t45ctixW7es+sr03moNX6JDFbAHVvocgJd3k8cIyHyF4DumEZCEurlKHI32BprPJ5GLOEwZAAAAAElFTkSuQmCC" />
-            </span>
-        </button>
-    }*@
+                                                                    @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
+                                                                {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">
+                                                                <span onclick="location.href = '@Url.Action("FitmentReport", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Fitment Report" class="mdc-fab__icon material-icons">
+                                                                <img style="width:75%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA8ElEQVRIid2VTQ6CMBBGp8ZDqPFAJngEj0F0a4ILL4UX0FPIDcQFrp4LpoZAW6DExPglBFK+mTf9mVTk7wRsgIJ+HWMB9wHJ4yE2cohHdf42YBwkEjAcMgHghBhXsIiIMabzr+1xqR03D1U6NEkIOosBjNHXAVFL5JJvz35/iYAtkANPoNTvJBTQ2wcN7ynQE9kkgFYOUAEpsHRAujMZAbioNW3HNpRPAZRqXQQAjymbbIv4HE+jEpG19bgAhaea9syu+t45ctixW7es+sr03moNX6JDFbAHVvocgJd3k8cIyHyF4DumEZCEurlKHI32BprPJ5GLOEwZAAAAAElFTkSuQmCC" />
+                                                                </span>
+                                                                </button>
+                                                                }*@
 
 
 
-        @*@if (ViewBag.profile != "Client")
-    {
+                                                                    @*@if (ViewBag.profile != "Client")
+                                                                {
 
-        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-            <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-            </span>
-        </button>
-    }*@
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                </span>
+                                                                </button>
+                                                                }*@
 
 
                                                                 </td>
@@ -672,17 +672,17 @@
                                         </button>
 
                                         @*<form>
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile">
-                                                <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
-                                                    <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" />
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile">
+                                    <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                    <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" />
 
-                                                </div>
-                                            </button>
+                                    </div>
+                                    </button>
                                     </form>*@
                                         @*<input type="file" accept=".xls, .xlsx" name="UploadedFile" />*@
                                     </div>
                                     @*<div class="">
-                                    <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
+                                <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
 
                                 </div>*@
                                     <div class="">
@@ -707,91 +707,89 @@
             @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
             <!--<div id="myCallModal" class="modal modal-wrap modal-bg">-->
-                <!-- Modal content -->
-                <!--<div class="modal-dialog modal-lg" role="document">
+            <!-- Modal content -->
+            <!--<div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+
+
+
+
+                                <div class="filheader">
+                                    <div class="filavatar">
+                                        <span>
+
+
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                        </span>
+                                    </div>
+                                    <h5 class="modal-title pull-left"> Call Candidate !</h5>
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                </button>
+
+
+
+
+                                <div class="modal-body">
+
+                                    <h5 class="modal-title text-center" id="callingLabel"></h5>
+
+                                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+            display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>-->
+            <!--<div id="statusModal" class="modal modal-bg">-->
+            <!-- Modal content -->
+            <!--<div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-
-
 
 
                         <div class="filheader">
                             <div class="filavatar">
-                                <span>
-
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                </span>
+                                <span class="publicsharing-icon fas fa-question fa-2x"></span>
                             </div>
-                            <h5 class="modal-title pull-left"> Call Candidate !</h5>
+                            <h5 class="modal-title pull-left" id="statusHeading"> Filter</h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                            <span aria-hidden="true" id="statusPopUp" style="cursor:pointer;">&times;</span>
                         </button>
-
-
 
 
                         <div class="modal-body">
 
-                            <h5 class="modal-title text-center" id="callingLabel"></h5>
+                            <div class="col-md-12 col-sm-12 ">
+                                <div class="form-group">
 
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                                    <label class="control-labeled">
+                                        Status
+                                    </label>
 
+                                    <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()"></select>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input type="button" onclick="SaveStatusPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                    </div>
+                                </div>
+
+
+
+                            </div>
                         </div>
-
                     </div>
 
                 </div>
             </div>-->
-
-
-            <!--<div id="statusModal" class="modal modal-bg">-->
-            <!-- Modal content -->
-            <!--<div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-
-
-                <div class="filheader">
-                    <div class="filavatar">
-                        <span class="publicsharing-icon fas fa-question fa-2x"></span>
-                    </div>
-                    <h5 class="modal-title pull-left" id="statusHeading"> Filter</h5>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" id="statusPopUp" style="cursor:pointer;">&times;</span>
-                </button>
-
-
-                <div class="modal-body">
-
-                    <div class="col-md-12 col-sm-12 ">
-                        <div class="form-group">
-
-                            <label class="control-labeled">
-                                Status
-                            </label>
-
-                            <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()"></select>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-                        <div>
-                            <div class="col-md-12 col-sm-12">
-                                <input type="button" onclick="SaveStatusPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
-                            </div>
-                        </div>
-
-
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>-->
 
             <div id="candidateStatusModal" class="modal modal-bg">
                 <!-- Modal content -->
@@ -831,8 +829,8 @@
 
                                     @*<label class="control-labeled">
                                     Upload Audio
-                                </label>
-                                <input type="file" id="idAudioFile" accept=".mp3, .wav, .m4a">*@
+                                    </label>
+                                    <input type="file" id="idAudioFile" accept=".mp3, .wav, .m4a">*@
 
                                 </div>
                                 <div class="form-group">
@@ -879,11 +877,6 @@
                         </button>
 
                         <div class="modal-body" id="statusListTableBody">
-
-
-
-
-
                         </div>
                     </div>
 
@@ -908,11 +901,6 @@
                         </button>
 
                         <div class="modal-body" id="importResultTableBody" style=" overflow: auto; height: 300px">
-
-
-
-
-
                         </div>
                     </div>
 
@@ -988,50 +976,49 @@
                 <span onclick="closeAddCandidateModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body" style="padding-bottom:0px" id="addCandidatelist">
-
             </div>
         </div>
     </div>
 </div>
 
 <script>
-        var spanImport = document.getElementById("importResultPopUp");
-        // When the user clicks on <span> (x), close the modal
-        spanImport.onclick = function () {
-            var modal = document.getElementById("importResultModal");
-            modal.style.display = "none";
-            location.reload();
-        }
-        function ImportQuickCandidates() {
-            document.getElementById("btnImport").disabled = true;
-            var irfExcelId = '@ViewBag.IRFId';
-            var irfExcelName = '@ViewBag.IRFName';
-            var excel_file = $("#idExcelFile")[0].files[0];
-            var isSendInvite = document.getElementById("IsSendInvite").value;
+    var spanImport = document.getElementById("importResultPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanImport.onclick = function () {
+        var modal = document.getElementById("importResultModal");
+        modal.style.display = "none";
+        location.reload();
+    }
+    function ImportQuickCandidates() {
+        document.getElementById("btnImport").disabled = true;
+        var irfExcelId = '@ViewBag.IRFId';
+        var irfExcelName = '@ViewBag.IRFName';
+        var excel_file = $("#idExcelFile")[0].files[0];
+        var isSendInvite = document.getElementById("IsSendInvite").value;
 
 
-            var formdata = new FormData();
-            formdata.append('IRFId', irfExcelId);
-            formdata.append('IsSendInvite', isSendInvite);
-            formdata.append('excel_file', excel_file);
-            formdata.append('IRFName', irfExcelName);
+        var formdata = new FormData();
+        formdata.append('IRFId', irfExcelId);
+        formdata.append('IsSendInvite', isSendInvite);
+        formdata.append('excel_file', excel_file);
+        formdata.append('IRFName', irfExcelName);
 
-            $.ajax({
-                type: "POST",
-                url: "/Candidate/ImportQuickCandidates",
-                contentType: false,
-                processData: false,
-                data: formdata,
-                success: function (data) {
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/ImportQuickCandidates",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
 
-                    document.getElementById('myModal').style.display = "none";
-                    var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                    document.getElementById('importResultModal').style.display = "block";
-                    $('#importResultTableBody').html('');
-                    $('#importResultTableBody').html(importMsg);
-                }
-            });
-        }
+                document.getElementById('myModal').style.display = "none";
+                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                document.getElementById('importResultModal').style.display = "block";
+                $('#importResultTableBody').html('');
+                $('#importResultTableBody').html(importMsg);
+            }
+        });
+    }
 </script>
 @if (ViewBag.Message != null)
 {
@@ -1069,8 +1056,7 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
+                    function () {
                         //window.location.href = '/IRF/Index';
                         document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
                         document.getElementsByClassName("sweet-alert")[0].style.display = "none";
@@ -1331,15 +1317,15 @@
         ModalButtonClick(true);
 
     });
-    
+
     function searchResult() {
         $.ajax({
             type: "POST",
             url: "/Candidate/CandidatesJson",
             data: { 'searchValue': $('#txtmeeting_filter').val(), 'id': $("#hidirfid").val() },
             success: function (data) {
-                    $('#tableID').html('');
-                    $('#tableID').html(data);
+                $('#tableID').html('');
+                $('#tableID').html(data);
             }
         });
     }
