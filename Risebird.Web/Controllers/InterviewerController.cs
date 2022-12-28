@@ -864,7 +864,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public JsonResult IsEmailIdExists(string EmailId, int UserId, bool IsEdit)
         {
-            if(IsEdit)
+            if (IsEdit)
             {
 
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());

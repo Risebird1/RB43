@@ -137,7 +137,7 @@ namespace Risebird.Repository
                         cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
                         cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
                         con.Open();
-                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        if (await cmdClientUser.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -1135,24 +1135,25 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> FetchWhatsAppNumberByEmail(string Emailid)
+        public async Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {
-                var query = "Select WhatsappNumber from UserList Where Emailid=@Emailid";
+                var query = "Select WhatsappNumber,FirstName,LastName from UserList Where Emailid=@Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", Emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<string>(query, dynamicParameters);
-                    return result.FirstOrDefault();
+                    var result = await con.QueryFirstOrDefaultAsync<UserList>(query, dynamicParameters);
+
+                    return (result?.WhatsappNumber,result?.FirstName+" "+ result?.LastName);
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return "";
+            return (string.Empty,string.Empty);
         }
 
         public async Task<string> FetchNameByEmail(string Emailid)

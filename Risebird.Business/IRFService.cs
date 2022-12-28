@@ -1981,12 +1981,12 @@ namespace Risebird.Business
                                    //auto call candidate here
                                    try
                                    {
-                                      await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
+                                       await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
 
                                    }
                                    catch (Exception ex)
                                    {
-                                      await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                       await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                        return;
                                    }
 
