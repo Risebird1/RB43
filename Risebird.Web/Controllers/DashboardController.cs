@@ -1731,7 +1731,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 //var result = _userService.GetWhatsappno(model.EmailId);
-                _= await _userService.UpdateWhatsappno(emailid, whatsappnumber);
+                _ = await _userService.UpdateWhatsappno(emailid, whatsappnumber);
                 return Json("Whatsapp added Successfully.");
             }
             else

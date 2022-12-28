@@ -82,6 +82,10 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                if(string.IsNullOrWhiteSpace(profileName))
+                {
+                      return RedirectToAction("SignOut", "Session");
+                }
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
@@ -3321,6 +3325,11 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+                    if (candidateData == null)
+                    {
+                        return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+                    }
+
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {

@@ -317,7 +317,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    return RedirectToAction("Index");
                 }
             }
             catch (Exception ex)

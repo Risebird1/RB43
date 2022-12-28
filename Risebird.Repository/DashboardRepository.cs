@@ -130,7 +130,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
