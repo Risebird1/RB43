@@ -163,20 +163,20 @@
 
             <div class="mob_h">
                 <div class="pull-right">
-                   @* <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
-                        @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                        {
-                            var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                            profileName = profileName.Trim('"');
-                            @if (profileName == "Client" || profileName == "Interviewer")
-                            {
-                                <c>For Support Toll Free Number - </c>
-                                <span class="fa fa-phone">
-                                    18001207846
-                                </span>
-                                <c style="font-size:18px"> | </c>
-                            }
-                        }
+                    @* <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
+                    @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+                    {
+                    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                    profileName = profileName.Trim('"');
+                    @if (profileName == "Client" || profileName == "Interviewer")
+                    {
+                    <c>For Support Toll Free Number - </c>
+                    <span class="fa fa-phone">
+                    18001207846
+                    </span>
+                    <c style="font-size:18px"> | </c>
+                    }
+                    }
                     </div>*@
                     <div class="user user-r pull-left">
                         <h6 class="main-notification-title">
@@ -379,15 +379,26 @@
     {
         <script>
             var closeStatusList = document.getElementById("supportModalPopUp");
-            closeStatusList.onclick = function () {
-                var modal = document.getElementById("supportModal");
-                modal.style.display = "none";
+            if (closeStatusList != null) {
+                closeStatusList.onclick = function () {
+                    var modal = document.getElementById("supportModal");
+                    if (modal != null) {
+                        modal.style.display = "none";
+                    }
+                }
             }
             var closeStatusmailList = document.getElementById("supportmailModalPopUp");
-            closeStatusmailList.onclick = function () {
-                var modal = document.getElementById("supportmailModal");
-                modal.style.display = "none";
+
+            if (closeStatusmailList != null) {
+                closeStatusmailList.onclick = function () {
+                    var modal = document.getElementById("supportmailModal");
+                    if (modal != null) {
+                        modal.style.display = "none";
+                    }
+                }
             }
+
+
             function GetSupportModal() {
                 $.ajax({
                     url: '/Support/SuportIndex',

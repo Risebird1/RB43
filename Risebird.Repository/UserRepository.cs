@@ -137,7 +137,7 @@ namespace Risebird.Repository
                         cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
                         cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
                         con.Open();
-                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        if (await cmdClientUser.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }

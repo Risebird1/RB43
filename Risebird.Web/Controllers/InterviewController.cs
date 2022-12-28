@@ -6996,6 +6996,11 @@ namespace Risebird.Web.Controllers
                 ViewBag.interviewid = interviewId;
                 ViewBag.irfId = irfId;
                 var email = HttpContext.Session.GetString("email");
+                if(string.IsNullOrWhiteSpace(email))
+                {
+                    return RedirectToAction("AddSecureReport", new { interviewId = interviewId, irfId = irfId, uniqueid = uniqueid });
+                }
+
                 email = email.Replace("\"", "");
                 if (emailid != email)
                 {
