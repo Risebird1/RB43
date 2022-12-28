@@ -109,6 +109,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillGeneralTypeList { get; set; }
 
         public SelectList CompanyTypeList { get; set; }
+        [DisplayName("JD File(.docx,.doc,.pdf files only)")]
         public IFormFile JDFile { get; set; }
         public IFormFile CompanyDetailFile { get; set; }
 
