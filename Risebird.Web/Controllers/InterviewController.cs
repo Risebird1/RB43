@@ -2705,7 +2705,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (comments == null)
                         comments = new InterviewComments();
-                     GetStatusList(comments);
+                    GetStatusList(comments);
                     return View("InterviewComments", comments);
                 }
                 else
@@ -2823,7 +2823,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         InterviewComments comments = new InterviewComments();
-                         GetStatusList(comments);
+                        GetStatusList(comments);
                         return View("InterviewComments", comments);
                     }
                 }

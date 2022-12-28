@@ -2043,7 +2043,7 @@ namespace Risebird.Web.Controllers
                                     _list.EmailAddress = item.Trim();
                                     _list.roomId = _meetinglinks.roomId;
                                     _list.Expiretime = 48;
-                                   await _mCQService.AddMCQSetShareListPremium(_list);
+                                    await _mCQService.AddMCQSetShareListPremium(_list);
                                 }
                             }
                             catch (Exception ex)

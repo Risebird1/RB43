@@ -1994,7 +1994,7 @@ namespace Risebird.Business
                 var levels = await _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
                 var check = await _meetingRespository.GetIRFbyId(irfId);
-                var interviewDetails =  await _meetingRespository.GetInterviewMeetingById(interviewId);
+                var interviewDetails = await _meetingRespository.GetInterviewMeetingById(interviewId);
                 var candidatedetails = await _meetingRespository.GetCandidateSharedDetails(id);
 
                 if (!check)

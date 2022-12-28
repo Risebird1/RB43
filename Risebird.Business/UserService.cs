@@ -704,7 +704,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> FetchWhatsAppNumberByEmail(string Emailid)
+        public async Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {
@@ -713,7 +713,7 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return "";
+                return (string.Empty, string.Empty);
             }
         }
         public async Task<string> FetchNameByEmail(string Emailid)

@@ -4177,7 +4177,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["RecruiterSuccessErrorMessage"] = "Recruiter disable Failed";
                 return Json("Failed");
             }
