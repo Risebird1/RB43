@@ -289,7 +289,7 @@ namespace Risebird.Functions
                         //Cancel Interview
                         var query1 = "Update InterviewMeetings set isAutoCancelled=1,confirmationStatus=2,Cancellationsource='Already Completed Interview' where id=@meetingid";
                         results = con.Query(query1, dynamicParameters1);
-
+                        //TODO update candidate Status
                         var masg = new SendGridMessage();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
                         masg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHrContact, null));

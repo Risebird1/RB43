@@ -4366,7 +4366,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
@@ -4486,12 +4486,19 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.PerHourRate = modeldata.PerHourRate;
                 model._skilldetails.SeniorityLevel = modeldata.SeniorityLevel;
                 model._skilldetails.EmploymentType = modeldata.EmploymentType;
+                model._skilldetails.AssessmentVerificationType = modeldata.AssessmentVerificationType;
+                model._skilldetails.MCQSetsValue = modeldata.MCQSetsValue;
+                model._skilldetails.CodeLanguage = modeldata.CodeLanguage;
             }
             else
             {
                 model._skilldetails.id = 0;
                 model._skilldetails.AssessmentGroupName = "";
                 model._skilldetails.Isinstaavailable = false;
+            }
+            if (string.IsNullOrWhiteSpace(model._skilldetails.AssessmentVerificationType))
+            {
+                model._skilldetails.AssessmentVerificationType = "MCQ";
             }
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
@@ -4563,7 +4570,11 @@ namespace Risebird.Web.Controllers
                 selectListforEmployementTypes.Add(selectItem);
             }
             model._skilldetails.EmploymentTypeList = selectListforEmployementTypes;
-
+            var mcqsets = await _skillService.GetMCQSetsDetails();
+            model._skilldetails.MCQSetsList = new SelectList(mcqsets, "id", "Name");
+            var programmingLanguage = from ProgrammingLanguageenum s in Enum.GetValues(typeof(ProgrammingLanguageenum))
+                                      select new { ID = s.GetDescription(), Name = s.GetDescription() };
+            model._skilldetails.ProgrammingLanguageList = new SelectList(programmingLanguage, "ID", "Name");
             return PartialView(model);
         }
 
@@ -4582,7 +4593,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {

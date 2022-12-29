@@ -23,22 +23,24 @@ CREATE Procedure usp_AddAssessmentGroup
 @Country int,
 @PerHourRate int,
 @SeniorityLevel varchar(50) = null,
-@EmploymentType varchar(20) = null
+@EmploymentType varchar(20) = null,
+@AssessmentVerificationType varchar(5),
+@CodeLanguage varchar(100),
+@MCQSetsValue int
 AS            
 BEGIN        
 if(@id=0)      
 Begin      
-Insert into AssessmentGroup(AssessmentGroup,PrimarySkills,Isinstaavailable,Categoryid,CompanyType,IsRelevant,ProfileType,CompetencyLevel,Country, PerHourRate, SeniorityLevel, EmploymentType) 
-values(@AssessmentGroup,@PrimarySkills,@Isinstaavailable,@Category,@CompanyType,@IsRelevant,@ProfileType,@CompetencyLevel,@Country,@PerHourRate, @SeniorityLevel, @EmploymentType)      
+Insert into AssessmentGroup(AssessmentGroup,PrimarySkills,Isinstaavailable,Categoryid,CompanyType,IsRelevant,ProfileType,CompetencyLevel,Country, PerHourRate, SeniorityLevel, EmploymentType,AssessmentVerificationType,CodeLanguage,MCQSetsValue) 
+values(@AssessmentGroup,@PrimarySkills,@Isinstaavailable,@Category,@CompanyType,@IsRelevant,@ProfileType,@CompetencyLevel,@Country,@PerHourRate, @SeniorityLevel, @EmploymentType,@AssessmentVerificationType,@CodeLanguage,@MCQSetsValue)      
 END      
 else      
 Begin      
 Update AssessmentGroup set AssessmentGroup=@AssessmentGroup,PrimarySkills=@PrimarySkills,Isinstaavailable=@Isinstaavailable,Categoryid=@Category, 
 CompanyType=@CompanyType,IsRelevant=@IsRelevant,ProfileType=@ProfileType,CompetencyLevel=@CompetencyLevel,Country=@Country,PerHourRate=@PerHourRate,
-SeniorityLevel = @SeniorityLevel, EmploymentType = @EmploymentType
+SeniorityLevel = @SeniorityLevel, EmploymentType = @EmploymentType,AssessmentVerificationType=@AssessmentVerificationType,CodeLanguage=@CodeLanguage,
+MCQSetsValue=@MCQSetsValue
 where id=@id      
 end      
 END    
-  
-
 GO

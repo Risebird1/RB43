@@ -68,6 +68,9 @@ namespace Risebird.Entities.ViewModel
         //public int SeniorityLevel { get; set; } //based on Job Profile Enum
         public string SeniorityLevel { get; set; } //based on Job Profile Enum
         public string EmploymentType { get; set; } //based on Job Profile Enum
+        public string AssessmentVerificationType { get; set; }
+        public string MCQSetsValue { get; set; }
+        public string CodeLanguage { get; set; }
     }
     public class Assessment
     {
@@ -124,7 +127,12 @@ namespace Risebird.Entities.ViewModel
         public string EmploymentType { get; set; }
         public string[] EmploymentTypeArray { get; set; }
         public List<SelectListItem> EmploymentTypeList { get; set; }
-
+        [DisplayName("Assessment Verification Type")]
+        public string AssessmentVerificationType { get; set; }
+        public string MCQSetsValue { get; set; }
+        public string CodeLanguage { get; set; }
+        public SelectList ProgrammingLanguageList { get; set; }
+        public SelectList MCQSetsList { get; set; }
     }
     public class AssessmentQuestions
     {
