@@ -414,6 +414,21 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public async Task<IEnumerable<Skill>> GetMCQSetsDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Skill>(
+                        con, "select id,Title as Name from MCQSets order by Title", null, commandType: Text);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -58,9 +58,9 @@
                     @Html.LabelFor(model => model._skilldetails.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
                 </div>
                 @Html.DropDownListFor(model => model._skilldetails.Isinstaavailable, new[]
-                                                        {   new SelectListItem { Text = "No", Value = "false" },
-                                                            new SelectListItem { Text = "Yes", Value = "true"} },
-                                                            new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+            {   new SelectListItem { Text = "No", Value = "false" },
+            new SelectListItem { Text = "Yes", Value = "true"} },
+            new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                 @Html.ValidationMessageFor(model => model._skilldetails.Isinstaavailable, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
@@ -75,9 +75,9 @@
                     @Html.LabelFor(model => model._skilldetails.IsRelevant, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
                 </div>
                 @Html.DropDownListFor(model => model._skilldetails.IsRelevant, new[]
-                                                        {   new SelectListItem { Text = "No", Value = "false" },
-                                                            new SelectListItem { Text = "Yes", Value = "true" }},
-                                                            new { @class = "select-css form-control text-box single-line" })
+            {   new SelectListItem { Text = "No", Value = "false" },
+            new SelectListItem { Text = "Yes", Value = "true" }},
+            new { @class = "select-css form-control text-box single-line" })
                 @Html.ValidationMessageFor(model => model._skilldetails.IsRelevant, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
@@ -130,12 +130,12 @@
                 @Html.ValidationMessageFor(model => model._skilldetails.ProfileType, "", new { @class = "text-danger" })
             </div>
             @*<div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                    <div class="mandate">
-                        @Html.LabelFor(model => model._skilldetails.CompetencyLevel, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
-                    </div>
-                    @Html.DropDownListFor(model => model._skilldetails.CompetencyLevel, (SelectList)ViewBag.CompetencyLevellist, "Select", new { @class = "form-control", @required = "required" })
-                    @Html.ValidationMessageFor(model => model._skilldetails.CompetencyLevel, "", new { @class = "text-danger" })
-                </div>*@
+        <div class="mandate">
+        @Html.LabelFor(model => model._skilldetails.CompetencyLevel, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
+        </div>
+        @Html.DropDownListFor(model => model._skilldetails.CompetencyLevel, (SelectList)ViewBag.CompetencyLevellist, "Select", new { @class = "form-control", @required = "required" })
+        @Html.ValidationMessageFor(model => model._skilldetails.CompetencyLevel, "", new { @class = "text-danger" })
+        </div>*@
             <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                 <div class="mandate">
                     @Html.LabelFor(model => model._skilldetails.SeniorityLevel, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
@@ -180,6 +180,19 @@
                 @Html.EditorFor(model => model._skilldetails.PerHourRate, new { htmlAttributes = new { @class = "form-control", @type = "number", @required = "required" } })
                 @Html.ValidationMessageFor(model => model._skilldetails.PerHourRate, "", new { @class = "text-danger" })
             </div>
+            <div class="form-group col-lg-6  col-md-6 col-sm-6 pull-left">
+                @*<div class="mandate">
+            @Html.LabelFor(model => model._skilldetails.AssessmentVerificationType, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
+            </div>*@
+                @Html.RadioButtonFor(model=>model._skilldetails.AssessmentVerificationType,"MCQ",new{@onchange="RadioLinkChanged(this.value)"}) MCQ
+                @Html.RadioButtonFor(model=>model._skilldetails.AssessmentVerificationType,"Code",new{@onchange="RadioLinkChanged(this.value)"}) Code
+                <div class="form-group" style="display:block" id="MCQValueDiv">
+                    @Html.DropDownListFor(x => Model._skilldetails.MCQSetsValue, (SelectList)Model._skilldetails.MCQSetsList, htmlAttributes: new { @class = "select-css form-control text-box single-line" })
+                </div>
+                <div class="form-group" style="display:none" id="codelanguagediv">
+                    @Html.DropDownListFor(x => Model._skilldetails.CodeLanguage, (SelectList)Model._skilldetails.ProgrammingLanguageList, htmlAttributes: new { @class = "select-css form-control text-box single-line" })
+                </div>
+            </div>
         </div>
         <div>
             <div class="card-footer" style="margin-top: 15px;">
@@ -200,4 +213,16 @@
     jQuery(document).ready(function () {
         jQuery("#zskilldetails_SelectedSkillIds, #zskilldetails_ProfileTypeArray, #zskilldetails_SeniorityLevelArray, #zskilldetails_EmploymentTypeArray").select2({ multiple: true });
     });
+</script>
+<script>
+    function RadioLinkChanged(val) {
+        if (val == 'MCQ') {
+            document.getElementById("MCQValueDiv").style.display = "block";
+            document.getElementById("codelanguagediv").style.display = "none";
+        }
+        else {
+            document.getElementById("MCQValueDiv").style.display = "none";
+            document.getElementById("codelanguagediv").style.display = "block";
+        }
+    }
 </script>

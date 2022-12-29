@@ -86,7 +86,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -4533,6 +4533,9 @@ namespace Risebird.Repository
                     parameters.Add("@PerHourRate", _skilldetails.PerHourRate);
                     parameters.Add("@SeniorityLevel", _skilldetails.SeniorityLevel);
                     parameters.Add("@EmploymentType", _skilldetails.EmploymentType);
+                    parameters.Add("@AssessmentVerificationType", _skilldetails.AssessmentVerificationType);
+                    parameters.Add("@CodeLanguage", _skilldetails.CodeLanguage);
+                    parameters.Add("@MCQSetsValue", _skilldetails.MCQSetsValue);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";

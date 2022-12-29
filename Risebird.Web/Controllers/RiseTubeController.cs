@@ -2549,7 +2549,7 @@ namespace Risebird.Web.Controllers
                 //Start: Share button functionaly
                 ViewBag.ResultStatus = "VideoPresent";
                 MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
-                if (model.CandidateAvailable != "Available")
+                if (model == null || model.CandidateAvailable != "Available")
                 {
                     model = new MeetingVM();
                     ViewBag.ResultStatus = "VideoNotPresent";

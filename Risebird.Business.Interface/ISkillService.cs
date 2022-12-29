@@ -23,6 +23,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AssignmentVM>> GetAssessmentGroupsByCategory(int categoryId);
         Task<int?> GetAssessmentGroupCategory(int assessmentGroupId);
         Task<IEnumerable<string>> GetPrimarySkillsBasedOnCategory(int categoryId);
-
+        Task<List<Skill>> GetMCQSetsDetails();
     }
 }
