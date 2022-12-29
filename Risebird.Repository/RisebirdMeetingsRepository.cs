@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -27,9 +29,10 @@ namespace Risebird.Repository
         private readonly IMeetingRespository _meetingRespository;
         private readonly ICandidateRepository _candidateRepository;
         private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IIRFService _irfService;
 
         public RisebirdMeetingsRepository(IConfiguration configuration, INotificationHelper notificationHelper, IIRFRepository irfRepository,
-            IMeetingRespository meetingRespository, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger)
+            IMeetingRespository meetingRespository, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService)
         {
             _configuration = configuration;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
@@ -38,6 +41,7 @@ namespace Risebird.Repository
             _meetingRespository = meetingRespository;
             _candidateRepository = candidateRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _irfService = irfService;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
             string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, int TimeZoneoffset, string TimeZonesValue, out int interviewIdOut, string zoomAccountEmail = null)
@@ -158,7 +162,9 @@ namespace Risebird.Repository
                         //Cancel Interview
                         var query1 = "Update InterviewMeetings set isAutoCancelled=1,confirmationStatus=2,Cancellationsource='Already Completed Interview' where id=@meetingid";
                         results = con.Query(query1, dynamicParameters1);
-
+                        var candidateId = _irfRepository.GetCandidateIdByEmail(candidateEmail).Result;
+                        var irfid = _irfRepository.GetIRFIdByIRFName(IRFID);
+                        var result1 = _irfService.AddCandidateStatus("System", candidateId, irfid, "Already Completed Cancelled", (int)CandidateStatusOptions.Cancelled, interviewId).Result;
                         var masg = new SendGridMessage();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateEmail, null));
                         masg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ClientHrContact, null));

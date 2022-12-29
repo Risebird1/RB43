@@ -223,6 +223,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<List<Skill>> GetMCQSetsDetails()
+        {
+            try
+            {
+                var data = await _skillRepository.GetMCQSetsDetails();
+                return data.ToList();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

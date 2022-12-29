@@ -33,7 +33,7 @@
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-    
+
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.49.1" />
@@ -194,14 +194,14 @@
     <Content Update="Views\Interview\InterviewComments.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-<Content Update="Views\Interview\UploadAudio.cshtml">
+    <Content Update="Views\Interview\UploadAudio.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
- <Content Update="Views\IRF\FilteredInterviewDashboard.cshtml">
+    <Content Update="Views\IRF\FilteredInterviewDashboard.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
 
-     
+
     <Content Update="Views\IRF\SelectedInterviewMeetings.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
