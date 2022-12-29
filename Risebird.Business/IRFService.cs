@@ -1615,6 +1615,14 @@ namespace Risebird.Business
                 {
                     _skilldetails.EmploymentType = string.Join(',', _skilldetails.EmploymentTypeArray);
                 }
+                if (_skilldetails.AssessmentVerificationType == "MCQ")
+                {
+                    _skilldetails.CodeLanguage = "";
+                }
+                else
+                {
+                    _skilldetails.MCQSetsValue = "";
+                }
                 return _irfRepository.Addassignmentgroup(_skilldetails).Result;
             }
 

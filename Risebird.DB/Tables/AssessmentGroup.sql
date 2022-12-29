@@ -16,6 +16,9 @@ CREATE TABLE [dbo].[AssessmentGroup](
     [PerHourRate][int] NULL,
     [SeniorityLevel][varchar](50) NULL,
     [EmploymentType][varchar](20) NULL,
+    [AssessmentVerificationType][varchar](5) NULL,
+    [CodeLanguage][varchar](100) NULL,
+    [MCQSetsValue][int] NULL,
  CONSTRAINT [PK_AssessmentGroup] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -120,6 +123,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE AssessmentGroup
     Add EmploymentType varchar(20) NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AssessmentVerificationType')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add AssessmentVerificationType varchar(5) NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodeLanguage')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add CodeLanguage varchar(100) NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MCQSetsValue')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add MCQSetsValue int NULL 
 END
 GO
 
