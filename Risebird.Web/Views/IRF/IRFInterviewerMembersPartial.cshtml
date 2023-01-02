@@ -11,13 +11,18 @@
                         <th class="text-center">Mobile</th>
                         <th>EmailId</th>
                         <th class="text-center">Call</th>
-
                         <th>ResumeLink</th>
-                        
-                            <th>Active</th>
-                        
+                        <th>Active</th>
                         <th>Available</th>
+                        @if (ViewBag.Type != "IRF")
+                        {
+                            <th>Verified</th>
+                        }
                         <th>Total Interviews</th>
+                        @if (ViewBag.Type != "IRF")
+                        {
+                            <th>Report</th>
+                        }
 
                     </tr>
                 </thead>
@@ -26,37 +31,36 @@
 
                     @foreach (var item in Model)
                     {
-                    <tr>
-                        @if (item.Type == "Interviewer")
-                        {
-                            <td style="color: #17c317">@item.Type</td>
-                        }
-                        else
-                        {
-                            <td style="color: #ff7bf5">@item.Type</td>
-                        }
-                        <td class="text-center">@item.MobileNumber</td>
-               
-                        <td>@item.EmailId</td>
-                        <td class="text-center">
-                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                        <tr>
+                            @if (item.Type == "Interviewer")
                             {
-                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName', '@item.MobileNumber', '@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                <td style="color: #17c317">@item.Type</td>
                             }
+                            else
+                            {
+                                <td style="color: #ff7bf5">@item.Type</td>
+                            }
+                            <td class="text-center">@item.MobileNumber</td>
 
-                        </td>
-
-                        @if (item.ResumeLink != null && item.ResumeLink != "")
-                        {
+                            <td>@item.EmailId</td>
                             <td class="text-center">
-                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                {
+                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName', '@item.MobileNumber', '@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                }
+
                             </td>
-                        }
-                        else
-                        {
-                            <td class="text-center">No Resume</td>
-                        }
-                        
+
+                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                            {
+                                <td class="text-center">
+                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="text-center">No Resume</td>
+                            }
                             @if (item.IsActive)
                             {
                                 <td class="text-center">Yes</td>
@@ -65,32 +69,70 @@
                             {
                                 <td class="text-center">No</td>
                             }
-                        
-                        @if (ViewBag.Type == "IRF")
-                        {
-                            @if (item.IsAvailable)
+                            @if (ViewBag.Type == "IRF")
                             {
-                                <td class="text-center">Yes</td>
+                                @if (item.IsAvailable)
+                                {
+                                    <td class="text-center">Yes</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center">No</td>
+                                }
                             }
                             else
                             {
-                                <td class="text-center">No</td>
+                                @if (@item.AvailableStatus != "0")
+                                {
+                                    <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
                             }
-                        }
-                        else
-                        {
-                            @if (@item.AvailableStatus != "0")
+                            @if (ViewBag.Type != "IRF")
                             {
-                                <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
+                                @if (item.IsVerified)
+                                {
+                                    <td class="text-center">Verified</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center">Not Verified</td>
+                                }
                             }
-                            else
+                            <td class="text-center">@item.TotalInterviews</td>
+                            @if (ViewBag.Type != "IRF")
                             {
-                                <td></td>
+                                @if (item.AssessmentVerificationType == "MCQ")
+                                {
+                                    @if (!string.IsNullOrEmpty(item.MCQSetsValue))
+                                    {
+                                        <td>
+                                            <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.MCQSetsValue,SMCQId=item.SMCQId })'>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                </button>
+                                            </a>
+                                        </td>
+                                    }
+                                }
+                                else
+                                {
+                                    @if (!string.IsNullOrEmpty(item.inviteId))
+                                    {
+                                        <td>
+                                            <a target="_blank" href='@Url.Action("CodeInviteReport", "Interviewer", new { inviteid = item.inviteId })'>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                </button>
+                                            </a>
+                                        </td>
+                                    }
+                                }
                             }
-                        }
-                        <td class="text-center">@item.TotalInterviews</td>
-
-                    </tr>
+                        </tr>
                     }
 
                 </tbody>

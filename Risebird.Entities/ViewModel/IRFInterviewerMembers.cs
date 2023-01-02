@@ -16,6 +16,14 @@
         public bool IsAvailable { get; set; }
         public string AvailableStatus { get; set; }
         public int AvailbilityHour { get; set; }
+        public bool IsVerified { get; set; }
+        public int MCQCandidateid { get; set; }
+        public string AssessmentVerificationType { get; set; }
+        public string CodeLanguage { get; set; }
+        public string MCQSetsValue { get; set; }
+        public string Title { get; set; }
+        public string inviteId { get; set; }
+        public string SMCQId { get; set; }
     }
     public class AssessmentIRFListVM
     {
