@@ -2610,5 +2610,25 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> AddInterviewerAssesssmentDetails(int Assessmentid, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Assessmentid", Assessmentid);
+                    parameters.Add("@emailid", emailid);
+                    var results = await SqlMapper.QueryAsync(con, "usp_AddAssessmentInterviewerDetails", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

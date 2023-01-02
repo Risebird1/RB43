@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -24,6 +26,7 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -52,11 +55,12 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
         private readonly ICalendlyHelper _calendlyHelper;
-
+        private readonly IMCQService _mCQService;
+        private readonly string codeapiendpoint;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper)
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper, IMCQService mCQService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -77,6 +81,8 @@ namespace Risebird.Web.Controllers
             _interviewSchedulerservice = interviewSchedulerservice;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
             _calendlyHelper = calendlyHelper;
+            _mCQService = mCQService;
+            codeapiendpoint = _configuration["CodeApiEndPoint"];
         }
 
 
@@ -4446,6 +4452,7 @@ namespace Risebird.Web.Controllers
             var modellist = await _userService.GetInterviewerEntitleById(assessmentid);
             if (modellist == null)
             {
+
                 modellist = new AssignmentVM();
             }
             //var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
@@ -7303,6 +7310,153 @@ namespace Risebird.Web.Controllers
         {
             var _clientdetails = await _clientService.GetClient(clientid);
             return Json(_clientdetails);
+        }
+        [HttpPost]
+        public async Task<JsonResult> ShareVerificationToInterviewer(int Assessmentid)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var model = await _irfService.GetAssessmentGroupInterviewerMembers(Assessmentid);
+                var Uniquedate = model?.FirstOrDefault();
+                MCQVMShare _list = new MCQVMShare();
+                _list.status = 0;
+                _list.MCQSet = Uniquedate.Title;
+                _list.ClientHR = emailid;
+                _list.ApplyingCompany = "";
+                _list.WhoShared = emailid;
+                if (Uniquedate.AssessmentVerificationType == "MCQ")
+                {
+                    var Emailids = string.Join(",", model.Select(x => x.EmailId).Distinct());
+                    string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Uniquedate.MCQSetsValue;
+                    var botlinkslist = new MCQBotResponse();
+                    currenturl = currenturl + "&uniqueid=322";
+                    var aadharverificationflag = "Y";
+                    var _interviewerflag = "N";
+                    botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl, _interviewerflag);
+                    foreach (var item in Emailids.Split(","))
+                    {
+                        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                        var _testurl = botlinkslist.emailBotUrls.Where(x => x.email == item).FirstOrDefault().botTestLink;
+                        var roomId = _testurl.Split("/").LastOrDefault();
+                        //Send Mail to Interviewer
+                        Mail _mail = new Mail
+                        {
+                            TO = item,
+                            Subject = "Invitation for " + Uniquedate.Title + " : " + "Risebird"
+                        };
+                        var result = await _notificationHelper.SharedBotTestLink(_mail, Uniquedate.Title, "15", _testurl, "Risebird");
+
+                        _list.PartitionKey = date1;
+                        _list.MCQId = Uniquedate.MCQSetsValue;
+                        _list.EmailAddress = item.Trim();
+                        _list.roomId = roomId;
+                        _list.Expiretime = 48;
+                        _list.ShareType = true;
+                        _list.botactive = true;
+                        await _mCQService.AddMCQSetShareList(_list);
+                        await _interviewerService.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
+                    }
+                }
+                else
+                {
+                    var Emailids = string.Join(",", model.Select(x => x.EmailId).Distinct());
+                    foreach (var item in Emailids.Split(","))
+                    {
+                        var codeInviteVM = new CodeInviteVM();
+                        codeInviteVM.userName = emailid;
+                        codeInviteVM.candidateEmail = item;
+                        codeInviteVM.programmingLanguage = Uniquedate.CodeLanguage;
+                        codeInviteVM.experience = 3;
+                        codeInviteVM.inviteStartTime = DateTime.Now;
+                        codeInviteVM.inviteEndTime = DateTime.Now.AddDays(2);
+                        codeInviteVM.difficultyLevel = "standard";
+                        await GenerateCodeInviteURL(codeInviteVM);
+                        await _interviewerService.SendInviteCode(codeInviteVM, emailid);
+                        await _interviewerService.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
+                        //Send mail to interviewer
+                        Mail _mail = new Mail
+                        {
+                            TO = item,
+                            Subject = "Invitation for " + Uniquedate.CodeLanguage + " : " + "Risebird"
+                        };
+                        var result = await _notificationHelper.SharedBotTestLink(_mail, Uniquedate.CodeLanguage, "15", codeInviteVM.botURL, "Risebird");
+                    }
+                }
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
+        public async Task<MCQBotResponse> GenerateBotLink(string emailds, string AadhaarVerificationRequired, string MCQTestlink, string _interviewerflag)
+        {
+            var model = new MCQBotRequest();
+            model.tenantUuid = "e5f37005-42a3-4510-b211-0a3c0ee675b7";
+            model.email = emailds;
+            model.aadharVerification = AadhaarVerificationRequired;
+            model.faceVerification = "Y";
+            model.interviewerTraining = _interviewerflag;
+            model.companyEmailVerification = "N";
+            model.videoBio = "N";
+            model.careerQuestions = "N";
+            model.testLink.mcq = MCQTestlink;
+            model.testLink.code = "";
+            var client = new RestClient("https://bot.risebird.io/api/v1/bot/invite");
+            var request = new RestRequest("https://bot.risebird.io/api/v1/bot/invite", Method.Post);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            RestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
+            return convertedResponse;
+        }
+        public async Task GenerateCodeInviteURL(CodeInviteVM _codeinvite)
+        {
+            var model = new CodeInviteURLRequest();
+            model.userName = _codeinvite.userName;
+            model.candidateEmail = _codeinvite.candidateEmail;
+            model.programmingLanguage = _codeinvite.programmingLanguage;
+            model.experience = _codeinvite.experience;
+            model.inviteStartTime = _codeinvite.inviteStartTime.ToString("yyyy-MM-dd HH:mm:ss");
+            model.inviteEndTime = _codeinvite.inviteEndTime.ToString("yyyy-MM-dd HH:mm:ss");
+            model.zone = "IST";
+            model.difficultyLevel = _codeinvite.difficultyLevel.ToLower();
+            model.assignmentType = "QUICK";
+            var client = new RestClient(codeapiendpoint + "invited-assignment");
+            var request = new RestRequest(codeapiendpoint + "invited-assignment", Method.Post);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            RestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<CodeInviteURLResponse>(response.Content);
+            _codeinvite.invite_UrL = convertedResponse.inviteUrl;
+            _codeinvite.inviteId = convertedResponse.inviteUrl.Split("/").LastOrDefault();
+            var botcodeurl = await GenerateBotCodeLink(_codeinvite.candidateEmail, _codeinvite.invite_UrL);
+            if (botcodeurl != null)
+                _codeinvite.botURL = botcodeurl.emailBotUrls.FirstOrDefault().botTestLink;
+        }
+        public async Task<MCQBotResponse> GenerateBotCodeLink(string emailds, string CodeTestLink)
+        {
+            var model = new MCQBotRequest();
+            model.tenantUuid = "e5f37005-42a3-4510-b211-0a3c0ee675b7";
+            model.email = emailds;
+            model.aadharVerification = "Y";
+            model.faceVerification = "Y";
+            model.interviewerTraining = "N";
+            model.companyEmailVerification = "N";
+            model.videoBio = "N";
+            model.careerQuestions = "N";
+            model.testLink.mcq = "";
+            model.testLink.code = CodeTestLink;
+            var client = new RestClient("https://bot.risebird.io/api/v1/bot/invite");
+            var request = new RestRequest("https://bot.risebird.io/api/v1/bot/invite", Method.Post);
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(model);
+            RestResponse response = await client.ExecuteAsync(request);
+            var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
+            return convertedResponse;
         }
     }
 }
