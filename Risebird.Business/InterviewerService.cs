@@ -1168,5 +1168,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> AddInterviewerAssesssmentDetails(int Assessmentid, string emailid)
+        {
+            try
+            {
+                return await _interviewerRepository.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
+
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
