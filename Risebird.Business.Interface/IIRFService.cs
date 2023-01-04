@@ -122,5 +122,6 @@ namespace Risebird.Business.Interface
         Task<bool> SendRedoInvite(int irfId, string email, string loggedUserEmailId, string linkurl);
         Task<bool> SendClientRedoInvite(int irfId, int interviewid, string email);
         Task<IEnumerable<ClientInterviewMapped>> GetCompletedInterviewCountMappedClient(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<IRFInterviewerMembers>> GetInterviewerAssessmentGroups(string emailid);
     }
 }

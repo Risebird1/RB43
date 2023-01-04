@@ -459,17 +459,38 @@
         $("#questionlistTableBody").empty().html(html);
     }
     function ShareVerificationInterviewer(id) {
-        $.ajax({
-            url: '/IRF/ShareVerificationToInterviewer',
-            type: 'POST',
-            data: { 'Assessmentid': id },
-            success: function (data) {
-                if (data == "Success") {
-                    alert("successfully share the verification request for assessment.");
-                } else {
-                    alert("Fail to share the verification request for assessment.");
-                }
+        swal.fire({
+            title: 'Are you sure you want to share verification test to interviewers?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Share it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/ShareVerificationToInterviewer',
+                        type: 'POST',
+                        data: { 'Assessmentid': id },
+                        success: function (data) {
+                            if (data == "Success") {
+                                alert("successfully share the verification request for assessment.");
+                            } else {
+                                alert("Fail to share the verification request for assessment.");
+                            }
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not shared verfication test link!',
+                    'error'
+                )
             }
-        });
+        })
     }
 </script>

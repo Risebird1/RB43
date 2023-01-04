@@ -1,0 +1,121 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.IRFInterviewerMembers>
+<div>
+    @if (Model != null && Model.Count() != 0)
+    {
+                <div id="style-2" class="scrollers" style="overflow-y:auto">
+
+                    <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>Assessmnet Group</th>
+                                <th>Verified</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                    @foreach (var item in Model)
+                    {
+                                        <tr>
+                                            <td>@item.Assessmentgroup</td>
+                                                    @if (item.IsVerified)
+                                {
+                                                <td class="text-center">Verified</td>
+                                }
+                                else
+                                {
+                                                <td class="text-center">Not Verified</td>
+                                }
+                                            <td>
+                                @if (item.AssessmentVerificationType == "MCQ")
+                                {
+                                    @if (!string.IsNullOrEmpty(item.SMCQId))
+                                    {
+                                                                        <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.MCQSetsValue,SMCQId=item.SMCQId })'>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                                <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    @if (!string.IsNullOrEmpty(item.inviteId))
+                                    {
+                                                                        <a target="_blank" href='@Url.Action("CodeInviteReport", "Interviewer", new { inviteid = item.inviteId })'>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                                <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                    }
+                                }
+                                                                <button class="mdc-fab app-fab--absolute priority" aria-label="Share Verification to interviewer" style="background: #59b259 !important" title="Share Verification to interviewer">
+                                                                                            <span onclick="javascript:ShareVerificationInterviewer('@item.Assessmentid','@item.EmailId');" title="Share Verification to interviewer" class=" mdc-fab__icon material-icons">									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                                                                        </button>
+                                            </td>
+                                        </tr>
+                    }
+
+                        </tbody>
+                    </table>
+
+                </div>
+    }
+    else
+    {
+                <div>
+                    No assessments found for this interviewer
+                </div>
+    }
+</div>
+
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+<style>
+    .sb-content {
+        overflow-y: scroll;
+        box-sizing: border-box;
+    }
+</style>
+<script>
+    function ShareVerificationInterviewer(id,interieweremailid) {
+        swal.fire({
+            title: 'Are you sure you want to share verification test to interviewer?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Share it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/ShareAssessmentVerificationToInterviewer',
+                        type: 'POST',
+                        data: { 'Assessmentid': id ,'interieweremailid':interieweremailid},
+                        success: function (data) {
+                            if (data == "Success") {
+                                swal.fire("successfully share the verification request for assessment.");
+                            } else {
+                                swal.fire("Fail to share the verification request for assessment.");
+                            }
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not shared verfication test link!',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
