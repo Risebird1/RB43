@@ -107,7 +107,7 @@
                             {
                                 @if (item.AssessmentVerificationType == "MCQ")
                                 {
-                                    @if (!string.IsNullOrEmpty(item.MCQSetsValue))
+                                    @if (!string.IsNullOrEmpty(item.SMCQId))
                                     {
                                         <td>
                                             <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.MCQSetsValue,SMCQId=item.SMCQId })'>

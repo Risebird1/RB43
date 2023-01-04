@@ -7359,7 +7359,7 @@ namespace Risebird.Web.Controllers
                         await _interviewerService.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
                     }
                 }
-                else
+                else if (Uniquedate.AssessmentVerificationType == "Code")
                 {
                     var Emailids = string.Join(",", model.Select(x => x.EmailId).Distinct());
                     foreach (var item in Emailids.Split(","))
@@ -7457,6 +7457,101 @@ namespace Risebird.Web.Controllers
             RestResponse response = await client.ExecuteAsync(request);
             var convertedResponse = JsonConvert.DeserializeObject<MCQBotResponse>(response.Content);
             return convertedResponse;
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetInterviewerAssessmentGroup(string InterviewerEmailid)
+        {
+            try
+            {
+                var model = await _irfService.GetInterviewerAssessmentGroups(InterviewerEmailid);
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ShareAssessmentVerificationToInterviewer(int Assessmentid, string interieweremailid)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var model = await _irfService.GetAssessmentGroupInterviewerMembers(Assessmentid);
+                var Uniquedate = model?.Where(x => x.EmailId == interieweremailid).FirstOrDefault();
+                if (Uniquedate.AssessmentVerificationType == "MCQ")
+                {
+                    MCQVMShare _list = new MCQVMShare();
+                    _list.status = 0;
+                    _list.MCQSet = Uniquedate.Title;
+                    _list.ClientHR = emailid;
+                    _list.ApplyingCompany = "";
+                    _list.WhoShared = emailid;
+                    var Emailids = string.Join(",", model.Select(x => x.EmailId).Distinct());
+                    string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Uniquedate.MCQSetsValue;
+                    var botlinkslist = new MCQBotResponse();
+                    currenturl = currenturl + "&uniqueid=322";
+                    var aadharverificationflag = "Y";
+                    var _interviewerflag = "N";
+                    botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl, _interviewerflag);
+                    foreach (var item in Emailids.Split(","))
+                    {
+                        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                        var _testurl = botlinkslist.emailBotUrls.Where(x => x.email == item).FirstOrDefault().botTestLink;
+                        var roomId = _testurl.Split("/").LastOrDefault();
+                        //Send Mail to Interviewer
+                        Mail _mail = new Mail
+                        {
+                            TO = item,
+                            Subject = "Invitation for " + Uniquedate.Title + " : " + "Risebird"
+                        };
+                        var result = await _notificationHelper.SharedBotTestLink(_mail, Uniquedate.Title, "15", _testurl, "Risebird");
+
+                        _list.PartitionKey = date1;
+                        _list.MCQId = Uniquedate.MCQSetsValue;
+                        _list.EmailAddress = item.Trim();
+                        _list.roomId = roomId;
+                        _list.Expiretime = 48;
+                        _list.ShareType = true;
+                        _list.botactive = true;
+                        await _mCQService.AddMCQSetShareList(_list);
+                        await _interviewerService.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
+                    }
+                }
+                else if (Uniquedate.AssessmentVerificationType == "Code")
+                {
+                    var Emailids = string.Join(",", model.Select(x => x.EmailId).Distinct());
+                    foreach (var item in Emailids.Split(","))
+                    {
+                        var codeInviteVM = new CodeInviteVM();
+                        codeInviteVM.userName = emailid;
+                        codeInviteVM.candidateEmail = item;
+                        codeInviteVM.programmingLanguage = Uniquedate.CodeLanguage;
+                        codeInviteVM.experience = 3;
+                        codeInviteVM.inviteStartTime = DateTime.Now;
+                        codeInviteVM.inviteEndTime = DateTime.Now.AddDays(2);
+                        codeInviteVM.difficultyLevel = "standard";
+                        await GenerateCodeInviteURL(codeInviteVM);
+                        await _interviewerService.SendInviteCode(codeInviteVM, emailid);
+                        await _interviewerService.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
+                        //Send mail to interviewer
+                        Mail _mail = new Mail
+                        {
+                            TO = item,
+                            Subject = "Invitation for " + Uniquedate.CodeLanguage + " : " + "Risebird"
+                        };
+                        var result = await _notificationHelper.SharedBotTestLink(_mail, Uniquedate.CodeLanguage, "15", codeInviteVM.botURL, "Risebird");
+                    }
+                }
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
         }
     }
 }
