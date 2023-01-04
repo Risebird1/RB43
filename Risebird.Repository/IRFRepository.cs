@@ -6364,6 +6364,28 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetInterviewerAssessmentGroups(string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_FetchInterviewerAssessmentGroupDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 

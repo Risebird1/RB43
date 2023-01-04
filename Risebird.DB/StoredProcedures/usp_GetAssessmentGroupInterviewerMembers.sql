@@ -21,7 +21,7 @@ left join AssessmentGroup ag on ag.id=CTE.value
 left join MCQSets ms on ms.id=ag.MCQSetsValue  
 left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and cid.candidateEmail=ul.EmailId
 left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId
-where CTE.value = 1     
+where CTE.value = @Assessmentid     
 group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.IsVerified,iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey
          
       
