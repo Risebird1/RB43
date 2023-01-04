@@ -6295,7 +6295,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SupportAdmin") /*profileName == "HR" || profileName == "SeniorHR" ||*/
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrWhiteSpace(x.AssessmentGroup) && (x.AssessmentGroupId != 0) && (x.CreatedFromTemplateId == null || x.CreatedFromTemplateId == 0));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
@@ -6331,7 +6331,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     if (filter != null)
                     {
@@ -6663,7 +6663,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
 
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "Client")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
