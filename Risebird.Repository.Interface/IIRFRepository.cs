@@ -193,5 +193,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> FetchSupportAdminEmailid();
         Task<IEnumerable<ClientInterviewMapped>> GetCompletedInterviewCountMappedClient(DateTime startDate, DateTime endDate);
         bool EditIRFConfiguration(int irfId);
+        Task<IEnumerable<IRFInterviewerMembers>> GetInterviewerAssessmentGroups(string emailid);
     }
 }

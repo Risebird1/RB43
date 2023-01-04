@@ -2902,5 +2902,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetInterviewerAssessmentGroups(string emailid)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewerAssessmentGroups(emailid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
