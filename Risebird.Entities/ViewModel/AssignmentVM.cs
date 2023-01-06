@@ -33,6 +33,8 @@ namespace Risebird.Entities.ViewModel
         public int? EmployerSize { get; set; }
         public string Delivery { get; set; }
         public int Assessmentcount { get; set; }
+
+        public int InterviewerCount { get; set; }
         public string Createdby { get; set; }
         public string Seniority { get; set; }
         [Display(Name = "Years  OfExperience")]
