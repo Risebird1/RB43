@@ -6295,7 +6295,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SupportAdmin") /*profileName == "HR" || profileName == "SeniorHR" ||*/
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrWhiteSpace(x.AssessmentGroup) && (x.AssessmentGroupId != 0) && (x.CreatedFromTemplateId == null || x.CreatedFromTemplateId == 0));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
@@ -6331,7 +6331,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     if (filter != null)
                     {
@@ -6663,7 +6663,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
 
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "Client")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
@@ -7553,5 +7553,104 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllActiveAssessmentGroupInterviewersForSME(int agId, string agName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
+
+                    {
+                        var interviewingMembers = (IList<AssessmentGroupInterviewers>)(await _irfService.GetAssessmentGroupInterviewerMembersForSME(agId));
+                        ViewBag.AssessmentGroupName = agName;
+                        return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", interviewingMembers);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                    
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> AddUpdateAssessmentGroupSME(IList<AssessmentGroupInterviewers> model, string assessmentGroupName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName== "SeniorInterviewerManagement" || profileName == "SeniorHR")
+                    {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
+                        if (ModelState.IsValid)
+                        {
+                            if(model != null)
+                            {
+                                if(model.Where(x=> x.IsSME)?.Count()>5)
+                                {
+                                    ModelState.AddModelError("", "Cannot add more than 5 Subject Matter Experts for an Assessment Group!");
+                                    ViewBag.AssessmentGroupName = assessmentGroupName;
+                                    return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);
+
+                                }
+                            }
+                            if(await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model))
+                            {
+                                TempData["SuccessErrorMessageInterviewer"] = $"SME's updated Successfully for {assessmentGroupName}";
+
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageInterviewer"] = $"Failed to update SME's updated for {assessmentGroupName}";
+
+                            }
+                            return RedirectToAction("InterviewerEntitle");
+
+                        }
+                        else
+                        {
+                            ViewBag.AssessmentGroupName = assessmentGroupName;
+                            return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
     }
 }

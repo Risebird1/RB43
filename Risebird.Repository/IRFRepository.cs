@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -20,12 +21,15 @@ namespace Risebird.Repository
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IRFRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        public IRFRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _httpContextAccessor = httpContextAccessor;
+
         }
         public IEnumerable<Users> GetCientUsers()
         {
@@ -6386,6 +6390,106 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<AssessmentGroupInterviewers>> GetAssessmentGroupInterviewerMembersForSME(int Assessmentid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Assessmentid", Assessmentid);
+                    return await SqlMapper.QueryAsync<AssessmentGroupInterviewers>(con, "usp_GetAssessmentGroupInterviewerMembersForSME", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddUpdateAssessmentGroupSMEInterviewer(IList<AssessmentGroupInterviewers> interviewers)
+        {
+            string currentUser = string.Empty;
+            try
+            {
+                if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
+                {
+                    currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
+                    currentUser = currentUser?.Replace("\"", "");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    
+                    SqlCommand cmd = new SqlCommand("usp_AddUpdateAssessmentGroupSMEInterviewer", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int));
+                    cmd.Parameters["@AssessmentGroupId"].Value = interviewers?.FirstOrDefault().AssessmentGroupId;
+
+                    DataTable dataTable = new DataTable();
+                    dataTable.Columns.Add("AssessmentGroupId", typeof(int));
+                    dataTable.Columns.Add("InterviewerProfileId", typeof(int));
+                    dataTable.Columns.Add("IsSME", typeof(bool));
+                    dataTable.Columns.Add("CreatedBy", typeof(string));
+                    dataTable.Columns.Add("CreatedOn", typeof(string));
+                    dataTable.Columns.Add("ModifiedBy", typeof(string));
+                    dataTable.Columns.Add("ModifiedOn", typeof(string));
+                    
+
+                    foreach (var item in interviewers)
+                    {
+                        dataTable.Rows.Add(item.AssessmentGroupId, item.InterviewerProfileId, item.IsSME, currentUser, DateTime.Now, null, null);
+                    }
+
+                    if (dataTable != null && dataTable.Rows.Count > 0)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@SMEBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@SMEBulkData"].Value = dataTable;
+                    }
+                    
+                    con.Open();
+
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+                }
+            }
+
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {currentUser}");
+
+                return false;
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {currentUser}");
+
+                return false;
+            }
+        }
+
     }
 }
 
