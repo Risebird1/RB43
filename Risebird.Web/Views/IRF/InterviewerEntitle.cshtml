@@ -4,8 +4,8 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @model Risebird.Entities.ViewModel.Assessment
 @{
-    ViewData["Title"] = "Interviewers";
-    ViewBag.PageHeader = "Assessment Group";
+    ViewData["Title"] = "Assessment Groups";
+    ViewBag.PageHeader = "Assessment Groups";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @using X.PagedList.Mvc.Core;
@@ -25,7 +25,7 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">Assessment Group</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">Assessment Groups</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -100,7 +100,7 @@
                                             </td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
-                                            <td class="table-h">@item.Assessmentcount</td>
+                                            <td class="table-h">@item.InterviewerCount</td>
                                             <td class="table-h">@item.IrfCount</td>
                                             @if (item.Isinstaavailable)
                                             {

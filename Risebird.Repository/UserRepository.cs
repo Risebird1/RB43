@@ -1081,12 +1081,11 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    // var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill,Count(*) as NoOfInterview from Skill sk join TransInterviewerSkill tis on sk.id=tis.SkillId group by sk.Name,sk.id order by LTRIM(RTRIM(sk.Name))";
-                    var query = "select ag.id,AssessmentGroup,PrimarySkills,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate,(Select count(ipr.id) from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId cross Apply string_split(AssessmentGroupId,',') where value =ag.id and ul.IsActive = 1 ) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName,Count(IRF.id) as IrfCount from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid left join IRF on IRF.AssessmentGroupId=ag.id group by ag.id,AssessmentGroup,PrimarySkills,ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate";
-                    var parameters = new DynamicParameters();
-                    var results = await con.QueryAsync<AssignmentVM>(query, parameters);
-                    return results.ToList();
+                     var resultData = await SqlMapper.QueryAsync<AssignmentVM>(con, "sp_GetAssessmentGroups", null,
+                        commandType: CommandType.StoredProcedure);
+                    return resultData.ToList();
                 }
+               
             }
             catch (Exception ex)
             {

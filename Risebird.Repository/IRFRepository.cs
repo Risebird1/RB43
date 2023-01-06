@@ -6196,7 +6196,7 @@ namespace Risebird.Repository
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@profile", profile);
                     parameters.Add("@emailid", emailid);
-                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStatsIRFCount", parameters,
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStatsIRFCount", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
             }
