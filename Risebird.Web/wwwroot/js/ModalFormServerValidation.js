@@ -13,7 +13,6 @@ $(document).ready(function () {
 
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
         event.preventDefault();
-
         var form = $(this).parents('.modal').find('form');
         var actionUrl = form.attr('action');
         var dataToSend = form.serialize();
@@ -25,22 +24,26 @@ $(document).ready(function () {
 
             // find IsValid input field and check it's value
             // if it's valid then hide modal window
-            var isValid = newBody.find('[name="IsValid"]').val() == 'True';
-            if (isValid) {
-                placeholderElement.find('.modal').modal('hide');
-                var html = "Interviewer rated successfully!";
-                if (dateOfInterview != null && dateOfInterview != '') {
-                    html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+            var isValidElement = newBody.find('[name="IsValid"]') == 'True';
+            if (isValidElement != null) {
+                var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                if (isValid) {
+                    placeholderElement.find('.modal').modal('hide');
+                    var html = "Interviewer rated successfully!";
+                    if (dateOfInterview != null && dateOfInterview != '') {
+                        html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+                    }
+
+                    Swal.fire({
+                        title: '<strong>Successful</u></strong>',
+                        type: 'success',
+                        html: html,
+                        confirmButtonText: "Close",
+                        allowOutsideClick: false
+                    });
                 }
-                
-                Swal.fire({
-                    title: '<strong>Successful</u></strong>',
-                    type: 'success',
-                    html: html,
-                    confirmButtonText: "Close",
-                    allowOutsideClick: false
-                });
             }
+            
         });
 
     });
@@ -86,6 +89,15 @@ $(document).ready(function () {
         OpenPopUp(event, candidateCommunicationDetails_placeholderElement);
     });
 
+    //var sme_placeholderElement = $('#modal_SME_placeholder');
+
+
+    //$('button[data-toggle="ajax-modal-SubjectMatterExpert"]').click(function (event) {
+    //    debugger;
+    //    OpenPopUp(event, sme_placeholderElement);
+
+    //});
+
 });
 
 function ChangeClientFeedbackRating(value) {
@@ -124,7 +136,6 @@ function moreless(id) {
 }
 
 function OpenPopUp(event, placeholderElement, setRating = false) {
-
     //var url = $(this).data('url');
     var url = event.delegateTarget.dataset.url;
     $.get(url).done(function (data) {

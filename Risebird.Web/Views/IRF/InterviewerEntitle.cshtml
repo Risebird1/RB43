@@ -4,8 +4,8 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @model Risebird.Entities.ViewModel.Assessment
 @{
-    ViewData["Title"] = "Interviewers";
-    ViewBag.PageHeader = "Assessment Group";
+    ViewData["Title"] = "Assessment Groups";
+    ViewBag.PageHeader = "Assessment Groups";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @using X.PagedList.Mvc.Core;
@@ -25,7 +25,7 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title">Assessment Group</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">Assessment Groups</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -100,7 +100,7 @@
                                             </td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
-                                            <td class="table-h">@item.Assessmentcount</td>
+                                            <td class="table-h">@item.InterviewerCount</td>
                                             <td class="table-h">@item.IrfCount</td>
                                             @if (item.Isinstaavailable)
                                             {
@@ -111,6 +111,7 @@
                                                 <td>No</td>
                                             }
                                             <td class="text-left four">
+                                                
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                     <span onclick="EditAssessment(@item.id)" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span>
                                                 </button>
@@ -129,6 +130,10 @@
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute priority" aria-label="Share Verification to interviewer" style="background: #59b259 !important" title="Share MCQ Set">
                                                     <span onclick="javascript:ShareVerificationInterviewer('@item.id');" title="Share Verification to interviewer" class=" mdc-fab__icon material-icons">									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                                                </button>
+                                                
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                    <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME" class="mdc-fab__icon material-icons"><i class="fa-solid fa-user-check"></i></span>
                                                 </button>
                                             </td>
 
@@ -264,6 +269,12 @@
         </div>
     </div>
 </div>
+
+<div id="modal_SME_placeholder"></div>
+
+<script src="~/js/ModalFormServerValidation.js"></script>
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
@@ -339,6 +350,21 @@
                 $('#assessmentgrouplist').html('');
                 $('#assessmentgrouplist').html(data);
                 CreateAssignmetGroup();
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    
+    function GetAllActiveAssessmentGroupInterviewersForSME(agId, agName) {
+        $.ajax({
+            url: '/IRF/GetAllActiveAssessmentGroupInterviewersForSME',
+            data: { 'agId': agId, 'agName' : agName },
+            success: function (data) {
+                $('#modal_SME_placeholder').html('');
+                $('#modal_SME_placeholder').html(data);
+                debugger;
+                $('#modal_SME_placeholder').find('.modal').modal('show');
             }
         });
     }

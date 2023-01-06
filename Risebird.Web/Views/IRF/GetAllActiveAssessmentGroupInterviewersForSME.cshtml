@@ -1,0 +1,171 @@
+﻿@model IList<Risebird.Entities.ViewModel.AssessmentGroupInterviewers>
+@using Newtonsoft.Json
+@using Risebird.Entities.ViewModel
+<style>
+
+    /*.modal-xl {
+        width: 80%;
+        max-width: 1200px;
+    }*/
+
+</style>
+
+<!-- Modal -->
+@*<form asp-action="AddUpdateAssessmentGroupSME" asp-route-assessmentGroupName="@ViewBag.AssessmentGroupName">
+
+</form>*@
+<div class="modal fade" style="height:1000px" id="modalSME" tabindex="-1" role="dialog" aria-labelledby="modalSMELabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSMELabel">Choose SME from the list of active Interviewers for '@ViewBag.AssessmentGroupName' displayed below</h5>
+
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+
+            </div>
+            <div class="modal-body" id="sme_modal_body" style="max-height:400px; overflow:auto">
+
+                <form asp-action="AddUpdateAssessmentGroupSME" asp-route-assessmentGroupName="@ViewBag.AssessmentGroupName">
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="scrollers" style="overflow-y:auto">
+                            <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Email Id</th>
+                                        <th>Name</th>
+                                        <th>Appoint SME</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+                                        for (int i = 0; i <= Model.Count() - 1; i++)
+                                        {
+                                            <tr>
+
+                                                <td>@Model[i].EmailId</td>
+                                                <td>@Model[i].InterviewerName</td>
+                                                <td class="text-center">@Html.CheckBoxFor(m =>  m[i].IsSME)</td>
+                                                @Html.HiddenFor(m =>m[i].InterviewerProfileId)
+                                                @Html.HiddenFor(m =>m[i].AssessmentGroupId)
+                                                @Html.HiddenFor(m =>m[i].EmailId)
+                                                @Html.HiddenFor(m =>m[i].InterviewerName)
+
+                                            </tr>
+                                        }
+                                    }
+
+
+
+
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    }
+
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save">
+                </div>
+                @*                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                *@
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var placeholderElement = $('#modal_SME_placeholder');
+    $('button[data-save="modal"]').click(function (event) {
+        debugger;
+        event.preventDefault();
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = form.serialize();
+        $.post(actionUrl, dataToSend).done(function (data) {
+            debugger;
+            //var newBody = $('#comments_modal_body', data);
+            //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
+            var newBody = $('.modal-body', data);
+            placeholderElement.find('.modal-body').replaceWith(newBody);
+
+            // find IsValid input field and check it's value
+            // if it's valid then hide modal window
+            //var isValidElement = newBody.find('[name="IsValid"]') == 'True';
+            //if (isValidElement != null) {
+            //    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+            //    if (isValid) {
+            //        placeholderElement.find('.modal').modal('hide');
+            //        var html = "Interviewer rated successfully!";
+            //        if (dateOfInterview != null && dateOfInterview != '') {
+            //            html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+            //        }
+
+            //        Swal.fire({
+            //            title: '<strong>Successful</u></strong>',
+            //            type: 'success',
+            //            html: html,
+            //            confirmButtonText: "Close",
+            //            allowOutsideClick: false
+            //        });
+            //    }
+            //}
+
+        });
+
+    });
+
+    placeholderElement.on('click', '[data-save="modal"]', function (event) {
+        event.preventDefault();
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = form.serialize();
+        $.post(actionUrl, dataToSend).done(function (data) {
+            debugger;
+            //var newBody = $('#comments_modal_body', data);
+            //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
+            var newBody = $('.modal-body', data);
+            placeholderElement.find('.modal-body').replaceWith(newBody);
+
+            // find IsValid input field and check it's value
+            // if it's valid then hide modal window
+            var isValidElement = newBody.find('[name="IsValid"]') == 'True';
+            if (isValidElement != null) {
+                var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                if (isValid) {
+                    placeholderElement.find('.modal').modal('hide');
+                    var html = "Interviewer rated successfully!";
+                    if (dateOfInterview != null && dateOfInterview != '') {
+                        html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+                    }
+
+                    Swal.fire({
+                        title: '<strong>Successful</u></strong>',
+                        type: 'success',
+                        html: html,
+                        confirmButtonText: "Close",
+                        allowOutsideClick: false
+                    });
+                }
+            }
+
+        });
+
+    });
+</script>
+

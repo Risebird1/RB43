@@ -2914,5 +2914,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<AssessmentGroupInterviewers>> GetAssessmentGroupInterviewerMembersForSME(int agId)
+        {
+            try
+            {
+                return await _irfRepository.GetAssessmentGroupInterviewerMembersForSME(agId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddUpdateAssessmentGroupSMEInterviewer(IList<AssessmentGroupInterviewers> interviewers)
+        {
+            try
+            {
+                return await _irfRepository.AddUpdateAssessmentGroupSMEInterviewer(interviewers);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
