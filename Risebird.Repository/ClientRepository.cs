@@ -38,12 +38,12 @@ namespace Risebird.Repository
                     {
                         DynamicParameters dp = new DynamicParameters();
                         dp.Add("@Emailid", emailid);
-                        return SqlMapper.Query<Client>(
+                        return await SqlMapper.QueryAsync<Client>(
                             con, "Select cl.* From SeniorHR sh join Client cl on cl.id=sh.Clientid join Userlist ul on ul.id=sh.userid where ul.Emailid=@Emailid", dp, commandType: Text);
                     }
                     else
                     {
-                        return SqlMapper.Query<Client>(
+                        return await SqlMapper.QueryAsync<Client>(
                             con, "select * from Client", null, commandType: Text);
                     }
                 }
@@ -96,7 +96,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    Client client = await SqlMapper.QuerySingleAsync<Client>(con, "[usp_GetClientById]", parameters,
+                    Client client = await SqlMapper.QueryFirstAsync<Client>(con, "[usp_GetClientById]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return client;
                 }
@@ -231,7 +231,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Emailid", _client.CreatedBy);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    userid = await con.QueryFirstOrDefaultAsync<int>(query, dynamicParameters);
                 }
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();

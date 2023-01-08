@@ -92,7 +92,7 @@ namespace Risebird.Repository
                     cmd.Parameters.Add(new SqlParameter("@MCQQuestionsBulkData", SqlDbType.Structured));
                     cmd.Parameters["@MCQQuestionsBulkData"].Value = mcqQuestions;
                     con.Open();
-                    if (cmd.ExecuteNonQuery() != 0)
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -229,7 +229,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var resultset = con.Query(query, dynamicParameters);
+                    var resultset = await con.QueryAsync(query, dynamicParameters);
                     return "Success";
                 }
             }
@@ -361,7 +361,7 @@ namespace Risebird.Repository
                     cmd.Parameters.Add(new SqlParameter("@MCQCandidateQuestionsBulkData", SqlDbType.Structured));
                     cmd.Parameters["@MCQCandidateQuestionsBulkData"].Value = mcqQuestions;
                     con.Open();
-                    if (cmd.ExecuteNonQuery() != 0)
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -803,7 +803,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var resultset = con.Query(query, dynamicParameters);
+                    var resultset = await con.QueryAsync(query, dynamicParameters);
                     return "Success";
                 }
             }
@@ -912,7 +912,7 @@ namespace Risebird.Repository
                     cmd.Parameters.Add(new SqlParameter("@MCQCandidateQuestionsBulkData", SqlDbType.Structured));
                     cmd.Parameters["@MCQCandidateQuestionsBulkData"].Value = mcqQuestions;
                     con.Open();
-                    if (cmd.ExecuteNonQuery() != 0)
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }

@@ -89,7 +89,7 @@ namespace Risebird.Repository
                 parameters.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var uniques = SqlMapper.Query<AadhaarDetails>(
+                    var uniques = await SqlMapper.QueryAsync<AadhaarDetails>(
                         con, "Select EmailId,AadhaarVerified From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
                     return uniques.FirstOrDefault();
                 }
@@ -112,7 +112,7 @@ namespace Risebird.Repository
                 parameters.Add("@emailid", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var uniques = SqlMapper.Query<string>(
+                    var uniques = await SqlMapper.QueryAsync<string>(
                         con, "Select uniqueid From UserList where EmailId=@emailid ", parameters, commandType: System.Data.CommandType.Text);
                     return uniques.FirstOrDefault();
                 }
