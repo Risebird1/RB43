@@ -7473,7 +7473,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> ShareAssessmentVerificationToInterviewer(int Assessmentid, string interieweremailid)
+        public async Task<JsonResult> ShareAssessmentVerificationToInterviewer(int Assessmentid, string interieweremailid, string Type)
         {
             try
             {
@@ -7492,27 +7492,59 @@ namespace Risebird.Web.Controllers
                     var Emailids = string.Join(",", model.Select(x => x.EmailId).Distinct());
                     string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Uniquedate.MCQSetsValue;
                     var botlinkslist = new MCQBotResponse();
-                    currenturl = currenturl + "&uniqueid=322";
-                    var aadharverificationflag = "Y";
-                    var _interviewerflag = "N";
-                    botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl, _interviewerflag);
+                    if (Type == "manual")
+                    {
+                        currenturl = currenturl + "&uniqueid=448";
+                    }
+                    else
+                    {
+                        currenturl = currenturl + "&uniqueid=322";
+                        var aadharverificationflag = "Y";
+                        var _interviewerflag = "N";
+                        botlinkslist = await GenerateBotLink(Emailids.Replace(";", ","), aadharverificationflag, currenturl, _interviewerflag);
+                    }
+
                     foreach (var item in Emailids.Split(","))
                     {
                         var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                        var _testurl = botlinkslist.emailBotUrls.Where(x => x.email == item).FirstOrDefault().botTestLink;
-                        var roomId = _testurl.Split("/").LastOrDefault();
-                        //Send Mail to Interviewer
-                        Mail _mail = new Mail
+                        var _meetinglinks = new ShareMCQRisebirdMeetingResponse();
+                        if (Type == "manual")
                         {
-                            TO = item,
-                            Subject = "Invitation for " + Uniquedate.Title + " : " + "Risebird"
-                        };
-                        var result = await _notificationHelper.SharedBotTestLink(_mail, Uniquedate.Title, "15", _testurl, "Risebird");
-
+                            var MeetingDate = DateTime.Now;
+                            _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                            if (string.IsNullOrWhiteSpace(_meetinglinks.roomId))
+                            {
+                                _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                            }
+                            Mail _mail = new Mail
+                            {
+                                TO = item,
+                                Subject = "Invitation for " + Uniquedate.Title + " : " + "Risebird"
+                            };
+                            var result = await _notificationHelper.SharedTestLink(_mail, Uniquedate.Title, "15", currenturl, "Risebird", _meetinglinks.meetingAttendee, MeetingDate, -330);
+                            string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Uniquedate.MCQSetsValue + "&SMCQId=" + date1;
+                            Mail _mail1 = new Mail
+                            {
+                                TO = emailid,
+                                Subject = "Invitation for " + Uniquedate.Title + " : " + item
+                            };
+                            await _notificationHelper.SharedTestLinkClient(_mail1, Uniquedate.Title, "15", currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                        }
+                        else
+                        {
+                            var _testurl = botlinkslist.emailBotUrls.Where(x => x.email == item).FirstOrDefault().botTestLink;
+                            _meetinglinks.roomId = _testurl.Split("/").LastOrDefault();
+                            Mail _mail = new Mail
+                            {
+                                TO = item,
+                                Subject = "Invitation for " + Uniquedate.Title + " : " + "Risebird"
+                            };
+                            var result = await _notificationHelper.SharedBotTestLink(_mail, Uniquedate.Title, "15", _testurl, "Risebird");
+                        }
                         _list.PartitionKey = date1;
                         _list.MCQId = Uniquedate.MCQSetsValue;
                         _list.EmailAddress = item.Trim();
-                        _list.roomId = roomId;
+                        _list.roomId = _meetinglinks.roomId;
                         _list.Expiretime = 48;
                         _list.ShareType = true;
                         _list.botactive = true;
@@ -7552,6 +7584,28 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Fail");
             }
+        }
+        public ShareMCQRisebirdMeetingResponse ShareRisebirdMeeting(string agentname, string visitorName, DateTime datetime)
+        {
+            var _model = new ShareMCQRisebirdMeeting();
+            _model.agentname = agentname;
+            _model.visitorName = visitorName;
+            DateTime currentTime = TimeZoneInfo.ConvertTime(datetime, TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time"));
+            var datetime1 = currentTime.ToString("yyyy-MM-dd'T'HH:mm:ss.000Z");
+            _model.datetime = datetime1;
+            var _meeting = new RestClient("https://meet.risebird.io/api/v1/room");
+            var request = new RestRequest("https://meet.risebird.io/api/v1/room", Method.Post);
+            request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+            request.AddBody(_model);
+            RestResponse response = _meeting.Execute(request);
+            var content = response.Content;
+            var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+
+            if (convertedResponse != null)
+            {
+                return convertedResponse;
+            }
+            return new ShareMCQRisebirdMeetingResponse();
         }
 
         [HttpGet]
