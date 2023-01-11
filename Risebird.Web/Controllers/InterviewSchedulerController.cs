@@ -494,7 +494,7 @@ namespace Risebird.Web.Controllers
                 fileBytes = stream.ToArray();
             }
             FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
-            return fileTypeInfo.MimeType.ToLower();
+            return fileTypeInfo?.MimeType?.ToLower();
         }
 
         public async Task<JsonResult> FetchSlots(int day, int month, int year, string id, int offset, string TimeZonevalue)

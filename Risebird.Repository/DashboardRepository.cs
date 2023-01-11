@@ -168,7 +168,7 @@ namespace Risebird.Repository
                     cmdProgress.Parameters.Add(new SqlParameter("@ProgressBulkData", SqlDbType.Structured));
                     cmdProgress.Parameters["@ProgressBulkData"].Value = activityprogressDt;
                     con.Open();
-                    if (cmdProgress.ExecuteNonQuery() != 0)
+                    if (await cmdProgress.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -780,7 +780,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Channelid", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ChannelApprovedInterviewer>(con, "usp_GetChannelApprovedInterviewer", dynamicParameters,
+                    return await SqlMapper.QueryAsync<ChannelApprovedInterviewer>(con, "usp_GetChannelApprovedInterviewer", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }

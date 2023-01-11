@@ -87,7 +87,7 @@ namespace Risebird.Repository
                     cmdTechReport.Parameters["@EventTimeslotBulkData"].Value = timeslot;
                     con.Open();
                     var changes = await cmdTechReport.ExecuteNonQueryAsync();
-                    if (cmdTechReport.ExecuteNonQuery() != 0)
+                    if (await cmdTechReport.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -351,7 +351,7 @@ namespace Risebird.Repository
                     cmdTechReport.Parameters["@EventTimeslotBulkData"].Value = timeslot;
                     con.Open();
                     var changes = await cmdTechReport.ExecuteNonQueryAsync();
-                    if (cmdTechReport.ExecuteNonQuery() != 0)
+                    if (await cmdTechReport.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
