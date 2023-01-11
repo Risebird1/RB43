@@ -79,7 +79,7 @@ namespace Risebird.Repository
                         cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
                         cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
                         con.Open();
-                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        if (await cmdClientUser.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -1264,7 +1264,7 @@ namespace Risebird.Repository
                 parameters.Add("@CandidateEmail", candidateEmailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<CallRecordingDetailsVM>(con, "usp_FetchCallRecording", parameters,
+                    var result = await SqlMapper.QueryAsync<CallRecordingDetailsVM>(con, "usp_FetchCallRecording", parameters,
                        commandType: CommandType.StoredProcedure);
                     return (List<CallRecordingDetailsVM>)result;
                 }
@@ -1478,7 +1478,7 @@ namespace Risebird.Repository
                 parameters.Add("@WhoCalled", WhoCalled);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(con, "usp_AddorUpdateCallRecordingInterviewer", parameters,
+                    await SqlMapper.QueryAsync<string>(con, "usp_AddorUpdateCallRecordingInterviewer", parameters,
                        commandType: CommandType.StoredProcedure);
                     return "success";
                 }
@@ -1601,7 +1601,7 @@ namespace Risebird.Repository
                 dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var data = SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
+                    var data = await SqlMapper.QueryAsync<ClientUserVM>(con, "[dbo].[sp_RisebirdClientPremiumUser]", dp,
                         commandType: StoredProcedure);
                     return data.ToList();
                 }

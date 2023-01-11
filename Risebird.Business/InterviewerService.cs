@@ -160,7 +160,8 @@ namespace Risebird.Business
                 List<string> assessmentGroupDiffArray = new List<string>();
                 foreach (var item in interviewerProfile.AssessmentGroupArray)
                 {
-                    if (!interviewerProfile.AssessmentGroupArrayOld.Contains(item))
+                    if (interviewerProfile.AssessmentGroupArrayOld == null 
+                        || !interviewerProfile.AssessmentGroupArrayOld.Contains(item))
                     {
                         assessmentGroupDiffArray.Add(item);
                     }

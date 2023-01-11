@@ -2186,7 +2186,7 @@ namespace Risebird.Web.Controllers
             }
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
-                model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(model.id).Result;
+                model.InterviewerMembers = await _irfService.GetIRFInterviewerMembers(model.id);
                 model.InterviewerCollection = new List<TransInterviewer>();
                 model.EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
                 model.QualityController = new List<TransQualityController>();

@@ -4031,7 +4031,7 @@ namespace Risebird.Repository
                         cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
                         cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
                         con.Open();
-                        if (cmdCuratedIRF.ExecuteNonQuery() != 0)
+                        if (await cmdCuratedIRF.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
