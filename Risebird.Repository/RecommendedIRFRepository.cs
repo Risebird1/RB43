@@ -323,7 +323,7 @@ namespace Risebird.Repository
                     cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
                     cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
                     con.Open();
-                    if (cmdTechSkill.ExecuteNonQuery() != 0)
+                    if (await cmdTechSkill.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -347,7 +347,7 @@ namespace Risebird.Repository
                         cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
                         cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
                         con.Open();
-                        if (cmdInterviewer.ExecuteNonQuery() != 0)
+                        if (await cmdInterviewer.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }

@@ -86,7 +86,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@dateValue", DateTime.Now.AddDays(-1));
-                    var result = SqlMapper.Query<CandidateLastStatus>(con, "usp_GetCandidateLastStatus", parameters,
+                    var result = await SqlMapper.QueryAsync<CandidateLastStatus>(con, "usp_GetCandidateLastStatus", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -145,7 +145,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@interviewid", interviewid);
                         parameters.Add("@CandidateEmail", CandidateEmail);
-                        var result = SqlMapper.Query<CandidateLastStatus>(con, "usp_CancelInterviewUpdate", parameters,
+                        var result = await SqlMapper.QueryAsync<CandidateLastStatus>(con, "usp_CancelInterviewUpdate", parameters,
                             commandType: CommandType.StoredProcedure);
                         return "Interview Cancelled Successfully.";
                     }
@@ -256,7 +256,7 @@ namespace Risebird.Repository
                     cmdJoinability.Parameters.Add(new SqlParameter("@CandidateResumeBulkData", SqlDbType.Structured));
                     cmdJoinability.Parameters["@CandidateResumeBulkData"].Value = resumeListDt;
                     con.Open();
-                    if (cmdJoinability.ExecuteNonQuery() != 0)
+                    if ( await cmdJoinability.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
