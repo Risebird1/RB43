@@ -1108,7 +1108,8 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                        <th width="40%" class="table_heading">Skills</th>
+                                                                       <th width="20%" class="table_heading">Resume</th>
+                                                                        <th width="20%" class="table_heading">Skills</th>
                                                                         <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
                                                                         <th width="10%" class="table_heading">Active</th>
                                                                         <th width="10%" class="table_heading">Availability</th>
@@ -1164,6 +1165,19 @@
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
 
                                                                                 </td>
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
+                                                                                    </td>
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                    </td>
+                                                                                }
                                                                                 <td>
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
                                                                                 </td>
