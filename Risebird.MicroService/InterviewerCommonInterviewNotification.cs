@@ -37,7 +37,7 @@ namespace Risebird.MicroService
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
-                var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview();
+                var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified");
                 foreach (var item in _AllInterviewerInterview)
                 {
                     if (!string.IsNullOrEmpty(item.EmailId))

@@ -265,8 +265,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
-                        commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerSkills", Params,
+                        commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -282,8 +282,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
-                       commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerCertificate", Params,
+                       commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -330,8 +330,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        _ = SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
-                        commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
+                        commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -348,8 +348,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
-                        commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerProjects", Params,
+                        commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -364,8 +364,8 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
-                        commandType: CommandType.StoredProcedure).Result;
+                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerAvailability", Params,
+                        commandType: CommandType.StoredProcedure);
 
                     }
                 }
@@ -381,8 +381,8 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    _ = SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
-                    commandType: CommandType.StoredProcedure).Result;
+                    _ = SqlMapper.Query<int>(con, "usp_AddInterviewerAccDetails", paramsAccount,
+                    commandType: CommandType.StoredProcedure);
 
                 }
 
@@ -2186,7 +2186,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview()
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type)
         {
             try
             {
@@ -2194,6 +2194,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@type", type);
                     var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
                            commandType: CommandType.StoredProcedure);
                     return (List<CommonInterviewDetailsVM>)results;

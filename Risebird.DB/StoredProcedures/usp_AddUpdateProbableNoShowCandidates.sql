@@ -16,10 +16,15 @@ CREATE PROCEDURE [dbo].[usp_AddUpdateProbableNoShowCandidates]
 @currentTime datetime  
 AS    
 Begin   
-  
 
-delete from ProbableNoShowCandidates where id in  
-(select pns.id from ProbableNoShowCandidates pns join InterviewMeetings im on im.id = pns.InterviewId where im.confirmationStatus = 2 or im.interviewDate < @currentTime)  
+declare @dateOfExistingRecords datetime = (select top 1 CreatedAt from ProbableNoShowCandidates)
+
+if( @dateOfExistingRecords is not null and (cast(@dateOfExistingRecords as date) != cast(@currentTime as date)))
+Begin
+	delete from ProbableNoShowCandidates where (cast(@dateOfExistingRecords as date) != cast(@currentTime as date))
+End
+--delete from ProbableNoShowCandidates where id in  
+--(select pns.id from ProbableNoShowCandidates pns join InterviewMeetings im on im.id = pns.InterviewId where im.confirmationStatus = 2 or im.interviewDate < @currentTime)  
   
   
 declare @Enumerator table (id int)  

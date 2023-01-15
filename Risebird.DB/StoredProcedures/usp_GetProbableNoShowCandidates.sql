@@ -20,7 +20,7 @@ Begin
   select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId from ProbableNoShowCandidates pnc
   join InterviewMeetings im on im.id = pnc.InterviewId
   join UserList ul on ul.id = pnc.CandidateUserId
-
+  order by im.interviewDate desc
 End  
 GO
 

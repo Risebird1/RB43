@@ -59,7 +59,7 @@ namespace Risebird.Repository
                     cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
                     cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
                     con.Open();
-                    if (cmdTechSkill.ExecuteNonQuery() != 0)
+                    if (await cmdTechSkill.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -110,14 +110,14 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<InterviewRequestVM>(query, parameters);
+                    var result = await con.QueryAsync<InterviewRequestVM>(query, parameters);
                     model = result.FirstOrDefault();
                 }
                 //Fetch Skills
                 var querySkill = "Select IRFId,LevelId,SkillId,ActualLevelId as Weightage from TransInterviewRequestSkills Where IRFID=@id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<InstaTechSkill>(querySkill, parameters);
+                    var result = await con.QueryAsync<InstaTechSkill>(querySkill, parameters);
                     model.TechSkill = (List<InstaTechSkill>)result;
                 }
                 return model;
@@ -142,7 +142,7 @@ namespace Risebird.Repository
                 parameters.Add("@Assignto", userid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(query, parameters);
+                    var result = await con.QueryAsync(query, parameters);
                     return true;
                 }
             }
@@ -166,7 +166,7 @@ namespace Risebird.Repository
                 parameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(query, parameters);
+                    var result = await con.QueryAsync(query, parameters);
                     return true;
                 }
             }
@@ -189,7 +189,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(query, parameters);
+                    var result = await con.QueryAsync<string>(query, parameters);
                     return result.FirstOrDefault();
                 }
             }

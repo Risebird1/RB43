@@ -636,9 +636,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetTechSkillofSkillChannelByQuestion", parameters,
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<string>(con, "usp_GetTechSkillofSkillChannelByQuestion", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
+                    return result;
                 }
             }
 
@@ -2622,8 +2622,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.QueryAsync<SkillComment>(con, "usp_GetTechSkillComments", dynamicParameters,
-                        commandType: CommandType.StoredProcedure).Result;
+                    var result = SqlMapper.Query<SkillComment>(con, "usp_GetTechSkillComments", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result;
 
                 }
@@ -3112,7 +3112,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewPlanner", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync<int>(con, "usp_AddUpdateInterviewPlanner", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -3161,7 +3161,7 @@ namespace Risebird.Repository
                 parameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(
+                    await SqlMapper.QueryAsync<string>(
                         con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
                     return "Candidate added successfully.";
                 }
@@ -3245,7 +3245,7 @@ namespace Risebird.Repository
                             parameters.Add("@ProfileSource", obj.ProfileSource);
                             parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
 
-                            SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
+                            await SqlMapper.QueryAsync<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
                     }
@@ -3389,7 +3389,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", meetingid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(
+                    await SqlMapper.QueryAsync<string>(
                         con, "usp_UnAssignInterviewer", parameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -3862,7 +3862,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select id, EmailId from UserList where idProfile in (2,31) and isactive=1";
+                var query = "select id, EmailId from UserList where idProfile in (31) and isactive=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return con.Query<Users>(query);
@@ -3930,7 +3930,7 @@ namespace Risebird.Repository
                         DynamicParameters parameters = new DynamicParameters();
                         parameters.Add("@Name", cgName);
                         parameters.Add("@CreatedOn", DateTime.Now);
-                        var obj = SqlMapper.Query<int>(con, "usp_AddCuratedGroup", parameters,
+                        var obj = await SqlMapper.QueryAsync<int>(con, "usp_AddCuratedGroup", parameters,
                              commandType: CommandType.StoredProcedure);
 
                         var curatedGroupId = obj.FirstOrDefault();
@@ -3950,7 +3950,7 @@ namespace Risebird.Repository
                         cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
                         cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
                         con.Open();
-                        if (cmdCuratedIRF.ExecuteNonQuery() != 0)
+                        if (await cmdCuratedIRF.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -4031,7 +4031,7 @@ namespace Risebird.Repository
                         cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
                         cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
                         con.Open();
-                        if (cmdCuratedIRF.ExecuteNonQuery() != 0)
+                        if (await cmdCuratedIRF.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -4108,7 +4108,7 @@ namespace Risebird.Repository
                         cmdCuratedUsers.Parameters.Add(new SqlParameter("@CuratedGroupUsersBulkData", SqlDbType.Structured));
                         cmdCuratedUsers.Parameters["@CuratedGroupUsersBulkData"].Value = curatedUsersDt;
                         con.Open();
-                        if (cmdCuratedUsers.ExecuteNonQuery() != 0)
+                        if (await cmdCuratedUsers.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -4836,7 +4836,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(query, dynamicParameters);
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
                     return result;
                 }
 
@@ -6264,7 +6264,7 @@ namespace Risebird.Repository
                 parameters.Add("@type", type);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<InterviewDetailsVM>(con, "usp_GetIRFCompletedInterviewDetails", parameters,
+                    var result = await SqlMapper.QueryAsync<InterviewDetailsVM>(con, "usp_GetIRFCompletedInterviewDetails", parameters,
                           commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -6288,7 +6288,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<InterviewDetailsVM>(
+                    var result = await SqlMapper.QueryAsync<InterviewDetailsVM>(
                         con, "Select IRF.IRFId,cl.Name as ClientName,ul.EmailId as ClientHRAttemptContact From IRF join Client cl on IRF.ClientId=cl.id join UserList ul on ul.id=IRF.RisebirdHr where IRF.id=@id", parameters, commandType: Text);
                     return result.FirstOrDefault();
                 }
@@ -6310,7 +6310,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<string>(
+                    var result = await SqlMapper.QueryAsync<string>(
                         con, "Select EmailId From UserList where idProfile=32", null, commandType: Text);
                     return result;
                 }

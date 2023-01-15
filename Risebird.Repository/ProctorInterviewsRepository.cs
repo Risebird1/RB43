@@ -35,7 +35,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Profile", profile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<VMProperties>(con, "usp_GetAllUserVMs", dynamicParameters,
+                    var result = await SqlMapper.QueryAsync<VMProperties>(con, "usp_GetAllUserVMs", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -57,7 +57,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<VMProperties>(con, "usp_GetAllVMs", null,
+                    var result = await SqlMapper.QueryAsync<VMProperties>(con, "usp_GetAllVMs", null,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -79,7 +79,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<TriggeredVM>(con, "usp_GetAllTriggeredVMs", null,
+                    var result = await SqlMapper.QueryAsync<TriggeredVM>(con, "usp_GetAllTriggeredVMs", null,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -127,7 +127,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query(con, "usp_UpdateVMStatus", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateVMStatus", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -149,7 +149,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@expectedStatus", expectedStatus);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query(con, "usp_AddVMTrigger", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync(con, "usp_AddVMTrigger", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -188,7 +188,7 @@ namespace Risebird.Repository
                         cmd.Parameters.Add(new SqlParameter("@VMPropertiesBulkData", SqlDbType.Structured));
                         cmd.Parameters["@VMPropertiesBulkData"].Value = vmPropertiesDt;
                         con.Open();
-                        if (cmd.ExecuteNonQuery() != 0)
+                        if (await cmd.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -258,7 +258,7 @@ namespace Risebird.Repository
                         cmd.Parameters.Add(new SqlParameter("@TransVMTriggerDetailsBulkData", SqlDbType.Structured));
                         cmd.Parameters["@TransVMTriggerDetailsBulkData"].Value = vmPropertiesDt;
                         con.Open();
-                        if (cmd.ExecuteNonQuery() != 0)
+                        if (await cmd.ExecuteNonQueryAsync() != 0)
                         {
                             con.Close();
                         }
@@ -326,7 +326,7 @@ namespace Risebird.Repository
                     cmd.Parameters.Add(new SqlParameter("@VMIPBulkData", SqlDbType.Structured));
                     cmd.Parameters["@VMIPBulkData"].Value = vmIpDt;
                     con.Open();
-                    if (cmd.ExecuteNonQuery() != 0)
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }
@@ -357,7 +357,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@UserName", userName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query(con, "usp_UpdateVMNamePassword", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateVMNamePassword", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -378,7 +378,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Password", password);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query(con, "usp_UpdateVMPassword", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateVMPassword", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -572,7 +572,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@time", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query(con, "usp_UpdateActionPerformed", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateActionPerformed", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
