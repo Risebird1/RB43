@@ -56,7 +56,7 @@ Begin try
 
 			
 
-			if(@irfIntId is not null and @irfIntId > 0 and @recipientProfileType = 23)--@InterviewId is not null and @InterviewId > 0 
+			if(@irfIntId is not null and @irfIntId > 0 and @recipientProfileType = 'Candidate')--@InterviewId is not null and @InterviewId > 0 
 			Begin
 
 				if not exists( select top 1 id from RisebirdCandidateCommunicationCount where IRFId = @irfIntId)
