@@ -28,10 +28,12 @@
                         @if (Model.Profile == "Admin")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Existing VMs</font></span>
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Existing VMs</font></span>
                             </button>
                         }
-
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="javascript:CreateNewVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add New VM</font></span>
+                        </button>
 
 
 
@@ -146,9 +148,9 @@
                                                                 <span class="pull-left">Password:</span>
 
                                                                 <!--- <div class="pull-left">
-        <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
-        <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-    </div>--->
+                                                                    <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                                </div>--->
 
 
 
@@ -156,11 +158,14 @@
                                                                     <div class="pull-left passshow" id="password-field_@item.id" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
 
                                                                     @if (item.Password != null)
-                                                                    {<span class="secret" id="secret_@item.id">********</span>
+                                                                    {
+                                                                        <span class="secret" id="secret_@item.id">********</span>
                                                                         <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
                                                                     }
                                                                     else
-                                                                    { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                                                    {
+                                                                        <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>
+                                                                    }
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -197,21 +202,21 @@
                                                     {
                                                         @if (item.StatusDesc.ToLower() == "running")
                                                         {
-                                                   
-                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
-                                                            <i class="fa fa-stop"></i>
-                                                        </button>
-                                                 
+
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
+                                                                <i class="fa fa-stop"></i>
+                                                            </button>
+
 
 
                                                         }
                                                         else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
                                                         {
-                                                <span id="procinterview_5"  style="margin-right: 3px;">
-                                                    <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
-                                                        <i class="fa fa-play"></i>
-                                                    </button>
-                                                </span>
+                                                            <span id="procinterview_5" style="margin-right: 3px;">
+                                                                <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
+                                                                    <i class="fa fa-play"></i>
+                                                                </button>
+                                                            </span>
                                                         }
                                                     }
                                                     @if (Model.Profile == "Admin" || Model.Profile == "Candidate" || Model.Profile == "Interviewer")
@@ -230,24 +235,26 @@
 
                                                     @if (Model.Profile == "Interviewer" || Model.Profile == "Admin")
                                                     {
-                                                        <span id="procinterview_6"  style="margin-right: 3px;">
+                                                        <span id="procinterview_6" style="margin-right: 3px;">
                                                             <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
                                                                 <i class="fa fa-question"></i>
                                                             </button>
                                                         </span>
                                                     }
                                                     @if (item.QuestionsCount != 0)
-                                                    {<span id="procinterview_7"  style="margin-right: 3px;">
+                                                    {
+                                                        <span id="procinterview_7" style="margin-right: 3px;">
                                                             <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
                                                                 <i class="fa fa-question-circle"></i>
-                                                            </button></span>
-                                                            }
+                                                            </button>
+                                                        </span>
+                                                    }
 
 
 
 
-                                                        </div>
-                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -274,11 +281,6 @@
                                     </button>
 
                                     <div class="modal-body" id="nonExistingTableBody">
-
-
-
-
-
                                     </div>
                                 </div>
 
@@ -357,7 +359,28 @@
         </div>
     </div>
 </div>
+<div id="newVMModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
 
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon fas fa-question fa-2x"></span>
+                </div>
+                <h5 class="modal-title pull-left">New VMs</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="newvmPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="newVMTableBody">
+            </div>
+        </div>
+
+    </div>
+</div>
 @if (Model.Message != null)
 {
     <script type="text/javascript">
@@ -450,6 +473,23 @@
                 $('#nonExistingTableBody').html(data);
 
 
+            }
+        });
+    }
+    var closeVmMember = document.getElementById("newvmPopUp");
+    // When the user clicks on <span> (x), close the modal
+    closeVmMember.onclick = function () {
+        var modal = document.getElementById("newVMModal");
+        modal.style.display = "none";
+    }
+    function CreateNewVMs() {
+        $.ajax({
+            url: '/ProctorInterviews/CreateNewVM',
+            success: function (data) {
+                var modal = document.getElementById("newVMModal");
+                modal.style.display = "block";
+                $('#newVMTableBody').html('');
+                $('#newVMTableBody').html(data);
             }
         });
     }

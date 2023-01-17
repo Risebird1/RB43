@@ -318,5 +318,23 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<string> AddNewVmDetails(VMProperties model)
+        {
+            try
+            {
+                var vmPropList = new List<VMProperties>();
+                var triggeredVMList = new List<TriggeredVM>();
+                model.IsAdded = true;
+                model.Status = (int)VMState.creating;
+                vmPropList.Add(model);
+                var result = await _proctorInterviewsRepository.AddNonExistingVMs(vmPropList);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed";
+            }
+        }
     }
 }

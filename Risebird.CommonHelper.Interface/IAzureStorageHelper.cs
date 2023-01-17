@@ -41,5 +41,6 @@ namespace Risebird.CommonHelper.Interface
 
         Task InsertResumeBlob(string filename, string containerName, IFormFile blobFile, string extension);
         Task InsertImageBlob(string filename, string containerName, IFormFile blobFile, string contentType);
+        string InsertBlobVMFile(string filename, string containerName, string blobFile);
     }
 }
