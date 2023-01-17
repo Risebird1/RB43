@@ -54,7 +54,7 @@ namespace Risebird.Business.Interface
         Task<List<AssignmentVM>> InterviewerEntitleDetails(int id);
         Task<bool> ResetNavigation(int userId);
         Task<string> GetCurrentuserImage(string emailId);
-        Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid);
+        Task<(string, string)> FetchWhatsAppNumberByEmail(string Emailid);
         Task<string> FetchNameByEmail(string Emailid);
         Task<string> SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
         Task<List<CallRecordingDetailsVM>> FetchCallRecording(string candidateEmailid, string irfid);

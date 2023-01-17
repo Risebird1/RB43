@@ -30,5 +30,6 @@ namespace Risebird.Repository.Interface
         Task<bool> RemoveCandidateVmAccess();
         Task<bool> RemoveVM(int vmId);
         Task<IEnumerable<VMActionPerformed>> GetVMStarterEmailId();
+        Task<IEnumerable<VMProperties>> GetDeleteorShutdownVMList();
     }
 }

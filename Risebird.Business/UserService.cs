@@ -704,7 +704,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid)
+        public async Task<(string, string)> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {

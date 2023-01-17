@@ -1,0 +1,65 @@
+﻿@model Risebird.Entities.Data.VMProperties
+
+@using (Html.BeginForm("CreateNewVM", "ProctorInterviews", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+{
+    <div class="member">
+        <div class="row col-md-12 col-sm-12">
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group mb-0">
+                    <label class="control-label  desp-label" for="CustomName">VM Name </label>
+                    @Html.TextBoxFor(m=>m.Name,new{@class="form-control w-full"})
+                    <label class="text-danger" id="customName_Error" style="color:red"></label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label class="control-label  desp-label" for="Password">Location </label>
+                    @Html.DropDownListFor(m=>m.VmLocation,Model.LocationsList,new{@class="form-control w-full"})
+                    <label class="text-danger" id="emptyFields_Error" style="color:red"></label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label class="control-label  desp-label" for="UserName">User Name </label>
+                    @Html.TextBoxFor(m=>m.UserName,new{@class="form-control w-full"})
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label class="control-label  desp-label" for="Password">Password </label>
+                    @Html.TextBoxFor(m=>m.Password,new{@class="form-control w-full",@type="password",@maxlength="24"})
+                    <label class="text-danger" id="emptyFields_Error" style="color:red"></label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label class="control-label  desp-label" for="UserName">Auto shutdown time(in Hr.) </label>
+                    @Html.TextBoxFor(m=>m.shutdowntime,new{@class="form-control w-full",@type="number"})
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label class="control-label  desp-label" for="UserName">Auto Delete time(in Hr.) </label>
+                    @Html.TextBoxFor(m=>m.deletetime,new{@class="form-control w-full",@type="number"})
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label  desp-label" for="UserName">Number of VMs </label>
+                @Html.TextBoxFor(m=>m.VMCount,new{@class="form-control w-full",@type="number",@min=1})
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer" style="width:95%;margin:0px 10px;">
+        <div class="row">
+            <div class="col-md-12 mc-button-area">
+                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Add</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        document.getElementById("VmLocation").value = "southindia";
+    })
+</script>

@@ -1236,6 +1236,13 @@ namespace Risebird.CommonHelper
                 await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
             }
         }
+        public string InsertBlobVMFile(string filename, string containerName, string blobFile)
+        {
+            CloudBlockBlob blob;
+            blob = GetCloudBlockBlob(containerName, filename);
+            blob.UploadTextAsync(blobFile);
+            return blob.Uri.ToString();
+        }
     }
 
 }

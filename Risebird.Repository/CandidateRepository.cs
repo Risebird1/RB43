@@ -256,7 +256,7 @@ namespace Risebird.Repository
                     cmdJoinability.Parameters.Add(new SqlParameter("@CandidateResumeBulkData", SqlDbType.Structured));
                     cmdJoinability.Parameters["@CandidateResumeBulkData"].Value = resumeListDt;
                     con.Open();
-                    if ( await cmdJoinability.ExecuteNonQueryAsync() != 0)
+                    if (await cmdJoinability.ExecuteNonQueryAsync() != 0)
                     {
                         con.Close();
                     }

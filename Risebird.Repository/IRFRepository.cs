@@ -6436,7 +6436,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    
+
                     SqlCommand cmd = new SqlCommand("usp_AddUpdateAssessmentGroupSMEInterviewer", con);
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -6451,7 +6451,7 @@ namespace Risebird.Repository
                     dataTable.Columns.Add("CreatedOn", typeof(string));
                     dataTable.Columns.Add("ModifiedBy", typeof(string));
                     dataTable.Columns.Add("ModifiedOn", typeof(string));
-                    
+
 
                     foreach (var item in interviewers)
                     {
@@ -6463,7 +6463,7 @@ namespace Risebird.Repository
                         cmd.Parameters.Add(new SqlParameter("@SMEBulkData", SqlDbType.Structured));
                         cmd.Parameters["@SMEBulkData"].Value = dataTable;
                     }
-                    
+
                     con.Open();
 
                     if (await cmd.ExecuteNonQueryAsync() != 0)

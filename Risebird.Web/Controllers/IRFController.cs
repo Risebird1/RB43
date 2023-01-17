@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -26,7 +25,6 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -5564,7 +5562,7 @@ namespace Risebird.Web.Controllers
             profileName = profileName.Replace("\"", "");
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
-            if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+            if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
             {
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = await _irfService.GetCandidateTimeline(id, emailid);
@@ -7631,7 +7629,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -7644,7 +7642,7 @@ namespace Risebird.Web.Controllers
                 return Json("Error retrieving data! Please try again.");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddUpdateAssessmentGroupSME(IList<AssessmentGroupInterviewers> model, string assessmentGroupName)
         {
@@ -7654,15 +7652,15 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName== "SeniorInterviewerManagement" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
                         if (ModelState.IsValid)
                         {
-                            if(model != null)
+                            if (model != null)
                             {
-                                if(model.Where(x=> x.IsSME)?.Count()>5)
+                                if (model.Where(x => x.IsSME)?.Count() > 5)
                                 {
                                     ModelState.AddModelError("", "Cannot add more than 5 Subject Matter Experts for an Assessment Group!");
                                     ViewBag.AssessmentGroupName = assessmentGroupName;
@@ -7670,7 +7668,7 @@ namespace Risebird.Web.Controllers
 
                                 }
                             }
-                            if(await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model))
+                            if (await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model))
                             {
                                 TempData["SuccessErrorMessageInterviewer"] = $"SME's updated Successfully for {assessmentGroupName}";
 

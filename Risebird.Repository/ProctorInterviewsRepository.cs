@@ -169,7 +169,6 @@ namespace Risebird.Repository
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-
                         DataTable vmPropertiesDt = new DataTable();
                         vmPropertiesDt.Columns.Add("Name", typeof(string));
                         vmPropertiesDt.Columns.Add("ResourceGroupName", typeof(string));
@@ -178,9 +177,13 @@ namespace Risebird.Repository
                         vmPropertiesDt.Columns.Add("IsRemoved", typeof(bool));
                         vmPropertiesDt.Columns.Add("IsDeleted", typeof(bool));
 
+                        vmPropertiesDt.Columns.Add("shutdowntime", typeof(int));
+                        vmPropertiesDt.Columns.Add("deletetime", typeof(int));
+                        vmPropertiesDt.Columns.Add("VmLocation", typeof(string));
+
                         foreach (var vm in vmList)
                         {
-                            vmPropertiesDt.Rows.Add(vm.Name, vm.ResourceGroupName, vm.Status, true, false, false);
+                            vmPropertiesDt.Rows.Add(vm.Name, vm.ResourceGroupName, vm.Status, true, false, false, vm.shutdowntime, vm.deletetime, vm.VmLocation);
                         }
 
                         SqlCommand cmd = new SqlCommand("usp_VMPropertiesBulkInsert", con);
@@ -648,7 +651,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public async Task<IEnumerable<VMProperties>> GetDeleteorShutdownVMList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<VMProperties>(con, "usp_deleteorShutdownVM", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }

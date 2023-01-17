@@ -131,7 +131,7 @@ namespace Risebird.CommonHelper
                 foreach (var item in Emailid)
                 {
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                   
+
                     if (!string.IsNullOrEmpty(dataResult.Item1))
                     {
                         _whatsAppVM.CountryCode = "+91";
@@ -269,7 +269,7 @@ namespace Risebird.CommonHelper
                 {
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {                      
+                    {
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                         _whatsAppVM.UserName = dataResult.Item2;
@@ -320,7 +320,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);                       
+                        await WhatsAppTrackUser(_whatsAppVM);
                         Dictionary<string, string> headers = new Dictionary<string, string>
                         {
                             { "Authorization", "Basic " + accesskey },
@@ -411,7 +411,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                         await WhatsAppTrackUser(_whatsAppVM);
-                       
+
                         Dictionary<string, string> headers = new Dictionary<string, string>
                         {
                             { "Authorization", "Basic " + accesskey },
@@ -458,7 +458,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                         await WhatsAppTrackUser(_whatsAppVM);
                         _whatsAppVM.UserName = Username;
-                        
+
                         Dictionary<string, string> headers = new Dictionary<string, string>
                         {
                             { "Authorization", "Basic " + accesskey },
@@ -503,7 +503,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                         await WhatsAppTrackUser(_whatsAppVM);
-                     
+
                         Dictionary<string, string> headers = new Dictionary<string, string>
                         {
                             { "Authorization", "Basic " + accesskey },
@@ -553,7 +553,7 @@ namespace Risebird.CommonHelper
                                 _whatsAppVM.CountryCode = "+91";
                                 _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                                 await WhatsAppTrackUser(_whatsAppVM);
-                              
+
                                 Dictionary<string, string> headers = new Dictionary<string, string>
                                 {
                                     { "Authorization", "Basic " + accesskey },
@@ -604,13 +604,13 @@ namespace Risebird.CommonHelper
                 {
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {                       
+                    {
                         _whatsAppVM.UserName = dataResult.Item2;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                         await WhatsAppTrackUser(_whatsAppVM);
-                        
+
                         Dictionary<string, string> headers = new Dictionary<string, string>
                                 {
                                     { "Authorization", "Basic " + accesskey },
@@ -648,13 +648,13 @@ namespace Risebird.CommonHelper
                 {
                     var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
                     if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {                       
+                    {
                         _whatsAppVM.UserName = dataResult.Item2;
                         _whatsAppVM.Emailid = item;
                         _whatsAppVM.CountryCode = "+91";
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1;
                         await WhatsAppTrackUser(_whatsAppVM);
-                       
+
                         Dictionary<string, string> headers = new Dictionary<string, string>
                                 {
                                     { "Authorization", "Basic " + accesskey },
@@ -696,7 +696,7 @@ namespace Risebird.CommonHelper
                         _whatsAppVM.WhatsAppNumber = dataResult.Item1.Replace("+91", "");
                         _whatsAppVM.UserName = dataResult.Item2;
                         _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);                       
+                        await WhatsAppTrackUser(_whatsAppVM);
 
                         Dictionary<string, string> headers = new Dictionary<string, string>
                                 {

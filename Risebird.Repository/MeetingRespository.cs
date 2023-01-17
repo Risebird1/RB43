@@ -6328,7 +6328,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result =await  SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRedoInterviewMeetings", null, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRedoInterviewMeetings", null, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return result;
                 }

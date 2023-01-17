@@ -338,14 +338,19 @@
     });
 
 </script>
+
+<script src='//fw-cdn.com/2398529/2998468.js' chat='true'></script>
+
+<script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer>
+    </script>
+
 @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
 {
     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     profileName = profileName.Trim('"');
-    @if (profileName == "Client" || profileName == "Interviewer")
+    @if (profileName == "Client" || profileName == "Interviewer" || (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client"))
     {
-        <script src='//fw-cdn.com/2398529/2998468.js' chat='true'>
-        </script>
+        
         <script>
             window.fwSettings = {
                 'widget_id': 44000003946
@@ -354,23 +359,12 @@
         </script>
         <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
 
+    
     }
 
 }
 
-@if (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client")
-{
-    <script src='//fw-cdn.com/2398529/2998468.js' chat='true'>
-    </script>
-    <script>
-        window.fwSettings = {
-            'widget_id': 44000003946
-        };
-        !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
-    </script>
-    <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
 
-}
 @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
 {
     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");

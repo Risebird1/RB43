@@ -82,9 +82,9 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                if(string.IsNullOrWhiteSpace(profileName))
+                if (string.IsNullOrWhiteSpace(profileName))
                 {
-                      return RedirectToAction("SignOut", "Session");
+                    return RedirectToAction("SignOut", "Session");
                 }
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
