@@ -21,5 +21,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model);
         Task<bool> UpdateActionPerformed(int vmId, string emailId, string action);
         Task<bool> RemoveVM(int vmId);
+        Task<string> AddNewVmDetails(VMProperties model);
     }
 }

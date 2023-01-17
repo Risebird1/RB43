@@ -29,10 +29,9 @@ namespace Risebird.Web.Controllers
         private readonly IProctorInterviewsService _proctorInterviewsService;
         private readonly CancellationToken _cancellationToken;
         private IProfileService _profileService;
+        private readonly IVmHelper _vmhelper;
 
-
-
-        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory, IProfileService profileService)
+        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory, IProfileService profileService, IVmHelper vmhelper)
         {
             _httpClient = factory.GetHttpClient();
             _applicationErrorLogger = applicationErrorLogger;
@@ -41,8 +40,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _proctorInterviewsService = proctorInterviewsService;
             _profileService = profileService;
-
-
+            _vmhelper = vmhelper;
         }
 
         [Authorize]
@@ -605,6 +603,68 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
+        [HttpGet]
+        public async Task<IActionResult> CreateNewVM()
+        {
+            try
+            {
+                var model = new VMProperties();
+                var locations = await _vmhelper.Fetchavailablelocation();
+                var _locations = JsonConvert.DeserializeObject<VMServerProperty>(locations);
+                if (_locations.value.Count > 0)
+                {
+                    var _locationlist = _locations.value.Select(x => new SelectListItem() { Text = x.name, Value = x.name });
+                    _locationlist = _locationlist.OrderBy(x => x.Text);
+                    model.LocationsList = new SelectList(_locationlist, "Value", "Text");
+                }
+                model.VMCount = 1;
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateNewVM(VMProperties model)
+        {
+            try
+            {
+                var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/GetVMList";
+                var functionKey = "fa19fIch6k8mPgiWRkbjvYSpBf26kJffV8jUaXFyWCk2yOXbofkRDA==";
+                var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, null, functionKey, "", _cancellationToken);
+                var result = response.Content.ReadAsStringAsync().Result;
+                result = result.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\"", "").Replace("\\", "\"");
+                var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
+                if (!vmsInCloudPortal.value.Select(x => x.name).Contains(model.Name))
+                {
+                    var responsevmdetails = "";
+                    for (int i = 0; i < model.VMCount; i++)
+                    {
+                        model.Name = model.Name + "_" + i;
+                        model.ResourceGroupName = model.Name;
+                        var responsevm = await _vmhelper.CreateVmMachine(model);
+                        responsevmdetails = responsevm;
+                        if (responsevm == "Success")
+                        {
+                            var resultset = await _proctorInterviewsService.AddNewVmDetails(model);
+                        }
+                    }
+                    TempData["SuccessErrorMessageProctor"] = responsevmdetails;
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageProctor"] = "VM with name " + model.Name + " is already present.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

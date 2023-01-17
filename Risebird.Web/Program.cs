@@ -200,6 +200,7 @@ builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
 builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
 builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
+builder.Services.AddScoped<IVmHelper, VmHelper>();
 
 
 var app = builder.Build();
