@@ -5564,7 +5564,7 @@ namespace Risebird.Web.Controllers
             profileName = profileName.Replace("\"", "");
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
-            if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+            if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
             {
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = await _irfService.GetCandidateTimeline(id, emailid);

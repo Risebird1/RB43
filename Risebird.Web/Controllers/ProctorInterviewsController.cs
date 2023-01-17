@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
                 {
                     profileName = "Admin";
                 }
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName == "QualityController" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName == "QualityController" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "Recruiter" || profileName == "MappingAdmin" || profileName == "SupportAdmin")
                 {
                     var model = new VirtualMachineVM();
                     var vmList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
