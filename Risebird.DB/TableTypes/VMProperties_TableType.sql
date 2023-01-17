@@ -8,7 +8,10 @@ CREATE TYPE [dbo].[VMProperties_TableType] AS TABLE(
 	[Status] [int] NULL,
 	[IsAdded] [bit] NOT NULL,
 	[IsRemoved] [bit] NOT NULL,
-	[IsDeleted] [bit] NOT NULL
+	[IsDeleted] [bit] NOT NULL,
+	[shutdowntime] [int] NULL,
+	[deletetime] [int] NULL,
+	[VmLocation] [varchar](150) NULL
 )
 
 End

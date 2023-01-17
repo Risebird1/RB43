@@ -17,6 +17,10 @@ CREATE TABLE [dbo].[VMProperties](
 	[PrivateIP] [varchar](100) NULL,
 	[Password] [VARCHAR](20) NULL,
 	[CustomName] [VARCHAR](20) NULL,
+	[shutdowntime] [int] NULL,
+	[deletetime] [int] NULL,
+	[VmLocation] [VARCHAR](150) NULL,
+	[CreateDate] [datetime] null
  CONSTRAINT [PK_VMProperties] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -37,6 +41,42 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE VMProperties
     Add [UserName] VARCHAR(50)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'shutdowntime')
+      AND Object_ID = Object_ID(N'VMProperties'))
+BEGIN
+    ALTER TABLE VMProperties
+    Add shutdowntime int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'deletetime')
+      AND Object_ID = Object_ID(N'VMProperties'))
+BEGIN
+    ALTER TABLE VMProperties
+    Add deletetime int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VmLocation')
+      AND Object_ID = Object_ID(N'VMProperties'))
+BEGIN
+    ALTER TABLE VMProperties
+    Add VmLocation varchar(150)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreateDate')
+      AND Object_ID = Object_ID(N'VMProperties'))
+BEGIN
+    ALTER TABLE VMProperties
+    Add CreateDate datetime
 END
 
 END
