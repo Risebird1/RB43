@@ -7,14 +7,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
-    var Header = "<a href='/InterviewerSkills/Index'>Interviewer Skills Channel</a>&nbsp;/&nbsp;Edit Interviewer Skills Channel";
+    var Header = "Edit Interviewer Skills Channel";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
-    
+
     <div class="mt50">
     </div>
     <div class="content client interviewer">
@@ -41,25 +41,26 @@
                                         <div class="col-lg-6  col-md-6 col-sm-6  pull-left">
                                             @if (!Model.IsClone)
                                             {
-                                            <div class="form-group">
-                                                <div class="mandate">
-                                                    @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                <div class="form-group">
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
+                                                    @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
                                                 </div>
-                                                @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
-                                            </div>
 
                                             }
                                             else
                                             {
-                                        <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
-                                            </div>
+                                                <div class="form-group">
+                                                    <div class="mandate">
+                                                        @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
+                                                    @Html.EditorFor(m => m.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                                    @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                                </div>
                                             }
 
                                         </div>
@@ -68,7 +69,7 @@
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
-                                                @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line",@readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
                                                 @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
@@ -97,7 +98,8 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
+                                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                </div>
                                                 @Html.DropDownListFor(model => model.PrimarySkill, (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control", @required = "required" })
                                                 @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                             </div>
@@ -108,7 +110,7 @@
                                                 @Html.DropDownListFor(m => m.HeuristicProfileType, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select Profile Type", new { @class = "select-css form-control",@required="required" })
                                                 @Html.ValidationMessageFor(model => model.HeuristicProfileType, "", new { @class = "text-danger" })
                                             </div>
-                                            </div>
+                                        </div>
                                         <div class="col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
@@ -340,7 +342,7 @@
 </div>
 <script>
     $(document).ready(function () {
-        if ('@Model.IsClone'=='True') {
+        if ('@Model.IsClone' == 'True') {
             document.getElementById("InterviewerSkillId").value = '';
             document.getElementById("CalendlyLink").value = '';
             document.getElementById("JDTiltle").value = '';
@@ -357,7 +359,7 @@
             if (jdFileElement != null) {
                 jdFileElement.value = '';
             }
-            
+
 
 
         }
@@ -372,7 +374,7 @@
     function InterviewerSkillsNameChanged() {
 
         var name = document.getElementById("InterviewerSkillId").value;
-        
+
         var element = document.getElementById("btnUploadSaveAs");
 
         if (name != InterviewerSkillName) {
