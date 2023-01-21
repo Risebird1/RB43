@@ -133,7 +133,7 @@
                                                         </div>
                                                         <div id="intskill_3" class="clearfix row"><div class="client-field"> <span>Profile Type:</span>@item.HeuristicProfileType</div></div>
                                                         <div id="intskill_4" class="clearfix row"><div class="client-field"> <span>End Date:</span>@item.EndDate</div></div>
-                                                        <div id="intskill_5" class="clearfix row"><div class="client-field"><span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")</div></div>
+                                                        <div id="intskill_5" class="clearfix row"><div class="client-field"><span>Primary Skill:</span> @(item.SkillName != null ? item.SkillName : "")</div></div>
                                                         <div id="intskill_6" class="clearfix row"><div class="client-field"><span>Total Discussion:</span> @item.TotalMeetings</div></div>
                                                         <div id="intskill_7" class="clearfix row"><div class="client-field"><span>Schedule Discussion:</span> @item.ScheduledMeetings</div></div>
                                                         <div id="intskill_8" class="clearfix row"><div class="client-field"><span>Approved Interviewers:</span> @item.ApprovedInterviewers</div></div>
@@ -174,7 +174,9 @@
                                                     </button>
                                                     <button id="intskill_12" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "InterviewerSkills" , new
-                                                 {InterviewerSkillName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                 {InterviewerSkillName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg>
+                                                        </span>
                                                     </button>
 
 
@@ -199,10 +201,10 @@
                                                             <span onclick="PauseInterviewerSkills('@item.id', '@item.InterviewerSkillId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                         </button>
 
-
-
-
                                                     }
+                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Edit Scheduler Event">
+                                                        <span onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-calendar-check-o"></i></span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -246,55 +248,55 @@
                                                     </div>
                                                 </div>
                                                 @*<div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        @if (!Model.IsClientUser)
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    </div>*@
+                                                <div class="form-group">
+                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                                <div class="col-md-6 col-sm-6">
+                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
+                                                {
+                                                @if (item != null && item != "")
+                                                {
+                                                <option value="@item">@item</option>
+                                                }
+                                                }
+                                                </select>
+                                                </div>
+                                                </div>
+                                                @if (!Model.IsClientUser)
+                                                {
+                                                <div class="form-group">
+                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
+                                                <div class="col-md-6 col-sm-6">
+                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                {
+                                                @if (item != null && item != "")
+                                                {
+                                                <option value="@item">@item</option>
+                                                }
+                                                }
+                                                </select>
+                                                </div>
+                                                </div>
+                                                }
+                                                </div>*@
 
                                                 <div class="col-md-6 col-sm-6">
 
                                                     @*<div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
-                                                                    {
-                                                                    @if (item != null && item != "")
-                                                                        {
-                                                                    <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>*@
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                    <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                    {
+                                                    @if (item != null && item != "")
+                                                    {
+                                                    <option value="@item">@item</option>
+                                                    }
+                                                    }
+                                                    </select>
+                                                    </div>
+                                                    </div>*@
                                                     <div class="form-group col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-6 col-sm-6">
@@ -381,7 +383,12 @@
 
 
 <script type="text/javascript">
-
+    function EditSchedulerEvent(schedulerlink) {
+        if (schedulerlink != '') {
+            var _uniqueid = schedulerlink.split('?')[schedulerlink.split('?').length - 1].split('=')[1];
+            window.location.href = "/InterviewScheduler/IRFSchedulerEventEdit?id=" + _uniqueid;
+        }
+    }
     function DeleteInterviewerSkills(id, iscName) {
 
         swal.fire({

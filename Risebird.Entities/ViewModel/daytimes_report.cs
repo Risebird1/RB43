@@ -26,7 +26,7 @@ namespace Risebird.Entities.ViewModel
         public int Concurrency { get; set; }
         public int BufferTime { get; set; }
         public string MeetingPlatform { get; set; }
-
+        public string schedulertype { get; set; }
     }
     public class daytimes_report
     {
@@ -97,6 +97,7 @@ namespace Risebird.Entities.ViewModel
         public string TimeZones { get; set; }
         public string TimeZonesValue { get; set; }
         public int TimeZoneoffset { get; set; }
+        public string schedulertype { get; set; }
     }
     public class TimeslotsVM
     {
