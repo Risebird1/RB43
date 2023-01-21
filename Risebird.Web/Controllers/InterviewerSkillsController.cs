@@ -32,7 +32,8 @@ namespace Risebird.Web.Controllers
         private IInterviewerService _interviewerService;
         private readonly IUserService _userService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
-        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
+        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
             _iInterviewerSkillsService = InterviewerSkillsService;
@@ -45,6 +46,7 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _userService = userService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
 
         [Authorize]
@@ -212,9 +214,10 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 InterviewerSkillsDetails.JDLink = uploadedFileURL;
                             }
-
                         }
-                        if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
+                        var _schedulinglink = AutoGenerateSchedulingLink(InterviewerSkillsDetails.StartDate, InterviewerSkillsDetails.InterviewerSkillId, InterviewerSkillsDetails.JDTiltle + "_Scheduling");
+                        InterviewerSkillsDetails.CalendlyLink = _schedulinglink;
+                        if (await _iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails))
                         {
                             TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been added Successfully!";
                             return RedirectToAction("Index");
@@ -1737,6 +1740,39 @@ namespace Risebird.Web.Controllers
             //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
             return new SelectList(list, "Value", "Text");
         }
-
+        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string meetingPlatform = null)
+        {
+            var model_Second = new List<daytimes_second>();
+            var sun = new List<perdaytime>();
+            var mon = new List<perdaytime>();
+            sun.Add(new perdaytime { Start = "8", End = "23" });
+            mon.Add(new perdaytime { Start = "6", End = "9" });
+            mon.Add(new perdaytime { Start = "18", End = "23" });
+            model_Second.Add(new daytimes_second { Daytype = "sunday", dayCheck = true, dayvalue = sun });
+            model_Second.Add(new daytimes_second { Daytype = "monday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "tuesday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "wednesday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "thursday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "friday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "saturday", dayCheck = true, dayvalue = sun });
+            var model_report = new daytimes_report();
+            model_report.setvalue = model_Second;
+            model_report.StartDate = eventStartdate.AddHours(12);
+            model_report.EndDate = eventStartdate.AddDays(60);
+            model_report.EventName = EventName;
+            model_report.SkillChannel = SkillChannel;
+            model_report.duration = 60;
+            model_report.Concurrency = 10;
+            model_report.BufferTime = 18;
+            model_report.MeetingPlatform = meetingPlatform;
+            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
+            var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
+            if (model != null)
+            {
+                var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
+                return eventurl;
+            }
+            return "";
+        }
     }
 }

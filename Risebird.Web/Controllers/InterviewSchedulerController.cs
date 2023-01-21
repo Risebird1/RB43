@@ -254,16 +254,31 @@ namespace Risebird.Web.Controllers
                         items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
                     }
                     model.TimeZonesList = items;
+                    model.schedulertype = result.FirstOrDefault().schedulertype;
                 }
                 else
                 {
                     model._IRFDetails = new ScheculeInterviewIRFVM();
+                    var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                    List<SelectListItem> items = new List<SelectListItem>();
+                    foreach (var tzi in timeZones)
+                    {
+                        items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
+                    }
+                    model.TimeZonesList = items;
                     ViewBag.Start = 3;
                 }
             }
             else
             {
                 model._IRFDetails = new ScheculeInterviewIRFVM();
+                var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                List<SelectListItem> items = new List<SelectListItem>();
+                foreach (var tzi in timeZones)
+                {
+                    items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
+                }
+                model.TimeZonesList = items;
                 ViewBag.Start = 3;
             }
             return View(model);
@@ -291,11 +306,14 @@ namespace Risebird.Web.Controllers
                     model.TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(model.offset, value, model.TimeZonesValue);
                     model.scheduleDate = value.AddMinutes(model.TimeZoneoffset);
                 }
-                var _ckeckEmail = await _interviewSchedulerservice.CheckEmailAddressAllow(model.Email);
-                if (_ckeckEmail)
+                if (model.schedulertype.ToUpper() == "IRF")
                 {
-                    ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
-                    return View(model);
+                    var _ckeckEmail = await _interviewSchedulerservice.CheckEmailAddressAllow(model.Email);
+                    if (_ckeckEmail)
+                    {
+                        ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                        return View(model);
+                    }
                 }
                 if (model.ResumeFile != null)
                 {
