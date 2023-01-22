@@ -12,6 +12,7 @@
         font-weight: bold;
         color: red;
     }
+
     .button {
         position: relative !important;
         padding: 13px 10px !important;
@@ -26,7 +27,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                            color: #9b9393;*/
+                                                                                color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -343,24 +344,25 @@
                                 @Html.HiddenFor(m => m.CountryCode)
                                 @Html.HiddenFor(m => m.ClientName)
                                 @Html.HiddenFor(m => m.TimeZonesValue)
+                                @Html.HiddenFor(m => m.schedulertype)
                                 <h2>Enter Details</h2>
                                 <div class="form-group">
                                     <div class="mandate">
-                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-label required" })                                       
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-label required" })
                                     </div>
                                     @Html.TextBoxFor(m => m.Name, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
                                 <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label required" })
-                                      
+
                                     </div>
                                     @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
                                 <div class="form-group clearfix">
                                     <div class="resume pull-left">
                                         @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "form-label required" })
-                                    
+
                                     </div>
                                     <div class="col-md-6 pull-left">
                                         @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
@@ -377,14 +379,14 @@
                                 <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.InterviewChannelId, htmlAttributes: new { @class = "form-label required" })
-                                       
+
                                     </div>
                                     @Html.TextBoxFor(m => m.InterviewChannelId, new { @readonly = "readonly", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
                                 <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
-                                       
+
                                     </div>
                                     @if (Model._listhr != null && Model._listhr.Count() > 0)
                                     {

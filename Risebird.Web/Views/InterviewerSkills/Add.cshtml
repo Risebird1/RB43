@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
-    var Header = "<a href='/InterviewerSkills/Index'>Interviewer Skills Channel</a>&nbsp;/&nbsp;Add Interviewer Skills Channel";
+    var Header = "Add Interviewer Skills Channel";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -15,7 +15,7 @@
 
 
 <div class="main-panel" id="main-panel">
- 
+
     <div class="mt50">
     </div>
     <div class="content client interviewer">
@@ -35,7 +35,7 @@
 
                                 <div class="col-md-12">
                                     <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Interviewer Skills</h4></div>
-                                  
+
                                 </div>
 
 
@@ -52,7 +52,7 @@
 
                                                 @Html.EditorFor(model => model.InterviewerSkillId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
                                                 <!--<label class="text-danger" id="uniqueMsg" style="color:red"></label>-->
-                                                @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
+                                            @Html.ValidationMessageFor(model => model.InterviewerSkillId, "", new { @class = "text-danger" })
                                                 @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
 
                                             </div>
@@ -61,7 +61,7 @@
                                             <div class="form-group">
                                                 <div class="mandate">    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                                @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line",@readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
                                                 @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
 
                                             </div>
@@ -94,10 +94,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="mandate">
-                                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
-                                                    @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill,"Select", new { @class = "select-css form-control" })
-                                                    @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
+                                                    @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                 </div>
+                                                @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill,"Select", new { @class = "select-css form-control" })
+                                                @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
+                                            </div>
                                             <div class="form-group">
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.HeuristicProfileType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -106,7 +107,7 @@
                                                 @Html.ValidationMessageFor(model => model.HeuristicProfileType, "", new { @class = "text-danger" })
                                             </div>
 
-                                            </div>
+                                        </div>
                                         <div class="col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
                                                 <div class="mandate">  @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
@@ -127,7 +128,7 @@
 
 
                                                 <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-    
+
                                                     <div class="mdc-radio mdc-radio--touch">
                                                         <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
                                                         <div class="mdc-radio__background">
@@ -295,7 +296,7 @@
 
 
 
-                    
+
 
 
 
@@ -307,8 +308,8 @@
 
                     </div>
 
-                            <!-- end content-->
-                        </div>
+                    <!-- end content-->
+                </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
@@ -334,7 +335,7 @@
 </script>
 
 <script>
- 
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -639,7 +640,7 @@
         // document.getElementById("btnUpload").disabled = false;
 
     }
-    
+
     function AddRowInterviewer() {
         document.getElementById("btnUpload").disabled = false;
 
@@ -716,7 +717,7 @@
         //    url: "/InterviewerSkills/GetInterviewerSkills",
         //    data: { 'id': id },
         //    success: function (data) {
-      
+
         //        $("#InterviewerCollection_0__SkillId").val(data);
 
 
@@ -728,7 +729,7 @@
     });
 
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo,tdThree) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -876,7 +877,7 @@
             }
         });
     }
-    
+
 
 </script>
 

@@ -10,8 +10,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-  
- 
 Create PROCEDURE [dbo].[usp_GetIRFInterviewerMembers]  
 @IRFId int  
 AS  
@@ -25,7 +23,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
   from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId      
   join UserList ul on ul.id = ti.UserId      
   join IRF on irf.id = ti.IRFId      
-  where irf.id=@IRFId and ti.IsActive=1      
+  where irf.id=@IRFId and ti.IsActive=1 and ul.IsActive=1     
   group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,ti.IsActive,ti.IsAvailable,IRF.SendIntervieweravailbilityOn      
       
  insert into @commonTable       
@@ -37,7 +35,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
   from TransQualityController tqc join InterviewerProfile ipr on ipr.UserId = tqc.UserId      
   join UserList ul on ul.id = tqc.UserId      
   join IRF on irf.id = tqc.IRFId      
-  where tqc.IRFId =@IRFId and tqc.IsActive=1      
+  where tqc.IRFId =@IRFId and tqc.IsActive=1 and ul.IsActive=1     
   group by tqc.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,IRF.SendIntervieweravailbilityOn    
       
  insert into @commonTable       
@@ -49,7 +47,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
   from TransEmergencyInterviewer tei join InterviewerProfile ipr on ipr.UserId = tei.UserId      
   join UserList ul on ul.id = tei.UserId      
   join IRF on irf.id = tei.IRFId      
-  where  tei.IRFId = @IRFId and tei.IsActive=1      
+  where  tei.IRFId = @IRFId and tei.IsActive=1 and ul.IsActive=1     
   group by tei.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId ,ul.uniqueid,ul.FirstName+' '+ul.LastName,tei.IsActive,IRF.SendIntervieweravailbilityOn    
       
 select * from @commonTable         
