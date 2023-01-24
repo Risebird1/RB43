@@ -267,7 +267,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid", dp);
+                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
                     return result.Distinct().ToList();
                 }
             }
@@ -939,7 +939,7 @@ namespace Risebird.Repository
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true, irfDetails.IsClone ? item.IsAvailable : true);
+                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true, irfDetails.IsClone ? item.IsAvailable : false);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -5837,11 +5837,11 @@ namespace Risebird.Repository
                         {
                             if (irfDetails.JobCountry == "2")
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, true);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
                             }
                             else
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, true);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
                             }
                         }
                     }
@@ -6489,7 +6489,50 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<IRF>> GetAllNewCreatedIRFs()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllNewCreatedIRFs", null,
+                         commandType: CommandType.StoredProcedure);
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    //parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAllIRFAssessmentInterviewerMembers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 

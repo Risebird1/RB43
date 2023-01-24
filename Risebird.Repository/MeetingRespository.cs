@@ -5325,40 +5325,24 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public bool UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
+        public async Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
         {
             try
             {
-                string query = string.Empty;
-                string query1 = string.Empty;
-                if (status == 1)
-                {
-                    query = "Update ti set ti.IsAvailable=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
-                }
-                else
-                {
-                    query = "Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
-                    //query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
-                }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", Irfid);
                 dynamicParameters.Add("@uniqueid", uniqueid);
-                //if (status != 1)
-                //{
-                //    using (SqlConnection con = new SqlConnection(connectionString))
-                //    {
-                //        var results = con.Query(query1, dynamicParameters);
-                //    }
-                //}
+                dynamicParameters.Add("@Status", status);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateIntervieweravailbilityStatus", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

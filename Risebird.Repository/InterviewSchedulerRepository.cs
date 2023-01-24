@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -147,13 +148,13 @@ namespace Risebird.Repository
             {
                 //var query = "Select * from ScheduleInterviewEvent sie where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
                 //var query = "Select sie.*,IRF.MeetingPlatform from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannel where uniqueid=@uniqueid and  IsActive=1 and IsNull(IsSingleUse,0)=0 union Select sie.*,IRF.MeetingPlatform from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannelRelation where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and IsSingleUse=1";
-                var query = "Select sie.*,IRF.MeetingPlatform,'IRF' schedulertype from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannel where uniqueid=@uniqueid and  IsActive=1 and IsNull(IsSingleUse,0)=0 union Select sie.*,IRF.MeetingPlatform,'IRF' schedulertype from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannelRelation where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and IsSingleUse=1 union Select sie.*,'Zoom' MeetingPlatform,'Interviewer' schedulertype from ScheduleInterviewEvent sie join InterviewerSkillsChannel IRF on IRF.InterviewerSkillId=sie.SkillChannel where uniqueid=@uniqueid and  IsActive=1 and IsNull(IsSingleUse,0)=0 union Select sie.*,'Zoom' MeetingPlatform,'Interviewer' schedulertype from ScheduleInterviewEvent sie join InterviewerSkillsChannel IRF on IRF.InterviewerSkillId=sie.SkillChannelRelation where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and IsSingleUse=1";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<daytimes_second>(query, dp);
-                    return (List<daytimes_second>)results;
+                    var result = await SqlMapper.QueryAsync<daytimes_second>(con, "usp_FetchSchedulerDetailsByUniqueId", dp,
+                                commandType: CommandType.StoredProcedure);
+                    return (List<daytimes_second>)result;
                 }
             }
             catch (Exception ex)
@@ -253,12 +254,12 @@ namespace Risebird.Repository
             try
             {
                 //var query = "Select JDTiltle, JDLink from IRF where IRFId=@IRFId";
-                var query = "Select JDTiltle, JDLink from IRF where IRFId=@IRFId union Select JDTiltle, JDLink from InterviewerSkillsChannel where InterviewerSkillId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<JDDetails>(query, dp);
+                    var results = await SqlMapper.QueryAsync<JDDetails>(con, "usp_FetchJDTitleByIRFId", dp,
+                            commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }
