@@ -6544,8 +6544,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = await _irfService.GetIRFInterviewerMembers(irfId);
-                model = model.Where(x => x.Type == "Interviewer").ToList();
+                var model = await _irfService.GetAllIRFAssessmentInterviewerMembers(irfId);
+                //model = model.Where(x => x.Type == "Interviewer").ToList();
                 if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)
                 {
                     await _irfService.UpdateIntervieweravailbilityDetails(irfId);
@@ -6591,9 +6591,9 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public JsonResult UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
+        public async Task<JsonResult> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
         {
-            if (_meetingService.UpdateCheckIntervieweravailbilityStatus(status, uniqueid, Irfid))
+            if (await _meetingService.UpdateCheckIntervieweravailbilityStatus(status, uniqueid, Irfid))
             {
                 return Json("Successfully status updated");
             }
@@ -7631,7 +7631,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -7644,7 +7644,7 @@ namespace Risebird.Web.Controllers
                 return Json("Error retrieving data! Please try again.");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddUpdateAssessmentGroupSME(IList<AssessmentGroupInterviewers> model, string assessmentGroupName)
         {
@@ -7654,15 +7654,15 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName== "SeniorInterviewerManagement" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
                         if (ModelState.IsValid)
                         {
-                            if(model != null)
+                            if (model != null)
                             {
-                                if(model.Where(x=> x.IsSME)?.Count()>5)
+                                if (model.Where(x => x.IsSME)?.Count() > 5)
                                 {
                                     ModelState.AddModelError("", "Cannot add more than 5 Subject Matter Experts for an Assessment Group!");
                                     ViewBag.AssessmentGroupName = assessmentGroupName;
@@ -7670,7 +7670,7 @@ namespace Risebird.Web.Controllers
 
                                 }
                             }
-                            if(await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model))
+                            if (await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model))
                             {
                                 TempData["SuccessErrorMessageInterviewer"] = $"SME's updated Successfully for {assessmentGroupName}";
 

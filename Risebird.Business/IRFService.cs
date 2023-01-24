@@ -2940,5 +2940,31 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<IRF>> GetAllNewCreatedIRFs()
+        {
+            try
+            {
+                return await _irfRepository.GetAllNewCreatedIRFs();
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetAllIRFAssessmentInterviewerMembers(irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

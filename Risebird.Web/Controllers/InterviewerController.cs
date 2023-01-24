@@ -139,6 +139,7 @@ namespace Risebird.Web.Controllers
                             filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                             filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
                             filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
+                            filter.IsActive = filter.IsActive == null ? filter.IsActive = model.Select(x => x.IsActive).ToArray() : filter.IsActive = filter.IsActive;
 
                             model = model.Where(c =>
                                (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -149,8 +150,13 @@ namespace Risebird.Web.Controllers
                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
-                          && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
+                          && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)
+                          && (filter.IsActive.Count() > 0 ? filter.IsActive.Contains(c.IsActive) : c.IsActive == true)).ToList();
 
+                        }
+                        else
+                        {
+                            model = model.Where(x => x.IsActive == true).ToList();
                         }
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in model)
