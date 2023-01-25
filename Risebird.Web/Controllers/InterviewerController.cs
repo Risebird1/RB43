@@ -46,9 +46,10 @@ namespace Risebird.Web.Controllers
         private static string SearchvalueInterviewer;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly string codeapiendpoint;
+        private readonly IAadhaarService _aadhaarService;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService)
 
         {
             _interviewerService = interviewerService;
@@ -67,6 +68,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             codeapiendpoint = _configuration["CodeApiEndPoint"];
+            _aadhaarService = aadhaarService;
         }
 
 
@@ -3266,6 +3268,62 @@ namespace Risebird.Web.Controllers
             return convertedResponse;
         }
         #endregion
+        [AllowAnonymous]
+        public async Task<IActionResult> ShowInterest(string uniqueid)
+        {
+            var model = new InterviewerProfileVM();
+            var _list = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            if (_list == null)
+            {
+                ViewBag.status = 3;
+                return View(model);
+            }
+            model.EmailId = _list.EmailId;
+            model.uniqueid = uniqueid;
+            ViewBag.status = 2;
+            return View(model);
+        }
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> ShowInterest(InterviewerProfileVM model)
+        {
+            if (model.ResumeFile != null)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                {
+                    var resumeFileName = model.ResumeFile.FileName.Replace(" ", "_");
+                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", model.ResumeFile);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                    model.ResumeLink = blob.Uri.ToString();
+                }
+            }
+            else
+            {
+                ViewBag.status = 2;
+                ModelState.AddModelError(string.Empty, "Please add a Resume File");
+                return View(model);
+            }
+            var result = await _interviewerService.SaveInterviewerResume(model);
+            ViewBag.status = 1;
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterestedStatus(int status, string uniqueid)
+        {
+            var result = await _interviewerService.UpdateInterviewerInterest(status, uniqueid);
+            if (result)
+            {
+                return Json("Success");
+            }
+            else
+            {
+                return Json("Fail");
+            }
+        }
     }
 }
 

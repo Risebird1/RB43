@@ -30,6 +30,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[ModifiedOn] [datetime] NULL,
 	[CreatedBy] [varchar](100) NULL,
 	[ModifiedBy] [varchar](100) NULL,
+	[IsInterest] [bit] NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -277,6 +278,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add ModifiedBy varchar(100)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsInterest')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add IsInterest bit
 END
 
 

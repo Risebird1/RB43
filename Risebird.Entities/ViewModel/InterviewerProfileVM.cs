@@ -212,5 +212,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Available for interview")]
         public int Isavailable { get; set; }
         public string AvailableDetails { get; set; }
+        public string uniqueid { get; set; }
     }
 }

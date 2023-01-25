@@ -231,15 +231,15 @@ namespace Risebird.Web.Controllers
                             ViewBag.Type = "RedoInterviews";
                             modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                         }
-                        else if (type == "TemplateInterviews")
-                        {
-                            ViewBag.Type = "TemplateInterviews";
-                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
-                        }
-                        else
+                        else if (type == "Interviews")
                         {
                             ViewBag.Type = "Interviews";
                             modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "TemplateInterviews";
+                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                         }
                         return View(modelList);
                     }
@@ -366,13 +366,13 @@ namespace Risebird.Web.Controllers
                 {
                     modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                 }
-                else if (type == "TemplateInterviews")
+                else if (type == "Interviews")
                 {
-                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                 }
                 else
                 {
-                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                 }
                 Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
@@ -6996,7 +6996,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.interviewid = interviewId;
                 ViewBag.irfId = irfId;
                 var email = HttpContext.Session.GetString("email");
-                if(string.IsNullOrWhiteSpace(email))
+                if (string.IsNullOrWhiteSpace(email))
                 {
                     return RedirectToAction("AddSecureReport", new { interviewId = interviewId, irfId = irfId, uniqueid = uniqueid });
                 }
