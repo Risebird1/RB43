@@ -160,7 +160,7 @@ namespace Risebird.Business
                 List<string> assessmentGroupDiffArray = new List<string>();
                 foreach (var item in interviewerProfile.AssessmentGroupArray)
                 {
-                    if (interviewerProfile.AssessmentGroupArrayOld == null 
+                    if (interviewerProfile.AssessmentGroupArrayOld == null
                         || !interviewerProfile.AssessmentGroupArrayOld.Contains(item))
                     {
                         assessmentGroupDiffArray.Add(item);
@@ -1175,6 +1175,30 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
 
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateInterviewerInterest(int status, string uniqueid)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateInterviewerInterest(status, uniqueid);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> SaveInterviewerResume(InterviewerProfileVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveInterviewerResume(model);
             }
             catch (SqlTypeException ex)
             {

@@ -1,0 +1,118 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
+    <title>Show Interest</title>
+</head>
+<body>
+    <div class="text-center" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
+        <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width:180px;" /></div>
+    </div>
+    <div class="container">
+        <input type="hidden" value="@ViewBag.status" id="hidpagestatus" />
+        <div class="row">
+            @*Add header for interviewer with details*@
+            @if (ViewBag.status == 3)
+            {
+                <div class="col-md-8 offset-md-2">
+                    URL is not correct please check the url and try again or contact to risebird support team.
+                </div>
+            }
+            else
+            {
+                <div class="col-md-8 offset-md-2" id="divmain">
+                    <div class="callno" style="margin-bottom:10px;">
+                        <h2>Interviewer Details</h2>
+                    </div>
+                    <div class="col-md-12 col-sm-12" style="float:left">
+                        <div>
+                            @Html.Label("Email Address","Email Address", htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.EmailId, new { @class = "calloption text-box single-line", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6" style="float:left" onclick="ShowInterestStatus(1)">
+                        <a style="text-decoration: none;background: #289f28;padding: 10px 20px;position: relative;top: 25px;
+                           margin-bottom: 10px;clear: both;border-radius: 3px;color: #fff;" href={1}>Yes! Im interested</a>
+                    </div>
+                    <div class="col-md-6 col-sm-6" style="float:left" onclick="ShowInterestStatus(0)">
+                        <a style="text-decoration: none;background:#cd362b;padding: 10px 20px;position: relative;top: 25px;
+                          margin-bottom: 10px;margin-left:10px;clear: both;border-radius: 3px;color: #fff;">No! I am not interested</a>
+                    </div>
+                </div>
+                <div class="col-md-8 offset-md-2" id="divmessage">
+                    Status updated successfully.
+                    @*Correct meesgae display*@
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>
+<div id="Resumepopup" class="modal modal-bg" style="z-index:3">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <h5 class="modal-title pull-left">Upload Resume</h5>
+            </div>
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span onclick="closeAadhaarpopup()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>*@
+            <div class="modal-body">
+                <div class="loader text-center">
+                    <img src="~/Newassets/img/lazyload.gif" />
+                </div>
+                @using (Html.BeginForm("ShowInterest", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.HiddenFor(m => m.uniqueid)
+                    @Html.HiddenFor(m => m.EmailId)
+                    <div class="row" style="padding:10px" id="divcandidateskills">
+                        @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+                    </div>
+                    <div>
+                        <div class="col-md-12 text-right">
+                            <input type="submit" value="Save" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
+<script>
+    function ShowInterestStatus(status) {
+        $.ajax({
+            type: "POST",
+            url: "/Interviewer/UpdateInterestedStatus",
+            data: { status: status, uniqueid: $("#uniqueid").val() },
+            success: function (data) {
+                if (status == 1) {
+                    var modelpopup = document.getElementById("Resumepopup");
+                    modelpopup.style.display = "block";
+                }
+                else {
+                    document.getElementById("divmessage").style.display = "block";
+                    document.getElementById("divmain").style.display = "none";
+                }
+            }
+        });
+    }
+    $(document).ready(function () {
+        if ($("#hidpagestatus").val() == "1") {
+            document.getElementById("divmessage").style.display = "block";
+            document.getElementById("divmain").style.display = "none";
+        } else if ($("#hidpagestatus").val() == "2") {
+            document.getElementById("divmessage").style.display = "none";
+            document.getElementById("divmain").style.display = "block";
+        }
+    })
+</script>
