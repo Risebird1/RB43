@@ -2631,5 +2631,52 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewerInterest(int status, string uniqueid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    if (status == 1)
+                    {
+                        parameters.Add("@status", true);
+                    }
+                    else
+                    {
+                        parameters.Add("@status", false);
+                    }
+                    parameters.Add("@uniqueid", uniqueid);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerinterest", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> SaveInterviewerResume(InterviewerProfileVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", model.EmailId);
+                    parameters.Add("@ResumeLink", model.ResumeLink);
+                    var results = await SqlMapper.QueryAsync(con, "usp_SaveInterviewerResume", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

@@ -1182,5 +1182,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewerInterest(int status, string uniqueid)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateInterviewerInterest(status, uniqueid);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> SaveInterviewerResume(InterviewerProfileVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveInterviewerResume(model);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

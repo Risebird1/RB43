@@ -73,22 +73,22 @@
                     <div class="mobile-view"> <h4 class="card-title"> Interviews</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.Type == "Interviews")
+                    @if (ViewBag.Type == "TemplateInterviews")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                     }
-                    else if (ViewBag.Type == "TemplateInterviews")
+                    else if (ViewBag.Type == "Interviews")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                     }
                 </div>
