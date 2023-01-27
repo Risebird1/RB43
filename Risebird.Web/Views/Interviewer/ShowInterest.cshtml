@@ -91,7 +91,7 @@
 <script>
     function ShowInterestStatus(status) {
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: "/Interviewer/UpdateInterestedStatus",
             data: { status: status, uniqueid: $("#uniqueid").val() },
             success: function (data) {

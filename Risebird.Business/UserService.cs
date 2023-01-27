@@ -704,7 +704,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid)
+        public async Task<(string, string)> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {
@@ -948,6 +948,18 @@ namespace Risebird.Business
             try
             {
                 return await _userRepository.GetClientUsersForReviewNotification();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<InterviewerProfileVM>> GetInterviewerInterestNotification()
+        {
+            try
+            {
+                return await _userRepository.GetInterviewerInterestNotification();
             }
             catch (Exception e)
             {
