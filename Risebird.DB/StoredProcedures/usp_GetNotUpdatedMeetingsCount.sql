@@ -16,7 +16,7 @@ AS
 Begin                                   
 Declare @Role varchar(150)          
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid          
-if(@Role='SeniorHR' or @Role='SupportAdmin')          
+if(@Role='SeniorHR')--or @Role='SupportAdmin'          
 BEGIN          
 select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  

@@ -25,9 +25,23 @@ set @startFrom = @startFromParam
 set @endWith = @endWithParam
 set @searchValue=@searchValueParam
 
-declare @tblTechSkill table (InterviewId int, TechSkillScore float);
-	insert into @tblTechSkill
-	select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId
+--declare @tblTechSkill table (InterviewId int, TechSkillScore float);
+--	insert into @tblTechSkill
+--	select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId
+
+CREATE TABLE #tblTechSkill (InterviewId int, TechSkillScore float)
+
+insert into #tblTechSkill
+select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
+group by tsr.Interviewid
+
+CREATE TABLE #PatchVideoCountTbl (InterviewId int, VideoCount int)
+
+	insert into #PatchVideoCountTbl
+	select vqd.Interviewid, count(vqd.id) from VideoQuestionDetails vqd
+	join InterviewComments ic on ic.InterviewId = vqd.Interviewid
+	where NULLIF(vqd.VideoLink, '') IS NOT NULL
+	group by vqd.Interviewid
 
 if(@searchValue is not null)
 
@@ -42,7 +56,7 @@ if(@searchValue is not null)
 		IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage           
 		as ThumbnailImage,    
-		patchvideoCount.MeetingCount as MeetingPatchCount,    
+		patchvideoCount.VideoCount as MeetingPatchCount,    
 		(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END)  as CandidateAvailable,      
 		 tsr.TechSkillScore,ca.TotalExperience, ca.Heuristicsscore, hl.[Description] as HeuristicDesc      
 		from InterviewMeetings im                
@@ -52,9 +66,10 @@ if(@searchValue is not null)
 		inner join UserList ul on ul.EmailId = im.candidateEmail        
 		join CandidatesMaster cm on cm.UserId = ul.id            
 		join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id    
-		inner join @tblTechSkill tsr  on tsr.InterviewId= im.id
+		inner join #tblTechSkill tsr  on tsr.InterviewId= im.id
 		left join HeuristicLevels hl on hl.id = ca.Heuristicsscore
-		outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
+		left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
+		--outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
     
 		where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ic.CandidateAvailable=1 and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%')) and ca.AvailableFullTime=1 and ca.AvailableFreeLancing=1     
 		group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,        
@@ -63,7 +78,7 @@ if(@searchValue is not null)
 		im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,         
 		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate,tsr.TechSkillScore,    
 		IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
-		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.MeetingCount           
+		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.VideoCount           
 		 ,ic.CandidateAvailable,ca.TotalExperience, ca.Heuristicsscore, hl.[Description])
 		 select * from meetings_rows where row_num>@startFrom and row_num<=@endWith 
 
@@ -81,7 +96,7 @@ Else
 		IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage           
 		as ThumbnailImage,    
-		patchvideoCount.MeetingCount as MeetingPatchCount,    
+		patchvideoCount.VideoCount as MeetingPatchCount,    
 		(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END)  as CandidateAvailable,      
 		 tsr.TechSkillScore,ca.TotalExperience, ca.Heuristicsscore, hl.[Description] as HeuristicDesc     
 		from InterviewMeetings im                
@@ -91,9 +106,10 @@ Else
 		inner join UserList ul on ul.EmailId = im.candidateEmail        
 		join CandidatesMaster cm on cm.UserId = ul.id            
 		join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id    
-		inner join @tblTechSkill tsr  on tsr.InterviewId= im.id
+		inner join #tblTechSkill tsr  on tsr.InterviewId= im.id
 		left join HeuristicLevels hl on hl.id = ca.Heuristicsscore
-		outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
+		left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
+		--outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
     
 		where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ic.CandidateAvailable=1 and ca.AvailableFullTime=1 and ca.AvailableFreeLancing=1     
 		group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,        
@@ -102,23 +118,16 @@ Else
 		im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,         
 		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate,tsr.TechSkillScore,    
 		IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
-		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.MeetingCount           
+		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.VideoCount           
 		 ,ic.CandidateAvailable,ca.TotalExperience, ca.Heuristicsscore, hl.[Description])
 		 select * from meetings_rows where row_num>@startFrom and row_num<=@endWith
 	End
 
-
+drop table #PatchVideoCountTbl
+drop table #tblTechSkill
   
 END      
-  
-  
-        
-  
-  
-        
-  
-  
-  
+   
 GO
 
 
