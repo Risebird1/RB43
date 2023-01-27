@@ -955,5 +955,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<InterviewerProfileVM>> GetInterviewerInterestNotification()
+        {
+            try
+            {
+                return await _userRepository.GetInterviewerInterestNotification();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

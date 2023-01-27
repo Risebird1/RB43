@@ -75,5 +75,6 @@ namespace Risebird.Business.Interface
         Task<string> GetWhatsappno(string emailId);
         Task<string> UpdateWhatsappno(string emailId, string WhatsappNumber);
         Task<List<ClientUserVM>> GetClientUsersForReviewNotification();
+        Task<List<InterviewerProfileVM>> GetInterviewerInterestNotification();
     }
 }
