@@ -1764,5 +1764,22 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<InterviewerProfileVM>> GetInterviewerInterestNotification()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var data = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "[dbo].[usp_InterviewerInterestNotification]", null,
+                        commandType: StoredProcedure);
+                    return data.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

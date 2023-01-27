@@ -3311,7 +3311,7 @@ namespace Risebird.Web.Controllers
             ViewBag.status = 1;
             return View(model);
         }
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> UpdateInterestedStatus(int status, string uniqueid)
         {
             var result = await _interviewerService.UpdateInterviewerInterest(status, uniqueid);

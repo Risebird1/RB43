@@ -56,7 +56,7 @@ namespace Risebird.Repository.Interface
         Task<bool> ResetNavigation(int userId);
         Task<string> GetCurrentuserImage(string emailId);
 
-        Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid);
+        Task<(string, string)> FetchWhatsAppNumberByEmail(string Emailid);
         Task<string> FetchNameByEmail(string Emailid);
         Task<int> GetInterviewerid(string emailid);
         Task<string> SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
@@ -87,5 +87,6 @@ namespace Risebird.Repository.Interface
         Task<string> UpdateWhatsappno(string emailId, string WhatsappNumber);
         Task<ClientUserVM> GetClientDetailsByIRFId(string IRFId);
         Task<List<ClientUserVM>> GetClientUsersForReviewNotification();
+        Task<List<InterviewerProfileVM>> GetInterviewerInterestNotification();
     }
 }
