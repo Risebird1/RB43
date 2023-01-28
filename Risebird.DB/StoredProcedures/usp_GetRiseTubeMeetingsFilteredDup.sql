@@ -37,7 +37,24 @@ Begin
       
       
 if @clientid = 0            
- BEGIN        
+ BEGIN  
+
+	CREATE TABLE #PatchVideoCountTbl (InterviewId int, VideoCount int)
+
+	insert into #PatchVideoCountTbl
+	select vqd.Interviewid, count(vqd.id) from VideoQuestionDetails vqd
+	join InterviewComments ic on ic.InterviewId = vqd.Interviewid
+	where NULLIF(vqd.VideoLink, '') IS NOT NULL
+	group by vqd.Interviewid
+
+	CREATE TABLE #TechSkillScoreTbl (InterviewId int, WeightageActual float)
+
+	insert into #TechSkillScoreTbl
+	select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
+	join InterviewComments ic on ic.InterviewId = tsr.Interviewid
+	group by tsr.Interviewid
+
+
    Select @Role=pr.Name from UserList ul join Profile pr on ul.idProfile=pr.id where Emailid= @Emailid   
    if(@Role='SeniorHR' or @Role='SupportAdmin')  
    begin  
@@ -55,8 +72,8 @@ if @clientid = 0
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,             
    IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,        
-   patchvideoCount.MeetingCount as MeetingPatchCount,      
-   Techscore.TechSkillScore as TechSkillScore, ic.ThumbnailTimeSeconds      
+   patchvideoCount.VideoCount as MeetingPatchCount,      
+   Techscore.WeightageActual as TechSkillScore, ic.ThumbnailTimeSeconds      
       
    from InterviewMeetings im                
    inner join IRF on im.IRFId = IRF.IRFId              
@@ -67,9 +84,11 @@ if @clientid = 0
    left join QCFeedbackReport QCF on im.id=QCF.InterviewId            
    inner join client cl on IRF.ClientID=cl.id     
    join SeniorHR sh on sh.Clientid=IRF.ClientId  
-   left join Userlist ulsh on ulsh.id=sh.Userid  
-   outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
-   outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
+   left join Userlist ulsh on ulsh.id=sh.Userid 
+   left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
+   left join #TechSkillScoreTbl as Techscore on Techscore.InterviewId = ic.InterviewId
+   --outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
+   --outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))       
    and cast(interviewDate as date) >= cast (@startDate as date)      
@@ -81,7 +100,7 @@ if @clientid = 0
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,ul.FirstName, ul.LastName,           
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone, ca.ResumeLink,IRF.id,IRF.JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved,      
-   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore, ic.ThumbnailTimeSeconds)       
+   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.VideoCount,Techscore.WeightageActual, ic.ThumbnailTimeSeconds)       
       
    select * from meetings_rows where row_num>@startFrom and row_num<=@endWith      
   End      
@@ -100,8 +119,8 @@ if @clientid = 0
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,             
    IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,        
-   patchvideoCount.MeetingCount as MeetingPatchCount,      
-   Techscore.TechSkillScore as TechSkillScore, ic.ThumbnailTimeSeconds      
+   patchvideoCount.VideoCount as MeetingPatchCount,      
+   Techscore.WeightageActual as TechSkillScore, ic.ThumbnailTimeSeconds      
       
    from InterviewMeetings im                
    inner join IRF on im.IRFId = IRF.IRFId              
@@ -112,9 +131,11 @@ if @clientid = 0
    left join QCFeedbackReport QCF on im.id=QCF.InterviewId            
    inner join client cl on IRF.ClientID=cl.id        
    join SeniorHR sh on sh.Clientid=IRF.ClientId  
-   left join Userlist ulsh on ulsh.id=sh.Userid  
-   outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
-   outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
+   left join Userlist ulsh on ulsh.id=sh.Userid
+   left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
+   left join #TechSkillScoreTbl as Techscore on Techscore.InterviewId = ic.InterviewId
+   --outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
+   --outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null       
    and cast(interviewDate as date) >= cast (@startDate as date)      
@@ -127,7 +148,7 @@ if @clientid = 0
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ul.FirstName, ul.LastName,         
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone, ca.ResumeLink,IRF.id,IRF.JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved,      
-   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore, ic.ThumbnailTimeSeconds)       
+   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.VideoCount,Techscore.WeightageActual, ic.ThumbnailTimeSeconds)       
       
    select * from meetings_rows where row_num>@startFrom and row_num<=@endWith      
 End  
@@ -148,8 +169,8 @@ End
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,             
    IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,        
-   patchvideoCount.MeetingCount as MeetingPatchCount,      
-   Techscore.TechSkillScore as TechSkillScore, ic.ThumbnailTimeSeconds      
+   patchvideoCount.VideoCount as MeetingPatchCount,      
+   Techscore.WeightageActual as TechSkillScore, ic.ThumbnailTimeSeconds      
       
    from InterviewMeetings im                
    inner join IRF on im.IRFId = IRF.IRFId              
@@ -158,9 +179,11 @@ End
    join CandidatesMaster cm on ul.id = cm.UserId            
    join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id            
    left join QCFeedbackReport QCF on im.id=QCF.InterviewId            
-   inner join client cl on IRF.ClientID=cl.id            
-   outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
-   outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
+   inner join client cl on IRF.ClientID=cl.id   
+   left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
+   left join #TechSkillScoreTbl as Techscore on Techscore.InterviewId = ic.InterviewId
+   --outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
+   --outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))       
    and cast(interviewDate as date) >= cast (@startDate as date)      
@@ -171,7 +194,7 @@ End
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,ul.FirstName, ul.LastName,           
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone, ca.ResumeLink,IRF.id,IRF.JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved,      
-   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore, ic.ThumbnailTimeSeconds)       
+   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.VideoCount,Techscore.WeightageActual, ic.ThumbnailTimeSeconds)       
       
    select * from meetings_rows where row_num>@startFrom and row_num<=@endWith      
   End      
@@ -190,8 +213,8 @@ End
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,             
    IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable,        
-   patchvideoCount.MeetingCount as MeetingPatchCount,      
-   Techscore.TechSkillScore as TechSkillScore, ic.ThumbnailTimeSeconds      
+   patchvideoCount.VideoCount as MeetingPatchCount,      
+   Techscore.WeightageActual as TechSkillScore, ic.ThumbnailTimeSeconds      
       
    from InterviewMeetings im                
    inner join IRF on im.IRFId = IRF.IRFId              
@@ -200,9 +223,11 @@ End
    join CandidatesMaster cm on ul.id = cm.UserId            
    join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id            
    left join QCFeedbackReport QCF on im.id=QCF.InterviewId            
-   inner join client cl on IRF.ClientID=cl.id            
-   outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
-   outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
+   inner join client cl on IRF.ClientID=cl.id  
+   left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
+   left join #TechSkillScoreTbl as Techscore on Techscore.InterviewId = ic.InterviewId
+   --outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount      
+   --outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore      
       
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null       
    and cast(interviewDate as date) >= cast (@startDate as date)      
@@ -213,22 +238,30 @@ End
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ul.FirstName, ul.LastName,         
    im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.JoiningBiometryScore,             
    ca.Phone, ca.ResumeLink,IRF.id,IRF.JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,ic.InterviewerComment,ic.IsApproved,      
-   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.MeetingCount,Techscore.TechSkillScore, ic.ThumbnailTimeSeconds)       
+   ic.InterviewStatus,ic.MeetingStatus, cm.id,ic.ThumbnailImage ,cl.CuratedLink , QCF.InterviewId ,ic.CandidateAvailable,patchvideoCount.VideoCount,Techscore.WeightageActual, ic.ThumbnailTimeSeconds)       
       
    select * from meetings_rows where row_num>@startFrom and row_num<=@endWith      
   End      
        
    END  
       
-      
+
+	  drop table #TechSkillScoreTbl
+      drop table #PatchVideoCountTbl
       
       
 END            
 else       
       
-declare @tblTechSkill table (InterviewId int, TechSkillScore float);      
- insert into @tblTechSkill      
- select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId      
+--declare @tblTechSkill table (InterviewId int, TechSkillScore float);      
+-- insert into @tblTechSkill      
+-- select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId  
+
+CREATE TABLE #tblTechSkill (InterviewId int, TechSkillScore float)
+
+insert into #tblTechSkill
+select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
+group by tsr.Interviewid
       
 declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);      
  insert into @tblPatchCount      
@@ -264,7 +297,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id            
    inner join dbo.UserList ul on ul.id = tc.ClientUserId            
    inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id        
-   inner join @tblTechSkill tts on tts.InterviewId = im.id      
+   inner join #tblTechSkill tts on tts.InterviewId = im.id      
    left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId      
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
   
@@ -304,7 +337,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id            
    inner join dbo.UserList ul on ul.id = tc.ClientUserId            
    inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id       
-   inner join @tblTechSkill tts on tts.InterviewId = im.id      
+   inner join #tblTechSkill tts on tts.InterviewId = im.id      
    left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId      
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid   
    and (ic.MoveToCP is null or ic.MoveToCP =0)             
@@ -346,7 +379,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id            
    inner join dbo.UserList ul on ul.id = tc.ClientUserId            
    inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id        
-   inner join @tblTechSkill tts on tts.InterviewId = im.id      
+   inner join #tblTechSkill tts on tts.InterviewId = im.id      
    left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId      
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid   
    and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))             
@@ -389,7 +422,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id            
    inner join dbo.UserList ul on ul.id = tc.ClientUserId            
    inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id       
-   inner join @tblTechSkill tts on tts.InterviewId = im.id      
+   inner join #tblTechSkill tts on tts.InterviewId = im.id      
    left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId      
    where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus = 8) and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
      and (ic.MoveToCP is null or ic.MoveToCP =0)             
@@ -406,7 +439,8 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    select * from meetings_rows where row_num>@startFrom and row_num<=@endWith      
   End      
  END     
-      
+   
+  drop table #tblTechSkill
 END            
                
 End      

@@ -8,12 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-          
-          
-              
-              
-                  
-                  
+                 
 CREATE PROCEDURE [dbo].[usp_GetInterviewerRiseTubeMeetings]                
   @startFromParam int,                      
   @endWithParam int,                  
@@ -23,10 +18,17 @@ Begin
  declare @startFrom INT, @endWith int                    
                        
    set @startFrom = @startFromParam                      
-  set @endWith = @endWithParam                     
-declare @tblTechSkill table (InterviewId int, TechSkillScore float);                      
- insert into @tblTechSkill                      
- select InterviewId, sum(WeightageActual) as TechSkillScore from InterviewerTechSkillReport group by InterviewId                      
+  set @endWith = @endWithParam      
+  
+--declare @tblTechSkill table (InterviewId int, TechSkillScore float);                      
+-- insert into @tblTechSkill                      
+-- select InterviewId, sum(WeightageActual) as TechSkillScore from InterviewerTechSkillReport group by InterviewId  
+ 
+CREATE TABLE #tblTechSkill (InterviewId int, TechSkillScore float)
+
+insert into #tblTechSkill
+select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
+group by tsr.Interviewid
                       
 declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);                      
  insert into @tblPatchCount                      
@@ -49,7 +51,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    inner join TransInterviewerListInterviewerSkills cm on ulc.id = cm.UserId                            
    inner join InterviewerSkillsChannel IRF on im.ISCId = IRF.InterviewerSkillId                                
    inner join InterviewerProfile ca on ca.id = cm.InterviewerProfileId and cm.ISCId = irf.id                       
-   inner join @tblTechSkill tts on tts.InterviewId = im.id                      
+   inner join #tblTechSkill tts on tts.InterviewId = im.id                      
    left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId               
    left join [InterviewerRecommendation] irc on irc.Interviewid=im.id               
    left join AssessmentGroup ag on ag.id=irf.AssessmentGroupId               
@@ -78,7 +80,7 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
    inner join TransInterviewerListInterviewerSkills cm on ulc.id = cm.UserId                            
    inner join InterviewerSkillsChannel IRF on im.ISCId = IRF.InterviewerSkillId                                
    inner join InterviewerProfile ca on ca.id = cm.InterviewerProfileId and cm.ISCId = irf.id                       
-   inner join @tblTechSkill tts on tts.InterviewId = im.id                      
+   inner join #tblTechSkill tts on tts.InterviewId = im.id                      
    left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId                
    left join [InterviewerRecommendation] irc on irc.Interviewid=im.id               
    left join AssessmentGroup ag on ag.id=irf.AssessmentGroupId               
@@ -91,15 +93,10 @@ declare @tblPatchCount table (InterviewId int, MeetingPatchCount int);
  select * from meetings_rows --where row_num>@startFrom and row_num<=@endWith                      
  END                
                       
-                      
+  drop table #tblTechSkill                    
 END                                                                             
-                   
-  
-                      
-
-				                                                                      
-               
-      GO
+              
+GO
                
                                      
              
