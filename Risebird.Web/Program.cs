@@ -90,7 +90,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddDistributedRedisCache(options =>
 {
     options.InstanceName = "risebirdportalui";
-    options.Configuration = "risebirdportal2.redis.cache.windows.net:6380,password=D61Xuo4tWZvWAckfOS4dRG+EF8WrmmY+XlxfTDzxZAA=,ssl=True,abortConnect=False";
+    options.Configuration = "risebirdportalnew.redis.cache.windows.net:6380,password=63HxF9rAS5oopAdrfqPt5oFQqoTiklD2lAzCaKXgquw=,ssl=True,abortConnect=False";
 });
 
 //builder.Services.AddMvc();
