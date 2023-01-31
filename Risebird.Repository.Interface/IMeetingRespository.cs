@@ -252,5 +252,6 @@ namespace Risebird.Repository.Interface
         Task<bool> BacklinkFailInterviewStatusUpdate(int id);
         Task<bool> UpdateProbableNoShowCandidates();
         Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates();
+        Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId);
     }
 }

@@ -90,7 +90,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var uniques = await SqlMapper.QueryAsync<AadhaarDetails>(
-                        con, "Select EmailId,AadhaarVerified From UserList where uniqueid=@uniqueid ", parameters, commandType: System.Data.CommandType.Text);
+                        con, "Select EmailId,AadhaarVerified From UserList where uniqueid=@uniqueid", parameters, commandType: System.Data.CommandType.Text);
                     return uniques.FirstOrDefault();
                 }
             }

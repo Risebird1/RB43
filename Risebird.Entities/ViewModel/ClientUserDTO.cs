@@ -28,5 +28,8 @@
         public string EmailId { get; set; }
 
         public string Role { get; set; }
+        public string uniqueid { get; set; }
+        public string IRFName { get; set; }
+        public string FirstName { get; set; }
     }
 }

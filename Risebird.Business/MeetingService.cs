@@ -3785,6 +3785,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId)
+        {
+            try
+            {
+                return await _meetingRespository.SaveSauveyIRFReview(rating, comments, Emailid, IRFId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 

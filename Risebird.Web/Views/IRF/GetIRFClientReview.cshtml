@@ -1,0 +1,103 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.IRFClientReviewVM>
+<div>
+    <div class="pull-right">
+        <div class="mc-button-area text-left">
+            <div class="pull-left">
+                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10" title="Send Notification for client feedback">
+                    <span class="fa fa-comments" data-toggle="tooltip" data-placement="top" onclick="SendNotificationClientReview(@ViewBag.IRFId)" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Send For Feedback</font></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div style="clear:both">
+        @if (Model != null && Model.Count() != 0)
+        {
+            <div id="style-2" class="scrollers" style="overflow-y:auto">
+                <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th class="text-center">Comment</th>
+                            <th>Rating</th>
+                            <th>Feedback On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ClientEmailid</td>
+                                <td>
+                                    @if (item.Comment != null && item.Comment != "")
+                                    {
+                                        @if (item.Comment.Length > 40)
+                                        {
+                                            <div class="article">
+                                                <p style="margin-bottom:0px;">
+                                                    @item.Comment.Substring(0, 40)
+                                                </p>
+                                                <p class="moretext_@item.id moretext">
+                                                    @item.Comment.Substring(40, @item.Comment.Length - 40)
+                                                </p>
+                                            </div>
+                                            <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                        }
+                                        else
+                                        {
+                                            <div class="article">
+                                                <p>
+                                                    @item.Comment.Substring(0, @item.Comment.Length)
+                                                </p>
+                                            </div>
+                                        }
+                                    }
+                                </td>
+                                <td>@item.Rating</td>
+                                <td>@item.CreatedOn</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div>
+                No Client Feedback
+            </div>
+        }
+    </div>
+</div>
+
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+    function SendNotificationClientReview(Irfid) {
+        $.ajax({
+            url: '/IRF/ClientFeedbackNotification',
+            data: { 'irfId': Irfid },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+</script>
+<style>
+    .sb-content {
+        overflow-y: scroll;
+        box-sizing: border-box;
+    }
+</style>
