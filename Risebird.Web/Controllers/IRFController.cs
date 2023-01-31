@@ -7705,6 +7705,75 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-        
+        [HttpGet]
+        public async Task<IActionResult> GetIRFClientReview(int irfId)
+        {
+            try
+            {
+                var model = await _irfService.GetIRFClientReviews(irfId);
+                if (model == null)
+                {
+                    model = new List<IRFClientReviewVM>();
+                }
+                ViewBag.IRFId = irfId;
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> ClientFeedbackNotification(int irfId)
+        {
+            var transClientUser = _irfRepository.GetTransClientUser(irfId);
+            var billingowner = await _irfService.GetIRFBillingOwnerById(irfId);
+            var _irfitem = await _irfService.GetSkillChannelStatsById(irfId);
+            string JDTitle = "";
+            DataTable dt = new DataTable();
+            if (_irfitem != null)
+            {
+                JDTitle = _irfitem.JDTiltle;
+                dt.Columns.AddRange(new DataColumn[5] { new DataColumn("Skill Channel", typeof(string)),
+                            new DataColumn("Candidates", typeof(int)),
+                            new DataColumn("Completed",typeof(int)),
+                            new DataColumn("Selected",typeof(int)),
+                            new DataColumn("Rejected",typeof(int))});
+                dt.Rows.Add(_irfitem.IRFId, _irfitem.CandidateCount, _irfitem.CompletedInterviews, _irfitem.SelectedMeetings, _irfitem.RejectedMeetings);
+            }
+            foreach (var item in transClientUser)
+            {
+                try
+                {
+                    var ReviewURL = "https://portal.risebird.io/Survey/ClientIRFReview?IRFId=" + item.IRFName + "&uniqueid=" + item.uniqueid;
+                    Mail _mail1 = new Mail
+                    {
+                        TO = item.EmailId,
+                        Subject = "Skill Channel " + item.IRFName + " Feedback"
+                    };
+                    var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, item.FirstName, dt, JDTitle, ReviewURL);
+                }
+                catch (Exception e)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                }
+            }
+            try
+            {
+                var ReviewURL = "https://portal.risebird.io/Survey/ClientIRFReview?IRFId=" + billingowner.IRFId + "&uniqueid=" + billingowner.uniqueid;
+                Mail _mail1 = new Mail
+                {
+                    TO = billingowner.EmailId,
+                    Subject = "Skill Channel " + billingowner.IRFId + " Feedback"
+                };
+                var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, billingowner.Name, dt, JDTitle, ReviewURL);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return Json("Notification sent successfully.");
+        }
     }
 }

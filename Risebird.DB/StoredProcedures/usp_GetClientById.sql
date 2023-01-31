@@ -17,14 +17,7 @@ Create PROCEDURE [dbo].[usp_GetClientById]
   
 AS  
 Begin  
-  
-SELECT   
-    *
-     
-FROM  
-      [dbo].[Client]  
-WHERE  
-      Id = @id  
+SELECT  * FROM   [dbo].[Client] WHERE  Id = @id  
 End  
   
   

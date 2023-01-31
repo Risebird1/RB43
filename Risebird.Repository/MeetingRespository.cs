@@ -6536,5 +6536,27 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", Emailid);
+                parameters.Add("@rating", rating);
+                parameters.Add("@comments", comments);
+                parameters.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_saveClientIRFreviewdetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
