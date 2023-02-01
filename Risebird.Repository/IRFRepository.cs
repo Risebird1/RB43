@@ -6555,29 +6555,6 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IRF> GetSkillChannelStatsById(int irfId)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@IRFId", irfId);
-                    var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetSkillChannelStatsById", parameters, commandTimeout: 600,
-                        commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
         public async Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId)
         {
             try

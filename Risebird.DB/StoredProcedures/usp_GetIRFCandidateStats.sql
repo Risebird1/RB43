@@ -67,7 +67,8 @@ where IRFId=IRF.IRFId and confirmationStatus=1 and isAutoCancelled=1) as Unfille
 (select Count(im.id) from InterviewMeetings im        
 where IRFId=IRF.IRFId and confirmationStatus=1 and (zoomLink is null or zoomLink='')) as MissingZoomLink,      
 (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id       
-where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')) as MissingVideoLink      
+where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')) as MissingVideoLink,
+(Select Count(cir.id) from ClientIRFReviewDetails cir where cir.IRFId=IRF.id) FeedbackCount
  from IRF          
  join @tbl_Temp tmp on tmp.IRFId =IRF.id          
  join Client cl on cl.id = irf.ClientId          
@@ -75,7 +76,7 @@ where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.Vid
  left join UserList ulb on ulb.id = irf.BillingOwner)  
  Select RisebirdHrEmail,Count(IRFId) IRFId,Sum(CandidateCount) CandidateCount,Sum(FutureScheduledMeetings) FutureScheduledMeetings,Sum(CompletedInterviews) CompletedInterviews,Sum(SelectedMeetings) SelectedMeetings,Sum(RejectedMeetings) RejectedMeetings,Sum(NotScheduledCount) NotScheduledCount,  
  Sum(ReScheduledCount) ReScheduledCount,Sum(PendingCount) PendingCount,Sum(UnassignedInterviewsCount) UnassignedInterviewsCount,Sum(UnfilledMeetingStatusCount) UnfilledMeetingStatusCount,Sum(UnfilledInterviewStatusCount) UnfilledInterviewStatusCount,  
- Sum(UnfilledCommentsCount) UnfilledCommentsCount,Sum(MissingZoomLink) MissingZoomLink,Sum(MissingVideoLink) MissingVideoLink from CTE  
+ Sum(UnfilledCommentsCount) UnfilledCommentsCount,Sum(MissingZoomLink) MissingZoomLink,Sum(MissingVideoLink) MissingVideoLink,Sum(FeedbackCount) FeedbackCount from CTE  
  group by RisebirdHREmail  
 END
 GO

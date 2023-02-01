@@ -41,5 +41,6 @@ namespace Risebird.Entities.ViewModel
         public string[] TemplateName { get; set; }
         public bool[] AadhaarVerified { get; set; }
         public bool[] IsActive { get; set; }
+        public bool[] IsInterested { get; set; }
     }
 }

@@ -199,7 +199,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetAllNewCreatedIRFs();
         Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId);
         Task<IEnumerable<IRFClientReviewVM>> GetIRFClientReviews(int irfId);
-        Task<IRF> GetSkillChannelStatsById(int irfId);
         Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId);
     }
 }

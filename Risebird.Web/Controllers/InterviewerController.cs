@@ -22,7 +22,6 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
     public class InterviewerController : Controller
     {
         private IInterviewerService _interviewerService;
@@ -142,6 +141,7 @@ namespace Risebird.Web.Controllers
                             filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
                             filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
                             filter.IsActive = filter.IsActive == null ? filter.IsActive = model.Select(x => x.IsActive).ToArray() : filter.IsActive = filter.IsActive;
+                            filter.IsInterested = filter.IsInterested == null ? filter.IsInterested = model.Select(x => x.IsInterested).ToArray() : filter.IsInterested = filter.IsInterested;
 
                             model = model.Where(c =>
                                (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -153,7 +153,8 @@ namespace Risebird.Web.Controllers
                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
                           && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)
-                          && (filter.IsActive.Count() > 0 ? filter.IsActive.Contains(c.IsActive) : c.IsActive == true)).ToList();
+                          && (filter.IsActive.Count() > 0 ? filter.IsActive.Contains(c.IsActive) : c.IsActive == true)
+                          && (filter.IsInterested.Count() > 0 ? filter.IsInterested.Contains(c.IsInterested) : c.IsInterested == true)).ToList();
 
                         }
                         else
@@ -278,141 +279,11 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
-                        ViewBag.profile = profileName;
-                        if (TempData["MessageInterviewer"] != null)
-                        {
-                            ViewBag.Message = TempData["MessageInterviewer"].ToString();
-                            TempData.Remove("MessageInterviewer");
-                        }
-                        var model = _interviewerService.GetInterviewers();
-                        var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                        foreach (var item in model)
-                        {
-                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                            {
-                                var Assessmentgroups = string.Empty;
-                                foreach (var groups in item.AssessmentGroupId.Split(","))
-                                {
-                                    if (string.IsNullOrWhiteSpace(groups))
-                                        continue;
-
-                                    int assesmsnetid = Convert.ToInt32(groups);
-                                    if (string.IsNullOrEmpty(Assessmentgroups))
-                                    {
-                                        Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
-                                    }
-                                }
-                                item.AssessmentGroupId = Assessmentgroups;
-                            }
-                        }
                         if (filter != null)
                         {
                             HttpContext.Session.SetString("InterviewerIndexfilters", JsonConvert.SerializeObject(filter));
                         }
-                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); x.AvailableDetails = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.Isavailable)).GetDescription(); return x; }).ToList();
-                        filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = model.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
-                        filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = model.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
-                        filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = model.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
-                        filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
-                        filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
-                        filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
-                        filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
-                        filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
-                        filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
-
-                        model = model.Where(c =>
-                             (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
-                          && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
-                          && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
-                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
-                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
-                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
-                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
-                           && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
-
-
-                        var Senioritylevel = _iRFRepository.GetSenioritylevel();
-                        foreach (var item in model)
-                        {
-                            if (!string.IsNullOrEmpty(item.Senioritylevel))
-                            {
-                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
-                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
-                            }
-                        }
-                        var Country = from WorkCountry s in Enum.GetValues(typeof(WorkCountry))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
-                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                                           select new { ID = (int)s, Name = s.GetDescription() };
-                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
-                        var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-                        var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
-                                                select new { ID = (int)s, Name = s.GetDescription() };
-                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-                        var _isleadinterviewer = from LeadInterviewerenum s in Enum.GetValues(typeof(LeadInterviewerenum))
-                                                 select new { ID = (int)s, Name = s.GetDescription() };
-                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
-                        ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
-                        ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
-                        ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
-                        ViewBag.IndianRate = IndiaPrice.Select(x => x.Name).Distinct();
-                        ViewBag.OutSideIndiaRate = OutSideIndiaPrice.Select(x => x.Name).Distinct();
-                        ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
-                        ViewBag.Country = Country.Select(x => x.Name).Distinct();
-                        //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
-                        ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
-                        ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
-
-                        if (string.IsNullOrEmpty(searchValue) && Page > 1)
-                        {
-                            searchValue = Searchvalueprofile;
-                        }
-                        Searchvalueprofile = searchValue;
-
-                        ViewBag.Searchvalue = searchValue;
-                        if (!string.IsNullOrEmpty(searchValue))
-                        {
-                            searchValue = searchValue.ToUpper().Trim();
-                            model = model.Where(x => (!string.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
-
-                        }
-                        ViewBag.TotalCount = model.Count;
-
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = model.Count / 10;
-                        if (model.Count % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = model.Count;
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
-                            }
-
-                        }
-                        if (model.Count == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-                        _modelDetails = model;
-                        return View(model.ToPagedList(Page ?? 1, 10));
-                        // return View(_interviewerService.GetInterviewers());
+                        return RedirectToAction("Index", new { Page = Page, searchValue = searchValue });
                     }
                     else
                     {
@@ -2414,6 +2285,8 @@ namespace Risebird.Web.Controllers
                     filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                     filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
                     filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
+                    filter.IsActive = filter.IsActive == null ? filter.IsActive = model.Select(x => x.IsActive).ToArray() : filter.IsActive = filter.IsActive;
+                    filter.IsInterested = filter.IsInterested == null ? filter.IsInterested = model.Select(x => x.IsInterested).ToArray() : filter.IsInterested = filter.IsInterested;
 
                     model = model.Where(c =>
                        (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -2424,7 +2297,9 @@ namespace Risebird.Web.Controllers
                   && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
                   && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
                   && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
-                  && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
+                  && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)
+                  && (filter.IsActive.Count() > 0 ? filter.IsActive.Contains(c.IsActive) : c.IsActive == true)
+                  && (filter.IsInterested.Count() > 0 ? filter.IsInterested.Contains(c.IsInterested) : c.IsInterested == true)).ToList();
                 }
                 var Senioritylevel = _iRFRepository.GetSenioritylevel();
                 foreach (var item in model)

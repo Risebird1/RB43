@@ -2197,6 +2197,10 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
+                    if (irf.FeedbackCount == 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
                     //End: merging 911 dashboard
                 }
                 return irfList;
@@ -2685,6 +2689,10 @@ namespace Risebird.Business
                     }
                     if (profile != "Client")
                     {
+                        if (irf.FeedbackCount == 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
                         if (irf.ScheduledPercentage < 75)
                         {
                             irf.Flags = irf.Flags + 1;
@@ -2971,47 +2979,6 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.GetIRFClientReviews(irfId);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public async Task<IRF> GetSkillChannelStatsById(int irfId)
-        {
-            try
-            {
-                var irf = await _irfRepository.GetSkillChannelStatsById(irfId);
-                if (irf != null)
-                {
-                    if (irf.CandidateCount > 0)
-                    {
-                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100) / irf.CandidateCount;
-                        irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
-                    }
-                    if (irf.CompletedInterviews > 0)
-                    {
-                        irf.SelectionRate = irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CompletedInterviews : 0;
-                    }
-                    if (irf.CompletionRate < 60)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.SelectionRate < 20)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.NotScheduledCount > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.ReScheduledCount > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                }
-                return irf;
             }
             catch (Exception e)
             {

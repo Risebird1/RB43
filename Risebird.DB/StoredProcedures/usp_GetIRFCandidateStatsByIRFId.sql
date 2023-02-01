@@ -7,10 +7,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-    
-
-      
-  
 Create PROCEDURE [dbo].usp_GetIRFCandidateStatsByIRFId      
 @IRFId int,      
 @timeNow datetime      
@@ -74,7 +70,7 @@ where IRFId=IRF.IRFId and confirmationStatus=1 and isAutoCancelled=1) as Unfille
 (select Count(im.id) from InterviewMeetings im    
 where IRFId=IRF.IRFId and confirmationStatus=1 and (zoomLink is null or zoomLink='')) as MissingZoomLink,  
 (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id   
-where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')) as MissingVideoLink  
+where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')) as MissingVideoLink
  from IRF      
  join Client cl on cl.id = irf.ClientId      
  join UserList ul on ul.id = irf.RisebirdHr      

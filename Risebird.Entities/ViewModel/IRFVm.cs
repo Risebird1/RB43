@@ -312,6 +312,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsMeetingNotificationSend { get; set; }
         public bool IsMeetingAutoCancelled { get; set; }
         public string MeetingPlatform { get; set; }
+        public int FeedbackCount { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {
