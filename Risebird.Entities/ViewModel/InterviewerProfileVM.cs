@@ -213,5 +213,6 @@ namespace Risebird.Entities.ViewModel
         public int Isavailable { get; set; }
         public string AvailableDetails { get; set; }
         public string uniqueid { get; set; }
+        public bool IsInterested { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using System;
+
+namespace Risebird.Entities.ViewModel
 {
     public class IRFInterviewerMembers
     {
@@ -38,5 +40,14 @@
         public int CompletedMeetings { get; set; }
         public int ScheduledMeetings { get; set; }
         public string Comment { get; set; }
+    }
+    public class IRFClientReviewVM
+    {
+        public int id { get; set; }
+        public string ClientEmailid { get; set; }
+        public string Comment { get; set; }
+        public int Rating { get; set; }
+        public int IRFId { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

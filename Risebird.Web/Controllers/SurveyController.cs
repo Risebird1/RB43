@@ -888,6 +888,19 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
+        [HttpGet]
+        public async Task<IActionResult> ClientIRFReview(string IRFId, string uniqueid)
+        {
+            var _list = await _aadhaarService.FetchCandidateEmailidByUniqueId(uniqueid);
+            ViewBag.Emailid = _list.EmailId;
+            ViewBag.IRFId = IRFId;
+            return View();
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveClientIRFReview(int rating, string comments, string Emailid, string IRFId)
+        {
+            var resultset = await _meetingService.SaveSauveyIRFReview(rating, comments, Emailid, IRFId);
+            return Json("success");
+        }
     }
 }

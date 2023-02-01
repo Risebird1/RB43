@@ -2197,6 +2197,10 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
+                    if (irf.FeedbackCount == 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
                     //End: merging 911 dashboard
                 }
                 return irfList;
@@ -2685,6 +2689,10 @@ namespace Risebird.Business
                     }
                     if (profile != "Client")
                     {
+                        if (irf.FeedbackCount == 0)
+                        {
+                            irf.Flags = irf.Flags + 1;
+                        }
                         if (irf.ScheduledPercentage < 75)
                         {
                             irf.Flags = irf.Flags + 1;
@@ -2960,6 +2968,31 @@ namespace Risebird.Business
                 return await _irfRepository.GetAllIRFAssessmentInterviewerMembers(irfId);
             }
 
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<IRFClientReviewVM>> GetIRFClientReviews(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetIRFClientReviews(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId)
+        {
+            try
+            {
+                var irf = await _irfRepository.GetIRFBillingOwnerById(irfId);
+                return irf;
+            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

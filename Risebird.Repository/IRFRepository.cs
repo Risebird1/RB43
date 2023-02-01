@@ -2403,7 +2403,7 @@ namespace Risebird.Repository
             try
             {
                 //"select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
-                var query = "select a.*, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id) as a inner join ClientRole on ClientRole.id =a.ClientRoleId where IRFId =  @IRFId";
+                var query = "select a.*, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId,UserList.uniqueid,IRF.IRFId as IRFName,UserList.FirstName from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id join IRF on IRF.id=TransClientUser.IRFId) as a inner join ClientRole on ClientRole.id =a.ClientRoleId where IRFId =  @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6521,6 +6521,51 @@ namespace Risebird.Repository
                     //parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAllIRFAssessmentInterviewerMembers", parameters,
                          commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRFClientReviewVM>> GetIRFClientReviews(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    return await SqlMapper.QueryAsync<IRFClientReviewVM>(con, "usp_GetIRFClientReviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    var result = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "dbo.usp_GetSkillChannelBillingOwnerById", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)

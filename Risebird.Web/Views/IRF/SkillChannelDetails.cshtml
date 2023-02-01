@@ -321,7 +321,7 @@
                                                             {
                                                                 @if (item.Flags > 0)
                                                                 {
-                                                                    <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
+                                                                    <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
                                                                 }
                                                                 else
                                                                 {
@@ -531,7 +531,7 @@
         var modal = document.getElementById("flagsModal");
         modal.style.display = "none";
     }
-    function OpenModalForFlags(irfName, jdTitle, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink) {
+    function OpenModalForFlags(irfName, jdTitle, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink, feedbackCount) {
         $('#flagsModalBody').html('');
         var modal = document.getElementById("flagsModal");
         modal.style.display = "block";
@@ -589,6 +589,7 @@
         html += '<tr><td style = "border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
         html += ' <tr><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
         html += '<tr><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
+        html += '<tr><td style="border: 1px solid black">Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
         html += '</table>';
         $("#flagsModalBodyCount").empty().html(html);
     }
