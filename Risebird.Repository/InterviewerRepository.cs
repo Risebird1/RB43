@@ -2678,5 +2678,228 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        /// <summary>
+        /// Returns all the skill channels for which the current logged in interviewer
+        /// has been assigned as an SME(Subject Matter Expert)
+        /// </summary>
+        /// <param name="loggedInInterviewer"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<SkillChannelDetailsForSME>> GetSkillChannelsAssignedToSME(string loggedInInterviewer)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@loggedInInterviewer", loggedInInterviewer);
+                    return await SqlMapper.QueryAsync<SkillChannelDetailsForSME>(con, "usp_GetSkillChannelsAssignedToSME", parameters,
+                           commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IRFVm> GetSkillChannelDetailsForSMEByIdToUpdate(int irfId, int interviewerProfileId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@interviewerProfileId", interviewerProfileId);
+                    var result = await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetSkillChannelDetailsForSMEByIdToUpdate", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateSkillChannelDetailsBySME(IRFVm model, int interviewerProfileId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+
+                    DataTable techSkillDt = new DataTable();
+                    techSkillDt.Columns.Add("IRFId", typeof(int));
+                    techSkillDt.Columns.Add("LevelId", typeof(int));
+                    techSkillDt.Columns.Add("SkillId", typeof(int));
+                    techSkillDt.Columns.Add("Weightage", typeof(int));
+                    techSkillDt.Columns.Add("Concepts", typeof(string));
+                    techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                    techSkillDt.Columns.Add("Timelimit", typeof(int));
+
+                    foreach (var item in model.SkillCollection)
+                    {
+                        if (string.IsNullOrEmpty(item.Concepts))
+                        {
+                            item.Concepts = "";
+                        }
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
+                        {
+                            item.Natureofquestion = "";
+                        }
+                        techSkillDt.Rows.Add(model.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                    }
+
+                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_UpdateSkillChannelDetailsBySME", con);
+                    cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@irfId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@irfId"].Value = model.id;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@interviewerProfileId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@interviewerProfileId"].Value = interviewerProfileId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDLink", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@JDLink"].Value = model.JDLink;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@timeNow"].Value = DateTime.Now;
+
+                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    }
+                    
+                    con.Open();
+
+                    if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async  Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string feedbackAudioLink)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", irfId);
+                dynamicParameters.Add("@interviewerProfileId", interviewerProfileId);
+                dynamicParameters.Add("@feedbackAudioLink", feedbackAudioLink);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveSMEFeedbackAudio", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+                
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+        public async Task<bool> UpdateVerifiedInterviewers(List<TransInterviewer> interviewers, string loggedInSME)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable verifiedDt = new DataTable();
+                    verifiedDt.Columns.Add("id", typeof(int));
+                    verifiedDt.Columns.Add("IsSMEVerified", typeof(bool));
+
+                    foreach (var item in interviewers)
+                    {
+                        verifiedDt.Rows.Add(item.id, item.IsSMEVerified);
+                    }
+
+                    SqlCommand cmdUpdateVerifiedInterviewers = new SqlCommand("usp_UpdateVerifiedInterviewers", con);
+                    cmdUpdateVerifiedInterviewers.CommandType = CommandType.StoredProcedure;
+
+
+                    if (verifiedDt != null && verifiedDt.Rows.Count > 0)
+                    {
+                        cmdUpdateVerifiedInterviewers.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                        cmdUpdateVerifiedInterviewers.Parameters["@InterviewerBulkData"].Value = verifiedDt;
+                    }
+
+                    cmdUpdateVerifiedInterviewers.Parameters.Add(new SqlParameter("@smeEmail", SqlDbType.VarChar));
+                    cmdUpdateVerifiedInterviewers.Parameters["@smeEmail"].Value = loggedInSME;
+
+                    con.Open();
+
+                    if (await cmdUpdateVerifiedInterviewers.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
+        public async Task<bool> CheckIfSME(string loggedInUser)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailID", loggedInUser);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result  = await SqlMapper.QuerySingleAsync<bool>(con, "usp_CheckIfSME", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+
+
     }
 }

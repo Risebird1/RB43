@@ -100,5 +100,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl);
         Task<string> SendSkillChannelFeedbackNotification(Mail model, string Name, DataTable dt, string JDTitle, string ReviewURL);
+        Task<string> SendAssignedNotificationToSME(string smeEmail, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner);
+        Task<string> SendIRFCreatedFromTemplateNotificationToChannelOwner(string channelOwnerEmail, string skillChannelName, string templateName, string jdTitle, string client);
     }
 }

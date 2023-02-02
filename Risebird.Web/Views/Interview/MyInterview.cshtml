@@ -115,6 +115,16 @@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Update your availability" onclick="location.href='@Url.Action("IRFInterviewerMapping", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update your availability</font></span>
                                 </button>
+                                @{
+                                    bool isSME = ViewBag.IsSME;
+                                }
+                                @if(isSME)
+                                {
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                        <span @*class="fa-sharp fa-solid fa-comment-medical"*@ data-toggle="tooltip" data-placement="top" title="Assigned Skill Channels as SMEs(Subject Matter Expert)" onclick="location.href='@Url.Action("AssignedSkillChannelsAsSME", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update Skill Channels(As SME)</font></span>
+                                    </button>
+                                }
+                                
                             </div>
 
                             @*<div class="pull-left">
@@ -2119,3 +2129,4 @@
         </script>*@
 }
 <script src="~/js/filtervalidation.js"></script>
+<script src="~/js/feedbackrecorder/record.js"></script>

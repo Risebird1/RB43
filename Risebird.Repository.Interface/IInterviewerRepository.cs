@@ -87,5 +87,11 @@ namespace Risebird.Repository.Interface
         Task<bool> AddInterviewerAssesssmentDetails(int Assessmentid, string emailid);
         Task<bool> UpdateInterviewerInterest(int status, string uniqueid);
         Task<bool> SaveInterviewerResume(InterviewerProfileVM model);
+        Task<IEnumerable<SkillChannelDetailsForSME>> GetSkillChannelsAssignedToSME(string loggedInInterviewer);
+        Task<IRFVm> GetSkillChannelDetailsForSMEByIdToUpdate(int irfId, int interviewerProfileId);
+        Task<bool> UpdateSkillChannelDetailsBySME(IRFVm model, int interviewerProfileId);
+        Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string feedbackAudioLink);
+        Task<bool> UpdateVerifiedInterviewers(List<TransInterviewer> interviewers, string loggedInSME);
+        Task<bool> CheckIfSME(string loggedInUser);
     }
 }

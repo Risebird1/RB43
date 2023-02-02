@@ -22,7 +22,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<Interviewer> GetInterviewerSkills();
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         IEnumerable<TransClientUser> GetTransClientUser(int id);
-        IEnumerable<TransInterviewer> GetTransInterviewer(int id);
+        //IEnumerable<TransInterviewer> GetTransInterviewer(int id);
+        Task<IEnumerable<TransInterviewer>> GetTransInterviewer(int id);
         IEnumerable<TransJoinability> GetTransJoinability(int id);
         IEnumerable<TransQualityController> GetTransQualityController(int id);
         IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
@@ -31,7 +32,8 @@ namespace Risebird.Repository.Interface
         Task<bool> ArchiveIRF(int IRFId);
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
-        Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
+        Task<Tuple<bool, bool>> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
+        //Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
         IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         Task<IEnumerable<LevelTech>> GetLevelTech();
@@ -200,5 +202,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId);
         Task<IEnumerable<IRFClientReviewVM>> GetIRFClientReviews(int irfId);
         Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId);
+        Task<IEnumerable<SkillChannelSME>> GetEligibleSMEForSkillChannel(int Assessmentid, int? irfId);
     }
 }

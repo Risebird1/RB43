@@ -53,11 +53,8 @@ namespace Risebird.Business
         {
             try
             {
-                var client = await _clientRepository.GetClient(id);
-                if (client == null)
-                    return null;
-                else
-                    return client;
+                return await _clientRepository.GetClient(id);
+                
             }
             catch (Exception e)
             {
@@ -452,6 +449,18 @@ namespace Risebird.Business
             try
             {
                 return await _clientRepository.Getclientaudiofeedbackdetails();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> GetClientName(int id)
+        {
+            try
+            {
+                return await _clientRepository.GetClientName(id);
             }
             catch (Exception ex)
             {
