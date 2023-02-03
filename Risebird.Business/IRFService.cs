@@ -2235,7 +2235,7 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.FeedbackCount == 0)
+                    if (irf.FeedbackCount > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
@@ -2741,7 +2741,7 @@ namespace Risebird.Business
                     }
                     if (profile != "Client")
                     {
-                        if (irf.FeedbackCount == 0)
+                        if (irf.FeedbackCount > 0)
                         {
                             irf.Flags = irf.Flags + 1;
                         }
