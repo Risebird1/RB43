@@ -43,6 +43,11 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@IsCandidateavailability bit,
 	@IsMeetingAutoCancelled bit,
 	@IsMeetingNotificationSend bit,
+	@SkillChannelSME int = null,
+	@ModifiedBy varchar(100) = null,
+	@timeNow datetime,
+	@isSMEChanged bit output,
+	@IsLocked bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -109,6 +114,7 @@ BEGIN
 	,[IsCandidateavailability]=@IsCandidateavailability
 	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
+	,[IsLocked]=@IsLocked
 	Where id =@id        
     
 	
@@ -232,7 +238,30 @@ BEGIN
 	--	CountryType = @RecommendationCountryType, ModifiedOn = @RecommendationModifiedOn where id = @idRecommendation
 		   
 	--END   
-  
+	set @isSMEChanged = 0
+
+	if(@SkillChannelSME is not null and @SkillChannelSME > 0)
+	Begin
+
+		update SkillChannelSMEs set IsDeleted = 1, DeletedBy = @ModifiedBy, @isSMEChanged = 1 where IRFId = @id and InterviewerProfileId != @SkillChannelSME
+
+
+		if exists (select top 1 id from SkillChannelSMEs where irfid = @id and InterviewerProfileId = @SkillChannelSME and (IsDeleted is null or IsDeleted = 0))
+		Begin
+			set @isSMEChanged = 0
+
+		End
+		else
+		Begin
+
+			insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+			values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
+
+		End
+	
+	
+	End
+
   commit tran  
  end try  
  begin catch  

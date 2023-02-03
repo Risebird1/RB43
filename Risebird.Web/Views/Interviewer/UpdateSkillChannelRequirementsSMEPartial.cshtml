@@ -1,0 +1,259 @@
+﻿@using Risebird.Repository.Interface;
+@model Risebird.Entities.ViewModel.IRFVm
+@inject IIRFRepository _irfRepository
+<style>
+
+    .modal-xl {
+        width: 1000px;
+        max-width: 1200px;
+    }
+    
+</style>
+@{
+    var skillsList = new SelectList(await _irfRepository.GetSkills(), "id", "Name");
+    var levelTechList = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+}
+
+@*<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+*@
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+@*<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+*@
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
+<style>
+    .modal-dialog {
+        overflow-y: initial !important
+    }
+
+    .modal-body {
+        height: 300px;
+        overflow-y: auto;
+    }
+</style>    
+
+<!-- Modal -->
+<div class="modal fade" style="height:1000px" id="modalSMEActivity" tabindex="-1" role="dialog" aria-labelledby="modalSMEActivityLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width:90%" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSMEActivityLabel">Update Requirement(s) for Skill Channel : '@Model.IRFId'</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="smeActivity_modal_body">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form asp-action="SMESkillChannelUpdate" asp-route-interviewerProfileId="@ViewBag.InterviewerProfileId" id="form_sme">
+
+
+
+                    
+
+                    <div class="form-group">
+                        <a target="_blank" href="@Model.JDLink">Existing JD Link</a>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="JDFile"></label>
+                        <div>
+                            <input type="file" asp-for=JDFile class="form-control input-lg" accept=".doc, .docx, .pdf" placeholder="Only files with .pdf, .doc and .docx extentsions accepted">
+                        </div>
+                        <span asp-validation-for="JDFile" class="text-danger"></span>
+                    </div>
+
+                    
+                    
+                    <label class="control-label">Tech Skill Weightage</label>
+                    <div>
+                        <div>
+                            <div>
+                                <div class="row">
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="scrollers" style="overflow:auto">
+                                            <table class="table table-striped mbn" id="SkillTable" style="width:100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                        <th width="30%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                        <th width="20%" class="table_heading">Concepts</th>
+                                                        <th width="30%" class="table_heading">Nature of questions</th>
+                                                        <th width="10%" class="table_heading">Time limit</th>
+                                                        <th width="10%" class="table_heading text-center">Action</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownList("SkillCollection[0].LevelId", levelTechList, new { @class = "select-css form-control " })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("SkillCollection[0].SkillId", skillsList, new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                            </td>
+                                                            <td class="action text-center">
+
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                    else
+                                                    {
+                                                        for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+
+                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, levelTechList, new { @class = "form-control select-css" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, skillsList, new { @class = "select-css form-control" })
+                                                                </td>
+
+                                                                <td>
+                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
+                                                                </td>
+                                                                <td class="action text-center">
+                                                                    <div>
+
+                                                                        <span id="btnPlus_@i" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus_@i" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+
+                                                        }
+                                                    }
+
+                                                </tbody>
+                                            </table>
+                                            <label class="text-danger" id="SkillCollection_WeightageError" style="color:red!important; font-size:12px!important;margin-left:0px">Note: The sum of the Weightages for each skill should add up to 100.</label>
+                                        </div>
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+
+                    <input type="hidden" asp-for="id" />
+                    <input type="hidden" asp-for="IRFId" />
+                    <input type="hidden" asp-for="JDLink" />
+                    
+                    
+
+                </form>
+
+                <div class="row" id="divAudioRecording">
+
+                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+                        <div class="pull-left" style="padding:10px"><button id="startSMERecButton" onclick="startSMERecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play"></i></button></div>
+                        <div class="pull-left" style="padding:10px"><button id="stopSMERecButton" type="button" onclick="stopSMERecording('@Model.id', '@ViewBag.InterviewerProfileId')" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
+                        <div class="pull-left" style="padding:10px"><button id="cancelSMERecButton" type="button" onclick="cancelSMERecording()" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
+
+                    </div>
+                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                <p style="font-size:18px" id="smeRecordingStatus"></p>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    @{
+                        string displayStatus = "none";
+                        string audioUrl = string.Empty;
+                        string fileName = string.Empty;
+
+                        if (Model != null && !string.IsNullOrEmpty(Model.AudioComment))
+                        {
+                            displayStatus = "block";
+                            audioUrl = Model.AudioComment;
+                            var splitUrl = audioUrl?.Split("/");
+                            fileName = splitUrl?[splitUrl.Length - 1];
+                        }
+                    }
+                    <div id="div_playUploadedAudioTwo" style="display:@displayStatus">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="multiple_row">
+                                    <h2>Uploaded Feedback Audio</h2>
+                                </div><!--end of multiple location-->
+                            </div><!--end of col-md-12-->
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="table-responsive-sm">
+                                    <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                        <thead>
+                                            <tr>
+                                                <th width="30%">File</th>
+                                                <th width="35%">Play</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td id="td_audioFile">
+                                                    <a id="anchorAudioId" asp-append-version="true" href="@audioUrl" download>
+                                                        @fileName
+                                                    </a>
+                                                </td>
+                                                <td id="td_audioControl">
+                                                    <audio id="controlAudioId" asp-append-version="true" src="@audioUrl" controls></audio>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div><!--end of col-md-12-->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12 text-right clearfix">
+                    <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" data-save="modal" value="Save"/> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/AddEditSkillChannelCommonMethods.js"></script>

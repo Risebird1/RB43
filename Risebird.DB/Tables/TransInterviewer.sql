@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[TransInterviewer](
             [IsActive] [bit] NOT NULL DEFAULT 1,
             [ClientAction] [Varchar](12) NULL,
             [IsAvailable] [bit] NOT NULL DEFAULT 1,
+            [IsSMEVerified] [bit] NULL,
 			CONSTRAINT [FK_TIIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),			
  CONSTRAINT [PK_TransInterviewer] PRIMARY KEY CLUSTERED 					
@@ -37,7 +38,7 @@ END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'IsActive')
+    WHERE Name IN (N'IsAvailable')
       AND Object_ID = Object_ID(N'TransInterviewer'))
 BEGIN
     ALTER TABLE TransInterviewer
@@ -52,6 +53,17 @@ BEGIN
     ALTER TABLE TransInterviewer
     Add ClientAction varchar(12)
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsSMEVerified')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add IsSMEVerified bit null
+END
+
 END
 
 GO

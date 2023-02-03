@@ -63,13 +63,9 @@
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
                                             @*<li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>*@
                                             <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
-                                            @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
+                                            <li><a href="#" rel="tab-13" class="" id="rtab-13">Subject Matter Expert</a></li>
                                             <li><a href="#" rel="tab-12" id="rtab-12" class="">Manage Channel</a></li>
                                         </ul>
-
-
-
-
 
                                     </div>
 
@@ -1147,6 +1143,13 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <h3 class="tab_drawer_heading" rel="tab-13">Subject Matter Expert</h3>
+                                        <div class="tab-box" id="tab-13">
+                                        </div>
+
+
+
                                         <h3 class="tab_drawer_heading" rel="tab-12">Manage Channel</h3>
                                         <div class="tab-box" id="tab-12">
                                             <div class="tab-main-box">
@@ -1352,6 +1355,9 @@
         }
     });
 
+</script>
+<script>
+    var smesLoadedForAssessmentGroup;
 </script>
 
 @*<script>
@@ -2639,6 +2645,29 @@
 
     }
 
+    function GetSMEListForAssessmentGroup()
+    {
+        var assessmentGroupId = $("#AssessmentGroupId").val();
+        var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
+        if(smesLoadedForAssessmentGroup != assessmentGroupId){
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetAssessmentGroupSMEs",
+                data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName },
+                success: function (data) {
+                    $('#tab-13').empty();
+                    if(data != null)
+                    {
+                        $('#tab-13').html(data);
+                        smesLoadedForAssessmentGroup = assessmentGroupId;
+                    }
+
+                }
+            });
+        }
+        
+    }
+
     function QCChanged(val, id) {
         var index = id.split('_')[1];
         var searchFor = '[id^="QualityController"][id$="UserId"]';
@@ -3162,16 +3191,22 @@
                 $("#rtab-10").addClass("active");
                 document.getElementById("tab-10").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
-    @*document.getElementById("btnNext").style.display = "block";
-                    document.getElementById("btnUpload").style.display = "none";*@
-                    }
-            else if (activeTab.trim() == "Manage Channel") {
+    
+            }
+            else if (activeTab.trim() == "Subject Matter Expert") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-11").addClass("active");
                 document.getElementById("tab-11").style.display = "block";
+                document.getElementById("tab-13").style.display = "none";
+            }
+            else if (activeTab.trim() == "Manage Channel") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-13").addClass("active");
+                document.getElementById("tab-13").style.display = "block";
                 document.getElementById("tab-12").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
+                GetSMEListForAssessmentGroup();
             }
 
         });
@@ -3461,24 +3496,27 @@
                         document.getElementById("btnUpload").style.display = "block";*@
                         }
             }
+            
             else if (activeTab.trim() == "Coordinator") {
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-13").addClass("active");
+                    document.getElementById("tab-13").style.display = "block";
+                    document.getElementById("tab-11").style.display = "none";
+                    GetSMEListForAssessmentGroup();
+                }
+            }
+            else if (activeTab.trim() == "Subject Matter Expert") {
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-12").addClass("active");
                     document.getElementById("tab-12").style.display = "block";
                     document.getElementById("btnNext").style.display = "none";
                     document.getElementById("btnUpload").style.display = "block";
-                    document.getElementById("tab-11").style.display = "none";
+                    document.getElementById("tab-13").style.display = "none";
                 }
             }
-            //else if (activeTab.trim() == "Recommendation") {
-            //    $(".tab-menu li a").removeClass("active");
-            //    $("#rtab-12").addClass("active");
-            //    document.getElementById("tab-12").style.display = "block";
-            //    document.getElementById("tab-11").style.display = "none";
-            //    document.getElementById("btnNext").style.display = "none";
-            //    document.getElementById("btnUpload").style.display = "block";
-            //}
+            
 
         });
     });

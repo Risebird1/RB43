@@ -36,8 +36,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|300italic,400italic,600italic,700italic,400,300,500,600,700&subset=latin,latin-ext" rel="stylesheet" />
-@*    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-*@
+    @*    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.css" integrity="sha512-j9A2LKfsPKqkj4NbtVncb6451JV3kQWoCP1Coayq04haUgIUTs3t2N0vn0kbtS7CsKVP2O9RvfQI4YYjURVxIA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https:/cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css?v=7" />
 
@@ -52,8 +52,8 @@
     {
         <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
     }
-@*    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-*@
+    @*    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+    *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.js" integrity="sha512-52x9jxRlpg4HFObOpmnst5aeTZxf3nqEAk0E0MRwP5mOQwWgIr9BydMAQyeIWhHiMZN/nvEpoStVS97oLrCg7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @*<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>*@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
@@ -726,27 +726,32 @@
     });
 
 </script>
+
+
+
+
+
 @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
 {
     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     profileName = profileName.Trim('"');
-    @if (profileName == "Client" || profileName == "Interviewer")
+    @if (profileName == "Client" || profileName == "Interviewer" || (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client"))
     {
-        <script src='//fw-cdn.com/2398529/2998468.js'chat='true'>
-</script>
+        <script src='//fw-cdn.com/2398529/2998468.js' chat='true'></script>
+        <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
         <script>
             window.fwSettings = {
                 'widget_id': 44000003946
             };
             !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
+
         </script>
-        <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
 
     }
 
 }
 
-@if (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client")
+@*@if (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client")
 {
     <script src='//fw-cdn.com/2398529/2998468.js'
         chat='true'>
@@ -755,11 +760,11 @@
 	window.fwSettings={
 	'widget_id':44000003946
 	};
-	!function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}() 
+	!function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}()
     </script>
     <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
 
-}
+}*@
 @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
 {
     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");

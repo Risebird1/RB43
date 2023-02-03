@@ -1081,11 +1081,11 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                     var resultData = await SqlMapper.QueryAsync<AssignmentVM>(con, "sp_GetAssessmentGroups", null,
-                        commandType: CommandType.StoredProcedure);
+                    var resultData = await SqlMapper.QueryAsync<AssignmentVM>(con, "sp_GetAssessmentGroups", null,
+                       commandType: CommandType.StoredProcedure);
                     return resultData.ToList();
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -1134,7 +1134,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<(string,string)> FetchWhatsAppNumberByEmail(string Emailid)
+        public async Task<(string, string)> FetchWhatsAppNumberByEmail(string Emailid)
         {
             try
             {
@@ -1145,14 +1145,14 @@ namespace Risebird.Repository
                 {
                     var result = await con.QueryFirstOrDefaultAsync<UserList>(query, dynamicParameters);
 
-                    return (result?.WhatsappNumber,result?.FirstName+" "+ result?.LastName);
+                    return (result?.WhatsappNumber, result?.FirstName + " " + result?.LastName);
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return (string.Empty,string.Empty);
+            return (string.Empty, string.Empty);
         }
 
         public async Task<string> FetchNameByEmail(string Emailid)

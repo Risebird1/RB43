@@ -6,7 +6,6 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using System;
 using System.Collections.Generic;

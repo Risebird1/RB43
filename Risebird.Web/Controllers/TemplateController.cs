@@ -221,12 +221,13 @@ namespace Risebird.Web.Controllers
                             model.ClonableTemplates = model.ClonableTemplates.OrderByDescending(x => x.SkillChannelCounts).ToList();
                         }
 
-                        if (profileName == "Client")
+                        int index = 0;
+                        foreach (var template in model.ClonableTemplates)
                         {
-                            int index = 0;
-                            foreach (var template in model.ClonableTemplates)
+                            template.NameWithoutHtml = template.Name;
+
+                            if (profileName == "Client")
                             {
-                                template.NameWithoutHtml = template.Name;
                                 if (!string.IsNullOrEmpty(template.TaggedClients))
                                 {
                                     var clientsMapped = template.TaggedClients.Split(",");
@@ -239,10 +240,11 @@ namespace Risebird.Web.Controllers
                                         model.ClonableTemplates.ToList().Insert(0, item);
                                     }
                                 }
-
-                                index++;
-
                             }
+
+
+                            index++;
+
                         }
 
                         return View(model);

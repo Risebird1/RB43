@@ -17,6 +17,7 @@ using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -3199,6 +3200,315 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+
+        #region SME
+
+        [HttpGet]
+        public async Task<IActionResult> AssignedSkillChannelsAsSME()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var model = await _interviewerService.GetSkillChannelsAssignedToSME(emailid);
+                        if (TempData["SMESuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SMESuccessErrorMessage"].ToString();
+                            TempData.Remove("SMESuccessErrorMessage");
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Error retrieving Profile Data!";
+                return RedirectToAction("MyInterview", "Interview");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSkillChannelDetailsForSMEByIdToUpdate(int irfId, int interviewerProfileId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var model = await _interviewerService.GetSkillChannelDetailsForSMEByIdToUpdate(interviewerProfileId, irfId);
+                        ViewBag.InterviewerProfileId = interviewerProfileId;
+                        return PartialView("UpdateSkillChannelRequirementsSMEPartial", model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SMESkillChannelUpdate(IRFVm model, int interviewerProfileId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        ViewBag.InterviewerProfileId = interviewerProfileId;
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
+                        bool isValidModel = true;
+                        if(model.SkillCollection!=null &&  model.SkillCollection.Any(x=> x.LevelId == 0 || x.Weightage == 0 || x.SkillId ==0 || x.Timelimit ==0 || string.IsNullOrEmpty(x.Concepts) || string.IsNullOrEmpty(x.Natureofquestion)))
+                        {
+                            ModelState.AddModelError("", "All the fields under the Tech Skill section are required with weightage greater than 0.");
+                            isValidModel = false;
+                        }
+                        if (model.SkillCollection != null && model.SkillCollection.Sum(x=> x.Weightage) != 100)
+                        {
+                            ModelState.AddModelError("", "The Weightage should add up to an exact 100 under Tech Skill Section.");
+                            isValidModel = false;
+                        }
+                        if (!isValidModel)
+                        {
+                            model.IsValidCustom = isValidModel;
+                            
+                            return PartialView("UpdateSkillChannelRequirementsSMEPartial", model);
+                        }
+                        string fileName = string.Empty;
+                        var files = Request.Form.Files;
+                        if(files != null && files.Count()>0)
+                        {
+
+                            fileName = ContentDispositionHeaderValue.Parse(files[0].ContentDisposition).FileName.Trim('"');
+
+                        }
+
+                        if (files!= null && files.Count() > 0)
+                        {
+                            var jdFile = files[0];
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(jdFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(fileName, "resumes", jdFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                string uploadedFileURL = blob.Uri.ToString();
+                                if (uploadedFileURL == null)
+                                {
+                                    ModelState.AddModelError("", "Could not upload JD File.");
+                                    model.IsValidCustom = false;
+                                    return PartialView("UpdateSkillChannelRequirementsSMEPartial", model);
+
+                                }
+                                model.JDLink = uploadedFileURL;
+                            }
+                        }
+                        else
+                        {
+                            model.JDLink = null;
+                        }
+
+                        await _interviewerService.UpdateSkillChannelDetailsBySME(model, interviewerProfileId);
+
+                        return PartialView("UpdateSkillChannelRequirementsSMEPartial", model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
+        [HttpPost]
+        public async Task<string> UploadSMEAudio()
+        {
+            try
+            {
+                var file = Request.Form.Files;
+                var nvc = Request.Form;
+                int irfId = 0;
+                int interviewerProfileId = 0;
+                //string currentUserEmail = string.Empty;
+                if (!string.IsNullOrEmpty(nvc["irfId"]))
+                {
+                    irfId = Convert.ToInt32(nvc["irfId"]);
+                }
+
+                if (!string.IsNullOrEmpty(nvc["smeProfileId"]))
+                {
+                    interviewerProfileId = Convert.ToInt32(nvc["smeProfileId"]);
+                }
+
+                var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+                string uploadedaudioFileURL = string.Empty;
+                if (file != null)
+                {
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                    if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
+                    {
+                        await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                        var blob = containerRef.GetBlockBlobReference(fileName);
+                        uploadedaudioFileURL = blob.Uri.ToString();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+                }
+                _ = await _interviewerService.SaveSMEAudio(irfId, interviewerProfileId, uploadedaudioFileURL);
+                return uploadedaudioFileURL;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelInterviewers(int irfId, int interviewerProfileId, string skillChannelName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var model = await _interviewerService.GetSkillChannelInterviewersToVerify(irfId);
+                        if (model != null)
+                        {
+                            model = (IList<TransInterviewer>)model;
+                        }
+                        ViewBag.IRFId = irfId;
+                        ViewBag.InterviewerProfileId = interviewerProfileId;
+                        ViewBag.SkillChannelName = skillChannelName;
+                        return View(model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyIRFInterviewersBySME(IList<TransInterviewer> model, int irfId, int interviewerProfileId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
+                        //bool isValidModel = true;
+                        //if (model.SkillCollection != null && model.SkillCollection.Any(x => x.LevelId == 0 || x.Weightage == 0 || x.SkillId == 0 || x.Timelimit == 0 || string.IsNullOrEmpty(x.Concepts) || string.IsNullOrEmpty(x.Natureofquestion)))
+                        //{
+                        //    ModelState.AddModelError("", "All the fields under the Tech Skill section are required with weightage greater than 0.");
+                        //    isValidModel = false;
+                        //}
+                        
+
+                        if(await _interviewerService.UpdateVerifiedInterviewers(model, emailId))
+                        {
+                            TempData["SMESuccessErrorMessage"] = "Interviewers' profile verified successfully!";
+                        }
+                        else
+                        {
+                            TempData["SMESuccessErrorMessage"] = "Failed to verify interviewers' profile. Please try again!";
+                        }
+                        return RedirectToAction("AssignedSkillChannelsAsSME");
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
+        #endregion
     }
 }
 

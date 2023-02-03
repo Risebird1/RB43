@@ -4,7 +4,6 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -150,7 +149,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(str))
                 {
-                    var query = "select* from[dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid where candidateEmail = @candidateEmail and intc.MeetingStatus = 4 and IRFId= @IRFId and RedoInterview = false";
+                    var query = "select* from [dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid where candidateEmail = @candidateEmail and intc.MeetingStatus = 4 and IRFId= @IRFId and RedoInterview = 0";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@candidateEmail", candidateEmail);
                     dynamicParameters.Add("@IRFId", IRFID);

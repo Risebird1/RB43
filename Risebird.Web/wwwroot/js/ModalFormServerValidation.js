@@ -97,6 +97,81 @@ $(document).ready(function () {
     //    OpenPopUp(event, sme_placeholderElement);
 
     //});
+    var sme_placeholderElement = $('#modal_sme_placeholder');
+
+
+    $('button[data-toggle="ajax-modal-smeActivity"]').click(function (event) {
+        OpenPopUp(event, sme_placeholderElement);
+
+    });
+    sme_placeholderElement.on('click', '[data-save="modal"]', function (event) {
+        event.preventDefault();
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        //var dataToSend = form.serialize();
+        ////File data
+        //debugger;
+        //var file_data = $('input[name="JDFile"]')[0].files;
+        //for (var i = 0; i < file_data.length; i++) {
+        //    dataToSend.append(file_data[i].name, file_data[i]);
+        //}
+        var data = new FormData();
+
+        //Form data
+        var form_data = form.serializeArray();
+        $.each(form_data, function (key, input) {
+            data.append(input.name, input.value);
+        });
+
+        //File data
+        var file_data = $('input[name="JDFile"]')[0].files;
+        for (var i = 0; i < file_data.length; i++) {
+            data.append(file_data[i].name, file_data[i]);
+        }
+
+        //console.log(dataToSend);
+        //$.post(actionUrl, data).done(function (dataRecieved) {
+            
+        //    var newBody = $('.modal-body', dataRecieved);
+        //    placeholderElement.find('.modal-body').replaceWith(newBody);
+
+        //});
+
+
+        $.ajax({
+            url: actionUrl,
+            method: "post",
+            processData: false,
+            contentType: false,
+            data: data,
+            success: function (dataRecieved) {
+                var newBody = $('.modal-body', dataRecieved);
+                sme_placeholderElement.find('.modal-body').replaceWith(newBody);
+
+                // find IsValid input field and check it's value
+                // if it's valid then hide modal window
+                var isValidElement = newBody.find('[name="IsValidCustom"]') == 'True';
+                if (isValidElement != null) {
+                    var isValid = newBody.find('[name="IsValidCustom"]').val() == 'True';
+                    if (isValid) {
+                        sme_placeholderElement.find('.modal').modal('hide');
+                        var html = "Data updated successfully!";
+                        
+                        Swal.fire({
+                            title: '<strong>Successful</u></strong>',
+                            type: 'success',
+                            html: html,
+                            confirmButtonText: "Close",
+                            allowOutsideClick: false
+                        });
+                    }
+                }
+            },
+            error: function (e) {
+                //error
+            }
+        });
+    })
 
 });
 

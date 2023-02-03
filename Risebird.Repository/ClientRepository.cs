@@ -857,5 +857,30 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<string> GetClientName(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@id", id);
+                    var result = await SqlMapper.QueryAsync<string>(
+                        con, "select [Name] from Client where id = @id", dp, commandType: Text);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

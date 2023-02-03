@@ -70,5 +70,12 @@ namespace Risebird.Business.Interface
         Task<bool> AddInterviewerAssesssmentDetails(int Assessmentid, string emailid);
         Task<bool> UpdateInterviewerInterest(int status, string uniqueid);
         Task<bool> SaveInterviewerResume(InterviewerProfileVM model);
+        Task<IEnumerable<SkillChannelDetailsForSME>> GetSkillChannelsAssignedToSME(string loggedInInterviewer);
+        Task<IRFVm> GetSkillChannelDetailsForSMEByIdToUpdate(int interviewerProfileId, int irfId);
+        Task<bool> UpdateSkillChannelDetailsBySME(IRFVm model, int interviewerProfileId);
+        Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string audioUrl);
+        Task<IEnumerable<TransInterviewer>> GetSkillChannelInterviewersToVerify(int irfId);
+        Task<bool> UpdateVerifiedInterviewers(IList<TransInterviewer> interviewers, string loggedInSME);
+        Task<bool> CheckIfSME(string loggedInUser);
     }
 }

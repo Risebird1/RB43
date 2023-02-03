@@ -251,7 +251,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter" , "MappingAdmin" };
+                        List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter", "MappingAdmin" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");

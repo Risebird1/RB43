@@ -73,6 +73,7 @@
                                             }
                                             @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                             {
+                                                <li><a href="#" id="rtab-13" class="" onclick="headerClickchange('tab-13')">Subject Matter Expert</a></li>
                                                 <li><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Manage Channel</a></li>
                                             }
                                         </ul>
@@ -515,7 +516,7 @@
                                                         <div class="" style="display:none" id="uploadDiv">
                                                             @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf", @placeholder = "Only files with .pdf, .doc and .docx extentsions accepted" })
 
                                                         </div>
                                                         <div class="upload">
@@ -548,7 +549,7 @@
                                                         </div>
                                                         @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
                                                         @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-                                                        <div class="spinner">
+                                                        <div class="spinner">isLockedElement
                                                         <button type="button" class="up-3 button">&rsaquo;</button>
                                                         <button type="button" class="down-3 button">&lsaquo;</button>
                                                         </div>
@@ -1125,7 +1126,7 @@
                                                                                 @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                             </td>
                                                                             <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                <a onclick="" data-tooltip="">No Resume</a>
                                                                             </td>
                                                                             <td>
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
@@ -1515,6 +1516,10 @@
                                         </div>
                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                         {
+                                            <h3 class="tab_drawer_heading" rel="tab-13">Subject Matter Expert</h3>
+                                                <div class="tab-box" id="tab-13">
+                                            </div>
+
                                             <h3 class="tab_drawer_heading" rel="tab-12">Manage Channel</h3>
                                             <div class="tab-box" id="tab-12">
                                                 <div class="tab-main-box">
@@ -1597,6 +1602,30 @@
                                                                     </div>
                                                                     @Html.LabelFor(model => model.IsMeetingNotificationSend, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                     <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 col-sm-4 pull-left">
+                                                                <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                    <div class="mdc-checkbox">
+                                                                        @*@{
+                                                                            string disabled = "false";
+                                                                            if(Model.IsLocked)
+                                                                            {
+                                                                                disabled = "true";
+                                                                            }
+                                                                            
+                                                                        }*@
+                                                                        @Html.CheckBoxFor(m => m.IsLocked, new { @class = "mdc-checkbox__native-control"})
+                                                                        <div class="mdc-checkbox__background">
+                                                                            <svg class="mdc-checkbox__checkmark"
+                                                                                 viewBox="0 0 24 24">
+                                                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                            </svg>
+                                                                            <div class="mdc-checkbox__mixedmark"></div>
+                                                                        </div>
+                                                                        <div class="mdc-checkbox__ripple"></div>
+                                                                    </div>
+                                                                    @Html.LabelFor(model => model.IsLocked, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-4 col-sm-4 pull-left">
@@ -1722,9 +1751,16 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
+<script src="~/js/AddEditSkillChannelCommonMethods.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+        var isLockedElement = document.getElementById("IsLocked");
+        if(isLockedElement.checked)
+        {
+            isLockedElement.disabled = true;
+        }
         $(".selectpicker").select2();
         $("#btnPrev").click(function () {
             var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
@@ -1851,14 +1887,6 @@
                     document.getElementById("tab-10").style.display = "block";
                 }
                 else {
-                    //if (isQcRequired) {
-                    //    $("#rtab-9").addClass("active");
-                    //    document.getElementById("tab-9").style.display = "block";
-                    //}
-                    //else {
-                    //    $("#rtab-7").addClass("active");
-                    //    document.getElementById("tab-7").style.display = "block";
-                    //}
                     $("#rtab-7").addClass("active");
                     document.getElementById("tab-7").style.display = "block";
                 }
@@ -1870,15 +1898,27 @@
                     }
                 }
             }
-            else if (activeTab.trim() == "Manage Channel") {
+            else if (activeTab.trim() == "Subject Matter Expert") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-11").addClass("active");
                 document.getElementById("tab-11").style.display = "block";
-                document.getElementById("tab-12").style.display = "none";
+                document.getElementById("tab-13").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 if ($("#hidClientuser").val() == false) {
                     document.getElementById("btnUpload").style.display = "none";
                 }
+            }
+            else if (activeTab.trim() == "Manage Channel") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-13").addClass("active");
+                document.getElementById("tab-13").style.display = "block";
+                document.getElementById("tab-12").style.display = "none";
+                document.getElementById("btnNext").style.display = "block";
+                document.getElementById("btnUpload").style.display = "none";
+                GetSMEListForAssessmentGroup();
+                @*if ($("#hidClientuser").val() == false) {
+                    document.getElementById("btnUpload").style.display = "none";
+                }*@
             }
 
         });
@@ -2014,62 +2054,45 @@
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                    //if (isQcRequired) {
-                    //    $("#rtab-9").addClass("active");
-                    //    document.getElementById("tab-9").style.display = "block";
-                    //    document.getElementById("tab-8").style.display = "none";
-                    //}
-                    //else {
-                    //    $("#rtab-10").addClass("active");
-                    //    document.getElementById("tab-10").style.display = "block";
-                    //    document.getElementById("tab-8").style.display = "none";
-                    //}
                     $("#rtab-10").addClass("active");
                     document.getElementById("tab-10").style.display = "block";
                     document.getElementById("tab-8").style.display = "none";
                 }
 
             }
-            //else if (activeTab.trim() == "QC") {
-            //    flag = checkTabValidation(activeTab);
-            //    if (!flag) {
-            //        $(".tab-menu li a").removeClass("active");
-            //        if ($("#hidprofile").val() != "Client") {
-            //            $("#rtab-10").addClass("active");
-            //            document.getElementById("tab-10").style.display = "block";
-            //        } else {
-            //            $("#rtab-11").addClass("active");
-            //            document.getElementById("tab-11").style.display = "block";
-            //            document.getElementById("btnNext").style.display = "none";
-            //            if ($("#hidClientuser").val() == false) {
-            //                document.getElementById("btnUpload").style.display = "block";
-            //            }
-            //        }
-            //        document.getElementById("tab-9").style.display = "none";
-            //    }
-            //}
+            
             else if (activeTab.trim() == "E.Interviewer") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
+
                     if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin") {
-                    document.getElementById("btnNext").style.display = "none";
+                        document.getElementById("btnNext").style.display = "none";
                         document.getElementById("btnUpload").style.display = "block";
-                }
-                        document.getElementById("tab-10").style.display = "none";
+                    }
+                    document.getElementById("tab-10").style.display = "none";
                 }
             }
+            
             else if (activeTab.trim() == "Coordinator") {
-    @*flag = checkTabValidation(activeTab);*@
-                                                    if (!flag) {
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-13").addClass("active");
+                    document.getElementById("tab-13").style.display = "block";
+                    document.getElementById("tab-11").style.display = "none";
+                    GetSMEListForAssessmentGroup();
+                }
+            }
+            else if (activeTab.trim() == "Subject Matter Expert") {
+                if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-12").addClass("active");
                     document.getElementById("tab-12").style.display = "block";
                     document.getElementById("btnNext").style.display = "none";
                     document.getElementById("btnUpload").style.display = "block";
-                    document.getElementById("tab-11").style.display = "none";
+                    document.getElementById("tab-13").style.display = "none";
                 }
             }
         });
@@ -2374,6 +2397,14 @@
             document.getElementById("tab-11").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
+        else if (activeTab.trim() == "Subject Matter Expert") {
+            $(".tab-menu li a").removeClass("active");
+            $("#r" + newHeader).addClass("active");
+
+            document.getElementById("tab-13").style.display = "none";
+            document.getElementById(newHeader).style.display = "block";
+            
+        }
         else if (activeTab.trim() == "Manage Channel") {
             $(".tab-menu li a").removeClass("active");
             $("#r" + newHeader).addClass("active");
@@ -2381,7 +2412,10 @@
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
-
+        if(newHeader == "tab-13")
+        {
+            GetSMEListForAssessmentGroup();
+        }
         if (!flag) {
             if (newHeader == "tab-1") {
                 document.getElementById("btnPrev").style.display = "none";
@@ -2638,7 +2672,36 @@
     }
 
 </script>
+<script>
+    var smesLoadedForAssessmentGroup;
+    function GetSMEListForAssessmentGroup()
+    {
+        var assessmentGroupId = $("#AssessmentGroupId").val();
+        var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
+        if(smesLoadedForAssessmentGroup != assessmentGroupId){
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetAssessmentGroupSMEs",
+                data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName, 'irfId' : '@Model.id' },
+                success: function (data) {
+                    $('#tab-13').empty();
+                    if(data != null)
+                    {
+                        $('#tab-13').html(data);
+                        smesLoadedForAssessmentGroup = assessmentGroupId;
+                        var isLocked = document.getElementById("IsLocked").checked;
+                        if(isLocked == true)
+                        {
+                            DisableAllSMECheckboxes();
+                        }
+                    }
 
+                }
+            });
+        }
+        
+    }
+</script>
 <script>
     $(document).ready(function () {
 
@@ -2701,7 +2764,7 @@
         var inputs = document.getElementsByTagName("input");
         for (i = 0; i <= inputs.length - 1; i++) {
             inputs[i].addEventListener("input", function () {
-                if (!@ViewBag.IsClientUser) {
+                if ('@ViewBag.IsClientUser' =='False') {
                     document.getElementById("btnUpload").disabled = false;
                 }
             });
@@ -3192,53 +3255,7 @@
 
     }
 
-    function AddRow() {
-        //document.getElementById("btnUpload").disabled = false;
-
-        var table = document.getElementById("SkillTable");
-        var rowCount = table.rows.length;
-
-
-        var $ttc = $("#SkillTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#SkillTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#SkillTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-        // document.getElementById("btnUpload").disabled = false;
-
-    }
+    
     function AddSkillGeneralRow() {
         //document.getElementById("btnUpload").disabled = false;
 
@@ -4016,72 +4033,6 @@
 
     }
 
-    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
-
-        if ($(element).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-            //document.getElementById("btnUpload").disabled = false;
-
-            //var currentvalue = $(this).attr('value');
-            var closestRow = $(element).closest('tr');
-            var currentIndex = closestRow[0].sectionRowIndex;
-            var totalRows = $(element).parents('tbody').find('tr').length;
-            var maxIndex = totalRows - 1;
-            if (currentIndex == maxIndex) {
-                $(element).closest('tr').remove();
-            }
-            //ClientCollection_1__ClientRoleId
-            else {
-                $(element).closest('tr').remove();
-                var startIndex = currentIndex + 1;
-                var endIndex = maxIndex + 1;
-                for (i = startIndex; i < endIndex; i++) {
-                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                    //name="ClientCollection[3].ClientUserId"
-                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                    if (tdFour != '') {
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-                    }
-
-                    if (tdFive != null && tdFive != '') {
-                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
-                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
-                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
-                    }
-                    if (tdSix != null && tdSix != '') {
-                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
-                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
-                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
-                    }
-                    if (tdSeven != null && tdSeven != '') {
-                        var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
-                        elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
-                        elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
 
     function validateName() {
         var letterNumber = /^[0-9a-zA-Z]+$/;

@@ -1,4 +1,5 @@
-﻿using Risebird.Business.Interface;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -20,9 +22,10 @@ namespace Risebird.Business
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
         private readonly IPasswordHelper _passwordHelper;
+        private readonly IIRFRepository _irfRepository;
 
 
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper)
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper, IIRFRepository irfRepository)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -30,6 +33,7 @@ namespace Risebird.Business
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
             _passwordHelper = passwordHelper;
+            _irfRepository = irfRepository;
         }
 
         #region Interviewer Profile Service Functions
@@ -1101,7 +1105,7 @@ namespace Risebird.Business
                 return await _interviewerRepository.SendInviteCode(codeInviteVM, loggedinUser);
 
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -1176,7 +1180,68 @@ namespace Risebird.Business
                 return await _interviewerRepository.AddInterviewerAssesssmentDetails(Assessmentid, emailid);
 
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<SkillChannelDetailsForSME>> GetSkillChannelsAssignedToSME(string loggedInInterviewer)
+        {
+            try
+            {
+                return await _interviewerRepository.GetSkillChannelsAssignedToSME(loggedInInterviewer);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IRFVm> GetSkillChannelDetailsForSMEByIdToUpdate(int interviewerProfileId, int irfId)
+        {
+            try
+            {
+                IRFVm model = await _interviewerRepository.GetSkillChannelDetailsForSMEByIdToUpdate(irfId, interviewerProfileId);
+                if(model != null)
+                {
+                    model.SkillCollection = (IList<TransSkill>)(await _irfRepository.GetSkillsbyIRFid(irfId));
+                    //model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    //model.SkillsList = new SelectList(await _irfRepository.GetSkills(), "id", "Name");
+                }
+                return model;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public async Task<bool> UpdateSkillChannelDetailsBySME(IRFVm model, int interviewerProfileId)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateSkillChannelDetailsBySME(model, interviewerProfileId);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string audioUrl)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveSMEAudio(irfId, interviewerProfileId, audioUrl);
+
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -1201,6 +1266,47 @@ namespace Risebird.Business
                 return await _interviewerRepository.SaveInterviewerResume(model);
             }
             catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<TransInterviewer>> GetSkillChannelInterviewersToVerify(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetTransInterviewer(irfId);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateVerifiedInterviewers(IList<TransInterviewer> interviewers, string loggedInSME)
+        {
+            try
+            {
+                //var verifiedInterviewers = interviewers.Where(x => x.IsSMEVerified);
+                return await _interviewerRepository.UpdateVerifiedInterviewers(interviewers?.ToList(), loggedInSME);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> CheckIfSME(string loggedInUser)
+        {
+            try
+            {
+                return await _interviewerRepository.CheckIfSME(loggedInUser);
+
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;

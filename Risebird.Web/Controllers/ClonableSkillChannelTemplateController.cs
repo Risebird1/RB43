@@ -43,7 +43,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin"  || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                         model = await _clonableSkillChannelTemplateService.GetTemplateDataFromSourceSkillChannel(irfId, assessmentGroupId);

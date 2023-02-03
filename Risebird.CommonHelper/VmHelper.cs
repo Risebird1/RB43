@@ -1,20 +1,11 @@
-﻿using Azure.Core;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-using static System.Net.WebRequestMethods;
 
 namespace Risebird.CommonHelper
 {
