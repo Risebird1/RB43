@@ -2802,5 +2802,59 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+
+        public async Task<string> SendAssignedNotificationToSME(string smeEmail, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "You have been assigned as a Subject Matter Expert.";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(smeEmail, null));
+
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(channelOwner, null));
+
+
+                object[] parameters = new object[] { skillChannelName, client, jdTitle, primarySkills};
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssignedNotificationToSME.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        public async Task<string> SendIRFCreatedFromTemplateNotificationToChannelOwner(string channelOwnerEmail, string skillChannelName, string templateName, string jdTitle, string client)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "New Skill Channel has been created!";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(channelOwnerEmail, null));
+
+                //msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(channelOwner, null));
+
+
+                object[] parameters = new object[] { skillChannelName, templateName, client, jdTitle, DateTime.Now.ToString("MM/dd/yyyy hh:mm tt") };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "IRFCreatedFromTemplateNotificationToChannelOwner.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+
     }
 }

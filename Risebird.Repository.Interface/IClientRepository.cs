@@ -38,5 +38,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ClientAudioInstructions>> GetClientAudioForIRF(int interviewId);
         Task<IEnumerable<ClientAudioInstructions>> GetClientInstructionsAudioForReport(int interviewId, string emailId = null, string profile = null);
         Task<List<Clientaudiofeedback>> Getclientaudiofeedbackdetails();
+        Task<string> GetClientName(int id);
     }
 }

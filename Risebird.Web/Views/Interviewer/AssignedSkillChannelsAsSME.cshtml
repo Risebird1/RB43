@@ -1,0 +1,277 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.SkillChannelDetailsForSME>
+@{
+    ViewData["Title"] = "Skill Channel(s) assigned to as SME";
+    ViewBag.PageHeader = "Skill Channel(s) assigned to as SME";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
+
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <img style="visibility:hidden" src="img/chardin.png" data-position="right" />
+                        <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                        <h4 class="card-title"></h4>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <div style="float:left">
+                            @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>*@
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+
+                            @*<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("RecipientActivityDetails","Mail", new { recipientType = ViewBag.recipientType})" method="post" id="form">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SkillChannel">
+                                                                Skill Channel
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="SkillChannel" name="SkillChannel" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                    @foreach (var item in Model.Select(x => x.SkillChannelName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Latest Activity</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Activity" name="Activity" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                    @foreach (var item in Model.Select(x => x.latestEvent).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SentBy">
+                                                                Sent By
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="SentBy" name="SentBy" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                    @foreach (var item in Model.Select(x => x.SentBy).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Recipient">Recipient</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="Recipient" name="Recipient" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                    @foreach (var item in Model.Select(x => x.email).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                                                                       <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 10px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                            <div style="overflow-x:scroll" class="scrollbar">
+
+                                <div id="tableID" class="second">
+                                    <table id="recipientsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Skill Channel</th>
+                                                <th>Primary Skill</th>
+                                                <th>JD Title</th>
+                                                <th>Client</th>
+                                                <th>Channel Owner</th>
+                                                <th>Assigned On</th>
+                                                <th style="text-align:center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Skill Channel</th>
+                                                <th>Primary Skill</th>
+                                                <th>JD Title</th>
+                                                <th>Client</th>
+                                                <th>Channel Owner</th>
+                                                <th>Assigned On</th>
+                                                <th style="text-align:center">Actions</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @if (Model != null && Model.Count() > 0)
+                                            {
+                                                int i = 1;
+                                                foreach (var item in Model)
+                                                {
+                                                    <tr>
+
+                                                        
+                                                        <td>@item.SkillChannelName</td>
+                                                        <td>@item.PrimarySkill</td>
+                                                        <td>@item.JDTitle</td>
+                                                        <td>@item.Client</td>
+                                                        <td>@item.ChannelOwner</td>
+                                                        <td>@item.AssignedOn</td>
+                                                        
+                                                        <td>
+
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Click here to update Skill Channel Requirements" style="position:relative;left:2px;" data-toggle="ajax-modal-smeActivity" data-target="#modalSMEActivity" data-url="@Url.Action("GetSkillChannelDetailsForSMEByIdToUpdate","Interviewer", new { interviewerProfileId = item.InterviewerProfileId, irfId = item.IRFId})">
+                                                                <span title="Click here to update Skill Channel Requirements." class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 576 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V285.7l-86.8 86.8c-10.3 10.3-17.5 23.1-21 37.2l-18.7 74.9c-2.3 9.2-1.8 18.8 1.3 27.5H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128zM549.8 235.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-29.4 29.4-71-71 29.4-29.4c15.6-15.6 40.9-15.6 56.6 0zM311.9 417L441.1 287.8l71 71L382.9 487.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to review Interviewers">
+                                                                <span onclick="location.href = '@Url.Action("SkillChannelInterviewers", "Interviewer", new { interviewerProfileId = item.InterviewerProfileId, irfId = item.IRFId, skillChannelName = item.SkillChannelName})'" title="Click here to review Interviewers" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
+
+                                                        </td>
+                                                    </tr>
+                                                    i = i + 1;
+                                                }
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end content-->
+        </div>
+
+        <div id="modal_sme_placeholder"></div>
+
+        <script src="~/js/ModalFormServerValidation.js"></script>
+
+        <!--  end card  -->
+    </div>
+    <!-- end col-md-12 -->
+</div>
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html:'@ViewBag.Message', 
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}

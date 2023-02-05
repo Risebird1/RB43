@@ -3003,7 +3003,10 @@
         var selectedOption = $('.dropques').find("[selected]");
         $(selectedOption).unwrap();
         if ('@ViewBag.profileName' == "CuratedUser" || '@Model.IsClientCurated' == 'True') {
-            document.getElementsByClassName('minmaxCon')[0].style.display = "none";
+            if(document.getElementsByClassName('minmaxCon') != null && document.getElementsByClassName('minmaxCon').length > 0)
+            {
+                document.getElementsByClassName('minmaxCon')[0].style.display = "none";
+            }
         }
         var weightageItems = $('[id$="WeightageActual"]');
         for (i = 0; i < weightageItems.length; i++) {

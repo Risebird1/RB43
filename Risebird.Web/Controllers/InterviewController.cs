@@ -46,6 +46,7 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IZoomHelper _zoomHelper;
+        private readonly IInterviewerService _interviewerService;
 
 
         //private static List<MeetingVM> _modelDetails;
@@ -59,7 +60,8 @@ namespace Risebird.Web.Controllers
             ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService,
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
-            IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, IZoomHelper zoomHelper)
+            IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, 
+            IZoomHelper zoomHelper, IInterviewerService interviewerService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -79,6 +81,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _interviewSchedulerservice = interviewSchedulerservice;
             _zoomHelper = zoomHelper;
+            _interviewerService = interviewerService;
         }
 
 
@@ -1580,10 +1583,12 @@ namespace Risebird.Web.Controllers
                         var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
                         var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         var isNotificationAccepted = _meetingService.FetchInterviewerNotificationStatus(emailid);
+                        var isSME = await _interviewerService.CheckIfSME(emailid);
                         ViewBag.isNotificationAccepted = isNotificationAccepted;
                         ViewBag.CodedName = codedname;
                         ViewBag.isCodedResumePresent = isCodedResumePresent;
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
+                        ViewBag.IsSME = isSME;
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {

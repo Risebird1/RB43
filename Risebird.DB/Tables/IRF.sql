@@ -39,6 +39,11 @@ CREATE TABLE [dbo].[IRF](
             [IsCandidateavailability][bit] NULL,
             [IsMeetingNotificationSend][bit] NULL,
             [IsMeetingAutoCancelled][bit] NULL,
+            [OriginalJDLink][varchar](2000) NULL,
+            [AudioCommentBy][varchar](100) NULL,
+            [UpdatedBySME][int] NULL,
+            [UpdatedBySMEAt][datetime] NULL,
+            [IsLocked][bit]null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -316,6 +321,55 @@ BEGIN
     ALTER TABLE IRF
     Add IsMeetingAutoCancelled bit
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OriginalJDLink')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add OriginalJDLink VARCHAR(2000)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AudioCommentBy')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AudioCommentBy VARCHAR(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'UpdatedBySME')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add UpdatedBySME int null
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'UpdatedBySMEAt')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add UpdatedBySMEAt datetime null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsLocked')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsLocked bit null
+END
+
 
 END
 

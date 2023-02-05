@@ -1,0 +1,108 @@
+﻿@model IList<Risebird.Entities.ViewModel.SkillChannelSME>
+
+@{
+    bool containsSelectedForIRF = false;
+    if(Model != null && Model.Any(x=> x.IsSelectedForIRF))
+    {
+        containsSelectedForIRF = true;
+    }
+}
+<div class="tab-main-box">
+    <div class="row">
+
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="table-responsive-sm">
+                <table class="table table-bordered mbn" id="SMEtable">
+                    <thead>
+                        <tr>
+                            <th width="30%" class="table_heading">EmailId</th>
+
+                            <th width="40%" class="table_heading">Name</th>
+
+
+                            <th width="30%" class="table_heading">Select</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Count() > 0)
+                        {
+
+                            for (int i = 0; i <= Model.Count() - 1; i++)
+                            {
+                                <tr>
+
+                                    <td>@Model[i].EmailId</td>
+                                    <td>@Model[i].InterviewerName</td>
+                                    <td class="text-center">@Html.CheckBox("SkillChannelSMEs[" + i + "].IsSelectedForIRF", Model[i].IsSelectedForIRF, new {@id = "SkillChannelSMEs_" + i + "__IsSelectedForIRF", @onClick = "ckChange(this)"})</td>
+                                    
+
+                                    
+                                    @Html.Hidden("SkillChannelSMEs[" + i + "].InterviewerProfileId", Model[i].InterviewerProfileId, new {@id = "SkillChannelSMEs_" + i + "__InterviewerProfileId"})
+                                    @Html.Hidden("SkillChannelSMEs[" + i + "].AssessmentGroupId", Model[i].AssessmentGroupId, new {@id = "SkillChannelSMEs_" + i + "__AssessmentGroupId"})
+                                    @Html.Hidden("SkillChannelSMEs[" + i + "].EmailId", Model[i].EmailId, new {@id = "SkillChannelSMEs_" + i + "__EmailId"})
+                                    @*@Html.HiddenFor(m =>m[i].AssessmentGroupId)
+                                    @Html.HiddenFor(m =>m[i].EmailId)
+                                    @Html.HiddenFor(m =>m[i].InterviewerName)*@
+
+                                </tr>
+                            }
+
+                        }
+                        
+                    </tbody>
+                    
+                    
+                </table>
+
+            </div>
+        </div><!--end of col-md-12-->
+    </div>
+
+</div>
+
+<script>
+    var checkBoxItems = $('[id$="IsSelectedForIRF"]');
+
+function ckChange(ckType){
+    var checked = document.getElementById(ckType.id);
+    if (checked.checked) {
+        DisableEnableCheckboxes(checkBoxItems)
+    }
+    else {
+
+      for(var i=0; i < checkBoxItems.length; i++){
+        checkBoxItems[i].disabled = false;
+      } 
+    }    
+}
+
+function DisableAllSMECheckboxes()
+{
+        for (var i = 0; i < checkBoxItems.length; i++) {
+
+            checkBoxItems[i].disabled = true;
+        }
+}
+
+function DisableEnableCheckboxes(checkBoxItems){
+    for (var i = 0; i < checkBoxItems.length; i++) {
+
+          if(!checkBoxItems[i].checked){
+
+              checkBoxItems[i].disabled = true;
+          }
+          else {
+              checkBoxItems[i].disabled = false;
+          }
+      }
+}
+
+</script>
+@if(containsSelectedForIRF)
+{
+    <script>
+        DisableEnableCheckboxes(checkBoxItems);
+
+    </script>
+}

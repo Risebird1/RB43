@@ -38,7 +38,7 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IMeetingService _meetingService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        private ISkillService _skillService;
+        private readonly ISkillService _skillService;
         private static List<Candidate> _modelDetails;
         private static List<MeetingVM> _modelDetail;
         private static List<MeetingVM> _modelDetle;
@@ -6749,7 +6749,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Create(int templateId)
+        public async Task<IActionResult> Create(int templateId, string templateName)
         {
             try
             {
@@ -6759,7 +6759,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var model = new IRFVm();
                         if (profileName == "Client")
@@ -6772,6 +6772,7 @@ namespace Risebird.Web.Controllers
                             model = await _clonableSkillChannelTemplateService.GetTemplateDataForPopulatingSkillChannel(templateId);
                         }
                         model.Profile = profileName;
+                        model.TemplateName = templateName;
                         return View(model);
                     }
                     else
@@ -6806,7 +6807,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
 
 
@@ -7735,5 +7736,44 @@ namespace Risebird.Web.Controllers
             }
             return Json("Notification sent successfully.");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAssessmentGroupSMEs(int agId, string agName, int? irfId, bool isLocked = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
+
+                    {
+                        var interviewingSMEMembers = (IList<SkillChannelSME>)(await _irfService.GetEligibleSMEForSkillChannel(agId, irfId));
+                        ViewBag.AssessmentGroupName = agName;
+                        ViewBag.IsLocked = isLocked;
+                        return PartialView("SMEListPartialView", interviewingSMEMembers);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error retrieving data! Please try again.");
+            }
+        }
+
     }
 }

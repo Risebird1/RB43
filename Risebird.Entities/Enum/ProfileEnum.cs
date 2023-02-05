@@ -26,5 +26,7 @@ namespace Risebird.Entities.Enum
         CuratedUser = 26,
         [Description("ExternalUser")]
         ExternalUser = 27,
+        [Description("SupportAdmin")]
+        SupportAdmin = 32,
     }
 }

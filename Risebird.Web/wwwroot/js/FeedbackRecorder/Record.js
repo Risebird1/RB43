@@ -13,6 +13,8 @@ var audioContext;//audio context to help us record
 var interviewId;
 var irfid;
 var candidateType;
+var smeProfileId;
+
 function startRecording() {
     //console.log("recordButton clicked");
     document.getElementById("stopRecButton").disabled = false;
@@ -245,6 +247,7 @@ function createIRFDownloadLink(blob) {
 
 
 function startClientRecording() {
+    
     document.getElementById("startClientRecButton").disabled = true;
     document.getElementById("stopClientRecButton").disabled = false;
     document.getElementById("cancelClientRecButton").disabled = false;
@@ -371,6 +374,147 @@ function cancelClientRecording() {
     document.getElementById("startClientRecButton").disabled = false;
     document.getElementById("cancelClientRecButton").disabled = true;
     document.getElementById("clientRecordingStatus").innerHTML = "Recording cancelled!";
+    setTimeout(afterClientRecordingTimeOut, 500);
+    //console.log("stopButton clicked");
+    //disable the stop button, enable the record too allow for new recordings
+    //reset button just in case the recording is stopped while paused
+    //tell the recorder to stop the recording
+    rec.stop();
+    gumStream.getAudioTracks()[0].stop();
+}
+
+//recording code for smes
+
+function startSMERecording() {
+    debugger;
+    document.getElementById("startSMERecButton").disabled = true;
+    document.getElementById("stopSMERecButton").disabled = false;
+    document.getElementById("cancelSMERecButton").disabled = false;
+    document.getElementById("smeRecordingStatus").innerHTML = "Recording started...";
+
+    var constraints = { audio: true, video: false };
+
+
+    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+        //console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
+
+        /*
+            create an audio context after getUserMedia is called
+            sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+            the sampleRate defaults to the one set in your OS for your playback device
+
+        */
+        audioContext = new AudioContext();
+
+        //update the format 
+
+        /*  assign to gumStream for later use  */
+        gumStream = stream;
+
+        /* use the stream */
+        input = audioContext.createMediaStreamSource(stream);
+
+        /* 
+            Create the Recorder object and configure to record mono sound (1 channel)
+            Recording 2 channels  will double the file size
+        */
+        rec = new Recorder(input, { numChannels: 1 });
+
+        //start the recording process
+        rec.record();
+
+        //console.log("Recording started");
+
+    }).catch(function (err) {
+        //enable the record button if getUserMedia() fails
+
+    });
+}
+
+function stopSMERecording(_irfId, _smeProfileId) {
+    debugger;
+    console.log(_irfId, _smeProfileId);
+    document.getElementById("stopSMERecButton").disabled = true;
+    document.getElementById("startSMERecButton").disabled = false;
+    document.getElementById("cancelSMERecButton").disabled = true;
+    document.getElementById("smeRecordingStatus").innerHTML = "Recording stopped!";
+    setTimeout(afterSMERecordingTimeOut, 500);
+
+    irfid = _irfId;
+    smeProfileId = _smeProfileId;
+    //candidateType = canType;
+    //tell the recorder to stop the recording
+    rec.stop();
+
+    //stop microphone access
+    gumStream.getAudioTracks()[0].stop();
+
+    //create the wav blob and pass it on to createDownloadLink
+    rec.exportWAV(createSMERecordingDownloadLink);
+}
+
+
+
+function createSMERecordingDownloadLink(blob) {
+
+    var filename = "Audio_SMEFeedback_" + irfid + "_" + smeProfileId + "_" + new Date().toISOString();
+    var fd = new FormData();
+    fd.append("audio_data", blob, filename + ".wav");
+    fd.append('irfId', irfid);
+    fd.append('smeProfileId', smeProfileId);
+
+    $.ajax(
+        {
+            url: '/Interviewer/UploadSMEAudio',
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+
+                splitData = data.split("/");
+
+                // Create anchor element.
+                var a = document.createElement('a');
+
+                // Set the href property.
+                a.href = data;
+                a.id = "anchorAudioId";
+                a.setAttribute('download', '');
+                if (splitData != null && splitData.length > 1) {
+                    a.innerText = splitData[splitData.length - 1];
+                }
+
+
+                // Append the anchor element.
+                const elementFile = document.getElementById("td_audioFile").children[0];
+                elementFile.replaceChild(a, elementFile.childNodes[0]);
+
+                var audio = document.createElement('audio');
+                audio.id = 'controlAudioId';
+                audio.controls = 'controls';
+                audio.src = data;
+
+                const elementAudio = document.getElementById("td_audioControl");//.children[0];
+                elementAudio.removeChild(elementAudio.children[0]);
+                elementAudio.appendChild(audio);
+                document.getElementById('div_playUploadedAudioTwo').style.display = "block";
+            }
+        }
+    );
+
+
+}
+
+function afterSMERecordingTimeOut() {
+    document.getElementById("smeRecordingStatus").innerHTML = '';
+}
+
+function cancelSMERecording() {
+    document.getElementById("stopSMERecButton").disabled = true;
+    document.getElementById("startSMERecButton").disabled = false;
+    document.getElementById("cancelSMERecButton").disabled = true;
+    document.getElementById("smeRecordingStatus").innerHTML = "Recording cancelled!";
     setTimeout(afterClientRecordingTimeOut, 500);
     //console.log("stopButton clicked");
     //disable the stop button, enable the record too allow for new recordings

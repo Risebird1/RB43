@@ -32,9 +32,15 @@ namespace Risebird.Business
         private readonly ISkillService _skillService;
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
         private readonly IClientRepository _clientRepository;
+        private readonly IUserRepository _userRepository;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService, IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IClientRepository clientRepository)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration,
+            IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper,
+            ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository,
+            IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService, 
+            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository,
+            IClientRepository clientRepository, IUserRepository userRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -50,6 +56,7 @@ namespace Risebird.Business
             _skillService = skillService;
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
             _clientRepository = clientRepository;
+            _userRepository = userRepository;
         }
 
         #region IRF Functions
@@ -59,11 +66,26 @@ namespace Risebird.Business
             {
                 irfDetails.IRFId = irfDetails.IRFId.Trim();
                 irfDetails.CreatedOn = DateTime.UtcNow;
+                irfDetails.CreatedBy = loggedInUser;
                 //irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
+                    if(irfDetails.SkillChannelSMEs.Any(x=> x.IsSelectedForIRF))
+                    {
+                        //send notification to the sme here
+                        var smeEmail = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
+                        string channelOwner = string.Empty;
+                        var client = (await _clientService.GetClient(irfDetails.ClientId))?.Name;
+
+                        if (irfDetails.RisebirdHr != 0)
+                        {
+                            channelOwner = (await _userRepository.GetUser(irfDetails.RisebirdHr)).EmailId;
+                        }
+                        await _notificationHelper.SendAssignedNotificationToSME(smeEmail, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
+                    }
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
                     activityTrackerModel.Particulars = irfDetails.IRFId;
@@ -467,7 +489,7 @@ namespace Risebird.Business
                 var transJoinability = _irfRepository.GetTransJoinability(id);
                 //var transClientUser = _irfRepository.GetTransClientUser(id);
 
-                var transInterviewer = _irfRepository.GetTransInterviewer(id);
+                var transInterviewer = await _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
                 var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
@@ -479,6 +501,7 @@ namespace Risebird.Business
 
 
                 //assign values retrieved to the model
+                model.IsLocked = IRF.IsLocked;
                 model.id = IRF.id;
                 model.MeetingPlatform = IRF.MeetingPlatform;
                 model.ClientCompName = IRF.ClientCompName;
@@ -549,6 +572,7 @@ namespace Risebird.Business
         {
             try
             {
+                model.ModifiedBy = loggedInUser;
                 var interviewerChangesData = new List<InterviewerSuccessRateChangeData>();
                 var removedInterviewers = new List<RemovedInterviewersFromSkillsChannelData>();
                 var addedNewInterviewers = new List<AddedNewInterviewersInSkillsChannelData>();
@@ -663,10 +687,24 @@ namespace Risebird.Business
                         }
                     }
                 }
-
                 var result = await _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null);
-                if (result)
+                if (result.Item1)
                 {
+
+                    if (model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF) && result.Item2)
+                    {
+                        //send notification to the sme here
+                        var smeEmail = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
+                        string channelOwner = string.Empty;
+                        var client = (await _clientService.GetClient(model.ClientId))?.Name;
+
+                        if (model.RisebirdHr != 0)
+                        {
+                            channelOwner = (await _userRepository.GetUser(model.RisebirdHr)).EmailId;
+                        }
+                        await _notificationHelper.SendAssignedNotificationToSME(smeEmail, model.IRFId, client, model.JDTiltle, model.PrimarySkillInvite, channelOwner);
+                    }
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
                     activityTrackerModel.Particulars = model.IRFId;
@@ -708,7 +746,7 @@ namespace Risebird.Business
 
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
-                return result;
+                return result.Item1;
             }
 
             catch (Exception e)
@@ -2197,7 +2235,7 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.FeedbackCount == 0)
+                    if (irf.FeedbackCount > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
@@ -2432,19 +2470,21 @@ namespace Risebird.Business
         {
             try
             {
-                if (profile == ProfileEnum.Client.GetDescription())
+                string channelOwner;
+                if (profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
                 {
                     var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
-                    eligibleHrs.RemoveAt(0);
+                    //eligibleHrs.RemoveAt(0);
                     var random = new Random();
                     int index = random.Next(eligibleHrs.Count);
                     irfDetails.RisebirdHr = eligibleHrs[index].id;
+                    channelOwner = eligibleHrs[index].EmailId;
                 }
                 else
                 {
                     irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                    channelOwner = loggedInUser;
                 }
-
                 irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
                 irfDetails.CompanyDetails = string.Empty;
                 irfDetails.PerMintuteRate = 0;
@@ -2457,6 +2497,10 @@ namespace Risebird.Business
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result)
                 {
+                    var clientName = await _clientService.GetClientName(irfDetails.ClientId);
+                    //send mail to the HR here
+                    await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
                     activityTrackerModel.Particulars = irfDetails.IRFId;
@@ -2527,17 +2571,20 @@ namespace Risebird.Business
         {
             try
             {
-                if (profile == ProfileEnum.Client.GetDescription())
+                string channelOwner;
+                if (profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
                 {
                     var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
-                    eligibleHrs.RemoveAt(0);
+                    //eligibleHrs.RemoveAt(0);
                     var random = new Random();
                     int index = random.Next(eligibleHrs.Count);
                     irfDetails.RisebirdHr = eligibleHrs[index].id;
+                    channelOwner = eligibleHrs[index].EmailId;
                 }
                 else
                 {
                     irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                    channelOwner = loggedInUser;
                 }
 
                 //get meeting platform from template by Id
@@ -2582,6 +2629,11 @@ namespace Risebird.Business
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result)
                 {
+                    var clientName = await _clientService.GetClientName(irfDetails.ClientId);
+                    //send mail to the HR here
+                    await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
                     activityTrackerModel.Particulars = irfDetails.IRFId;
@@ -2621,7 +2673,7 @@ namespace Risebird.Business
                 if (profile == ProfileEnum.Client.GetDescription())
                 {
                     var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
-                    eligibleHrs.RemoveAt(0);
+                    //eligibleHrs.RemoveAt(0);
                     var random = new Random();
                     int index = random.Next(eligibleHrs.Count);
                     irfDetails.RisebirdHr = eligibleHrs[index].id;
@@ -2689,7 +2741,7 @@ namespace Risebird.Business
                     }
                     if (profile != "Client")
                     {
-                        if (irf.FeedbackCount == 0)
+                        if (irf.FeedbackCount > 0)
                         {
                             irf.Flags = irf.Flags + 1;
                         }
@@ -2928,6 +2980,19 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.GetAssessmentGroupInterviewerMembersForSME(agId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<SkillChannelSME>> GetEligibleSMEForSkillChannel(int agId, int? irfId)
+        {
+            try
+            {
+                var members = await _irfRepository.GetEligibleSMEForSkillChannel(agId, irfId);
+                return members?.Where(x=>x.IsSME)?.ToList();
             }
             catch (Exception e)
             {

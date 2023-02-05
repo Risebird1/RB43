@@ -129,5 +129,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId);
         Task<IEnumerable<IRFClientReviewVM>> GetIRFClientReviews(int irfId);
         Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId);
+        Task<IEnumerable<SkillChannelSME>> GetEligibleSMEForSkillChannel(int agId, int? irfId);
     }
 }

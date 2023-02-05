@@ -1706,7 +1706,7 @@ namespace Risebird.Repository
         //    }
         //}
 
-        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null)
+        public async Task<Tuple<bool, bool>> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null)
         {
             try
             {
@@ -1956,6 +1956,30 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillChannelSME", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
+
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@timeNow"].Value = DateTime.Now;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ModifiedBy", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@ModifiedBy"].Value = irfDetails.ModifiedBy;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
+
+                    bool isSMEChanged = false;
+
+                    
+                    SqlParameter isSMEChangedParam = new SqlParameter();
+                    isSMEChangedParam.ParameterName = "@isSMEChanged";
+                    isSMEChangedParam.DbType = DbType.Boolean;
+                    isSMEChangedParam.Direction = ParameterDirection.Output;
+                    cmdUpdateIRF.Parameters.Add(isSMEChangedParam);
+
+
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@idRecommendation", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@idRecommendation"].Value = irfDetails.IRFRecommendations.id;
 
@@ -2043,7 +2067,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-
+                    isSMEChanged = Convert.ToBoolean(cmdUpdateIRF?.Parameters["@isSMEChanged"]?.Value);
                     if (removedTechSkills != null)
                     {
                         foreach (var removedTechSkill in removedTechSkills)
@@ -2155,8 +2179,8 @@ namespace Risebird.Repository
                             }
                         }
                     }
-
-                    return true;
+                    return new Tuple<bool, bool>(true, isSMEChanged);
+                    //return Tuple(<true, isSMEChanged>);
                 }
 
             }
@@ -2164,13 +2188,13 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return new Tuple<bool, bool>(false, false); 
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return new Tuple<bool, bool>(false, false);
             }
         }
 
@@ -2308,7 +2332,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<TransInterviewer> GetTransInterviewer(int id)
+        public async Task<IEnumerable<TransInterviewer>> GetTransInterviewer(int id)
         {
             try
             {
@@ -2316,7 +2340,7 @@ namespace Risebird.Repository
                 param.Add("@irfId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<TransInterviewer>(con, "usp_GetTransInterviewer", param,
+                    var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetTransInterviewer", param,
                                             commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -2325,7 +2349,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -2807,6 +2831,8 @@ namespace Risebird.Repository
             parameters.Add("@IsCandidateavailability", entity.IsCandidateavailability);
             parameters.Add("@IsMeetingAutoCancelled", entity.IsMeetingAutoCancelled);
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
+            parameters.Add("@CreatedBy", entity.CreatedBy);
+            parameters.Add("@SkillChannelSME", entity.SkillChannelSMEs.Where(x=>x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
@@ -6414,6 +6440,30 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<SkillChannelSME>> GetEligibleSMEForSkillChannel(int Assessmentid, int? irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Assessmentid", Assessmentid);
+                    parameters.Add("@irfId", irfId);
+                    return await SqlMapper.QueryAsync<SkillChannelSME>(con, "usp_GetAssessmentGroupInterviewerMembersForSME", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddUpdateAssessmentGroupSMEInterviewer(IList<AssessmentGroupInterviewers> interviewers)
         {
             string currentUser = string.Empty;
@@ -6578,6 +6628,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
     }
 }
 

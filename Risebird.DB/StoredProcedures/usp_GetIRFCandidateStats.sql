@@ -68,7 +68,8 @@ where IRFId=IRF.IRFId and confirmationStatus=1 and isAutoCancelled=1) as Unfille
 where IRFId=IRF.IRFId and confirmationStatus=1 and (zoomLink is null or zoomLink='')) as MissingZoomLink,      
 (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id       
 where IRFId=IRF.IRFId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='')) as MissingVideoLink,
-(Select Count(cir.id) from ClientIRFReviewDetails cir where cir.IRFId=IRF.id) FeedbackCount
+IsNull((Select 1 from IRF a left join ClientIRFReviewDetails cir on cir.IRFId=a.id 
+where cir.id is null and a.id=IRF.id),0) FeedbackCount  
  from IRF          
  join @tbl_Temp tmp on tmp.IRFId =IRF.id          
  join Client cl on cl.id = irf.ClientId          

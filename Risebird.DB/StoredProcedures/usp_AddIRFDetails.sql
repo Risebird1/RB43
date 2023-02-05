@@ -44,6 +44,8 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsCandidateavailability bit,
 @IsMeetingAutoCancelled bit,
 @IsMeetingNotificationSend bit,
+@SkillChannelSME int = null,
+@CreatedBy varchar(100) = null,
 @idIrf int output            
             
 AS            
@@ -117,8 +119,14 @@ Begin
    @IsMeetingAutoCancelled,
    @IsMeetingNotificationSend)      
        
-    
-select @idIrf = SCOPE_IDENTITY()    
+	select @idIrf = SCOPE_IDENTITY()    
+   
+	if(@SkillChannelSME is not null and @SkillChannelSME != 0)
+	Begin
+		insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+		values (@idIrf, @SkillChannelSME, Isnull(@CreatedBy, ''), @CreatedOn)
+	End
+
 End
 else
 BEGIN

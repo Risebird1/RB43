@@ -98,6 +98,7 @@ namespace Risebird.Entities.ViewModel
         public IList<TransInterviewer> InterviewerCollection { get; set; }
         public IList<TransEmergencyInterviewer> EmergencyInterviewerCollection { get; set; }
         public IList<TransResumeEvaluator> ResumeEvaluatorCollection { get; set; }
+        public IList<SkillChannelSME> SkillChannelSMEs { get; set; }
         public IList<TransHR> HRCollection { get; set; }
         public IList<TransRecruiter> RecruiterCollection { get; set; }
 
@@ -199,6 +200,11 @@ namespace Risebird.Entities.ViewModel
         public bool IsMeetingAutoCancelled { get; set; }
 
         public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string SMEAudioCommentLink { get; set; }
+        public bool IsValidCustom { get; set; }
+        public bool IsLocked { get; set; }
     }
     public class InterviewerIds
     {
@@ -313,6 +319,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsMeetingAutoCancelled { get; set; }
         public string MeetingPlatform { get; set; }
         public int FeedbackCount { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public bool IsLocked { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {
