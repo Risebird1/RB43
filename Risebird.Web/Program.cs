@@ -1,25 +1,4 @@
-﻿//using Microsoft.AspNetCore.Hosting;
-//using System.IO;
-
-//namespace Risebird.Web
-//{
-//    public class Program
-//    {
-//        public static void Main(string[] args)
-//        {
-//            var host = new WebHostBuilder()
-//                .UseKestrel(c => c.AddServerHeader = false)
-//                .UseContentRoot(Directory.GetCurrentDirectory())
-//                .UseIISIntegration()
-//                .UseStartup<Startup>()
-//                .Build();
-
-//            host.Run();
-//        }
-//    }
-//}
-
-using Microsoft.ApplicationInsights.Extensibility;
+﻿using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -90,7 +69,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.InstanceName = "risebirdportalui";
-    options.Configuration = "risebirdportalnew.redis.cache.windows.net:6380,password=63HxF9rAS5oopAdrfqPt5oFQqoTiklD2lAzCaKXgquw=,ssl=True,abortConnect=False";
+    options.Configuration = "risebirdportal.redis.cache.windows.net:6380,password=XIsWSLMvXVfhiFbm94eKPfcm2wSlHgIGtAzCaFuEFU4=,ssl=True,abortConnect=False";
 });
 //builder.Services.AddDistributedRedisCache(options =>
 //{
