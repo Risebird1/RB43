@@ -41,12 +41,12 @@ DECLARE
 	where NULLIF(vqd.VideoLink, '') IS NOT NULL
 	group by vqd.Interviewid
 
-	CREATE TABLE #TechSkillScoreTbl (InterviewId int, WeightageActual float)
+	--CREATE TABLE #TechSkillScoreTbl (InterviewId int, WeightageActual float)
 
-	insert into #TechSkillScoreTbl
-	select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
-	join InterviewComments ic on ic.InterviewId = tsr.Interviewid
-	group by tsr.Interviewid
+	--insert into #TechSkillScoreTbl
+	--select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
+	--join InterviewComments ic on ic.InterviewId = tsr.Interviewid
+	--group by tsr.Interviewid
 
 	CREATE TABLE #SuitableCandidateTbl (InterviewId int, [status] varchar(20))
 
@@ -82,7 +82,7 @@ suit.Status as IsIntrested ,
 rtvsl.Status as ShortListstatus,    
 patchvideoCount.VideoCount as MeetingPatchCount,    
 (CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END)  as CandidateAvailable,      
- Techscore.WeightageActual as TechSkillScore, ic.ThumbnailTimeSeconds      
+ ic.TotalTechScore as TechSkillScore, ic.ThumbnailTimeSeconds      
 from InterviewMeetings im                
 inner join IRF on im.IRFId = IRF.IRFId              
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -98,7 +98,7 @@ inner join CuratedGroupSubscribers cgs on cgs.CuratedGroupId = cim.CuratedGroupI
 left join #SuitableCandidateTbl as suit on suit.InterviewId = ic.InterviewId
 left join #RiseTubeVedioShortListTbl as rtvsl on rtvsl.InterviewId = ic.InterviewId
 left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
-left join #TechSkillScoreTbl as Techscore on Techscore.InterviewId = ic.InterviewId
+--left join #TechSkillScoreTbl as Techscore on Techscore.InterviewId = ic.InterviewId
 --outer apply (Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId and Userid=@id order by InterstedOn desc)suit    
 --outer apply (Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId and Userid=@id  order by ShortListedOn desc)rtvsl    
 --outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount    
@@ -111,14 +111,14 @@ im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtC
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
 ca.Phone, ca.ResumeLink ,  ca.CostEstimate,IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage           
-, QCF.InterviewId, suit.Status, rtvsl.Status , ic.CandidateAvailable, patchvideoCount.VideoCount,Techscore.WeightageActual,
+, QCF.InterviewId, suit.Status, rtvsl.Status , ic.CandidateAvailable, patchvideoCount.VideoCount, ic.TotalTechScore,
 ic.ThumbnailTimeSeconds  
 
 
 drop table #PatchVideoCountTbl
 drop table #RiseTubeVedioShortListTbl
 drop table #SuitableCandidateTbl
-drop table #TechSkillScoreTbl
+--drop table #TechSkillScoreTbl
 
 END 
 
