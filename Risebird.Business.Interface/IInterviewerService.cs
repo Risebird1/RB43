@@ -77,5 +77,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<TransInterviewer>> GetSkillChannelInterviewersToVerify(int irfId);
         Task<bool> UpdateVerifiedInterviewers(IList<TransInterviewer> interviewers, string loggedInSME);
         Task<bool> CheckIfSME(string loggedInUser);
+        Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
     }
 }

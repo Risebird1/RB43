@@ -1312,5 +1312,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList()
+        {
+            try
+            {
+                var result = await _interviewerRepository.FetchClientIRFFeedbackList();
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
