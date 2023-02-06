@@ -13,7 +13,7 @@ CREATE PROCEDURE usp_GetAssessmentGroupInterviewerMembersForSME
 AS      
 BEGIN 
 
-if(@irfId is not null and @irfId > 0)
+if(@irfId is not null and @irfId > 0 and exists(select top 1 id from SkillChannelSMEs where IRFId = @irfId and (IsDeleted  is null or IsDeleted = 0)) )
 Begin
 	
 	select agi.AssessmentGroupId, agi.InterviewerProfileId, agi.IsSME, ul.EmailId, (ul.FirstName+ space(1) +ul.LastName) as InterviewerName, 0 as IsSelectedForIRF  
