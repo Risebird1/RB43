@@ -2901,5 +2901,26 @@ namespace Risebird.Repository
 
 
 
+        public async Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<ClientIRFsFeedbackVM>(con, "usp_FetchClientIRFFeedbackCountList", null,
+                           commandType: CommandType.StoredProcedure);
+                    return results.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }

@@ -92,6 +92,14 @@ namespace Risebird.Entities.ViewModel
         public string SentAt { get; set; }
         public string SentBy { get; set; }
         public DateTime interviewDate { get; set; }
-
+    }
+    public class ClientIRFsFeedbackVM
+    {
+        public string IRFId { get; set; }
+        public int averageRating { get; set; }
+        public int minRating { get; set; }
+        public int maxRating { get; set; }
+        public int Rating { get; set; }
+        public int countRating { get; set; }
     }
 }
