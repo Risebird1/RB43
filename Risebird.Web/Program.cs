@@ -87,11 +87,16 @@ builder.Services.AddSession(options =>
 });
 
 //Configure session state
-builder.Services.AddDistributedRedisCache(options =>
+builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.InstanceName = "risebirdportalui";
     options.Configuration = "risebirdportalnew.redis.cache.windows.net:6380,password=63HxF9rAS5oopAdrfqPt5oFQqoTiklD2lAzCaKXgquw=,ssl=True,abortConnect=False";
 });
+//builder.Services.AddDistributedRedisCache(options =>
+//{
+//    options.InstanceName = "risebirdportalui";
+//    options.Configuration = "risebirdportalnew.redis.cache.windows.net:6380,password=63HxF9rAS5oopAdrfqPt5oFQqoTiklD2lAzCaKXgquw=,ssl=True,abortConnect=False";
+//});
 
 //builder.Services.AddMvc();
 builder.Services.AddDistributedMemoryCache();
