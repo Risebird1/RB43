@@ -1741,5 +1741,17 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> FetchClientIRFFeedbackList()
+        {
+            var results = await _interviewerService.FetchClientIRFFeedbackList();
+            if (results == null)
+            {
+                var Clientmodel = new List<ClientIRFsFeedbackVM>();
+                return Json(Clientmodel);
+            }
+            return Json(results);
+        }
     }
 }
