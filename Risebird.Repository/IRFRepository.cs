@@ -3888,7 +3888,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select id, EmailId from UserList where idProfile in (31) and isactive=1";
+                var query = "select id, EmailId from UserList where idProfile in (31, 32) and isactive=1 and EmailId != 'shivesh@risebird.io'";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return con.Query<Users>(query);
