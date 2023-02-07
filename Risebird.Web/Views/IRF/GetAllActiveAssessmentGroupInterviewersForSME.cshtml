@@ -30,6 +30,11 @@
                 <form asp-action="AddUpdateAssessmentGroupSME" asp-route-assessmentGroupName="@ViewBag.AssessmentGroupName">
                     @if (Model != null && Model.Count() > 0)
                     {
+@*                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />*@
+                       <input name="IsValid" type="hidden" value="@ViewBag.IsValid" />
+                       <input name="Result" type="hidden" value="@ViewBag.Result" />
+
+
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                         <div class="scrollers" style="overflow-y:auto">
@@ -91,44 +96,44 @@
 
 <script>
     var placeholderElement = $('#modal_SME_placeholder');
-    $('button[data-save="modal"]').click(function (event) {
-        debugger;
-        event.preventDefault();
-        var form = $(this).parents('.modal').find('form');
-        var actionUrl = form.attr('action');
-        var dataToSend = form.serialize();
-        $.post(actionUrl, dataToSend).done(function (data) {
-            debugger;
-            //var newBody = $('#comments_modal_body', data);
-            //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
-            var newBody = $('.modal-body', data);
-            placeholderElement.find('.modal-body').replaceWith(newBody);
+    //$('button[data-save="modal"]').click(function (event) {
+    //    debugger;
+    //    event.preventDefault();
+    //    var form = $(this).parents('.modal').find('form');
+    //    var actionUrl = form.attr('action');
+    //    var dataToSend = form.serialize();
+    //    $.post(actionUrl, dataToSend).done(function (data) {
+    //        debugger;
+    //        //var newBody = $('#comments_modal_body', data);
+    //        //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
+    //        var newBody = $('.modal-body', data);
+    //        placeholderElement.find('.modal-body').replaceWith(newBody);
 
-            // find IsValid input field and check it's value
-            // if it's valid then hide modal window
-            //var isValidElement = newBody.find('[name="IsValid"]') == 'True';
-            //if (isValidElement != null) {
-            //    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
-            //    if (isValid) {
-            //        placeholderElement.find('.modal').modal('hide');
-            //        var html = "Interviewer rated successfully!";
-            //        if (dateOfInterview != null && dateOfInterview != '') {
-            //            html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
-            //        }
+    //        // find IsValid input field and check it's value
+    //        // if it's valid then hide modal window
+    //        //var isValidElement = newBody.find('[name="IsValid"]') == 'True';
+    //        //if (isValidElement != null) {
+    //        //    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+    //        //    if (isValid) {
+    //        //        placeholderElement.find('.modal').modal('hide');
+    //        //        var html = "Interviewer rated successfully!";
+    //        //        if (dateOfInterview != null && dateOfInterview != '') {
+    //        //            html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
+    //        //        }
 
-            //        Swal.fire({
-            //            title: '<strong>Successful</u></strong>',
-            //            type: 'success',
-            //            html: html,
-            //            confirmButtonText: "Close",
-            //            allowOutsideClick: false
-            //        });
-            //    }
-            //}
+    //        //        Swal.fire({
+    //        //            title: '<strong>Successful</u></strong>',
+    //        //            type: 'success',
+    //        //            html: html,
+    //        //            confirmButtonText: "Close",
+    //        //            allowOutsideClick: false
+    //        //        });
+    //        //    }
+    //        //}
 
-        });
+    //    });
 
-    });
+    //});
 
     placeholderElement.on('click', '[data-save="modal"]', function (event) {
         event.preventDefault();
@@ -136,7 +141,6 @@
         var actionUrl = form.attr('action');
         var dataToSend = form.serialize();
         $.post(actionUrl, dataToSend).done(function (data) {
-            debugger;
             //var newBody = $('#comments_modal_body', data);
             //placeholderElement.find('#comments_modal_body').replaceWith(newBody);
             var newBody = $('.modal-body', data);
@@ -144,23 +148,33 @@
 
             // find IsValid input field and check it's value
             // if it's valid then hide modal window
-            var isValidElement = newBody.find('[name="IsValid"]') == 'True';
+            var isValidElement = newBody.find('[name="IsValid"]');
             if (isValidElement != null) {
-                var isValid = newBody.find('[name="IsValid"]').val() == 'True';
-                if (isValid) {
+                var isValid = newBody.find('[name="IsValid"]').val();
+                if (isValid == "True") {
                     placeholderElement.find('.modal').modal('hide');
-                    var html = "Interviewer rated successfully!";
-                    if (dateOfInterview != null && dateOfInterview != '') {
-                        html = "Interviewer rated successfully for the interview dated " + dateOfInterview + "!";
-                    }
+                    var result = newBody.find('[name="Result"]').val();
 
-                    Swal.fire({
-                        title: '<strong>Successful</u></strong>',
-                        type: 'success',
-                        html: html,
-                        confirmButtonText: "Close",
-                        allowOutsideClick: false
-                    });
+                    if(result == "True")
+                    {
+                        Swal.fire({
+                            title: '<strong>Successful</u></strong>',
+                            type: 'success',
+                            html: "SME(s) added successfully!",
+                            confirmButtonText: "Close",
+                            allowOutsideClick: false
+                        });
+                    }
+                    else{
+                        Swal.fire({
+                            title: '<strong>Failed</u></strong>',
+                            type: 'error',
+                            html: "Failed to add SME(s).",
+                            confirmButtonText: "Close",
+                            allowOutsideClick: false
+                        });
+                    }
+                    
                 }
             }
 
