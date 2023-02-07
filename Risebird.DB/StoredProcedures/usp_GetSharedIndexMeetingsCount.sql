@@ -21,11 +21,11 @@ set @searchValue=@searchValueParam
 --	insert into @tblTechSkill
 --	select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId
 
-CREATE TABLE #tblTechSkill (InterviewId int, TechSkillScore float)
+--CREATE TABLE #tblTechSkill (InterviewId int, TechSkillScore float)
 
-insert into #tblTechSkill
-select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
-group by tsr.Interviewid
+--insert into #tblTechSkill
+--select tsr.Interviewid, sum(tsr.WeightageActual) from TechSkillReport tsr
+--group by tsr.Interviewid
 
 CREATE TABLE #PatchVideoCountTbl (InterviewId int, VideoCount int)
 
@@ -46,7 +46,7 @@ if(@searchValue is not null)
 		inner join UserList ul on ul.EmailId = im.candidateEmail        
 		join CandidatesMaster cm on cm.UserId = ul.id            
 		join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id    
-		inner join #tblTechSkill tsr  on tsr.InterviewId= im.id    
+		--inner join #tblTechSkill tsr  on tsr.InterviewId= im.id    
 		left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
 		--outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
     
@@ -55,7 +55,7 @@ if(@searchValue is not null)
 		im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,    
 		im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,        
 		im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
-		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate,tsr.TechSkillScore,    
+		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate, ic.TotalTechScore,    
 		IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.VideoCount           
 		 ,ic.CandidateAvailable,ca.TotalExperience) a
@@ -72,7 +72,7 @@ Else
 		inner join UserList ul on ul.EmailId = im.candidateEmail        
 		join CandidatesMaster cm on cm.UserId = ul.id            
 		join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id    
-		inner join #tblTechSkill tsr  on tsr.InterviewId= im.id    
+		--inner join #tblTechSkill tsr  on tsr.InterviewId= im.id    
 		left join #PatchVideoCountTbl as patchvideoCount on patchvideoCount.InterviewId = ic.InterviewId
 		--outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
     
@@ -81,7 +81,7 @@ Else
 		im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,    
 		im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,        
 		im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
-		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate,tsr.TechSkillScore,    
+		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate, ic.TotalTechScore,    
 		IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.VideoCount           
 		 ,ic.CandidateAvailable,ca.TotalExperience) a
@@ -90,7 +90,7 @@ Else
 
 
 	drop table #PatchVideoCountTbl
-	drop table #tblTechSkill
+	--drop table #tblTechSkill
 End
 
 

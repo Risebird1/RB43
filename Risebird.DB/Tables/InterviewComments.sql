@@ -44,7 +44,7 @@ CREATE TABLE [dbo].[InterviewComments](
 	[ModifiedOn] [datetime] NULL,
 	[CreatedBy] [varchar](100) NULL,
 	[ModifiedBy] [varchar](100) NULL,
-
+    [TotalTechScore][float] NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -214,6 +214,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewComments
     Add ModifiedBy varchar(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TotalTechScore')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add TotalTechScore float
 END
 
 End
