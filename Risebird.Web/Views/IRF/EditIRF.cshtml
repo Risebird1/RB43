@@ -1514,7 +1514,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
                                         {
                                             <h3 class="tab_drawer_heading" rel="tab-13">Subject Matter Expert</h3>
                                                 <div class="tab-box" id="tab-13">
@@ -1755,7 +1755,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
+        debugger;
         var isLockedElement = document.getElementById("IsLocked");
         if(isLockedElement.checked)
         {
