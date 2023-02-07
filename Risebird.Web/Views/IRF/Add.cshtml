@@ -2648,9 +2648,9 @@
     function GetSMEListForAssessmentGroup()
     {
         var assessmentGroupId = $("#AssessmentGroupId").val();
-        var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
-        if(smesLoadedForAssessmentGroup != assessmentGroupId){
-            $.ajax({
+        var assessmentGroupName = $("#AssessmentGroupId option:selected").text();
+        
+        $.ajax({
                 type: "GET",
                 url: "/IRF/GetAssessmentGroupSMEs",
                 data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName },
@@ -2663,8 +2663,7 @@
                     }
 
                 }
-            });
-        }
+        });
         
     }
 
