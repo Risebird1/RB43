@@ -242,22 +242,35 @@ BEGIN
 
 	if(@SkillChannelSME is not null and @SkillChannelSME > 0)
 	Begin
-
-		update SkillChannelSMEs set IsDeleted = 1, DeletedBy = @ModifiedBy, @isSMEChanged = 1 where IRFId = @id and InterviewerProfileId != @SkillChannelSME
-
-
-		if exists (select top 1 id from SkillChannelSMEs where irfid = @id and InterviewerProfileId = @SkillChannelSME and (IsDeleted is null or IsDeleted = 0))
+		if not exists(select top 1 id from SkillChannelSMEs where IRFId = @id)
 		Begin
-			set @isSMEChanged = 0
-
-		End
-		else
-		Begin
-
 			insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
 			values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
 
+			set @isSMEChanged = 1
+
 		End
+		Else
+		Begin
+
+			update SkillChannelSMEs set IsDeleted = 1, DeletedBy = @ModifiedBy, @isSMEChanged = 1 where IRFId = @id and InterviewerProfileId != @SkillChannelSME
+
+
+			if exists (select top 1 id from SkillChannelSMEs where irfid = @id and InterviewerProfileId = @SkillChannelSME and (IsDeleted is null or IsDeleted = 0))
+			Begin
+				set @isSMEChanged = 0
+
+			End
+			else
+			Begin
+
+				insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+				values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)
+
+			End
+
+		End
+		
 	
 	
 	End

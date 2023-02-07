@@ -2412,8 +2412,10 @@
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
+        debugger;
         if(newHeader == "tab-13")
         {
+            debugger;
             GetSMEListForAssessmentGroup();
         }
         if (!flag) {
@@ -2676,14 +2678,23 @@
     var smesLoadedForAssessmentGroup;
     function GetSMEListForAssessmentGroup()
     {
+        debugger;
         var assessmentGroupId = $("#AssessmentGroupId").val();
         var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
-        if(smesLoadedForAssessmentGroup != assessmentGroupId){
-            $.ajax({
+        //var assmntElement = document.getElementById("AssessmentGroupId");
+        //var selectedText = assmntElement.options[assmntElement.selectedIndex].innerHTML;
+        @*var e = document.getElementById("AssessmentGroupId");
+        var assessmentGroupName = e.options[e.selectedIndex].text;*@
+        @*if(smesLoadedForAssessmentGroup != assessmentGroupId){
+            
+        }*@
+        $.ajax({
                 type: "GET",
                 url: "/IRF/GetAssessmentGroupSMEs",
+                async: true,
                 data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName, 'irfId' : '@Model.id' },
                 success: function (data) {
+                    debugger;
                     $('#tab-13').empty();
                     if(data != null)
                     {
@@ -2698,7 +2709,6 @@
 
                 }
             });
-        }
         
     }
 </script>
