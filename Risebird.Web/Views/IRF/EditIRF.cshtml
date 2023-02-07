@@ -2678,10 +2678,17 @@
     {
         var assessmentGroupId = $("#AssessmentGroupId").val();
         var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
-        if(smesLoadedForAssessmentGroup != assessmentGroupId){
-            $.ajax({
+        //var assmntElement = document.getElementById("AssessmentGroupId");
+        //var selectedText = assmntElement.options[assmntElement.selectedIndex].innerHTML;
+        @*var e = document.getElementById("AssessmentGroupId");
+        var assessmentGroupName = e.options[e.selectedIndex].text;*@
+        @*if(smesLoadedForAssessmentGroup != assessmentGroupId){
+            
+        }*@
+        $.ajax({
                 type: "GET",
                 url: "/IRF/GetAssessmentGroupSMEs",
+                async: true,
                 data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName, 'irfId' : '@Model.id' },
                 success: function (data) {
                     $('#tab-13').empty();
@@ -2698,7 +2705,6 @@
 
                 }
             });
-        }
         
     }
 </script>

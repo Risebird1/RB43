@@ -35,6 +35,8 @@
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
 
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.49.1" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />

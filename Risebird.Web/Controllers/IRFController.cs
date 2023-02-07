@@ -7618,6 +7618,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
+                        ViewBag.IsValid = "True";
                         if (ModelState.IsValid)
                         {
                             if (model != null)
@@ -7626,28 +7627,26 @@ namespace Risebird.Web.Controllers
                                 {
                                     ModelState.AddModelError("", "Cannot add more than 5 Subject Matter Experts for an Assessment Group!");
                                     ViewBag.AssessmentGroupName = assessmentGroupName;
+                                    ViewBag.IsValid = "False";
                                     return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);
 
                                 }
                             }
-                            if (await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model))
-                            {
-                                TempData["SuccessErrorMessageInterviewer"] = $"SME's updated Successfully for {assessmentGroupName}";
-
-                            }
-                            else
-                            {
-                                TempData["SuccessErrorMessageInterviewer"] = $"Failed to update SME's updated for {assessmentGroupName}";
-
-                            }
-                            return RedirectToAction("InterviewerEntitle");
+                            
 
                         }
                         else
                         {
+                            ViewBag.IsValid = "False";
                             ViewBag.AssessmentGroupName = assessmentGroupName;
                             return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);
+
                         }
+                        var result = await _irfService.AddUpdateAssessmentGroupSMEInterviewer(model);
+                        ViewBag.Result = result.ToString();
+                        return PartialView("GetAllActiveAssessmentGroupInterviewersForSME", model);
+
+
                     }
                     else
                     {

@@ -25,8 +25,11 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewReportComments](
 AS    
 Begin Try    
   BEGIN TRAN UpdateUser     
- Declare @NickName varchar(10)
+ Declare @NickName varchar(10), @totalTechSkillScore float
+
+set @totalTechSkillScore = (select sum(WeightageActual) from TechSkillReport where InterviewId = @interviewId)
 Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList ul on ul.EmailId=im.interviewer join InterviewerProfile ip on ip.UserId=ul.id where im.id=@InterviewId        
+ 
  IF EXISTS( SELECT 1 FROM InterviewMeetings where id = @InterviewId)    
   BEGIN    
    IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)    
@@ -43,7 +46,8 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
      VideoDuration = ISNULL(@VideoDuration, VideoDuration),
 	 InterviewerNickName=ISNULL(@NickName,InterviewerNickName),
 	 ModifiedBy = @PerformedBy,
-	 ModifiedOn = @PerformedAt
+	 ModifiedOn = @PerformedAt,
+	 TotalTechScore = @totalTechSkillScore
      WHERE interviewId = @InterviewId    
     
                         
@@ -63,7 +67,8 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
         VideoDuration,
 		InterviewerNickName,
 		CreatedBy,
-		CreatedOn)     
+		CreatedOn,
+		TotalTechScore)     
      VALUES    
        (@interviewId,    
         @InterviewStatus,    
@@ -77,7 +82,8 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
         @VideoDuration,
 		@NickName,
 		@PerformedBy,
-		@PerformedAt)    
+		@PerformedAt,
+		@totalTechSkillScore)    
   
      IF NOT EXISTS(SELECT 1 FROM InterviewReport where InterviewId= @InterviewId)  
      BEGIN  
@@ -123,9 +129,4 @@ GO
   
   
   
-  
-  
-
-
-
 
