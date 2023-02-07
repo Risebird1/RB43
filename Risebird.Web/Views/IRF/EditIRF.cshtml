@@ -2412,10 +2412,8 @@
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
-        debugger;
         if(newHeader == "tab-13")
         {
-            debugger;
             GetSMEListForAssessmentGroup();
         }
         if (!flag) {
@@ -2678,7 +2676,6 @@
     var smesLoadedForAssessmentGroup;
     function GetSMEListForAssessmentGroup()
     {
-        debugger;
         var assessmentGroupId = $("#AssessmentGroupId").val();
         var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
         //var assmntElement = document.getElementById("AssessmentGroupId");
@@ -2694,7 +2691,6 @@
                 async: true,
                 data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName, 'irfId' : '@Model.id' },
                 success: function (data) {
-                    debugger;
                     $('#tab-13').empty();
                     if(data != null)
                     {
