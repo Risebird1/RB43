@@ -2869,7 +2869,7 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
-        public async Task<string> FetchInterviewerCodedName(string emailID)
+        public async Task<InterviewerDetails> FetchInterviewerCodedName(string emailID)
         {
             try
             {
@@ -2879,7 +2879,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "";
+                return null;
             }
         }
         public async Task<InterviewerRating> FetchRatingDetails(int interviewId, string emailid)
@@ -3304,30 +3304,6 @@ namespace Risebird.Business
             {
                 var assignedMeeting = _meetingRespository.ChangeInterviewerNotificationStatus(emailID, status);
                 return assignedMeeting;
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
-        public bool FetchInterviewerNotificationStatus(string emailID)
-        {
-            try
-            {
-                return _meetingRespository.FetchInterviewerNotificationStatus(emailID);
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
-        public bool CheckInterviewerCodedResume(string emailID)
-        {
-            try
-            {
-                return _meetingRespository.CheckInterviewerCodedResume(emailID);
             }
             catch (Exception ex)
             {

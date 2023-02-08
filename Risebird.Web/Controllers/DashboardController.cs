@@ -1436,8 +1436,11 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InterviewerDashboardVM();
                         model = await _dashboardService.GetInterviewDetailsCount(emailid);
-                        var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
-                        model.CodedName = codedname;
+                        //var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
+                        if (HttpContext.Session.GetString("InterviewerCodedName") != null)
+                        {
+                            model.CodedName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                        }
                         //var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         ViewBag.isCodedResumePresent = false;
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];

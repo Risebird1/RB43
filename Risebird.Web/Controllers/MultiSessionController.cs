@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.Entities.Enum;
@@ -16,12 +17,13 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private readonly ISettingsService _settingsService;
         private readonly IClientService _clientService;
-        public MultiSessionController(IUserService userService, ISettingsService settingsService, IClientService clientService)
+        private readonly IMeetingService _meetingService;
+        public MultiSessionController(IUserService userService, ISettingsService settingsService, IClientService clientService, IMeetingService meetingService)
         {
             _userService = userService;
-
             _settingsService = settingsService;
             _clientService = clientService;
+            _meetingService = meetingService;
         }
         public IActionResult Index()
         {
@@ -88,7 +90,11 @@ namespace Risebird.Web.Controllers
                     {
                         role = _clientService.GetClientRoleByEmailId(emailId).Result;
                     }
-
+                    if (menus.FirstOrDefault()?.profileName == "Interviewer")
+                    {
+                        var codedname = await _meetingService.FetchInterviewerCodedName(emailId);
+                        HttpContext.Session.SetString("InterviewerCodedName", JsonConvert.SerializeObject(emailId));
+                    }
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty);
                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
                     //HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));

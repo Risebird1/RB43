@@ -4540,20 +4540,18 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
-        public async Task<string> FetchInterviewerCodedName(string emailId)
+        public async Task<InterviewerDetails> FetchInterviewerCodedName(string emailId)
         {
             try
             {
-                var query = "Select ip.NickName from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
+                var query = "Select ip.NickName,ip.CodedResumeLink,ISNULL(ip.IsNotificationAccepted,0) as IsNotificationAccepted from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@Emailid", emailId);
-
-                    var results = await con.QueryAsync<string>(query, dp);
+                    var results = await con.QueryAsync<InterviewerDetails>(query, dp);
                     return results.FirstOrDefault();
                 }
-
             }
             catch (SqlException ex)
             {
@@ -5430,59 +5428,6 @@ namespace Risebird.Repository
                     SqlMapper.Query(
                         con, "Update ip Set ip.IsNotificationAccepted=@Status from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where ul.EmailId=@Emailid", new { Status = status, Emailid = emailID }, commandType: Text);
                     return true;
-                }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return false;
-        }
-        public bool FetchInterviewerNotificationStatus(string emailID)
-        {
-            try
-            {
-                var query = "Select ISNULL(IsNotificationAccepted,0) from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    DynamicParameters dp = new DynamicParameters();
-                    dp.Add("@Emailid", emailID);
-                    var results = con.Query<bool>(query, dp);
-                    return results.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return false;
-        }
-        public bool CheckInterviewerCodedResume(string emailID)
-        {
-            try
-            {
-                var query = "Select CodedResumeLink from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    DynamicParameters dp = new DynamicParameters();
-                    dp.Add("@Emailid", emailID);
-                    var results = con.Query<string>(query, dp);
-                    if (string.IsNullOrEmpty(results.FirstOrDefault()))
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
                 }
             }
             catch (SqlException ex)

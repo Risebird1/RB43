@@ -1971,7 +1971,7 @@ namespace Risebird.Repository
 
                     bool isSMEChanged = false;
 
-                    
+
                     SqlParameter isSMEChangedParam = new SqlParameter();
                     isSMEChangedParam.ParameterName = "@isSMEChanged";
                     isSMEChangedParam.DbType = DbType.Boolean;
@@ -2188,7 +2188,7 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return new Tuple<bool, bool>(false, false); 
+                return new Tuple<bool, bool>(false, false);
             }
 
             catch (Exception e)
@@ -2832,7 +2832,7 @@ namespace Risebird.Repository
             parameters.Add("@IsMeetingAutoCancelled", entity.IsMeetingAutoCancelled);
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
             parameters.Add("@CreatedBy", entity.CreatedBy);
-            parameters.Add("@SkillChannelSME", entity.SkillChannelSMEs.Where(x=>x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId);
+            parameters.Add("@SkillChannelSME", entity.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
@@ -6628,7 +6628,28 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public async Task<string> UpdateIRFRedFlags()
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_UpdateIRFRedFlags", parameters, commandTimeout: 9000, commandType: CommandType.StoredProcedure);
+                    return "successfully";
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return "Fail";
+        }
     }
 }
 
