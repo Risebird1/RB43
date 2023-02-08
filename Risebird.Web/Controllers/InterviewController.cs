@@ -60,7 +60,7 @@ namespace Risebird.Web.Controllers
             ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService,
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
-            IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, 
+            IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IZoomHelper zoomHelper, IInterviewerService interviewerService)
         {
             _meetingService = meetingService;
@@ -1394,8 +1394,12 @@ namespace Risebird.Web.Controllers
                         //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.emailid = emailid;
-                        var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
-                        ViewBag.CodedName = codedname;
+                        //var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = "";
+                        if (HttpContext.Session.GetString("InterviewerCodedName") != null)
+                        {
+                            ViewBag.CodedName = HttpContext.Session.GetString("InterviewerCodedName")?.Trim().Replace("\"", "");
+                        }
                         var list = new SelectList(new[]
                         {   new { ID = "Today", Name = "Today"},
                             new { ID = "Tomorrow", Name = "Tomorrow"  },
@@ -1581,12 +1585,17 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var myInterview = await _meetingService.GetAllAssignedInterviews(emailid);
                         var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
-                        var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
-                        var isNotificationAccepted = _meetingService.FetchInterviewerNotificationStatus(emailid);
                         var isSME = await _interviewerService.CheckIfSME(emailid);
-                        ViewBag.isNotificationAccepted = isNotificationAccepted;
-                        ViewBag.CodedName = codedname;
-                        ViewBag.isCodedResumePresent = isCodedResumePresent;
+                        ViewBag.isNotificationAccepted = codedname.IsNotificationAccepted;
+                        ViewBag.CodedName = codedname.NickName;
+                        if (string.IsNullOrWhiteSpace(codedname.CodedResumeLink))
+                        {
+                            ViewBag.isCodedResumePresent = false;
+                        }
+                        else
+                        {
+                            ViewBag.isCodedResumePresent = true;
+                        }
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.IsSME = isSME;
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
@@ -5347,7 +5356,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
-            var codedname = await _meetingService.FetchInterviewerCodedName(Emailid);
+            var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid)).NickName;
             return Json(new { meetings = meetings, codedname = codedname });
         }
 

@@ -162,7 +162,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);
-        Task<string> FetchInterviewerCodedName(string emailId);
+        Task<InterviewerDetails> FetchInterviewerCodedName(string emailId);
         Task<IEnumerable<string>> GetIRFInterviewingMembersEmails(string irfId);
         Task<IEnumerable<string>> GetIRFQualityControllerEmails(string irfId);
         Task<IEnumerable<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
@@ -207,8 +207,6 @@ namespace Risebird.Repository.Interface
         Task<List<InterviewerRating>> FetchFeedbackDetails();
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
         bool ChangeInterviewerNotificationStatus(string emailID, int status);
-        bool FetchInterviewerNotificationStatus(string emailID);
-        bool CheckInterviewerCodedResume(string emailID);
         Task<bool> ApplyLateReportPenalty();
         bool UpdateCancelRecruiterInterviewDetails(int meetingid);
         Task<IEnumerable<MeetingVM>> GetInterviewsScheduledWithinNextTwoHours(string emailId);
