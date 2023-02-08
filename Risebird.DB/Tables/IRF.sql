@@ -44,6 +44,7 @@ CREATE TABLE [dbo].[IRF](
             [UpdatedBySME][int] NULL,
             [UpdatedBySMEAt][datetime] NULL,
             [IsLocked][bit]null,
+            [flagcount][int]null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -368,6 +369,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add IsLocked bit null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'flagcount')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add flagcount int null
 END
 
 

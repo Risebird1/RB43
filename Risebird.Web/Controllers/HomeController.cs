@@ -18,12 +18,13 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private readonly ISettingsService _settingsService;
         private readonly IClientService _clientService;
-        public HomeController(IUserService userService, ISettingsService settingsService, IClientService clientService)
+        private readonly IMeetingService _meetingService;
+        public HomeController(IUserService userService, ISettingsService settingsService, IClientService clientService, IMeetingService meetingService)
         {
             _userService = userService;
-
             _settingsService = settingsService;
             _clientService = clientService;
+            _meetingService = meetingService;
         }
 
         public async Task<IActionResult> Index(string url = null)
@@ -91,7 +92,11 @@ namespace Risebird.Web.Controllers
                     {
                         role = _clientService.GetClientRoleByEmailId(emailId).Result;
                     }
-
+                    if (menus.FirstOrDefault()?.profileName == "Interviewer")
+                    {
+                        var codedname = await _meetingService.FetchInterviewerCodedName(emailId);
+                        HttpContext.Session.SetString("InterviewerCodedName", JsonConvert.SerializeObject(codedname));
+                    }
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty);
                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
                     //HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));

@@ -1024,8 +1024,12 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _instaInterviewService.GetAllInstaAssignedInterviews(emailid);
-                        var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
-                        ViewBag.CodedName = codedname;
+                        //var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = "";
+                        if (HttpContext.Session.GetString("InterviewerCodedName") != null)
+                        {
+                            ViewBag.CodedName = HttpContext.Session.GetString("InterviewerCodedName")?.Trim().Replace("\"", "");
+                        }
                         myInterview = myInterview.Select(x => { x.ConfirmationStatus = ((InstaReceiveMeetingStatus)Convert.ToInt32(x.ConfirmationStatus)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {

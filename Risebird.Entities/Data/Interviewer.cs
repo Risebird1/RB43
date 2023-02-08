@@ -24,4 +24,10 @@ namespace Risebird.Entities.Data
         public bool IsLeadInterviewer { get; set; }
         public string NickName { get; set; }
     }
+    public class InterviewerDetails
+    {
+        public string NickName { get; set; }
+        public bool IsNotificationAccepted { get; set; }
+        public string CodedResumeLink { get; set; }
+    }
 }

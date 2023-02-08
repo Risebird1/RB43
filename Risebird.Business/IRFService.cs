@@ -38,7 +38,7 @@ namespace Risebird.Business
             INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration,
             IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper,
             ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository,
-            IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService, 
+            IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService,
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository,
             IClientRepository clientRepository, IUserRepository userRepository)
         {
@@ -72,7 +72,7 @@ namespace Risebird.Business
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
-                    if(irfDetails.SkillChannelSMEs.Any(x=> x.IsSelectedForIRF))
+                    if (irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
                     {
                         //send notification to the sme here
                         var smeEmail = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
@@ -2992,7 +2992,7 @@ namespace Risebird.Business
             try
             {
                 var members = await _irfRepository.GetEligibleSMEForSkillChannel(agId, irfId);
-                return members?.Where(x=>x.IsSME)?.ToList();
+                return members?.Where(x => x.IsSME)?.ToList();
             }
             catch (Exception e)
             {
@@ -3062,6 +3062,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<string> UpdateIRFRedFlags()
+        {
+            try
+            {
+                return await _irfRepository.UpdateIRFRedFlags();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
             }
         }
     }

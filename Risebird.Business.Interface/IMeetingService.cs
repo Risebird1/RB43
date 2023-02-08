@@ -138,7 +138,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
-        Task<string> FetchInterviewerCodedName(string emailID);
+        Task<InterviewerDetails> FetchInterviewerCodedName(string emailID);
         Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
         Task<SelectList> GetIRFQualityControllersEmails(string irfId);
         Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string irfId);
@@ -172,8 +172,6 @@ namespace Risebird.Business.Interface
         Task<List<InterviewerRating>> FetchFeedbackDetails();
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
         bool ChangeInterviewerNotificationStatus(string emailID, int status);
-        bool FetchInterviewerNotificationStatus(string emailID);
-        bool CheckInterviewerCodedResume(string emailID);
         Task<bool> SendsMailsAfterCancellingInterview(int meetingId, int irfId, string candidateEmail);
         Task<List<MeetingVM>> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
         Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
