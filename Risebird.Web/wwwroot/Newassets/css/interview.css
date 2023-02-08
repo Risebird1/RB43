@@ -381,7 +381,7 @@
     color: #42a5f5;
 }
 
-#startRecButton {
+#startRecButton, #startSMERecButton {
     background: url(../../img/play-recrd.png) no-repeat;
     text-indent: -999px;
     width: 85px;
@@ -392,7 +392,7 @@
     background-position: 50% 0%;
 }
 
-#stopRecButton {
+#stopRecButton, #stopSMERecButton {
     background: url(../../img/stop-recording.png) no-repeat;
     text-indent: -999px;
     background-size: 40px;
@@ -403,7 +403,7 @@
     background-position: 50% 0%;
 }
 
-#cancelRecButton {
+#cancelRecButton, #cancelSMERecButton {
     background: url(../../img/cancel-record.png) no-repeat;
     text-indent: -999px;
     background-size: 40px;
