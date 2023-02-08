@@ -1439,7 +1439,7 @@ namespace Risebird.Web.Controllers
                         //var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
                         if (HttpContext.Session.GetString("InterviewerCodedName") != null)
                         {
-                            model.CodedName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                            model.CodedName = HttpContext.Session.GetString("InterviewerCodedName")?.Trim().Replace("\"", "");
                         }
                         //var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         ViewBag.isCodedResumePresent = false;

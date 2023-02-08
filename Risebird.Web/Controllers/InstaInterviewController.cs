@@ -1028,7 +1028,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.CodedName = "";
                         if (HttpContext.Session.GetString("InterviewerCodedName") != null)
                         {
-                            ViewBag.CodedName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                            ViewBag.CodedName = HttpContext.Session.GetString("InterviewerCodedName")?.Trim().Replace("\"", "");
                         }
                         myInterview = myInterview.Select(x => { x.ConfirmationStatus = ((InstaReceiveMeetingStatus)Convert.ToInt32(x.ConfirmationStatus)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)

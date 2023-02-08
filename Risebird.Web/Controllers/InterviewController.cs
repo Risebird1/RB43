@@ -1398,7 +1398,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.CodedName = "";
                         if (HttpContext.Session.GetString("InterviewerCodedName") != null)
                         {
-                            ViewBag.CodedName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                            ViewBag.CodedName = HttpContext.Session.GetString("InterviewerCodedName")?.Trim().Replace("\"", "");
                         }
                         var list = new SelectList(new[]
                         {   new { ID = "Today", Name = "Today"},

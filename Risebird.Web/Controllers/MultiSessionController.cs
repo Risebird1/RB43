@@ -93,7 +93,7 @@ namespace Risebird.Web.Controllers
                     if (menus.FirstOrDefault()?.profileName == "Interviewer")
                     {
                         var codedname = await _meetingService.FetchInterviewerCodedName(emailId);
-                        HttpContext.Session.SetString("InterviewerCodedName", JsonConvert.SerializeObject(emailId));
+                        HttpContext.Session.SetString("InterviewerCodedName", JsonConvert.SerializeObject(codedname));
                     }
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() : string.Empty);
                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
