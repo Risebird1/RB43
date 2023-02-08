@@ -13,7 +13,7 @@
     var skillsList = new SelectList(await _irfRepository.GetSkills(), "id", "Name");
     var levelTechList = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
 }
-
+<link href="~/newassets/css/interview.css" rel="stylesheet" />
 @*<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 *@
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -34,7 +34,7 @@
 
 <!-- Modal -->
 <div class="modal fade" style="height:1000px" id="modalSMEActivity" tabindex="-1" role="dialog" aria-labelledby="modalSMEActivityLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="width:90%" role="document">
+    <div class="modal-dialog modal-xl" style="width:90%" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalSMEActivityLabel">Update Requirement(s) for Skill Channel : '@Model.IRFId'</h5>
@@ -55,14 +55,12 @@
                         <a target="_blank" href="@Model.JDLink">Existing JD Link</a>
                     </div>
 
-                    <div class="form-group">
-                        <label asp-for="JDFile"></label>
-                        <div>
-                            <input type="file" asp-for=JDFile class="form-control input-lg" accept=".doc, .docx, .pdf" placeholder="Only files with .pdf, .doc and .docx extentsions accepted">
-                        </div>
-                        <span asp-validation-for="JDFile" class="text-danger"></span>
+                    
+                    <div class="mb-3">
+                        <label asp-for="JDFile" class="form-label">Job Description:</label>
+                        <input type="file" asp-for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.doc,.docx)" name="JDFile">
+                        <label id="error_JDFile" class="text-danger"></label>
                     </div>
-
                     
                     
                     <label class="control-label">Tech Skill Weightage</label>
@@ -183,10 +181,17 @@
 
                 <div class="row" id="divAudioRecording">
 
-                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
-                        <div class="pull-left" style="padding:10px"><button id="startSMERecButton" onclick="startSMERecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play"></i></button></div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        @*<div class="pull-left" style="padding:10px"><button id="startSMERecButton" onclick="startSMERecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play"></i></button></div>
                         <div class="pull-left" style="padding:10px"><button id="stopSMERecButton" type="button" onclick="stopSMERecording('@Model.id', '@ViewBag.InterviewerProfileId')" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
                         <div class="pull-left" style="padding:10px"><button id="cancelSMERecButton" type="button" onclick="cancelSMERecording()" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
+*@
+                        <div class="pull-left"> <button id="startSMERecButton" type="button" onclick="startSMERecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
+                        <div class="pull-left"> <button id="stopSMERecButton" type="button" onclick="stopSMERecording('@Model.id', '@ViewBag.InterviewerProfileId')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                        <div class="pull-left">
+                            <div> <button id="cancelSMERecButton" type="button" onclick="cancelSMERecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                        </div>
+
 
                     </div>
                     <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">

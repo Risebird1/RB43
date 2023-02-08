@@ -42,13 +42,16 @@ Begin
 End
 Else
 Begin
-	select agi.AssessmentGroupId, agi.InterviewerProfileId, agi.IsSME, ul.EmailId, (ul.FirstName+ space(1) +ul.LastName) as InterviewerName  from AssessmentGroupInterviewers agi
+	select agi.AssessmentGroupId, agi.InterviewerProfileId, agi.IsSME, ul.EmailId, (ul.FirstName+ space(1) +ul.LastName) as InterviewerName  
+	from AssessmentGroupInterviewers agi
 	join InterviewerProfile ipr on ipr.id = agi.InterviewerProfileId
 	join UserList ul on ul.id = ipr.UserId
-	where agi.AssessmentGroupId = @Assessmentid
+	where agi.AssessmentGroupId = @Assessmentid --and ul.IsActive=1
 End
 
 End
+ 
+
  
  
          
