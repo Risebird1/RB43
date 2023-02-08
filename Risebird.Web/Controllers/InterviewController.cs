@@ -1583,7 +1583,6 @@ namespace Risebird.Web.Controllers
                         var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
                         var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         var isNotificationAccepted = _meetingService.FetchInterviewerNotificationStatus(emailid);
-                        //bool isSME = false;
                         var isSME = await _interviewerService.CheckIfSME(emailid);
                         ViewBag.isNotificationAccepted = isNotificationAccepted;
                         ViewBag.CodedName = codedname;
