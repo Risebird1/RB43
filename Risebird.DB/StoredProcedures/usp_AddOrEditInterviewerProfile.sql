@@ -72,6 +72,7 @@ Begin
 		set @assessmentGroupList = (select STRING_AGG(asg.AssessmentGroup, ',') from @temp tp join AssessmentGroup asg on asg.id = tp.assessmentGroupId where TotalInterviewers >= 100)
 		return
 	  End
+	   
   End
 if(@assessmentGroupList is null or @assessmentGroupList = '')
 Begin
@@ -272,11 +273,24 @@ Declare @v_User_Id int;
 	insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)  
 	values (@v_User_Id, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)  
 	end  
-           
+     
+	 
+
+
 End  
+
+	
 End
 
 
+if(@AssessmentGroupDifference is not null and @AssessmentGroupDifference != '')
+  Begin
+    
+	  --insert into @temp
+	  insert into AssessmentGroupInterviewers
+	  select a.value, @InterviewerProfileId, 0, @loggedInUser, GETDATE(), null, null from string_split(@AssessmentGroupDifference,',') a
+	  
+  End
 
 End 
 GO
