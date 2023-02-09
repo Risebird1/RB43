@@ -36,8 +36,8 @@ Begin Try
 
 		if not exists (select top 1 id from SMEActivityTracker where IRFId =@irfId and InterviewerProfileId = @interviewerProfileId)
 		Begin
-			insert into SMEActivityTracker (IRFId, InterviewerProfileId, IsAudioCommentRecorded)
-			values (@irfId, @interviewerProfileId, 1)
+			insert into SMEActivityTracker (IRFId, InterviewerProfileId, IsAudioCommentRecorded, CreatedAt)
+			values (@irfId, @interviewerProfileId, 1, @timeNow)
 		End
 		Else
 		Begin
