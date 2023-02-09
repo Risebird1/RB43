@@ -14,11 +14,9 @@
     var levelTechList = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
 }
 <link href="~/newassets/css/interview.css" rel="stylesheet" />
-@*<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
-*@
+
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-@*<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
-*@
+
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
 <style>
@@ -48,22 +46,22 @@
                 <form asp-action="SMESkillChannelUpdate" asp-route-interviewerProfileId="@ViewBag.InterviewerProfileId" id="form_sme">
 
 
-
-                    
-
                     <div class="form-group">
                         <a target="_blank" href="@Model.JDLink">Existing JD Link</a>
                     </div>
 
-                    
+                    <div class="multiple_row mt-3">
+                        <h2>Upload Job Description File</h2>
+                    </div>
                     <div class="mb-3">
                         <label asp-for="JDFile" class="form-label">Job Description:</label>
                         <input type="file" asp-for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.doc,.docx)" name="JDFile">
                         <label id="error_JDFile" class="text-danger"></label>
                     </div>
                     
-                    
-                    <label class="control-label">Tech Skill Weightage</label>
+                    <div class="multiple_row">
+                        <h2>Tech Skill Weightage</h2>
+                    </div>
                     <div>
                         <div>
                             <div>
@@ -71,16 +69,16 @@
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="scrollers" style="overflow:auto">
-                                            <table class="table table-striped mbn" id="SkillTable" style="width:100%;">
+                                            <table class="table table-striped mbn table-bordered" id="SkillTable" style="width:100%;">
                                                 <thead>
                                                     <tr>
-                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                        <th width="30%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                        <th width="20%" class="table_heading">Concepts</th>
-                                                        <th width="30%" class="table_heading">Nature of questions</th>
-                                                        <th width="10%" class="table_heading">Time limit</th>
-                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                        <th width="15%" class="table_heading"><strong>Level</strong><span class="red">*</span></th>
+                                                        <th width="30%" class="table_heading"><strong>Skill Name</strong><span class="red">*</span></th>
+                                                        <th width="10%" class="table_heading"><strong>Weightage</strong> <span class="red">*</span></th>
+                                                        <th width="20%" class="table_heading"><strong>Concepts</strong></th>
+                                                        <th width="30%" class="table_heading"><strong>Nature of questions</strong></th>
+                                                        <th width="10%" class="table_heading"><strong>Time limit</strong></th>
+                                                        <th width="10%" class="table_heading text-center"><strong>Action</strong></th>
 
                                                     </tr>
                                                 </thead>
@@ -179,13 +177,16 @@
 
                 </form>
 
+                <div class="multiple_row mt-3">
+                    <h2>Record Feedback</h2>
+                </div>
+                <div class="row mb-3">
+                    <label class="text-danger" style="color:red!important; font-size:12px!important; margin-left : 15px">Note: To Delete/Override an existing Recording, click on the 'Start Recording' button, record a new feedback and click on the 'Stop Recording' button to upload the new feedback. Remember : This feedback overrides/deletes the existing recording.</label>
+                </div>
                 <div class="row" id="divAudioRecording">
 
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        @*<div class="pull-left" style="padding:10px"><button id="startSMERecButton" onclick="startSMERecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play"></i></button></div>
-                        <div class="pull-left" style="padding:10px"><button id="stopSMERecButton" type="button" onclick="stopSMERecording('@Model.id', '@ViewBag.InterviewerProfileId')" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
-                        <div class="pull-left" style="padding:10px"><button id="cancelSMERecButton" type="button" onclick="cancelSMERecording()" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
-*@
+                        
                         <div class="pull-left"> <button id="startSMERecButton" type="button" onclick="startSMERecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
                         <div class="pull-left"> <button id="stopSMERecButton" type="button" onclick="stopSMERecording('@Model.id', '@ViewBag.InterviewerProfileId')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
                         <div class="pull-left">
