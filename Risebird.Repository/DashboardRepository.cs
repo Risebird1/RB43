@@ -1401,6 +1401,11 @@ namespace Risebird.Repository
                         dt = dataset.Tables[3];
                         _resultVM.QCReportCount = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
+                    if (dataset.Tables.Count > 4)
+                    {
+                        dt = dataset.Tables[4];
+                        _resultVM.IsResumePresent = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? true : false;
+                    }
                     return _resultVM;
                 }
             }

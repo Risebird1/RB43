@@ -317,7 +317,17 @@
         </div>
     </div>
 </div>
-
+<div id="Resumepopup" class="modal modal-bg" style="z-index:3">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <h5 class="modal-title pull-left">Upload Resume</h5>
+            </div>
+            <div class="modal-body" id="divresumepopup">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -371,16 +381,24 @@
         });
     });
 </script>
-<script>
-    $(document).ready(function () {
-        $.ajax({
-            url: '/DashBoard/FetchAlertMessage',
-            type: 'POST',
-            success: function (data) {
-            binddata(data);
-            }
+@if (!Model.IsResumePresent)
+{
+    <script>
+        $(document).ready(function () {
+            uploadresume();
         });
-    });
+    </script>
+}
+<script>
+    //$(document).ready(function () {
+    //    $.ajax({
+    //        url: '/DashBoard/FetchAlertMessage',
+    //        type: 'POST',
+    //        success: function (data) {
+    //            binddata(data);
+    //        }
+    //    });
+    //});
 </script>
 <script>
     function GenerateclientpaiChart(client) {
@@ -433,9 +451,18 @@
     //        html += '<li>'+ data[i]+'</li>';
     //    }
     //    html += '</ul>';
-       
+
     //    $("#divalertmessage").empty().html(html);
     //           }
-
+    function uploadresume() {
+        $.ajax({
+            url: '/Interviewer/InterviewerResumeupdate',
+            success: function (data) {
+                var modal = document.getElementById("Resumepopup");
+                modal.style.display = "block";
+                $('#divresumepopup').html('');
+                $('#divresumepopup').html(data);
+            }
+        });
+    }
 </script>
-        
