@@ -366,17 +366,17 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult VMUsers(int vmId, string vmName)
+        public async Task<IActionResult> VMUsers(int vmId, string vmName)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
-
+                var resultData = await _profileService.GetProfile();
                 var model = new VMUsersMapping
                 {
                     VmId = vmId,
                     VmName = vmName,
                     UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId, (int)ProfileEnum.HR)),
-                    ProfileList = new SelectList(_profileService.GetProfile().Where(x => x.id != (int)ProfileEnum.Admin), "id", "Name", (int)ProfileEnum.HR)
+                    ProfileList = new SelectList(resultData.Where(x => x.id != (int)ProfileEnum.Admin), "id", "Name", (int)ProfileEnum.HR)
                 };
                 return View(model);
             }

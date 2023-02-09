@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -20,15 +21,16 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public List<Profile> GetProfile()
+        public async Task<List<Profile>> GetProfile()
         {
             try
             {
-                return _profileRepository.GetProfiles().ToList();
+                var data= await _profileRepository.GetProfiles();
+                return data.ToList();
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 

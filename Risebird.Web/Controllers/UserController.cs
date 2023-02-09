@@ -69,7 +69,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     ViewBag.profileName = profileName;
                     var model = await _userService.GetRisebirdUsers();
-                    List<Profile> profiles = _profileService.GetProfile();
+                    var profiles = await _profileService.GetProfile();
                     List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
                     ViewBag.profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
                     if (HttpContext.Session.GetString("RiseBirdUserfilters") != null)
@@ -155,7 +155,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var model = new UserList();
-                    List<Profile> profiles = _profileService.GetProfile();
+                    List<Profile> profiles = await _profileService.GetProfile();
 
                     List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Freemium Client", "MappingAdmin" };
                     List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
 
                     else
                     {
-                        List<Profile> profiles = _profileService.GetProfile();
+                        List<Profile> profiles = await _profileService.GetProfile();
                         profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
@@ -249,7 +249,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.profileName = profileName;
                     if (user != null)
                     {
-                        List<Profile> profiles = _profileService.GetProfile();
+                        List<Profile> profiles = await _profileService.GetProfile();
 
                         List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter", "MappingAdmin" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
@@ -304,7 +304,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        List<Profile> profiles = _profileService.GetProfile();
+                        List<Profile> profiles = await _profileService.GetProfile();
                         profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
