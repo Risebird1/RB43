@@ -214,5 +214,6 @@ namespace Risebird.Entities.ViewModel
         public string AvailableDetails { get; set; }
         public string uniqueid { get; set; }
         public bool IsInterested { get; set; }
+        public string type { get; set; }
     }
 }

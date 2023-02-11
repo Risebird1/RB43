@@ -3185,6 +3185,10 @@ namespace Risebird.Web.Controllers
             }
             var result = await _interviewerService.SaveInterviewerResume(model);
             ViewBag.status = 1;
+            if (model.type == "InterviewIndex")
+            {
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
             return View(model);
         }
         [HttpGet]
@@ -3522,6 +3526,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.EmailId = emailid;
+                    model.type = "InterviewIndex";
                 }
             }
             return PartialView(model);
