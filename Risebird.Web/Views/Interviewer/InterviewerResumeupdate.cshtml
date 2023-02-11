@@ -1,0 +1,17 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
+
+@using (Html.BeginForm("ShowInterest", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.uniqueid)
+    @Html.HiddenFor(m => m.EmailId)
+    @Html.HiddenFor(m => m.type)
+    <div class="row" style="padding:10px" id="divcandidateskills">
+        @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+    </div>
+    <div>
+        <div class="col-md-12 text-right">
+            <input type="submit" value="Save" />
+        </div>
+    </div>
+}
+

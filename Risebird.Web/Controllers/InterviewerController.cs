@@ -3185,6 +3185,10 @@ namespace Risebird.Web.Controllers
             }
             var result = await _interviewerService.SaveInterviewerResume(model);
             ViewBag.status = 1;
+            if (model.type == "InterviewIndex")
+            {
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
             return View(model);
         }
         [HttpGet]
@@ -3296,12 +3300,12 @@ namespace Risebird.Web.Controllers
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
                         bool isValidModel = true;
-                        if(model.SkillCollection!=null &&  model.SkillCollection.Any(x=> x.LevelId == 0 || x.Weightage == 0 || x.SkillId ==0 || x.Timelimit ==0 || string.IsNullOrEmpty(x.Concepts) || string.IsNullOrEmpty(x.Natureofquestion)))
+                        if (model.SkillCollection != null && model.SkillCollection.Any(x => x.LevelId == 0 || x.Weightage == 0 || x.SkillId == 0 || x.Timelimit == 0 || string.IsNullOrEmpty(x.Concepts) || string.IsNullOrEmpty(x.Natureofquestion)))
                         {
                             ModelState.AddModelError("", "All the fields under the Tech Skill section are required with weightage greater than 0.");
                             isValidModel = false;
                         }
-                        if (model.SkillCollection != null && model.SkillCollection.Sum(x=> x.Weightage) != 100)
+                        if (model.SkillCollection != null && model.SkillCollection.Sum(x => x.Weightage) != 100)
                         {
                             ModelState.AddModelError("", "The Weightage should add up to an exact 100 under Tech Skill Section.");
                             isValidModel = false;
@@ -3309,19 +3313,19 @@ namespace Risebird.Web.Controllers
                         if (!isValidModel)
                         {
                             model.IsValidCustom = isValidModel;
-                            
+
                             return PartialView("UpdateSkillChannelRequirementsSMEPartial", model);
                         }
                         string fileName = string.Empty;
                         var files = Request.Form.Files;
-                        if(files != null && files.Count()>0)
+                        if (files != null && files.Count() > 0)
                         {
 
                             fileName = ContentDispositionHeaderValue.Parse(files[0].ContentDisposition).FileName.Trim('"');
 
                         }
 
-                        if (files!= null && files.Count() > 0)
+                        if (files != null && files.Count() > 0)
                         {
                             var jdFile = files[0];
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(jdFile);
@@ -3478,9 +3482,9 @@ namespace Risebird.Web.Controllers
                         //    ModelState.AddModelError("", "All the fields under the Tech Skill section are required with weightage greater than 0.");
                         //    isValidModel = false;
                         //}
-                        
 
-                        if(await _interviewerService.UpdateVerifiedInterviewers(model, emailId))
+
+                        if (await _interviewerService.UpdateVerifiedInterviewers(model, emailId))
                         {
                             TempData["SMESuccessErrorMessage"] = "Interviewers' profile verified successfully!";
                         }
@@ -3509,6 +3513,24 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
+        public ActionResult InterviewerResumeupdate()
+        {
+            var model = new InterviewerProfileVM();
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+
+                if (profileName == "Interviewer")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    model.EmailId = emailid;
+                    model.type = "InterviewIndex";
+                }
+            }
+            return PartialView(model);
+        }
     }
 }
 

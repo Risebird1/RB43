@@ -46,92 +46,212 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsMeetingNotificationSend bit,
 @SkillChannelSME int = null,
 @CreatedBy varchar(100) = null,
+@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
+@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
+@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
+@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
+@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
+@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
+@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
+--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
+@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
 @idIrf int output            
             
 AS            
-Begin            
-if not exists (select 1 from IRF where IRFId =@IRFId)     
-Begin    
- INSERT INTO [dbo].[IRF]            
-   ([IRFId]            
-   ,[clientName]            
-   ,[JDTiltle]            
-   ,[CompanyType]            
-   ,[ClientId]            
-   ,[JobCountry]            
-   ,[StartDate]            
-   ,[EndDate]                       
-   ,[JDLink]            
-   ,[NoOfPosition]            
-   ,[NoOfIntterview]            
-   ,[RisebirdHr]            
-   ,[PerMintuteRate]              
-   ,[JobLevel]            
-   ,[CalendlyLink]            
-   ,[CreatedOn]            
-   ,[IsBiometricEnabled]            
-   ,[TotalBudget]            
-   ,[PriorityLevel]            
-   ,[CompanyDetails]            
-   ,[BussinessType]        
-   ,[Heuristicsscore]        
-   ,[PrimarySkillInvite]      
-   ,[BillingOwner]    
-   ,[AssessmentGroupId]
-   --,[IsQCRequired]
-   ,[IsJoinabilitySelectabilityRequired]
-   ,[IsGeneralSkillRequired]
-   ,[IsAadhaarVerificationRequired]
-   ,[IsCandidateavailability]
-   ,[IsMeetingAutoCancelled]
-   ,[IsMeetingNotificationSend])            
-       VALUES            
-           (@IRFId,            
-   @clientName,            
-   @JDTiltle,            
-   @CompanyType,            
-   @ClientId,            
-   @JobCountry,            
-   @StartDate,            
-   @EndDate,            
-   @JDLink,            
-   @NoOfPosition,            
-   @NoOfIntterview,            
-   @RisebirdHr,            
-   @PerMintuteRate,            
-   @JobLevel,            
-   @CalendlyLink,            
-   @CreatedOn,            
-   @IsBiometricEnabled,            
-   @TotalBudget,            
-   @PriorityLevel,            
-   @CompanyDetails,          
-   @Type,        
-   @Heuristicsscore,        
-   @PrimarySkillInvite,      
-   @BillingOwner,    
-   @AssessmentGroupId,
-   --@IsQCRequired,
-   @IsJoinabilitySelectabilityRequired,
-   @IsGeneralSkillRequired,
-   @IsAadhaarVerificationRequired,
-   @IsCandidateavailability,
-   @IsMeetingAutoCancelled,
-   @IsMeetingNotificationSend)      
-       
-	select @idIrf = SCOPE_IDENTITY()    
-   
-	if(@SkillChannelSME is not null and @SkillChannelSME != 0)
-	Begin
-		insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
-		values (@idIrf, @SkillChannelSME, Isnull(@CreatedBy, ''), @CreatedOn)
-	End
+Begin
+	Begin Try
+		Begin tran
 
-End
-else
-BEGIN
-select @idIrf = 0            
-END
+			if not exists (select 1 id from IRF where IRFId =@IRFId)     
+				Begin    
+				 INSERT INTO [dbo].[IRF]            
+				   ([IRFId]            
+				   ,[clientName]            
+				   ,[JDTiltle]            
+				   ,[CompanyType]            
+				   ,[ClientId]            
+				   ,[JobCountry]            
+				   ,[StartDate]            
+				   ,[EndDate]                       
+				   ,[JDLink]            
+				   ,[NoOfPosition]            
+				   ,[NoOfIntterview]            
+				   ,[RisebirdHr]            
+				   ,[PerMintuteRate]              
+				   ,[JobLevel]            
+				   ,[CalendlyLink]            
+				   ,[CreatedOn]            
+				   ,[IsBiometricEnabled]            
+				   ,[TotalBudget]            
+				   ,[PriorityLevel]            
+				   ,[CompanyDetails]            
+				   ,[BussinessType]        
+				   ,[Heuristicsscore]        
+				   ,[PrimarySkillInvite]      
+				   ,[BillingOwner]    
+				   ,[AssessmentGroupId]
+				   --,[IsQCRequired]
+				   ,[IsJoinabilitySelectabilityRequired]
+				   ,[IsGeneralSkillRequired]
+				   ,[IsAadhaarVerificationRequired]
+				   ,[IsCandidateavailability]
+				   ,[IsMeetingAutoCancelled]
+				   ,[IsMeetingNotificationSend])            
+					   VALUES            
+						   (@IRFId,            
+				   @clientName,            
+				   @JDTiltle,            
+				   @CompanyType,            
+				   @ClientId,            
+				   @JobCountry,            
+				   @StartDate,            
+				   @EndDate,            
+				   @JDLink,            
+				   @NoOfPosition,            
+				   @NoOfIntterview,            
+				   @RisebirdHr,            
+				   @PerMintuteRate,            
+				   @JobLevel,            
+				   @CalendlyLink,            
+				   @CreatedOn,            
+				   @IsBiometricEnabled,            
+				   @TotalBudget,            
+				   @PriorityLevel,            
+				   @CompanyDetails,          
+				   @Type,        
+				   @Heuristicsscore,        
+				   @PrimarySkillInvite,      
+				   @BillingOwner,    
+				   @AssessmentGroupId,
+				   --@IsQCRequired,
+				   @IsJoinabilitySelectabilityRequired,
+				   @IsGeneralSkillRequired,
+				   @IsAadhaarVerificationRequired,
+				   @IsCandidateavailability,
+				   @IsMeetingAutoCancelled,
+				   @IsMeetingNotificationSend)      
+       
+					select @idIrf = SCOPE_IDENTITY()  
+				
+					INSERT INTO [dbo].[TransJoinability](  
+					[IRFId] ,  
+					[LevelId],  
+					[Type],  
+					[Value],  
+					[Weightage])  
+  
+					SELECT @idIrf, jbd.LevelId, jbd.[Type], jbd.[Value], jbd.Weightage FROM @JoinabilityBulkData jbd
+
+					--selectability
+
+					INSERT INTO [dbo].[TransSelectability](  
+					[IRFId] ,  
+					[LevelId],  
+					[Type],  
+					[Value],  
+					[Weightage])  
+  
+					SELECT @idIrf, sbd.LevelId, sbd.[Type], sbd.[Value], sbd.Weightage FROM @SelectabilityBulkData sbd
+
+
+					--general skills
+
+					INSERT INTO [dbo].[TransSkillGeneral](  
+					[IRFId] ,  
+					[LevelId],  
+					[Type],  
+					[Value],  
+					[Weightage])  
+  
+					SELECT @idIrf, sgbd.LevelId, sgbd.[Type], sgbd.[Value], sgbd.Weightage FROM @SkillGeneralBulkData sgbd
+					--tech skills
+
+					INSERT INTO [dbo].[TransTechSkill](    
+					[IRFId] ,    
+					[LevelId],    
+					[SkillId],    
+					[Weightage],[Concepts],[Natureofquestion],[Timelimit])    
+    
+					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd
+					--interviewers
+
+					INSERT INTO [dbo].[TransInterviewer](  
+					[IRFId] ,  
+					[UserId],  
+					[PerSuccessRate], 
+					[IsActive],
+					[IsAvailable],
+					[InterviewerId])  
+    
+					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+
+					--emergency interviewers
+
+					INSERT INTO [dbo].[TransEmergencyInterviewer](  
+					[IRFId] ,  
+					[UserId],  
+					[PerSuccessRate], 
+					[IsActive],
+					[InterviewerId])  
+   
+    			
+					SELECT @idIrf, eibd.UserId, eibd.PerSuccessRate, eibd.IsActive, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId  
+
+					--client users
+
+					INSERT INTO [dbo].[TransClientUser](  
+					[IRFId] ,  
+					[ClientUserId],  
+					[ClientRoleId])  
+   
+					SELECT @idIrf, cubd.ClientUserId, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd 
+					left join ClientUser on cubd.ClientUserId= ClientUser.UserId 
+ 
+					--quality controllers
+				 --	delete from TransQualityController where IRFId=@id        
+
+					--INSERT INTO [dbo].[TransQualityController](  
+					--[IRFId] ,  
+					--[UserId],  
+					--[PerSuccessRate],
+					--[IsActive],
+					--[InterviewerId])  
+     
+					--SELECT qcbd.*, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId  
+ 
+					--HRs
+	
+					INSERT INTO [dbo].[TransHR](  
+					[IRFId] ,  
+					[HRId])  
+   
+					SELECT @idIrf, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId
+
+					if(@SkillChannelSME is not null and @SkillChannelSME != 0)
+					Begin
+						insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
+						values (@idIrf, @SkillChannelSME, Isnull(@CreatedBy, ''), @CreatedOn)
+					End
+
+				End
+			else
+				BEGIN
+				select @idIrf = 0            
+				END
+
+
+		commit tran
+
+	End Try
+	Begin Catch 
+		rollback transaction
+		DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),  
+				@Severity int = ERROR_SEVERITY(),  
+				@State smallint = ERROR_STATE()  
+   
+		RAISERROR (@Message, @Severity, @State)
+	End Catch
+
 End            
   
     

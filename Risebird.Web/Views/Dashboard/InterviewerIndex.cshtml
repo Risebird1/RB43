@@ -17,6 +17,15 @@
     .chardinjs-overlay {
         position: absolute !important;
     }
+
+    .blk-bg {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8) !important;
+        position: fixed;
+        top: 0;
+    }
+
 </style>
 <script>
     var Header = "<a  style='line-height:50px;'><span id='clientdashboard_1'>Dashboard</span></a>";
@@ -317,7 +326,19 @@
         </div>
     </div>
 </div>
-
+<div id="Resumepopup" class="modal modal-bg" style="z-index:1032">
+    <div class="blk-bg"></div>
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <h5 class="modal-title pull-left">Upload Resume</h5>
+            </div>
+            <div class="modal-body" id="divresumepopup">
+            </div>
+        </div>
+        <p>*Please upload your latest resume to process further.</p>
+    </div>
+</div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -371,16 +392,24 @@
         });
     });
 </script>
-<script>
-    $(document).ready(function () {
-        $.ajax({
-            url: '/DashBoard/FetchAlertMessage',
-            type: 'POST',
-            success: function (data) {
-            binddata(data);
-            }
+@if (!Model.IsResumePresent)
+{
+    <script>
+        $(document).ready(function () {
+            uploadresume();
         });
-    });
+    </script>
+}
+<script>
+    //$(document).ready(function () {
+    //    $.ajax({
+    //        url: '/DashBoard/FetchAlertMessage',
+    //        type: 'POST',
+    //        success: function (data) {
+    //            binddata(data);
+    //        }
+    //    });
+    //});
 </script>
 <script>
     function GenerateclientpaiChart(client) {
@@ -433,9 +462,18 @@
     //        html += '<li>'+ data[i]+'</li>';
     //    }
     //    html += '</ul>';
-       
+
     //    $("#divalertmessage").empty().html(html);
     //           }
-
+    function uploadresume() {
+        $.ajax({
+            url: '/Interviewer/InterviewerResumeupdate',
+            success: function (data) {
+                var modal = document.getElementById("Resumepopup");
+                modal.style.display = "block";
+                $('#divresumepopup').html('');
+                $('#divresumepopup').html(data);
+            }
+        });
+    }
 </script>
-        

@@ -55,6 +55,8 @@ where interviewer =@emailID and confirmationStatus = 1 and (ic.MeetingStatus is 
 
 Select Count(*) as QCReportCount from Trans_QCFormReport tq join InterviewMeetings im on tq.Interviewid=im.id 
 where im.interviewer=@emailID
+
+Select ip.ResumeLink from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
 END
 
 
