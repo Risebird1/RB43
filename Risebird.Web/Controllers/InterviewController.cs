@@ -5989,8 +5989,10 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
                     ViewBag.PageFrom = "Completed";
+
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
@@ -6111,6 +6113,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.emailid = emailId;
                     if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
+                        ViewBag.profile = profileName;
                         var model = await _meetingService.FetchQCFormDetailsById(interviewid);
                         if (model == null)
                         {
@@ -6162,6 +6165,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.emailid = emailId;
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
+                        ViewBag.profile = profileName; ViewBag.profile = profileName;
                         model.Emailid = emailId;
                         var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
@@ -6578,6 +6582,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.PageFrom = "Resloved";
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
