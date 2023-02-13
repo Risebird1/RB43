@@ -340,7 +340,51 @@
         </div>
     </div>
 </div>
+<div id="UpdateVideoDetailsModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Video Details </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeUpdateVideoDetailsModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
 
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <input type="hidden" id="txtvideointerviewid" />
+                    <input type="hidden" id="txtVideoCandidateEmaild" />
+                    <div style="padding:10px">
+                        <input type="text" id="txtVideoURL" class="form-control" placeholder="Video URL Link" />
+                    </div>
+                    <div style="padding:10px">
+                        <input type="number" id="txtVideoduration" class="form-control" placeholder="Video Duration(Minutes)" />
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right nopad">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="SaveVideoDetailsById()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                            </div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="closeUpdateVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
 
     $(document).ready(function () {
