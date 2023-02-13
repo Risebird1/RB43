@@ -6,12 +6,17 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using System;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Risebird.MicroService
 {
@@ -36,6 +41,7 @@ namespace Risebird.MicroService
             DateTime ActionDate = new DateTime();
             string ActionDatejoin = string.Empty;
             string ActionDateleft = string.Empty;
+            string plainToken = string.Empty;
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
             await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, requestBody);
             var children = stuff.Children().GetEnumerator();
@@ -54,7 +60,11 @@ namespace Risebird.MicroService
                         while (internalNodes.MoveNext())
                         {
                             var mainFamilies1 = internalNodes.Current;
-                            if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "object")
+                            if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
+                            {
+                                plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
+                            }
+                            else if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "object")
                             {
                                 Meetingid = ((JProperty)mainFamilies1).Value["id"].ToString();
                                 var currentmainDetails = internalNodes.Current;
@@ -124,6 +134,19 @@ namespace Risebird.MicroService
                 {
 
                 }
+            }
+            else if (eventType == "URL_VALIDATION")
+            {
+                var enc = Encoding.Default;
+                HMACSHA256 hmac = new HMACSHA256(enc.GetBytes("GDtej-8ATdm-HOvk2ivLUA"));
+                hmac.Initialize();
+                byte[] buffer = enc.GetBytes(plainToken);
+                var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
+                ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
+                _zoom.plainToken = plainToken;
+                _zoom.encryptedToken = hashForValidate;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _zoom);
+                return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
             }
             return new OkObjectResult("Success");
         }
