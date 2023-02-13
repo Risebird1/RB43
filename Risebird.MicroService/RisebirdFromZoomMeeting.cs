@@ -145,7 +145,7 @@ namespace Risebird.MicroService
                 ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
                 _zoom.plainToken = plainToken;
                 _zoom.encryptedToken = hashForValidate;
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, _zoom);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
                 return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
             }
             return new OkObjectResult("Success");
