@@ -5,6 +5,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using System;
 using System.Data.SqlClient;
 using System.IO;
@@ -15,9 +17,10 @@ namespace Risebird.MicroService
 {
     public class RisebirdFromZoomMeeting
     {
-        public RisebirdFromZoomMeeting()
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        public RisebirdFromZoomMeeting(IApplicationErrorLogger applicationErrorLogger)
         {
-
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         [FunctionName("RisebirdFromZoomMeeting")]
@@ -34,6 +37,7 @@ namespace Risebird.MicroService
             string ActionDatejoin = string.Empty;
             string ActionDateleft = string.Empty;
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, requestBody);
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
