@@ -1,0 +1,72 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
+<style>
+    .paddingclass {
+        padding-bottom: 10px;
+    }
+</style>
+@Html.HiddenFor(m=>m.EmailId)
+<div class="row col-md-12 col-lg-12 paddingclass">
+    <div class="col-md-2 col-lg-2">
+        Interviewer
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @Model.EmailId (@Model.LastLogin)
+    </div>
+</div>
+<div class="row col-md-12 col-lg-12 paddingclass">
+    <div class="col-md-2 col-lg-2">
+        Is Verified
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @Html.DropDownListFor(model => model.isVerified, new[]{   new SelectListItem { Text = "No", Value = "false" },
+        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsVerified()" })
+    </div>
+</div>
+<div class="row col-md-12 col-lg-12 paddingclass">
+    <div class="col-md-2 col-lg-2">
+        Is Approved
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @Html.DropDownListFor(model => model.IsApproved, new[]{   new SelectListItem { Text = "No", Value = "false" },
+        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsApproved()" })
+    </div>
+</div>
+<div class="row col-md-12 col-lg-12 paddingclass">
+    <div class="col-md-2 col-lg-2">
+        Is Active
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @Model.IsActive
+    </div>
+</div>
+<div class="row col-md-12 col-lg-12 paddingclass">
+    <div class="col-md-2 col-lg-2">
+        Is Interest
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @Model.IsInterested
+    </div>
+</div>
+
+<script>
+    function changeIsVerified() {
+        var Emailid = $("#EmailId").val();
+        var isverified = $("#isVerified").val();
+        $.ajax({
+            url: '/Interviewer/InterviewerFlagUpdate',
+            data: { 'Emailid': Emailid, 'Verified': isverified },
+            success: function (data) {
+            }
+        });
+    }
+    function changeIsApproved() {
+        var Emailid = $("#EmailId").val();
+        var isaproved = $("#IsApproved").val();
+        $.ajax({
+            url: '/Interviewer/InterviewerFlagUpdate',
+            data: { 'Emailid': Emailid, 'IsApproved': isaproved },
+            success: function (data) {
+            }
+        });
+    }
+</script>

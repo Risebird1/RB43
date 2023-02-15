@@ -89,11 +89,11 @@
                             @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InviteCodeList", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Send InviteCode</font></span>
                         </button>*@
-                            <span class="interviewer_3">
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Check Interviewer availability using Email" onclick="SendIntervieweravailability()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Interviewer availability</font></span>
-                                </button>
-                            </span>
+                                <span class="interviewer_3">
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Check Interviewer availability using Email" onclick="SendIntervieweravailability()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Interviewer availability</font></span>
+                                    </button>
+                                </span>
                         }
                         <span class="interviewer_3">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -106,9 +106,9 @@
                     <div class="pull-left">
                         @if (ViewBag.profile != "Finance")
                         {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddInterviewerProfile", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
-                            </button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddInterviewerProfile", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
+                                </button>
                         }
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
@@ -157,7 +157,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -174,7 +174,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -210,7 +210,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -228,7 +228,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -246,7 +246,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -264,7 +264,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -282,7 +282,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -300,7 +300,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                                    <option value="@item">@item</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -401,289 +401,292 @@
                                             <tbody id="tblbodyInterviewerProfile">
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.id data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                        <tr id=@item.id data-changes="1">
+                                                            <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
                                                         @if (item.FirstName != null && item.FirstName != "")
                                                         {
-                                                            <td class="cadName intwname">
-                                                                <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
-                                                            </td>
+                                                                    <td class="cadName intwname">
+                                                                        <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
+                                                                    </td>
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
+                                                                    <td></td>
                                                         }
 
                                                         @if (item.LastName != null && item.LastName != "")
                                                         {
                                                             @if (item.LastName.Length > 10)
                                                             {
-                                                                <td class="cadLast">
-                                                                    <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
-                                                                </td>
+                                                                            <td class="cadLast">
+                                                                                <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
+                                                                            </td>
                                                             }
                                                             else
                                                             {
-                                                                <td class="cadLast">
-                                                                    <a onclick=""> @item.LastName </a>
-                                                                </td>
+                                                                            <td class="cadLast">
+                                                                                <a onclick=""> @item.LastName </a>
+                                                                            </td>
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
+                                                                    <td></td>
                                                         }
 
                                                         @if (ViewBag.profile == "Admin" && item.EmailId != null && item.EmailId != "")
                                                         {
-                                                            <td class="cadEmail">
-                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
-                                                            </td>
+                                                                    <td class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
+                                                                    </td>
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
+                                                                    <td></td>
                                                         }
 
                                                         @if (ViewBag.profile == "Admin")
                                                         {
-                                                            <td>@item.MobileNumber</td>
+                                                                    <td>@item.MobileNumber</td>
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
+                                                                    <td></td>
                                                         }
 
 
-                                                        <td class="interview-com">
-                                                            <div id="section">
+                                                            <td class="interview-com">
+                                                                <div id="section">
                                                                 @if (item.AssessmentGroupId != null && item.AssessmentGroupId != "")
                                                                 {
                                                                     @if (item.AssessmentGroupId.Length > 20)
                                                                     {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
+                                                                                    <div class="article">
+                                                                                        <p style="margin-bottom:0px;">
                                                                                 @item.AssessmentGroupId.Substring(0, 20)
-                                                                            </p>
-                                                                            <p class="moretext1_@item.id moretext">
+                                                                                        </p>
+                                                                                        <p class="moretext1_@item.id moretext">
                                                                                 @item.AssessmentGroupId.Substring(20, @item.AssessmentGroupId.Length - 20)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless1(@item.id)" class="moreless-button" value="Readmore" id="read1_@item.id" href="#">Read more</a>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <a onclick="moreless1(@item.id)" class="moreless-button" value="Readmore" id="read1_@item.id" href="#">Read more</a>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <div class="article">
+                                                                                    <div class="article">
 
-                                                                            <p>
+                                                                                        <p>
                                                                                 @item.AssessmentGroupId.Substring(0, @item.AssessmentGroupId.Length)
-                                                                            </p>
-                                                                        </div>
+                                                                                        </p>
+                                                                                    </div>
                                                                     }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <div></div>
+                                                                            <div></div>
                                                                 }
 
 
-                                                            </div>
+                                                                </div>
 
 
 
 
-                                                        </td>
+                                                            </td>
 
 
 
                                                         @if (item.ResumeLink != null && item.ResumeLink != "")
                                                         {
-                                                            <td>
+                                                                    <td>
 
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
-                                                            </td>
+                                                                        <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
+                                                                    </td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No Resume</td>
+                                                                    <td>No Resume</td>
                                                         }
 
 
-                                                        <td><b>@item.NickName</b></td>
+                                                            <td><b>@item.NickName</b></td>
                                                         @if (item.AvailableDetails != "0")
                                                         {
-                                                            <td>Available</td>
+                                                                    <td>Available</td>
                                                         }
                                                         else
                                                         {
-                                                            <td>Not Available</td>
+                                                                    <td>Not Available</td>
                                                         }
                                                         @if (item.IsActive)
                                                         {
-                                                            <td>Active</td>
+                                                                    <td>Active</td>
                                                         }
                                                         else
                                                         {
-                                                            <td>Inactive</td>
+                                                                    <td>Inactive</td>
                                                         }
                                                         @if (item.IsInterested)
                                                         {
-                                                            <td>Interested</td>
+                                                                    <td>Interested</td>
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
+                                                                    <td></td>
                                                         }
-                                                        <td class="text-left action">
-                                                            <span class="interviewer_9">
-                                                                <button class="mdc-fab app-fab--absolute mb-40" aria-label="Recommendation">
-                                                                    <span onclick="location.href = '@Url.Action("InterviewerRecommendation", "Interviewer", new {  id = item.UserId })'" title="Recommendation" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;">
-                                                                            <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-                                                            </span>
+                                                            <td class="text-left action">
+                                                                <span class="interviewer_9">
+                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Recommendation">
+                                                                        <span onclick="location.href = '@Url.Action("InterviewerRecommendation", "Interviewer", new {  id = item.UserId })'" title="Recommendation" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;">
+                                                                                <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </span>
 
 
-                                                            <span class="interviewer_10">
-                                                                <button title="Availability Details" class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openAvailDetailsModel(@item.id)">
+                                                                <span class="interviewer_10">
+                                                                    <button title="Availability Details" class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openAvailDetailsModel(@item.id)">
 
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-                                                                </button>
-                                                            </span>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
+                                                                    </button>
+                                                                </span>
 
-                                                            <span class="interviewer_11">
-                                                                <button title="Bank Details" class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openBankDetailsModel(@item.id)">
+                                                                <span class="interviewer_11">
+                                                                    <button title="Bank Details" class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openBankDetailsModel(@item.id)">
 
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" /></svg>
-                                                                </button>
-                                                            </span>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" /></svg>
+                                                                    </button>
+                                                                </span>
 
                                                             @if (ViewBag.profile != "Finance")
                                                             {
-                                                                <span class="interviewer_12">
-                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
-                                                                        <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                    </button>
-                                                                </span>
+                                                                        <span class="interviewer_12">
+                                                                            <button class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
+                                                                                <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                            </button>
+                                                                        </span>
                                                             }
                                                             else
                                                             {
-                                                                <span class="interviewer_12">
-                                                                    <button disabled class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
-                                                                        <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                    </button>
-                                                                </span>
+                                                                        <span class="interviewer_12">
+                                                                            <button disabled class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
+                                                                                <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                            </button>
+                                                                        </span>
                                                             }
 
-                                                            <span class="interviewer_13">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">
-                                                                    <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                                <span class="interviewer_13">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">
+                                                                        <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                                    </button>
+                                                                </span>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Assessments List">
+                                                                    <span onclick="javascript:getAssessmentsdetails('@item.EmailId');" title="Assessments List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cassette" viewBox="0 0 16 16"><path d="M4 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7 6a1 1 0 0 0 0 2h2a1 1 0 1 0 0-2H7Z" /><path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13ZM1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-.691l-1.362-2.724A.5.5 0 0 0 12 10H4a.5.5 0 0 0-.447.276L2.19 13H1.5a.5.5 0 0 1-.5-.5v-9ZM11.691 11l1 2H3.309l1-2h7.382Z" /></svg></span>
                                                                 </button>
-                                                            </span>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Assessments List">
-                                                                <span onclick="javascript:getAssessmentsdetails('@item.EmailId');" title="Assessments List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cassette" viewBox="0 0 16 16"><path d="M4 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7 6a1 1 0 0 0 0 2h2a1 1 0 1 0 0-2H7Z" /><path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13ZM1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-.691l-1.362-2.724A.5.5 0 0 0 12 10H4a.5.5 0 0 0-.447.276L2.19 13H1.5a.5.5 0 0 1-.5-.5v-9ZM11.691 11l1 2H3.309l1-2h7.382Z" /></svg></span>
-                                                            </button>
-                                                            <br />
+                                                                <br />
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
-                                                                <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClickInterviewer('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+                                                                        <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClickInterviewer('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
 
                                                             }
                                                             @if (ViewBag.profile != "Finance")
                                                             {
-                                                                <span class="interviewer_15">
-                                                                    <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">
-                                                                        <span title="Click here to delete Interviewer Profile" onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                                    </button>
-                                                                </span>
+                                                                        <span class="interviewer_15">
+                                                                            <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">
+                                                                                <span title="Click here to delete Interviewer Profile" onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                                            </button>
+                                                                        </span>
                                                             }
                                                             else
                                                             {
-                                                                <span class="interviewer_15">
-                                                                    <button disabled class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">
-                                                                        <span title="Click here to delete Interviewer Profile" onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                                    </button>
-                                                                </span>
+                                                                        <span class="interviewer_15">
+                                                                            <button disabled class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Interviewer Profile">
+                                                                                <span title="Click here to delete Interviewer Profile" onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                                            </button>
+                                                                        </span>
                                                             }
 
-                                                            <span class="interviewer_16">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
-                                                                    <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
+                                                                <span class="interviewer_16">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
+                                                                        <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
+                                                                    </button>
+                                                                </span>
+                                                                <button class="mdc-fab app-fab--absolute" style="margin:0px 3px;" aria-label="Share Public URL">
+                                                                    <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
                                                                 </button>
-                                                            </span>
-                                                            <button class="mdc-fab app-fab--absolute" style="margin:0px 3px;" aria-label="Share Public URL">
-                                                                <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute " aria-label="Tds Certificates">
-                                                                <span onclick="javascript:OpenTdsCertificates('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /><path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" /></svg></span>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                                                                    <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                </button>
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Tds Certificates">
+                                                                    <span onclick="javascript:OpenTdsCertificates('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /><path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" /></svg></span>
+                                                                </button>
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
+                                                                    <span onclick="javascript:OpenInterviewerFlagDetails('@item.EmailId');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001"/></svg></span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
 
 
-                                                    <tr class="collapse @item.id">
+                                                        <tr class="collapse @item.id">
 
-                                                        <td colspan="999" class="child-section">
-                                                            <table class="table table-striped" cellpadding="0" cellspacing="0">
-                                                                <tr>
-                                                                    <th>Lead Interviewer</th>
-                                                                    <th>Coded Resume </th>
-                                                                    <th>Password</th>
-                                                                    <th>Approved</th>
-                                                                    <th>City</th>
-                                                                    <th>Current Role</th>
-                                                                    <th>Experience</th>
-                                                                    <th>Preffered Domain</th>
-                                                                    <th>GitHub</th>
-                                                                    <th>Linkedin </th>
-                                                                    <th>Stack Overflow</th>
-                                                                    <th>Blog</th>
+                                                            <td colspan="999" class="child-section">
+                                                                <table class="table table-striped" cellpadding="0" cellspacing="0">
+                                                                    <tr>
+                                                                        <th>Lead Interviewer</th>
+                                                                        <th>Coded Resume </th>
+                                                                        <th>Password</th>
+                                                                        <th>Approved</th>
+                                                                        <th>City</th>
+                                                                        <th>Current Role</th>
+                                                                        <th>Experience</th>
+                                                                        <th>Preffered Domain</th>
+                                                                        <th>GitHub</th>
+                                                                        <th>Linkedin </th>
+                                                                        <th>Stack Overflow</th>
+                                                                        <th>Blog</th>
 
-                                                                </tr>
+                                                                    </tr>
 
-                                                                <tr>
+                                                                    <tr>
 
                                                                     @if (item.IsLeadInterviewer)
                                                                     {
-                                                                        <td class="text-center">Yes</td>
+                                                                                <td class="text-center">Yes</td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td class="text-center">No</td>
+                                                                                <td class="text-center">No</td>
                                                                     }
                                                                     @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
                                                                     {
-                                                                        <td>
+                                                                                <td>
 
-                                                                            <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
-                                                                        </td>
+                                                                                    <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
+                                                                                </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td>No Coded Resume</td>
+                                                                                <td>No Coded Resume</td>
                                                                     }
 
-                                                                    <td>
-                                                                        <div style="position:relative">
-                                                                            <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                                        <td>
+                                                                            <div style="position:relative">
+                                                                                <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
                                                                             @if (item.UserPassword != null && item.UserPassword != "")
                                                                             {
-                                                                                <span class="secret" id="secret_@item.id" style="top:0px;">********</span>
-                                                                                <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                                                        <span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                                                        <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>
+                                                                                        <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>
                                                                             }
-                                                                        </div>
+                                                                            </div>
 
 
-                                                                    </td>
+                                                                        </td>
 
 
 
@@ -691,81 +694,81 @@
 
                                                                     @if (item.IsApproved == true)
                                                                     {
-                                                                        <td>Approved</td>
+                                                                                <td>Approved</td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td>Not Approved</td>
+                                                                                <td>Not Approved</td>
                                                                     }
                                                                     @if (item.City != null && item.City != "")
                                                                     {
-                                                                        <td>@item.City</td>
+                                                                                <td>@item.City</td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td></td>
+                                                                                <td></td>
                                                                     }
                                                                     @if (item.CurrentRole != null && item.CurrentRole != "")
                                                                     {
-                                                                        <td>@item.CurrentRole</td>
+                                                                                <td>@item.CurrentRole</td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td></td>
+                                                                                <td></td>
                                                                     }
-                                                                    <td>@item.Experience</td>
-                                                                    <td>@item.PreferredDomain</td>
+                                                                        <td>@item.Experience</td>
+                                                                        <td>@item.PreferredDomain</td>
 
                                                                     @if (item.GitHubLink != null && item.GitHubLink != "")
                                                                     {
-                                                                        <td>
+                                                                                <td>
 
-                                                                            <a id="githubId" target="_blank" title="Github" href=@item.GitHubLink>Github</a>
-                                                                        </td>
+                                                                                    <a id="githubId" target="_blank" title="Github" href=@item.GitHubLink>Github</a>
+                                                                                </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td>No Github</td>
+                                                                                <td>No Github</td>
                                                                     }
                                                                     @if (item.LinkedinLink != null && item.LinkedinLink != "")
                                                                     {
-                                                                        <td>
+                                                                                <td>
 
-                                                                            <a id="linkedInId" target="_blank" title="LinkedIn" href=@item.LinkedinLink>LinkedIn</a>
-                                                                        </td>
+                                                                                    <a id="linkedInId" target="_blank" title="LinkedIn" href=@item.LinkedinLink>LinkedIn</a>
+                                                                                </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td>No LinkedIn</td>
+                                                                                <td>No LinkedIn</td>
                                                                     }
 
                                                                     @if (item.StackOverflowLink != null && item.StackOverflowLink != "")
                                                                     {
-                                                                        <td>
+                                                                                <td>
 
-                                                                            <a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=@item.StackOverflowLink>Stackoverflow</a>
-                                                                        </td>
+                                                                                    <a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=@item.StackOverflowLink>Stackoverflow</a>
+                                                                                </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td>No Stackoverflow</td>
+                                                                                <td>No Stackoverflow</td>
                                                                     }
                                                                     @if (item.Blog != null && item.Blog != "")
                                                                     {
-                                                                        <td>
+                                                                                <td>
 
-                                                                            <a id="blogId" target="_blank" title="Blog" href=@item.Blog>Blog</a>
-                                                                        </td>
+                                                                                    <a id="blogId" target="_blank" title="Blog" href=@item.Blog>Blog</a>
+                                                                                </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td>No Blog</td>
+                                                                                <td>No Blog</td>
                                                                     }
-                                                                </tr>
+                                                                    </tr>
 
-                                                            </table>
-                                                        </td>
-                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
                                                 }
                                             </tbody>
                                         </table>
@@ -970,23 +973,23 @@
 
 @if (ViewBag.Message != null)
 {
-    <script type="text/javascript">
-        $(document).ready(function () {
-            my_code();
-        });
-        function my_code() {
-            var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
-                swal.fire("Successful", '@ViewBag.Message', "success");
-            }
-            else {
-                swal.fire("Failed", '@ViewBag.Message', "error");
+        <script type="text/javascript">
+            $(document).ready(function () {
+                my_code();
+            });
+            function my_code() {
+                var msg = '@ViewBag.Message';
+                if (msg.includes("Success")) {
+                    swal.fire("Successful", '@ViewBag.Message', "success");
+                }
+                else {
+                    swal.fire("Failed", '@ViewBag.Message', "error");
+                }
+
             }
 
-        }
-
-        //window.onload = my_code();
-    </script>
+            //window.onload = my_code();
+        </script>
 }
 
 
@@ -1368,7 +1371,7 @@
 
                 }*@
 
-                                if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+                                    if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
                 html += '<input type="hidden" id="hidmobile' + data[i].userId + '" value="' + data[i].mobileNumber + '"/><input type="hidden" id="hidcandidateEmail_' + data[i].userId + '" value="' + data[i].emailId + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickInterviewerjson(' + data[i].userId + ')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top:-3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span>';
             }
 
@@ -1391,6 +1394,9 @@
             html += ' <button class="mdc-fab app-fab--absolute " aria-label="Tds Certificates">';
             html += ' <span onclick="javascript:OpenTdsCertificatesJson(' + i + ');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /><path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" /></svg></span>';
             html += ' </button>';
+            html += '<button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">';
+            html += '<span onclick="javascript:OpenInterviewerFlagDetailsJson(' + i + ');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001"/></svg></span>';
+            html += '</button>';
             html += '</td>';
             html += '  </tr>';
             html += '   <tr class="collapse ' + data[i].id + '">';
@@ -1590,6 +1596,10 @@
     function OpenTdsCertificatesJson(index) {
         var EmailId = $("#hidpublicemail_" + index).val();
         OpenTdsCertificates(EmailId);
+    }
+    function OpenInterviewerFlagDetailsJson(index) {
+        var EmailId = $("#hidpublicemail_" + index).val();
+        OpenInterviewerFlagDetails(EmailId);
     }
     function getAssessmentsdetailsJson(index) {
         var EmailId = $("#hidpublicemail_" + index).val();
@@ -1798,449 +1808,449 @@
     @if (pfName == "HR")
     {
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        <script type="text/javascript">
-            hopscotch.registerHelper('addOverlay', function () {
-                $('body').append('<div class="overlay"></div>');
-            });
+                <script type="text/javascript">
+                    hopscotch.registerHelper('addOverlay', function () {
+                        $('body').append('<div class="overlay"></div>');
+                    });
 
-            hopscotch.registerHelper('removeOverlay', function () {
-                $('.overlay').fadeOut(function () {
-                    $(this).remove();
-                    $('.helper').remove();
-                });
-            });
-
-            hopscotch.listen('show', function () {
-                var elementObject = $(hopscotch.getCurrTarget(tour));
-                //var element = $('#' + elementObject[0].id);
-                var element = $('.' + elementObject[0].className);
-                element.prev().removeClass('overlay-relative');
-                element.addClass('overlay-relative');
-
-                if ($('.helper').length !== 0) {
-
-                    // Use Helper Layer for hilight target element.
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
-
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
-
-                } else {
-
-                    // Add Helper Layer for highlight target element.
-                    var newHelper = '<div class="helper"></div>';
-                    $('body').append(newHelper);
-
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
-
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
-                }
-
-            });
-
-            var tour = {
-                id: "hello-hopscotch",
-                showCloseButton: false,
-
-                steps: [
-                    {
-                        title: "Interviewer",
-                        content: "View all Interviewer detail here and click on next button to know its features",
-                        target: ".interviewer_1",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        showCTAButton: true,
-                        ctaLabel: 'Skip',
-                        highlight: true,
-                        zindex: 999999,
-                        yOffset: 10,
-                        onCTA: function () {
-                            hopscotch.showStep(2);
-                            $('.interviewer_1').removeClass('overlay-relative');
+                    hopscotch.registerHelper('removeOverlay', function () {
+                        $('.overlay').fadeOut(function () {
+                            $(this).remove();
                             $('.helper').remove();
-                            $('.hopscotch-bubble').remove();
-                            $('.overlay-relative').remove();
-                            $('.overlay').remove();
-                        },
-                        onNext: function () {
-                            $('.interviewer_1').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        });
+                    });
 
+                    hopscotch.listen('show', function () {
+                        var elementObject = $(hopscotch.getCurrTarget(tour));
+                        //var element = $('#' + elementObject[0].id);
+                        var element = $('.' + elementObject[0].className);
+                        element.prev().removeClass('overlay-relative');
+                        element.addClass('overlay-relative');
+
+                        if ($('.helper').length !== 0) {
+
+                            // Use Helper Layer for hilight target element.
+                            var helper = $('.helper');
+                            var padding = 5;
+                            var helperPosX = element.position().left - padding;
+                            var helperPosY = element.position().top - padding;
+                            var targetWidth = element.outerWidth();
+                            var targetHeight = element.outerHeight();
+
+                            console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                            console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                            helper.css('width', targetWidth);
+                            helper.css('height', targetHeight);
+                            helper.offset({ left: helperPosX, top: helperPosY });
+
+                        } else {
+
+                            // Add Helper Layer for highlight target element.
+                            var newHelper = '<div class="helper"></div>';
+                            $('body').append(newHelper);
+
+                            var helper = $('.helper');
+                            var padding = 5;
+                            var helperPosX = element.position().left - padding;
+                            var helperPosY = element.position().top - padding;
+                            var targetWidth = element.outerWidth();
+                            var targetHeight = element.outerHeight();
+
+                            console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                            console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                            helper.css('width', targetWidth);
+                            helper.css('height', targetHeight);
+                            helper.offset({ left: helperPosX, top: helperPosY });
                         }
-                    },
-                    {
-                        title: "Search",
-                        content: "Search the records here based on available details",
-                        target: ".interviewer_2",
-                        showPrevButton: true,
-                        placement: "left",
-                        zindex: 999999,
-                        xOffset: 10,
-                        onPrev: function () {
 
-                            $('.interviewer_2').removeClass('overlay-relative');
-                            $('.helper').remove();
+                    });
+
+                    var tour = {
+                        id: "hello-hopscotch",
+                        showCloseButton: false,
+
+                        steps: [
+                            {
+                                title: "Interviewer",
+                                content: "View all Interviewer detail here and click on next button to know its features",
+                                target: ".interviewer_1",
+                                placement: "bottom",
+                                showPrevButton: true,
+                                showCTAButton: true,
+                                ctaLabel: 'Skip',
+                                highlight: true,
+                                zindex: 999999,
+                                yOffset: 10,
+                                onCTA: function () {
+                                    hopscotch.showStep(2);
+                                    $('.interviewer_1').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                    $('.hopscotch-bubble').remove();
+                                    $('.overlay-relative').remove();
+                                    $('.overlay').remove();
+                                },
+                                onNext: function () {
+                                    $('.interviewer_1').removeClass('overlay-relative');
+                                    $('.helper').remove();
+
+                                }
+                            },
+                            {
+                                title: "Search",
+                                content: "Search the records here based on available details",
+                                target: ".interviewer_2",
+                                showPrevButton: true,
+                                placement: "left",
+                                zindex: 999999,
+                                xOffset: 10,
+                                onPrev: function () {
+
+                                    $('.interviewer_2').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onNext: function () {
+
+                                    $('.interviewer_2').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+
+                            },
+
+                            {
+                                title: "Filter",
+                                content: "Filter here based on available attributes or reset filter if applied earlier",
+                                target: ".interviewer_3",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 0,
+                                xOffset: 10,
+                                onNext: function () {
+                                    $('.interviewer_3').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_3').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+                            {
+                                title: "Email id",
+                                content: "Showing Email id here ",
+                                target: ".interviewer_4",
+                                placement: "bottom",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 0,
+                                xOffset: 10,
+                                onNext: function () {
+                                    $('.interviewer_4').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_4').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+
+                            {
+                                title: "Primary Skill",
+                                content: "Showing Primary Skill here",
+                                target: ".interviewer_5",
+                                placement: "bottom",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 0,
+                                xOffset: 10,
+                                onNext: function () {
+                                    $('.interviewer_5').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_5').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+                            {
+                                title: "Assessment Group",
+                                content: "Showing Assessment Group here",
+                                target: ".interviewer_6",
+                                placement: "bottom",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 0,
+                                xOffset: -15,
+                                onNext: function () {
+                                    $('.interviewer_6').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_6').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+                            {
+                                title: "Resume Link",
+                                content: "Showing Resume Link here",
+                                target: ".interviewer_7",
+                                placement: "bottom",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 0,
+                                xOffset: -15,
+                                onNext: function () {
+                                    $('.interviewer_7').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_7').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+                            {
+                                title: "Coded Name",
+                                content: "Showing Coded Name here",
+                                target: ".interviewer_8",
+                                placement: "bottom",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 0,
+                                xOffset: -15,
+                                onNext: function () {
+                                    $('.interviewer_8').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_8').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+                            {
+                                title: "Recommendation",
+                                content: "Click here to view Recommendation details",
+                                target: ".interviewer_9",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_9').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_9').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+                            {
+                                title: "Availability Details",
+                                content: "Click here to view Availability Details",
+                                target: ".interviewer_10",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_10').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_10').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+                            {
+                                title: "Bank Details",
+                                content: "Click here to view Bank Details",
+                                target: ".interviewer_11",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_11').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_11').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+
+                            {
+                                title: "Edit",
+                                content: "Click here to edit Interviewer Profile",
+                                target: ".interviewer_12",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_12').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_12').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+                            {
+                                title: "Interviewer Employer Detail",
+                                content: "Click here to add Interviewer Employer Detail",
+                                target: ".interviewer_13",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_13').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_13').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+                            {
+                                title: "Call Candidate",
+                                content: "Click here to Call Candidate",
+                                target: ".interviewer_14",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_14').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_14').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+
+                            {
+                                title: "Delete Interviewer",
+                                content: "Click here to delete Interviewer Profile",
+                                target: ".interviewer_15",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_15').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_15').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+                            {
+                                title: "Assessment",
+                                content: "Click here to view Assessment",
+                                target: ".interviewer_16",
+                                placement: "left",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: -20,
+                                xOffset: 0,
+                                onNext: function () {
+                                    $('.interviewer_16').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('.interviewer_16').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+                            {
+                                title: "Interviewer Menu",
+                                content: "Click on Interview menu to see its features",
+                                target: "#interviewer_menu",
+                                placement: "top",
+                                showPrevButton: true,
+                                zindex: 999999,
+                                yOffset: 10,
+                                xOffset: -10,
+                                onNext: function () {
+                                    $('#interviewer_menu').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                },
+                                onPrev: function () {
+                                    $('#interviewer_menu').removeClass('overlay-relative');
+                                    $('.helper').remove();
+                                }
+                            },
+
+
+
+                        ],
+                        onStart: ["addOverlay"],
+                        onEnd: ["removeOverlay"],
+                    };
+                    //if (hopscotch.getState() === "hello-hopscotch:1") {
+                    //    hopscotch.startTour(tour);
+                    //}
+                    hopscotch.startTour(tour);
+                    function setCookie(key, value) {
+                        var expires = new Date();
+                        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+                        document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
+                    };
+
+                    function getCookie(key) {
+                        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+                        return keyValue ? keyValue[2] : null;
+                    };
+
+                    var tour = {
+                        onEnd: function () {
+                            setCookie("toured", "toured");
                         },
-                        onNext: function () {
-
-                            $('.interviewer_2').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-
-                    },
-
-                    {
-                        title: "Filter",
-                        content: "Filter here based on available attributes or reset filter if applied earlier",
-                        target: ".interviewer_3",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('.interviewer_3').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_3').removeClass('overlay-relative');
-                            $('.helper').remove();
+                        onClose: function () {
+                            setCookie("toured", "toured");
                         }
-                    },
+                    };
 
-
-                    {
-                        title: "Email id",
-                        content: "Showing Email id here ",
-                        target: ".interviewer_4",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('.interviewer_4').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_4').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-
-                    {
-                        title: "Primary Skill",
-                        content: "Showing Primary Skill here",
-                        target: ".interviewer_5",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: 10,
-                        onNext: function () {
-                            $('.interviewer_5').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_5').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Assessment Group",
-                        content: "Showing Assessment Group here",
-                        target: ".interviewer_6",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('.interviewer_6').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_6').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-                    {
-                        title: "Resume Link",
-                        content: "Showing Resume Link here",
-                        target: ".interviewer_7",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('.interviewer_7').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_7').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-                    {
-                        title: "Coded Name",
-                        content: "Showing Coded Name here",
-                        target: ".interviewer_8",
-                        placement: "bottom",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 0,
-                        xOffset: -15,
-                        onNext: function () {
-                            $('.interviewer_8').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_8').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Recommendation",
-                        content: "Click here to view Recommendation details",
-                        target: ".interviewer_9",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_9').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_9').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-                    {
-                        title: "Availability Details",
-                        content: "Click here to view Availability Details",
-                        target: ".interviewer_10",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_10').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_10').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Bank Details",
-                        content: "Click here to view Bank Details",
-                        target: ".interviewer_11",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_11').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_11').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-
-                    {
-                        title: "Edit",
-                        content: "Click here to edit Interviewer Profile",
-                        target: ".interviewer_12",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_12').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_12').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Interviewer Employer Detail",
-                        content: "Click here to add Interviewer Employer Detail",
-                        target: ".interviewer_13",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_13').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_13').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-                    {
-                        title: "Call Candidate",
-                        content: "Click here to Call Candidate",
-                        target: ".interviewer_14",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_14').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_14').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-
-                    {
-                        title: "Delete Interviewer",
-                        content: "Click here to delete Interviewer Profile",
-                        target: ".interviewer_15",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_15').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_15').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-                    {
-                        title: "Assessment",
-                        content: "Click here to view Assessment",
-                        target: ".interviewer_16",
-                        placement: "left",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: -20,
-                        xOffset: 0,
-                        onNext: function () {
-                            $('.interviewer_16').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('.interviewer_16').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-                    {
-                        title: "Interviewer Menu",
-                        content: "Click on Interview menu to see its features",
-                        target: "#interviewer_menu",
-                        placement: "top",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 10,
-                        xOffset: -10,
-                        onNext: function () {
-                            $('#interviewer_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#interviewer_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-
-
-
-                ],
-                onStart: ["addOverlay"],
-                onEnd: ["removeOverlay"],
-            };
-            //if (hopscotch.getState() === "hello-hopscotch:1") {
-            //    hopscotch.startTour(tour);
-            //}
-            hopscotch.startTour(tour);
-            function setCookie(key, value) {
-                var expires = new Date();
-                expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-                document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
-            };
-
-            function getCookie(key) {
-                var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-                return keyValue ? keyValue[2] : null;
-            };
-
-            var tour = {
-                onEnd: function () {
-                    setCookie("toured", "toured");
-                },
-                onClose: function () {
-                    setCookie("toured", "toured");
-                }
-            };
-
-            // Initialize tour if it's the user's first time
-            if (!getCookie("toured")) {
-                hopscotch.startTour(tour);
-            }
-        </script>
+                    // Initialize tour if it's the user's first time
+                    if (!getCookie("toured")) {
+                        hopscotch.startTour(tour);
+                    }
+                </script>
 
 
     }
@@ -2262,6 +2272,22 @@
             }
         });
     }
+    function closeinterviewerFlagDetailsModal() {
+        var modal = document.getElementById("interviewerFlagDetailsModal");
+        modal.style.display = "none";
+    }
+    function OpenInterviewerFlagDetails(Emailid) {
+        $.ajax({
+            url: '/Interviewer/FetchInterviewerFlagDetails',
+            data: { 'InterviewerEmailid': Emailid },
+            success: function (data) {
+                var modal = document.getElementById("interviewerFlagDetailsModal");
+                modal.style.display = "block";
+                $('#FlagDetailsTablebody').html('');
+                $('#FlagDetailsTablebody').html(data);
+            }
+        });
+    }
 </script>
 <div id="interviewerAssessmentModal" class="modal modal-bg">
     <!-- Modal content -->
@@ -2277,6 +2303,24 @@
                 <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" id="memberTableBody" style="overflow:auto;max-height:30vw">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="interviewerFlagDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+            </div>
+            <button onclick="closeinterviewerFlagDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="FlagDetailsTablebody" style="overflow:auto;max-height:30vw">
             </div>
         </div>
     </div>
