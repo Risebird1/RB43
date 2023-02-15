@@ -2730,7 +2730,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
 
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
@@ -2774,7 +2774,7 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
                     }
-                    
+
                     con.Open();
 
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
@@ -2797,7 +2797,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async  Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string feedbackAudioLink)
+        public async Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string feedbackAudioLink)
         {
             try
             {
@@ -2812,7 +2812,7 @@ namespace Risebird.Repository
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -2882,10 +2882,10 @@ namespace Risebird.Repository
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@emailID", loggedInUser);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result  = await SqlMapper.QuerySingleAsync<bool>(con, "usp_CheckIfSME", dynamicParameters,
+                    var result = await SqlMapper.QuerySingleAsync<bool>(con, "usp_CheckIfSME", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -2921,6 +2921,46 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public async Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", intervieweremailid);
+                    var results = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_FetchInterviewersFlags", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@Verified", Verified);
+                    parameters.Add("@IsApproved", IsApproved);
+                    var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerFlags", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

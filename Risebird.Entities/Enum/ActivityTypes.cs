@@ -40,5 +40,7 @@ namespace Risebird.Entities.Enum
         [Description("QC Done")]
         QCDone = 12,
 
+        [Description("Update Interviewer")]
+        UpdateInterviewer = 13,
     }
 }

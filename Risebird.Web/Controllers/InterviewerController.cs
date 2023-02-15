@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -434,6 +436,7 @@ namespace Risebird.Web.Controllers
                             interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
                         }
                         string assessmentGroupList;
+                        interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
                         {
                             TempData["MessageInterviewer"] = "Interviewer Profile has been added Successfully!";
@@ -557,6 +560,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         string assessmentGroupList;
+                        interviewerProfile.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         if (_interviewerService.EditInterviewerProfile(interviewerProfile, emailId, out assessmentGroupList))
                         {
                             TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
@@ -3530,6 +3534,24 @@ namespace Risebird.Web.Controllers
                 }
             }
             return PartialView(model);
+        }
+        public async Task<IActionResult> FetchInterviewerFlagDetails(string InterviewerEmailid)
+        {
+            try
+            {
+                var result = await _interviewerService.GetInterviewerFlagDetails(InterviewerEmailid);
+                return PartialView(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<JsonResult> InterviewerFlagUpdate(string Emailid, bool? Verified, bool? IsApproved)
+        {
+            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, Verified, IsApproved);
+            return Json("success");
         }
     }
 }

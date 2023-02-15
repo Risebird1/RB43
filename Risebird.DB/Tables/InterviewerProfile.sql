@@ -31,6 +31,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[CreatedBy] [varchar](100) NULL,
 	[ModifiedBy] [varchar](100) NULL,
 	[IsInterest] [bit] NULL,
+	[isVerified] [bit] NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -287,6 +288,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add IsInterest bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'isVerified')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add isVerified bit
 END
 
 

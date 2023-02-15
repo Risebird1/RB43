@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
@@ -22,10 +23,12 @@ namespace Risebird.MicroService
 {
     public class RisebirdFromZoomMeeting
     {
+        private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public RisebirdFromZoomMeeting(IApplicationErrorLogger applicationErrorLogger)
+        public RisebirdFromZoomMeeting(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
             _applicationErrorLogger = applicationErrorLogger;
+            _configuration = configuration;
         }
 
         [FunctionName("RisebirdFromZoomMeeting")]
@@ -43,7 +46,6 @@ namespace Risebird.MicroService
             string ActionDateleft = string.Empty;
             string plainToken = string.Empty;
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
-            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, requestBody);
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -137,15 +139,15 @@ namespace Risebird.MicroService
             }
             else if (eventType == "URL_VALIDATION")
             {
+                var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
                 var enc = Encoding.Default;
-                HMACSHA256 hmac = new HMACSHA256(enc.GetBytes("GDtej-8ATdm-HOvk2ivLUA"));
+                HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
                 hmac.Initialize();
                 byte[] buffer = enc.GetBytes(plainToken);
                 var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
                 ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
                 _zoom.plainToken = plainToken;
                 _zoom.encryptedToken = hashForValidate;
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
                 return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
             }
             return new OkObjectResult("Success");
