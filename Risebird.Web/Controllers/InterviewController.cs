@@ -2959,7 +2959,7 @@ namespace Risebird.Web.Controllers
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin"  || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         isAdminHR = true;
                     }
