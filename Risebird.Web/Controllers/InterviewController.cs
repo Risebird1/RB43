@@ -3075,7 +3075,7 @@ namespace Risebird.Web.Controllers
 
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         if (model.AudioFile != null)
                         {
@@ -3210,7 +3210,7 @@ namespace Risebird.Web.Controllers
                                 await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
-                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                             {
                                 return RedirectToAction("Index");
                             }
