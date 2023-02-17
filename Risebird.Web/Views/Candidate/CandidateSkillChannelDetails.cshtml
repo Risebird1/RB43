@@ -1,0 +1,127 @@
+﻿@model Risebird.Entities.ViewModel.CandidateIRFDetailsVM
+@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Http;
+@using Risebird.Entities.Enum
+@using Microsoft.Extensions.Configuration;
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IConfiguration configuration
+
+@{
+    ViewData["Title"] = "Skill Channel Details";
+    ViewBag.PageHeader = "";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
+<input type="text" hidden id="hidtxtIRFid" value=@Model.CandidateDetails.IRFId />
+<input type="text" hidden id="txtMailstatus" value="@ViewBag.PageType" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
+    <div id="PublicShareMail" class="modal modal-bg">
+        @if (ViewBag.PageType == "Public")
+        {
+            <div class="blk-bg"></div>
+        }
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                    </div>
+                    <h5 class="modal-title pull-left">Your Email Id</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                        <div class="text-areadiv">
+                            <input type="text" id="txtcandidateEmailid" class="form-control" />
+                        </div>
+                        <div class="mt-10 text-right">
+
+                            <input type="button" onclick="SubmitEmail()" id="btnSubmit" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="height:20%">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4" height="50%">
+                    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("LogoSet")))
+                    {
+                        <img class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+                    }
+                    else
+                    {
+                        <img class="img-responsive" src="@HttpContextAccessor.HttpContext.Session.GetString("LogoSet")" />
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <h3>Candidate Details</h3>
+                    <p>Prashant Singh</p>
+                    <p>Prashanth_k@risebird.io</p>
+                </div>
+                <hr />
+                <div class="col-md-12 col-lg-12">
+                    <h3>Know Your Employer</h3>
+                    <p>Risebird</p>
+                    <p><a href="https://risebird.io" target="_blank">risebird.io</a></p>
+                </div>
+                <hr />
+                <div class="col-md-12 col-lg-12">
+                    <h3>Interviews details</h3>
+                    <p>Upcoming Interview with action buttons</p>
+                    <p>Previously Interviews</p>
+                </div>
+                <hr />
+                <div class="col-md-12 col-lg-12">
+                    <h3>Do'es/Don't</h3>
+                    <ul>
+                        <li>Any thing</li>
+                        <li>statements</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($("#txtMailstatus").val() == "Public") {
+            var modal = document.getElementById("PublicShareMail");
+            modal.style.display = "block";
+        }
+    });
+    function SubmitEmail() {
+        if ($("#txtcandidateEmailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtcandidateEmailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/CandidatePublicdetails",
+                data: { id: $("#hidtxtid").val(), Emailid: $("#txtcandidateEmailid").val().trim(), irfId: $("#hidtxtIRFid").val() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Candidate/VerifiedSkillChannelDetails?emailid=" + $("#txtcandidateEmailid").val() + "&id=" + $("#hidtxtid").val() + "&IRFid=" + $("#hidtxtIRFid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    }
+</script>

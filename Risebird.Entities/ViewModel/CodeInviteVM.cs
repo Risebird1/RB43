@@ -50,6 +50,7 @@ namespace Risebird.Entities.ViewModel
         public string inviteId { get; set; }
         public SelectList ProgrammingLanguageList { get; set; }
         public string botURL { get; set; }
+        public int score { get; set; }
     }
     public class CodeInviteURLRequest
     {

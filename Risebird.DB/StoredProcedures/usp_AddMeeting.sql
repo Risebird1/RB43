@@ -45,7 +45,7 @@ declare @InterviewId int;
 declare  @irfIntId int  
      
    set @irfIntId =(select id from IRF where IRFId=@IRFId)  
-  
+   set @candidateEmail = trim(@candidateEmail)
   
 IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate)  
   

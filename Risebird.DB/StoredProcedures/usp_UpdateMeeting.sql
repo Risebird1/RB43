@@ -42,7 +42,7 @@ Begin
 	   @irfIntId int, @oldConfirmationStatus varchar(100)
    
    set @irfIntId =(select id from IRF where IRFId=@IRFId)
-
+   set @candidateEmail = trim(@candidateEmail)
 	
 
 	IF EXISTS (SELECT 1   FROM   InterviewMeetings  WHERE  id=@interviewId)
