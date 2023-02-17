@@ -439,5 +439,62 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<CandidateIRFDetailsVM> GetIRFDetailsForCandidate(string emailId, int irfId)
+        {
+            try
+            {
+                return await _candidateRepository.GetIRFDetailsForCandidate(emailId, irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<int> GetuniqueCandidateByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _candidateRepository.GetuniqueCandidateByEmailId(emailId, id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
+        public async Task<string> GetCandidateUniqueId(string emailId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateUniqueId(emailId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<Candidate> GetCandidateIRFMailDetails(string emailId, int irfId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateIRFMailDetails(emailId, irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        
+
     }
 }

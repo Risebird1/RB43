@@ -43,7 +43,8 @@ begin try
  declare @WhatsApp varchar(15)     
     
  Set @WhatsApp= Replace(@textreminder,' ','')      
- Set @WhatsApp= Replace(@WhatsApp,'+91','')      
+ Set @WhatsApp= Replace(@WhatsApp,'+91','')     
+ set @candidateEmail = trim(@candidateEmail)
     
  if(LEN(@WhatsApp)!=10)      
  begin      
