@@ -17,7 +17,7 @@
     var currentMeetingStatus = Model.MeetingStatus.HasValue ? Model.MeetingStatus.Value : 0;
     var currentInterviewStatus = Model.InterviewStatus.HasValue ? Model.InterviewStatus.Value : 0;
 
-    if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
+    if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Quality Controller")
     {
         if(currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
         {
@@ -28,14 +28,6 @@
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
         }
 
-        //if(currentInterviewStatus != (int)InterviewStatus.BorderLine)
-        //{
-        //    interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().Where(x=>x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
-        //}
-        //else
-        //{
-        //    interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
-        //}
         interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
     }
     else if(ViewBag.profile == "Interviewer")
