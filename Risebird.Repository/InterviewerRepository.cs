@@ -2941,7 +2941,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive)
         {
             try
             {
@@ -2949,8 +2949,9 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Emailid", Emailid);
-                    parameters.Add("@Verified", Verified);
+                    parameters.Add("@LeadInterviewer", LeadInterviewer);
                     parameters.Add("@IsApproved", IsApproved);
+                    parameters.Add("@IsActive", IsActive);
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerFlags", parameters,
                            commandType: CommandType.StoredProcedure);
                     return true;

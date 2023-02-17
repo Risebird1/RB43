@@ -12,7 +12,7 @@ Create Procedure usp_FetchInterviewersFlags
 @Emailid varchar(150)
 As
 BEGIN
-Select ul.Emailid,ip.isApproved,ul.Isactive,ip.IsInterest as IsInterested,ul.LastLogin,ip.isVerified from 
+Select ul.Emailid,ip.isApproved,ul.Isactive,ip.IsInterest as IsInterested,ul.LastLogin,ip.IsLeadInterviewer,ip.CreatedBy from 
 InterviewerProfile ip join Userlist ul on ul.id=ip.Userid 
 where ul.Emailid=@Emailid
 END

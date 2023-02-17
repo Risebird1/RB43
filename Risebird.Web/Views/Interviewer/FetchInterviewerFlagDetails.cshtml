@@ -10,21 +10,29 @@
         Interviewer
     </div>
     <div class="col-md-6 col-lg-6">
-        @Model.EmailId (@Model.LastLogin)
+        @Model.EmailId
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
     <div class="col-md-2 col-lg-2">
-        Is Verified
+        Last Login
     </div>
     <div class="col-md-6 col-lg-6">
-        @Html.DropDownListFor(model => model.isVerified, new[]{   new SelectListItem { Text = "No", Value = "false" },
-        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsVerified()" })
+        @Model.LastLogin (@Model.CreatedBy)
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
     <div class="col-md-2 col-lg-2">
-        Is Approved
+        Lead Interviewer
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]{   new SelectListItem { Text = "No", Value = "false" },
+        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsLeadInterviewer()" })
+    </div>
+</div>
+<div class="row col-md-12 col-lg-12 paddingclass">
+    <div class="col-md-2 col-lg-2">
+        Approved
     </div>
     <div class="col-md-6 col-lg-6">
         @Html.DropDownListFor(model => model.IsApproved, new[]{   new SelectListItem { Text = "No", Value = "false" },
@@ -33,15 +41,16 @@
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
     <div class="col-md-2 col-lg-2">
-        Is Active
+        Active
     </div>
     <div class="col-md-6 col-lg-6">
-        @Model.IsActive
+        @Html.DropDownListFor(model => model.IsActive, new[]{   new SelectListItem { Text = "No", Value = "false" },
+        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsActive()" })
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
     <div class="col-md-2 col-lg-2">
-        Is Interest
+        Interested
     </div>
     <div class="col-md-6 col-lg-6">
         @Model.IsInterested
@@ -49,12 +58,12 @@
 </div>
 
 <script>
-    function changeIsVerified() {
+    function changeIsLeadInterviewer() {
         var Emailid = $("#EmailId").val();
-        var isverified = $("#isVerified").val();
+        var isLeadInterviewer = $("#IsLeadInterviewer").val();
         $.ajax({
             url: '/Interviewer/InterviewerFlagUpdate',
-            data: { 'Emailid': Emailid, 'Verified': isverified },
+            data: { 'Emailid': Emailid, 'LeadInterviewer': isLeadInterviewer },
             success: function (data) {
             }
         });
@@ -65,6 +74,16 @@
         $.ajax({
             url: '/Interviewer/InterviewerFlagUpdate',
             data: { 'Emailid': Emailid, 'IsApproved': isaproved },
+            success: function (data) {
+            }
+        });
+    }
+    function changeIsActive(){
+        var Emailid = $("#EmailId").val();
+        var isActive = $("#IsActive").val();
+        $.ajax({
+            url: '/Interviewer/InterviewerFlagUpdate',
+            data: { 'Emailid': Emailid, 'IsActive': isActive },
             success: function (data) {
             }
         });
