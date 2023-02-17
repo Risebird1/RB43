@@ -299,5 +299,4 @@ BEGIN
     Add isVerified bit
 END
 
-
 End

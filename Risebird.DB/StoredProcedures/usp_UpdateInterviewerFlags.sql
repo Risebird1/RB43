@@ -10,14 +10,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create procedure usp_UpdateInterviewerFlags
 @Emailid varchar(150),
-@Verified bit=null,
-@IsApproved bit=null
+@LeadInterviewer bit=null,
+@IsApproved bit=null,
+@IsActive bit=null
 As
 BEGIN
 Update ip set
-ip.isVerified=Isnull(@Verified,ip.isVerified),
+ip.IsLeadInterviewer=Isnull(@LeadInterviewer,ip.IsLeadInterviewer),
 ip.IsApproved=isnull(@IsApproved,ip.IsApproved)
 from InterviewerProfile ip join UserList ul on ip.Userid=ul.id
 where ul.EmailId=@Emailid
+Update UserList set IsActive=IsNull(@IsActive,IsActive) where EmailId=@Emailid
 END
 GO

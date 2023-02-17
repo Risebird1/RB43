@@ -3548,9 +3548,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<JsonResult> InterviewerFlagUpdate(string Emailid, bool? Verified, bool? IsApproved)
+        public async Task<JsonResult> InterviewerFlagUpdate(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive)
         {
-            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, Verified, IsApproved);
+            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsActive);
             return Json("success");
         }
     }

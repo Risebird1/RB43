@@ -1360,11 +1360,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive)
         {
             try
             {
-                return await _interviewerRepository.UpdateInterviewerFlag(Emailid, Verified, IsApproved);
+                return await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsActive);
             }
             catch (SqlTypeException ex)
             {

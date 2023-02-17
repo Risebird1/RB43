@@ -8,10 +8,10 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_UpdateIRFRedFlags
-@timeNow datetime
-As
-BEGIN
-Update IRF set flagcount=dbo.fn_FalgCountForIrfStats(id,Getdate())
-END
+Create Procedure usp_UpdateIRFRedFlags  
+@timeNow datetime  
+As  
+BEGIN  
+Update IRF set flagcount=dbo.fn_FalgCountForIrfStats(id,DateAdd(minute,330,Getdate()))  
+END  
 GO

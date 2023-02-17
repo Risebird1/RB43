@@ -19,7 +19,7 @@ namespace Risebird.MicroService
             _irfService = irfService;
         }
         [FunctionName("UpdateIRFRedFlagsCounts")]
-        public async Task Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 2 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             await _irfService.UpdateIRFRedFlags();

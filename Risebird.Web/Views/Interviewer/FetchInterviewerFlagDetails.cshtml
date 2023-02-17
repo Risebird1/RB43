@@ -6,25 +6,43 @@
 </style>
 @Html.HiddenFor(m=>m.EmailId)
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-3 col-lg-3">
         Interviewer
     </div>
     <div class="col-md-6 col-lg-6">
-        @Model.EmailId (@Model.LastLogin)
+        @Model.EmailId
     </div>
 </div>
+@if (Model.LastLogin != null)
+{
+    <div class="row col-md-12 col-lg-12 paddingclass">
+        <div class="col-md-3 col-lg-3">
+            Last Login
+        </div>
+        <div class="col-md-6 col-lg-6">
+            @if (string.IsNullOrEmpty(Model.CreatedBy))
+            {
+                @Model.LastLogin
+            }
+            else
+            {
+                @Model.LastLogin   @Model.CreatedBy
+            }
+        </div>
+    </div>
+}
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
-        Is Verified
+    <div class="col-md-3 col-lg-3">
+        Lead Interviewer
     </div>
     <div class="col-md-6 col-lg-6">
-        @Html.DropDownListFor(model => model.isVerified, new[]{   new SelectListItem { Text = "No", Value = "false" },
-        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsVerified()" })
+        @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]{   new SelectListItem { Text = "No", Value = "false" },
+        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsLeadInterviewer()" })
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
-        Is Approved
+    <div class="col-md-3 col-lg-3">
+        Approved
     </div>
     <div class="col-md-6 col-lg-6">
         @Html.DropDownListFor(model => model.IsApproved, new[]{   new SelectListItem { Text = "No", Value = "false" },
@@ -32,16 +50,17 @@
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
-        Is Active
+    <div class="col-md-3 col-lg-3">
+        Active
     </div>
     <div class="col-md-6 col-lg-6">
-        @Model.IsActive
+        @Html.DropDownListFor(model => model.IsActive, new[]{   new SelectListItem { Text = "No", Value = "false" },
+        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsActive()" })
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
-        Is Interest
+    <div class="col-md-3 col-lg-3">
+        Interested
     </div>
     <div class="col-md-6 col-lg-6">
         @Model.IsInterested
@@ -49,13 +68,14 @@
 </div>
 
 <script>
-    function changeIsVerified() {
+    function changeIsLeadInterviewer() {
         var Emailid = $("#EmailId").val();
-        var isverified = $("#isVerified").val();
+        var isLeadInterviewer = $("#IsLeadInterviewer").val();
         $.ajax({
             url: '/Interviewer/InterviewerFlagUpdate',
-            data: { 'Emailid': Emailid, 'Verified': isverified },
+            data: { 'Emailid': Emailid, 'LeadInterviewer': isLeadInterviewer },
             success: function (data) {
+                swal.fire("Lead Interviewer status updated successfully.");
             }
         });
     }
@@ -66,6 +86,18 @@
             url: '/Interviewer/InterviewerFlagUpdate',
             data: { 'Emailid': Emailid, 'IsApproved': isaproved },
             success: function (data) {
+                swal.fire("Approved status updated successfully.");
+            }
+        });
+    }
+    function changeIsActive() {
+        var Emailid = $("#EmailId").val();
+        var isActive = $("#IsActive").val();
+        $.ajax({
+            url: '/Interviewer/InterviewerFlagUpdate',
+            data: { 'Emailid': Emailid, 'IsActive': isActive },
+            success: function (data) {
+                swal.fire("Interviewer active status updated successfully.");
             }
         });
     }

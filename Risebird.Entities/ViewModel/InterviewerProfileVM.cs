@@ -218,5 +218,6 @@ namespace Risebird.Entities.ViewModel
         public string ResourceUrl { get; set; }
         public bool isVerified { get; set; }
         public DateTime? LastLogin { get; set; }
+        public string CreatedBy { get; set; }
     }
 }
