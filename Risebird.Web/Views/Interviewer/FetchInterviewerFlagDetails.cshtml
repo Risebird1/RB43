@@ -6,23 +6,33 @@
 </style>
 @Html.HiddenFor(m=>m.EmailId)
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-3 col-lg-3">
         Interviewer
     </div>
     <div class="col-md-6 col-lg-6">
         @Model.EmailId
     </div>
 </div>
-<div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
-        Last Login
+@if (Model.LastLogin != null)
+{
+    <div class="row col-md-12 col-lg-12 paddingclass">
+        <div class="col-md-3 col-lg-3">
+            Last Login
+        </div>
+        <div class="col-md-6 col-lg-6">
+            @if (string.IsNullOrEmpty(Model.CreatedBy))
+            {
+                @Model.LastLogin
+            }
+            else
+            {
+                @Model.LastLogin   @Model.CreatedBy
+            }
+        </div>
     </div>
-    <div class="col-md-6 col-lg-6">
-        @Model.LastLogin (@Model.CreatedBy)
-    </div>
-</div>
+}
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-3 col-lg-3">
         Lead Interviewer
     </div>
     <div class="col-md-6 col-lg-6">
@@ -31,7 +41,7 @@
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-3 col-lg-3">
         Approved
     </div>
     <div class="col-md-6 col-lg-6">
@@ -40,7 +50,7 @@
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-3 col-lg-3">
         Active
     </div>
     <div class="col-md-6 col-lg-6">
@@ -49,7 +59,7 @@
     </div>
 </div>
 <div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-2 col-lg-2">
+    <div class="col-md-3 col-lg-3">
         Interested
     </div>
     <div class="col-md-6 col-lg-6">
@@ -65,6 +75,7 @@
             url: '/Interviewer/InterviewerFlagUpdate',
             data: { 'Emailid': Emailid, 'LeadInterviewer': isLeadInterviewer },
             success: function (data) {
+                swal.fire("Lead Interviewer status updated successfully.");
             }
         });
     }
@@ -75,16 +86,18 @@
             url: '/Interviewer/InterviewerFlagUpdate',
             data: { 'Emailid': Emailid, 'IsApproved': isaproved },
             success: function (data) {
+                swal.fire("Approved status updated successfully.");
             }
         });
     }
-    function changeIsActive(){
+    function changeIsActive() {
         var Emailid = $("#EmailId").val();
         var isActive = $("#IsActive").val();
         $.ajax({
             url: '/Interviewer/InterviewerFlagUpdate',
             data: { 'Emailid': Emailid, 'IsActive': isActive },
             success: function (data) {
+                swal.fire("Interviewer active status updated successfully.");
             }
         });
     }
