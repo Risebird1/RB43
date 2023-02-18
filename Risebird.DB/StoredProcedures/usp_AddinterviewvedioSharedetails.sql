@@ -15,7 +15,9 @@ CREATE Procedure [dbo].[usp_AddinterviewvedioSharedetails]
 @EmailAddress varchar(100)
 AS      
 Begin      
-Declare @emailUser varchar(100)  
+Declare @emailUser varchar(100) 
+set @Email = trim(@Email)
+
 SELECT @emailUser= value FROM STRING_SPLIT(@Email,'@') ORDER BY (SELECT NULL)  
 OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY  
 declare @profileid int  

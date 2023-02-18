@@ -4428,5 +4428,100 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        /// <summary>
+        /// get skill channel based public url for candidate
+        /// </summary>
+        /// <param name="Emailid"></param>
+        /// <param name="IRFId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId)
+        {
+            try
+            {
+                var candidateUniqueId = await _candidateService.GetCandidateUniqueId(Emailid);
+                string sendMailURL = string.Empty;//"https://" + Request.Host.ToString() + "/Candidate/CandidatePublicdetails?id=" + CandidateDetails.uniqueid + "&IRFId=" + IRFId;
+                if (!string.IsNullOrEmpty(candidateUniqueId))
+                {
+                    sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/CandidateSkillChannelDetails?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                }
+                return Json(sendMailURL);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult CandidateSkillChannelDetails(string id, int IRFId)
+        {
+            //var model = new CandidateIRFDetailsVM();
+            var model = new Candidate();
+            ViewBag.PageType = "Public";
+            ViewBag.Id = id;
+            model.IRFId = IRFId;
+            return View("CandidateSkillChannelDetails", model);
+        }
+
+        /// <summary>
+        /// Skill Channel Details For Candidate
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="Emailid"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> CandidatePublicdetails(string id, string Emailid, string irfId)
+        {
+            var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+            _trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            var role = await _candidateService.GetuniqueCandidateByEmailId(Emailid, id);
+            //get logo based on the skill channel
+            string logovalue = string.Empty;
+            if (!string.IsNullOrEmpty(irfId) && Convert.ToInt32(irfId) > 0)
+            {
+                logovalue = await _clientService.GetClientLogoByIRFId(Convert.ToInt32(irfId));
+            }
+            if (string.IsNullOrEmpty(logovalue))
+            {
+                HttpContext.Session.SetString("LogoSet", "");
+            }
+            else
+                HttpContext.Session.SetString("LogoSet", logovalue);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("This id does not have access!");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifiedSkillChannelDetails(string emailid, string id, int IRFid)
+        {
+            try
+            {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                ViewBag.id = id;
+                var CandidateDetails = await _candidateService.GetIRFDetailsForCandidate(emailid, IRFid);
+                //var CandidateDetails = await _candidateService.GetCandidateIRFMailDetails(emailid, IRFid);
+                return View("CandidateSkillChannelDetails", CandidateDetails);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+        }
     }
 }

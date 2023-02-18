@@ -1,5 +1,7 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -639,5 +641,157 @@ namespace Risebird.Repository
             return null;
 
         }
+        public async Task<Candidate> GetCandidateIRFMailDetails(string EmailId, int IRFid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("Email", EmailId);
+                    parameters.Add("IRFId", IRFid);
+                    var result = await SqlMapper.QueryAsync<Candidate>(con, "sp_CandidatelinkDetail", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<string> GetCandidateUniqueId(string emailId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<string>(con, "[usp_GetCandidateUniqueId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<int> GetuniqueCandidateByEmailId(string emailId, string id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                parameters.Add("@uniqueid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_GetuniqueCandidateByEmailId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
+        public async Task<CandidateIRFDetailsVM> GetIRFDetailsForCandidate(string emailId, int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    CandidateIRFDetailsVM _resultVM = new CandidateIRFDetailsVM();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetIRFDetailsForCandidate", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@Email", emailId);
+                    adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        _resultVM.CandidateDetails.Name = dt.Rows[0]["Name"] != null ? dt.Rows[0][0].ToString() : null;
+                        _resultVM.CandidateDetails.IRFName = dt.Rows[0][1] != null ? dt.Rows[0][1].ToString() : null;
+                        _resultVM.CandidateDetails.EmailId = dt.Rows[0][2] != null ? dt.Rows[0][2].ToString() : null;
+                        _resultVM.CandidateDetails.Phone = dt.Rows[0][3] != null ? dt.Rows[0][3].ToString() : null;
+                        _resultVM.CandidateDetails.JDTiltle = dt.Rows[0][5] != null ? dt.Rows[0][5].ToString() : null;
+                        _resultVM.CandidateDetails.JDLink = dt.Rows[0][6] != null ? dt.Rows[0][6].ToString() : null;
+                        _resultVM.CandidateDetails.ClientName = dt.Rows[0][7] != null ? dt.Rows[0][7].ToString() : null;
+                        _resultVM.CandidateDetails.CalendlyLink = dt.Rows[0][8] != null ? dt.Rows[0][8].ToString() : null;
+                        _resultVM.CandidateDetails.PrimarySkillInvite = dt.Rows[0][9] != null ? dt.Rows[0][9].ToString() : null;
+                        //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if(dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listMeetings = new List<MeetingVM>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listMeetings.Add(new MeetingVM {
+                                    Interviewid = !string.IsNullOrEmpty(dt.Rows[i][0].ToString()) ? Convert.ToInt32(dt.Rows[i][0]) : 0,
+                                    resumeLink = dt.Rows[i][1] != null ? dt.Rows[i][1].ToString() : null,
+                                    zoomLink = dt.Rows[i][2] != null ? dt.Rows[i][2].ToString() : null,
+                                    interviewDate = dt.Rows[i][3] != null ? Convert.ToDateTime(dt.Rows[i][3].ToString()) : new DateTime(),
+                                    candidateEmail = dt.Rows[i][4] != null ? dt.Rows[i][4].ToString() : null,
+                                    interviewSlot = dt.Rows[i][5] != null ? dt.Rows[i][5].ToString() : null
+                                });
+                            }
+                            _resultVM.Meetings = listMeetings;
+                        }
+                        
+                    }
+                    //if (dataset.Tables.Count > 2)
+                    //{
+                    //    dt = dataset.Tables[2];
+                    //    _resultVM.CodeInviteDetails.programmingLanguage = dt.Rows[0][0] != null ? dt.Rows[0][0].ToString() : null;
+                    //    _resultVM.CodeInviteDetails.score = dt.Rows[0][1] != null ? Convert.ToInt32(dt.Rows[0][1].ToString()) : new int();
+                    //    _resultVM.CandidateDetails.EmailId = dt.Rows[0][2] != null ? dt.Rows[0][2].ToString() : null;
+                    //}
+                    //if (dataset.Tables.Count > 3)
+                    //{
+                    //    dt = dataset.Tables[3];
+                    //    _resultVM.MCQVMShare.MCQSet = dt.Rows[0][0] != null ? dt.Rows[0][0].ToString() : null;
+                    //    _resultVM.MCQVMShare.MCQId = dt.Rows[0][1] != null ? dt.Rows[0][1].ToString() : null;
+                    //}
+                    
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

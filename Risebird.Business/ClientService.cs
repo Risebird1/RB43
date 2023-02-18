@@ -469,5 +469,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<string> GetClientLogoByIRFId(int irfId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientLogoByIRFId(irfId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

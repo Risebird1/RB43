@@ -29,5 +29,9 @@ namespace Risebird.Repository.Interface
         Task<string> FetchBillingownerById(int id);
         Task<InterviewUsersDetails> FetchChannelOwnerByInterviewid(int interviewid);
         Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium);
+        Task<CandidateIRFDetailsVM> GetIRFDetailsForCandidate(string emailId, int irfId);
+        Task<int> GetuniqueCandidateByEmailId(string emailId, string id);
+        Task<string> GetCandidateUniqueId(string emailId);
+        Task<Candidate> GetCandidateIRFMailDetails(string EmailId, int IRFid);
     }
 }

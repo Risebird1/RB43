@@ -23,9 +23,9 @@ namespace Risebird.Business
         private readonly INotificationHelper _notificationHelper;
         private readonly IPasswordHelper _passwordHelper;
         private readonly IIRFRepository _irfRepository;
+        private readonly IActivityTrackerRepository _activityTrackerRepository;
 
-
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper, IIRFRepository irfRepository)
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IPasswordHelper passwordHelper, IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -34,6 +34,7 @@ namespace Risebird.Business
             _notificationHelper = notificationHelper;
             _passwordHelper = passwordHelper;
             _irfRepository = irfRepository;
+            _activityTrackerRepository = activityTrackerRepository;
         }
 
         #region Interviewer Profile Service Functions
@@ -129,7 +130,18 @@ namespace Risebird.Business
                 }
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
+                    activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Add Interviewer";
+                    activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
             }
             catch (Exception e)
             {
@@ -180,7 +192,18 @@ namespace Risebird.Business
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
+                    activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Update Interviewer";
+                    activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
             }
             catch (Exception e)
             {
@@ -1204,7 +1227,7 @@ namespace Risebird.Business
             try
             {
                 IRFVm model = await _interviewerRepository.GetSkillChannelDetailsForSMEByIdToUpdate(irfId, interviewerProfileId);
-                if(model != null)
+                if (model != null)
                 {
                     model.SkillCollection = (IList<TransSkill>)(await _irfRepository.GetSkillsbyIRFid(irfId));
                     //model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
@@ -1323,6 +1346,30 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid)
+        {
+            try
+            {
+                return await _interviewerRepository.GetInterviewerFlagDetails(intervieweremailid);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsActive);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

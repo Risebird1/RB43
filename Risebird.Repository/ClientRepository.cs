@@ -881,6 +881,34 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> GetClientLogoByIRFId(int irfId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@irfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<string>(con, "[usp_GetClientLogoByIRFId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
     }
 }

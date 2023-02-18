@@ -95,7 +95,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsLeadInterviewer { get; set; }
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
-        [Display(Name = "Is Verified")]
+        [Display(Name = "Is Approved")]
         public bool IsApproved { get; set; }
 
 
@@ -215,5 +215,9 @@ namespace Risebird.Entities.ViewModel
         public string uniqueid { get; set; }
         public bool IsInterested { get; set; }
         public string type { get; set; }
+        public string ResourceUrl { get; set; }
+        public bool isVerified { get; set; }
+        public DateTime? LastLogin { get; set; }
+        public string CreatedBy { get; set; }
     }
 }
