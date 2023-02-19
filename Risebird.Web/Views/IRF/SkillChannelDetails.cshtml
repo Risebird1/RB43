@@ -357,9 +357,17 @@
                                                                 <td> @item.FeedbackCount</td>
                                                             }
                                                             <td> @item.CandidateCount </td>
-                                                            <td> @item.CompletedInterviews </td>
-                                                            <td> @item.SelectedMeetings </td>
-                                                            <td> @item.RejectedMeetings </td>
+                                                            <td> @item.CompletedInterviews                                                                
+                                                               { @if (item.CandidateCount > 0){@((item.CompletedInterviews * 100) / @item.CandidateCount)}% }
+                                                            </td>
+                                                            <td> @item.SelectedMeetings
+                                                             { @if (item.CompletedInterviews > 0){@((item.SelectedMeetings * 100) / @item.CompletedInterviews)}% }</td>
+                                                            <td> @item.RejectedMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                }% }
+                                                            </td>
                                                             @if (ViewBag.profile != "Client")
                                                             {
                                                                 <td> @item.PendingCount </td>
