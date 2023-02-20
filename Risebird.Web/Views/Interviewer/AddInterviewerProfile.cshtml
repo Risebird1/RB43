@@ -715,18 +715,25 @@
             document.getElementById("txt_Age").value = age.toString();
         });
         $("#txt_EmailId").change(function () {
-            $.ajax({
-                url: '/Interviewer/EmailIdVilidation',
-                type: 'POST',
-                data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
-                success: function (data) {
-                    if (data != "Not") {
-                        $("#err_txt_EmailId").text(data);
-                    }
-                }
-            });
+            checkEmailid();
         });
     });
+    var emailidvalidation = "";
+    function checkEmailid() {
+        $.ajax({
+            url: '/Interviewer/EmailIdVilidation',
+            type: 'POST',
+            data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
+            success: function (data) {
+                emailidvalidation = data;
+                if (data != "Not") {
+                    $("#err_txt_EmailId").text(data);
+                } else {
+                    emailidvalidation = "";
+                }
+            }
+        });
+    }
 
     // ========== Add Row Methods  =========================================================//
 
@@ -1210,26 +1217,29 @@
             }
 
         }
+        checkEmailid();
+        if (emailidvalidation != "") {
+            return false;
+        }
         document.getElementById('SkillCollection_Error').innerHTML = "";
-
         //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
         //    return true;
         //}
         //return false;
     }
-            //function CheckvalidationforProfile() {
-            //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
-            //    //    $("#err_assessmentgroup").text("");
-            //    //    return true;
-            //    //}
-            //    //$(".multiselect-selected-text").focus();
-            //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-            //    //return false;
-            //    if ($(".badge").length > 0) {
-            //        $("#err_assessmentgroup").text("");
-            //        return true;
-            //    }
-            //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-            //    return false;
-            //}
+                                                //function CheckvalidationforProfile() {
+                                                //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+                                                //    //    $("#err_assessmentgroup").text("");
+                                                //    //    return true;
+                                                //    //}
+                                                //    //$(".multiselect-selected-text").focus();
+                                                //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+                                                //    //return false;
+                                                //    if ($(".badge").length > 0) {
+                                                //        $("#err_assessmentgroup").text("");
+                                                //        return true;
+                                                //    }
+                                                //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+                                                //    return false;
+                                                //}
 </script>

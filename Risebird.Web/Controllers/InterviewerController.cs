@@ -770,10 +770,10 @@ namespace Risebird.Web.Controllers
             if (EmailIdList.Contains(EmailId.ToUpper()))
             {
                 var role = _interviewerService.GetUserRolebyEmailid(EmailId);
-                return Json("EmailId already in use as " + role + ".", new Newtonsoft.Json.JsonSerializerSettings());
+                return Json("EmailId already in use as " + role + ".");
             }
             else
-                return Json("Not", new Newtonsoft.Json.JsonSerializerSettings());
+                return Json("Not");
         }
 
         #endregion
