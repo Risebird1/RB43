@@ -80,5 +80,6 @@ namespace Risebird.Business.Interface
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
         Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive);
+        Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings();
     }
 }

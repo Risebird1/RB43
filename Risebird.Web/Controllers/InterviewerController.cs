@@ -3553,6 +3553,34 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsActive);
             return Json("success");
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerStatsAndRatings(string type)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                //var emailid = HttpContext.Session.GetString("email")?.Trim();
+                //emailid = emailid.Replace("\"", "");
+               
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                {
+                    IEnumerable<InterviewerStatsVM> statsList;
+                    statsList = await _interviewerService.GetInterviewerStatsAndRatings();
+                    ViewBag.Profile = profileName;
+                    return View(statsList);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
 
