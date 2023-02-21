@@ -11,16 +11,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+CREATE PROCEDURE [dbo].[usp_GetProbableNoShowCandidates]      
   
-CREATE PROCEDURE [dbo].[usp_GetProbableNoShowCandidates]    
-
-AS    
-Begin   
-  
-  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId from ProbableNoShowCandidates pnc
-  join InterviewMeetings im on im.id = pnc.InterviewId
-  join UserList ul on ul.id = pnc.CandidateUserId
-  order by im.interviewDate desc
+AS      
+Begin     
+    
+  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId, ul.MobileNumber from ProbableNoShowCandidates pnc  
+  join InterviewMeetings im on im.id = pnc.InterviewId  
+  join UserList ul on ul.id = pnc.CandidateUserId  
+  order by im.interviewDate desc  
 End  
 GO
 
