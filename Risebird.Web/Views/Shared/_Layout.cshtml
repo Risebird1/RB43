@@ -157,6 +157,48 @@
                 background-color: red !important;
                 color: white !important;
             }
+
+        
+    </style>
+
+    <style>
+        .dropbtnStats {
+            background: transparent;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+
+        .dropdownStats {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-contentStats {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-contentStats a {
+            color: black!important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-contentStats a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdownStats:hover .dropdown-contentStats {
+            display: block;
+        }
+
     </style>
     @*<script>
     var importLocation = '@importLocation';
@@ -225,7 +267,7 @@
                             @if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
                             {
                                 <div class="pull-left">
-                                    <div class="desktop-view topbar-item">
+                                    <div class="desktop-view topbar-item" style="margin-top:-1vw">
                                         @if (profileName != "Client")
                                         {
                                             var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
@@ -241,7 +283,14 @@
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("RequirementManagement", "DashBoard")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Channel Management</font></span>
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("Index", "ActivityTracker")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z" /></svg><font style="font-family:arial;text-transform:capitalize;font-size:14px!important;padding-right:10px;"> ActivityTracker</font></span>
                                         }
-                                        <span style="cursor:pointer;" onclick="location.href='@Url.Action("SkillChannelDetails", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg><font style="font-family:arial;text-transform:capitalize;font-size:14px!important;"> Skill Channel Stats</font></span>
+                                        <div class="dropdownStats">
+                                            <button class="dropbtnStats"><font style="font-family: arial;font-size: 15px !important;text-transform: capitalize;padding-right:20px;"> Stats</font></button>
+                                            <div class="dropdown-contentStats">
+                                                <a href='@Url.Action("SkillChannelDetails", "IRF")'>Skill Channel Stats</a>
+                                                <a href='@Url.Action("InterviewerStatsAndRatings", "Interviewer")'>Interviewer Stats</a>
+                                            </div>
+                                        </div>
+
 
                                         <span class="divider-lm"> | </span>
                                     </div>

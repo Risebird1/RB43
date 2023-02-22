@@ -131,5 +131,9 @@ namespace Risebird.Entities.ViewModel
         public string profileName { get; set; }
         public int Candidateesumeid { get; set; }
         public string PrimarySkillInvite { get; set; }
+        public string CompanyLink { get; set; }
+        public string CompanyVideoLink { get; set; }
+        public string ChannelOwnerEmail { get; set; }
+        public string ChannelOwnerMobile { get; set; }
     }
 }

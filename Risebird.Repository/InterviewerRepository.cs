@@ -2963,5 +2963,30 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    return await SqlMapper.QueryAsync<InterviewerStatsVM>(con, "dbo.usp_GetInterviewerStatsAndRatings", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
+
 }

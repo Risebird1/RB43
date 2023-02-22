@@ -4458,11 +4458,11 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public IActionResult CandidateSkillChannelDetails(string id, int IRFId)
         {
-            //var model = new CandidateIRFDetailsVM();
-            var model = new Candidate();
+            var model = new CandidateIRFDetailsVM();
+            //var model = new Candidate();
             ViewBag.PageType = "Public";
             ViewBag.Id = id;
-            model.IRFId = IRFId;
+            model.CandidateDetails.IRFId = IRFId;
             return View("CandidateSkillChannelDetails", model);
         }
 
