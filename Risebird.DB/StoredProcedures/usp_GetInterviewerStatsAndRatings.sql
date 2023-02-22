@@ -11,13 +11,18 @@ GO
                       
 CREATE PROCEDURE usp_GetInterviewerStatsAndRatings     
                   
-@timeNow datetime 
+@timeNow datetime,
+@irfId int = null
 
 AS          
 BEGIN  
 
 declare @yesterdayDate date = cast(dateadd(day, -1, @timeNow) as date)
-
+declare @IRFName varchar(30)
+if(@irfId is not null)
+begin
+	set @IRFName = (select IRFId from IRF where id = @irfId)
+end
 DECLARE @tbl_RelevantInterviews TABLE (                    
 	id int,
 	interviewDate date,
@@ -29,7 +34,7 @@ DECLARE @tbl_RelevantInterviews TABLE (
 INSERT INTO @tbl_RelevantInterviews    
 select im.id, cast(interviewDate as date), interviewer, interviewDate, ul.id  from InterviewMeetings im
 join UserList ul on ul.EmailId = im.interviewer
-where cast(im.interviewDate as date)>= @yesterdayDate and confirmationStatus = 1
+where cast(im.interviewDate as date)>= @yesterdayDate and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)
 
 
 DECLARE @tbl_Interviewer TABLE (                    
@@ -50,7 +55,7 @@ DECLARE @tbl_InterviewerSelected TABLE (
 INSERT INTO @tbl_InterviewerSelected  
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
-where ic.InterviewStatus = 2 and MeetingStatus = 4
+where (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6)
 group by im.interviewer
 
 DECLARE @tbl_InterviewerBorderLine TABLE (                    
@@ -61,7 +66,7 @@ DECLARE @tbl_InterviewerBorderLine TABLE (
 INSERT INTO @tbl_InterviewerBorderLine  
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
-where ic.InterviewStatus = 4 and MeetingStatus = 4
+where (ic.InterviewStatus = 4) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 8)
 group by im.interviewer
 
 DECLARE @tbl_InterviewerRejected TABLE (                    
@@ -72,7 +77,7 @@ DECLARE @tbl_InterviewerRejected TABLE (
 INSERT INTO @tbl_InterviewerRejected  
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
-where ic.InterviewStatus = 3 and MeetingStatus = 4
+where (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 7)
 group by im.interviewer
 
 DECLARE @tbl_InterviewerProxy TABLE (                    
@@ -83,7 +88,7 @@ DECLARE @tbl_InterviewerProxy TABLE (
 INSERT INTO @tbl_InterviewerProxy  
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
-where ic.InterviewStatus = 1 and MeetingStatus = 4
+where ic.InterviewStatus = 1 and ic.MeetingStatus = 4
 group by im.interviewer
 
 
@@ -129,7 +134,7 @@ DECLARE @tbl_InterviewerPending TABLE (
 INSERT INTO @tbl_InterviewerPending  
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
-where ic.MeetingStatus = 2 or (ic.MeetingStatus is null and im.interviewDate < @timeNow)
+where ic.MeetingStatus = 2 or (ic.MeetingStatus is null and im.interviewDate < @timeNow) or (ic.MeetingStatus = 4 and ic.InterviewStatus is null)
 group by im.interviewer
 
 DECLARE @tbl_InterviewerPenalties TABLE ( 

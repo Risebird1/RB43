@@ -1372,11 +1372,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings()
+        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerStatsAndRatings();
+                return await _interviewerRepository.GetInterviewerStatsAndRatings(irfId);
             }
             catch (SqlTypeException ex)
             {

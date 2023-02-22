@@ -2964,7 +2964,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings()
+        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
         {
             try
             {
@@ -2972,6 +2972,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
                     return await SqlMapper.QueryAsync<InterviewerStatsVM>(con, "dbo.usp_GetInterviewerStatsAndRatings", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
