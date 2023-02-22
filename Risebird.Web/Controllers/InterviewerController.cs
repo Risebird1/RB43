@@ -3555,7 +3555,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsAndRatings(string type)
+        public async Task<IActionResult> InterviewerStatsAndRatings()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3570,6 +3570,35 @@ namespace Risebird.Web.Controllers
                     statsList = await _interviewerService.GetInterviewerStatsAndRatings();
                     ViewBag.Profile = profileName;
                     return View(statsList);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerStatsAndRatingsByIRF(int? irfId = null)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                //var emailid = HttpContext.Session.GetString("email")?.Trim();
+                //emailid = emailid.Replace("\"", "");
+
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                {
+                    IEnumerable<InterviewerStatsVM> statsList;
+                    statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
+                    ViewBag.Profile = profileName;
+                    return PartialView("InterviewerStatsAndRatingsPartialView", statsList);
                 }
                 else
                 {
