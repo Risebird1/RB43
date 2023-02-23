@@ -14,5 +14,6 @@ namespace Risebird.Entities.ViewModel
         public string ArchiveStatus { get; set; }
         public string ImageUrl { get; set; }
         public string Status { get; set; }
+        public int InterviewesCount { get; set; }
     }
 }

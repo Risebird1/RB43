@@ -27,7 +27,16 @@
     strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
 }
+<style>
+    .DetailLink td{
+        color: darkblue;
+    }
 
+        .DetailLink:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+</style>
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
@@ -483,35 +492,11 @@
                 <span aria-hidden="true" id="clientreviewPopUp" style="cursor:pointer;">&times;</span>
             </button>
 
-
             <div class="modal-body" id="clientreviewTableBody">
             </div>
         </div>
     </div>
 </div>
-<script>
-    var closeMember = document.getElementById("interviewerStatsPopUp");
-    closeMember.onclick = function () {
-        var modal = document.getElementById("interviewerStatsModal");
-        modal.style.display = "none";
-    }
-    function getInterviewerStats(id, Name) {
-        var headingElement = document.getElementById("interviewerStatsHeading");
-        headingElement.innerHTML = "";
-        headingElement.innerHTML = "Interviewer Stats for '" + Name + "'";
-        $.ajax({
-            url: '/Interviewer/InterviewerStatsAndRatingsByIRF',
-            data: { 'irfId': id },
-            success: function (data) {
-                debugger;
-                var modal = document.getElementById("interviewerStatsModal");
-                modal.style.display = "block";
-                $('#interviewerStatsTableBody').html('');
-                $('#interviewerStatsTableBody').html(data);
-            }
-        });
-    }
-</script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#ResetFilter").click(function () {
@@ -664,12 +649,12 @@
         });
         var html = '';
         if ($("#hidtype").val() == "IRF") {
-            html += '<table style="width:100%"><tr style="cursor: pointer;" onclick="getdetailedview(' + irfid + ',4)"><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
-            html += '<tr style="cursor: pointer;" onclick="getdetailedview(' + irfid + ',3)"><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
-            html += '<tr><td style = "border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
-            html += '<tr style="cursor: pointer;" onclick="getdetailedview(' + irfid + ',2)"><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
-            html += '<tr style="cursor: pointer;" onclick="getdetailedview(' + irfid + ',1)"><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
-            html += '<tr style="cursor: pointer;" onclick="javascript:getClientFeedback(' + irfid + ');"><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
+            html += '<table style="width:100%"><tr class="DetailLink" onclick="getdetailedview(' + irfid + ',4)"><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',3)"><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
+            html += '<tr><td style ="border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',2)"><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',1)"><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="javascript:getClientFeedback(' + irfid + ');"><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
         } else {
             html += '<table style="width:100%"><tr><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
             html += '<tr><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
