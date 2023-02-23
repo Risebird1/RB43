@@ -858,7 +858,7 @@ namespace Risebird.Repository
 
                     DataTable techSkillDt = new DataTable();
 
-                    if(irfDetails.SkillCollection != null && irfDetails.SkillCollection.Count()>0)
+                    if (irfDetails.SkillCollection != null && irfDetails.SkillCollection.Count() > 0)
                     {
                         techSkillDt.Columns.Add("IRFId", typeof(int));
                         techSkillDt.Columns.Add("LevelId", typeof(int));
@@ -882,7 +882,7 @@ namespace Risebird.Repository
                         }
                     }
 
-                    
+
 
                     DataTable interviewerDt = new DataTable();
 
@@ -930,7 +930,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable hRDt = new DataTable();
-                    if (irfDetails.HRCollection != null && irfDetails.HRCollection.Count()>0)
+                    if (irfDetails.HRCollection != null && irfDetails.HRCollection.Count() > 0)
                     {
                         hRDt.Columns.Add("IRFId", typeof(int));
                         hRDt.Columns.Add("UserId", typeof(int));
@@ -940,7 +940,7 @@ namespace Risebird.Repository
                             hRDt.Rows.Add(irfDetails.id, item.UserId);
                         }
                     }
-                    
+
                     SqlCommand cmdCreateIRF = new SqlCommand("usp_AddIRFDetails", con);
                     cmdCreateIRF.CommandType = CommandType.StoredProcedure;
 
@@ -1108,7 +1108,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    irfID =  Convert.ToInt32(cmdCreateIRF?.Parameters["@idIrf"]?.Value); 
+                    irfID = Convert.ToInt32(cmdCreateIRF?.Parameters["@idIrf"]?.Value);
 
                     return true;
 
@@ -6652,6 +6652,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return "Fail";
+        }
+        public async Task<IEnumerable<InterviewDetailsVM>> GetSkillChannelStatsDetails(int irfid, string type)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfid", irfid);
+                    parameters.Add("@type", type);
+                    return await SqlMapper.QueryAsync<InterviewDetailsVM>(con, "dbo.usp_GetIRFStatsDetails", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -3076,5 +3076,18 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+        public async Task<IEnumerable<InterviewDetailsVM>> GetSkillChannelStatsDetails(int irfid, string type)
+        {
+            try
+            {
+                var interviewlist = await _irfRepository.GetSkillChannelStatsDetails(irfid, type);
+                return interviewlist;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

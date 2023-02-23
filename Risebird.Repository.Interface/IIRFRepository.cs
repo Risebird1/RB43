@@ -204,5 +204,6 @@ namespace Risebird.Repository.Interface
         Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId);
         Task<IEnumerable<SkillChannelSME>> GetEligibleSMEForSkillChannel(int Assessmentid, int? irfId);
         Task<string> UpdateIRFRedFlags();
+        Task<IEnumerable<InterviewDetailsVM>> GetSkillChannelStatsDetails(int irfid, string type);
     }
 }

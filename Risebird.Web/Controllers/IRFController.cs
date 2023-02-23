@@ -6157,6 +6157,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Type = "IRF";
                             irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                            //only Active IRFs
                         }
                         else
                         {
@@ -6172,6 +6173,7 @@ namespace Risebird.Web.Controllers
                             {
                                 ViewBag.Type = "IRF";
                                 irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                                //Add Active and Archive filter
                             }
                             else
                             {
@@ -6184,6 +6186,7 @@ namespace Risebird.Web.Controllers
                             {
                                 ViewBag.Type = "IRF";
                                 irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                                //Add Active and Archive filter
                             }
                             else
                             {
@@ -7632,7 +7635,7 @@ namespace Risebird.Web.Controllers
 
                                 }
                             }
-                            
+
 
                         }
                         else
@@ -7773,6 +7776,11 @@ namespace Risebird.Web.Controllers
                 return Json("Error retrieving data! Please try again.");
             }
         }
-
+        public async Task<IActionResult> SkillChannelDetailedView(string type, int irfid)
+        {
+            ViewBag.type = type;
+            var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
+            return View(interviewlist);
+        }
     }
 }
