@@ -247,7 +247,7 @@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
-                                                    @if (ViewBag.profile == "Client")
+                                                    @if (ViewBag.profile == "Client" || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement")
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -288,10 +288,11 @@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
-                                                    @if (ViewBag.profile == "Client")
+                                                    @if (ViewBag.profile == "Client" || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement")
                                                     {
                                                         <th>Action</th>
                                                     }
+                                                    
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -373,6 +374,17 @@
                                                                     }
                                                                 </td>
                                                             }
+                                                            else if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement")
+                                                            {
+                                                                <td>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+
+                                                                        <span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+
+                                                                    </button>
+                                                                </td>
+                                                            }
+                                                            
                                                         </tr>
                                                     }
                                                 }
@@ -380,6 +392,31 @@
                                         </table>
                                     </div>
                                 </div>
+
+                                <div id="interviewerStatsModal" class="modal modal-bg">
+                                    <!-- Modal content -->
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+
+
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="interviewerStatsHeading">Interviewer Stats</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true" id="interviewerStatsPopUp" style="cursor:pointer;">&times;</span>
+                                            </button>
+
+                                            <div class="modal-body" id="interviewerStatsTableBody">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
                                 <div id="flagsModal" class="modal modal-bg" style="z-index:3">
                                     <!-- Modal content -->
                                     <div class="modal-dialog modal-lg" role="document">
@@ -446,11 +483,35 @@
                 <span aria-hidden="true" id="clientreviewPopUp" style="cursor:pointer;">&times;</span>
             </button>
 
+
             <div class="modal-body" id="clientreviewTableBody">
             </div>
         </div>
     </div>
 </div>
+<script>
+    var closeMember = document.getElementById("interviewerStatsPopUp");
+    closeMember.onclick = function () {
+        var modal = document.getElementById("interviewerStatsModal");
+        modal.style.display = "none";
+    }
+    function getInterviewerStats(id, Name) {
+        var headingElement = document.getElementById("interviewerStatsHeading");
+        headingElement.innerHTML = "";
+        headingElement.innerHTML = "Interviewer Stats for '" + Name + "'";
+        $.ajax({
+            url: '/Interviewer/InterviewerStatsAndRatingsByIRF',
+            data: { 'irfId': id },
+            success: function (data) {
+                debugger;
+                var modal = document.getElementById("interviewerStatsModal");
+                modal.style.display = "block";
+                $('#interviewerStatsTableBody').html('');
+                $('#interviewerStatsTableBody').html(data);
+            }
+        });
+    }
+</script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#ResetFilter").click(function () {
