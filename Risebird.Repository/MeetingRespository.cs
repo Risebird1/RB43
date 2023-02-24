@@ -2085,7 +2085,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioShare", parameters,
+                    var result = await SqlMapper.QueryAsync(con, "usp_AddinterviewvedioShare", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "";
                 }

@@ -148,14 +148,13 @@
                     <div class="col-md-12">
                         @foreach (var item in Model.CuratedData)
                         {
-                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 pull-left" style="margin-top: 15px;">
+                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 pull-left" style="margin-top: 15px;padding-left:10px">
                                 <div class="card-content-holder border card-blue">
                                     <div class="card-header">
                                         <div class="row">
                                             <div class=" col-md-6 col-sm-6 first">
                                                 <h6> @item.CuratedGroupName <span class="pskill" title="@item.CuratedGroupName"></span></h6>
                                             </div>
-
                                         </div>
                                     </div>
 
@@ -167,10 +166,10 @@
                                             </div>
                                             <div class="statusInfo">
                                                 <div class="group inner list-group-item-text">
-                                                    <div class="row ">
+                                                    <div class="row">
                                                         <p> <span>Total Skills Channel:  </span> @item.TotalIRFs</p>
                                                     </div> <br />
-                                                    <div class="row ">
+                                                    <div class="row">
                                                         <p><span>Interviews: </span> @item.InterviewesCount</p>
                                                     </div>
                                                 </div>
@@ -230,8 +229,6 @@
                                                         <span onclick="javascript:Subscribe('@item.CuratedGroupId', '@item.CuratedGroupName');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
                                                     </button>
                                                 }
-
-
                                             </div>
                                         </div>
                                     </div>

@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_GetCuratedGroupsForCuratedUser]  
+Create PROCEDURE [dbo].[usp_GetCuratedGroupsForCuratedUser] 
 @EmailId varchar(200)  
 AS  
 Begin 
@@ -38,11 +38,11 @@ Begin
 		CuratedGroupId INT,
 		InterviewesCount int 
 	);
-	INSERT INTO @tbl_TotalIRFs
-	Select cim.id as CuratedGroupId,Count(ic.id) Interviewes from CuratedIRFMapping cim join IRF on IRF.id=cim.IRFId 
+	INSERT INTO @tbl_TotalSelectedInteviewes
+	Select cim.CuratedGroupId,Count(ic.id) Interviewes from CuratedIRFMapping cim join IRF on IRF.id=cim.IRFId 
 	left join InterviewMeetings im on im.IRFId=IRF.IRFId left join InterviewComments ic on ic.InterviewId=im.id
 	where ic.MeetingStatus=4 and (ic.InterviewStatus=2 or ic.InterviewStatus=4)
-	group by cim.id
+	group by cim.CuratedGroupId
 
 	select cg.id as CuratedGroupId, cg.[Name] as CuratedGroupName, cg.IsDeleted,cg.CreatedOn,sub.SubId, tirf.TotalIRFs,tsi.InterviewesCount 
 	from CuratedGroup cg
