@@ -23,6 +23,7 @@ if(@irfId is not null)
 begin
 	set @IRFName = (select IRFId from IRF where id = @irfId)
 end
+
 DECLARE @tbl_RelevantInterviews TABLE (                    
 	id int,
 	interviewDate date,
@@ -34,7 +35,7 @@ DECLARE @tbl_RelevantInterviews TABLE (
 INSERT INTO @tbl_RelevantInterviews    
 select im.id, cast(interviewDate as date), interviewer, interviewDate, ul.id  from InterviewMeetings im
 join UserList ul on ul.EmailId = im.interviewer
-where cast(im.interviewDate as date)>= @yesterdayDate and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)
+where ((cast(im.interviewDate as date)>= @yesterdayDate and @irfId is null) or @irfId is not null) and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)
 
 
 DECLARE @tbl_Interviewer TABLE (                    
@@ -128,7 +129,18 @@ group by im.interviewer
 
 DECLARE @tbl_InterviewerPending TABLE (                    
     interviewer varchar(200),
-	TotalPending int
+	StatusPending int
+);
+
+INSERT INTO @tbl_InterviewerPending  
+select im.interviewer, count(im.id) from @tbl_RelevantInterviews im
+left join InterviewComments ic on ic.InterviewId = im.id
+where (ic.MeetingStatus is null and im.interviewDate < @timeNow) or (ic.MeetingStatus = 4 and ic.InterviewStatus is null)
+group by im.interviewer
+
+DECLARE @tbl_InterviewerScheduled TABLE (                    
+    interviewer varchar(200),
+	Scheduled int
 );
 
 INSERT INTO @tbl_InterviewerPending  
@@ -150,18 +162,95 @@ where ipt.Points < 0
 group by im.interviewer
 
 
-select ti.interviewer as InterviewerEmailId, ti.TotalMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
-tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.TotalPending, tipenal.TotalPenalties
-from @tbl_Interviewer ti
-left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer
-left join @tbl_InterviewerRejected tir on tir.interviewer = ti.interviewer
-left join @tbl_InterviewerProxy tip on tip.interviewer = ti.interviewer
-left join @tbl_InterviewerBorderLine tib on tib.interviewer = ti.interviewer
-left join @tbl_InterviewerDropped tid on tid.interviewer = ti.interviewer
-left join @tbl_InterviewerNoShow tins on tins.interviewer = ti.interviewer
-left join @tbl_InterviewerNoShowCandidate tinsc on tinsc.interviewer = ti.interviewer
-left join @tbl_InterviewerPending tipen on tipen.interviewer = ti.interviewer
-left join @tbl_InterviewerPenalties tipenal on tipenal.interviewer = ti.interviewer
+DECLARE @tbl_InterviewerClientRatings TABLE ( 
+	interviewer varchar(200),
+	AverageRating int
+);
+
+INSERT INTO @tbl_InterviewerClientRatings  
+
+select  ti.interviewer, AVG(ir.StarRating) from @tbl_Interviewer ti 
+left join InterviewMeetings im on im.interviewer = ti.interviewer
+left join InterviewRatings ir on ir.Interviewid = im.id
+where ir.Comment not like '%Redflags raised%'
+group by ti.interviewer
+
+
+
+
+if(@irfId is not null)
+Begin
+	select  ul.EmailId as InterviewerEmailId, ti.TotalMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
+	tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,
+	tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating
+	from TransInterviewer tin 
+	join UserList ul on ul.id = tin.UserId
+	join InterviewerProfile ipr on ipr.UserId = ul.id
+	left join @tbl_Interviewer ti on ti.interviewer = ul.EmailId
+	left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer
+	left join @tbl_InterviewerRejected tir on tir.interviewer = ti.interviewer
+	left join @tbl_InterviewerProxy tip on tip.interviewer = ti.interviewer
+	left join @tbl_InterviewerBorderLine tib on tib.interviewer = ti.interviewer
+	left join @tbl_InterviewerDropped tid on tid.interviewer = ti.interviewer
+	left join @tbl_InterviewerNoShow tins on tins.interviewer = ti.interviewer
+	left join @tbl_InterviewerNoShowCandidate tinsc on tinsc.interviewer = ti.interviewer
+	left join @tbl_InterviewerPending tipen on tipen.interviewer = ti.interviewer
+	left join @tbl_InterviewerScheduled tisch on tisch.interviewer = ti.interviewer
+	left join @tbl_InterviewerPenalties tipenal on tipenal.interviewer = ti.interviewer
+	left join @tbl_InterviewerClientRatings tic on tic.interviewer = ti.interviewer
+	where tin.IsActive=1 and tin.IRFId = @irfId
+End
+else
+Begin
+	select  ti.interviewer as InterviewerEmailId, ti.TotalMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
+	tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,
+	tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating
+	from @tbl_Interviewer ti
+	left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer
+	left join @tbl_InterviewerRejected tir on tir.interviewer = ti.interviewer
+	left join @tbl_InterviewerProxy tip on tip.interviewer = ti.interviewer
+	left join @tbl_InterviewerBorderLine tib on tib.interviewer = ti.interviewer
+	left join @tbl_InterviewerDropped tid on tid.interviewer = ti.interviewer
+	left join @tbl_InterviewerNoShow tins on tins.interviewer = ti.interviewer
+	left join @tbl_InterviewerNoShowCandidate tinsc on tinsc.interviewer = ti.interviewer
+	left join @tbl_InterviewerPending tipen on tipen.interviewer = ti.interviewer
+	left join @tbl_InterviewerScheduled tisch on tisch.interviewer = ti.interviewer
+	left join @tbl_InterviewerPenalties tipenal on tipenal.interviewer = ti.interviewer
+	left join @tbl_InterviewerClientRatings tic on tic.interviewer = ti.interviewer
+	join UserList ul on ul.EmailId = ti.interviewer
+	join InterviewerProfile ipr on ipr.UserId = ul.id
+End
+
+
+
+
+--select * into  #Temptable from (select  ti.interviewer as InterviewerEmailId, ti.TotalMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
+--tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,
+--tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId
+--from @tbl_Interviewer ti
+--left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer
+--left join @tbl_InterviewerRejected tir on tir.interviewer = ti.interviewer
+--left join @tbl_InterviewerProxy tip on tip.interviewer = ti.interviewer
+--left join @tbl_InterviewerBorderLine tib on tib.interviewer = ti.interviewer
+--left join @tbl_InterviewerDropped tid on tid.interviewer = ti.interviewer
+--left join @tbl_InterviewerNoShow tins on tins.interviewer = ti.interviewer
+--left join @tbl_InterviewerNoShowCandidate tinsc on tinsc.interviewer = ti.interviewer
+--left join @tbl_InterviewerPending tipen on tipen.interviewer = ti.interviewer
+--left join @tbl_InterviewerScheduled tisch on tisch.interviewer = ti.interviewer
+--left join @tbl_InterviewerPenalties tipenal on tipenal.interviewer = ti.interviewer
+--join UserList ul on ul.EmailId = ti.interviewer
+--join InterviewerProfile ipr on ipr.UserId = ul.id) a
+
+--if(@irfId is not null)
+--Begin
+--	select tt.* from TransInterviewer tio 
+--	left join #Temptable tt on tio.UserId = tt.UserId
+--	where tio.IsActive=1 and tio.IRFId = @irfId
+--End
+--else
+--Begin
+--	select * from #Temptable
+--End
            
       
 END        
