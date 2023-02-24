@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_GetRiseTubeIndexMeetingsForCuratedUserPaged]     
+Create PROCEDURE [dbo].[usp_GetRiseTubeIndexMeetingsForCuratedUserPaged]     
   @Emailid varchar(100),    
   @startFrom int,
   @endWith int,
@@ -50,7 +50,7 @@ AS
     left join UserList ul on ul.EmailId = im.candidateEmail      
     join CandidatesMaster cm on cm.UserId = ul.id          
     join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id      
-    join CandidateCuratedScore ccs on ul.EmailId= ccs.CandidateEmailId      
+    --join CandidateCuratedScore ccs on ul.EmailId= ccs.CandidateEmailId      
     left join QCFeedbackReport QCF on im.id=QCF.InterviewId          
     inner join client cl on IRF.ClientID=cl.id          
     inner join CuratedIRFMapping cim on cim.IRFId = irf.id      
@@ -59,8 +59,8 @@ AS
     outer apply (Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId and Userid=@id  order by ShortListedOn desc)rtvsl  
     outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount  
     outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore  
-    where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  and ccs.CuratedEmailId=@Emailid and ccs.Score>=30 and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))
-   
+    where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  --and ccs.CuratedEmailId=@Emailid and ccs.Score>=30 
+	and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))
     group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, im.ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,  
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ul.FirstName, ul.LastName,      
@@ -99,7 +99,7 @@ AS
     left join UserList ul on ul.EmailId = im.candidateEmail      
     join CandidatesMaster cm on cm.UserId = ul.id          
     join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id      
-    join CandidateCuratedScore ccs on ul.EmailId= ccs.CandidateEmailId      
+    --join CandidateCuratedScore ccs on ul.EmailId= ccs.CandidateEmailId      
     left join QCFeedbackReport QCF on im.id=QCF.InterviewId          
     inner join client cl on IRF.ClientID=cl.id          
     inner join CuratedIRFMapping cim on cim.IRFId = irf.id      
@@ -108,7 +108,7 @@ AS
     outer apply (Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId and Userid=@id  order by ShortListedOn desc)rtvsl  
     outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount  
     outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore  
-    where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  and ccs.CuratedEmailId=@Emailid and ccs.Score>=30    
+    where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  --and ccs.CuratedEmailId=@Emailid and ccs.Score>=30    
     group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, im.ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,  
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ul.FirstName, ul.LastName,      
@@ -123,7 +123,7 @@ AS
       
   
   
- END         
+ END               
    
 GO
 
