@@ -3598,6 +3598,7 @@ namespace Risebird.Web.Controllers
                     IEnumerable<InterviewerStatsVM> statsList;
                     statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
                     ViewBag.Profile = profileName;
+                    ViewBag.DisplayType = "popup";
                     return PartialView("InterviewerStatsAndRatingsPartialView", statsList);
                 }
                 else
