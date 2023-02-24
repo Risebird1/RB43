@@ -34,10 +34,22 @@ Begin
 	select id, CuratedGroupId from CuratedGroupSubscribers
 	where UserId= @userId
 
-	select cg.id as CuratedGroupId, cg.[Name] as CuratedGroupName, cg.IsDeleted,cg.CreatedOn,sub.SubId, tirf.TotalIRFs from CuratedGroup cg
+	DECLARE @tbl_TotalSelectedInteviewes TABLE (
+		CuratedGroupId INT,
+		InterviewesCount int 
+	);
+	INSERT INTO @tbl_TotalIRFs
+	Select cim.id as CuratedGroupId,Count(ic.id) Interviewes from CuratedIRFMapping cim join IRF on IRF.id=cim.IRFId 
+	left join InterviewMeetings im on im.IRFId=IRF.IRFId left join InterviewComments ic on ic.InterviewId=im.id
+	where ic.MeetingStatus=4 and (ic.InterviewStatus=2 or ic.InterviewStatus=4)
+	group by cim.id
+
+	select cg.id as CuratedGroupId, cg.[Name] as CuratedGroupName, cg.IsDeleted,cg.CreatedOn,sub.SubId, tirf.TotalIRFs,tsi.InterviewesCount 
+	from CuratedGroup cg
 	join CuratedGroupUsers cgu on cgu.CuratedGroupId=cg.id
 	left join @tbl_SubscribedTo sub on cg.id=sub.CuratedGroupId
 	left join @tbl_TotalIRFs tirf on tirf.CuratedGroupId=cg.id
+	left join @tbl_TotalSelectedInteviewes tsi on tsi.CuratedGroupId=cg.id
 	where cgu.UserId=@userId
 
 End

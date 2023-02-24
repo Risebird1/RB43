@@ -22,7 +22,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
 <div class="main-panel" id="main-panel">
-  
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -51,8 +51,6 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-
-
                     </div>
                     <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
@@ -170,9 +168,11 @@
                                             <div class="statusInfo">
                                                 <div class="group inner list-group-item-text">
                                                     <div class="row ">
-                                                        <span>Total Skills Channel:</span> @item.TotalIRFs
+                                                        <p> <span>Total Skills Channel:  </span> @item.TotalIRFs</p>
                                                     </div> <br />
-
+                                                    <div class="row ">
+                                                        <p><span>Interviews: </span> @item.InterviewesCount</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -325,8 +325,8 @@
     }
 
     function ApplySessionFilter() {
-        var curatedGroupName =  @Html.Raw(Json.Serialize(CuratedGroupName));
-        var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
+        var curatedGroupName = @Html.Raw(Json.Serialize(CuratedGroupName));
+        var subscriptionStatus = @Html.Raw(Json.Serialize(SubscriptionStatus));
         $("#CuratedGroupName").val(curatedGroupName);
         $("#SubscriptionStatus").val(subscriptionStatus);
         var form = $("#form").serialize();
@@ -524,50 +524,51 @@
             if (getData == "true") {
 
                 var enjoyhint_instance = new EnjoyHint({});
-             if( $('#subs').val()!=''){
-                var enjoyhint_script_steps = [
-                    {
-                        'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .allcur ': 'All Selected Candidiates',
-                        'nextbutton': { classname: "mynext", text: "Next" },
-                        'skipbutton': { classname: "myskip", text: "Skip" }
-                    },
-                    {
-                        'next .allshort': 'Shortlisted Candidates Video',
-                        'nextbutton': { classname: "mynext", text: "Next" },
-                        'skipbutton': { classname: "myskip", text: "Skip" }
-                    },
-                    {
-                        'next .allintsent': 'Interest Sent Candidates Video',
-                        'nextbutton': { classname: "mynext", text: "Next" },
-                        'skipbutton': { classname: "myskip", text: "Skip" }
-                    },
-                    {
-                        'next .allintac': 'Interest Accepted Candidates Video',
-                        'nextbutton': { classname: "mynext", text: "Next" },
-                        'skipbutton': { classname: "myskip", text: "Skip" }
-                    },
-                    {
-                        'click .subc ': 'Click here to Subscribe / Unsubscribe Skill Channel'
-                    }
-                ];}
-            else{
+                if ($('#subs').val() != '') {
+                    var enjoyhint_script_steps = [
+                        {
+                            'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
+                            'nextButton': { className: "myNext", text: "Next" },
+                            'skipButton': { className: "mySkip", text: "Skip" }
+                        },
+                        {
+                            'next .allcur ': 'All Selected Candidiates',
+                            'nextbutton': { classname: "mynext", text: "Next" },
+                            'skipbutton': { classname: "myskip", text: "Skip" }
+                        },
+                        {
+                            'next .allshort': 'Shortlisted Candidates Video',
+                            'nextbutton': { classname: "mynext", text: "Next" },
+                            'skipbutton': { classname: "myskip", text: "Skip" }
+                        },
+                        {
+                            'next .allintsent': 'Interest Sent Candidates Video',
+                            'nextbutton': { classname: "mynext", text: "Next" },
+                            'skipbutton': { classname: "myskip", text: "Skip" }
+                        },
+                        {
+                            'next .allintac': 'Interest Accepted Candidates Video',
+                            'nextbutton': { classname: "mynext", text: "Next" },
+                            'skipbutton': { classname: "myskip", text: "Skip" }
+                        },
+                        {
+                            'click .subc ': 'Click here to Subscribe / Unsubscribe Skill Channel'
+                        }
+                    ];
+                }
+                else {
 
-            var enjoyhint_script_steps = [
-                    {
-                        'next .card-title': 'List of Risebird Verified Skill Channel',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'click .subc ': 'Click here to Subscribe / Unsubscribe Skill Channel'
-                    }
-                ]
-            }
+                    var enjoyhint_script_steps = [
+                        {
+                            'next .card-title': 'List of Risebird Verified Skill Channel',
+                            'nextButton': { className: "myNext", text: "Next" },
+                            'skipButton': { className: "mySkip", text: "Skip" }
+                        },
+                        {
+                            'click .subc ': 'Click here to Subscribe / Unsubscribe Skill Channel'
+                        }
+                    ]
+                }
 
                 setTimeout(function () {
                     enjoyhint_instance.set(enjoyhint_script_steps);

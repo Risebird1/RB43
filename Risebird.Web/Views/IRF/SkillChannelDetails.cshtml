@@ -27,7 +27,16 @@
     strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
 }
+<style>
+    .DetailLink td{
+        color: darkblue;
+    }
 
+        .DetailLink:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+</style>
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
@@ -41,6 +50,7 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Skill Channel Stats</h4></div>
                 </div>
+                <input type="hidden" value="@ViewBag.Type" id="hidtype" />
                 <div class="pull-left">
                     @if (ViewBag.profile != "Client")
                     {
@@ -235,10 +245,6 @@
                                                     {
                                                         <th>JD Title</th>
                                                     }
-                                                    @if (ViewBag.profile != "Client")
-                                                    {
-                                                        <th>Missing Client Feedback</th>
-                                                    }
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -250,7 +256,7 @@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
-                                                    @if (ViewBag.profile == "Client")
+                                                    @if (ViewBag.profile == "Client" || ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner"))
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -280,10 +286,6 @@
                                                     {
                                                         <th>JD Title</th>
                                                     }
-                                                    @if (ViewBag.profile != "Client")
-                                                    {
-                                                        <th>Missing Client Feedback</th>
-                                                    }
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -295,10 +297,11 @@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
-                                                    @if (ViewBag.profile == "Client")
+                                                    @if (ViewBag.profile == "Client" || ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner"))
                                                     {
                                                         <th>Action</th>
                                                     }
+                                                    
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -329,7 +332,7 @@
                                                             {
                                                                 @if (item.Flags > 0)
                                                                 {
-                                                                    <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
+                                                                    <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.id','@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
                                                                 }
                                                                 else
                                                                 {
@@ -351,10 +354,6 @@
                                                             @if (ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td> @item.JDTiltle </td>
-                                                            }
-                                                            @if (ViewBag.profile != "Client")
-                                                            {
-                                                                <td> @item.FeedbackCount</td>
                                                             }
                                                             <td> @item.CandidateCount </td>
                                                             <td> @item.CompletedInterviews                                                                
@@ -397,6 +396,17 @@
                                                                     }
                                                                 </td>
                                                             }
+                                                            else if ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner")
+                                                            {
+                                                                <td>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+
+                                                                        <span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+
+                                                                    </button>
+                                                                </td>
+                                                            }
+                                                            
                                                         </tr>
                                                     }
                                                 }
@@ -404,6 +414,31 @@
                                         </table>
                                     </div>
                                 </div>
+
+                                <div id="interviewerStatsModal" class="modal modal-bg">
+                                    <!-- Modal content -->
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+
+
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="interviewerStatsHeading">Interviewer Stats</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true" id="interviewerStatsPopUp" style="cursor:pointer;">&times;</span>
+                                            </button>
+
+                                            <div class="modal-body" id="interviewerStatsTableBody">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
                                 <div id="flagsModal" class="modal modal-bg" style="z-index:3">
                                     <!-- Modal content -->
                                     <div class="modal-dialog modal-lg" role="document">
@@ -458,6 +493,47 @@
     </div>
 </div>
 
+<div id="clientreviewModal" class="modal modal-bg" style="z-index:100">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-comments" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Client Feedback</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="clientreviewPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="clientreviewTableBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var closeMember = document.getElementById("interviewerStatsPopUp");
+    closeMember.onclick = function () {
+        var modal = document.getElementById("interviewerStatsModal");
+        modal.style.display = "none";
+    }
+    function getInterviewerStats(id, Name) {
+        var headingElement = document.getElementById("interviewerStatsHeading");
+        headingElement.innerHTML = "";
+        headingElement.innerHTML = "Interviewer Stats for '" + Name + "'";
+        $.ajax({
+            url: '/Interviewer/InterviewerStatsAndRatingsByIRF',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("interviewerStatsModal");
+                modal.style.display = "block";
+                $('#interviewerStatsTableBody').html('');
+                $('#interviewerStatsTableBody').html(data);
+            }
+        });
+    }
+</script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#ResetFilter").click(function () {
@@ -556,7 +632,7 @@
         var modal = document.getElementById("flagsModal");
         modal.style.display = "none";
     }
-    function OpenModalForFlags(irfName, jdTitle, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink, feedbackCount) {
+    function OpenModalForFlags(irfid, irfName, jdTitle, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink, feedbackCount) {
         $('#flagsModalBody').html('');
         var modal = document.getElementById("flagsModal");
         modal.style.display = "block";
@@ -609,12 +685,21 @@
             CreateChartAxes(chart);
         });
         var html = '';
-        html += '<table style="width:100%"><tr><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
-        html += ' <tr><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
-        html += '<tr><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
-        html += '<tr><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
+        if ($("#hidtype").val() == "IRF") {
+            html += '<table style="width:100%"><tr class="DetailLink" onclick="getdetailedview(' + irfid + ',4)"><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',3)"><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
+            html += '<tr><td style ="border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',2)"><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',1)"><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
+            html += '<tr class="DetailLink" onclick="javascript:getClientFeedback(' + irfid + ');"><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
+        } else {
+            html += '<table style="width:100%"><tr><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
+            html += '<tr><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
+            html += '<tr><td style = "border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
+            html += '<tr><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
+            html += '<tr><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
+            html += '<tr><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
+        }
         html += '</table>';
         $("#flagsModalBodyCount").empty().html(html);
     }
@@ -909,6 +994,39 @@ else
         html += '</tbody>';
         html += '</table>';
         $("#flagsModalBodyCount").empty().html(html);
+    }
+    var closeMemberFeedback = document.getElementById("clientreviewPopUp");
+    closeMemberFeedback.onclick = function () {
+        var modal = document.getElementById("clientreviewModal");
+        modal.style.display = "none";
+    }
+    function getClientFeedback(id) {
+        $.ajax({
+            url: '/IRF/GetIRFClientReview',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("clientreviewModal");
+                modal.style.display = "block";
+                $('#clientreviewTableBody').html('');
+                $('#clientreviewTableBody').html(data);
+            }
+        });
+    }
+    function getdetailedview(irfid, typeindex) {
+        var type = "";
+        if (parseInt(typeindex) == 1) {
+            type = "MissingZoom";
+        } else if (parseInt(typeindex) == 2) {
+            type = "MissingVideo";
+        }
+        else if (parseInt(typeindex) == 3) {
+            type = "StatusPending";
+        }
+        else if (parseInt(typeindex) == 4) {
+            type = "UnassignedInterview";
+        }
+        //window.location.href = "/IRF/SkillChannelDetailedView?type=" + type + "&irfid=" + irfid;
+        window.open('/IRF/SkillChannelDetailedView?type=' + type + '&irfid=' + irfid, '_blank');
     }
 </script>
 
