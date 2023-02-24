@@ -37,6 +37,19 @@
             cursor: pointer;
         }
 </style>
+<style>
+    .modal-dialog {
+        height: 900px !important;
+    }
+
+    .modal-content {
+        /* 80% of window height */
+        height: 60%;
+    }
+
+    
+
+</style>
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
@@ -404,7 +417,7 @@
 
                                 <div id="interviewerStatsModal" class="modal modal-bg">
                                     <!-- Modal content -->
-                                    <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-dialog" role="document">
                                         <div class="modal-content">
 
 
@@ -517,6 +530,7 @@
                 modal.style.display = "block";
                 $('#interviewerStatsTableBody').html('');
                 $('#interviewerStatsTableBody').html(data);
+                $('#listTable').DataTable();
             }
         });
     }

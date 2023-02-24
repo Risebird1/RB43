@@ -1,6 +1,12 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerStatsVM>
-
-<div id="tableID" class="second" style="overflow-x:scroll">
+@{
+    string customHeight = "none";
+    if (ViewBag.DisplayType == "popup")
+    {
+        customHeight = "450px";
+    }
+}
+<div id="tableID" class="second" style="overflow-x:scroll; max-height: @customHeight" ">
     <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
         <thead>
             <tr>
