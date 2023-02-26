@@ -11,6 +11,7 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
 <style>
     .star-rating {
         border: solid 1px white;
@@ -818,20 +819,19 @@
                                                                 for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                 {
                                                                     <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
-                                                                        <td>
-
+                                                                        <td class="tooltipquestion">
                                                                             @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
                                                                             {
+                                                                                <span class="tooltiptext">@Model.QuestionsCollection[i].Comment</span>
                                                                                 @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)", @disabled = "disabled" })
                                                                             }
                                                                             else
                                                                             {
                                                                                 var newList = new List<SelectListItem>();
                                                                                 newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
+                                                                                <span class="tooltiptext">@Model.QuestionsCollection[i].Comment</span>
                                                                                 @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)", @disabled = "disabled" })
-
                                                                             }
-
                                                                         </td>
                                                                         <td>
                                                                             @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
@@ -1642,7 +1642,7 @@
             $('button[data-toggle="ajax-modal"]').click();
             }, 1);*@
 
-                                var meetingStatus = document.getElementById('MeetingStatus').value;
+                                    var meetingStatus = document.getElementById('MeetingStatus').value;
         if (meetingStatus == null || meetingStatus == '') {
             document.getElementById('InterviewerComment').disabled = true;
             document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
