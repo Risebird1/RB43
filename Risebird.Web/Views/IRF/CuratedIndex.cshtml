@@ -144,98 +144,99 @@
                     <!--  end card  -->
                     <!-- end col-md-12 -->
                     <!-- Start Card -->
-
-                    <div class="col-md-12">
-                        @foreach (var item in Model.CuratedData)
-                        {
-                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 pull-left" style="margin-top: 15px;padding-left:10px">
-                                <div class="card-content-holder border card-blue">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class=" col-md-6 col-sm-6 first">
-                                                <h6> @item.CuratedGroupName <span class="pskill" title="@item.CuratedGroupName"></span></h6>
+                    <div id="skill_card">
+                        <div class="row">
+                            @foreach (var item in Model.CuratedData)
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="w-full">
+                                                <div class="w60">
+                                                    <h6> @item.CuratedGroupName <span class="pskill" title="@item.CuratedGroupName"></span></h6>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <!-- irf body-->
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="statusImg">
-                                                <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
-                                            </div>
-                                            <div class="statusInfo">
-                                                <div class="group inner list-group-item-text">
-                                                    <div class="row">
-                                                        <p> <span>Total Skills Channel:  </span> @item.TotalIRFs</p>
-                                                    </div> <br />
-                                                    <div class="row">
-                                                        <p><span>Interviews: </span> @item.InterviewesCount</p>
+                                        <!-- irf body-->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="statusImg">
+                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                </div>
+                                                <div class="statusInfo">
+                                                    <div class="group inner list-group-item-text">
+                                                        <div class="row">
+                                                            <p> <span>Total Skills Channel:  </span> @item.TotalIRFs</p>
+                                                        </div> <br />
+                                                        <div class="row">
+                                                            <p><span>Interviews: </span> @item.InterviewesCount</p>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer action">
+                                            <div class="row">
+
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
+
+                                                    @if (@item.Status == "Active")
+                                                    {
+                                                        <h6 style="color: green;"> @item.Status</h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6 style="color: black;"> @item.Status</h6>
+                                                    }
+                                                </div>
+
+                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+                                                    <input type="text" hidden value="@item.SubId" id="subs" />
+                                                    @if (item.SubId != null)
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute allcur " aria-label="All">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute subc " aria-label="Unsubscribe">
+                                                            <span onclick="javascript:UnSubscribe('@item.CuratedGroupId', '@item.CuratedGroupName');" title="Unsubscribe" class="mdc-fab__icon material-icons">
+                                                                <i style="font-size:16px;" class="far fa-bell-slash"></i>
+                                                            </span>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
+                                                            <span onclick="javascript:Subscribe('@item.CuratedGroupId', '@item.CuratedGroupName');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                        </button>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
-
-                                    <div class="card-footer action">
-                                        <div class="row">
-
-                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
-
-                                                @if (@item.Status == "Active")
-                                                {
-                                                    <h6 style="color: green;"> @item.Status</h6>
-                                                }
-                                                else
-                                                {
-                                                    <h6 style="color: black;"> @item.Status</h6>
-                                                }
-                                            </div>
-
-                                            <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
-                                                <input type="text" hidden value="@item.SubId" id="subs" />
-                                                @if (item.SubId != null)
-                                                {
-                                                    <button class="mdc-fab app-fab--absolute allcur " aria-label="All">
-                                                        <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
-                                                        <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
-                                                        <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
-                                                        <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute subc " aria-label="Unsubscribe">
-                                                        <span onclick="javascript:UnSubscribe('@item.CuratedGroupId', '@item.CuratedGroupName');" title="Unsubscribe" class="mdc-fab__icon material-icons">
-                                                            <i style="font-size:16px;" class="far fa-bell-slash"></i>
-                                                        </span>
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                        <span onclick="javascript:Subscribe('@item.CuratedGroupId', '@item.CuratedGroupName');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
-                                                    </button>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
 
                     <!-- End Card-->

@@ -14,7 +14,7 @@
     var Header = "<a  style='line-height:50px;'><span>Interview Report</span></a>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
 <style>
     .mob_h {
         display: none;
@@ -136,8 +136,8 @@
                         @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                         {
                             <button class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
-                                    <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
-                                </button>
+                                <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                            </button>
                         }
                     </div>
                 </div>
@@ -642,20 +642,20 @@
                                                                 {
 
                                                                     <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
-                                                                        <td>
+                                                                        <td class="tooltipquestion">
 
                                                                             @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
                                                                             {
+                                                                                <span class="tooltiptext">@Model.QuestionsCollection[i].Comment</span>
                                                                                 @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)", @disabled = "disabled" })
                                                                             }
                                                                             else
                                                                             {
                                                                                 var newList = new List<SelectListItem>();
                                                                                 newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
+                                                                                <span class="tooltiptext">@Model.QuestionsCollection[i].Comment</span>
                                                                                 @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css form-control text-box single-line", onmouseover = "dropDwnToolTips(this)", @disabled = "disabled" })
-
                                                                             }
-
                                                                         </td>
                                                                         <td>
                                                                             @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
@@ -1535,6 +1535,7 @@
         else {
             id.title = id.value;
         }
+        alert(id.value);
     }
 
 </script>
@@ -1785,7 +1786,7 @@
         temp.remove();
         $('#special_text').text('Copied');
     }
-     function switchtoquestionVedio(questiontime) {
+    function switchtoquestionVedio(questiontime) {
         var time = 1.0;
         if (questiontime != '') {
             time = questiontime;
@@ -1879,39 +1880,39 @@
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
         for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
+        proctoringTotal += parseInt(proctoringItems[i].value);
         }
         $("#ProctoringCount").val(proctoringTotal);
         if (parseInt(proctoringTotal) > 0) {
-            $("#ProctoringCount").css("border-color", "red");
+        $("#ProctoringCount").css("border-color", "red");
         }
         else {
-            $("#ProctoringCount").css("border-color", "#E3E3E3");
+        $("#ProctoringCount").css("border-color", "#E3E3E3");
         }
 
         //shorter/better attempt
         var weightageItems = $('[id$="WeightageActual"]');
         for (i = 0; i < weightageItems.length; i++) {
-            var id = weightageItems[i].id;
-            var match = id.match(/\d+/g);
-            var digit = match[0];
+        var id = weightageItems[i].id;
+        var match = id.match(/\d+/g);
+        var digit = match[0];
 
-            var index = weightageItems[i].id.indexOf(digit);
-            var skillName = weightageItems[i].id.substring(0, index);
-            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
-            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
-            if (reqLevel <= actLevel) {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
-            }
-            else {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
-                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+        var index = weightageItems[i].id.indexOf(digit);
+        var skillName = weightageItems[i].id.substring(0, index);
+        var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+        var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+        if (reqLevel <= actLevel) {
+        reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+        $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+        $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+        }
+        else {
+        reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+        var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+        $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+        $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
 
-            }
+        }
 
         }
 
@@ -1920,57 +1921,57 @@
         var totalCount = 0;
 
         for (i = 0; i < items.length; i++) {
-            totalCount += parseInt(items[i].value);
+        totalCount += parseInt(items[i].value);
         }
         var average = totalCount / 4;
         $("#OverallScore").val(average);
 
         //SetChart();
         SetTechReportChart('TechSkillReportCollection');
-    });*@
+        });*@
 
-    function AddRow() {
-
-
-        var $ttc = $("#QuestionsTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#QuestionsTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
+        function AddRow() {
 
 
+            var $ttc = $("#QuestionsTable").find("tbody tr:last");
+            var $tr = $ttc.clone();
+            var trIndexReplaced = $("#QuestionsTable tr").length - 1;
 
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
+            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+            }).attr("id", function () { // change id also
+                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+            });
+            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+            })
 
-        $tr.find("a").val("");
 
-        // add cloned row as last row
-        $("#QuestionsTable").find("tbody tr:last").after($tr);
 
-        // Find the affected form
-        var $form = $tr.closest("FORM");
+            // reset fields in the new row
+            $tr.find("select").val("");
+            $tr.find("input[type=text]").val("");
+            $tr.find("input[type=hidden]").val("");
 
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
+            $tr.find("a").val("");
 
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
+            // add cloned row as last row
+            $("#QuestionsTable").find("tbody tr:last").after($tr);
 
-    }
+            // Find the affected form
+            var $form = $tr.closest("FORM");
+
+            // Unbind existing validation
+            $form.unbind();
+            $form.data("validator", null);
+
+            // Check document for changes
+            $.validator.unobtrusive.parse(document);
+
+        }
     function AddSkillGeneralRow() {
         var table = document.getElementById("SkillGeneralTable");
         var rowCount = table.rows.length;
