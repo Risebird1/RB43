@@ -1,0 +1,30 @@
+﻿.tooltipquestion {
+    position: relative;
+}
+
+.tooltiptext {
+    position: absolute;
+    left: 8%;
+    background-color: #000;
+    color: #fff;
+    white-space: nowrap;
+    padding: 10px 15px;
+    border-radius: 7px;
+    visibility: hidden;
+}
+
+    .tooltiptext::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        transform: translateX(-50%);
+        border: 15px solid;
+        border-color: #000 #0000 #0000 #0000;
+    }
+
+.tooltipquestion:hover .tooltiptext {
+    visibility: visible;
+    top: -60%;
+    opacity: 0.8;
+}
