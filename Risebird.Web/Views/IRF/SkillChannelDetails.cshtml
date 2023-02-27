@@ -28,14 +28,14 @@
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
 }
 <style>
-    .DetailLink td{
+    .DetailLink td {
         color: darkblue;
     }
 
-        .DetailLink:hover {
-            text-decoration: underline;
-            cursor: pointer;
-        }
+    .DetailLink:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 </style>
 <style>
     .modal-dialog {
@@ -46,8 +46,6 @@
         /* 80% of window height */
         height: 60%;
     }
-
-    
 
 </style>
 
@@ -314,7 +312,7 @@
                                                     {
                                                         <th>Action</th>
                                                     }
-                                                    
+
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -345,7 +343,12 @@
                                                             {
                                                                 @if (item.Flags > 0)
                                                                 {
-                                                                    <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.id','@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
+                                                                    @if (ViewBag.Type != "ChannelOwner")
+                                                                    {
+                                                                        <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.id','@item.IRFId', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
+                                                                    }else{
+                                                                        <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.id','@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
@@ -401,12 +404,17 @@
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
 
-                                                                        <span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+                                                                        @*<span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>*@
+                                                                        <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank" >
+                                                                            <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="'@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>
+                                                                        </a>
+                                                                          @*onclick="location.href='@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"*@
 
                                                                     </button>
+                                                                   
                                                                 </td>
                                                             }
-                                                            
+
                                                         </tr>
                                                     }
                                                 }
@@ -689,14 +697,14 @@
         if ($("#hidtype").val() == "IRF") {
             html += '<table style="width:100%"><tr class="DetailLink" onclick="getdetailedview(' + irfid + ',4)"><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
             html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',3)"><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
-            html += '<tr><td style ="border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
+            html += '<tr><td style ="border:1px solid black"> Pending Candidate Feedback</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
             html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',2)"><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
             html += '<tr class="DetailLink" onclick="getdetailedview(' + irfid + ',1)"><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
             html += '<tr class="DetailLink" onclick="javascript:getClientFeedback(' + irfid + ');"><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
         } else {
             html += '<table style="width:100%"><tr><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
             html += '<tr><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
-            html += '<tr><td style = "border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
+            html += '<tr><td style = "border:1px solid black"> Pending Candidate Feedback</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
             html += '<tr><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
             html += '<tr><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
             html += '<tr><td style="border: 1px solid black">Missing Client Feedback</td><td style="border: 1px solid black">' + feedbackCount + '</td></tr>';
