@@ -12,11 +12,14 @@ var interviewId = '';
 
 var span = document.getElementById("callPopUp");
 // When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-    hangUp();
-    var modal = document.getElementById("myCallModal");
-    modal.style.display = "none";
+if (span != null) {
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
 }
+
 
 function GenerateToken() {
     $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {

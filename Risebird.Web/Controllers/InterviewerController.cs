@@ -3555,7 +3555,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsAndRatings()
+        public async Task<IActionResult> InterviewerStatsAndRatings(int? irfId = null, string irfName = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3567,8 +3567,12 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<InterviewerStatsVM> statsList;
-                    statsList = await _interviewerService.GetInterviewerStatsAndRatings();
+                    statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
                     ViewBag.Profile = profileName;
+                    if(!string.IsNullOrEmpty(irfName))
+                    {
+                        ViewBag.IRFName = irfName;
+                    }
                     return View(statsList);
                 }
                 else
