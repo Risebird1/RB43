@@ -3573,6 +3573,10 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.IRFName = irfName;
                     }
+                    if (irfId != null && irfId.Value > 0)
+                    {
+                        ViewBag.irfId = irfId.Value;
+                    }
                     return View(statsList);
                 }
                 else
@@ -3614,6 +3618,39 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
         }
     }
 }

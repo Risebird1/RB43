@@ -6625,7 +6625,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
 
 
-                    if (profileName == "Admin" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "Client" || profileName == "SupportAdmin" || profileName == "SeniorHR")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
