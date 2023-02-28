@@ -5,6 +5,11 @@
     {
         customHeight = "450px";
     }
+    int irfId = 0;
+    if (ViewBag.irfId != null)
+    {
+        irfId = Convert.ToInt32(ViewBag.irfId);
+    }
 }
 <div id="tableID" class="second" style="overflow-x:scroll; max-height: @customHeight" ">
     <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
@@ -15,6 +20,7 @@
                 <th>Penalty Count</th>
                 <th>Client Rating</th>
                 <th>Total Meetings</th>
+                <th>Total Completed</th>
                 <th>Status Pending</th>
                 <th>Selected</th>
                 <th>Borderline</th>
@@ -34,6 +40,7 @@
                 <th>Penalty Count</th>
                 <th>Client Rating</th>
                 <th>Total Meetings</th>
+                <th>Total Completed</th>
                 <th>Status Pending</th>
                 <th>Selected</th>
                 <th>Borderline</th>
@@ -49,7 +56,8 @@
         <tbody>
 
             @if (Model != null && Model.Count() > 0)
-            {
+            {   
+                int i = 0;
                 foreach (var item in Model)
                 {
 
@@ -75,11 +83,12 @@
                         <td>@item.TotalPenalties</td>
                         <td>@(!string.IsNullOrEmpty(item.AverageClientRating) ? item.AverageClientRating : string.Empty)</td>
                         <td>@item.TotalMeetings </td>
+                        <td>@item.TotalCompletedMeetings </td>
                         <td>@item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                        <td>@item.TotalSelected { @(item.TotalMeetings != 0 ? (item.TotalSelected * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                        <td>@item.TotalBorderLine { @(item.TotalMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                        <td>@item.TotalRejected { @(item.TotalMeetings != 0 ? (item.TotalRejected * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                        <td>@item.TotalProxy { @(item.TotalMeetings != 0 ? (item.TotalProxy * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                        <td>@item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                        <td>@item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                        <td>@item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                        <td>@item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
                         <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                         <td>@item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                         <td>@item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
@@ -89,12 +98,16 @@
                         {
                             <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
                         }
+                        @if (irfId > 0)
+                        {
+                            <span id="deactivateBtn_@i" data-placement="top" onclick="javascript:DeactivateInterviewer('@irfId', '@item.InterviewerEmailId', this.id);" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                        }
                           
                         </td>
 
 
                     </tr>
-
+                    i++;
 
                 }
             }
@@ -110,3 +123,76 @@
 
 
 </div>
+<script>
+    function DeactivateInterviewer(irfId, interviewerEmail, elementId) {
+        debugger;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The interviewer (" + interviewerEmail + ") will be deactivated from this skill channel!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, deactivate!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interviewer/DeactivateSkillChannelInterviewer?irfId=' + irfId + '&interviewerEmail=' + interviewerEmail,
+                        type: "POST",
+                        success: function (result) {
+                            if (result == true) {
+                                
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error while deactivating!", "Please try again", "error");
+
+                            }
+
+                        },
+                        error: function () {
+
+                            swal.fire("Error archiving!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deactivated!',
+                    type: 'success',
+                    html: '<p>The interviewer '  + interviewerEmail + ' has been deactivated.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    debugger;
+                    var element = document.getElementById(elementId);
+                    if(element != null)
+                    {
+                        $(element).closest('tr').remove();
+                        //$('#listTable').DataTable().destroy();
+                        //$('#listTable').DataTable();
+                    }
+                    
+                    //location.reload(true);
+
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Operation cancelled!:)',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+</script>

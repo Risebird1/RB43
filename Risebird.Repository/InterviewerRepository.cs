@@ -2987,6 +2987,32 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@interviewerEmail", interviewerEmail);
+                    _ = await SqlMapper.QueryAsync(con, "dbo.usp_DeactivateSkillChannelInterviewer", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
     }
 
 }
