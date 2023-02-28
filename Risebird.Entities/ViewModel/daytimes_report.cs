@@ -57,6 +57,7 @@ namespace Risebird.Entities.ViewModel
     public class ScheculeInterview
     {
         public string Name { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
         [Display(Name = "Interview Channel")]
         public string InterviewChannelId { get; set; }
