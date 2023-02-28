@@ -965,6 +965,11 @@ namespace Risebird.Web.Controllers
                             model.ResumeLink = await _candidateService.FetchCandidateResumeById(id);
                             model.Candidateesumeid = id;
                         }
+                        if (TempData["SuccessErrorMessageCandidate"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidate");
+                        }
                         return PartialView("AddCandidate", model);
                         //return View(model);
                     }

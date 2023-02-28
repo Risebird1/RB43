@@ -1384,5 +1384,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail)
+        {
+            try
+            {
+                return await _interviewerRepository.DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
