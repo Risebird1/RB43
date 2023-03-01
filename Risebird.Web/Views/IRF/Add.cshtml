@@ -2647,23 +2647,28 @@
 
     function GetSMEListForAssessmentGroup()
     {
-        var assessmentGroupId = $("#AssessmentGroupId").val();
-        var assessmentGroupName = $("#AssessmentGroupId option:selected").text();
-        
-        $.ajax({
-                type: "GET",
-                url: "/IRF/GetAssessmentGroupSMEs",
-                data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName },
-                success: function (data) {
-                    $('#tab-13').empty();
-                    if(data != null)
-                    {
-                        $('#tab-13').html(data);
-                        smesLoadedForAssessmentGroup = assessmentGroupId;
-                    }
 
-                }
-        });
+        if(smesLoadedForAssessmentGroup == null || (typeof smesLoadedForAssessmentGroup==='undefined'))
+        {
+            var assessmentGroupId = $("#AssessmentGroupId").val();
+            var assessmentGroupName = $("#AssessmentGroupId option:selected").text();
+        
+            $.ajax({
+                    type: "GET",
+                    url: "/IRF/GetAssessmentGroupSMEs",
+                    data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName },
+                    success: function (data) {
+                        $('#tab-13').empty();
+                        if(data != null)
+                        {
+                            $('#tab-13').html(data);
+                            smesLoadedForAssessmentGroup = assessmentGroupId;
+                        }
+
+                    }
+            });
+        }
+        
         
     }
 
