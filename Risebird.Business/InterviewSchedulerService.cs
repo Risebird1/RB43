@@ -337,5 +337,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckInterviewScheduleavailability(EmailId, IRFId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

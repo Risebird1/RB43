@@ -598,5 +598,26 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@candidateEmail", EmailId);
+                dp.Add("@IRFId", IRFId);
+                dp.Add("@timenow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewAvailabilityResponse>(con, "usp_CheckInterviewScheduleavailability", dp,
+                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
