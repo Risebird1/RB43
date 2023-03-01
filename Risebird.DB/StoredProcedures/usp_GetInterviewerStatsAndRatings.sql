@@ -210,7 +210,7 @@ Begin
 	left join @tbl_InterviewerScheduled tisch on tisch.interviewer = ti.interviewer
 	left join @tbl_InterviewerPenalties tipenal on tipenal.interviewer = ti.interviewer
 	left join @tbl_InterviewerClientRatings tic on tic.interviewer = ti.interviewer
-	where tin.IsActive=1 and tin.IRFId = @irfId
+	where tin.IRFId = @irfId
 End
 else
 Begin
