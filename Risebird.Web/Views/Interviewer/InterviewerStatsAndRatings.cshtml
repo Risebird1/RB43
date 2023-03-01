@@ -1,44 +1,11 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerStatsVM>
-@*@using Risebird.Entities
-@using Newtonsoft.Json;
-@using Microsoft.AspNetCore.Http
-@using Risebird.Entities.ViewModel
-@using Risebird.Entities.Enum
-@inject IHttpContextAccessor HttpContextAccessor*@
-@*ViewBag.Profile*@
+
 
 @{
     ViewData["Title"] = "Interviewer Stats";
     ViewBag.PageHeader = "Interviewer Stats";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    //dynamic filter = null;
-    
-    //string AssessmentGroupTemplate = string.Empty;
-    //string SeniorityLevel = string.Empty;
-    //string CountryType = string.Empty;
-    //string CompanyType = string.Empty;
-    //string EmploymentType = string.Empty;
-    //string DifficultyLevel = string.Empty;
-    //string Category = string.Empty;
-    //string[] PrimarySkills = new string[] { };
 }
-
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
-{
-    filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters"));
-    //TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
-    //CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
-    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
-    CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
-    CompanyType = filter.CompanyType != null ? filter.CompanyType : string.Empty;
-    EmploymentType = filter.EmploymentType != null ? filter.EmploymentType : string.Empty;
-    DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
-    AssessmentGroupTemplate = filter.AssessmentGroupTemplate != null ? filter.AssessmentGroupTemplate : string.Empty;
-    Category = filter.Category != null ? filter.Category : string.Empty;
-    PrimarySkills = filter.PrimarySkills != null ? filter.PrimarySkills : string.Empty;
-}*@
-
-
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
@@ -52,16 +19,6 @@
                     <h6 class="card-title">Interviewer Stats @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</h6>
                     <div class="mobile-view"> <h4 class="card-title">Interviewer Stats @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</h4></div>
                 </div>
-
-                @*<div class="pull-right">
-                    <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
-
-                    </div>
-                </div>*@
             </div>
         </div>
     </div>

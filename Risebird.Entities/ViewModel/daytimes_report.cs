@@ -69,7 +69,7 @@ namespace Risebird.Entities.ViewModel
         public IFormFile ResumeFile { get; set; }
         public string Resume { get; set; }
         [EmailAddress]
-        [Display(Name = "Staffing Agencies")]
+        [Display(Name = "Staffing Agencies(Source)")]
         public string StaffingAgiencies { get; set; }
         public string Uniqueid { get; set; }
         public DateTime scheduleDate { get; set; }
