@@ -2679,12 +2679,12 @@
         var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
         //var assmntElement = document.getElementById("AssessmentGroupId");
         //var selectedText = assmntElement.options[assmntElement.selectedIndex].innerHTML;
+        
         @*var e = document.getElementById("AssessmentGroupId");
         var assessmentGroupName = e.options[e.selectedIndex].text;*@
-        @*if(smesLoadedForAssessmentGroup != assessmentGroupId){
-            
-        }*@
-        $.ajax({
+
+        if(smesLoadedForAssessmentGroup != assessmentGroupId){
+            $.ajax({
                 type: "GET",
                 url: "/IRF/GetAssessmentGroupSMEs",
                 async: true,
@@ -2704,6 +2704,8 @@
 
                 }
             });
+        }
+        
         
     }
 </script>
