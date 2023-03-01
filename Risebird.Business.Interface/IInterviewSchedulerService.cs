@@ -32,5 +32,6 @@ namespace Risebird.Business.Interface
         Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null);
         int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue);
         Task<bool> CheckEmailAddressAllow(string EmailId);
+        Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId);
     }
 }

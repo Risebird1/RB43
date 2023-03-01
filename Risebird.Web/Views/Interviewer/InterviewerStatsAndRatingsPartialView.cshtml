@@ -96,13 +96,18 @@
                         <td class="text-center">
                         @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
                         {
-                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                            <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+
                         }
                         @if (irfId > 0)
                         {
-                            <span id="deactivateBtn_@i" data-placement="top" onclick="javascript:DeactivateInterviewer('@irfId', '@item.InterviewerEmailId', this.id);" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                            <span>
+                                <button  class="mdc-fab app-fab--absolute trash-btn" title="Click here to deactivate interviewer">
+                                    <span title="Click here to deactivate Interviewer Profile" onclick="javascript:DeactivateInterviewer('@irfId', '@item.InterviewerEmailId', this.id);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                </button>
+                            </span>
                         }
-                          
+                        
                         </td>
 
 
@@ -170,16 +175,14 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    debugger;
-                    var element = document.getElementById(elementId);
-                    if(element != null)
-                    {
-                        $(element).closest('tr').remove();
-                        //$('#listTable').DataTable().destroy();
-                        //$('#listTable').DataTable();
-                    }
+
+                    //var element = document.getElementById(elementId);
+                    //if(element != null)
+                    //{
+                    //    $(element).closest('tr').remove();
+                        
+                    //}
                     
-                    //location.reload(true);
 
                 })
             }
