@@ -588,7 +588,7 @@
                                                                 <br />
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
-                                                                        <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClickInterviewer('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+                                                                        <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClickInterviewer('@item.FirstName', '@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
 
                                                             }
                                                             @if (ViewBag.profile != "Finance")
@@ -2139,7 +2139,7 @@
 
                             {
                                 title: "Call Candidate",
-                                content: "Click here to Call Candidate",
+                                content: "Click here to call the Interviewer",
                                 target: ".interviewer_14",
                                 placement: "left",
                                 showPrevButton: true,
