@@ -255,6 +255,11 @@ namespace Risebird.Web.Controllers
                     }
                     model.TimeZonesList = items;
                     model.schedulertype = result.FirstOrDefault().schedulertype;
+                    //Check if Candidate details is present for IRF
+                    //if (result.FirstOrDefault().IsSingleUse)
+                    //{
+                    //    await _interviewSchedulerservice.CheckCandidateIRFDetails(model.InterviewChannelId, model.Uniqueid);
+                    //}
                 }
                 else
                 {
@@ -308,12 +313,33 @@ namespace Risebird.Web.Controllers
                 }
                 if (model.schedulertype.ToUpper() == "IRF")
                 {
-                    var _ckeckEmail = await _interviewSchedulerservice.CheckEmailAddressAllow(model.Email);
-                    if (_ckeckEmail)
+                    //var _ckeckEmail = await _interviewSchedulerservice.CheckEmailAddressAllow(model.Email);
+                    var _interviewdetails = await _interviewSchedulerservice.CheckInterviewScheduleavailability(model.Email, model.InterviewChannelId);
+                    if (_interviewdetails != null)
                     {
-                        ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
-                        return View(model);
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("OtherProfile")))
+                        {
+                            ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                            return View(model);
+                        }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("PastComplete")))
+                        {
+                            ModelState.AddModelError(string.Empty, "An interview has already been completed for you on" + _interviewdetails.Where(x => x.interviewtype.Contains("PastComplete")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
+                            return View(model);
+                        }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("FutureScheduled")))
+                        {
+                            ModelState.AddModelError(string.Empty, "An interview has already been scheduled for you on " + _interviewdetails.Where(x => x.interviewtype.Contains("FutureScheduled")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
+                            return View(model);
+                        }
                     }
+                    //if (_ckeckEmail)
+                    //{
+                    //    ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                    //    return View(model);
+                    //}
+                    //check interviewer and IRF details
+                    //Past and future both
                 }
                 if (model.ResumeFile != null)
                 {
@@ -368,24 +394,12 @@ namespace Risebird.Web.Controllers
                 {
                     interviewOnDevice = interviewOnDevice + " " + "Quality Headphone";
                 }
-                //if (model.Checkbox3)
-                //{
-                //    interviewOnDevice = interviewOnDevice + " " + "High Speed Internet";
-                //}
                 if (model.Checkbox4)
                 {
                     interviewOnDevice = interviewOnDevice + " " + "Working webcam";
                 }
-                //if (model.Checkbox5)
-                //{
-                //    interviewOnDevice = interviewOnDevice + " " + "Chrome Browser";
-                //}
-                //if (model.Checkbox6)
-                //{
-                //    interviewOnDevice = interviewOnDevice + " " + "Silent place with appropriate lighting";
-                //}
                 var jdDetails = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
-                //var JDTitle = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
+
                 TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);
                 var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
@@ -403,7 +417,6 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
                             return View(model);
                         }
-
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
@@ -440,11 +453,6 @@ namespace Risebird.Web.Controllers
                         var timeZones = TimeZoneInfo.GetSystemTimeZones();
                         foreach (TimeZoneInfo timeZone in timeZones)
                         {
-                            //if (timeZone.DisplayName.Contains(offsetvalue))
-                            //{
-                            //    timezonevalue = timeZone.DisplayName;
-                            //    break;
-                            //}
                             if (timeZone.DisplayName.Contains(model.TimeZonesValue))
                             {
                                 if (timeZone.DisplayName.Contains(offsetvalue))
@@ -461,10 +469,6 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        //if (zoomLink.accountemail == "me")
-                        //{
-                        //    zoomLink.accountemail = "host@risebird.io";
-                        //}
                         string accountEmail = "hire@risebird.io";
                         //Send Mail Notification
                         Mail _mail = new Mail

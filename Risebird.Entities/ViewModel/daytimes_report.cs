@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public int BufferTime { get; set; }
         public string MeetingPlatform { get; set; }
         public string schedulertype { get; set; }
+        public bool IsSingleUse { get; set; }
     }
     public class daytimes_report
     {
