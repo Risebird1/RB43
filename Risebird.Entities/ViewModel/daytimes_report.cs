@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -100,6 +101,7 @@ namespace Risebird.Entities.ViewModel
         public string TimeZonesValue { get; set; }
         public int TimeZoneoffset { get; set; }
         public string schedulertype { get; set; }
+        public bool reschedulerequest { get; set; }
     }
     public class TimeslotsVM
     {
@@ -116,5 +118,14 @@ namespace Risebird.Entities.ViewModel
         public string LogoLink { get; set; }
         public string Name { get; set; }
         public string JDTiltle { get; set; }
+    }
+    public class CandidateIRFData
+    {
+        public string CandidateName { get; set; }
+        public string candidateEmail { get; set; }
+        public string resumeLink { get; set; }
+        public string staffingAgency { get; set; }
+        public string ClientHrContact { get; set; }
+        public string MobileNumber { get; set; }
     }
 }

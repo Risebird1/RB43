@@ -27,7 +27,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                                color: #9b9393;*/
+                                                                                                                                                color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -345,6 +345,7 @@
                                 @Html.HiddenFor(m => m.ClientName)
                                 @Html.HiddenFor(m => m.TimeZonesValue)
                                 @Html.HiddenFor(m => m.schedulertype)
+                                @Html.HiddenFor(m => m.reschedulerequest)
                                 <h2>Enter Details</h2>
                                 <div class="form-group">
                                     <div class="mandate">
@@ -359,34 +360,32 @@
                                     </div>
                                     @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
-                                <div class="form-group clearfix">
-                                    <div class="resume pull-left">
-                                        @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "form-label required" })
-
+                                @if (!Model.reschedulerequest)
+                                {
+                                    <div class="form-group clearfix">
+                                        <div class="resume pull-left">
+                                            @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "form-label required" })
+                                        </div>
+                                        <div class="col-md-6 pull-left">
+                                            @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
+                                            @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
+                                            <span id="file-chosen"></span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 pull-left">
-                                        @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
-                                        @*<label class="upload" for="ResumeFile">Choose File</label>*@
-                                        @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
-                                        <!-- name of file chosen -->
-                                        <span id="file-chosen"></span>
-                                    </div>
-                                    @*@Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @accept = ".doc, .docx, .pdf, .txt" })*@
-
-                                </div>
-
-
+                                }
+                                else
+                                {
+                                    @Html.HiddenFor(m=>m.Resume)
+                                }
                                 <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.InterviewChannelId, htmlAttributes: new { @class = "form-label required" })
-
                                     </div>
                                     @Html.TextBoxFor(m => m.InterviewChannelId, new { @readonly = "readonly", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                 </div>
                                 <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
-
                                     </div>
                                     @if (Model._listhr != null && Model._listhr.Count() > 0)
                                     {
@@ -422,15 +421,26 @@
                                     @*<p> @Html.CheckBoxFor(m => m.Checkbox5) @Html.LabelFor(m => m.Checkbox5, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
                                     @*<p> @Html.CheckBoxFor(m => m.Checkbox6) @Html.LabelFor(m => m.Checkbox6, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
                                 </div>
-                                <div class="form-group">
-                                    <div class="mandate">
-                                        @Html.LabelFor(m => m.MobileNumber, htmlAttributes: new { @class = "form-label required" })
+                                @if (!Model.reschedulerequest)
+                                {
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(m => m.MobileNumber, htmlAttributes: new { @class = "form-label required" })
+                                        </div>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
+                                            @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                        </div>
                                     </div>
-                                    <div class="input-group">
+                                }
+                                else
+                                {
+                                    @Html.HiddenFor(m=>m.MobileNumber)
+                                    <div class="input-group" style="display:none">
                                         @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
                                         @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
                                     </div>
-                                </div>
+                                }
                                 <div class="clearfix"></div>
 
                                 @Html.HiddenFor(m=> m.MeetingPlatform)
