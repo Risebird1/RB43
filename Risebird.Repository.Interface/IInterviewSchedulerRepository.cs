@@ -23,7 +23,7 @@ namespace Risebird.Repository.Interface
         Task<int> AutoCreateEvent(daytimes_report model);
         Task<int> FetchEventidByUniqueid(string _uniqueid);
         Task<bool> UpdateSchedulingLinkDetails(string _uniqueid);
-        Task<string> GenerateOneTimeEvent(string olduniqueid);
+        Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail);
         Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
         Task<bool> CheckSkillChannelPaused(string SkillChannel);
         Task<bool> UpdateMeetingLinkDetails(int interviewid, string zoomLink, string zoommeetingid);
@@ -32,5 +32,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetAvailableZoomAccount(DateTime startTime, DateTime endTime, string currentZoomAccount = null);
         Task<bool> CheckEmailAddressAllow(string EmailId);
         Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId);
+        Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid);
     }
 }

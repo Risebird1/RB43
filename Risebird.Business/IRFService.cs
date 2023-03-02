@@ -1111,10 +1111,10 @@ namespace Risebird.Business
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
-                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
                     }
                     else
@@ -1981,10 +1981,10 @@ namespace Risebird.Business
                                    {
                                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                                       oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                       oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
                                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                                        {
-                                           oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                           oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
                                        }
                                    }
                                    else
@@ -2864,10 +2864,10 @@ namespace Risebird.Business
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
-                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
-                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
                         oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }

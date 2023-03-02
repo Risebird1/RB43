@@ -33,5 +33,6 @@ namespace Risebird.Business.Interface
         int FetchCurrentoffset(int offset, DateTime value, string TimeZonevalue);
         Task<bool> CheckEmailAddressAllow(string EmailId);
         Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId);
+        Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid);
     }
 }

@@ -157,10 +157,10 @@ namespace Risebird.MicroService
                         {
                             string stepfirst = item.CalendlyLink.Split("?")[item.CalendlyLink.Split("?").Length];
                             var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
-                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
+                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
                             if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                             {
-                                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid).Result;
+                                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
                             }
                         }
                         else
