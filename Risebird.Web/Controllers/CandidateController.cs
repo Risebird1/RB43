@@ -1034,8 +1034,9 @@ namespace Risebird.Web.Controllers
 
                     if (model.Candidateesumeid > 0)
                     {
+                        var linkurl = "https://" + Request.Host.ToString();
                         await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
-                        var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids);
+                        var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids, linkurl);
                         if (string.IsNullOrEmpty(id))
                         {
                             TempData["SuccessErrorMessageCandidateResume"] = result;
@@ -1417,12 +1418,13 @@ namespace Risebird.Web.Controllers
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
+                        var linkurl = "https://" + Request.Host.ToString();
                         if (endDate < DateTime.Now)
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested Skill Channel positions have been filled.";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                         }
-                        if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail))
+                        if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail, linkurl))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
@@ -2627,6 +2629,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    var linkurl = "https://" + Request.Host.ToString();
                     StringBuilder result = new StringBuilder();
 
                     if (Request != null && formCollection.Files.Count > 0)
@@ -2718,7 +2721,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     if (candidateList != null && candidateList.Any())
                                     {
-                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite, linkurl).Result;
                                     }
                                     else
                                     {
@@ -2828,7 +2831,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
             var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
-
+            var linkurl = "https://" + Request.Host.ToString();
             if (model.Contains("Successfully"))
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
@@ -2843,6 +2846,7 @@ namespace Risebird.Web.Controllers
                     {
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
                     }
+                    oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                 }
                 else
                 {
@@ -3949,7 +3953,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser))
+                var linkurl = "https://" + Request.Host.ToString();
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl))
                 {
                     return Json("Invitation has been sent Successfully!");
                 }

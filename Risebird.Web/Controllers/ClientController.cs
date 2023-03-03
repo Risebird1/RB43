@@ -3401,7 +3401,8 @@ namespace Risebird.Web.Controllers
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
                     if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
+                        var linkurl = "https://" + Request.Host.ToString();
+                        if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail, linkurl))
                         {
                             return Json("Invitation has been sent Successfully!");
                         }
