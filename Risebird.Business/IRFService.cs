@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -1088,7 +1089,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId)
+        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId, string linkurl)
         {
             try
             {
@@ -1107,6 +1108,7 @@ namespace Risebird.Business
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                     string oneTimeSchedulingLink = string.Empty;
+                    string oneTimeSchedulingLink1 = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
@@ -1116,21 +1118,23 @@ namespace Risebird.Business
                         {
                             oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
+                        oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }
                     else
                     {
                         oneTimeSchedulingLink = await _calendlyHelper.GenerateOneTimeSchedulingLink(irfId);
+                        oneTimeSchedulingLink1 = oneTimeSchedulingLink;
                     }
                     if (irf.BussinessType == "B2B")
                     {
                         //_notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
-                        await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
+                        await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
 
                     }
                     else
                     {
                         //_notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
-                        await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId);
+                        await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId);
 
                     }
                     WhatsAppVM _whatsapp = new WhatsAppVM();
@@ -1940,7 +1944,7 @@ namespace Risebird.Business
         //}
 
 
-        public async Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite)
+        public async Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite, string linkurl)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -1977,6 +1981,7 @@ namespace Risebird.Business
                                    var candidate = await _irfRepository.GetCandidateByIRF(irfId, candidateEmail);
                                    string mailResult = string.Empty;
                                    string oneTimeSchedulingLink = string.Empty;
+                                   string oneTimeSchedulingLink1 = string.Empty;
                                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                                    {
                                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
@@ -1986,19 +1991,21 @@ namespace Risebird.Business
                                        {
                                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
                                        }
+                                       oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                                    }
                                    else
                                    {
                                        oneTimeSchedulingLink = await _calendlyHelper.GenerateOneTimeSchedulingLink(irfId);
+                                       oneTimeSchedulingLink1 = oneTimeSchedulingLink;
                                    }
 
                                    if (irf.BussinessType == "B2B")
                                    {
-                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;
+                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;
                                    }
                                    else
                                    {
-                                       mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId).Result;
+                                       mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId).Result;
                                    }
                                    var index = data.Rows.IndexOf(row);
                                    if (mailResult.ToLower().Contains("success"))

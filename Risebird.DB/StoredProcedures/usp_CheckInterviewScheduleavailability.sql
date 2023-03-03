@@ -13,7 +13,7 @@ Create Procedure usp_CheckInterviewScheduleavailability
 AS
 BEGIN
 select 'PastComplete' as interviewtype,interviewDate from [dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid 
-where candidateEmail = @candidateEmail and intc.MeetingStatus = 4 and IRFId= @IRFId and RedoInterview = 0
+where candidateEmail = @candidateEmail and (intc.MeetingStatus = 4 or intc.MeetingStatus = 7 or intc.MeetingStatus = 8) and IRFId= @IRFId and RedoInterview = 0
 union 
 select 'FutureScheduled' as interviewtype,interviewDate from [dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid 
 where candidateEmail = @candidateEmail and IRFId= @IRFId and RedoInterview = 0
