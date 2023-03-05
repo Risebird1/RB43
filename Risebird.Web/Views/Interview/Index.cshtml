@@ -50,7 +50,7 @@
     var Header = "Interviews";
     $('#txtpageHeader').empty().html(Header);
 </script>
-
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
@@ -575,6 +575,10 @@
                                                                 @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                 {
                                                                     <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                                }
+                                                                @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
+                                                                {
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;cursor:pointer" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
                                                                 }
                                                                 @if (item.IsBiometricEnabled == true)
                                                                 {
@@ -1872,6 +1876,16 @@
     function closeRedoInterviewModel() {
         var modal = document.getElementById("RedoInterviewModel");
         modal.style.display = "none";
+    }
+    function Sendinvite(id, IRFId, CandidateEmail) {
+        $.ajax({
+            url: '/Client/SendInvite',
+            type: 'POST',
+            data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail },
+            success: function (data) {
+                swal.fire(data);
+            }
+        });
     }
 </script>
 

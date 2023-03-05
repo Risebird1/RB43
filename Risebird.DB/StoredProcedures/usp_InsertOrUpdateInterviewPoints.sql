@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE Procedure usp_InsertOrUpdateInterviewPoints      
+Create Procedure usp_InsertOrUpdateInterviewPoints      
 @interviewId int      
 As      
 BEGIN      
@@ -32,7 +32,7 @@ Select @InterviewStatus=InterviewStatus from InterviewComments where InterviewId
 Select @VideoDuration=VideoDuration from InterviewComments where InterviewId=@interviewId      
 Select @UserId=ul.id From InterviewMeetings im join UserList ul on im.interviewer=ul.EmailId where im.id=@interviewId      
 Select @CandidateEmail=CandidateEmail From InterviewMeetings where id=@interviewId      
-Select @MaxVideoDuration=cl.InterviewDuration from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@interviewId      
+Select @MaxVideoDuration=IRF.InterviewDuration from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId      
 Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Userlist ul on im.candidateEmail=ul.EmailId           
  join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id  where im.id=@interviewId                           
 select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId       

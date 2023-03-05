@@ -483,6 +483,7 @@ namespace Risebird.Business
                         IRF.IsCandidateavailability = _clientdetails.IsCandidateavailability;
                         IRF.IsMeetingAutoCancelled = _clientdetails.IsMeetingAutoCancelled;
                         IRF.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
+                        IRF.InterviewDuration = _clientdetails.InterviewDuration;
                     }
                 }
                 var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
@@ -560,6 +561,7 @@ namespace Risebird.Business
                 model.IsCandidateavailability = IRF.IsCandidateavailability;
                 model.IsMeetingAutoCancelled = IRF.IsMeetingAutoCancelled;
                 model.IsMeetingNotificationSend = IRF.IsMeetingNotificationSend;
+                model.InterviewDuration = IRF.InterviewDuration;
                 return model;
             }
             catch (Exception e)
