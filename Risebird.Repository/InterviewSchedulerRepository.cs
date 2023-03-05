@@ -449,7 +449,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = ";With CTE as(Select Count(id) as InterviewCount from InterviewMeetings where interviewDate=@interviewdate and IRFId=@IRFId) Select Case When CTE.InterviewCount<Isnull(si.ConCurrency,0) Then 'True' When CTE.InterviewCount>=Isnull(si.ConCurrency,0) Then 'False' End from CTE join ScheduleInterviewEvent si on si.SkillChannel=@IRFId where si.Uniqueid=@Uniqueid";
+                var query = ";With CTE as(Select Count(id) as InterviewCount from InterviewMeetings where interviewDate=@interviewdate and IRFId=@IRFId) Select Case When CTE.InterviewCount<Isnull(si.ConCurrency,0) Then 'True' When CTE.InterviewCount>=Isnull(si.ConCurrency,0) Then 'False' End from CTE join ScheduleInterviewEvent si on (si.SkillChannel=@IRFId or SkillChannelRelation=@IRFId) where si.Uniqueid=@Uniqueid";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 dp.Add("@interviewdate", interviewdate);
