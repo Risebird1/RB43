@@ -327,7 +327,8 @@ app.UseCsp(builder =>
            .Allow("https://cdn.tiny.cloud/1/no-api-key/")
            .Allow("https://cdnjs.com/libraries/material-components-web/")
            .Allow("https://widget.freshworks.com/")
-           .Allow("https://portal.risebird.io/");
+           .Allow("https://portal.risebird.io/")
+           .Allow("https://qa.portal.risebird.io/");
 
     builder.Frame
            .AllowSelf()

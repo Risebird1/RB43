@@ -48,6 +48,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@timeNow datetime,
 	@isSMEChanged bit output,
 	@IsLocked bit,
+	@InterviewDuration int,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -115,6 +116,7 @@ BEGIN
 	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
+	,[InterviewDuration]=@InterviewDuration
 	Where id =@id        
     
 	
@@ -290,8 +292,7 @@ BEGIN
  end catch  
   
     
-END    
-  
+END     
 
 GO
 

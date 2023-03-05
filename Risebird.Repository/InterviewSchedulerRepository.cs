@@ -408,7 +408,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> GenerateOneTimeEvent(string olduniqueid)
+        public async Task<string> GenerateOneTimeEvent(string olduniqueid,string candidateEmail)
         {
             try
             {
@@ -430,6 +430,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@duration", resultset.duration);
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
                 dynamicParameters.Add("@Concurrency", resultset.Concurrency);
+                dynamicParameters.Add("@candidateEmail", candidateEmail);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = await SqlMapper.QueryAsync<int>(con, "usp_GenerateOneTimeInterviewEvent", dynamicParameters,
@@ -448,7 +449,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = ";With CTE as(Select Count(id) as InterviewCount from InterviewMeetings where interviewDate=@interviewdate and IRFId=@IRFId) Select Case When CTE.InterviewCount<Isnull(si.ConCurrency,0) Then 'True' When CTE.InterviewCount>=Isnull(si.ConCurrency,0) Then 'False' End from CTE join ScheduleInterviewEvent si on si.SkillChannel=@IRFId where si.Uniqueid=@Uniqueid";
+                var query = ";With CTE as(Select Count(id) as InterviewCount from InterviewMeetings where interviewDate=@interviewdate and IRFId=@IRFId) Select Case When CTE.InterviewCount<Isnull(si.ConCurrency,0) Then 'True' When CTE.InterviewCount>=Isnull(si.ConCurrency,0) Then 'False' End from CTE join ScheduleInterviewEvent si on (si.SkillChannel=@IRFId or SkillChannelRelation=@IRFId) where si.Uniqueid=@Uniqueid";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 dp.Add("@interviewdate", interviewdate);
@@ -618,6 +619,27 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", IRFId);
+                dp.Add("@uniqueid", _uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CandidateIRFData>(con, "usp_GetCandidateIRFDetails", dp,
+                            commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

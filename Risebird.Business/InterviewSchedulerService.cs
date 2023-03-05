@@ -349,5 +349,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckCandidateIRFDetails(IRFId, _uniqueid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

@@ -256,10 +256,23 @@ namespace Risebird.Web.Controllers
                     model.TimeZonesList = items;
                     model.schedulertype = result.FirstOrDefault().schedulertype;
                     //Check if Candidate details is present for IRF
-                    //if (result.FirstOrDefault().IsSingleUse)
-                    //{
-                    //    await _interviewSchedulerservice.CheckCandidateIRFDetails(model.InterviewChannelId, model.Uniqueid);
-                    //}
+                    if (result.FirstOrDefault().IsSingleUse)
+                    {
+                        var _candidatedetails = await _interviewSchedulerservice.CheckCandidateIRFDetails(model.InterviewChannelId, model.Uniqueid);
+                        if (_candidatedetails != null)
+                        {
+                            model.Name = _candidatedetails.CandidateName != "" ? _candidatedetails.CandidateName : "";
+                            model.Email = _candidatedetails.candidateEmail != "" ? _candidatedetails.candidateEmail : "";
+                            model.Resume = _candidatedetails.resumeLink != "" ? _candidatedetails.resumeLink : "";
+                            model.HRCoordinator = _candidatedetails.ClientHrContact != "" ? _candidatedetails.ClientHrContact : "";
+                            model.StaffingAgiencies = _candidatedetails.staffingAgency != "" ? _candidatedetails.staffingAgency : "";
+                            model.MobileNumber = _candidatedetails.MobileNumber != "" ? _candidatedetails.MobileNumber : "";
+                            if (!string.IsNullOrEmpty(_candidatedetails.candidateEmail))
+                            {
+                                model.reschedulerequest = true;
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -382,8 +395,11 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("ResumeFile", "Please upload resume file(.pdf, .doc, .docx)!");
-                    return View(model);
+                    if (!model.reschedulerequest)
+                    {
+                        ModelState.AddModelError("ResumeFile", "Please upload resume file(.pdf, .doc, .docx)!");
+                        return View(model);
+                    }
                 }
                 string interviewOnDevice = string.Empty;
                 if (model.Checkbox1)
@@ -423,8 +439,14 @@ namespace Risebird.Web.Controllers
                         rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                     }
                     string textreminder = string.Empty;
-                    textreminder = model.CountryCode + model.MobileNumber;
-
+                    if (!model.reschedulerequest)
+                    {
+                        textreminder = model.CountryCode + model.MobileNumber;
+                    }
+                    else
+                    {
+                        textreminder = model.MobileNumber;
+                    }
                     bool result = false;
                     int interviewId = 0;
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)

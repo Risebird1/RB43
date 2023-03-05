@@ -794,11 +794,11 @@
                                                                             <td>
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                             </td>
-                                                                             
+
                                                                             <td class="cadName">
                                                                                 <a onclick="" data-tooltip="">No Resume</a>
                                                                             </td>
-                                                                                
+
                                                                             <td>
 
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
@@ -832,7 +832,7 @@
                                                                                 <td>
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                                 </td>
-                                                                                 @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
                                                                                 {
                                                                                     <td class="cadName">
                                                                                         <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
@@ -1233,6 +1233,11 @@
                                                                 @Html.LabelFor(model => model.IsMeetingNotificationSend, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
                                                             </div>
+                                                        </div>
+                                                        <div class="col-md-4 col-sm-4 pull-left">
+                                                            @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                            @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1684,6 +1689,7 @@
                 document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
                 document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
                 document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
+                document.getElementById('InterviewDuration').value = data.interviewDuration;
                 CheckCandidateavailabilityDetails();
             }
         });
@@ -2645,31 +2651,28 @@
 
     }
 
-    function GetSMEListForAssessmentGroup()
-    {
+    function GetSMEListForAssessmentGroup() {
 
-        if(smesLoadedForAssessmentGroup == null || (typeof smesLoadedForAssessmentGroup==='undefined'))
-        {
+        if (smesLoadedForAssessmentGroup == null || (typeof smesLoadedForAssessmentGroup === 'undefined')) {
             var assessmentGroupId = $("#AssessmentGroupId").val();
             var assessmentGroupName = $("#AssessmentGroupId option:selected").text();
-        
-            $.ajax({
-                    type: "GET",
-                    url: "/IRF/GetAssessmentGroupSMEs",
-                    data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName },
-                    success: function (data) {
-                        $('#tab-13').empty();
-                        if(data != null)
-                        {
-                            $('#tab-13').html(data);
-                            smesLoadedForAssessmentGroup = assessmentGroupId;
-                        }
 
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetAssessmentGroupSMEs",
+                data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName },
+                success: function (data) {
+                    $('#tab-13').empty();
+                    if (data != null) {
+                        $('#tab-13').html(data);
+                        smesLoadedForAssessmentGroup = assessmentGroupId;
                     }
+
+                }
             });
         }
-        
-        
+
+
     }
 
     function QCChanged(val, id) {
@@ -3195,7 +3198,7 @@
                 $("#rtab-10").addClass("active");
                 document.getElementById("tab-10").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
-    
+
             }
             else if (activeTab.trim() == "Subject Matter Expert") {
                 $(".tab-menu li a").removeClass("active");
@@ -3498,9 +3501,9 @@
                     document.getElementById("tab-10").style.display = "none";
     @*document.getElementById("btnNext").style.display = "none";
                         document.getElementById("btnUpload").style.display = "block";*@
-                        }
+                                            }
             }
-            
+
             else if (activeTab.trim() == "Coordinator") {
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -3520,7 +3523,7 @@
                     document.getElementById("tab-13").style.display = "none";
                 }
             }
-            
+
 
         });
     });
@@ -3783,7 +3786,7 @@
             document.getElementById('IsMeetingAutoCancelled').disabled = true;
         }
     }
-    function configurationChange(){
+    function configurationChange() {
 
     }
 </script>

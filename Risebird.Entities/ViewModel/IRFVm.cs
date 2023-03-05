@@ -205,6 +205,9 @@ namespace Risebird.Entities.ViewModel
         public string SMEAudioCommentLink { get; set; }
         public bool IsValidCustom { get; set; }
         public bool IsLocked { get; set; }
+        [Display(Name = "Interview Duration")]
+        public int InterviewDuration { get; set; }
+        public SelectList InterviewDurationList { get; set; }
     }
     public class InterviewerIds
     {
@@ -321,6 +324,7 @@ namespace Risebird.Entities.ViewModel
         public int FeedbackCount { get; set; }
         public DateTime CreatedOn { get; set; }
         public bool IsLocked { get; set; }
+        public int InterviewDuration { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

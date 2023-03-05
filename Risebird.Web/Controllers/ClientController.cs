@@ -3399,9 +3399,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
+                        var linkurl = "https://" + Request.Host.ToString();
+                        if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail, linkurl))
                         {
                             return Json("Invitation has been sent Successfully!");
                         }
@@ -4403,5 +4404,42 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> StaffingAgencyStats()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IEnumerable<StaffingAgencyStatsVM> statsList;
+                        statsList = await _clientService.GetStaffingAgencyStats();
+                        ViewBag.Profile = profileName;
+
+                        return View(statsList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
     }
 }

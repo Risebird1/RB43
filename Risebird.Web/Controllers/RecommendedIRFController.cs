@@ -696,6 +696,7 @@ namespace Risebird.Web.Controllers
             var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
             var isSendInvite = true;
             var IRFName = formCollection["IRFName"].ToString();
+            var linkurl = "https://" + Request.Host.ToString();
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
@@ -757,7 +758,7 @@ namespace Risebird.Web.Controllers
                                     StringBuilder result = new StringBuilder();
                                     if (candidateList != null && candidateList.Any())
                                     {
-                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite, linkurl).Result;
                                     }
                                     else
                                     {
