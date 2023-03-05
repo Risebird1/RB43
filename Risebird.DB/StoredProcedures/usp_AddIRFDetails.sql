@@ -11,7 +11,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].[usp_AddIRFDetails]            
-            
 @IRFId nvarchar(200),            
 @clientName varchar(200),            
 @JDTiltle nvarchar(200),            
@@ -46,6 +45,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsMeetingNotificationSend bit,
 @SkillChannelSME int = null,
 @CreatedBy varchar(100) = null,
+@InterviewDuration int,
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -96,7 +96,8 @@ Begin
 				   ,[IsAadhaarVerificationRequired]
 				   ,[IsCandidateavailability]
 				   ,[IsMeetingAutoCancelled]
-				   ,[IsMeetingNotificationSend])            
+				   ,[IsMeetingNotificationSend]
+				   ,[InterviewDuration])            
 					   VALUES            
 						   (@IRFId,            
 				   @clientName,            
@@ -129,7 +130,8 @@ Begin
 				   @IsAadhaarVerificationRequired,
 				   @IsCandidateavailability,
 				   @IsMeetingAutoCancelled,
-				   @IsMeetingNotificationSend)      
+				   @IsMeetingNotificationSend,
+				   @InterviewDuration)      
        
 					select @idIrf = SCOPE_IDENTITY()  
 				
@@ -253,8 +255,7 @@ Begin
 	End Catch
 
 End            
-  
-    
+      
 GO
 
 

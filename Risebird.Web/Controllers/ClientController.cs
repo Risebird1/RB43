@@ -3399,7 +3399,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var linkurl = "https://" + Request.Host.ToString();
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail, linkurl))

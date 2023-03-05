@@ -1109,7 +1109,7 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                       <th width="20%" class="table_heading">Resume</th>
+                                                                        <th width="20%" class="table_heading">Resume</th>
                                                                         <th width="20%" class="table_heading">Skills</th>
                                                                         <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
                                                                         <th width="10%" class="table_heading">Active</th>
@@ -1517,7 +1517,7 @@
                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
                                         {
                                             <h3 class="tab_drawer_heading" rel="tab-13">Subject Matter Expert</h3>
-                                                <div class="tab-box" id="tab-13">
+                                            <div class="tab-box" id="tab-13">
                                             </div>
 
                                             <h3 class="tab_drawer_heading" rel="tab-12">Manage Channel</h3>
@@ -1544,7 +1544,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsAadhaarVerificationRequired, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1560,7 +1560,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsCandidateavailability, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1576,7 +1576,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsMeetingAutoCancelled, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1593,7 +1593,7 @@
                                                                         @Html.CheckBoxFor(m => m.IsMeetingNotificationSend, new { @class = "mdc-checkbox__native-control" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1608,17 +1608,17 @@
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
                                                                         @*@{
-                                                                            string disabled = "false";
-                                                                            if(Model.IsLocked)
-                                                                            {
-                                                                                disabled = "true";
-                                                                            }
-                                                                            
-                                                                        }*@
+                                                                    string disabled = "false";
+                                                                    if(Model.IsLocked)
+                                                                    {
+                                                                    disabled = "true";
+                                                                    }
+
+                                                                    }*@
                                                                         @Html.CheckBoxFor(m => m.IsLocked, new { @class = "mdc-checkbox__native-control"})
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
-                                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                                 <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                             </svg>
                                                                             <div class="mdc-checkbox__mixedmark"></div>
@@ -1639,6 +1639,11 @@
                                                                     }
                                                                 </div>
                                                             </div>
+                                                            <div class="col-md-4 col-sm-4 pull-left">
+                                                                @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1652,6 +1657,7 @@
                                             @Html.HiddenFor(model=>model.IsCandidateavailability)
                                             @Html.HiddenFor(model=>model.IsMeetingAutoCancelled)
                                             @Html.HiddenFor(model=>model.IsMeetingNotificationSend)
+                                            @Html.HiddenFor(model=>model.InterviewDuration)
                                             @Html.HiddenFor(model=>model.MeetingPlatform)
                                         }
                                     </div>
@@ -1756,8 +1762,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var isLockedElement = document.getElementById("IsLocked");
-        if(isLockedElement.checked)
-        {
+        if (isLockedElement.checked) {
             isLockedElement.disabled = true;
         }
         $(".selectpicker").select2();
@@ -1915,10 +1920,10 @@
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
                 GetSMEListForAssessmentGroup();
-                @*if ($("#hidClientuser").val() == false) {
+    @*if ($("#hidClientuser").val() == false) {
                     document.getElementById("btnUpload").style.display = "none";
-                }*@
-            }
+                    }*@
+                    }
 
         });
         $("#btnNext").click(function () {
@@ -2059,7 +2064,7 @@
                 }
 
             }
-            
+
             else if (activeTab.trim() == "E.Interviewer") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
@@ -2067,14 +2072,14 @@
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
 
-                    if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin" && $("#hidprofile").val() != "SeniorHR" ) {
+                    if ($("#hidprofile").val() != "Admin" && $("#hidprofile").val() != "SupportAdmin" && $("#hidprofile").val() != "SeniorHR") {
                         document.getElementById("btnNext").style.display = "none";
                         document.getElementById("btnUpload").style.display = "block";
                     }
                     document.getElementById("tab-10").style.display = "none";
                 }
             }
-            
+
             else if (activeTab.trim() == "Coordinator") {
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -2285,12 +2290,12 @@
         //    flag = checkQcDetails();
         //    return flag;
         //}
-       @* else if (activeTab.trim() == "E.Interviewer") {
+    @* else if (activeTab.trim() == "E.Interviewer") {
             flag = checkEmergencyDetails();
             return flag;
-        }*@
+            }*@
 
-    }
+            }
     function headerClickchange(newHeader) {
         var activeTab = $(".active").text();
         var flag = false;
@@ -2402,7 +2407,7 @@
 
             document.getElementById("tab-13").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
-            
+
         }
         else if (activeTab.trim() == "Manage Channel") {
             $(".tab-menu li a").removeClass("active");
@@ -2411,8 +2416,7 @@
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
-        if(newHeader == "tab-13")
-        {
+        if (newHeader == "tab-13") {
             GetSMEListForAssessmentGroup();
         }
         if (!flag) {
@@ -2673,31 +2677,28 @@
 </script>
 <script>
     var smesLoadedForAssessmentGroup;
-    function GetSMEListForAssessmentGroup()
-    {
+    function GetSMEListForAssessmentGroup() {
         var assessmentGroupId = $("#AssessmentGroupId").val();
-        var assessmentGroupName = $( "#AssessmentGroupId option:selected" ).text();
+        var assessmentGroupName = $("#AssessmentGroupId option:selected").text();
         //var assmntElement = document.getElementById("AssessmentGroupId");
         //var selectedText = assmntElement.options[assmntElement.selectedIndex].innerHTML;
-        
-        @*var e = document.getElementById("AssessmentGroupId");
-        var assessmentGroupName = e.options[e.selectedIndex].text;*@
 
-        if(smesLoadedForAssessmentGroup != assessmentGroupId){
+    @*var e = document.getElementById("AssessmentGroupId");
+            var assessmentGroupName = e.options[e.selectedIndex].text;*@
+
+                if (smesLoadedForAssessmentGroup != assessmentGroupId) {
             $.ajax({
                 type: "GET",
                 url: "/IRF/GetAssessmentGroupSMEs",
                 async: true,
-                data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName, 'irfId' : '@Model.id' },
+                data: { 'agId': assessmentGroupId, 'agName': assessmentGroupName, 'irfId': '@Model.id' },
                 success: function (data) {
                     $('#tab-13').empty();
-                    if(data != null)
-                    {
+                    if (data != null) {
                         $('#tab-13').html(data);
                         smesLoadedForAssessmentGroup = assessmentGroupId;
                         var isLocked = document.getElementById("IsLocked").checked;
-                        if(isLocked == true)
-                        {
+                        if (isLocked == true) {
                             DisableAllSMECheckboxes();
                         }
                     }
@@ -2705,8 +2706,8 @@
                 }
             });
         }
-        
-        
+
+
     }
 </script>
 <script>
@@ -2771,7 +2772,7 @@
         var inputs = document.getElementsByTagName("input");
         for (i = 0; i <= inputs.length - 1; i++) {
             inputs[i].addEventListener("input", function () {
-                if ('@ViewBag.IsClientUser' =='False') {
+                if ('@ViewBag.IsClientUser' == 'False') {
                     document.getElementById("btnUpload").disabled = false;
                 }
             });
@@ -3262,7 +3263,7 @@
 
     }
 
-    
+
     function AddSkillGeneralRow() {
         //document.getElementById("btnUpload").disabled = false;
 

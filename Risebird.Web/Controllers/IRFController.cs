@@ -990,7 +990,9 @@ namespace Risebird.Web.Controllers
             }
             //model.IRFRecommendations = new IRFRecommendations();
             //model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-
+            var interviewduration = from InterviewDurationEnum s in Enum.GetValues(typeof(InterviewDurationEnum))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
             return;
         }
         //    catch (Exception ex)
@@ -2196,6 +2198,9 @@ namespace Risebird.Web.Controllers
 
             //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
+            var interviewduration = from InterviewDurationEnum s in Enum.GetValues(typeof(InterviewDurationEnum))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
             return;
         }
 
