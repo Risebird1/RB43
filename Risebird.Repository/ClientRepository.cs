@@ -909,6 +909,30 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<StaffingAgencyStatsVM>(con, "dbo.usp_GetStaffingAgencyStats", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
 
     }
 }

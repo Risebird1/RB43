@@ -7,6 +7,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -476,6 +477,18 @@ namespace Risebird.Business
                 return await _clientRepository.GetClientLogoByIRFId(irfId);
             }
             catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats()
+        {
+            try
+            {
+                return await _clientRepository.GetStaffingAgencyStats();
+            }
+            catch (SqlTypeException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
