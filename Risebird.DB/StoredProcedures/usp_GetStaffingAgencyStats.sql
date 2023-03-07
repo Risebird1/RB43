@@ -18,7 +18,11 @@ CREATE PROCEDURE [dbo].[usp_GetStaffingAgencyStats]
 AS          
 BEGIN  
 
-
+declare @IRFName varchar(30)
+if(@irfId is not null)
+begin
+	set @IRFName = (select IRFId from IRF where id = @irfId)
+end
 
 
 DECLARE @tbl_RelevantCandidates TABLE (                    
@@ -37,7 +41,7 @@ from Candidate ca join CandidatesMaster cm
 on cm.id = ca.CandidateMasterId
 join UserList ul on ul.id = cm.UserId
 join IRF on irf.id = ca.IRFId
-where ProfileSource is not null
+where ProfileSource is not null and (@irfId is null or ca.IRFId = @irfId)
 group by cm.UserId, ca.ProfileSource, ul.EmailId, ca.IRFId, irf.IRFId
 
 
@@ -49,7 +53,8 @@ DECLARE @tbl_RelevantInterviews TABLE (
 
 INSERT INTO @tbl_RelevantInterviews    
 select im.id, im.interviewDate, trc.ProfileSource from @tbl_RelevantCandidates trc 
-join InterviewMeetings im on im.candidateEmail = trc.CandidateEmail and im.IRFId = trc.IRFName and im.staffingAgency = trc.ProfileSource
+join InterviewMeetings im on im.candidateEmail = trc.CandidateEmail and im.IRFId = trc.IRFName 
+and im.staffingAgency = trc.ProfileSource  and (@irfId is null or im.IRFId = @IRFName)
 where im.confirmationStatus = 1
 
 

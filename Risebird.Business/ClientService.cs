@@ -482,11 +482,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats()
+        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats(int? irfId = null)
         {
             try
             {
-                return await _clientRepository.GetStaffingAgencyStats();
+                return await _clientRepository.GetStaffingAgencyStats(irfId);
             }
             catch (SqlTypeException ex)
             {
