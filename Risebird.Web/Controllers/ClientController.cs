@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -4407,7 +4408,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> StaffingAgencyStats()
+        public async Task<IActionResult> StaffingAgencyStats(int? irfId = null, string irfName = null)
         {
             try
             {
@@ -4419,8 +4420,17 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         IEnumerable<StaffingAgencyStatsVM> statsList;
-                        statsList = await _clientService.GetStaffingAgencyStats();
+                        statsList = await _clientService.GetStaffingAgencyStats(irfId);
                         ViewBag.Profile = profileName;
+
+                        if (!string.IsNullOrEmpty(irfName))
+                        {
+                            ViewBag.IRFName = irfName;
+                        }
+                        if (irfId != null && irfId.Value > 0)
+                        {
+                            ViewBag.irfId = irfId.Value;
+                        }
 
                         return View(statsList);
                     }
