@@ -49,8 +49,8 @@
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
-                    <h6 class="card-title">Staffing Agency Stats </h6>
-                    <div class="mobile-view"> <h4 class="card-title">Staffing Agency Stats </h4></div>
+                    <h6 class="card-title">Staffing Agency Stats @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty) </h6>
+                    <div class="mobile-view"> <h4 class="card-title">Staffing Agency Stats @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</h4></div>
                 </div>
 
                 @*<div class="pull-right">
@@ -77,100 +77,7 @@
                             <div class="toolbar">
 
                                 <div>
-                                    <div id="tableID" class="second" style="overflow-x:scroll">
-                                        <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Staffing Agency</th>
-                                                    <th>Total Meetings</th>
-                                                    <th>Total Completed</th>
-                                                    <th>Status Pending</th>
-                                                    <th>Selected</th>
-                                                    <th>Borderline</th>
-                                                    <th>Rejected</th>
-                                                    <th>Proxy</th>
-                                                    <th>Dropped</th>
-                                                    <th>No Show(Interviewer)</th>
-                                                    <th>No Show(Candidate)</th>
-                                                    <th>Scheduled</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Staffing Agency</th>
-                                                    <th>Total Meetings</th>
-                                                    <th>Total Completed</th>
-                                                    <th>Status Pending</th>
-                                                    <th>Selected</th>
-                                                    <th>Borderline</th>
-                                                    <th>Rejected</th>
-                                                    <th>Proxy</th>
-                                                    <th>Dropped</th>
-                                                    <th>No Show(Interviewer)</th>
-                                                    <th>No Show(Candidate)</th>
-                                                    <th>Scheduled</th>
-                                                    <th>Actions</th>
-                                                    
-                                                </tr>
-                                            </tfoot>
-                                            <tbody>
-
-                                                @if (Model != null && Model.Count() > 0)
-                                                {
-                                                    int i = 0;
-                                                    foreach (var item in Model)
-                                                    {
-
-                                                        <tr>
-                                                            @if (!string.IsNullOrEmpty(item.ProfileSource))
-                                                            {
-                                                                <td> @item.ProfileSource </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                            <td>@item.TotalMeetings </td>
-                                                            <td>@item.TotalCompletedMeetings </td>
-                                                            <td>@item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalInterviewerNoShow { @(item.TotalMeetings != 0 ? (item.TotalInterviewerNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                                                            <td>@item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                                                            <td class="text-center">
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-                                                                    <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.ProfileSource', '@item.MobileNumber', '@item.ProfileSource')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
-
-                                                                }
-
-
-                                                            </td>
-
-
-                                                        </tr>
-                                                        i++;
-
-                                                    }
-                                                }
-
-                                            </tbody>
-
-                                        </table>
-
-
-                                        @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
-
-
-
-
-                                    </div>
+                                    @await Html.PartialAsync("~/Views/Client/StaffingAgencyStatsPartialView.cshtml")
                                 </div>
 
 

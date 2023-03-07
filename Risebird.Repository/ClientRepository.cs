@@ -909,7 +909,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats()
+        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats(int? irfId = null)
         {
             try
             {
@@ -917,6 +917,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
                     return await SqlMapper.QueryAsync<StaffingAgencyStatsVM>(con, "dbo.usp_GetStaffingAgencyStats", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
