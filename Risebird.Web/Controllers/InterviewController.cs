@@ -7173,5 +7173,37 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> CaptureJoinMeetingTime(int interviewid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var model = await _meetingService.SaveCapturedJoinMeetingTime(interviewid, emailid);
+                        return Json("success");
+                    }
+                    else
+                    {
+                        return Json("fail");
+                    }
+                }
+                else
+                {
+                    return Json("fail");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("fail");
+            }
+        }
     }
 }

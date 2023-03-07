@@ -9,8 +9,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-  
 Create PROCEDURE [dbo].[usp_UpdateClientUser]  
 (@id INT,   
 @userFirstName varchar(150),   
@@ -19,7 +17,8 @@ Create PROCEDURE [dbo].[usp_UpdateClientUser]
 @userMobileNumber nvarchar(200),  
 @selectedClientRoleId int,  
 @UserPassword nvarchar(60),
-@WhatsappNumber varchar(15))    
+@WhatsappNumber varchar(15),
+@IsActive bit)    
 AS    
 Begin Try    
   BEGIN TRAN UpdateUser     
@@ -50,7 +49,8 @@ Begin Try
                            EmailID =   @email,    
          MobileNumber = @phone,   
          UserPassword =@password,
-		 WhatsappNumber=@WhatsappNumber
+		 WhatsappNumber=@WhatsappNumber,
+		 IsActive=@IsActive
     where id= @userId   
      
    update ClientUser set RoleId=@roleId where id=@cuid  
@@ -67,17 +67,6 @@ Begin Catch
     
  Rollback;    
 End Catch    
-    
-    
-    
-    
-    
-    
-  
-  
-  
-  
-  
   
 GO
 
