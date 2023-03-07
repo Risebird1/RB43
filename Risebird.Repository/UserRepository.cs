@@ -331,7 +331,10 @@ namespace Risebird.Repository
             var parameters = new DynamicParameters();
 
             if (entity.id > 0)
+            {
                 parameters.Add("@id", entity.id);
+                parameters.Add("@IsActive", entity.IsActive);
+            }
             if (entity.SelectedClientRole.HasValue)
                 parameters.Add("@selectedClientRoleId", entity.SelectedClientRole);
 

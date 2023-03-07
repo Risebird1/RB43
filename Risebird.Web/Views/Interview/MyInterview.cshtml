@@ -118,13 +118,13 @@
                                 @{
                                     bool isSME = ViewBag.IsSME;
                                 }
-                                @if(isSME)
+                                @if (isSME)
                                 {
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                         <span @*class="fa-sharp fa-solid fa-comment-medical"*@ data-toggle="tooltip" data-placement="top" title="Assigned Skill Channels as SMEs(Subject Matter Expert)" onclick="location.href='@Url.Action("AssignedSkillChannelsAsSME", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update Skill Channels(As SME)</font></span>
                                     </button>
                                 }
-                                
+
                             </div>
 
                             @*<div class="pull-left">
@@ -503,7 +503,7 @@
                                                                 {
 
                                                                     <td class="cadName">
-                                                                        <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                        <a target="_blank" onclick="CaptureMeetingOpenTime(@item.id)" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
                                                                         @* <a href="#" title="Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
                                                                 data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
                                                                 data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id, meetingLink = item.zoomLink})">
@@ -1523,7 +1523,7 @@
             html += 'data-target="#clientInstructions" > Client Instruction(s)</a ></td >'
             if (data[i].zoomLink != null && data[i].zoomLink != "") {
 
-                html += ' <td class="cadName"><a target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
+                html += ' <td class="cadName"><a onclick="CaptureMeetingOpenTime('+data[i].id+')" target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
             }
             else {
                 html += ' <td></td>';
@@ -2103,6 +2103,16 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+    function CaptureMeetingOpenTime(interviewid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interview/CaptureJoinMeetingTime",
+            data: { interviewid: interviewid},
+            success: function (data) {
+               
+            }
+        });
     }
 </script>
 @*<script>

@@ -6075,7 +6075,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select cl.InterviewDuration as RequiredDuration,ic.VideoDuration as ActualDuration,IRF.id as IRFId from  InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@id";
+                var query = "Select IRF.InterviewDuration as RequiredDuration,ic.VideoDuration as ActualDuration,IRF.id as IRFId from  InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6498,6 +6498,31 @@ namespace Risebird.Repository
                 }
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@emailid", emailid);
+                    parameters.Add("@JoiningDate", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveCapturedJoinMeetingTime", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

@@ -18,7 +18,7 @@ Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastNam
 (ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,    
 irf.JobCountry as  PreferredLocation,ul.EmailId as InterviewerEmailid,IRF.ClientName,ic.VideoLink, ic.VideoDuration,uli.Emailid as ChannelOwner,    
 CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate)     
-ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency,cl.InterviewDuration as MaxVideoDuration     
+ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency,IRF.InterviewDuration as MaxVideoDuration     
 from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId     
 left join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFID=im.IRFId join Client cl on cl.id=IRF.ClientId   
 left join Userlist uli on uli.id=irf.risebirdhr left join TransInterviewer ti on ti.IRFId=irf.id and ti.UserId=ip.Userid     
