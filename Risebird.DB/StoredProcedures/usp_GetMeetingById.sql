@@ -10,10 +10,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[usp_GetMeetingById]    
-    
 @interviewId int,  
 @timeNow datetime  
-    
 AS    
 Begin    
     
@@ -24,7 +22,7 @@ SELECT [InterviewMeetings].id as imid
   ,DATEDIFF(minute, @timeNow, interviewDate) as interviewtimedifference  
   ,IRF.JobCountry  
   ,interviewSlot    
-  ,interviewDuration    
+  ,InterviewMeetings.interviewDuration    
   ,interviewer   
   ,ul.EmailId as candidateEmail    
   --,candidateEmail    

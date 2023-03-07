@@ -50,6 +50,7 @@
                                             <th>Client name</th>
                                             <th>Role</th>
                                             <th>Mobile Number</th>
+                                            <th>Active</th>
                                             @if (ViewBag.Profile != "SeniorHR")
                                             {
                                                 <th>Password</th>
@@ -68,6 +69,7 @@
                                             <th>Client name</th>
                                             <th>Role</th>
                                             <th>Mobile Number</th>
+                                            <th>Active</th>
                                             @if (ViewBag.Profile != "SeniorHR")
                                             {
                                                 <th>Password</th>
@@ -87,6 +89,14 @@
                                                 <td>@item.ClientName</td>
                                                 <td>@item.Role</td>
                                                 <td>@item.MobileNumber</td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
                                                 @if (ViewBag.Profile != "SeniorHR")
                                                 {
                                                     <td>
@@ -121,18 +131,20 @@
                                                     @*<button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
                                                 <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                 </button>*@
-
-                                                    <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
-                                                        <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute " aria-label="Share Public URL">
-                                                        <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
-                                                    </button>
-                                                    @if (ViewBag.Profile != "SeniorHR")
+                                                    @if (item.IsActive)
                                                     {
-                                                        <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                            <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                        <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
+                                                            <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
                                                         </button>
+                                                        <button class="mdc-fab app-fab--absolute " aria-label="Share Public URL">
+                                                            <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
+                                                        </button>
+                                                        @if (ViewBag.Profile != "SeniorHR")
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                            </button>
+                                                        }
                                                     }
                                                 </td>
 
