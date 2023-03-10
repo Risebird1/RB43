@@ -4202,7 +4202,8 @@ namespace Risebird.Repository
                                              PrimarySkillInvite = c.PrimarySkillInvite,
                                              IRFId = c.IRFId,
                                              IsEmergency = c.IsEmergency,
-                                             MaxVideoDuration = c.MaxVideoDuration
+                                             MaxVideoDuration = c.MaxVideoDuration,
+                                             IsFixedInterviewduration=c.IsFixedInterviewduration
                                          }).ToList();
                         return resultset.ToList();
                     }

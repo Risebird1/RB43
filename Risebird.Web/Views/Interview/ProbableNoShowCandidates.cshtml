@@ -8,14 +8,12 @@
     ViewData["Title"] = "Probable No Show Candidates";
     ViewBag.PageHeader = "Probable No Show Candidates";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
 }
 
 <script>
     var Header = "<div>Probable No Show Candidates</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
@@ -32,18 +30,14 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Probable No Show Candidates</h4></div>
                     </div>
-                    
-                    
                     @*<div class="pull-right client-ms">
-                        <div style="float:left">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
-                        </div>
-                        
+                    <div style="float:left">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                    <div class="mdc-button__ripple"></div>
+                    </button>
+                    </div>
                     </div>*@
-                   
                 </div>
             </div>
         </div>
@@ -58,7 +52,6 @@
                             </div>
 
                             <div style="overflow-x:scroll" class="scrollbar">
-
                                 <div id="tableID" class="second">
                                     <table id="detailsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                         <thead>
@@ -66,7 +59,8 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Email</th>
                                                 <th>Skill Channel</th>
-                                                
+                                                <th>Actual Meeting Status</th>
+
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -74,6 +68,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Email</th>
                                                 <th>Skill Channel</th>
+                                                <th>Actual Meeting Status</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -82,18 +77,13 @@
                                                 foreach (var item in Model)
                                                 {
                                                     <tr>
-
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.candidateEmail</td>
-                                                        
                                                         <td>@item.IRFId</td>
-                                                        
-                                                        
+                                                        <td>@item.MeetingStatusStatusDesc</td>
                                                     </tr>
                                                 }
                                             }
-                                            
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -115,10 +105,10 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        
+
 
     });
-    
+
 
 </script>
 <script>
@@ -153,7 +143,7 @@
         });
     }
 
-  
+
 </script>
 
 

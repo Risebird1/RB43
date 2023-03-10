@@ -46,6 +46,7 @@ CREATE TABLE [dbo].[IRF](
             [IsLocked][bit]null,
             [flagcount][int]null,
             [InterviewDuration][int]null,
+            [IsFixedInterviewduration][bit]null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -388,6 +389,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add InterviewDuration int null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsFixedInterviewduration')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsFixedInterviewduration bit null
 END
 
 
