@@ -25,8 +25,9 @@ Declare @Type varchar(20)='Interview'
 Declare @Count int      
 Declare @Irfid int      
 Declare @AddPoint int         
-Declare @Points float      
-      
+Declare @Points float    
+Declare @FixedInterviewDuration bit
+
 Select @MeetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId      
 Select @InterviewStatus=InterviewStatus from InterviewComments where InterviewId=@interviewId      
 Select @VideoDuration=VideoDuration from InterviewComments where InterviewId=@interviewId      
@@ -38,6 +39,7 @@ Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on I
 select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId       
 Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                           
 Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and (InterviewPoints.Type=@Type or InterviewPoints.Type='Redo')                            
+Select @FixedInterviewDuration=IsFixedInterviewduration From IRF where id=@Irfid   
       
    if(@IsEmergency=1)                          
      Begin                          
@@ -83,8 +85,15 @@ Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and u
   if(@MeetingStatus=4 or @MeetingStatus=6 or @MeetingStatus=7 or @MeetingStatus=8)      
  BEGIN      
  if(@InterviewStatus=1 or @InterviewStatus=3)      
- Begin      
+ Begin    
+ if(@FixedInterviewDuration=1)
+ begin
+ Set @MaxVideoDuration=ISNULL(@MaxVideoDuration,0) 
+ end
+ else
+ begin
  Set @MaxVideoDuration=ISNULL(@MaxVideoDuration,0)/2      
+ end
  End      
  if(@VideoDuration>@MaxVideoDuration)      
  begin      

@@ -28,21 +28,18 @@ end
 DECLARE @tbl_RelevantCandidates TABLE (                    
 	CandidateUserId int,
 	CandidateEmail varchar(200),
-	ProfileSource varchar(200),
 	IRFId int,
-	IRFName varchar(30),
-	TotalCandidates int
-	
+	IRFName varchar(30)	
 )
 
 INSERT INTO @tbl_RelevantCandidates 
-select cm.UserId, ul.EmailId as CandidateEmail, ProfileSource, ca.IRFId, irf.IRFId as IRFName, count(*) 
+select cm.UserId, ul.EmailId as CandidateEmail, ca.IRFId, irf.IRFId as IRFName
 from Candidate ca join CandidatesMaster cm
 on cm.id = ca.CandidateMasterId
 join UserList ul on ul.id = cm.UserId
 join IRF on irf.id = ca.IRFId
-where ProfileSource is not null and (@irfId is null or ca.IRFId = @irfId)
-group by cm.UserId, ca.ProfileSource, ul.EmailId, ca.IRFId, irf.IRFId
+where (@irfId is null or ca.IRFId = @irfId)
+group by cm.UserId, ul.EmailId, ca.IRFId, irf.IRFId
 
 
 DECLARE @tbl_RelevantInterviews TABLE (                    
@@ -52,9 +49,9 @@ DECLARE @tbl_RelevantInterviews TABLE (
 ); 
 
 INSERT INTO @tbl_RelevantInterviews    
-select im.id, im.interviewDate, trc.ProfileSource from @tbl_RelevantCandidates trc 
+select im.id, im.interviewDate, im.staffingAgency from @tbl_RelevantCandidates trc --.ProfileSource
 join InterviewMeetings im on im.candidateEmail = trc.CandidateEmail and im.IRFId = trc.IRFName 
-and im.staffingAgency = trc.ProfileSource  and (@irfId is null or im.IRFId = @IRFName)
+and  (@irfId is null or im.IRFId = @IRFName) -- im.staffingAgency = trc.ProfileSource  and
 where im.confirmationStatus = 1
 
 
@@ -63,7 +60,7 @@ DECLARE @tbl_TotalInterviews TABLE (
 	TotalMeetings int
 );
 
-INSERT INTO @tbl_TotalInterviews    
+INSERT INTO @tbl_TotalInterviews
 select staffingAgency, count(id) from @tbl_RelevantInterviews  
 group by staffingAgency
 
@@ -147,8 +144,6 @@ where ic.MeetingStatus = 1
 group by staffingAgency
 
 
-
-
 DECLARE @tbl_InterviewDropped TABLE ( 
 	staffingAgency varchar(200),
 	TotalDropped int
@@ -184,23 +179,23 @@ where (ic.MeetingStatus = 2 and im.interviewDate > @timeNow)--or (ic.MeetingStat
 group by staffingAgency
 
 
-	select distinct trc.ProfileSource as ProfileSource, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
+	select distinct trc.staffingAgency as ProfileSource, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
 	tip.TotalProxy, tid.TotalDropped, tins.TotalInterviewerNoShow, tinsc.TotalNoShowCandidate, tisp.StatusPending, tisch.TotalScheduled as Scheduled,
 	ul.MobileNumber, ul.id as UserId
-	from @tbl_RelevantCandidates trc 
-	left join @tbl_TotalInterviews  ti on ti.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewCompleted ticom on ticom.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewSelected tis on tis.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewRejected tir on tir.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewProxy tip on tip.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewBorderLine tib on tib.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewDropped tid on tid.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewNoShowInterviewer tins on tins.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewCandidateNoShow tinsc on tinsc.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewProxy tiproxy on tiproxy.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewStatusPending tisp on tisp.staffingAgency = trc.ProfileSource
-	left join @tbl_InterviewScheduled tisch on tisch.staffingAgency = trc.ProfileSource
-	join UserList ul on ul.EmailId = trc.ProfileSource
+	from @tbl_RelevantInterviews trc 
+	left join @tbl_TotalInterviews  ti on ti.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewCompleted ticom on ticom.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewSelected tis on tis.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewRejected tir on tir.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewProxy tip on tip.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewBorderLine tib on tib.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewDropped tid on tid.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewNoShowInterviewer tins on tins.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewCandidateNoShow tinsc on tinsc.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewProxy tiproxy on tiproxy.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewStatusPending tisp on tisp.staffingAgency = trc.staffingAgency
+	left join @tbl_InterviewScheduled tisch on tisch.staffingAgency = trc.staffingAgency
+	join UserList ul on ul.EmailId = trc.staffingAgency
 	
       
 END        

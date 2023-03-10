@@ -46,6 +46,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @SkillChannelSME int = null,
 @CreatedBy varchar(100) = null,
 @InterviewDuration int,
+@IsFixedInterviewduration bit,
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -97,7 +98,8 @@ Begin
 				   ,[IsCandidateavailability]
 				   ,[IsMeetingAutoCancelled]
 				   ,[IsMeetingNotificationSend]
-				   ,[InterviewDuration])            
+				   ,[InterviewDuration]
+				   ,[IsFixedInterviewduration])            
 					   VALUES            
 						   (@IRFId,            
 				   @clientName,            
@@ -131,7 +133,8 @@ Begin
 				   @IsCandidateavailability,
 				   @IsMeetingAutoCancelled,
 				   @IsMeetingNotificationSend,
-				   @InterviewDuration)      
+				   @InterviewDuration,
+				   @IsFixedInterviewduration)      
        
 					select @idIrf = SCOPE_IDENTITY()  
 				
@@ -254,7 +257,7 @@ Begin
 		RAISERROR (@Message, @Severity, @State)
 	End Catch
 
-End            
+End           
       
 GO
 

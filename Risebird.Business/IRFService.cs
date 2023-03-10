@@ -562,6 +562,7 @@ namespace Risebird.Business
                 model.IsMeetingAutoCancelled = IRF.IsMeetingAutoCancelled;
                 model.IsMeetingNotificationSend = IRF.IsMeetingNotificationSend;
                 model.InterviewDuration = IRF.InterviewDuration;
+                model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
                 return model;
             }
             catch (Exception e)
