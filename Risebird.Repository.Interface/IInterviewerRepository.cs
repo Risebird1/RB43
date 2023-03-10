@@ -99,5 +99,6 @@ namespace Risebird.Repository.Interface
         //Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved);
         Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null);
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail);
+        Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null);
     }
 }

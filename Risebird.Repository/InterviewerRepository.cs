@@ -2964,7 +2964,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null)
         {
             try
             {
@@ -2973,7 +2973,9 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@irfId", irfId);
-                    return await SqlMapper.QueryAsync<InterviewerStatsVM>(con, "dbo.usp_GetInterviewerStatsAndRatings", parameters, commandTimeout: 600,
+                    parameters.Add("@interviewerUserId", interviewerUserId);
+                    parameters.Add("@type", type);
+                    return await SqlMapper.QueryAsync<StatsDetailsVM>(con, "dbo.usp_GetInterviewerStatsAndRatingsDetails", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -3011,6 +3013,30 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    return await SqlMapper.QueryAsync<InterviewerStatsVM>(con, "dbo.usp_GetInterviewerStatsAndRatings", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
     }
