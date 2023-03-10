@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[sp_GetMenuBasedOnEmailId]   
+Create PROCEDURE [dbo].[sp_GetMenuBasedOnEmailId]   
   @EmailId nvarchar(300),
   @SessionId varchar(300)
 AS  
@@ -27,6 +27,7 @@ END
 
 	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int;    
 	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId = @EmailId  
+	Set @lastLogin=Getdate()
 	set @roleId =0
 	
 
