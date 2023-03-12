@@ -501,17 +501,16 @@
                                                                 </td>
                                                                 @if (item.zoomLink != null && item.zoomLink != "")
                                                                 {
-
-                                                                    <td class="cadName">
-                                                                        <a target="_blank" onclick="CaptureMeetingOpenTime(@item.id)" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
-                                                                        @* <a href="#" title="Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
-                                                                data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
-                                                                data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id, meetingLink = item.zoomLink})">
-                                                                Meeting Link
-                                                                </a>*@
-
-                                                                    </td>
-
+                                                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a target="_blank" onclick="CaptureMeetingOpenTime(@item.id)" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>Before 10 min only</td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
@@ -1523,7 +1522,7 @@
             html += 'data-target="#clientInstructions" > Client Instruction(s)</a ></td >'
             if (data[i].zoomLink != null && data[i].zoomLink != "") {
 
-                html += ' <td class="cadName"><a onclick="CaptureMeetingOpenTime('+data[i].id+')" target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
+                html += ' <td class="cadName"><a onclick="CaptureMeetingOpenTime(' + data[i].id + ')" target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
             }
             else {
                 html += ' <td></td>';
@@ -2108,9 +2107,9 @@
         $.ajax({
             type: "POST",
             url: "/Interview/CaptureJoinMeetingTime",
-            data: { interviewid: interviewid},
+            data: { interviewid: interviewid },
             success: function (data) {
-               
+
             }
         });
     }

@@ -1236,8 +1236,25 @@
                                                         </div>
                                                         <div class="col-md-4 col-sm-4 pull-left">
                                                             @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                            @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control"})
                                                             @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-4 col-sm-4 pull-left">
+                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.IsFixedInterviewduration, new { @class = "mdc-checkbox__native-control" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.LabelFor(model => model.IsFixedInterviewduration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                <i style="margin-right:-4vw" title="Fixed Interview duration(Select and rejected duration is same)" class="fa fa-info-circle"></i>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -3501,7 +3518,7 @@
                     document.getElementById("tab-10").style.display = "none";
     @*document.getElementById("btnNext").style.display = "none";
                         document.getElementById("btnUpload").style.display = "block";*@
-                                            }
+                                                }
             }
 
             else if (activeTab.trim() == "Coordinator") {
@@ -3786,7 +3803,16 @@
             document.getElementById('IsMeetingAutoCancelled').disabled = true;
         }
     }
-    function configurationChange() {
-
+    $('#InterviewDuration').on('change', function () {
+        CheckFixedInterviewDuration()
+    });
+    function CheckFixedInterviewDuration(){
+        var value = document.getElementById('InterviewDuration').value;
+        if(parseInt(value)==30){
+            document.getElementById('IsFixedInterviewduration').disabled = false;
+        }else{
+            document.getElementById('IsFixedInterviewduration').checked = false;
+            document.getElementById('IsFixedInterviewduration').disabled = true;
+        }
     }
 </script>

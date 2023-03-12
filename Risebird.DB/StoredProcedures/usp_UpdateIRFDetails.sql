@@ -49,6 +49,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@isSMEChanged bit output,
 	@IsLocked bit,
 	@InterviewDuration int,
+	@IsFixedInterviewduration bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -117,6 +118,7 @@ BEGIN
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
 	,[InterviewDuration]=@InterviewDuration
+	,[IsFixedInterviewduration]=@IsFixedInterviewduration
 	Where id =@id        
     
 	

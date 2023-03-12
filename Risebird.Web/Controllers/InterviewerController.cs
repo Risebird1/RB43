@@ -3652,6 +3652,35 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, int? irfId = null)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                {
+                    IEnumerable<StatsDetailsVM> statsDetailsList;
+                    statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId);
+                    ViewBag.Profile = profileName;
+                    ViewBag.StatType = statType;
+                    //ViewBag.DisplayType = "popup";
+                    return PartialView("InterviewerStatsDetailsTablePartialView", statsDetailsList);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
 
