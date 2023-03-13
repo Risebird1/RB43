@@ -6,10 +6,15 @@
     {
         customHeight = "450px";
     }
-    int irfId = 0;
+    int? irfId = null;
     if (ViewBag.irfId != null)
     {
         irfId = Convert.ToInt32(ViewBag.irfId);
+    }
+    string irfName = null;
+    if (ViewBag.IRFName != null)
+    {
+        irfName = ViewBag.IRFName;
     }
 }
 <div id="tableID" class="second" style="overflow-x:scroll; max-height: @customHeight" ">
@@ -85,7 +90,10 @@
                         <td>@(!string.IsNullOrEmpty(item.AverageClientRating) ? item.AverageClientRating : string.Empty)</td>
                         @if (item.TotalMeetings > 0)
                         {
-                            <td title="Total Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.All')">@item.TotalMeetings</td>
+                            @*<td title="Total Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.All')">@item.TotalMeetings</td>*@
+                            <td title="Total Meetings">
+                                <a title="Total Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.All, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">@item.TotalMeetings</a>
+                            </td>
                         }
                         else
                         {
@@ -93,7 +101,10 @@
                         }
                         @if (item.TotalCompletedMeetings > 0)
                         {
-                            <td title="Total Completed Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Completed')">@item.TotalCompletedMeetings</td>
+                            @*<td title="Total Completed Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Completed')">@item.TotalCompletedMeetings</td>*@
+                            <td title="Total Completed Meetings">
+                    <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">@item.TotalCompletedMeetings</a>
+                            </td>
                         }
                         else
                         {
@@ -101,8 +112,13 @@
                         }
                         @if (item.StatusPending > 0)
                         {
-                            <td title="Status Pending" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Pending')">
+                            @*<td title="Status Pending" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Pending')">
                                 @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Status Pending">
+                                <a title="Status Pending" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Pending, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -111,8 +127,13 @@
                         }
                         @if (item.TotalSelected > 0)
                         {
-                            <td title="Total Selected" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Selected')">
+                            @*<td title="Total Selected" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Selected')">
                                 @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Total Selected">
+                                <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -122,8 +143,13 @@
                         
                         @if (item.TotalBorderLine > 0)
                         {
-                            <td title="Total Borderline" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Borderline')">
+                            @*<td title="Total Borderline" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Borderline')">
                                 @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Total Borderline">
+                                <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -132,8 +158,13 @@
                         }
                         @if (item.TotalRejected > 0)
                         {
-                            <td title="Total Rejected" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Rejected')">
+                            @*<td title="Total Rejected" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Rejected')">
                                 @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Total Rejected">
+                                <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -142,8 +173,13 @@
                         }
                         @if (item.TotalProxy > 0)
                         {
-                            <td title="Total Proxy" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Proxy')">
+                            @*<td title="Total Proxy" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Proxy')">
                                 @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Total Proxy">
+                                <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -152,8 +188,13 @@
                         }
                         @if (item.TotalDropped > 0)
                         {
-                            <td title="Total Dropped" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Dropped')">
+                            @*<td title="Total Dropped" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Dropped')">
                                 @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Total Dropped">
+                                <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -162,8 +203,13 @@
                         }
                         @if (item.TotalSelfNoShow > 0)
                         {
-                            <td title="No Show(Interviewer)" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Noshowinterviewer')">
+                            @*<td title="No Show(Interviewer)" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Noshowinterviewer')">
                                 @item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="No Show(Interviewer)">
+                                <a title="No Show(Interviewer)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowinterviewer, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -173,8 +219,13 @@
 
                         @if (item.TotalNoShowCandidate > 0)
                         {
-                            <td title="No Show(Candidate)" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Noshowcandidate')">
+                            @*<td title="No Show(Candidate)" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Noshowcandidate')">
                                 @item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="No Show(Candidate)">
+                                <a title="No Show(Candidate)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowcandidate, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -184,8 +235,13 @@
 
                         @if (item.Scheduled > 0)
                         {
-                            <td title="Scheduled" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Scheduled')">
+                            @*<td title="Scheduled" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Scheduled')">
                                 @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
+                            </td>*@
+                            <td title="Scheduled">
+                                <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                                    @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
                             </td>
                         }
                         else
@@ -210,7 +266,7 @@
                             <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
 
                         }
-                        @if (irfId > 0)
+                        @if (irfId.HasValue && irfId.Value > 0)
                         {
                             <span>
                                 <button  class="mdc-fab app-fab--absolute trash-btn" title="Click here to deactivate interviewer">

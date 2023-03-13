@@ -145,7 +145,7 @@ DECLARE @tbl_InterviewerPending TABLE (
 INSERT INTO @tbl_InterviewerPending    
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im  
 left join InterviewComments ic on ic.InterviewId = im.id  
-where (im.interviewDate < @timeNow) and ((ic.MeetingStatus = 4 and ic.InterviewStatus is null) or (ic.MeetingStatus is null) or ic.MeetingStatus = 2)
+where (im.interviewerDateTime < @timeNow) and ((ic.MeetingStatus = 4 and ic.InterviewStatus is null) or (ic.MeetingStatus is null) or ic.MeetingStatus = 2)
 group by im.interviewer  
   
 DECLARE @tbl_InterviewerScheduled TABLE (                      
@@ -156,7 +156,7 @@ DECLARE @tbl_InterviewerScheduled TABLE (
 INSERT INTO @tbl_InterviewerScheduled    
 select im.interviewer, count(im.id) from @tbl_RelevantInterviews im  
 left join InterviewComments ic on ic.InterviewId = im.id  
-where (ic.MeetingStatus = 2 and im.interviewDate > @timeNow)  
+where (ic.MeetingStatus = 2 and im.interviewerDateTime > @timeNow)  
 group by im.interviewer  
   
 DECLARE @tbl_InterviewerPenalties TABLE (   
