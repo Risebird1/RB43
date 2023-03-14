@@ -3655,7 +3655,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, int? irfId = null)
+        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, string interviewerEmailId = null, int? irfId = null, string irfName = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3668,8 +3668,19 @@ namespace Risebird.Web.Controllers
                     statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId);
                     ViewBag.Profile = profileName;
                     ViewBag.StatType = statType;
+                    ViewBag.InterviewerEmailId = interviewerEmailId;
                     //ViewBag.DisplayType = "popup";
-                    return PartialView("InterviewerStatsDetailsTablePartialView", statsDetailsList);
+                    if(irfId.HasValue)
+                    {
+                        ViewBag.IRFId = irfId.Value;
+                        ViewBag.IRFName = irfName;
+                    }
+                    return View("InterviewerStatsDetails", statsDetailsList);
+
+                    //else
+                    //{
+                    //    return PartialView("InterviewerStatsDetailsTablePartialView", statsDetailsList);
+                    //}
                 }
                 else
                 {
