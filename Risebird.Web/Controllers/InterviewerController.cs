@@ -3672,6 +3672,7 @@ namespace Risebird.Web.Controllers
                     //ViewBag.DisplayType = "popup";
                     if(irfId.HasValue)
                     {
+                        ViewBag.IRFId = irfId.Value;
                         ViewBag.IRFName = irfName;
                     }
                     return View("InterviewerStatsDetails", statsDetailsList);

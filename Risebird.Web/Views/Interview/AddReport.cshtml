@@ -64,6 +64,11 @@
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
 
         }
+        var timeSpan = DateTime.Now - Convert.ToDateTime(Model.interviewDate);
+        if (timeSpan.TotalMinutes > 15)
+        {
+            meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+        }
 
     }
     else

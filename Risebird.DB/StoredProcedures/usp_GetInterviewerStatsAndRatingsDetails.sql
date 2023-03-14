@@ -43,25 +43,38 @@ and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)
 and interviewer = @interviewerEmail
 
 
+DECLARE @tbl_InterviewerJoinTime TABLE (                    
+	interviewId int,
+	interviewer varchar(200),
+	JoiningTime datetime
+)
+
+INSERT INTO @tbl_InterviewerJoinTime
+select interviewid, interviewer, max(Joinedon) from InterviewMeetingsJoinTime where interviewer = @interviewerEmail
+group by interviewid, interviewer
+
+
 DECLARE @tbl_ResultInterviews TABLE (                    
-	id int,
+	interviewId int,
 	interviewDate datetime,
 	candidateEmail varchar(200),
 	SkillChannel varchar(200),
 	Client varchar(50),
 	MeetingStatus int,
 	InterviewStatus int,
-	ResultType varchar(30)
+	ResultType varchar(30),
+	InterviewerJoinTime datetime
 )
 
 
 INSERT INTO @tbl_ResultInterviews    
 select im.id, im.interviewDate, im.candidateEmail, im.SkillChannel, cl.[Name], ic.MeetingStatus, 
-ic.InterviewStatus, @type
+ic.InterviewStatus, @type, tijt.JoiningTime
 from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
 join IRF on irf.IRFId = im.SkillChannel
 join CLient cl on cl.id = irf.ClientId
+left join @tbl_InterviewerJoinTime tijt on tijt.interviewId = im.id
 where (@type =  'all') 
 or (@type = 'completed' and ic.MeetingStatus in (4, 6, 7, 8))
 or (@type = 'selected' and (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6))
