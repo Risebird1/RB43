@@ -24,6 +24,8 @@
                 <th>Client</th>
                 <th>Meeting Status</th>
                 <th>Interview Status</th>
+                <th>Report</th>
+                <th>Interviewer Joining Time</th>
 
             </tr>
         </thead>
@@ -35,6 +37,8 @@
                 <th>Client</th>
                 <th>Meeting Status</th>
                 <th>Interview Status</th>
+                <th>Report</th>
+                <th>Interviewer Joining Time</th>
                
             </tr>
         </tfoot>
@@ -62,6 +66,24 @@
                         {
                             <td>NA</td>
                         }
+                        <td>
+                            @if(item.InterviewStatus.HasValue  && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
+                            {
+                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = ViewBag.IRFId, IsSelected = true })'>
+                                    Report
+                                </a>
+                            }
+                            else
+                            {
+                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = ViewBag.IRFId, IsSelected = false })'>
+                                    Report
+                                </a>
+                            }
+
+                        </td>
+                        <td>
+                            @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
+                        </td>
 
                     </tr>
             

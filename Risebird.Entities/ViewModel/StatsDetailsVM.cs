@@ -17,6 +17,9 @@ namespace Risebird.Entities.ViewModel
         public int? MeetingStatus { get; set; }
         public int? InterviewStatus { get; set; }
         public string ResultType { get; set; }
+        public int irfId { get; set; }
+        public DateTime? InterviewerJoinTime { get; set; }
+        public int? interviewId { get; set; }
         
     }
 }
