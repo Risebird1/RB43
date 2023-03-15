@@ -10,18 +10,18 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
   
-CREATE PROCEDURE [dbo].[usp_GetProbableNoShowCandidates]    
-
-AS    
-Begin   
-  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus 
-from ProbableNoShowCandidates pnc
-join InterviewMeetings im on im.id = pnc.InterviewId
-join UserList ul on ul.id = pnc.CandidateUserId
-join InterviewComments ic on ic.Interviewid=im.id
-order by im.interviewDate desc
-End  
+    
+CREATE PROCEDURE [dbo].[usp_GetProbableNoShowCandidates]      
+  
+AS      
+Begin     
+  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber   
+from ProbableNoShowCandidates pnc  
+join InterviewMeetings im on im.id = pnc.InterviewId  
+join UserList ul on ul.id = pnc.CandidateUserId  
+join InterviewComments ic on ic.Interviewid=im.id  
+order by im.interviewDate desc  
+End    
 GO
 
