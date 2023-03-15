@@ -32,7 +32,7 @@ Begin
 	end as [Name],ir.IRfId as IRFName,ul.EmailId, ul.MobileNumber, ul.uniqueid,
 	ir.JDTiltle, ir.JDLink, ir.ClientName, ir.CalendlyLink, ir.PrimarySkillInvite, cl.CompanyLink, 
 	cl.CompanyVideoLink, ulr.EmailId as ChannelOwnerEmail, 
-	ulr.MobileNumber as ChannelOwnerMobile
+	ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact
 	from Candidate ca join irf ir on ca.IRFId=ir.id
 	join CandidatesMaster cm on cm.id=ca.CandidateMasterId
 	join Client cl on cl.id = ir.ClientId 
@@ -40,8 +40,9 @@ Begin
 	join UserList ulr on ulr.id = ir.RisebirdHr 
 	where ul.IsActive =1 and ul.emailid =@EmailParam and ir.Id = @irfIdParam
 
-	select im.id as Interviewid, im.resumeLink, im.zoomLink, im.interviewDate, im.candidateEmail, im.interviewSlot 
-	from InterviewMeetings im where IRFId = @IRFName and candidateEmail = @EmailParam
+	select im.id as Interviewid, im.resumeLink, im.zoomLink, im.interviewDate, im.candidateEmail, im.interviewSlot,
+	im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus 
+	from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id where IRFId = @IRFName and candidateEmail = @EmailParam
 
 	
 
@@ -53,3 +54,4 @@ End
 
            
 END 
+Go

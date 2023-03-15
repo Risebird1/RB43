@@ -749,29 +749,34 @@ namespace Risebird.Repository
                         _resultVM.CandidateDetails.CompanyVideoLink = dt.Rows[0]["CompanyVideoLink"] != null ? dt.Rows[0]["CompanyVideoLink"].ToString() : null;
                         _resultVM.CandidateDetails.ChannelOwnerEmail = dt.Rows[0]["ChannelOwnerEmail"] != null ? dt.Rows[0]["ChannelOwnerEmail"].ToString() : null;
                         _resultVM.CandidateDetails.ChannelOwnerMobile = dt.Rows[0]["ChannelOwnerMobile"] != null ? dt.Rows[0]["ChannelOwnerMobile"].ToString() : null;
+                        _resultVM.CandidateDetails.ClientHRAttemptContact = dt.Rows[0]["ClientHRAttemptContact"] != null ? dt.Rows[0]["ClientHRAttemptContact"].ToString() : null;
                         //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)
                     {
                         dt = dataset.Tables[1];
-                        if(dt.Rows != null && dt.Rows.Count > 0)
+                        if (dt.Rows != null && dt.Rows.Count > 0)
                         {
                             //_resultVM.Meetings = new List<MeetingVM>();
                             var listMeetings = new List<MeetingVM>();
                             for (int i = 0; i < dt.Rows.Count; i++)
                             {
-                                listMeetings.Add(new MeetingVM {
+                                listMeetings.Add(new MeetingVM
+                                {
                                     Interviewid = !string.IsNullOrEmpty(dt.Rows[i]["Interviewid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Interviewid"]) : 0,
                                     resumeLink = dt.Rows[i]["resumeLink"] != null ? dt.Rows[i]["resumeLink"].ToString() : null,
                                     zoomLink = dt.Rows[i]["zoomLink"] != null ? dt.Rows[i]["zoomLink"].ToString() : null,
                                     interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
                                     candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
-                                    interviewSlot = dt.Rows[i]["interviewSlot"] != null ? dt.Rows[i]["interviewSlot"].ToString() : null
+                                    interviewSlot = dt.Rows[i]["interviewSlot"] != null ? dt.Rows[i]["interviewSlot"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["ConfirmationStatus"] != null ? dt.Rows[i]["ConfirmationStatus"].ToString() : null,
+                                    MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["MeetingStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["MeetingStatus"]) : null : null,
+                                    InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatus"]) : null : null
                                 });
                             }
                             _resultVM.Meetings = listMeetings;
                         }
-                        
+
                     }
                     //if (dataset.Tables.Count > 2)
                     //{
@@ -786,7 +791,7 @@ namespace Risebird.Repository
                     //    _resultVM.MCQVMShare.MCQSet = dt.Rows[0][0] != null ? dt.Rows[0][0].ToString() : null;
                     //    _resultVM.MCQVMShare.MCQId = dt.Rows[0][1] != null ? dt.Rows[0][1].ToString() : null;
                     //}
-                    
+
                     return _resultVM;
                 }
             }

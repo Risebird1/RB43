@@ -112,7 +112,7 @@
                 <div class="modal-body">
                     <div class="col-md-12">
                         <div class="video-url">
-                            <label class="label-field desp-label"> Candidate Details for Skill Channel Url:  <b id="txtUrl"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <label class="label-field desp-label"> Candidate Details for Skill Channel Url:  <b id="txtUrl"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtUrl')">
                                 <p class="special-text">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
                                     <span id="special_text" class="special-text__tooltip">
@@ -381,7 +381,10 @@
                                                                         </span>
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                                         <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>                                                    
+                                                                         <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>                                                    
+                                                                     </button>
+                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Second Design Copy Public URL">
+                                                                         <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',2);" title="Second Design Copy Public URL" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>                                                    
                                                                      </button>
 
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
@@ -1110,10 +1113,10 @@
 
 }
 <script>
-    function CopyPublicUrl(EmailId,IRFId) {
+    function CopyPublicUrl(EmailId,IRFId,type) {
         $.ajax({
             url: '/Candidate/GetPublicURLCandidate',
-            data: { 'Emailid': EmailId,'IRFId' :IRFId},
+            data: { 'Emailid': EmailId,'IRFId' :IRFId,'type':type},
             type: 'POST',
             success: function (result) {
                 var modal = document.getElementById("PublicUrlShareModel");

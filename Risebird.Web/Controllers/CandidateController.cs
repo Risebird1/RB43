@@ -4446,7 +4446,7 @@ namespace Risebird.Web.Controllers
         /// <param name="IRFId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId)
+        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId,int type)
         {
             try
             {
@@ -4454,7 +4454,18 @@ namespace Risebird.Web.Controllers
                 string sendMailURL = string.Empty;//"https://" + Request.Host.ToString() + "/Candidate/CandidatePublicdetails?id=" + CandidateDetails.uniqueid + "&IRFId=" + IRFId;
                 if (!string.IsNullOrEmpty(candidateUniqueId))
                 {
-                    sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/CandidateSkillChannelDetails?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                    if (type == 1)
+                    {
+                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/TestPage?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                    }
+                    else if (type == 2)
+                    {
+                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/TestPagesecond?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                    }
+                    else
+                    {
+                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/CandidateSkillChannelDetails?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                    }
                 }
                 return Json(sendMailURL);
             }
@@ -4533,5 +4544,84 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
         }
+
+        #region CandidateTest
+        [HttpGet]
+        public IActionResult TestPage(string id, int IRFId)
+        {
+            var model = new CandidateIRFDetailsVM();
+            //var model = new Candidate();
+            ViewBag.PageType = "Public";
+            ViewBag.Id = id;
+            model.CandidateDetails.IRFId = IRFId;
+            return View(model);
+        }
+        public async Task<IActionResult> VerifiedTestPage(string emailid, string id, int IRFid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            ViewBag.id = id;
+            var CandidateDetails = await _candidateService.GetIRFDetailsForCandidate(emailid, IRFid);
+            if (CandidateDetails != null)
+            {
+                CandidateDetails.Meetings = CandidateDetails.Meetings.Select(x =>
+                {
+                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+                CandidateDetails.CandidateDetails.IRFId = IRFid;
+            }
+            foreach (var item in CandidateDetails.Meetings)
+            {
+                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                {
+                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                    {
+                        item.MeetingStatusStatusDesc = "Status Pending";
+                    }
+                }
+            }
+            return View("TestPage", CandidateDetails);
+        }
+
+        public IActionResult TestPagesecond(string id, int IRFId)
+        {
+            var model = new CandidateIRFDetailsVM();
+            //var model = new Candidate();
+            ViewBag.PageType = "Public";
+            ViewBag.Id = id;
+            model.CandidateDetails.IRFId = IRFId;
+            return View(model);
+        }
+        public async Task<IActionResult> VerifiedTestPagesecond(string emailid, string id, int IRFid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            ViewBag.id = id;
+            var CandidateDetails = await _candidateService.GetIRFDetailsForCandidate(emailid, IRFid);
+            if (CandidateDetails != null)
+            {
+                CandidateDetails.Meetings = CandidateDetails.Meetings.Select(x =>
+                {
+                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+                CandidateDetails.CandidateDetails.IRFId = IRFid;
+            }
+            foreach (var item in CandidateDetails.Meetings)
+            {
+                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                {
+                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                    {
+                        item.MeetingStatusStatusDesc = "Status Pending";
+                    }
+                }
+            }
+            return View("TestPagesecond", CandidateDetails);
+        }
+        #endregion
     }
 }
