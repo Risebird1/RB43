@@ -179,7 +179,7 @@ where (ic.MeetingStatus = 2 and im.interviewDate > @timeNow)--or (ic.MeetingStat
 group by staffingAgency
 
 
-	select distinct trc.staffingAgency as ProfileSource, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
+	select distinct trc.staffingAgency as EmailId, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,
 	tip.TotalProxy, tid.TotalDropped, tins.TotalInterviewerNoShow, tinsc.TotalNoShowCandidate, tisp.StatusPending, tisch.TotalScheduled as Scheduled,
 	ul.MobileNumber, ul.id as UserId
 	from @tbl_RelevantInterviews trc 
