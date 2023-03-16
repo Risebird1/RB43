@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class StaffingAgencyStatsVM
+    public class StatsVM
     {
-        public string ProfileSource { get; set; }
+        public string EmailId { get; set; }
+        public string RoleType { get; set; }
         public int TotalMeetings { get; set; }
         public int TotalCompletedMeetings { get; set; }
         public int TotalSelected { get; set; }

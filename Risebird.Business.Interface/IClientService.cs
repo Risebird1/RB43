@@ -42,6 +42,7 @@ namespace Risebird.Business.Interface
         Task<List<Clientaudiofeedback>> Getclientaudiofeedbackdetails();
         Task<string> GetClientName(int id);
         Task<string> GetClientLogoByIRFId(int irfId);
-        Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats(int? irfId = null);
+        Task<IEnumerable<StatsVM>> GetStaffingAgencyStats(int? irfId = null);
+        Task<IEnumerable<StatsVM>> GetClientHRStats(int? irfId = null);
     }
 }

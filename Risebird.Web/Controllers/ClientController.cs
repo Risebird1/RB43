@@ -4419,10 +4419,53 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
-                        IEnumerable<StaffingAgencyStatsVM> statsList;
+                        IEnumerable<StatsVM> statsList;
                         statsList = await _clientService.GetStaffingAgencyStats(irfId);
                         ViewBag.Profile = profileName;
+                        ViewBag.RoleType = ClientRoleTypes.StaffingAgency;
+                        if (!string.IsNullOrEmpty(irfName))
+                        {
+                            ViewBag.IRFName = irfName;
+                        }
+                        if (irfId != null && irfId.Value > 0)
+                        {
+                            ViewBag.irfId = irfId.Value;
+                        }
 
+                        return View(statsList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<IActionResult> ClientHRStats(int? irfId = null, string irfName = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IEnumerable<StatsVM> statsList;
+                        statsList = await _clientService.GetClientHRStats(irfId);
+                        ViewBag.Profile = profileName;
+                        ViewBag.RoleType = ClientRoleTypes.ClientHR;
                         if (!string.IsNullOrEmpty(irfName))
                         {
                             ViewBag.IRFName = irfName;

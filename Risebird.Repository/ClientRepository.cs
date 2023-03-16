@@ -909,7 +909,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<StaffingAgencyStatsVM>> GetStaffingAgencyStats(int? irfId = null)
+        public async Task<IEnumerable<StatsVM>> GetStaffingAgencyStats(int? irfId = null)
         {
             try
             {
@@ -918,7 +918,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@irfId", irfId);
-                    return await SqlMapper.QueryAsync<StaffingAgencyStatsVM>(con, "dbo.usp_GetStaffingAgencyStats", parameters, commandTimeout: 600,
+                    return await SqlMapper.QueryAsync<StatsVM>(con, "dbo.usp_GetStaffingAgencyStats", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -933,7 +933,29 @@ namespace Risebird.Repository
             return null;
         }
 
-
+        public async Task<IEnumerable<StatsVM>> GetClientHRStats(int? irfId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    return await SqlMapper.QueryAsync<StatsVM>(con, "dbo.usp_GetClientHRStats", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }

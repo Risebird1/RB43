@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.StaffingAgencyStatsVM>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.StatsVM>
 @*@using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -77,7 +77,7 @@
                             <div class="toolbar">
 
                                 <div>
-                                    @await Html.PartialAsync("~/Views/Client/StaffingAgencyStatsPartialView.cshtml")
+                                    @await Html.PartialAsync("~/Views/Client/ClientRoleWiseStatsPartialView.cshtml")
                                 </div>
 
 
