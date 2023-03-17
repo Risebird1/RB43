@@ -957,5 +957,33 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole,int? irfId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@clientUserId", clientUserId);
+                    parameters.Add("@roleType", clientRole);
+                    parameters.Add("@type", type);
+                    return await SqlMapper.QueryAsync<StatsDetailsVM>(con, "dbo.usp_GetClientRoleWiseStatsDetails", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
     }
 }

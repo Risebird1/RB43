@@ -506,6 +506,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int interviewerUserId, string type, string clientRole, int? irfId = null)
+        {
+            try
+            {
+                return await _clientRepository.GetClientRoleWiseStatsDetails(interviewerUserId, type, clientRole, irfId);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 }

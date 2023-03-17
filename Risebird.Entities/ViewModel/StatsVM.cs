@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
     public class StatsVM
     {
         public string EmailId { get; set; }
+        public int UserId { get; set; }
         public string RoleType { get; set; }
         public int TotalMeetings { get; set; }
         public int TotalCompletedMeetings { get; set; }

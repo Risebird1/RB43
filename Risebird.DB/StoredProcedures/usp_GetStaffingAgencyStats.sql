@@ -18,6 +18,7 @@ CREATE PROCEDURE [dbo].[usp_GetStaffingAgencyStats]
 AS          
 BEGIN  
 
+declare @yesterdayDate date = cast(dateadd(day, -1, @timeNow) as date) 
 declare @IRFName varchar(30)
 if(@irfId is not null)
 begin
@@ -51,7 +52,7 @@ DECLARE @tbl_RelevantInterviews TABLE (
 INSERT INTO @tbl_RelevantInterviews    
 select im.id, im.interviewDate, im.staffingAgency from @tbl_RelevantCandidates trc --.ProfileSource
 join InterviewMeetings im on im.candidateEmail = trc.CandidateEmail and im.IRFId = trc.IRFName 
-and  (@irfId is null or im.IRFId = @IRFName) -- im.staffingAgency = trc.ProfileSource  and
+and ((cast(im.interviewDate as date)>= @yesterdayDate and @irfId is null) or im.IRFId = @IRFName) -- im.staffingAgency = trc.ProfileSource  and
 where im.confirmationStatus = 1
 
 

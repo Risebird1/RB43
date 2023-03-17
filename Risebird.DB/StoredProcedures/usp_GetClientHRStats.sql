@@ -57,7 +57,7 @@ where im.confirmationStatus = 1
 
 
 DECLARE @tbl_TotalInterviews TABLE ( 
-    staffingAgency varchar(200),
+    ClientHrContact varchar(200),
 	TotalMeetings int
 );
 
@@ -184,7 +184,7 @@ group by ClientHrContact
 	tip.TotalProxy, tid.TotalDropped, tins.TotalInterviewerNoShow, tinsc.TotalNoShowCandidate, tisp.StatusPending, tisch.TotalScheduled as Scheduled,
 	ul.MobileNumber, ul.id as UserId
 	from @tbl_RelevantInterviews trc 
-	left join @tbl_TotalInterviews  ti on ti.staffingAgency = trc.ClientHrContact
+	left join @tbl_TotalInterviews  ti on ti.ClientHrContact = trc.ClientHrContact
 	left join @tbl_InterviewCompleted ticom on ticom.ClientHrContact = trc.ClientHrContact
 	left join @tbl_InterviewSelected tis on tis.ClientHrContact = trc.ClientHrContact
 	left join @tbl_InterviewRejected tir on tir.ClientHrContact = trc.ClientHrContact

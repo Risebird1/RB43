@@ -42,5 +42,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetClientLogoByIRFId(int irfId);
         Task<IEnumerable<StatsVM>> GetStaffingAgencyStats(int? irfId = null);
         Task<IEnumerable<StatsVM>> GetClientHRStats(int? irfId = null);
+        Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole, int? irfId = null);
     }
 }
