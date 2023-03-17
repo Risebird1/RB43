@@ -43,8 +43,8 @@
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
-                    <h6 class="card-title">Stats for Interviewer : '@ViewBag.InterviewerEmailId' @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty) - @ViewBag.StatType</h6>
-                    <div class="mobile-view"> <h4 class="card-title">Stats for Interviewer : '@ViewBag.InterviewerEmailId' @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty) - @ViewBag.StatType</h4></div>
+                    <h6 class="card-title">Stats for : '@ViewBag.EmailId' @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty) - @ViewBag.StatType</h6>
+                    <div class="mobile-view"> <h4 class="card-title">Stats for : '@ViewBag.EmailId' @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty) - @ViewBag.StatType</h4></div>
                 </div>
 
                 @*<div class="pull-right">
@@ -72,7 +72,7 @@
 
                                 <div>
 
-                                    @await Html.PartialAsync("~/Views/Interviewer/InterviewerStatsDetailsTablePartialView.cshtml")
+                                    @await Html.PartialAsync("~/Views/Interviewer/StatsDetailsTablePartialView.cshtml")
 
                                 </div>
 
