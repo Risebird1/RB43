@@ -4493,6 +4493,42 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> StatsDetails(int userId, string statType, string clientRole, string clientEmailId = null, int? irfId = null, string irfName = null)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                {
+                    IEnumerable<StatsDetailsVM> statsDetailsList;
+                    statsDetailsList = await _clientService.GetClientRoleWiseStatsDetails(userId, statType, clientRole, irfId);
+                    ViewBag.Profile = profileName;
+                    ViewBag.StatType = statType;
+                    ViewBag.EmailId = clientEmailId + "(" + clientRole + ")";
+                    //ViewBag.ClientRole = clientRole;
+                    if (irfId.HasValue)
+                    {
+                        ViewBag.IRFId = irfId.Value;
+                        ViewBag.IRFName = irfName;
+                    }
+                    return View("ClientStatsDetails", statsDetailsList);
+
+                    
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
     }
 }

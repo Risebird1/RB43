@@ -3668,18 +3668,18 @@ namespace Risebird.Web.Controllers
                     statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId);
                     ViewBag.Profile = profileName;
                     ViewBag.StatType = statType;
-                    ViewBag.InterviewerEmailId = interviewerEmailId;
+                    ViewBag.EmailId = interviewerEmailId + "(Interviewer)";
                     //ViewBag.DisplayType = "popup";
                     if(irfId.HasValue)
                     {
                         ViewBag.IRFId = irfId.Value;
                         ViewBag.IRFName = irfName;
                     }
-                    return View("InterviewerStatsDetails", statsDetailsList);
+                    return View("StatsDetails", statsDetailsList);
 
                     //else
                     //{
-                    //    return PartialView("InterviewerStatsDetailsTablePartialView", statsDetailsList);
+                    //    return PartialView("StatsDetailsTablePartialView", statsDetailsList);
                     //}
                 }
                 else

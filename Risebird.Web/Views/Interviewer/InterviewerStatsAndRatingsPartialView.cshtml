@@ -103,7 +103,7 @@
                         {
                             @*<td title="Total Completed Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Completed')">@item.TotalCompletedMeetings</td>*@
                             <td title="Total Completed Meetings">
-                    <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">@item.TotalCompletedMeetings</a>
+                                <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">@item.TotalCompletedMeetings</a>
                             </td>
                         }
                         else
