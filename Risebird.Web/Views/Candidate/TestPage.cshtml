@@ -91,6 +91,7 @@
         border-radius: 3px;
         /*font-size: 1.2vw;*/
         color: #fff;
+        cursor: pointer;
     }
 
     .fix {
@@ -143,7 +144,7 @@
     <div style="height:20%">
         <div class="container">
             <div class="row">
-                <div class="col-sm-12" style="text-align:center" height="50%">
+                <div class="col-md-8 col-xl-8 col-sm-12" style="text-align:center" height="50%">
                     @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("LogoSet")))
                     {
                         <img style="max-height:80px" class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
@@ -153,24 +154,44 @@
                         <img style="max-height:80px" class="img-responsive" src="@HttpContextAccessor.HttpContext.Session.GetString("LogoSet")" />
                     }
                 </div>
+                <div class="col-md-4 col-xl-4 col-sm-12">
+                    @if (Model.Timer > 0)
+                    {
+                        <div class="time_tab"> <span style="top:0px" class="time-left-txt">Time left to start the interview(In Mins):</span><div class="time-clock pull-left"><span class="timer">@Model.Timer</span></div></div>
+                    }
+                </div>
             </div>
             <div class="tab">
-                <button class="tablinks" onclick="openCity(event, 'Employer','arrow1')" id="defaultOpen">
+                <button class="tablinks" onclick="openCity(event, 'Employer','arrow1')">
                     Know Your Employer<span id="arrow1" class="arrow fas fa-caret-right"></span>
                 </button>
-                <button class="tablinks" onclick="openCity(event, 'Interviews','arrow2')">
-                    Interviews details<span id="arrow2" class="arrow fas fa-caret-right"></span>
+                <button class="tablinks" onclick="openCity(event, 'Interviews','arrow2')" id="defaultOpen">
+                    Interviews <span id="arrow2" class="arrow fas fa-caret-right"></span>
                 </button>
                 <button class="tablinks" onclick="openCity(event, 'Conditions','arrow3')">
-                    Do/Don't<span id="arrow3" class="arrow fas fa-caret-right"></span>
+                    Dos/Don'ts<span id="arrow3" class="arrow fas fa-caret-right"></span>
                 </button>
             </div>
             <div>
                 <div id="Employer" class="tabcontent">
-                    <p>Company Website : <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></p>
-                    <p>Job Description : <a href="@Model.CandidateDetails.JDLink" target="_blank">@Model.CandidateDetails.JDTiltle</a></p>
-                    <p>Primary Skill : @Model.CandidateDetails.PrimarySkillInvite</p>
-                    <p>HR Contact : @Model.CandidateDetails.ClientHRAttemptContact</p>
+                    <table style="width:100%;border:none !important">
+                        <tr>
+                            <td><p>Company Website :</td>
+                            <td> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></p></td>
+                        </tr>
+                        <tr>
+                            <td><p>Job Description Link :</td>
+                            <td> <a href="@Model.CandidateDetails.JDLink" target="_blank">Click Here</a></p></td>
+                        </tr>
+                        <tr>
+                            <td><p>Primary Skill : </td>
+                            <td>@Model.CandidateDetails.PrimarySkillInvite</p></td>
+                        </tr>
+                        <tr>
+                            <td><p>HR Contact : </td>
+                            <td>@Model.CandidateDetails.ClientHRAttemptContact</p></td>
+                        </tr>
+                    </table>
                     @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
                     {
                         <div style="max-width:auto">
@@ -184,44 +205,37 @@
                 <div id="Interviews" class="tabcontent">
                     @foreach (var item in Model.Meetings)
                     {
-                        @if (item.interviewDate >= DateTime.Now)
+                        @if (item.interviewDate >= DateTime.Now && item.confirmationStatus == "Confirmed")
                         {
-                            <p style="text-decoration:underline;color:black">Upcoming Interview</p>
+                            <p style="text-decoration:underline;color:black">Scheduled Interview</p>
                             <p></p>
                             <p>@item.interviewDate &nbsp; <a href="@item.zoomLink" target="_blank">Meeting Link</a></p>
                             <p>
-                                @if (item.confirmationStatus == "Confirmed")
-                                {
-                                    <div class="row" style="text-align: center;">
-                                        <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
-                                            <a class="interviewresponsebtn" style="background:#289f28;" target="_blank" href='@Url.Action("CandidateMeetingsStatus", "Interview", new { meetingid = item.Interviewid,status=1,uniqueid="",Irfid=Model.CandidateDetails.IRFId,candidateId="" })'>Yes! Im Available</a>
-                                        </div>
-                                        <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
-                                            <a class="interviewresponsebtn" style="background:#cd362b;" href={4}>Reschedule</a>
-                                        </div>
-                                        <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
-                                            <a class="interviewresponsebtn" style="background:#cd362b;" href={3}>No! I am not Available</a>
-                                        </div>
-                                        <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
-                                            <a class="interviewresponsebtn" style="background:#cd362b;" href={5}>Need More clarity</a>
-                                        </div>
+                                <div class="row" style="text-align: center;">
+                                    <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
+                                        <span class="interviewresponsebtn" style="background:#289f28;" target="_blank" onclick="ComfirmMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Yes! I am Available</span>
                                     </div>
-                                }
+                                    <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
+                                        <span class="interviewresponsebtn" style="background:#cd362b;" onclick="ReschuduleMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Reschedule</span>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
+                                        <span class="interviewresponsebtn" style="background:#cd362b;" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">No! I am not Available</span>
+                                    </div>
+                                    <div class="col-md-3 col-lg-3 col-sm-12" style="padding-left:0px;padding-right:0px;margin-bottom: 20px;">
+                                        <span class="interviewresponsebtn" style="background:#cd362b;" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need More Clarity</span>
+                                    </div>
+                                </div>
                             </p>
                         }
                         else
                         {
-                            <p style="text-decoration:underline;color:black">Completed Interview</p>
+                            <p style="text-decoration:underline;color:black">Interviews</p>
                             <p></p>
-                            @if (item.confirmationStatus == "Cancelled")
+                            <p><b>@item.interviewDate</b></p>
+                            @if (Model.IsReschedule)
                             {
-                                <p>@item.interviewDate &nbsp; <d style="color:red">Cancelled</d></p>
+                                <p>Reschedule Interview Link : <a href="@Model.SchedulingLink" target="_blank">Click Here</a></p>
                             }
-                            else
-                            {
-                                <p>@item.interviewDate &nbsp; <b>@item.MeetingStatusStatusDesc</b></p>
-                            }
-                            <p></p>
                         }
                     }
                 </div>
@@ -244,11 +258,9 @@
         </div>
 
     </div>
-
-
-
 </div>
-
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+<script src="~/js/BroadcastMessage.js"></script>
 <script>
     $(document).ready(function () {
         if ($("#txtMailstatus").val() == "Public") {
@@ -294,4 +306,142 @@
         evt.currentTarget.className += " active";
     }
     document.getElementById("defaultOpen").click();
+
+    function ReschuduleMeeting(interviewid, uniqueid, irfid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting and reschedule?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reschedule!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interview/CandidateMeetingsStatus',
+                        method: 'GET',
+                        data: {
+                            'meetingid': interviewid,
+                            'status': 3,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid
+                        },
+                        success: function (result) {
+                            window.open(result, '_blank');
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error rescheduling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'reschedule cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+
+    function ComfirmMeeting(interviewid, uniqueid, irfid) {
+        $.ajax({
+            url: '/Interview/CandidateMeetingsStatus',
+            method: 'GET',
+            data: {
+                'meetingid': interviewid,
+                'status': 1,
+                'uniqueid': uniqueid,
+                'Irfid': irfid
+            },
+            success: function (result) {
+                swal.fire("", "Thank you for confirming your availability!", "success");
+            }
+        })
+    }
+    function NotAttendMeeting(interviewid, uniqueid, irfid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Cancel!',
+            cancelButtonText: 'No',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interview/CandidateMeetingsStatus',
+                        method: 'GET',
+                        data: {
+                            'meetingid': interviewid,
+                            'status': 2,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid
+                        },
+                        success: function (result) {
+                            swal.fire(result);
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error Cancelling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                //location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'cancel aborted! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+<script>
+    startTimer();
+    function startTimer() {
+        var presentTime1 = document.getElementsByClassName('timer');
+        var presentTab = document.getElementsByClassName('time_tab');
+        for (var i = 0; i < presentTime1.length; i++) {
+            var presentTime = presentTime1[i].innerHTML + ':00';
+            var timeArray = presentTime.split(/[:]+/);
+            var m = timeArray[0];
+            var s = checkSecond((timeArray[1] - 1));
+            if (s == 59) { m = m - 1 }
+            if (m < 0) {
+                return
+            }
+            if (m >= 120) {
+                presentTime1[i].style.display = 'none';
+                presentTab[i].style.display = 'none';
+            }
+            else {
+                presentTime1[i].style.display = 'block';
+                presentTab[i].style.display = 'block';
+            }
+            presentTime1[i].innerHTML = m + ":" + s;
+        }
+        setTimeout(startTimer, 1000);
+    }
+    function checkSecond(sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec };
+        if (sec < 0) { sec = "59" };
+        return sec;
+    }
 </script>

@@ -4446,7 +4446,7 @@ namespace Risebird.Web.Controllers
         /// <param name="IRFId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId,int type)
+        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId, int type)
         {
             try
             {
@@ -4571,6 +4571,30 @@ namespace Risebird.Web.Controllers
                     return x;
                 }).ToList();
                 CandidateDetails.CandidateDetails.IRFId = IRFid;
+                var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
+                {
+                    CandidateDetails.IsReschedule = true;
+                    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
+                    {
+                        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
+                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
+                        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
+                    }
+                    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
+                }
+                //Start: InterviewMeeting Timer
+                var time = details.interviewDate.AddMinutes(-15);
+                var currentTime = DateTime.UtcNow;
+                TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                var timediff = indianTime - time;
+                if (timediff.TotalMinutes >= 0 && (details.confirmationStatus == "Confirmed"))
+                {
+                    CandidateDetails.Timer = Convert.ToInt32(timediff.TotalMinutes);
+                }
+                //End: InterviewMeeting Timer
             }
             foreach (var item in CandidateDetails.Meetings)
             {
@@ -4609,6 +4633,19 @@ namespace Risebird.Web.Controllers
                     return x;
                 }).ToList();
                 CandidateDetails.CandidateDetails.IRFId = IRFid;
+                var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
+                {
+                    CandidateDetails.IsReschedule = true;
+                    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
+                    {
+                        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
+                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
+                        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
+                    }
+                    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
+                }
             }
             foreach (var item in CandidateDetails.Meetings)
             {
@@ -4621,6 +4658,16 @@ namespace Risebird.Web.Controllers
                 }
             }
             return View("TestPagesecond", CandidateDetails);
+        }
+        [HttpPost]
+        public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail)
+        {
+            var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);
+            if (_result.Contains("Mail sent successfully."))
+            {
+                return Json("Information shared to contact person, HR will Connect you soon.");
+            }
+            return Json("Fail");
         }
         #endregion
     }
