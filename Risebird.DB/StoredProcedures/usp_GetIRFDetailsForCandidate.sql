@@ -44,7 +44,7 @@ Begin
 	im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus 
 	from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id where IRFId = @IRFName and candidateEmail = @EmailParam
 
-	
+	Select Uniqueid From ScheduleInterviewEvent where SkillChannelRelation=@IRFName and CandidateEmail=@EmailParam and IsNull(IsOnetimeUsed,0)=0
 
 End
 Else

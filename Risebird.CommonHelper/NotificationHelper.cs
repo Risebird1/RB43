@@ -2854,7 +2854,31 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-
+        public async Task<string> SendCandidateNeedClerityClientNotification(string message,string subject,string clienthr,string candidateemail)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                if (!string.IsNullOrEmpty(clienthr))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clienthr, null));
+                }
+                StringBuilder msgBody = new StringBuilder(message);
+                msgBody.Append("&nbsp;");
+                msgBody.AppendLine("Thank You,");
+                msgBody.Append("&nbsp;");
+                msgBody.Append(candidateemail);
+                msg.HtmlContent = msgBody.ToString();
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
 
     }
 }

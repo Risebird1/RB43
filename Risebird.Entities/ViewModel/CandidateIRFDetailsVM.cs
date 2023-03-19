@@ -18,5 +18,9 @@ namespace Risebird.Entities.ViewModel
         public List<MeetingVM> Meetings { get; set; }
         //public CodeInviteVM CodeInviteDetails { get; set; }
         //public MCQVMShare MCQVMShare { get; set; }
+        public string Uniqueid { get; set; }
+        public string SchedulingLink { get; set; }
+        public bool IsReschedule { get; set; }
+        public int Timer { get; set; }
     }
 }
