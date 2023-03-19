@@ -102,5 +102,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendSkillChannelFeedbackNotification(Mail model, string Name, DataTable dt, string JDTitle, string ReviewURL);
         Task<string> SendAssignedNotificationToSME(string smeEmail, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner);
         Task<string> SendIRFCreatedFromTemplateNotificationToChannelOwner(string channelOwnerEmail, string skillChannelName, string templateName, string jdTitle, string client);
+        Task<string> SendCandidateNeedClerityClientNotification(string message, string subject, string clienthr, string candidateemail);
     }
 }

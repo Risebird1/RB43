@@ -778,13 +778,11 @@ namespace Risebird.Repository
                         }
 
                     }
-                    //if (dataset.Tables.Count > 2)
-                    //{
-                    //    dt = dataset.Tables[2];
-                    //    _resultVM.CodeInviteDetails.programmingLanguage = dt.Rows[0][0] != null ? dt.Rows[0][0].ToString() : null;
-                    //    _resultVM.CodeInviteDetails.score = dt.Rows[0][1] != null ? Convert.ToInt32(dt.Rows[0][1].ToString()) : new int();
-                    //    _resultVM.CandidateDetails.EmailId = dt.Rows[0][2] != null ? dt.Rows[0][2].ToString() : null;
-                    //}
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        _resultVM.Uniqueid = dt.Rows[0]["Uniqueid"] != null ? dt.Rows[0]["Uniqueid"].ToString() : null;
+                    }
                     //if (dataset.Tables.Count > 3)
                     //{
                     //    dt = dataset.Tables[3];

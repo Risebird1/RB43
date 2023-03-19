@@ -12,6 +12,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
@@ -47,7 +48,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IZoomHelper _zoomHelper;
         private readonly IInterviewerService _interviewerService;
-
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -61,7 +62,7 @@ namespace Risebird.Web.Controllers
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IZoomHelper zoomHelper, IInterviewerService interviewerService)
+            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -82,6 +83,7 @@ namespace Risebird.Web.Controllers
             _interviewSchedulerservice = interviewSchedulerservice;
             _zoomHelper = zoomHelper;
             _interviewerService = interviewerService;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
 
 
@@ -5764,11 +5766,19 @@ namespace Risebird.Web.Controllers
                         }
                         var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
                         var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
-                        var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
+                        //var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
+                        if (status == 3 && candidateId == 0)
+                        {
+                            string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
+                            var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                            var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
+                            oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                            return Json(oneTimeSchedulingLink);
+                        }
                         return Json("Successfully status updated, " + value);
                     }
-                    return Json("Successfully status updated, Yes");
+                    return Json("Thank you for confirming your interview.");
                 }
                 else if (results == "Already Present")
                 {
