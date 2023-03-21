@@ -1094,16 +1094,26 @@
         html += '  <thead>';
         html += '  <tr>';
         html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
-        html += '  <th width="70%" class="table_heading">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
         html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Concepts <span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Natureofquestion <span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Timelimit <span class="red">*</span></th>';
         html += '  </tr>';
         html += '  </thead>';
         html += '  <tbody>';
         for (i = 0; i < data.length; i++) {
             html += '   <tr>';
             html += '  <td>' + data[i].levelName + '</td>';
-            html += '    <td>' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].skillName + '</td>';
             html += '  <td>' + data[i].weightage + '</td>';
+            html += '  <td>' + data[i].concepts + '</td>';
+            html += '  <td>' + data[i].natureofquestion + '</td>';
+            if (parseInt(data[i].timelimit) > 0) {
+                html += '  <td>' + data[i].timelimit + '</td>';
+            } else {
+                html += '<td></td>';
+            }
             html += '  </tr>';
         }
         html += '</tbody>';
