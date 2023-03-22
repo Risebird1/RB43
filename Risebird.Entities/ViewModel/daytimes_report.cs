@@ -29,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         public string MeetingPlatform { get; set; }
         public string schedulertype { get; set; }
         public bool IsSingleUse { get; set; }
+        public int duration { get; set; }
     }
     public class daytimes_report
     {
@@ -105,7 +106,7 @@ namespace Risebird.Entities.ViewModel
     }
     public class TimeslotsVM
     {
-        public int id { get; set; }
+        public double id { get; set; }
         public string Name { get; set; }
     }
     public class InterviewSchedulerIRF
