@@ -899,7 +899,16 @@
 
                                                                     </td>
                                                                     <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                        <div class="techinfocontainer">
+                                                                            @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                            <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                                <span class="tooltiptext">
+                                                                                    <p>Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+                                                                                    <p>Natureofquestion: @Model.TechSkillReportCollection[i].Natureofquestion</p>
+                                                                                    <p>Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
+                                                                                </span>
+                                                                            </i>
+                                                                        </div>
                                                                     </td>
 
                                                                     <td>
@@ -1642,7 +1651,7 @@
             $('button[data-toggle="ajax-modal"]').click();
             }, 1);*@
 
-                                    var meetingStatus = document.getElementById('MeetingStatus').value;
+                                        var meetingStatus = document.getElementById('MeetingStatus').value;
         if (meetingStatus == null || meetingStatus == '') {
             document.getElementById('InterviewerComment').disabled = true;
             document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";

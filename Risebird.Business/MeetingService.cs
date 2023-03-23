@@ -1072,7 +1072,10 @@ namespace Risebird.Business
                             RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
                             SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
                             SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
-                            WeightageRequired = item.Weightage
+                            WeightageRequired = item.Weightage,
+                            Concepts = item.Concepts,
+                            Timelimit = item.Timelimit,
+                            Natureofquestion = item.Natureofquestion
                         };
 
                         techSkillList.Add(obj);
@@ -1240,7 +1243,10 @@ namespace Risebird.Business
                         RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
                         SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
                         SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
-                        WeightageRequired = item.Weightage
+                        WeightageRequired = item.Weightage,
+                        Concepts = item.Concepts,
+                        Timelimit = item.Timelimit,
+                        Natureofquestion = item.Natureofquestion
                     };
 
                     techSkillList.Add(obj);
@@ -1249,6 +1255,15 @@ namespace Risebird.Business
             }
             else
             {
+                var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
+                model.TechSkillReportCollection = techReportCollection;
+                foreach (var item in techReportCollection ?? new List<TechSkillReport>())
+                {
+                    var techdetails = techSkillsDetails.Where(x => x.SkillId == item.SkillId).FirstOrDefault();
+                    item.Concepts = techdetails.Concepts;
+                    item.Timelimit = techdetails.Timelimit;
+                    item.Natureofquestion = techdetails.Natureofquestion;
+                }
                 model.TechSkillReportCollection = techReportCollection;
             }
 
