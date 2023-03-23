@@ -1,7 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
-
+@{
+    string emailId = string.Empty;
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -182,11 +184,8 @@
                         <h6 class="main-notification-title">
                             @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
                             {
-                                var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
-                                var email = emailid.Trim('"');
-                                <span>
-                                    @email
-                                </span>
+                                emailId = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                var email = emailId.Trim('"');
                             }
                         </h6>
                     </div>
@@ -347,13 +346,30 @@
     profileName = profileName.Trim('"');
     @if (profileName == "Client" || profileName == "Interviewer" || (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client"))
     {
-        <script src='//fw-cdn.com/2398529/2998468.js' chat='true'></script>
+        @*<script src='//fw-cdn.com/2398529/2998468.js' chat='true'></script>
         <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
         <script>
             window.fwSettings = {
                 'widget_id': 44000003946
             };
             !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
+        </script>*@
+        <script src='//fw-cdn.com/2398529/2998468.js' chat='true' widgetId='f5e6a6da-c305-49cf-9256-7651eefd1502'></script>
+        <script type='text/javascript' src='https://widget.freshworks.com/widgets/f5e6a6da-c305-49cf-9256-7651eefd1502.js' async defer></script>
+        <script>
+            window.fwSettings = {
+                'widget_id': f5e6a6da-c305-49cf-9256-7651eefd1502
+            };
+            !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
+
+            window.fcWidget.user.setEmail('@emailId');
+
+            // To set user properties
+            // Note that any other fields passed as properties which are not in the CRM Contact properties already, they will be ignored.
+            window.fcWidget.user.setProperties({
+                cf_plan: "Pro",                 // meta property 1
+                cf_status: "Active"             // meta property 2
+            });
         </script>
     }
 
