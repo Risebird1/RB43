@@ -76,7 +76,7 @@
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
-                <div class="col-md-8 pull-left">
+                <div class="col-md-4 pull-left">
                     <div class="pull-left myinterview">
 
                         @*<div class="marquees">
@@ -101,17 +101,20 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 pull-right">
-                    <div class="pull-right">
-                        <div class="pull-right">
-                            <div class="pull-left">
+                <div class="col-md-8 pull-right">
+                    <div>
+                        <div>
+                            @*<div class="pull-left">
                                 <div id="myinterview_2">
                                     <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
                                 </div>
+                                
 
-                            </div>
-                            <div class="pull-left">
-
+                            </div>*@
+                            <div>
+                                <div id="myinterview_2">
+                                    <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
+                                </div>
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Update your availability" onclick="location.href='@Url.Action("IRFInterviewerMapping", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update your availability</font></span>
                                 </button>
@@ -124,13 +127,16 @@
                                         <span @*class="fa-sharp fa-solid fa-comment-medical"*@ data-toggle="tooltip" data-placement="top" title="Assigned Skill Channels as SMEs(Subject Matter Expert)" onclick="location.href='@Url.Action("AssignedSkillChannelsAsSME", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update Skill Channels(As SME)</font></span>
                                     </button>
                                 }
-
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
+                                    <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
+                                </button>
+                                
                             </div>
 
                             @*<div class="pull-left">
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
-                            <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
-                            </button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
+                                    <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
+                                </button>
                             </div>*@
 
                         </div>
@@ -920,16 +926,16 @@
 <script>
     var interviewUnassignedMinutes;
     $(document).ready(function () {
-        ////setTimeout(function () {
-        ////    $('button[data-panel="main"]').click();
-        ////}, 1);
-
-        //function openClientFeed() {
+        //setTimeout(function () {
         //    $('button[data-panel="main"]').click();
-        //    setTimeout(openClientFeed, 60000);
-        //}
+        //}, 1);
 
-        //openClientFeed();
+        function openClientFeed() {
+            $('button[data-panel="main"]').click();
+            setTimeout(openClientFeed, 60000);
+        }
+
+        openClientFeed();
 
         $.ajax({
             type: "GET",
