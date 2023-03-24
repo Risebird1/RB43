@@ -13,5 +13,8 @@
         public float WeightageRequired { get; set; }
         public float WeightageActual { get; set; }
         public string TechComments { get; set; }
+        public string Concepts { get; set; }
+        public string Natureofquestion { get; set; }
+        public int Timelimit { get; set; }
     }
 }

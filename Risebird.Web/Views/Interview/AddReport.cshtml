@@ -19,9 +19,9 @@
 
     if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
     {
-        if(currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
+        if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x=>x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
         else
         {
@@ -38,10 +38,10 @@
         //}
         interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
     }
-    else if(ViewBag.profile == "Interviewer")
+    else if (ViewBag.profile == "Interviewer")
     {
 
-        if(currentMeetingStatus != (int)MeetingStatus.DroppedBorderLine)
+        if (currentMeetingStatus != (int)MeetingStatus.DroppedBorderLine)
         {
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString() && x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
         }
@@ -50,15 +50,15 @@
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
 
-        if(currentInterviewStatus != (int)InterviewStatus.BorderLine)
+        if (currentInterviewStatus != (int)InterviewStatus.BorderLine)
         {
-            interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().Where(x=>x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
+            interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
         }
         else
         {
             interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
         }
-        
+
         if (Model.HasDistinctParticipants == false)
         {
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
@@ -74,7 +74,7 @@
     else
     {
 
-        if(currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
+        if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
         {
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
@@ -87,13 +87,13 @@
 
     }
 
-   
+
 }
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
 
 @if (ViewBag.PageStatus == "Public")
 {
@@ -163,8 +163,8 @@
                     @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                     {
                         <button class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
-                                    <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
-                                </button>
+                            <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                        </button>
                     }
                 </div>
             </div>
@@ -222,7 +222,7 @@
                                                     @Html.HiddenFor(m => m.CandidateEmail)
                                                 </div>
                                             </div>
-                                          
+
                                             @if (ViewBag.PageStatus != "PublicExternal")
                                             {
                                                 <div class="col-md-6 col-sm-6">
@@ -235,12 +235,12 @@
                                             }
 
                                             @*<div class="col-md-6 col-sm-6">
-        <div class="form-group">
-        @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-        @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-        @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-        </div>
-        </div>*@
+                                            <div class="form-group">
+                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                            </div>
+                                            </div>*@
                                         </div>
 
                                         @*<div class="col-md-6 col-sm-6">
@@ -272,53 +272,53 @@
                                         </div>
                                         </div>
                                         }*@
-                                    <div class="row">
-                                        @*<div class="col-md-6 col-sm-6">
-        <div class="form-group">
-        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-        </div>
-        </div>*@
-                                        <div class="col-md-6 col-sm-6 border-rv">
+                                        <div class="row">
+                                            @*<div class="col-md-6 col-sm-6">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                @{
-                                                    if (Model.resumeLink != null && Model.resumeLink != "")
-                                                    {
-                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                            </div>*@
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    @{
+                                                        if (Model.resumeLink != null && Model.resumeLink != "")
+                                                        {
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                        }
                                                     }
-                                                }
 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.TextBoxFor(m => m.JDTiltle, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                            </div>
-                                        </div>
-                                        @*@if (ViewBag.PageStatus != "PublicExternal")
-        {
-        <div class="col-md-6 col-sm-6">
-        <div class="form-group">
-        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-        </div>
-        </div>
-        }*@
-                                        @if (Model.AadhaarVerified)
-                                        {
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group" style="padding-left:10px">
-                                                    <a href="#" onclick="javascript:FetchInterviewAadhaarDetails('@Model.CandidateEmail');">Click Here For Candidate Verified Data</a>
                                                 </div>
                                             </div>
-                                        }
-                                    </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    @Html.TextBoxFor(m => m.JDTiltle, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                </div>
+                                            </div>
+                                            @*@if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                            <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                            @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                            </div>
+                                            }*@
+                                            @if (Model.AadhaarVerified)
+                                            {
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group" style="padding-left:10px">
+                                                        <a href="#" onclick="javascript:FetchInterviewAadhaarDetails('@Model.CandidateEmail');">Click Here For Candidate Verified Data</a>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <!--<div class="row">
@@ -876,7 +876,16 @@
 
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    <div class="techinfocontainer">
+                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                            <span class="tooltiptext">
+                                                                                <p>Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+                                                                                <p>Natureofquestion: @Model.TechSkillReportCollection[i].Natureofquestion</p>
+                                                                                <p>Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
+                                                                            </span>
+                                                                        </i>
+                                                                    </div>
                                                                 </td>
 
                                                                 <td>
@@ -2055,11 +2064,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                            // Check document for changes
-                                                                                            //$.validator.unobtrusive.parse(document);
+                                                                                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                                        // Check document for changes
+                                                                                                        //$.validator.unobtrusive.parse(document);
 
-                                                                                        }
+                                                                                                    }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2159,7 +2168,7 @@
             });*@
 
 
-                                                                                        }
+                                                                                                    }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2247,7 +2256,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-           return CheckLength(250);
+                       return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2330,28 +2339,23 @@
         return true;
     }
 
-    function CheckQuestionsCount()
-    {
+    function CheckQuestionsCount() {
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
-        if(meetingStatusValue == 4)
-        {
+        if (meetingStatusValue == 4) {
 
             var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-            if(questionItems != null && questionItems.length>=5)
-            {
+            if (questionItems != null && questionItems.length >= 5) {
                 return true;
             }
-            else
-            {
+            else {
                 alert('A minimum of 5 questions should be added.');
                 return false;
             }
         }
-        else
-        {
+        else {
             return true;
         }
-        
+
 
     }
 
@@ -2432,7 +2436,7 @@
                 }
                 });*@
 
-                                                                                            }
+                                                                                                        }
 
 
     });

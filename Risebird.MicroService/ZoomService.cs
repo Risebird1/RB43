@@ -165,7 +165,7 @@ namespace Risebird.MicroService
 
                                     log.LogInformation($"Zoom : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
 
-                                    if(result)
+                                    if (result)
                                     {
                                         //delete recording
                                         //create HTTP Request 
