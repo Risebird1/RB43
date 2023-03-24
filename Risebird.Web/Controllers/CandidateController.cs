@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -863,7 +864,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CandidatesJson(int id, string searchValue)
+        public async Task<IActionResult> CandidatesJson(int id, string searchValue,string irfName)
         {
             int? Page = 1;
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -873,6 +874,8 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 ViewBag.profile = profileName;
+                ViewBag.IRFName = irfName;
+                ViewBag.IRFId = id;
                 var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                 var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                 if (profileName == "Recruiter")
