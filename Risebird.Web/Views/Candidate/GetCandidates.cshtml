@@ -1392,7 +1392,7 @@
         $.ajax({
             type: "POST",
             url: "/Candidate/CandidatesJson",
-            data: { 'searchValue': $('#txtmeeting_filter').val(), 'id': $("#hidirfid").val() },
+            data: { 'searchValue': $('#txtmeeting_filter').val(), 'id': $("#hidirfid").val(), 'irfName': $("#hidirfname").val() },
             success: function (data) {
                 $('#tableID').html('');
                 $('#tableID').html(data);

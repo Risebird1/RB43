@@ -165,10 +165,10 @@ namespace Risebird.MicroService
 
                                     log.LogInformation($"Zoom : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
 
-                                    //if(result)
-                                    //{
-                                    //    //delete recording
-                                    //    //create HTTP Request 
+                                    if (result)
+                                    {
+                                        //delete recording
+                                        //create HTTP Request 
 
                                     //    var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"));
 

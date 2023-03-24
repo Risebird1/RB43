@@ -9,7 +9,7 @@
     ViewBag.PageHeader = "Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
 <style>
     .star-rating {
         border: solid 1px white;
@@ -471,7 +471,16 @@
 
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    <div class="techinfocontainer">
+                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                            <span class="tooltiptext">
+                                                                                <p>Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+                                                                                <p>Natureofquestion: @Model.TechSkillReportCollection[i].Natureofquestion</p>
+                                                                                <p>Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
+                                                                            </span>
+                                                                        </i>
+                                                                    </div>
                                                                 </td>
 
                                                                 <td>

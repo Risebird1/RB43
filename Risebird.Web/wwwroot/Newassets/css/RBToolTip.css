@@ -27,4 +27,16 @@
     visibility: visible;
     top: -60%;
     opacity: 0.8;
+    z-index: 1;
+}
+
+.techinfocontainer {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.techinfoicon {
+    padding: 10px 0;
+    font-size: large;
+    cursor: pointer;
 }
