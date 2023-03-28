@@ -1117,6 +1117,14 @@ ul.panel-controls > li > button {
     background: #333333;
 }
 
+.daily-interview a.all[title] {
+    color: navy;
+}
+
+.daily-interview a.completed[title] {
+    color: darkmagenta;
+}
+
 .daily-interview a.selected[title] {
     color: green;
 }
@@ -1190,6 +1198,14 @@ ul.panel-controls > li > button {
             border-radius: 3px;
             background: green;
             content: "";
+        }
+
+        .legend li .na {
+            background: navy;
+        }
+
+        .legend li .dm {
+            background: darkmagenta;
         }
 
         .legend li .g {

@@ -1,0 +1,733 @@
+﻿@model Risebird.Entities.ViewModel.ClientStatsVM
+@using Risebird.Entities.Enum
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+
+    ViewData["Title"] = "Stats";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<style>
+    body {
+        overflow-y: hidden;
+        min-height: 1100px !important;
+    }
+
+    .chardinjs-overlay {
+        position: absolute !important;
+    }
+</style>
+<script>
+    var Header = "<a  style='line-height:50px;'><span id='clientdashboard_1'>Stats</span></a>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+<!-- END PLUGINS -->
+<!-- START THIS PAGE PLUGINS-->
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>*@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" defer rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+
+
+<!-- END THIS PAGE PLUGINS-->
+<!-- START TEMPLATE -->
+<!--<script type="text/javascript" src="~/js/demo_dashboard.js"></script>-->
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <!-- End Navbar -->
+    <!-- START PAGE CONTAINER -->
+    <div class="page-container">
+        <div class="jumbotron">
+
+            <div class="page-content">
+                <div class="panel-header panel-header-sm">
+                </div>
+                <!-- PAGE CONTENT WRAPPER -->
+                <div class="page-content-wrap dashboard">
+                    <div class="row" style="margin-bottom:15px">
+                        <ul class="panel-controls pull-left" style="margin-top: 2px;">
+                            <li>
+                                <label style="margin-top: 4px;margin-right: 5px;">Client: </label>
+                            </li>
+                            <li>
+                                <div>
+                                    @Html.DropDownList("ClientId", Model.ClientList, new { @class = "select-css form-control", @onchange = "GetClientData(this.value)" })
+                                </div>
+                            </li>
+                            <li>
+                                <label style="margin-top: 4px; margin-right: 5px; margin-left:5px">From: </label>
+                            </li>
+                            <li style="margin-right: 10px;">
+                                <div class="col-md-12 col-sm-12 nopad interview-date">
+                                    <input id="interviewTrackingStartDate" name="interviewTrackingStartDate" type="date" class="form-control">
+                                </div>
+                            </li>
+                            <li>
+                                <label style="margin-top: 4px;margin-right: 5px;">To: </label>
+                            </li>
+                            <li style="margin-right: 10px;">
+                                <div class="col-md-12 col-sm-12 nopad interview-date">
+                                    <input id="interviewTrackingEndDate" name="interviewTrackingEndDate" type="date" class="form-control">
+                                </div>
+                            </li>
+                            <li style="margin-right: 10px;"><button onclick="GetClientData()" class="panel-fullscreen"><i class="fa fa-eye" style="font-size:12px"></i></button></li>
+
+                        </ul>
+                        
+                    </div>
+
+                    <!-- START DASHBOARD CHART -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            @*<img style="visibility:hidden" src="img/chardin.png" data-position="right" />*@
+                            <a style="visibility: hidden; position: absolute;top: -1px;" data-toggle="chardinjs" data-position="left">See it in action</a>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="panel-title-box">
+                                        <h3><span id="clientdashboard_2" data-intro="Overview & track date wise Interviews Scheduled for selected Client" data-position="right">Datewise Interview Tracking</span></h3>
+                                    </div>
+                                    
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-holder" id="area-chart" style="height: 200px;"></div>
+                                    <div class="block-full-width">
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 nopad">
+                            
+                            <div class="daily-interview pull-left" style= "width : 100%">
+
+                                <div class="panel panel-default" data-intro="<span style='font-size:16px;'>Track daily interviews based on</span><hr class='btop' /> 1. Skill Channel <br/> 2. Status" data-position="top">
+                                    <div class="panel-heading">
+                                        <div class="panel-title-box">
+                                            <h3><span id="clientdashboard_5"> Interview Status/Results for selected date range</span></h3>
+
+                                        </div>
+                                    </div>
+                                    <div id="id_roleWiseMeetingResults">
+                                    </div>
+
+
+                                </div>
+
+
+
+                                
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- END DASHBOARD CHART -->
+
+
+                </div>
+            </div>
+            <!-- END PAGE CONTENT WRAPPER -->
+        </div>
+        <!-- END PAGE CONTENT -->
+    </div>
+    <!-- END PAGE CONTAINER -->
+
+
+
+
+
+</div>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+    {
+
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+                    <script type="text/javascript">
+
+                        hopscotch.registerHelper('addOverlay', function () {
+                            $('body').append('<div class="overlay"></div>');
+                        });
+
+                        hopscotch.registerHelper('removeOverlay', function () {
+                            $('.overlay').fadeOut(function () {
+                                $(this).remove();
+                                $('.helper').remove();
+                            });
+                        });
+
+                        hopscotch.listen('show', function () {
+                            var elementObject = $(hopscotch.getCurrTarget(tour));
+                            var element = $('#' + elementObject[0].id);
+
+                            element.prev().removeClass('overlay-relative');
+                            element.addClass('overlay-relative');
+
+                            if ($('.helper').length !== 0) {
+
+
+                                // Use Helper Layer for hilight target element.
+                                var helper = $('.helper');
+                                var padding = 5;
+                                var helperPosX = element.position().left - padding;
+                                var helperPosY = element.position().top - padding;
+                                var targetWidth = element.outerWidth();
+                                var targetHeight = element.outerHeight();
+
+                                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                                helper.css('width', targetWidth);
+                                helper.css('height', targetHeight);
+                                helper.offset({ left: helperPosX, top: helperPosY });
+
+                            } else {
+
+                                // Add Helper Layer for highlight target element.
+                                var newHelper = '<div class="helper"></div>';
+                                $('body').append(newHelper);
+
+                                var helper = $('.helper');
+                                var padding = 5;
+                                var helperPosX = element.position().left - padding;
+                                var helperPosY = element.position().top - padding;
+                                var targetWidth = element.outerWidth();
+                                var targetHeight = element.outerHeight();
+
+                                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                                helper.css('width', targetWidth);
+                                helper.css('height', targetHeight);
+                                helper.offset({ left: helperPosX, top: helperPosY });
+                            }
+
+                        });
+
+                        var tour = {
+                            id: "hello-hopscotch",
+                            showCloseButton: false,
+                            steps: [
+                                {
+                                    title: "Dashboard",
+                                    content: "Dashboard gives the summary of the analysis of the interviews and click on the next button to know its features",
+                                    target: "clientdashboard_1",
+                                    placement: "bottom",
+                                    showPrevButton: true,
+                                    highlight: true,
+                                    zindex: 999999,
+                                    yOffset: -10,
+                                    onCTA: function () {
+                                        $('#clientdashboard_1').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onNext: function () {
+                                        $('#clientdashboard_1').removeClass('overlay-relative');
+                                        $('.helper').remove();
+
+                                    }
+                                },
+                                {
+                                    title: "Daily Interview Tracking",
+                                    content: "Overview & track the daily interviews scheduled",
+                                    target: "clientdashboard_2",
+                                    placement: "bottom",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 10,
+                                    onPrev: function () {
+
+                                        $('#clientdashboard_2').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+
+                                    onNext: function () {
+
+                                        $('#clientdashboard_2').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+
+                                },
+                                {
+                                    title: "Filter by Date",
+                                    content: "Apply filter to see the interview detail of the particular date",
+                                    target: "clientdashboard_3",
+                                    showPrevButton: true,
+                                    placement: "left",
+                                    zindex: 999999,
+                                    yOffset: -10,
+                                    xOffset: 5,
+                                    onPrev: function () {
+
+                                        $('#clientdashboard_3').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onNext: function () {
+
+                                        $('#clientdashboard_3').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+
+                                },
+                                {
+                                    title: "Interview Analysis",
+                                    content: "Overview the summary of the Interview Analysis",
+                                    target: "clientdashboard_4",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    placement: "right",
+                                    xOffset: 10,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#clientdashboard_4').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_4').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+                                {
+                                    title: "Daily Interview Stats",
+                                    content: "Overview the summary of the Daily Interview Scheduled",
+                                    target: "clientdashboard_5",
+                                    placement: "left",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 5,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#clientdashboard_5').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_5').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+                                {
+                                    title: "Filter by Date",
+                                    content: "Apply filter to see the interview detail of particular date",
+                                    target: "clientdashboard_6",
+                                    placement: "left",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 5,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#clientdashboard_6').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_6').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+
+                                {
+                                    title: "Color Theme",
+                                    content: "Click here to change the overall color theme ",
+                                    target: "clientdashboard_7",
+                                    placement: "left",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: -40,
+                                    yOffset: 10,
+                                    onNext: function () {
+                                        $('#clientdashboard_7').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#clientdashboard_7').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+
+                                {
+                                    title: "All Interviews Menu",
+                                    content: "Click on All Interviews menu to see its feature ",
+                                    target: "allmeeting_menu",
+                                    placement: "bottom",
+                                    showPrevButton: true,
+                                    zindex: 999999,
+                                    xOffset: 10,
+                                    yOffset: -20,
+                                    onNext: function () {
+                                        $('#allmeeting_menu').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    },
+                                    onPrev: function () {
+                                        $('#allmeeting_menu').removeClass('overlay-relative');
+                                        $('.helper').remove();
+                                    }
+                                },
+
+
+                            ],
+
+                            onStart: ["addOverlay"],
+                            onEnd: ["removeOverlay"],
+                        };
+
+                        hopscotch.startTour(tour);
+
+                    </script>
+
+
+
+            } *@
+
+
+
+
+<script>
+    var chData;
+    $(document).ready(function () {
+        setDate();
+        //updateInterviewTracking();
+        GetClientData();
+        //function RenderClientFunnelData() {
+        //    return new Promise((resolve, reject) => {
+        //        $.ajax({
+        //            url: '/Dashboard/GetClientFunnelData',
+        //            method: 'POST',
+        //            async: 'false',
+        //            success: function (data) {
+        //                resolve(data);
+        //            },
+        //            error: function (error) {
+        //                reject(error)
+        //            }
+        //        });
+        //    })
+        //}
+
+        //RenderClientFunnelData()
+        //    .then((data) => {
+        //        chData = JSON.parse((data).replace(/&quot;/g, '"'));
+        //        am4core.ready(function () {
+
+        //            // Themes begin
+        //            am4core.useTheme(am4themes_animated);
+        //            // Themes end
+
+        //            let chart = am4core.create("myFunnelChart", am4charts.SlicedChart);
+        //            chart.data = [{
+        //                "name": "Risebird Selections",
+        //                "value": chData.TotalRisebirdSelection
+        //            }, {
+        //                "name": "Completed",
+        //                "value": chData.TotalCompleted
+        //            }, {
+        //                "name": "Candidates",
+        //                "value": chData.TotalCandidates
+        //            }];
+
+
+        //            chart.logo.disabled = true;
+        //            let series = chart.series.push(new am4charts.FunnelSeries());
+        //            series.dataFields.value = "value";
+        //            series.dataFields.category = "name";
+        //            series.labels.template.disabled = false;
+
+        //            series.colors.step = 16;
+        //            var fillModifier = new am4core.LinearGradientModifier();
+        //            fillModifier.brightnesses = [-0.1, -0.1, -0.1];
+        //            fillModifier.offsets = [0, 0.5, 1];
+
+
+        //            series.slices.template.fillModifier = fillModifier;
+        //            series.alignLabels = true;
+        //            series.labels.template.fill = am4core.color("#828080");
+        //            chart.fontSize = 13;
+        //            series.labels.template.text = "{category}: [bold]{value}[/]";
+
+        //        });
+        //    })
+        //    .catch((error) => {
+
+        //    })
+
+        
+        //getInterviewSlots();
+    });
+
+</script>
+<script>
+    function setDate() {
+        todayDate = getDate(0);
+        monthAgoDate = getDate(-30);
+        document.getElementById('interviewTrackingStartDate').value = monthAgoDate;
+        document.getElementById('interviewTrackingEndDate').value = todayDate;
+        //document.getElementById('statusTrackingDate').value = today;
+        //ocument.getElementById('interviewSlotsDate').value = today;
+        //document.getElementById('progressTrackingDate').value = today;
+    }
+
+    function getDate(addDays = 0) {
+        var date = new Date();
+        date.setDate(date.getDate() + addDays);
+        var dd = date.getDate();
+        var mm = date.getMonth() + 1; //January is 0!
+        var yyyy = date.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        date = yyyy + '-' + mm + '-' + dd;
+        return date;
+    }
+</script>
+@*<script>
+    $(document).ready(function () {
+    
+        });
+
+</script>*@
+<script>
+    function GetClientData(clientId = null){
+        var clientIdValue = clientId;
+        if(clientId == null )
+        {
+            clientIdValue = document.getElementById('ClientId').value;
+        }
+        updateInterviewTracking(clientIdValue);
+        GetDateRangeWiseMeetingStatusForClientRoles(clientIdValue);
+    }
+
+    function updateInterviewTracking(clientIdValue = null) {
+        document.getElementById('area-chart').innerHTML = '';
+        var startDateValue = document.getElementById('interviewTrackingStartDate').value;
+        var endDateValue = document.getElementById('interviewTrackingEndDate').value;
+        //var clientId;
+        //if (clientIdValue == null)
+        //{
+        //    clientId = document.getElementById('ClientId').value;
+        //}
+        //else
+        //{
+        //    clientId = clientIdValue;
+        //}
+        if (startDateValue == null || startDateValue == '') {
+            startDateValue = getDate(-30);
+        }
+        if (endDateValue == null || endDateValue == '') {
+            endDateValue = getDate(0);
+        }
+        $.ajax({
+            url: '/Client/GetDateRangeWiseClientInterviews',
+            async: true,
+            data: { 'startDateValue': startDateValue, 'endDateValue': endDateValue, 'emailId': '@Model.EmailId', 'clientId': clientIdValue },
+            success: function (data) {
+                
+                UpdateInterviewTrackingGraph(JSON.parse(data.meetingsData), JSON.parse(data.meetingsDataLabels));
+            }
+        });
+    }
+
+    function UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels) {
+
+        config = {
+            data: meetingsData,
+            xkey: 'Date',
+            ykeys: meetingsDataLabels,
+            labels: meetingsDataLabels,
+            resize: true,
+            hideHover: true,
+            parseTime : false,
+            xLabels: 'day',
+            yLabelFormat: function (y) { return y != Math.round(y) ? '' : y; },
+            gridTextSize: '10px',
+            //lineColors: ['#1caf9a', '#33414E'],
+            gridLineColor: '#E5E5E5'
+        };
+        config.element = 'area-chart';
+        Morris.Area(config);
+
+    }
+</script>
+
+
+<script>
+
+    function GetDateRangeWiseMeetingStatusForClientRoles(clientIdValue) {
+        var startDateValue = document.getElementById('interviewTrackingStartDate').value;
+        var endDateValue = document.getElementById('interviewTrackingEndDate').value;
+        //var clientId;
+        //if (clientIdValue == null) {
+        //    clientId = document.getElementById('ClientId').value;
+        //}
+        //else {
+        //    clientId = clientIdValue;
+        //}
+        if (startDateValue == null || startDateValue == '') {
+            startDateValue = getDate(-30);
+        }
+        if (endDateValue == null || endDateValue == '') {
+            endDateValue = getDate(0);
+        }
+        $.ajax({
+            url: '/Client/GetDateRangeWiseMeetingStatusForClientRoles',
+            async : true,
+            data: { 'startDateValue': startDateValue, 'endDateValue': endDateValue, 'clientId': clientIdValue },
+            success: function (data) {
+                $('#id_roleWiseMeetingResults').html('');
+                $('#id_roleWiseMeetingResults').html(data);
+
+            }
+        });
+    }
+
+</script>
+@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>*@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" defer integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.0/morris.min.js"></script>
+
+<script src="~/js/plugins/moment.min.js?v=1"></script>
+<script type='text/javascript' src='~/js/plugins/bootstrap/bootstrap-datepicker.js'></script>
+<script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
+
+
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox").mCustomScrollbar();
+        });
+    })(jQuery);
+</script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".chardinjs-tooltiptext span").attr('href', '/Client/AllMeetings');
+
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        function RenderCandidateFeedBackDetails() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: '/Survey/FetchCandidateFeedBackDetails',
+                    success: function (data) {
+                        resolve(data);
+                    },
+                    error: function (error) {
+                        reject(error);
+                    }
+                });
+            })
+        }
+
+        RenderCandidateFeedBackDetails()
+            .then((data) => {
+                $("#canfeedInterviewrating").text(data.avgQ1 + " Out of 5");
+                $("#canfeedInterviewerrating").text(data.avgQ2 + " Out of 5");
+                $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
+            })
+            .catch((error) => {
+
+            })
+
+
+
+        //$.ajax({
+        //    url: '/Survey/FetchCandidateFeedBackDetails',
+        //    success: function (data) {
+        //        $("#canfeedInterviewrating").text(data.avgQ1 + " Out of 5");
+        //        $("#canfeedInterviewerrating").text(data.avgQ2 + " Out of 5");
+        //        $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
+        //    }
+        //});
+    });
+</script>
+@*<script>
+    window.onload = function () {
+        updateInterviewTracking();
+    };
+</script>*@
+<script>
+    function changeinterviewnotificationstatus() {
+        $.ajax({
+            type: "GET",
+            url: "/Dashboard/Clientindex",
+            data: { status: 0 },
+            success: function (data) {
+            }
+        });
+    }
+    function SubmitWhatsapp() {
+        if ($("#clttxtwhatsappnumber").val().trim() != "") {
+
+            $.ajax({
+                type: "POST",
+                url: "/Dashboard/SaveWhatsappNumber",
+                data: { whatsappnumber: $("#clttxtwhatsappnumber").val().trim() },
+                success: function (data) {
+
+                    swal.fire(data);
+                    closeClientwhatsappModel();
+                }
+            });
+        }
+    }
+
+    function closeClientwhatsappModel() {
+        var model = document.getElementById("ClientwhatsappModel");
+        model.style.display = "none";
+    }
+    function openClientwhatsappModel() {
+        var model = document.getElementById("ClientwhatsappModel");
+        model.style.display = "block";
+    }
+</script>
+
+@*<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>*@
+

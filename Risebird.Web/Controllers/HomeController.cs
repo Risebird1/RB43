@@ -88,9 +88,14 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
                     int role = 0;
+                    string client = string.Empty;
                     if (menus.FirstOrDefault()?.profileName == "Client")
                     {
-                        role = _clientService.GetClientRoleByEmailId(emailId).Result;
+                        //role = _clientService.GetClientRoleByEmailId(emailId).Result;
+                        var clientDetails = _clientService.GetClientRoleAndCompanyNameByEmailId(emailId).Result;
+                        role = clientDetails.Item1;
+                        client = clientDetails.Item2;
+                        HttpContext.Session.SetString("clientName", client);
                     }
                     if (menus.FirstOrDefault()?.profileName == "Interviewer")
                     {

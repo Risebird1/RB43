@@ -221,6 +221,19 @@ namespace Risebird.Business
                 return 0;
             }
         }
+
+        public async Task<Tuple<int, string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientRoleAndCompanyNameByEmailId(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<int> GetUniqueClientRoleByEmailId(string emailId, string id)
         {
             try
@@ -513,6 +526,42 @@ namespace Risebird.Business
                 return await _clientRepository.GetClientRoleWiseStatsDetails(interviewerUserId, type, clientRole, irfId);
             }
             catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<Meeting>> GetDateRangeWiseClientMeetings(DateTime startDate, DateTime endDate, string emailId, int clientId)
+        {
+            try
+            {
+                return (await _clientRepository.GetDateRangeWiseClientMeetings(startDate, endDate, emailId, clientId)).OrderBy(x => x.interviewDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<ClientRoleWiseStatsWrapper> GetDateRangeWiseMeetingStatusForClientRoles(DateTime startDate, DateTime endDate, string emailId, int clientId)
+        {
+            try
+            {
+                return await _clientRepository.GetDateRangeWiseMeetingStatusForClientRoles(startDate, endDate, emailId, clientId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<StatsDerived>> GetDateRangeWiseMeetingStatusForClientByIRF(DateTime startDate, DateTime endDate, string emailId, int clientId, string clientUserEmailId, string role = null)
+        {
+            try
+            {
+                return (await _clientRepository.GetDateRangeWiseMeetingStatusForClientByIRF(startDate, endDate, emailId, clientId, clientUserEmailId, role));
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
