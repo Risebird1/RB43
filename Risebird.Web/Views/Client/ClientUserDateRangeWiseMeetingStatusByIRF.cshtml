@@ -1,0 +1,82 @@
+﻿@model List<Risebird.Entities.ViewModel.StatsDerived>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<div class="panel-body panel-body-table">
+    <h4>Stats (@ViewBag.RoleType)</h4>
+    @if (Model != null && Model.Count() > 0)
+    {
+
+        <div class="sb-container scroller">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            <th width="30%" class="text-center"><strong>EmailId</strong></th>
+                            <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
+                            <th width="50%" class="text-center"><strong>Status</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            foreach (var item in Model.Select(x => x.EmailId).Distinct())
+                            {
+                                //var Model = Model.ClientHRStats.Where(x => x.EmailId == item).ToList();
+                                int rowSpan = Model.Count();
+                                int maxCount = rowSpan - 1;
+                                for (int i = 0; i <= maxCount; i++)
+                                {
+                                    <tr>
+                                        @if (i == 0)
+                                        {
+                                            <td rowspan="@rowSpan" title="" class="text-center"><strong>@Model[i].EmailId</strong></td>
+                                        }
+                                        <td class="text-center"><strong>@Model[i].IRFnSkill</strong></td>
+                                        <td class="text-center"><a class="All Meetings" href="#" data-toggle="tooltip" title="All Meetings : @Model[i].TotalMeetings"><span><strong>@Model[i].TotalMeetings</strong></span></a> / <a class="Completed" href="#" data-toggle="tooltip" title="Completed : @Model[i].TotalCompletedMeetings"><span><strong>@Model[i].TotalCompletedMeetings</strong></span></a> / <a class="selected" href="#" data-toggle="tooltip" title="Selected : @Model[i].TotalSelected"><span><strong>@Model[i].TotalSelected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @Model[i].TotalRejected"><span><strong>@Model[i].TotalRejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @Model[i].TotalBorderLine"><span><strong>@Model[i].TotalBorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @Model[i].TotalProxy"><span><strong>@Model[i].TotalProxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @Model[i].TotalNoShow"><span><strong>@Model[i].TotalNoShow </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @Model[i].Scheduled"><span><strong>@Model[i].Scheduled </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @Model[i].TotalDropped"><span><strong>@Model[i].TotalDropped</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @Model[i].StatusPending"><span><strong>@Model[i].StatusPending</strong></span></a> </td>
+
+                                    </tr>
+                                }
+
+
+                            }
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+        @*<div class="legend">
+
+    <ul>
+    <li><div class="g color"></div>Selected: @Model.ClientHRStats.Select(x => x.TotalSelected).Sum()</li>
+    <li><div class="r color"></div>Rejected: @Model.ClientHRStats.Select(x => x.TotalRejected).Sum()</li>
+    <li><div class="b color"></div>BorderLine: @Model.ClientHRStats.Select(x => x.TotalBorderLine).Sum()</li>
+    <li><div class="pr color"></div>Proxy: @Model.ClientHRStats.Select(x => x.TotalProxy).Sum()</li>
+    <li><div class="ns color"></div>NoShow: @Model.ClientHRStats.Select(x => x.TotalNoShow).Sum()</li>
+    <li><div class="sch color"></div>Scheduled: @Model.ClientHRStats.Select(x => x.Scheduled).Sum()</li>
+    <li><div class="dr color"></div>Dropped: @Model.ClientHRStats.Select(x => x.TotalDropped).Sum()</li>
+    <li><div class="pe color"></div>Status Pending: @Model.ClientHRStats.Select(x => x.StatusPending).Sum()</li>
+
+    </ul>
+    </div>*@
+    }
+    else
+    {
+        <div>No interviews for this date range!</div>
+    }
+</div>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

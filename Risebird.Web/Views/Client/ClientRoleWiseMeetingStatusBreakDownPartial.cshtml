@@ -1,0 +1,152 @@
+﻿@model Risebird.Entities.ViewModel.ClientRoleWiseStatsWrapper
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<div class="panel-body panel-body-table">
+    <h4>Client HR Stats</h4>
+    @if (Model.ClientHRStats != null && Model.ClientHRStats.Count() > 0)
+    {
+        
+        <div class="sb-container scroller">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            <th width="30%" class="text-center"><strong>Client HR</strong></th>
+                            <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
+                            <th width="50%" class="text-center"><strong>Status</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            foreach (var item in Model.ClientHRStats.Select(x=>x.EmailId).Distinct())
+                            {
+                                var obj = Model.ClientHRStats.Where(x => x.EmailId == item).ToList();
+                                int rowSpan = obj.Count();
+                                int maxCount = rowSpan - 1;
+                                for (int i = 0; i <= maxCount; i++)
+                                {
+                                    <tr>
+                                        @if (i == 0)
+                                        {
+                                            <td rowspan="@rowSpan" title="" class="text-center"><strong>@obj[i].EmailId</strong></td>
+                                        }
+                                        <td class="text-center"><strong>@obj[i].IRFnSkill</strong></td>
+                                        <td class="text-center"><a class="Completed" href="#" data-toggle="tooltip" title="Completed : @obj[i].TotalCompletedMeetings"><span><strong>@obj[i].TotalCompletedMeetings</strong></span></a> / <a class="selected" href="#" data-toggle="tooltip" title="Selected : @obj[i].TotalSelected"><span><strong>@obj[i].TotalSelected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @obj[i].TotalRejected"><span><strong>@obj[i].TotalRejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @obj[i].TotalBorderLine"><span><strong>@obj[i].TotalBorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @obj[i].TotalProxy"><span><strong>@obj[i].TotalProxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @obj[i].TotalNoShow"><span><strong>@obj[i].TotalNoShow </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @obj[i].Scheduled"><span><strong>@obj[i].Scheduled </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @obj[i].TotalDropped"><span><strong>@obj[i].TotalDropped</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @obj[i].StatusPending"><span><strong>@obj[i].StatusPending</strong></span></a> </td>
+
+                                    </tr>
+                                }
+                                
+
+                            }
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+        @*<div class="legend">
+
+            <ul>
+                <li><div class="g color"></div>Selected: @Model.ClientHRStats.Select(x => x.TotalSelected).Sum()</li>
+                <li><div class="r color"></div>Rejected: @Model.ClientHRStats.Select(x => x.TotalRejected).Sum()</li>
+                <li><div class="b color"></div>BorderLine: @Model.ClientHRStats.Select(x => x.TotalBorderLine).Sum()</li>
+                <li><div class="pr color"></div>Proxy: @Model.ClientHRStats.Select(x => x.TotalProxy).Sum()</li>
+                <li><div class="ns color"></div>NoShow: @Model.ClientHRStats.Select(x => x.TotalNoShow).Sum()</li>
+                <li><div class="sch color"></div>Scheduled: @Model.ClientHRStats.Select(x => x.Scheduled).Sum()</li>
+                <li><div class="dr color"></div>Dropped: @Model.ClientHRStats.Select(x => x.TotalDropped).Sum()</li>
+                <li><div class="pe color"></div>Status Pending: @Model.ClientHRStats.Select(x => x.StatusPending).Sum()</li>
+
+            </ul>
+        </div>*@
+    }
+    else
+    {
+        <div>No interviews for this date range!</div>
+    }
+</div>
+<div class="panel-body panel-body-table">
+
+    <h4>Staffing Agency Stats</h4>
+    @if (Model.StaffingAgencyStats != null && Model.StaffingAgencyStats.Count() > 0)
+    {
+        <div class="sb-container scroller">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            <th width="30%" class="text-center"><strong>Staffing Agency</strong></th>
+                            <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
+                            <th width="50%" class="text-center"><strong>Status</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            foreach (var item in Model.StaffingAgencyStats.Select(x => x.EmailId).Distinct())
+                            {
+                                var obj = Model.StaffingAgencyStats.Where(x => x.EmailId == item).ToList();
+                                int rowSpan = obj.Count();
+                                int maxCount = rowSpan - 1;
+                                for (int i = 0; i <= maxCount; i++)
+                                {
+                                    <tr>
+                                        @if (i == 0)
+                                        {
+                                            <td rowspan="@rowSpan" title="" class="text-center"><strong>@obj[i].EmailId</strong></td>
+                                        }
+                                        <td class="text-center"><strong>@obj[i].IRFnSkill</strong></td>
+                                        <td class="text-center"><a class="Completed" href="#" data-toggle="tooltip" title="Completed : @obj[i].TotalCompletedMeetings"><span><strong>@obj[i].TotalCompletedMeetings</strong></span></a> / <a class="selected" href="#" data-toggle="tooltip" title="Selected : @obj[i].TotalSelected"><span><strong>@obj[i].TotalSelected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @obj[i].TotalRejected"><span><strong>@obj[i].TotalRejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @obj[i].TotalBorderLine"><span><strong>@obj[i].TotalBorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @obj[i].TotalProxy"><span><strong>@obj[i].TotalProxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @obj[i].TotalNoShow"><span><strong>@obj[i].TotalNoShow </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @obj[i].Scheduled"><span><strong>@obj[i].Scheduled </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @obj[i].TotalDropped"><span><strong>@obj[i].TotalDropped</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @obj[i].StatusPending"><span><strong>@obj[i].StatusPending</strong></span></a> </td>
+
+                                    </tr>
+                                }
+
+
+                            }
+                        }
+                        
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+        
+    }
+    else
+    {
+        <div>No interviews for this date range!</div>
+    }
+    <div class="legend">
+
+            <ul>
+                <li><div class="g color"></div>Selected: @Model.StaffingAgencyStats.Select(x => x.TotalSelected).Sum()</li>
+                <li><div class="r color"></div>Rejected: @Model.StaffingAgencyStats.Select(x => x.TotalRejected).Sum()</li>
+                <li><div class="b color"></div>BorderLine: @Model.StaffingAgencyStats.Select(x => x.TotalBorderLine).Sum()</li>
+                <li><div class="pr color"></div>Proxy: @Model.StaffingAgencyStats.Select(x => x.TotalProxy).Sum()</li>
+                <li><div class="ns color"></div>NoShow: @Model.StaffingAgencyStats.Select(x => x.TotalNoShow).Sum()</li>
+                <li><div class="sch color"></div>Scheduled: @Model.StaffingAgencyStats.Select(x => x.Scheduled).Sum()</li>
+                <li><div class="dr color"></div>Dropped: @Model.StaffingAgencyStats.Select(x => x.TotalDropped).Sum()</li>
+                <li><div class="pe color"></div>Status Pending: @Model.StaffingAgencyStats.Select(x => x.StatusPending).Sum()</li>
+
+            </ul>
+    </div>
+</div>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
