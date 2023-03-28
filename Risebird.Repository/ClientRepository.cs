@@ -508,6 +508,31 @@ namespace Risebird.Repository
                 return 0;
             }
         }
+        public async Task<Tuple<int, string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "[usp_GetClientRoleAndCompanyNameByEmailId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return new Tuple<int, string>(result.FirstOrDefault().ClientId, result.FirstOrDefault().Name);
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<int> GetUniqueClientRoleByEmailId(string emailId, string id)
         {
             try
@@ -984,6 +1009,178 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Meeting>> GetDateRangeWiseClientMeetings(DateTime startDate, DateTime endDate, string emailId, int clientId)//, string emailId, string clientName
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@startDateValue", startDate);
+                parameters.Add("@endDateValue", endDate);
+                parameters.Add("@clientId", clientId);
+                parameters.Add("@emailId", emailId);
+                //parameters.Add("@clientName", clientName);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_GetDateRangeWiseClientMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        //public async Task<ClientRoleWiseStatsWrapper> GetDateRangeWiseMeetingStatusForClientRoles(DateTime startDate, DateTime endDate, string emailId, int clientId)
+        //{
+        //    try
+        //    {
+        //        var parameters = new DynamicParameters();
+        //        parameters.Add("@startDateValueParam", startDate);
+        //        parameters.Add("@endDateValueParam", endDate);
+        //        parameters.Add("@clientIdParam", clientId);
+        //        parameters.Add("@emailIdParam", emailId);
+        //        parameters.Add("@timeNowParam", DateTime.Now);
+        //        //parameters.Add("@clientName", clientName);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var result = await SqlMapper.QueryAsync<StatsDerived>(con, "usp_GetDateRangeWiseMeetingStatusForClientRoles", parameters,
+        //                commandType: CommandType.StoredProcedure);
+        //            ClientRoleWiseStatsWrapper _resultVM = new ClientRoleWiseStatsWrapper();
+        //            _resultVM.ClientHRStats =(List<ClientHRStatsDerived>)result.Where(x => x.ClientRole == "ClientHR");
+        //            _resultVM.StaffingAgencyStats =(List<StaffingAgencyStatsDerived>)result.Where(x => x.ClientRole == "StaffingAgency");
+
+        //            return _resultVM;
+        //        }
+
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return null;
+        //}
+
+        public async Task<ClientRoleWiseStatsWrapper> GetDateRangeWiseMeetingStatusForClientRoles(DateTime startDate, DateTime endDate, string emailId, int clientId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    ClientRoleWiseStatsWrapper _resultVM = new ClientRoleWiseStatsWrapper();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetDateRangeWiseMeetingStatusForClientRoles", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@emailId", emailId);
+                    adapter.SelectCommand.Parameters.AddWithValue("@startDateValue", startDate);
+                    adapter.SelectCommand.Parameters.AddWithValue("@endDateValue", endDate);
+                    adapter.SelectCommand.Parameters.AddWithValue("@clientId", clientId);
+                    adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var listClientHRMeetings = new List<ClientHRStatsDerived>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listClientHRMeetings.Add(new ClientHRStatsDerived
+                                {
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    //IRFnSkill = !string.IsNullOrEmpty(dt.Rows[i]["IRFnSkill"].ToString()) ? dt.Rows[i]["IRFnSkill"].ToString() : null,
+                                    UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0,
+                                    TotalMeetings = !string.IsNullOrEmpty(dt.Rows[i]["TotalMeetings"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalMeetings"]) : 0,
+                                    TotalCompletedMeetings = !string.IsNullOrEmpty(dt.Rows[i]["TotalCompletedMeetings"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalCompletedMeetings"]) : 0,
+                                    TotalSelected = !string.IsNullOrEmpty(dt.Rows[i]["TotalSelected"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalSelected"]) : 0,
+                                    TotalRejected = !string.IsNullOrEmpty(dt.Rows[i]["TotalRejected"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalRejected"]) : 0,
+                                    TotalBorderLine = !string.IsNullOrEmpty(dt.Rows[i]["TotalBorderLine"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalBorderLine"]) : 0,
+                                    TotalProxy = !string.IsNullOrEmpty(dt.Rows[i]["TotalProxy"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalProxy"]) : 0,
+                                    TotalDropped = !string.IsNullOrEmpty(dt.Rows[i]["TotalDropped"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalDropped"]) : 0,
+                                    TotalNoShow = !string.IsNullOrEmpty(dt.Rows[i]["TotalNoShow"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalNoShow"]) : 0,
+                                    StatusPending = !string.IsNullOrEmpty(dt.Rows[i]["StatusPending"].ToString()) ? Convert.ToInt32(dt.Rows[i]["StatusPending"]) : 0,
+                                    Scheduled = !string.IsNullOrEmpty(dt.Rows[i]["Scheduled"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Scheduled"]) : 0
+
+
+                                });
+                            }
+                            _resultVM.ClientHRStats = listClientHRMeetings;
+                        }
+
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var listStaffingAgencyMeetings = new List<StaffingAgencyStatsDerived>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listStaffingAgencyMeetings.Add(new StaffingAgencyStatsDerived
+                                {
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    //IRFnSkill = !string.IsNullOrEmpty(dt.Rows[i]["IRFnSkill"].ToString()) ? dt.Rows[i]["IRFnSkill"].ToString() : null,
+                                    UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0,
+                                    TotalMeetings = !string.IsNullOrEmpty(dt.Rows[i]["TotalMeetings"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalMeetings"]) : 0,
+                                    TotalCompletedMeetings = !string.IsNullOrEmpty(dt.Rows[i]["TotalCompletedMeetings"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalCompletedMeetings"]) : 0,
+                                    TotalSelected = !string.IsNullOrEmpty(dt.Rows[i]["TotalSelected"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalSelected"]) : 0,
+                                    TotalRejected = !string.IsNullOrEmpty(dt.Rows[i]["TotalRejected"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalRejected"]) : 0,
+                                    TotalBorderLine = !string.IsNullOrEmpty(dt.Rows[i]["TotalBorderLine"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalBorderLine"]) : 0,
+                                    TotalProxy = !string.IsNullOrEmpty(dt.Rows[i]["TotalProxy"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalProxy"]) : 0,
+                                    TotalDropped = !string.IsNullOrEmpty(dt.Rows[i]["TotalDropped"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalDropped"]) : 0,
+                                    TotalNoShow = !string.IsNullOrEmpty(dt.Rows[i]["TotalNoShow"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalNoShow"]) : 0,
+                                    StatusPending = !string.IsNullOrEmpty(dt.Rows[i]["StatusPending"].ToString()) ? Convert.ToInt32(dt.Rows[i]["StatusPending"]) : 0,
+                                    Scheduled = !string.IsNullOrEmpty(dt.Rows[i]["Scheduled"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Scheduled"]) : 0
+
+
+                                });
+                            }
+                            _resultVM.StaffingAgencyStats = listStaffingAgencyMeetings;
+                        }
+
+                    }
+
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<StatsDerived>> GetDateRangeWiseMeetingStatusForClientByIRF(DateTime startDate, DateTime endDate, string emailId, int clientId, string clientUserEmailId, string role= null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@startDateValue", startDate);
+                parameters.Add("@endDateValue", endDate);
+                parameters.Add("@clientId", clientId);
+                parameters.Add("@emailId", emailId);
+                parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@clientUserEmailId", clientUserEmailId);
+                //parameters.Add("@clientName", clientName);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<StatsDerived>(con, "usp_GetDateRangeWiseMeetingStatusForClientByIRF", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

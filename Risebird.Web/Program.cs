@@ -253,6 +253,7 @@ app.UseCsp(builder =>
            .Allow("https://fw-cdn.com/")
            .Allow("https://widget.freshworks.com/")
            .Allow("https://risebird-org-75be704f472209616727480.freshchat.com/")
+           .Allow("https://sdk.twilio.com/")
            .Allow("blob:")
            .Allow("'unsafe-eval'")
            .Allow("'unsafe-inline'");

@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class ClientDashboardVM
+    public class ClientDashboardVM : ClientStatsBase
     {
-        public IEnumerable<Meeting> Meetings { get; set; }
-        public string MeetingsData { get; set; }
-        public string MeetingsDataLabels { get; set; }
-        public string EmailId { get; set; }
+        //public IEnumerable<Meeting> Meetings { get; set; }
+        //public string MeetingsData { get; set; }
+        //public string MeetingsDataLabels { get; set; }
+        //public string EmailId { get; set; }
         public string FunnelData { get; set; }
         public IEnumerable<ClientDailySlotsStatus> DailyMeetingResultsSlots { get; set; }
         //public CandidatesCount CandidatesCountObj { get; set; }

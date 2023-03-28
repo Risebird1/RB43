@@ -5,15 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -34,8 +37,9 @@ namespace Risebird.Web.Controllers
         private static List<MeetingVM> _modelDetails;
         private readonly IIRFService _irfService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IIRFRepository _irfRepository;
 
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -47,6 +51,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _userService = userService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _irfRepository = irfRepository;
         }
 
         [HttpGet]
@@ -4526,6 +4531,157 @@ namespace Risebird.Web.Controllers
             }
             else
             {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Stats()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+                        //var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+
+                        var model = new ClientStatsVM();
+                        //model.ClientName = clientName;
+                        model.EmailId = emailid;
+                        model.ClientList = new SelectList((await _irfRepository.GetClients()).OrderBy(x=>x.Name), "id", "Name");
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ClientStatsVM> GetDateRangeWiseClientInterviews(DateTime startDateValue, DateTime endDateValue, string emailId, int clientId)//string emailId, string clientName, 
+        {
+            try
+            {
+                var model = new ClientStatsVM();
+                model.Meetings = await _clientService.GetDateRangeWiseClientMeetings(startDateValue, endDateValue, emailId, clientId);
+                var meetingDates= model.Meetings.Select(x => x.interviewDate.Date).Distinct();
+
+                var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
+                List<object> iData = new List<object>();
+
+                foreach (var item in meetingDates)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.Date = item.Date.ToShortDateString();
+                    foreach (var irf in irfList)
+                    {
+                        AddProperty(expando, irf, model.Meetings.Where(x => x.IRFID == irf.Split("(")[0] && x.interviewDate.Date == item.Date).Count());
+                    }
+                    iData.Add(expando);
+                }
+
+                model.MeetingsData = JsonConvert.SerializeObject(iData);
+                model.MeetingsDataLabels = JsonConvert.SerializeObject(irfList);
+                return model;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        
+        [Authorize]
+        [HttpGet]
+        public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+        {
+            // ExpandoObject supports IDictionary so we can extend it like this
+            var expandoDict = expando as IDictionary<string, object>;
+            if (expandoDict.ContainsKey(propertyName))
+                expandoDict[propertyName] = propertyValue;
+            else
+                expandoDict.Add(propertyName, propertyValue);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetDateRangeWiseMeetingStatusForClientRoles(DateTime startDateValue, DateTime endDateValue, int clientId)
+        {
+            try
+            {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var model = new ClientRoleWiseStatsWrapper();
+                model= await _clientService.GetDateRangeWiseMeetingStatusForClientRoles(startDateValue, endDateValue, Emailid, clientId);
+                ViewBag.ClientId = clientId;
+                ViewBag.StartDate = startDateValue;
+                ViewBag.EndDate = endDateValue;
+                return PartialView("GetDateRangeWiseMeetingStatusForClientRoles", model);//ClientRoleWiseMeetingStatusBreakDownPartial
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> GetDateRangeWiseMeetingStatusForClientByIRF(DateTime startDateValue, DateTime endDateValue, int clientId, string clientUserEmailId, string role = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IEnumerable<StatsDerived> statsList;
+                        statsList = await _clientService.GetDateRangeWiseMeetingStatusForClientByIRF(startDateValue, endDateValue, emailId, clientId, clientUserEmailId, role);
+                        ViewBag.Profile = profileName;
+                        ViewBag.RoleType = role;//ClientRoleTypes.ClientHR;
+                        
+                        //return View("ClientUserDateRangeWiseMeetingStatusByIRF", statsList ?? statsList.ToList());
+                        return View("GetDateRangeWiseMeetingStatusForClientByIRF", statsList ?? statsList.ToList());
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
         }
