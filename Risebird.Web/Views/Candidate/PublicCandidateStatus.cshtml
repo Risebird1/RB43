@@ -140,30 +140,33 @@
                     <div class="pull-right">
                         <div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
-                            </button>
-                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                    <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
+                                </button>
+                            @if (ViewBag.ClientRole != "Client Admin")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                    <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
+                                </button>
+                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                                 <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
                                 </button>*@
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
-                            </button>
-                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                    <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                </button>
+                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
                                 </button>*@
+                            }
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
-                            </button>
-                            <span>
-                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
-
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                    <div class="mdc-button__ripple"></div>
+                                    <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
                                 </button>
-                            </span>
+                            <span>
+                                    <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
+
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <div class="mdc-button__ripple"></div>
+                                    </button>
+                                </span>
                             <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
 
 

@@ -88,7 +88,33 @@ begin
  join CandidateStatusOptionsMst csm on csm.id=cs.Status    
  order by ab.interviewDate desc    
     
-end      
+end   
+  else if(@clientRole = 9)          
+begin        
+ ;with CTE (Emailid,IRFId,candidateName,JDTiltle,MobileNumber,IsReportBlocked) as (Select distinct ul.EmailId,IRF.IRFId,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber,0 as IsReportBlocked From Candidate c join CandidatesMaster cm on cm.id=c.CandidateMasterId                     
+ join UserList ul on ul.id=cm.UserId join irf on irf.id=c.IRFId where irf.ClientId=@Clientid  and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0                         
+ Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber,tqr.IsReportBlocked from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Trans_QCFormReport tqr on tqr.Interviewid=im.id where irf.ClientId=@Clientid and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                            
+ Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*   
+ CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount from(    
+ Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.IsReportBlocked from              
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,CTE.IsReportBlocked  from CTE join      
+ IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
+ left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
+ left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12                          
+ join Client cl on cl.id=IRF.ClientId              
+ Where cs.Date is not Null 
+ group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
+ c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
+ c.CandidateMasterId,c.ProfileSource,CTE.IsReportBlocked having Count(*)=1) as Cd          
+ where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
+ group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.IsReportBlocked)as ab     
+ OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(ab.IRFId, ab.Emailid) as CountTable  
+ join CandidateStatus cs on ab.interviewDate=cs.Date and ab.IRFId=cs.IRFId and ab.CandidateMasterId=cs.CandidateId    
+ join CandidateStatusOptionsMst csm on csm.id=cs.Status    
+ order by ab.interviewDate desc    
+    
+end   
 else      
 begin      
  ;with CTE (Emailid,IRFId,candidateName,JDTiltle,MobileNumber,IsReportBlocked) as (Select distinct ul.EmailId,IRF.IRFId,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber,0 as IsReportBlocked From Candidate c join CandidatesMaster cm on cm.id=c.CandidateMasterId                     
@@ -129,7 +155,7 @@ Else
 BEGIN                    
 if @EmailId is not null                              
  Begin                              
-                              
+  set @Clientid= (Select cu.ClientId from UserList ul join ClientUser cu on cu.UserId=ul.id where ul.EmailId=@Emailid)                                  
   set @profileId = (select id from [Profile] where [Name]='Client')                              
   set @userId  = (select id from UserList where EmailId=@EmailId and idProfile=@profileId)                              
   set @roleId  = (select RoleId from ClientUser where UserId=@userId)                              
@@ -244,7 +270,39 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
  IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked           
                             
-  End                            
+  End          
+   else if(@roleId=9)                            
+  Begin                            
+      Select Distinct ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,                            
+    case                             
+     when ul.LastName is null then ul.FirstName                            
+     else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))                            
+    end as [Name],                            
+    ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,       
+ cs.Comments as ScheduleStatusComments,Max(cs.Date) as ScheduleStatusDate,csm.StatusValue as ScheduleStatusValue,      
+    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,IRF.id as IRFId,                             
+    ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                          
+    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
+ ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
+ im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked  
+from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
+join UserList ul on ul.EmailId=im.candidateEmail       
+join CandidatesMaster cm on cm.UserId=ul.id      
+join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id      
+left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=IRF.id and cs.InterviewId=im.id      
+join CandidateStatusOptionsMst csm on csm.id=cs.Status      
+join InterviewComments ic on ic.Interviewid=im.id   
+left join Trans_QCFormReport tqr on tqr.interviewid=im.id
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
+where irf.IsDeleted=0 and irf.Clientid=@Clientid                             
+and im.interviewDate>=@startDate and im.interviewDate<=@endDate       
+group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
+    case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
+    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
+ (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked           
+                            
+  End          
   else                              
    Begin                              
        Select Distinct ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,                            
