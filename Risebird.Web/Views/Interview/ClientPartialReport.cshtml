@@ -418,44 +418,45 @@
                                             </div><!--end of multiple location-->
                                         </div>
                                         <div class="report-wrap">
-                                            @if (ViewBag.PageStatus != "PublicExternal")
-                                            {
-                                                <div class="col-md-6 col-sm-6 border-rv pull-left">
-                                                    <div class="chart-box">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="chart-box">
+                                                    <div>
+                                                        @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
+                                                        <p class="card-text">Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></p>
                                                         <div>
-                                                            @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
-                                                            <p class="card-text">Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></p>
-                                                            <div>
-                                                                @*<div id="scoreChart" style="height: 200px; margin-left:60px"></div>*@
-                                                                <div id="canvasDiv">
-                                                                    <canvas id="scoreChart" width="400" height="250"></canvas>
-                                                                </div>
-
-                                                                <div class="transparent-chart">&nbsp;</div>
+                                                            @*<div id="scoreChart" style="height: 200px; margin-left:60px"></div>*@
+                                                            <div id="canvasDiv">
+                                                                <canvas id="scoreChart" width="400" height="250"></canvas>
                                                             </div>
+
+                                                            <div class="transparent-chart">&nbsp;</div>
                                                         </div>
                                                     </div>
+                                                </div>
 
 
-                                                    <div class="mc-button-area">
-                                                        <div id="uploadDiv">
+                                                <div class="mc-button-area">
+                                                    <div id="uploadDiv">
 
 
-                                                            <div style="margin-bottom:15px;">
-                                                                @{
-                                                                    if (Model.VideoLink != null)
-                                                                    {
-                                                                        <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
-                                                                    }
+                                                        <div style="margin-bottom:15px;">
+                                                            @{
+                                                                if (Model.VideoLink != null)
+                                                                {
+                                                                    <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
                                                                 }
-                                                            </div>
+                                                            }
                                                         </div>
-
                                                     </div>
-
-
 
                                                 </div>
+
+
+
+                                            </div>
+                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                                
                                                 <div class="col-md-6 col-sm-6 pull-left">
                                                     <div class="col-md-12 col-sm-12 pull-left">
                                                         <div class="form-group">
@@ -1877,10 +1878,88 @@
         $("#OverallScore").val(average);
 
         //SetChart();
+        debugger;
         SetTechReportChart('TechSkillReportCollection');
 
     }
 
+    $(document).ready(function () {
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
+            }
+        }
+        $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "");
+        }
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
+
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            //if (reqLevel <= actLevel) {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            //}
+            //else {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+            //    $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
+            //}
+            var actualWeightage;
+            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
+            if (reqLevel <= actLevel) {
+
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+
+            }
+            else {
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+            }
+
+        }
+
+
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        SetTechReportChart('TechSkillReportCollection');
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+
+            average = totalCount / 4;
+            //SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            //SetChartWithoutJoinabilitySelectability();
+        }
+        debugger;
+        $("#OverallScore").val(average);
+
+    })
 
     @*$(document).ready(function () {
 

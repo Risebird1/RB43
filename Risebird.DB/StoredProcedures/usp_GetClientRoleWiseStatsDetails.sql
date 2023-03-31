@@ -15,7 +15,9 @@ CREATE PROCEDURE usp_GetClientRoleWiseStatsDetails
 @irfId int = null,
 @type varchar(30),
 @roleType varchar(30),
-@clientUserId int
+@clientUserId int,
+@startDateValue datetime = null,
+@endDateValue datetime = null
 
 AS          
 BEGIN  
@@ -37,29 +39,49 @@ DECLARE @tbl_RelevantInterviews TABLE (
 	interviewer varchar(200)
 )
 
-DECLARE @tbl_RelevantCandidates TABLE (                    
-	CandidateUserId int,
-	CandidateEmail varchar(200),
-	IRFId int,
-	IRFName varchar(30)	
-)
+if(@startDateValue is null and @endDateValue is null)
+Begin
+	DECLARE @tbl_RelevantCandidates TABLE (                    
+		CandidateUserId int,
+		CandidateEmail varchar(200),
+		IRFId int,
+		IRFName varchar(30)	
+	)
 
-INSERT INTO @tbl_RelevantCandidates 
-select cm.UserId, ul.EmailId as CandidateEmail, ca.IRFId, irf.IRFId as IRFName
-from Candidate ca join CandidatesMaster cm
-on cm.id = ca.CandidateMasterId
-join UserList ul on ul.id = cm.UserId
-join IRF on irf.id = ca.IRFId
-where (@irfId is null or ca.IRFId = @irfId)
-group by cm.UserId, ul.EmailId, ca.IRFId, irf.IRFId
+	INSERT INTO @tbl_RelevantCandidates 
+	select cm.UserId, ul.EmailId as CandidateEmail, ca.IRFId, irf.IRFId as IRFName
+	from Candidate ca join CandidatesMaster cm
+	on cm.id = ca.CandidateMasterId
+	join UserList ul on ul.id = cm.UserId
+	join IRF on irf.id = ca.IRFId
+	where (@irfId is null or ca.IRFId = @irfId)
+	group by cm.UserId, ul.EmailId, ca.IRFId, irf.IRFId
 
 
-INSERT INTO @tbl_RelevantInterviews    
-select im.id, im.interviewDate, im.candidateEmail, im.IRFId, im.interviewer from @tbl_RelevantCandidates trc 
-join InterviewMeetings im on im.candidateEmail = trc.CandidateEmail and im.IRFId = trc.IRFName
-and  (@irfId is null or im.IRFId = @IRFName) 
-where im.confirmationStatus = 1 
-and ((im.staffingAgency = @clientEmail and @roleType = 'Staffing Agency') or (im.ClientHrContact = @clientEmail and @roleType = 'ClientHR'))
+	INSERT INTO @tbl_RelevantInterviews    
+	select im.id, im.interviewDate, im.candidateEmail, im.IRFId, im.interviewer from @tbl_RelevantCandidates trc 
+	join InterviewMeetings im on im.candidateEmail = trc.CandidateEmail and im.IRFId = trc.IRFName
+	and  (@irfId is null or im.IRFId = @IRFName) 
+	where im.confirmationStatus = 1 
+	and ((im.staffingAgency = @clientEmail and @roleType = 'Staffing Agency') or (im.ClientHrContact = @clientEmail and @roleType = 'ClientHR'))
+
+
+End
+else
+Begin
+
+	INSERT INTO @tbl_RelevantInterviews    
+	select im.id, im.interviewDate, im.candidateEmail, im.IRFId,  im.interviewer from InterviewMeetings im --im.ClientHrContact, im.staffingAgency
+	join IRF on IRF.IRFId = im.IRFId
+	join Client cl on cl.id=IRF.ClientId
+	left join InterviewComments ic on ic.InterviewId = im.id
+	where cast(interviewDate as date) >= cast (@startDateValue as date) and cast(interviewDate as date) <= cast (@endDateValue as date) 
+	and  (irf.id = @irfId)
+	and im.confirmationStatus=1 
+	and ((ClientHrContact = @clientEmail and @roleType = 'ClientHR') or (staffingAgency = @clientEmail and @roleType= 'Staffing Agency'))
+
+
+End
 
 
 DECLARE @tbl_InterviewerJoinTime TABLE (                    

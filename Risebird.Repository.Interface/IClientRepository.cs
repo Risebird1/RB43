@@ -42,7 +42,7 @@ namespace Risebird.Repository.Interface
         Task<string> GetClientLogoByIRFId(int irfId);
         Task<IEnumerable<StatsVM>> GetStaffingAgencyStats(int? irfId = null);
         Task<IEnumerable<StatsVM>> GetClientHRStats(int? irfId = null);
-        Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole, int? irfId = null);
+        Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole, int? irfId = null, DateTime? startDate = null, DateTime? endDate = null);
         Task<Tuple<int, string>> GetClientRoleAndCompanyNameByEmailId(string emailId);
         Task<IEnumerable<Meeting>> GetDateRangeWiseClientMeetings(DateTime startDate, DateTime endDate, string emailId, int clientId);
         Task<ClientRoleWiseStatsWrapper> GetDateRangeWiseMeetingStatusForClientRoles(DateTime startDate, DateTime endDate, string emailId, int clientId);

@@ -4500,7 +4500,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> StatsDetails(int userId, string statType, string clientRole, string clientEmailId = null, int? irfId = null, string irfName = null)
+        public async Task<IActionResult> StatsDetails(int userId, string statType, string clientRole, string clientEmailId = null, int? irfId = null, string irfName = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -4510,7 +4510,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<StatsDetailsVM> statsDetailsList;
-                    statsDetailsList = await _clientService.GetClientRoleWiseStatsDetails(userId, statType, clientRole, irfId);
+                    statsDetailsList = await _clientService.GetClientRoleWiseStatsDetails(userId, statType, clientRole, irfId, startDate, endDate);
                     ViewBag.Profile = profileName;
                     ViewBag.StatType = statType;
                     ViewBag.EmailId = clientEmailId + "(" + clientRole + ")";
@@ -4665,7 +4665,9 @@ namespace Risebird.Web.Controllers
                         statsList = await _clientService.GetDateRangeWiseMeetingStatusForClientByIRF(startDateValue, endDateValue, emailId, clientId, clientUserEmailId, role);
                         ViewBag.Profile = profileName;
                         ViewBag.RoleType = role;//ClientRoleTypes.ClientHR;
-                        
+                        ViewBag.ClientEmailId = clientUserEmailId;
+                        ViewBag.StartDate = startDateValue;
+                        ViewBag.EndDate = endDateValue;
                         //return View("ClientUserDateRangeWiseMeetingStatusByIRF", statsList ?? statsList.ToList());
                         return View("GetDateRangeWiseMeetingStatusForClientByIRF", statsList ?? statsList.ToList());
                     }
