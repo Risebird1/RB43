@@ -15,5 +15,8 @@ namespace Risebird.Entities.Enum
 
         [Description("Business Owner")]
         MultipleIRFowner = 6,
+        
+        [Description("Client Admin")]
+        ClientAdmin = 9
     }
 }

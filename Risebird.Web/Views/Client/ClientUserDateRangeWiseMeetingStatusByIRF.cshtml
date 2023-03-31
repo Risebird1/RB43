@@ -1,82 +1,220 @@
-﻿@model List<Risebird.Entities.ViewModel.StatsDerived>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
-<div class="panel-body panel-body-table">
-    <h4>Stats (@ViewBag.RoleType)</h4>
-    @if (Model != null && Model.Count() > 0)
-    {
+﻿@model IEnumerable<Risebird.Entities.ViewModel.StatsDerived>
+@using Risebird.Entities.Data;
 
-        <div class="sb-container scroller">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped ">
-                    <thead>
-                        <tr>
-                            <th width="30%" class="text-center"><strong>EmailId</strong></th>
-                            <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
-                            <th width="50%" class="text-center"><strong>Status</strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+<div id="tableID" class="second" style="overflow-x:scroll">
+    <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                @*@if (ViewBag.RoleType == ClientRoleTypes.StaffingAgency)
+                {
+                    <th>Staffing Agency</th>
+                }
+                else
+                {
+                    <th>Client HR</th>
+                }*@
+                <th>Skill Channel</th>
+                <th>Total Meetings</th>
+                <th>Total Completed</th>
+                <th>Status Pending</th>
+                <th>Selected</th>
+                <th>Borderline</th>
+                <th>Rejected</th>
+                <th>Proxy</th>
+                <th>Dropped</th>
+                <th>No Show</th>
+                <th>Scheduled</th>
+                @*<th>Actions</th>*@
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                @*@if (ViewBag.RoleType == ClientRoleTypes.StaffingAgency)
+                {
+                <th>Staffing Agency</th>
+                }
+                else
+                {
+                <th>Client HR</th>
+                }*@
+                <th>Skill Channel</th>
+                <th>Total Meetings</th>
+                <th>Total Completed</th>
+                <th>Status Pending</th>
+                <th>Selected</th>
+                <th>Borderline</th>
+                <th>Rejected</th>
+                <th>Proxy</th>
+                <th>Dropped</th>
+                <th>No Show</th>
+                <th>Scheduled</th>
+                @*<th>Actions</th>*@
+            </tr>
+        </tfoot>
+        <tbody>
 
-                        @{
-                            foreach (var item in Model.Select(x => x.EmailId).Distinct())
-                            {
-                                //var Model = Model.ClientHRStats.Where(x => x.EmailId == item).ToList();
-                                int rowSpan = Model.Count();
-                                int maxCount = rowSpan - 1;
-                                for (int i = 0; i <= maxCount; i++)
-                                {
-                                    <tr>
-                                        @if (i == 0)
-                                        {
-                                            <td rowspan="@rowSpan" title="" class="text-center"><strong>@Model[i].EmailId</strong></td>
-                                        }
-                                        <td class="text-center"><strong>@Model[i].IRFnSkill</strong></td>
-                                        <td class="text-center"><a class="All Meetings" href="#" data-toggle="tooltip" title="All Meetings : @Model[i].TotalMeetings"><span><strong>@Model[i].TotalMeetings</strong></span></a> / <a class="Completed" href="#" data-toggle="tooltip" title="Completed : @Model[i].TotalCompletedMeetings"><span><strong>@Model[i].TotalCompletedMeetings</strong></span></a> / <a class="selected" href="#" data-toggle="tooltip" title="Selected : @Model[i].TotalSelected"><span><strong>@Model[i].TotalSelected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @Model[i].TotalRejected"><span><strong>@Model[i].TotalRejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @Model[i].TotalBorderLine"><span><strong>@Model[i].TotalBorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @Model[i].TotalProxy"><span><strong>@Model[i].TotalProxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @Model[i].TotalNoShow"><span><strong>@Model[i].TotalNoShow </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @Model[i].Scheduled"><span><strong>@Model[i].Scheduled </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @Model[i].TotalDropped"><span><strong>@Model[i].TotalDropped</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @Model[i].StatusPending"><span><strong>@Model[i].StatusPending</strong></span></a> </td>
+            @if (Model != null && Model.Count() > 0)
+            {
+                //int i = 0;
+                foreach (var item in Model)
+                {
 
-                                    </tr>
-                                }
-
-
-                            }
+                    <tr>
+                        @*@if (!string.IsNullOrEmpty(item.EmailId))
+                        {
+                            <td> @item.EmailId </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }*@
+                        <td>@item.IRFnSkill</td>
+                        @if (item.TotalMeetings > 0)
+                        {
+                            <td title="Total Meetings">
+                                <a title="Total Meetings" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.All, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">@item.TotalMeetings</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalMeetings</td>
+                        }
+                        @if (item.TotalCompletedMeetings > 0)
+                        {
+                            <td title="Total Completed Meetings">
+                                <a title="Total Completed Meetings" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Completed, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">@item.TotalCompletedMeetings</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalCompletedMeetings</td>
+                        }
+                        @if (item.StatusPending > 0)
+                        {
+                            <td title="Status Pending">
+                                <a title="Status Pending" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Pending, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                        }
+                        @if (item.TotalSelected > 0)
+                        {
+                            <td title="Total Selected">
+                                <a title="Total Selected" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Selected, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
                         }
 
+                        @if (item.TotalBorderLine > 0)
+                        {
+                            <td title="Total Borderline">
+                                <a title="Total Borderline" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Borderline, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalBorderLine</td>
+                        }
+                        @if (item.TotalRejected > 0)
+                        {
 
-                    </tbody>
-                </table>
-            </div>
+                            <td title="Total Rejected">
+                                <a title="Total Rejected" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Rejected, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                        }
+                        @if (item.TotalProxy > 0)
+                        {
+                            <td title="Total Proxy">
+                                <a title="Total Proxy" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Proxy, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                        }
+                        @if (item.TotalDropped > 0)
+                        {
+
+                            <td title="Total Dropped">
+                                <a title="Total Dropped" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Dropped, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                        }
+                        @if (item.TotalNoShow > 0)
+                        {
+
+                            <td title="No Show">
+                                <a title="No Show" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Noshowinterviewer, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.TotalNoShow { @(item.TotalMeetings != 0 ? (item.TotalNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.TotalNoShow { @(item.TotalMeetings != 0 ? (item.TotalNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                        }
+                        
+                        @if (item.Scheduled > 0)
+                        {
+                            <td title="Scheduled">
+                                <a title="Scheduled" target="_blank" href="@Url.Action("StatsDetails", "Client", new {userId = item.UserId, statType = StatsTypes.Scheduled, clientRole = ViewBag.RoleType, clientEmailId = item.EmailId, irfId = item.irfIntId, irfName = item.IRFId, startDate = ViewBag.StartDate, endDate = ViewBag.EndDate})">
+                                    @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                        }
+
+                        @*<td class="text-center">
+                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                            {
+                                <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.EmailId', '@item.MobileNumber', '@item.EmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+
+                            }
 
 
-        </div>
+                        </td>*@
 
-        @*<div class="legend">
 
-    <ul>
-    <li><div class="g color"></div>Selected: @Model.ClientHRStats.Select(x => x.TotalSelected).Sum()</li>
-    <li><div class="r color"></div>Rejected: @Model.ClientHRStats.Select(x => x.TotalRejected).Sum()</li>
-    <li><div class="b color"></div>BorderLine: @Model.ClientHRStats.Select(x => x.TotalBorderLine).Sum()</li>
-    <li><div class="pr color"></div>Proxy: @Model.ClientHRStats.Select(x => x.TotalProxy).Sum()</li>
-    <li><div class="ns color"></div>NoShow: @Model.ClientHRStats.Select(x => x.TotalNoShow).Sum()</li>
-    <li><div class="sch color"></div>Scheduled: @Model.ClientHRStats.Select(x => x.Scheduled).Sum()</li>
-    <li><div class="dr color"></div>Dropped: @Model.ClientHRStats.Select(x => x.TotalDropped).Sum()</li>
-    <li><div class="pe color"></div>Status Pending: @Model.ClientHRStats.Select(x => x.StatusPending).Sum()</li>
+                    </tr>
+                    //i++;
 
-    </ul>
-    </div>*@
-    }
-    else
-    {
-        <div>No interviews for this date range!</div>
-    }
+                }
+            }
+
+        </tbody>
+
+    </table>
+
+
+    @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
 </div>
 
-<script src="~/Newassets/js/scrollBar.js"></script>
 
-<script type="text/javascript">
-    $(".sb-container").scrollBox();
-</script>
-
-<script>
-    $(document).ready(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>

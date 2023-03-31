@@ -982,7 +982,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole,int? irfId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole,int? irfId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -994,6 +994,8 @@ namespace Risebird.Repository
                     parameters.Add("@clientUserId", clientUserId);
                     parameters.Add("@roleType", clientRole);
                     parameters.Add("@type", type);
+                    parameters.Add("@startDateValue", startDate);
+                    parameters.Add("@endDateValue", endDate);
                     return await SqlMapper.QueryAsync<StatsDetailsVM>(con, "dbo.usp_GetClientRoleWiseStatsDetails", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
@@ -1166,10 +1168,11 @@ namespace Risebird.Repository
                 parameters.Add("@emailId", emailId);
                 parameters.Add("@timeNow", DateTime.Now);
                 parameters.Add("@clientUserEmailId", clientUserEmailId);
+                parameters.Add("@role", role);
                 //parameters.Add("@clientName", clientName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<StatsDerived>(con, "usp_GetDateRangeWiseMeetingStatusForClientByIRF", parameters,
+                    var result = await SqlMapper.QueryAsync<StatsDerived>(con, "usp_GetDateRangeWiseMeetingStatusForClientUserByIRF", parameters,
                         commandType: CommandType.StoredProcedure);
                     
                     return result;

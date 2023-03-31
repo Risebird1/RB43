@@ -16,6 +16,6 @@ select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumbe
 inner join [dbo].[UserList] ul on cu.UserId = ul.id    
 inner join [dbo].[Client] cl on cu.ClientId= cl.id    
 inner join [ClientRole] cr on cu.RoleId= cr.id    
-where ul.IsActive =1    
+where ul.IsActive =1 and cu.RoleId!=9   
 END
 GO
