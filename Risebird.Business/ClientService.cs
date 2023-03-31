@@ -519,11 +519,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int interviewerUserId, string type, string clientRole, int? irfId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int interviewerUserId, string type, string clientRole, int? irfId = null, DateTime ? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                return await _clientRepository.GetClientRoleWiseStatsDetails(interviewerUserId, type, clientRole, irfId);
+                return await _clientRepository.GetClientRoleWiseStatsDetails(interviewerUserId, type, clientRole, irfId, startDate, endDate);
             }
             catch (SqlTypeException ex)
             {

@@ -27,7 +27,7 @@ left join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail
 join CandidatesMaster cm on cm.UserId = ul.id
 left join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = IRF.id)
-where im.interviewDate<@timeEnd and im.interviewDate>@timeStart and (ic.VideoLink is null or ic.VideoLink='') and im.ZoomMeetingId is not null and ISNULL(ca.IsProctor,0)!=1 
+where im.interviewDate<@timeEnd and im.interviewDate>@timeStart and ((ic.VideoLink is null or ic.VideoLink='') or ic.VideoDuration <=5) and im.ZoomMeetingId is not null and ISNULL(ca.IsProctor,0)!=1 
 UNION
 select distinct im.id as imid, im.ZoomMeetingId, im.interviewDate, im.zoomLink, irf.MeetingPlatform
 from InterviewMeetings im 
@@ -36,7 +36,7 @@ left join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail
 join CandidatesMaster cm on cm.UserId = ul.id
 left join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = IRF.id)
-where im.interviewDate < (DATEADD(HOUR, -12, @timeEnd))and im.interviewDate>@timeStart and (ic.VideoLink is null or ic.VideoLink='') and im.ZoomMeetingId is not null and (ca.IsProctor = 1)
+where im.interviewDate < (DATEADD(HOUR, -12, @timeEnd))and im.interviewDate>@timeStart and ((ic.VideoLink is null or ic.VideoLink='') or ic.VideoDuration <=5) and im.ZoomMeetingId is not null and (ca.IsProctor = 1)
 
 End
 GO
