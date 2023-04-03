@@ -549,6 +549,13 @@
                         </select>
                     </div>
                     <div class="sharing">
+                        <label class="label-field desp-label" for="MCQ Meeting PlatForm" style="font-weight:normal;"> Meeting PlatForm</label>
+                        <select id="txtmeetingtype" class="form-control " style="margin-bottom:10px;">
+                            <option value="0">RB Meet</option>
+                            <option value="1">Google Meet</option>
+                        </select>
+                    </div>
+                    <div class="sharing">
                         <input type="checkbox" style="margin-bottom:10px;" id="chkbotlink" />  Share Bot Link
                     </div>
                     <div class="sharing">
@@ -798,7 +805,7 @@
         var url = '/MCQ/CandidateTestDetails?id=' + id;
         window.location.href = url;
     }
-    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType, clients, aadhaarVerification,premiumMCQ) {
+    function EditMcqSet(id, idMcq, profileType, seniorityLevel, employmentType, companyType, countryType, clients, aadhaarVerification, premiumMCQ) {
         openCreatePopUp();
         $("#idMcqTile").val(idMcq);
         $("#txtpartialid").val(id);
@@ -890,7 +897,7 @@
                         $.ajax({
                             type: "POST",
                             url: "/MCQ/ShareTestLink",
-                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: candidatetype, botactive: botactive },
+                            data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val(), Candidate: candidatetype, botactive: botactive, MeetingPlatForm: $("#txtmeetingtype").val() },
                             success: function (data) {
                                 if (data == "success") {
                                     alert("Successfully share the Phone Screen+ set.");
@@ -928,7 +935,7 @@
     @*var CompentencyLevels=  @Html.Raw(Json.Serialize(CompentencyLevel));
             var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));*@
 
-                                            var seniorityLevel = @Html.Raw(Json.Serialize(SeniorityLevel));
+                                                var seniorityLevel = @Html.Raw(Json.Serialize(SeniorityLevel));
         var countryType = @Html.Raw(Json.Serialize(CountryType));
         var companyType = @Html.Raw(Json.Serialize(CompanyType));
         var employmentType = @Html.Raw(Json.Serialize(EmploymentType));

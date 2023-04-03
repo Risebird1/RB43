@@ -22,7 +22,8 @@ CREATE PROCEDURE usp_AddMCQSetShareCandidate
 @WhoShared varchar(200),    
 @ShareDate datetime,  
 @ShareType bit,
-@botactive bit
+@botactive bit,
+@MeetingPlatForm int
 AS            
 BEGIN           
 Declare @MCQShareCount int        
@@ -30,12 +31,12 @@ Select @MCQShareCount=Count(*) From MCQShareList where EmailAddress=@EmailAddres
 if(@MCQShareCount>0)        
 begin        
 Update MCQShareList set ShareDate=@ShareDate,Expiretime=@Expiretime,WhoShared=@WhoShared,roomId=@roomId,ShareType=@ShareType,
-botactive=@botactive where EmailAddress=@EmailAddress and MCQId=@MCQId         
+botactive=@botactive,MeetingPlatForm=@MeetingPlatForm where EmailAddress=@EmailAddress and MCQId=@MCQId         
 end        
 else        
 begin        
-Insert into MCQShareList (PartitionKey,ApplyingCompany,ClientHR,EmailAddress,MCQId,MCQSet,Videorecording,status,ShareDate,roomId,Expiretime,WhoShared,ShareType,botactive)             
-values(@PartitionKey,@ApplyingCompany,@ClientHR,@EmailAddress,@MCQId,@MCQSet,@Videorecording,@status,@ShareDate,@roomId,@Expiretime,@WhoShared,@ShareType,@botactive)            
+Insert into MCQShareList (PartitionKey,ApplyingCompany,ClientHR,EmailAddress,MCQId,MCQSet,Videorecording,status,ShareDate,roomId,Expiretime,WhoShared,ShareType,botactive,MeetingPlatForm)             
+values(@PartitionKey,@ApplyingCompany,@ClientHR,@EmailAddress,@MCQId,@MCQSet,@Videorecording,@status,@ShareDate,@roomId,@Expiretime,@WhoShared,@ShareType,@botactive,@MeetingPlatForm)            
 end        
 END
   Go
