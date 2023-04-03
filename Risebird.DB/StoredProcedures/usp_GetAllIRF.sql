@@ -107,7 +107,7 @@ left join InterviewComments ic on ic.InterviewId= im.id
 inner join UserList ul on ul.EmailId = im.candidateEmail           
 inner join CandidatesMaster cm on ul.id =cm.UserId          
 inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-where ic.MeetingStatus=4 and im.confirmationStatus=1         
+where ic.MeetingStatus in (4,6,7,8)    and im.confirmationStatus=1         
 group by irf.id        
         
           

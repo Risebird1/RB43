@@ -123,28 +123,28 @@ else
    select    
     
        
-  (select count( cm.UserId) from TransClientUser tcu join irf on irf.id= tcu.IRFId    
+  (select count( distinct cm.UserId) from TransClientUser tcu join irf on irf.id= tcu.IRFId    
     join Candidate ca on ca.IRFId=irf.id   
  join CandidatesMaster cm on cm.id=ca.CandidateMasterId    
  join UserList ul on ul.id = cm.UserId  
  join InterviewMeetings  im on im.candidateEmail = ul.EmailId  
     where tcu.ClientUserId=@userId and DATEDIFF(DAY, im.interviewDate, @timeNow)<=30) as TotalCandidates,    
        
-   (select count(im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id 
+   (select count(distinct im.id) from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id 
    join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id) 
    where im.IRFId in (select id from @listofIRF) and confirmationStatus=1 and DATEDIFF(DAY, im.interviewDate, @timeNow)<=30) as TotalConfirmations,    
     
-   (select count(id) from @TotalCompletedMeetings) as TotalCompleted,    
+   (select count(distinct id) from @TotalCompletedMeetings) as TotalCompleted,    
     
-   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)) as TotalRisebirdSelection,    
+   (select count(distinct id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)) as TotalRisebirdSelection,    
     
-   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,    
+   (select count(distinct id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,    
     
-   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1) as TotalFinalSelections,    
+   (select count(distinct id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1) as TotalFinalSelections,    
     
-   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1) as TotalOffered,    
+   (select count(distinct id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1) as TotalOffered,    
     
-   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1 and tcm.JoiningStatus=1) as TotalJoined    
+   (select count(distinct id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1 and tcm.JoiningStatus=1) as TotalJoined    
     
  End    
     
