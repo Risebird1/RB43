@@ -185,6 +185,7 @@ builder.Services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
 builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
 builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
 builder.Services.AddScoped<IVmHelper, VmHelper>();
+builder.Services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
 
 
 var app = builder.Build();

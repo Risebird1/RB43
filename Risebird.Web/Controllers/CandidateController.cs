@@ -4327,9 +4327,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFId = id;
                         ViewBag.profile = profileName;
                         ViewBag.type = type;
-                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
-                        ClientRole = ClientRole.Replace("\"", "");
-                        ViewBag.ClientRole = ClientRole;
+                        //var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
+                        //ClientRole = ClientRole.Replace("\"", "");
+                        //ViewBag.ClientRole = ClientRole;
                         DateTime startDate = DateTime.Now.AddDays(-30);
                         DateTime endDate = DateTime.Now.AddDays(7);
                         if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
