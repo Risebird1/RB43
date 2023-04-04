@@ -1,0 +1,10 @@
+{
+  "web": {
+    "client_id": "31152548584-osd5bki1oi8o09fidps6176tsgl5qacm.apps.googleusercontent.com",
+    "project_id": "glass-world-381415",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "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",
+    "redirect_uris": [ "https://localhost:44329/MCQ/TestApi", "http://127.0.0.1:63077/authorize/", "http://localhost:63222/authorize/" ]
+  }}

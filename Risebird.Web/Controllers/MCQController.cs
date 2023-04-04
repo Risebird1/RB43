@@ -17,6 +17,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Apis.Calendar.v3.Data;
+using Risebird.Entities.Data;
+using System.Data;
+using System.Net;
 
 namespace Risebird.Web.Controllers
 {
@@ -33,11 +37,14 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFRepository _iRFRepository;
         private readonly IIRFService _irfService;
-        private readonly IClientService _clientService;
+        //private readonly IClientService _clientService;
         private readonly IAadhaarService _aadhaarService;
+        private readonly IGoogleEventHelper _googleEventHelper;
+        private readonly string ContainerName;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService, IClientService clientService, IAadhaarService aadhaarService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService, /*IClientService clientService,*/ IAadhaarService aadhaarService, IGoogleEventHelper googleEventHelper, ISASUrlHelper sasUrlHelper)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -51,7 +58,10 @@ namespace Risebird.Web.Controllers
             _iRFRepository = iRFRepository;
             _irfService = irfService;
             _aadhaarService = aadhaarService;
-            _clientService = clientService;
+            //_clientService = clientService;
+            _googleEventHelper = googleEventHelper;
+            ContainerName = _configuration["SASURLSettings:ContainerName"];
+            _sasUrlHelper = sasUrlHelper;
         }
 
         [Authorize]
@@ -111,7 +121,7 @@ namespace Risebird.Web.Controllers
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
-                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    //resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
 
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
@@ -1011,7 +1021,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime, bool Candidate, bool botactive)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime, bool Candidate, bool botactive, int MeetingPlatForm)
         {
             try
             {
@@ -1084,10 +1094,24 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
-                                if (string.IsNullOrWhiteSpace(_meetinglinks.roomId))
+                                if (MeetingPlatForm != 1)
                                 {
+                                    //_meetinglinks = ShareGoogleMeeting("Risebird", item.Trim(), MeetingDate);
                                     _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                                    if (string.IsNullOrWhiteSpace(_meetinglinks.roomId))
+                                    {
+                                        _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
+                                    }
+                                }
+                                else
+                                {
+                                    var ParticipentEmails = item.Trim() + ";" + ClientEmail;
+                                    var description = "Invitation for " + details.Title + " : " + ClientName;
+                                    var MeetingDetails = await CreateCalenderEvent(MeetingDate, ParticipentEmails, description, date1);
+                                    _meetinglinks.meetingAttendee = MeetingDetails.HangoutLink;
+                                    _meetinglinks.meetingAgent = MeetingDetails.HangoutLink;
+                                    _meetinglinks.roomId = MeetingDetails.Id;
+                                    //Save Meeting details in db
                                 }
                                 Mail _mail = new Mail
                                 {
@@ -1113,6 +1137,7 @@ namespace Risebird.Web.Controllers
                                 _list.Expiretime = Expiretime;
                                 _list.ShareType = Candidate;
                                 _list.botactive = botactive;
+                                _list.MeetingPlatForm = MeetingPlatForm;
                                 await _mCQService.AddMCQSetShareList(_list);
                             }
                         }
@@ -1243,28 +1268,47 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                            var request = new RestRequest("https://meet.risebird.io/api/v1/room/" + _candidate.roomId, Method.Get);
-                            //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
-                            request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
-                            RestResponse response = _meeting.Execute(request);
-                            var content = response.Content;
-                            if (!string.IsNullOrEmpty(content))
+                            if (_candidate.MeetingPlatForm == 1)
                             {
-                                content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
-                            }
-                            try
-                            {
-                                var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
-                                _candidate.VideoLink = convertedResponse.videoUrl;
-                                if (_candidate != null && _candidate.VideoLink != null)
+                                try
                                 {
-                                    await _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                    var videolink = await CalendarVideoToAzureBlob(_candidate.SMCQId);
+                                    _candidate.VideoLink = videolink;
+                                    if (_candidate != null && _candidate.VideoLink != null)
+                                    {
+                                        await _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 }
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
+                                var request = new RestRequest("https://meet.risebird.io/api/v1/room/" + _candidate.roomId, Method.Get);
+                                //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                                request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
+                                RestResponse response = _meeting.Execute(request);
+                                var content = response.Content;
+                                if (!string.IsNullOrEmpty(content))
+                                {
+                                    content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                                }
+                                try
+                                {
+                                    var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+                                    _candidate.VideoLink = convertedResponse.videoUrl;
+                                    if (_candidate != null && _candidate.VideoLink != null)
+                                    {
+                                        await _mCQService.UpdateVideoURLForCandidate(_candidate);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                }
                             }
                         }
                     }
@@ -1464,7 +1508,7 @@ namespace Risebird.Web.Controllers
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
-                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    //resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
 
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
@@ -1818,7 +1862,7 @@ namespace Risebird.Web.Controllers
                     resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
                     resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
-                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    //resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
                         if (!string.IsNullOrEmpty(item.ProfileType))
@@ -2577,5 +2621,76 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        #region Google Meet
+        public async Task<Event> CreateCalenderEvent(DateTime MeetingDate, string Emailids, string Description, string uniqueid)
+        {
+            CalendarEventDM model = new CalendarEventDM();
+            model.Summary = uniqueid;
+            model.Description = Description;
+            model.StartDate = MeetingDate;
+            model.EndDate = MeetingDate.AddHours(1);
+            model.TimeZone = "Asia/Kolkata";
+            var EmailList = Emailids.Split(";");
+            var AttendeesList = new List<EventAttendee>();
+            foreach (var item in EmailList)
+            {
+                var _emailAttendee = new EventAttendee();
+                _emailAttendee.Email = item;
+                AttendeesList.Add(_emailAttendee);
+            }
+            model.Attendees = AttendeesList;
+            var eventdetails = await _googleEventHelper.CreateCalendarEvent(model);
+            return eventdetails;
+            //Save Eventid,confiranceid,subject,htmlLink(meetinglink)
+            //await _googleEventHelper.DeleteCalendarEvent("taebapbmmjfvq4a0e403bh2rck");
+            //await _googleEventHelper.CalendarEventVideo("Risebird Technical interview");
+        }
+        public async Task<string> CalendarVideoToAzureBlob(string FileName)
+        {
+            string videolink = "";
+            string fileid = "";
+            var videodetails = await _googleEventHelper.CalendarEventVideo(FileName);
+            for (int i = 0; i < videodetails.Rows.Count; i++)
+            {
+                var duration = videodetails.Rows[i]["Video Duration"] != null ? Convert.ToInt32(videodetails.Rows[i]["Video Duration"]) : 0;
+                if (duration > 0)
+                {
+                    videolink = videodetails.Rows[i]["Download Link"].ToString();
+                    fileid = videodetails.Rows[i]["File ID"].ToString();
+                    break;
+                }
+            }
+            WebClient myWebClient = new WebClient();
+            string uploadedVideoUrl = string.Empty;
+            string sasUrl = string.Empty;
+            using (Stream myStream = myWebClient.OpenRead(videolink))
+            {
+                var fileName = FileName;
+                long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                fileName = fileName + "_" + unixTime.ToString();
+                try
+                {
+                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+                var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+
+                if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                {
+                    sasUrl = uploadedVideoUrl + "?" + sas;
+                }
+                if (string.IsNullOrWhiteSpace(sasUrl))
+                {
+                    await _googleEventHelper.DeleteCalendarEventVideo(fileid);
+                }
+            }
+            return sasUrl;
+        }
+        #endregion
     }
 }
+
+

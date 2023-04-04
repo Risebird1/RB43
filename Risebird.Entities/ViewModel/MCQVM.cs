@@ -122,6 +122,7 @@ namespace Risebird.Entities.ViewModel
 
         public string Title { get; set; }
         public int Timer { get; set; }
+        public int MeetingPlatForm { get; set; }
     }
     public class ProfileTypeSkills
     {
@@ -187,6 +188,7 @@ namespace Risebird.Entities.ViewModel
         public bool ShareType { get; set; }
         public bool IsInterviewerVerified { get; set; }
         public bool botactive { get; set; }
+        public int MeetingPlatForm { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {

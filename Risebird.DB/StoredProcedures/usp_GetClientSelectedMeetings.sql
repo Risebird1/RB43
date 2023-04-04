@@ -250,7 +250,108 @@ else if(@roleId=4)
              
         
  End        
+
+else if(@roleId=9)        
+ Begin        
+  if(@timeNow is not null)        
+   Begin        
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+ ca.ClientHRAttemptContact as ClientHrContact,  
+    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
+    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,       
+ case       
+  when ulc.LastName is null then ulc.FirstName      
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
+    end as candidateName,       
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
+    IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
+    ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
+    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName ,im.RedoInterview       
+    from InterviewMeetings im         
+    inner join IRF on im.IRFId = IRF.IRFId         
+    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id           
+    left join UserList ulc on im.candidateEmail= ulc.EmailId        
+    join CandidatesMaster cm on ulc.id= cm.UserId        
+    join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
+    inner join ClientUser tcu on IRF.ClientId=tcu.ClientId        
+    left join UserList ul on tcu.UserId= ul.id        
+    left join UserList uli on uli.EmailId = im.interviewer  
+    left join InterviewerProfile ipr on ipr.UserId = uli.id    
+    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and irf.IsDeleted=0        
+    and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)        
+    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4)      
+    order by im.interviewDate desc        
         
+   End        
+  else if((@startDate is not null) and (@endDate is not null))        
+   Begin        
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+ ca.ClientHRAttemptContact as ClientHrContact,  
+    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
+    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,       
+    case       
+       when ulc.LastName is null then ulc.FirstName      
+       else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
+    end as candidateName,        
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,    
+    IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
+    ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP,tqr.IsReportBlocked,        
+    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
+    from InterviewMeetings im         
+    inner join IRF on im.IRFId = IRF.IRFId         
+    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id     
+    left join UserList ulc on im.candidateEmail= ulc.EmailId        
+    join CandidatesMaster cm on ulc.id= cm.UserId        
+    join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
+    inner join ClientUser tcu on IRF.ClientId=tcu.ClientId        
+    left join UserList ul on tcu.UserId= ul.id        
+    left join UserList uli on uli.EmailId = im.interviewer  
+    left join InterviewerProfile ipr on ipr.UserId = uli.id    
+    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and irf.IsDeleted=0        
+    and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)        
+    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4)       
+    order by im.interviewDate desc        
+        
+   End        
+  else        
+   Begin        
+    select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,   
+ ca.ClientHRAttemptContact as ClientHrContact,  
+    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,        
+    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,       
+ case       
+  when ulc.LastName is null then ulc.FirstName      
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))      
+    end as candidateName,        
+    im.currentEmployerName, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,         
+    ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,        
+    IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,        
+    ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,        
+    ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, tqr.IsReportBlocked,        
+    cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, irf.IsQCRequired, ipr.NickName,im.RedoInterview        
+    from InterviewMeetings im         
+    inner join IRF on im.IRFId = IRF.IRFId         
+    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId         
+    left join Trans_QCFormReport tqr on tqr.Interviewid=im.id 
+    left join UserList ulc on im.candidateEmail= ulc.EmailId        
+    join CandidatesMaster cm on ulc.id= cm.UserId        
+    join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId        
+    inner join ClientUser tcu on IRF.ClientId=tcu.ClientId
+    left join UserList ul on tcu.UserId= ul.id        
+    left join UserList uli on uli.EmailId = im.interviewer  
+    left join InterviewerProfile ipr on ipr.UserId = uli.id     
+    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and irf.IsDeleted=0        
+    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4)        
+    order by im.interviewDate desc        
+   End        
+        
+ End             
 else        
  Begin        
   if(@timeNow is not null)        
@@ -366,10 +467,7 @@ else
         
  End        
               
-END
- 
-  
-   
+END  
 
 GO
 

@@ -180,6 +180,7 @@ namespace Risebird.Repository
                     parameters.Add("@ShareDate", DateTime.Now);
                     parameters.Add("@ShareType", _list.ShareType);
                     parameters.Add("@botactive", _list.botactive);
+                    parameters.Add("@MeetingPlateForm", _list.MeetingPlatForm);
 
                     await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidate", parameters,
                          commandType: CommandType.StoredProcedure);
