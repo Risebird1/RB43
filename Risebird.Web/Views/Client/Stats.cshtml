@@ -60,9 +60,19 @@
                                 <label style="margin-top: 4px;margin-right: 5px;">Client: </label>
                             </li>
                             <li>
-                                <div>
-                                    @Html.DropDownList("ClientId", Model.ClientList, new { @class = "select-css form-control", @onchange = "GetClientData(this.value)" })
-                                </div>
+                                @if (string.IsNullOrWhiteSpace(Model.ClientName))
+                                {
+                                    <div>
+                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "select-css form-control", @onchange = "GetClientData(this.value)" })
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        @Html.DropDownListFor(m=>m.id, Model.ClientList, new {@id="ClientId", @class = "select-css form-control", @disabled="disabled" })
+                                    </div>
+                                }
+
                             </li>
                             <li>
                                 <label style="margin-top: 4px; margin-right: 5px; margin-left:5px">From: </label>
@@ -83,7 +93,7 @@
                             <li style="margin-right: 10px;"><button onclick="GetClientData()" class="panel-fullscreen"><i class="fa fa-eye" style="font-size:12px"></i></button></li>
 
                         </ul>
-                        
+
                     </div>
 
                     <!-- START DASHBOARD CHART -->
@@ -97,7 +107,7 @@
                                     <div class="panel-title-box">
                                         <h3><span id="clientdashboard_2" data-intro="Overview & track date wise Interviews Scheduled for selected Client" data-position="right">Datewise Interview Tracking</span></h3>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="panel-body">
                                     <div class="chart-holder" id="area-chart" style="height: 200px;"></div>
@@ -112,8 +122,8 @@
 
                     <div class="row">
                         <div class="col-md-12 nopad">
-                            
-                            <div class="daily-interview pull-left" style= "width : 100%">
+
+                            <div class="daily-interview pull-left" style="width : 100%">
 
                                 <div class="panel panel-default" data-intro="<span style='font-size:16px;'>Track daily interviews based on</span><hr class='btop' /> 1. Skill Channel <br/> 2. Status" data-position="top">
                                     <div class="panel-heading">
@@ -130,7 +140,7 @@
 
 
 
-                                
+
 
 
                             </div>
@@ -477,7 +487,7 @@
 
         //    })
 
-        
+
         //getInterviewSlots();
     });
 
@@ -514,15 +524,14 @@
 </script>
 @*<script>
     $(document).ready(function () {
-    
+
         });
 
 </script>*@
 <script>
-    function GetClientData(clientId = null){
+    function GetClientData(clientId = null) {
         var clientIdValue = clientId;
-        if(clientId == null )
-        {
+        if (clientId == null) {
             clientIdValue = document.getElementById('ClientId').value;
         }
         updateInterviewTracking(clientIdValue);
@@ -553,7 +562,7 @@
             async: true,
             data: { 'startDateValue': startDateValue, 'endDateValue': endDateValue, 'emailId': '@Model.EmailId', 'clientId': clientIdValue },
             success: function (data) {
-                
+
                 UpdateInterviewTrackingGraph(JSON.parse(data.meetingsData), JSON.parse(data.meetingsDataLabels));
             }
         });
@@ -568,7 +577,7 @@
             labels: meetingsDataLabels,
             resize: true,
             hideHover: true,
-            parseTime : false,
+            parseTime: false,
             xLabels: 'day',
             yLabelFormat: function (y) { return y != Math.round(y) ? '' : y; },
             gridTextSize: '10px',
@@ -602,7 +611,7 @@
         }
         $.ajax({
             url: '/Client/GetDateRangeWiseMeetingStatusForClientRoles',
-            async : true,
+            async: true,
             data: { 'startDateValue': startDateValue, 'endDateValue': endDateValue, 'clientId': clientIdValue },
             success: function (data) {
                 $('#id_roleWiseMeetingResults').html('');

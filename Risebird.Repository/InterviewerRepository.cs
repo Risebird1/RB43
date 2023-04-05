@@ -2964,7 +2964,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null)
         {
             try
             {
@@ -2975,6 +2975,7 @@ namespace Risebird.Repository
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@interviewerUserId", interviewerUserId);
                     parameters.Add("@type", type);
+                    parameters.Add("@clientEmailId", clientEmailId);
                     return await SqlMapper.QueryAsync<StatsDetailsVM>(con, "dbo.usp_GetInterviewerStatsAndRatingsDetails", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }
@@ -3015,7 +3016,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
+        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null)
         {
             try
             {
@@ -3024,6 +3025,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@irfId", irfId);
+                    parameters.Add("@clientEmailId", clientEmailId);
                     return await SqlMapper.QueryAsync<InterviewerStatsVM>(con, "dbo.usp_GetInterviewerStatsAndRatings", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }

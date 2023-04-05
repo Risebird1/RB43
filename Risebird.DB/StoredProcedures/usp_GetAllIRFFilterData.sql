@@ -67,6 +67,34 @@ IF (@Profile = 'Client')
       
     
   end    
+  else if(@roleId=9)    
+  begin    
+      
+ select irf.IRFId, TRIM(irf.ClientName) as EndClientName, cl.[Name] as ClientCompanyName,  
+ CASE 
+ when charindex('|', irf.JDTiltle) != 0 then TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1))  
+ else irf.JDTiltle  
+ END as PrimarySkill  
+ from IRF   
+ left join Client cl on cl.id = irf.ClientId  
+ join [dbo].[ClientUser] tc on tc.ClientId = IRF.ClientId   
+ left join [dbo].[UserList] ul on ul.id = tc.UserId   
+ where ul.EmailId=@EmailId and tc.ClientId=@ClientId  
+ and (cast(irf.StartDate as date) >= cast(@startDate as date)  
+ or @startDate IS NULL)  
+ and (cast(irf.EndDate as date) <= cast(@endDate as date)  
+ or @endDate IS NULL)  
+ and (irf.IRFId in (select value from string_split(@IRFIdList, ','))  
+ or @IRFIdList IS NULL or @IRFIdList = '')  
+ and (cl.[Name] in (select value from string_split(@ClientCompanyList, ','))  
+ or @ClientCompanyList IS NULL or @ClientCompanyList = '')  
+ and (irf.ClientName in (select value from string_split(@EndCLientNameList, ','))  
+ or @EndCLientNameList IS NULL or @EndCLientNameList = '')  
+ and ((charindex('|', irf.JDTiltle) != 0 and TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1)) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
+ or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
+ or @PrimarySkillList IS NULL or @PrimarySkillList = '')  
+    
+  end    
   else    
   begin   
     

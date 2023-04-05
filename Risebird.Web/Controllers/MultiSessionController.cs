@@ -94,6 +94,10 @@ namespace Risebird.Web.Controllers
                         role = clientDetails.Item1;
                         client = clientDetails.Item2;
                         HttpContext.Session.SetString("clientName", client);
+                        if (((ClientRoleEnum)Convert.ToInt32(role)).GetDescription() == "Client Admin")
+                        {
+                            menus.Where(x => x.dAccess == true).FirstOrDefault().sUrl = "/Client/Stats";
+                        }
                     }
                     if (menus.FirstOrDefault()?.profileName == "Interviewer")
                     {
