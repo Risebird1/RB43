@@ -37,14 +37,14 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFRepository _iRFRepository;
         private readonly IIRFService _irfService;
-        //private readonly IClientService _clientService;
+        private readonly IClientService _clientService;
         private readonly IAadhaarService _aadhaarService;
         private readonly IGoogleEventHelper _googleEventHelper;
         private readonly string ContainerName;
         private readonly ISASUrlHelper _sasUrlHelper;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService, /*IClientService clientService,*/ IAadhaarService aadhaarService, IGoogleEventHelper googleEventHelper, ISASUrlHelper sasUrlHelper)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService, IClientService clientService, IAadhaarService aadhaarService, IGoogleEventHelper googleEventHelper, ISASUrlHelper sasUrlHelper)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -58,7 +58,7 @@ namespace Risebird.Web.Controllers
             _iRFRepository = iRFRepository;
             _irfService = irfService;
             _aadhaarService = aadhaarService;
-            //_clientService = clientService;
+            _clientService = clientService;
             _googleEventHelper = googleEventHelper;
             ContainerName = _configuration["SASURLSettings:ContainerName"];
             _sasUrlHelper = sasUrlHelper;
@@ -121,7 +121,7 @@ namespace Risebird.Web.Controllers
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
-                    //resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
 
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
@@ -1508,7 +1508,7 @@ namespace Risebird.Web.Controllers
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
-                    //resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
 
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
@@ -1862,7 +1862,7 @@ namespace Risebird.Web.Controllers
                     resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
                     resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
-                    //resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
                         if (!string.IsNullOrEmpty(item.ProfileType))
