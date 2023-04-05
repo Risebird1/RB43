@@ -14,7 +14,8 @@ CREATE PROCEDURE usp_GetInterviewerStatsAndRatingsDetails
 @timeNow datetime,
 @irfId int = null,
 @type varchar(30),
-@interviewerUserId int
+@interviewerUserId int,
+@clientEmailId varchar(100) = null
 
 AS          
 BEGIN  
@@ -41,6 +42,7 @@ select im.id, interviewDate, candidateEmail, IRFId from InterviewMeetings im --,
 where ((cast(im.interviewDate as date)>= @yesterdayDate and @irfId is null) or @irfId is not null) 
 and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)
 and interviewer = @interviewerEmail
+and (@clientEmailId is null or (im.ClientHrContact = @clientEmailId or im.staffingAgency = @clientEmailId))
 
 
 DECLARE @tbl_InterviewerJoinTime TABLE (                    
@@ -50,8 +52,11 @@ DECLARE @tbl_InterviewerJoinTime TABLE (
 )
 
 INSERT INTO @tbl_InterviewerJoinTime
-select interviewid, interviewer, max(Joinedon) from InterviewMeetingsJoinTime where interviewer = @interviewerEmail
-group by interviewid, interviewer
+select interviewid, ijt.interviewer, max(Joinedon) from InterviewMeetingsJoinTime ijt
+join InterviewMeetings im on im.id = ijt.interviewid
+where ijt.interviewer = @interviewerEmail
+and (@clientEmailId is null or (im.ClientHrContact = @clientEmailId or im.staffingAgency = @clientEmailId))
+group by interviewid, ijt.interviewer
 
 
 DECLARE @tbl_ResultInterviews TABLE (                    
@@ -63,13 +68,14 @@ DECLARE @tbl_ResultInterviews TABLE (
 	MeetingStatus int,
 	InterviewStatus int,
 	ResultType varchar(30),
-	InterviewerJoinTime datetime
+	InterviewerJoinTime datetime,
+	irfId int
 )
 
 
 INSERT INTO @tbl_ResultInterviews    
 select im.id, im.interviewDate, im.candidateEmail, im.SkillChannel, cl.[Name], ic.MeetingStatus, 
-ic.InterviewStatus, @type, tijt.JoiningTime
+ic.InterviewStatus, @type, tijt.JoiningTime,IRF.id as irfId
 from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
 join IRF on irf.IRFId = im.SkillChannel
@@ -83,6 +89,7 @@ or (@type = 'rejected' and (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  o
 or (@type = 'proxy' and ic.InterviewStatus = 1 and ic.MeetingStatus = 4)
 or (@type = 'noshowinterviewer' and  (ic.MeetingStatus = 5))
 or (@type = 'noshowcandidate' and  (ic.MeetingStatus = 1))
+or (@type = 'noshowallinclusive' and  (ic.MeetingStatus = 1 or ic.MeetingStatus = 5))
 or (@type = 'dropped' and ic.MeetingStatus = 3)
 or (@type = 'pending' and ((im.interviewDate < @timeNow) and ((ic.MeetingStatus = 4 and ic.InterviewStatus is null) or (ic.MeetingStatus is null) or ic.MeetingStatus = 2)))
 or (@type = 'scheduled' and ic.MeetingStatus = 2 and im.interviewDate > @timeNow)

@@ -19,5 +19,6 @@ namespace Risebird.Entities.Data
         public static readonly string Dropped = "dropped";
         public static readonly string Pending = "pending";
         public static readonly string Scheduled = "scheduled";
+        public static readonly string NoShowAllInclusive = "noshowallinclusive";
     }
 }

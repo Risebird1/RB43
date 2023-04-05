@@ -25,5 +25,7 @@ namespace Risebird.Entities.ViewModel
         public string ResumeLink { get; set; }
         public string InterviewerPhone { get; set; }
         public string AverageClientRating { get; set; }
+        public string NickName { get; set; }//CodedName
+        public string CodedResumeLink { get; set; }
     }
 }

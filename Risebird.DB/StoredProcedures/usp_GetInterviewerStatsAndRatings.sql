@@ -11,7 +11,8 @@ GO
                       
 CREATE PROCEDURE usp_GetInterviewerStatsAndRatings                              
 @timeNow datetime,  
-@irfId int = null  
+@irfId int = null,
+@clientEmailId varchar(100) = null
   
 AS            
 BEGIN    
@@ -34,7 +35,9 @@ DECLARE @tbl_RelevantInterviews TABLE (
 INSERT INTO @tbl_RelevantInterviews      
 select im.id, cast(interviewDate as date), interviewer, interviewDate, ul.id  from InterviewMeetings im  
 join UserList ul on ul.EmailId = im.interviewer  
-where ((cast(im.interviewDate as date)>= @yesterdayDate and @irfId is null) or @irfId is not null) and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)  
+where ((cast(im.interviewDate as date)>= @yesterdayDate and @irfId is null) or @irfId is not null) 
+and confirmationStatus = 1 and (@IRFName is null or im.IRFId = @IRFName)  
+and (@clientEmailId is null or (im.ClientHrContact = @clientEmailId or im.staffingAgency = @clientEmailId))
   
   
 DECLARE @tbl_Interviewer TABLE (                      
@@ -192,7 +195,8 @@ if(@irfId is not null)
 Begin  
  select  ul.EmailId as InterviewerEmailId, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,  
  tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,  
- tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating  
+ tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating, 
+ ipr.CodedResumeLink, ipr.NickName
  from TransInterviewer tin   
  join UserList ul on ul.id = tin.UserId  
  join InterviewerProfile ipr on ipr.UserId = ul.id  
@@ -215,7 +219,8 @@ else
 Begin  
  select  ti.interviewer as InterviewerEmailId, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,  
  tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,  
- tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating  
+ tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating,
+ ipr.CodedResumeLink, ipr.NickName
  from @tbl_Interviewer ti  
  left join @tbl_InterviewerCompleted ticom on ticom.interviewer = ti.interviewer  
  left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer  
