@@ -13,6 +13,11 @@
     //{
     //    irfId = Convert.ToInt32(ViewBag.irfId);
     //}
+    string clientEmailId = null;
+    if (ViewBag.ClientEmailId != null)
+    {
+        clientEmailId = ViewBag.ClientEmailId;
+    }
 }
 <div id="tableID" class="second" style="overflow-x:scroll; max-height: 450px ">
     <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
@@ -21,7 +26,11 @@
                 <th>Interview Date</th>
                 <th>Candidate</th>
                 <th>Skill Channel</th>
-                <th>Client</th>
+                @if(string.IsNullOrEmpty(clientEmailId))
+                {
+                    <th>Client</th>
+
+                }
                 <th>Meeting Status</th>
                 <th>Interview Status</th>
                 <th>Report</th>
@@ -34,7 +43,11 @@
                 <th>Interview Date</th>
                 <th>Candidate</th>
                 <th>Skill Channel</th>
-                <th>Client</th>
+                @if(string.IsNullOrEmpty(clientEmailId))
+                {
+                    <th>Client</th>
+
+                }
                 <th>Meeting Status</th>
                 <th>Interview Status</th>
                 <th>Report</th>
@@ -53,8 +66,19 @@
                         <td>@item.interviewDate</td>
                         <td>@item.candidateEmail</td>
                         <td>@item.SkillChannel</td>
-                        <td>@item.Client</td>
-                        <td>@(item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0 ? ((MeetingStatus)item.MeetingStatus).GetDescription() : "NA") </td>
+                        @if (string.IsNullOrEmpty(clientEmailId))
+                        {
+                            <td>@item.Client</td>
+
+                        }
+                        @if (item.MeetingStatus.HasValue && ((MeetingStatus)item.MeetingStatus == MeetingStatus.NoShowInterviewer || (MeetingStatus)item.MeetingStatus == MeetingStatus.NoShow))
+                        {
+                            <td>No Show</td>
+                        }
+                        else
+                        {
+                            <td>@(item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0 ? ((MeetingStatus)item.MeetingStatus).GetDescription() : "NA") </td>
+                        }
                         
                         @if (ViewBag.StatType == StatsTypes.Selected || ViewBag.StatType == StatsTypes.Rejected
                             || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy)

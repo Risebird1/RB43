@@ -167,6 +167,13 @@
                                                                             <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                         </button>
                                                                     }
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+
+                                                                        <a href="@Url.Action("InterviewerStatsAndRatingsForClientByIRF", "Interviewer", new {irfId = item.id, irfName = item.IRFId, clientEmailId = ViewBag.emailid})" target="_blank">
+                                                                            <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                                        </a>
+
+                                                                    </button>
                                                                 </td>
                                                             </tr>
                                                         }

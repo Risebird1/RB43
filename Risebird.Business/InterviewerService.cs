@@ -1372,11 +1372,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null)
+        public async Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null)
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerStatsAndRatings(irfId);
+                return await _interviewerRepository.GetInterviewerStatsAndRatings(irfId, clientEmailId);
             }
             catch (SqlTypeException ex)
             {
@@ -1397,11 +1397,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null)
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type,irfId);
+                return await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId);
             }
             catch (SqlTypeException ex)
             {

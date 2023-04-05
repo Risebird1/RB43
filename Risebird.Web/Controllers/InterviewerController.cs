@@ -3590,6 +3590,34 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerStatsAndRatingsForClientByIRF(string clientEmailId, int? irfId = null, string irfName = null)
+        {
+            try
+            {
+                IEnumerable<InterviewerStatsVM> statsList;
+                statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId, clientEmailId);
+                ViewBag.ClientEmailId = clientEmailId;
+                if (!string.IsNullOrEmpty(irfName))
+                {
+                    ViewBag.IRFName = irfName;
+                }
+                if (irfId != null && irfId.Value > 0)
+                {
+                    ViewBag.irfId = irfId.Value;
+                }
+                return View("InterviewerStatsAndRatings", statsList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null ;
+            }
+        }
+
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InterviewerStatsAndRatingsByIRF(int? irfId = null)
@@ -3690,6 +3718,32 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null)
+        {
+            try
+            {
+                IEnumerable<StatsDetailsVM> statsDetailsList;
+                statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, clientEmailId);
+                ViewBag.StatType = statType;
+                ViewBag.EmailId = interviewerEmailId + "(Interviewer)";
+                ViewBag.ClientEmailId = clientEmailId;
+                //ViewBag.DisplayType = "popup";
+                if (irfId.HasValue)
+                {
+                    ViewBag.IRFId = irfId.Value;
+                    ViewBag.IRFName = irfName;
+                }
+                return View("StatsDetails", statsDetailsList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
