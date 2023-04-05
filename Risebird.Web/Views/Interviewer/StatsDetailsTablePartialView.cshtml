@@ -93,13 +93,13 @@
                         <td>
                             @if(item.InterviewStatus.HasValue  && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
                             {
-                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = ViewBag.IRFId, IsSelected = true })'>
+                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = true })'>
                                     Report
                                 </a>
                             }
                             else
                             {
-                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = ViewBag.IRFId, IsSelected = false })'>
+                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false })'>
                                     Report
                                 </a>
                             }

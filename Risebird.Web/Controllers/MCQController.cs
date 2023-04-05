@@ -21,6 +21,11 @@ using Google.Apis.Calendar.v3.Data;
 using Risebird.Entities.Data;
 using System.Data;
 using System.Net;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Util.Store;
+using System.Threading;
+using Google.Apis.Drive.v3;
 
 namespace Risebird.Web.Controllers
 {
@@ -2690,6 +2695,41 @@ namespace Risebird.Web.Controllers
             return sasUrl;
         }
         #endregion
+        #region One Time UserAccess
+        public async Task CreateUserAccess()
+        {
+            UserCredential credential;
+            string[] scopes = { CalendarService.Scope.Calendar };
+            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "cre.json"), FileMode.Open, FileAccess.Read))
+            {
+                string credPath = "token.json";
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.Load(stream).Secrets,
+                    scopes,
+                    "user",
+                    CancellationToken.None,
+                    new FileDataStore(credPath, true));
+            }
+        }
+        public async Task CreateDriveUserAccess()
+        {
+            UserCredential credential;
+            string[] scopes = new string[] { DriveService.Scope.Drive,
+                               DriveService.Scope.DriveFile};
+
+            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
+            {
+                string credPath = "tokendrive.json";
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.Load(stream).Secrets,
+                                scopes,
+                                "user",
+                                CancellationToken.None,
+                                new FileDataStore(credPath, true));
+            }
+        }
+        #endregion
+
     }
 }
 

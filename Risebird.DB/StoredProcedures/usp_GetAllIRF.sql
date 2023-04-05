@@ -222,6 +222,95 @@ IF (@Profile = 'Client')
    where ul.EmailId = @EmailId and cu.ClientId=@ClientId          
    
   end    
+  else if(@roleId=9)    
+  begin    
+  delete from @tbl_ConfirmedMeetings    
+    
+  INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId           
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on cm.id=ca.CandidateMasterId          
+  where im.confirmationStatus=1 group by IRF.id          
+          
+  delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca          
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  group by ca.IRFId        
+          
+  delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+  select irf.id as IRFId, count(im.id) as SelectedMeetings          
+  from irf left join InterviewMeetings im on irf.IRFId= im.IRFId           
+  left join InterviewComments ic on im.id= ic.InterviewId          
+  left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null     
+  group by irf.id          
+          
+       delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId           
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 
+  group by irf.id     
+    
+ delete from @tbl_IRFSubset  
+    
+ INSERT INTO @tbl_IRFSubset   
+ select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
+ irf.id from IRF   
+ join [dbo].[ClientUser] tc on tc.ClientId = IRF.ClientId   
+ left join [dbo].[UserList] ul on ul.id = tc.UserId   
+ left join Client cl on cl.id = irf.ClientId  
+ where ul.EmailId=@EmailId and tc.ClientId=@ClientId   
+ and (((cast(irf.EndDate as date) > cast(@timeNow as date)) and @isFilterApplied=0) or @isFilterApplied=1)  
+ and (irf.IRFId like '%' + @searchValue +'%'  
+ or @searchValue IS NULL or @searchValue = '')  
+ and (cast(irf.StartDate as date) >= cast(@startDate as date)  
+ or @startDate IS NULL)  
+ and (cast(irf.EndDate as date) <= cast(@endDate as date)  
+ or @endDate IS NULL)  
+ and (irf.IRFId in (select value from string_split(@IRFIdList, ','))  
+ or @IRFIdList IS NULL or @IRFIdList = '')  
+ and (cl.[Name] in (select value from string_split(@ClientCompanyList, ','))  
+ or @ClientCompanyList IS NULL or @ClientCompanyList = '')  
+ and (irf.ClientName in (select value from string_split(@EndCLientNameList, ','))  
+ or @EndCLientNameList IS NULL or @EndCLientNameList = '')  
+ and ((charindex('|', irf.JDTiltle) != 0 and TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1)) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
+ or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
+ or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
+      
+    
+   select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
+   irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,          
+   Client.[Name] as ClientCompName, tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings,        
+   tschm.ScheduledMeetings, (irf.PerMintuteRate*tcm.ConfirmedMeetings) as TotalBudgetConsumed, 1 as IsClientUser, ulh.EmailId as RisebirdHREmail,  
+   irf.flagcount, irf.CreatedFromTemplateId          
+   from irf   
+   join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id
+   join [dbo].[ClientUser] tc on tc.ClientId = IRF.ClientId   
+   left join [dbo].[UserList] ul on ul.id = tc.UserId          
+   left join Client on IRF.ClientId = Client.id   
+   left join @tbl_ConfirmedMeetings tcm on irf.id = tcm.IRFId          
+   left join @tbl_TotalMeetings ttm on irf.id=ttm.IRFId          
+   left join @tbl_SelectedMeetings tsm on irf.id=tsm.IRFId          
+   left join @tbl_CompletedMeetings tschm on irf.id= tschm.IRFId         
+   left join UserList ulh on ulh.id = irf.RisebirdHr        
+   where ul.EmailId = @EmailId and tc.ClientId=@ClientId          
+   
+  end    
   else    
   begin   
   

@@ -4522,7 +4522,7 @@ namespace Risebird.Web.Controllers
                     }
                     return View("ClientStatsDetails", statsDetailsList);
 
-                    
+
                 }
                 else
                 {
@@ -4547,14 +4547,18 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "Client")
                     {
-                        //var clientName = HttpContext.Session.GetString("clientName")?.Trim();
-
                         var model = new ClientStatsVM();
-                        //model.ClientName = clientName;
+                        var _clientList = await _irfRepository.GetClients();
+                        if (profileName == "Client")
+                        {
+                            var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                            model.ClientName = clientName;
+                            model.id = _clientList.Where(x => x.Name == clientName).FirstOrDefault().id;
+                        }
                         model.EmailId = emailid;
-                        model.ClientList = new SelectList((await _irfRepository.GetClients()).OrderBy(x=>x.Name), "id", "Name");
+                        model.ClientList = new SelectList(_clientList.OrderBy(x => x.Name), "id", "Name");
                         return View(model);
                     }
                     else
@@ -4583,7 +4587,7 @@ namespace Risebird.Web.Controllers
             {
                 var model = new ClientStatsVM();
                 model.Meetings = await _clientService.GetDateRangeWiseClientMeetings(startDateValue, endDateValue, emailId, clientId);
-                var meetingDates= model.Meetings.Select(x => x.interviewDate.Date).Distinct();
+                var meetingDates = model.Meetings.Select(x => x.interviewDate.Date).Distinct();
 
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
                 List<object> iData = new List<object>();
@@ -4609,7 +4613,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
@@ -4637,7 +4641,7 @@ namespace Risebird.Web.Controllers
                     Emailid = Emailid.Replace("\"", "");
                 }
                 var model = new ClientRoleWiseStatsWrapper();
-                model= await _clientService.GetDateRangeWiseMeetingStatusForClientRoles(startDateValue, endDateValue, Emailid, clientId);
+                model = await _clientService.GetDateRangeWiseMeetingStatusForClientRoles(startDateValue, endDateValue, Emailid, clientId);
                 ViewBag.ClientId = clientId;
                 ViewBag.StartDate = startDateValue;
                 ViewBag.EndDate = endDateValue;

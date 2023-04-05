@@ -68,13 +68,14 @@ DECLARE @tbl_ResultInterviews TABLE (
 	MeetingStatus int,
 	InterviewStatus int,
 	ResultType varchar(30),
-	InterviewerJoinTime datetime
+	InterviewerJoinTime datetime,
+	irfId int
 )
 
 
 INSERT INTO @tbl_ResultInterviews    
 select im.id, im.interviewDate, im.candidateEmail, im.SkillChannel, cl.[Name], ic.MeetingStatus, 
-ic.InterviewStatus, @type, tijt.JoiningTime
+ic.InterviewStatus, @type, tijt.JoiningTime,IRF.id as irfId
 from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
 join IRF on irf.IRFId = im.SkillChannel
