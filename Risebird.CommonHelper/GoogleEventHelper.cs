@@ -32,13 +32,11 @@ namespace Risebird.CommonHelper
             string[] scopes = { CalendarService.Scope.Calendar };
             using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "cre.json"), FileMode.Open, FileAccess.Read))
             {
-                string credPath = "token.json";
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
+                    GoogleClientSecrets.FromStream(stream).Secrets,
                     scopes,
                     "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
+                    CancellationToken.None).Result;
             }
 
             CalendarService service = new CalendarService(new BaseClientService.Initializer()
@@ -124,13 +122,11 @@ namespace Risebird.CommonHelper
             string[] scopes = { CalendarService.Scope.Calendar };
             using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "cre.json"), FileMode.Open, FileAccess.Read))
             {
-                string credPath = "token.json";
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
+                    GoogleClientSecrets.FromStream(stream).Secrets,
                     scopes,
                     "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
+                    CancellationToken.None).Result;
             }
 
             CalendarService service = new CalendarService(new BaseClientService.Initializer()
@@ -153,13 +149,11 @@ namespace Risebird.CommonHelper
 
             using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
             {
-                string credPath = "tokendrive.json";
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                                scopes,
-                                "user",
-                                CancellationToken.None,
-                                new FileDataStore(credPath, true)).Result;
+                    GoogleClientSecrets.FromStream(stream).Secrets,
+                scopes,
+                "user",
+                CancellationToken.None).Result;
             }
 
             DriveService service = new DriveService(new BaseClientService.Initializer()
@@ -213,15 +207,23 @@ namespace Risebird.CommonHelper
             string[] scopes = new string[] { DriveService.Scope.Drive,
                                DriveService.Scope.DriveFile};
 
+            //using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
+            //{
+            //    string credPath = "tokendrive.json";
+            //    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+            //        GoogleClientSecrets.Load(stream).Secrets,
+            //                    scopes,
+            //                    "user",
+            //                    CancellationToken.None,
+            //                    new FileDataStore(credPath, true)).Result;
+            //}
             using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
             {
-                string credPath = "tokendrive.json";
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
+                    GoogleClientSecrets.FromStream(stream).Secrets,
                                 scopes,
                                 "user",
-                                CancellationToken.None,
-                                new FileDataStore(credPath, true)).Result;
+                                CancellationToken.None).Result;
             }
 
             DriveService service = new DriveService(new BaseClientService.Initializer()
