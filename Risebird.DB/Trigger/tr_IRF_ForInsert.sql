@@ -11,8 +11,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TRIGGER tr_IRF_ForInsert
-ON IRF
+CREATE TRIGGER [dbo].[tr_IRF_ForInsert]
+ON [dbo].[IRF]
 FOR INSERT
 AS
 BEGIN
@@ -28,7 +28,7 @@ BEGIN
  AssessmentGroupId,	IsQCRequired,	IsJoinabilitySelectabilityRequired,	IsGeneralSkillRequired,
  AudioComment,	CreatedFromTemplateId,	ModifiedOn,	MeetingPlatform,
  SendIntervieweravailbilityOn,	IsAadhaarVerificationRequired,	IsCandidateavailability,	IsMeetingNotificationSend, IsMeetingAutoCancelled,id,
- ActionType, PerformedAt)
+ ActionType, PerformedAt,InterviewDuration)
 
  (select IRFId,	ClientName,	JDTiltle,	CompanyType,	ClientId,	JobCountry, StartDate,
  EndDate,	JDLink,	NoOfPosition,	NoOfIntterview,	RisebirdHr,	PerMintuteRate,
@@ -38,8 +38,9 @@ BEGIN
  AssessmentGroupId,	IsQCRequired,	IsJoinabilitySelectabilityRequired,	IsGeneralSkillRequired,
  AudioComment,	CreatedFromTemplateId,	ModifiedOn,	MeetingPlatform,
  SendIntervieweravailbilityOn,	IsAadhaarVerificationRequired,	IsCandidateavailability,	IsMeetingNotificationSend, IsMeetingAutoCancelled,id,
- 'Inserted', DATEADD(MINUTE, 330, getdate())
+ 'Inserted', DATEADD(MINUTE, 330, getdate()),InterviewDuration
  from IRF where id = @id)
 END
+Go
 
 

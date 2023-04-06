@@ -54,26 +54,28 @@
                 </div>
                 <!-- PAGE CONTENT WRAPPER -->
                 <div class="page-content-wrap dashboard">
-                    <div class="row" style="margin-bottom:15px">
+                    <div class="row" style="margin-bottom:15px;float:right">
                         <ul class="panel-controls pull-left" style="margin-top: 2px;">
-                            <li>
-                                <label style="margin-top: 4px;margin-right: 5px;">Client: </label>
-                            </li>
-                            <li>
-                                @if (string.IsNullOrWhiteSpace(Model.ClientName))
-                                {
+                            @if (string.IsNullOrWhiteSpace(Model.ClientName))
+                            {
+                                <li>
+                                    <label style="margin-top: 4px;margin-right: 5px;">Client: </label>
+                                </li>
+                                <li>
                                     <div>
                                         @Html.DropDownList("ClientId", Model.ClientList, new { @class = "select-css form-control", @onchange = "GetClientData(this.value)" })
                                     </div>
-                                }
-                                else
-                                {
-                                    <div>
+
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <div style="display:none">
                                         @Html.DropDownListFor(m=>m.id, Model.ClientList, new {@id="ClientId", @class = "select-css form-control", @disabled="disabled" })
                                     </div>
-                                }
-
-                            </li>
+                                </li>
+                            }
                             <li>
                                 <label style="margin-top: 4px; margin-right: 5px; margin-left:5px">From: </label>
                             </li>
@@ -95,7 +97,7 @@
                         </ul>
 
                     </div>
-
+                    <div style="clear:both"></div>
                     <!-- START DASHBOARD CHART -->
                     <div class="row">
                         <div class="col-md-12">
@@ -119,7 +121,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <div style="clear:both"></div>
                     <div class="row">
                         <div class="col-md-12 nopad">
 
