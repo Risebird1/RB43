@@ -2696,22 +2696,22 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region One Time UserAccess
-        public async Task CreateUserAccess()
+        public async Task<UserCredential> CreateUserAccess()
         {
             UserCredential credential;
             string[] scopes = { CalendarService.Scope.Calendar };
             using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "cre.json"), FileMode.Open, FileAccess.Read))
             {
-                string credPath = "token.json";
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
+                    GoogleClientSecrets.FromStream(stream).Secrets,
                     scopes,
                     "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true));
+                    CancellationToken.None);
             }
+            return credential;
         }
-        public async Task CreateDriveUserAccess()
+
+        public async Task<UserCredential> CreateDriveUserAccess()
         {
             UserCredential credential;
             string[] scopes = new string[] { DriveService.Scope.Drive,
@@ -2719,14 +2719,13 @@ namespace Risebird.Web.Controllers
 
             using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
             {
-                string credPath = "tokendrive.json";
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
+                                GoogleClientSecrets.FromStream(stream).Secrets,
                                 scopes,
                                 "user",
-                                CancellationToken.None,
-                                new FileDataStore(credPath, true));
+                                CancellationToken.None);
             }
+            return credential;
         }
         #endregion
 
