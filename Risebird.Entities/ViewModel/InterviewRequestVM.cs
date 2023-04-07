@@ -62,5 +62,6 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Primary Skills")]
         public string[] PrimarySkills { get; set; }
+        public bool IsClientLogin { get; set; }
     }
 }

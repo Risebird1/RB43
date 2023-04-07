@@ -83,13 +83,19 @@
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
-                        @if (ViewBag.PageStatus == "Public")
+                        @if (ViewBag.PageStatus == "Public" || ViewBag.IsCLientLogin == true)
                         {
                             <input type="hidden" value="@ViewBag.emailid" id="hiddemail" />
                             <input type="hidden" value="@ViewBag.uniqueid" id="hidduniqueid" />
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
+                            <input type="hidden" value="@ViewBag.IsCLientLogin" id="hiddLoginStatus" />
+                            @if(ViewBag.PageStatus == "Public")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+
+                            }
+                            
                         }
                         else
                         {
@@ -139,9 +145,9 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            @if (ViewBag.PageStatus == "Public")
+                                            @if (ViewBag.PageStatus == "Public" || ViewBag.IsClientLogin == true)
                                             {
-                                                <form action="@Url.Action("PublicSkillChannelDetails","IRF",new { emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                <form action="@Url.Action("PublicSkillChannelDetails","IRF",new { emailid=ViewBag.emailid, uniqueid = ViewBag.uniqueid, isClientLogin = ViewBag.IsClientLogin })" method="post" id="form" onsubmit="return checkfilterDate();">
                                                     <div class="modal-body">
                                                         <div class="row">
                                                             <div class="col-md-6 col-sm-6 border-rv">
@@ -973,7 +979,8 @@
         function ResetFilter() {
             var email = $("#hiddemail").val();
             var uniqueid = $("#hidduniqueid").val();
-            window.location.href = "/IRF/ResetPublicSkillChannelDetailsFilter?emailid=" + email + "&uniqueid=" + uniqueid;
+            var loginStatus = $("#hiddLoginStatus").val();
+            window.location.href = "/IRF/ResetPublicSkillChannelDetailsFilter?emailid=" + email + "&uniqueid=" + uniqueid + "&isClientLogin=" + loginStatus;
         }
     </script>
 }

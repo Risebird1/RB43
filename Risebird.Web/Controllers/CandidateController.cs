@@ -4057,13 +4057,14 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> FetchInterviewerCommunicator(string emailid, string id)
+        public async Task<IActionResult> FetchInterviewerCommunicator(string emailid, bool isClientLogin = false, string id = null)
         {
             var model = new List<SchedulingLinkVM>();
             try
             {
                 ViewBag.id = id;
                 ViewBag.emailid = emailid;
+                ViewBag.IsClientLogin = isClientLogin;
                 model = await _meetingService.FetchSchedulingLinks(emailid);
                 if (model != null)
                 {
