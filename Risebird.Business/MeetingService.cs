@@ -1260,9 +1260,12 @@ namespace Risebird.Business
                 foreach (var item in techReportCollection ?? new List<TechSkillReport>())
                 {
                     var techdetails = techSkillsDetails.Where(x => x.SkillId == item.SkillId).FirstOrDefault();
-                    item.Concepts = techdetails.Concepts;
-                    item.Timelimit = techdetails.Timelimit;
-                    item.Natureofquestion = techdetails.Natureofquestion;
+                    if (techdetails != null)
+                    {
+                        item.Concepts = techdetails.Concepts;
+                        item.Timelimit = techdetails.Timelimit;
+                        item.Natureofquestion = techdetails.Natureofquestion;
+                    }
                 }
                 model.TechSkillReportCollection = techReportCollection;
             }
