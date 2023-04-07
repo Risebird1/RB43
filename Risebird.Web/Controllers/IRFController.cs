@@ -7208,12 +7208,21 @@ namespace Risebird.Web.Controllers
         //}
 
         [HttpGet]
-        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, string uniqueid)
+        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null )
         {
             ViewBag.emailid = emailid;
+            //if(!string.IsNullOrEmpty(uniqueid))
+            //{
+            //    ViewBag.uniqueid = uniqueid;
+            //}
             ViewBag.uniqueid = uniqueid;
+
+            ViewBag.IsClientLogin = isClientLogin;
             ViewBag.Type = "IRF";
-            ViewBag.PageStatus = "Public";
+            if(!isClientLogin)
+            {
+                ViewBag.PageStatus = "Public";
+            }
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
             var profileName = "Client";
             ViewBag.profile = profileName;
@@ -7237,7 +7246,7 @@ namespace Risebird.Web.Controllers
             return View("SkillChannelDetails", irfList);
         }
         [HttpPost]
-        public async Task<IActionResult> PublicSkillChannelDetails(SkillChannelDetailsFilter filter, string emailid, string uniqueid)
+        public async Task<IActionResult> PublicSkillChannelDetails(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             if (filter != null)
             {
@@ -7245,6 +7254,7 @@ namespace Risebird.Web.Controllers
             }
             ViewBag.emailid = emailid;
             ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
             var profileName = "Client";
             ViewBag.profile = profileName;
             ViewBag.Type = "IRF";
@@ -7260,13 +7270,13 @@ namespace Risebird.Web.Controllers
             }
             return View("SkillChannelDetails", irfList);
         }
-        [HttpGet]
-        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, string uniqueid)
+        [HttpGet] 
+        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, bool isClientLogin = false, string uniqueid= null)
         {
             try
             {
                 HttpContext.Session.Remove("SkillChannelDetailsFilters");
-                return RedirectToAction("PublicSkillChannelDetails", new { emailid = emailid, uniqueid = uniqueid });
+                return RedirectToAction("PublicSkillChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
             }
             catch (Exception ex)
             {

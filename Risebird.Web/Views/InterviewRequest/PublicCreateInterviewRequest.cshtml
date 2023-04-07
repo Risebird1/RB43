@@ -5,6 +5,17 @@
     ViewData["Title"] = "Create Request";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    //@if (!(bool)(ViewBag.IsClientLogin ?? false))
+    //{
+    //    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+
+    //}
+    //else
+    //{
+    //    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //}
+    
 }
 <script>
     var Header = "Create Interview Request";
@@ -39,6 +50,7 @@
                                 @Html.HiddenFor(m => m.RequestedBy)
                                 @Html.HiddenFor(m => m.ClientId)
                                 @Html.HiddenFor(m => m.ClientCompanyName)
+                                @Html.HiddenFor(m => m.IsClientLogin)
                                 <div style="width: 100%;">&nbsp;</div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">

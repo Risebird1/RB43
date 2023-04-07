@@ -4,6 +4,16 @@
     ViewData["Title"] = "Manage Interviews";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    //@if (!(bool)(ViewBag.IsClientLogin ?? false))
+    //{
+    //    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+
+    //}
+    //else
+    //{
+    //    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    //}
 }
 <script>
     var Header = "<div id='myinterview_1'>Manage Interviews</div>";
@@ -46,7 +56,11 @@
                     <div class="pull-right">
                         <input type="hidden" value="@ViewBag.emailid" id="hiddemailid" />
                         <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
-                        @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        <input type="hidden" value="@ViewBag.IsClientLogin" id="hiddIsClientLogin" />
+                        @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                        {
+                            @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        }
                     </div>
                 </div>
             </div>
@@ -152,9 +166,13 @@
                                                                             </svg>
                                                                         </span>
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                        <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                                    </button>
+                                                                    @if (!(bool)(ViewBag.IsClientLogin ?? false))
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Candidate Resumes" title="Candidate Resumes">
+                                                                            <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                        </button>
+                                                                    }
+                                                                    
                                                                     @if (item.IsPaused)
                                                                     {
                                                                         <button id="skill_16" class="mdc-fab app-fab--absolute  " aria-label="Play">

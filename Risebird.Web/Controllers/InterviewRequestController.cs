@@ -521,7 +521,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PublicCreateInterviewRequest(string emailid, string id)
+        public async Task<IActionResult> PublicCreateInterviewRequest(string emailid, bool isClientLogin = false, string id = null)
         {
             try
             {
@@ -533,6 +533,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
+                ViewBag.IsClientLogin = isClientLogin;
                 var model = new InterviewRequestVM();
                 model.uniqueid = id;
                 model.RequestedBy = emailid;
@@ -592,6 +593,7 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.emailid = meeting.RequestedBy;
                 ViewBag.id = meeting.uniqueid;
+                ViewBag.IsClientLogin = meeting.IsClientLogin;
                 var emailId = meeting.RequestedBy;
                 if (!string.IsNullOrEmpty(meeting.uniqueid))
                 {
