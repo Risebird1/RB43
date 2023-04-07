@@ -26,6 +26,7 @@ using Google.Apis.Calendar.v3;
 using Google.Apis.Util.Store;
 using System.Threading;
 using Google.Apis.Drive.v3;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 
 namespace Risebird.Web.Controllers
 {
@@ -2696,36 +2697,50 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region One Time UserAccess
-        public async Task<UserCredential> CreateUserAccess()
+        public async Task<string> CreateUserAccess()
         {
-            UserCredential credential;
-            string[] scopes = { CalendarService.Scope.Calendar };
-            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "cre.json"), FileMode.Open, FileAccess.Read))
+            try
             {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.FromStream(stream).Secrets,
-                    scopes,
-                    "user",
-                    CancellationToken.None);
+                UserCredential credential;
+                string[] scopes = { CalendarService.Scope.Calendar };
+                using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "cre.json"), FileMode.Open, FileAccess.Read))
+                {
+                    credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                        GoogleClientSecrets.FromStream(stream).Secrets,
+                        scopes,
+                        "user",
+                        CancellationToken.None);
+                }
+                return credential.Token.AccessToken.ToString();
             }
-            return credential;
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
         }
 
-        public async Task<UserCredential> CreateDriveUserAccess()
+        public async Task<string> CreateDriveUserAccess()
         {
-            UserCredential credential;
-            string[] scopes = new string[] { DriveService.Scope.Drive,
+            try
+            {
+                UserCredential credential;
+                string[] scopes = new string[] { DriveService.Scope.Drive,
                                DriveService.Scope.DriveFile};
 
-            using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
-            {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                GoogleClientSecrets.FromStream(stream).Secrets,
-                                scopes,
-                                "user",
-                                CancellationToken.None);
+                using (var stream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Cre", "credrive.json"), FileMode.Open, FileAccess.Read))
+                {
+                    credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                    GoogleClientSecrets.FromStream(stream).Secrets,
+                                    scopes,
+                                    "user",
+                                    CancellationToken.None);
+                }
+                return credential.Token.AccessToken.ToString();
             }
-            return credential;
+            catch (Exception ex)
+            {
+                return ex.InnerException.ToString();
+            }
         }
         #endregion
 
