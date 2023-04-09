@@ -2815,7 +2815,7 @@ namespace Risebird.CommonHelper
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(channelOwner, null));
 
 
-                object[] parameters = new object[] { skillChannelName, client, jdTitle, primarySkills};
+                object[] parameters = new object[] { skillChannelName, client, jdTitle, primarySkills };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssignedNotificationToSME.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -2854,7 +2854,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendCandidateNeedClerityClientNotification(string message,string subject,string clienthr,string candidateemail)
+        public async Task<string> SendCandidateNeedClerityClientNotification(string message, string subject, string clienthr, string candidateemail)
         {
             try
             {

@@ -1,5 +1,4 @@
-﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,7 +19,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -3563,13 +3561,13 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
-               
+
                 if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<InterviewerStatsVM> statsList;
                     statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
                     ViewBag.Profile = profileName;
-                    if(!string.IsNullOrEmpty(irfName))
+                    if (!string.IsNullOrEmpty(irfName))
                     {
                         ViewBag.IRFName = irfName;
                     }
@@ -3613,7 +3611,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null ;
+                return null;
             }
         }
 
@@ -3689,7 +3687,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                
+
                 if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<StatsDetailsVM> statsDetailsList;
@@ -3698,7 +3696,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.StatType = statType;
                     ViewBag.EmailId = interviewerEmailId + "(Interviewer)";
                     //ViewBag.DisplayType = "popup";
-                    if(irfId.HasValue)
+                    if (irfId.HasValue)
                     {
                         ViewBag.IRFId = irfId.Value;
                         ViewBag.IRFName = irfName;

@@ -982,7 +982,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole,int? irfId = null, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int clientUserId, string type, string clientRole, int? irfId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -1157,7 +1157,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<StatsDerived>> GetDateRangeWiseMeetingStatusForClientByIRF(DateTime startDate, DateTime endDate, string emailId, int clientId, string clientUserEmailId, string role= null)
+        public async Task<IEnumerable<StatsDerived>> GetDateRangeWiseMeetingStatusForClientByIRF(DateTime startDate, DateTime endDate, string emailId, int clientId, string clientUserEmailId, string role = null)
         {
             try
             {
@@ -1174,7 +1174,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<StatsDerived>(con, "usp_GetDateRangeWiseMeetingStatusForClientUserByIRF", parameters,
                         commandType: CommandType.StoredProcedure);
-                    
+
                     return result;
                 }
 

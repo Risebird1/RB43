@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -408,7 +407,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> GenerateOneTimeEvent(string olduniqueid,string candidateEmail)
+        public async Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail)
         {
             try
             {

@@ -38,7 +38,7 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteCandidate(int id);
         Task<Candidate> GetCandidate(int id, int irfId);
         Task<bool> UpdateCandidate(Candidate obj, string emailId);
-        Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId,string linkurl);
+        Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId, string linkurl);
         Task<InterviewPlanner> GetInterviewPlanner(int id);
         Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
         Task<bool> UnArchiveIRF(int id);
@@ -85,7 +85,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null);
-        Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite,string linkurl);
+        Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite, string linkurl);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);

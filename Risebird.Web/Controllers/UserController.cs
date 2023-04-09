@@ -442,7 +442,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
 
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" ||(emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
                     {
                         if (ModelState.IsValid)
                         {
@@ -623,7 +623,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                           
+
                             clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
                             clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
                             return View("ClientUserUpdate", clientUserVM);

@@ -55,7 +55,7 @@ namespace Risebird.Business
             try
             {
                 return await _clientRepository.GetClient(id);
-                
+
             }
             catch (Exception e)
             {
@@ -519,7 +519,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int interviewerUserId, string type, string clientRole, int? irfId = null, DateTime ? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetClientRoleWiseStatsDetails(int interviewerUserId, string type, string clientRole, int? irfId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {

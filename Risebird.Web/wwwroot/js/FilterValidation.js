@@ -13,8 +13,8 @@
     var dateStart = startDateValue.substring(8, 10);
     var startDate = new Date(yearStart, monthStart, dateStart);
 
-    if (((endDate - startDate) / (1000 * 3600 * 24)) > 30) {
-        alert("Start Date & End Date difference can't be greater than 30 days.");
+    if (((endDate - startDate) / (1000 * 3600 * 24)) > 45) {
+        alert("Start Date & End Date difference can't be greater than 45 days.");
         document.getElementById("EndDate").focus();
         return false;
     }

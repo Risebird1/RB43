@@ -7208,7 +7208,7 @@ namespace Risebird.Web.Controllers
         //}
 
         [HttpGet]
-        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null )
+        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             ViewBag.emailid = emailid;
             //if(!string.IsNullOrEmpty(uniqueid))
@@ -7219,7 +7219,7 @@ namespace Risebird.Web.Controllers
 
             ViewBag.IsClientLogin = isClientLogin;
             ViewBag.Type = "IRF";
-            if(!isClientLogin)
+            if (!isClientLogin)
             {
                 ViewBag.PageStatus = "Public";
             }
@@ -7270,8 +7270,8 @@ namespace Risebird.Web.Controllers
             }
             return View("SkillChannelDetails", irfList);
         }
-        [HttpGet] 
-        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, bool isClientLogin = false, string uniqueid= null)
+        [HttpGet]
+        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             try
             {

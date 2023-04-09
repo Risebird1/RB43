@@ -4203,7 +4203,7 @@ namespace Risebird.Repository
                                              IRFId = c.IRFId,
                                              IsEmergency = c.IsEmergency,
                                              MaxVideoDuration = c.MaxVideoDuration,
-                                             IsFixedInterviewduration=c.IsFixedInterviewduration
+                                             IsFixedInterviewduration = c.IsFixedInterviewduration
                                          }).ToList();
                         return resultset.ToList();
                     }

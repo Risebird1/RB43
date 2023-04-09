@@ -1050,7 +1050,7 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
                     cmdCreateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
-                    
+
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
 
@@ -1977,7 +1977,7 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
 

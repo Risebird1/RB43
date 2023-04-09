@@ -25,7 +25,7 @@ namespace Risebird.Business
         {
             try
             {
-                var data= await _profileRepository.GetProfiles();
+                var data = await _profileRepository.GetProfiles();
                 return data.ToList();
             }
             catch (Exception e)

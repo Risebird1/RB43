@@ -1,7 +1,5 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
