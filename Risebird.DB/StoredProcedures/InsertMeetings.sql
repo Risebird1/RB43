@@ -164,7 +164,28 @@ begin try
   update InterviewComments set MeetingStatus = null where InterviewId=@InterviewId        
         
   End        
-        
+  
+  --insert staffing agency and client HR to userlist and clientUser tables
+  declare @clientProfileId int = (select id from [Profile] where [Name] = 'Client')
+  declare @clientId int = (select top 1 ClientId from IRF where IRFId = @IRFId)
+
+  IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @staffingAgenecy)
+  BEGIN
+
+   insert into UserList(idProfile, EmailId, IsActive) values (@clientProfileId, @staffingAgenecy, 1)
+   insert into ClientUser (ClientId, UserId, RoleId, IsPasswordReset, IsActive) values (@clientId, (select id from UserList where EmailId = @staffingAgenecy), 4, null, 1)--ask password reset problem here
+  
+  END
+
+  IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @ClientHrContact)
+  BEGIN
+
+   insert into UserList(idProfile, EmailId, IsActive) values (@clientProfileId, @ClientHrContact, 1)
+   insert into ClientUser (ClientId, UserId, RoleId, IsPasswordReset, IsActive) values (@clientId, (select id from UserList where EmailId = @ClientHrContact), 1, null, 1)--ask password reset problem here
+  
+  END
+
+
  declare        
   @profileId int = (select id from [Profile] where [Name]='Candidate')        
  IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail and idProfile = @profileId)        
