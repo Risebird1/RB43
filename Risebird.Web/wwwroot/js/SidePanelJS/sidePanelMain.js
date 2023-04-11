@@ -23,25 +23,32 @@ var counter = 0;
 					}
 					else {
 						var dates = document.getElementsByClassName('date 1');
-						if (dates != null) {
-							var dateValue = dates[0].dataset.val;
-							$.get(url, { postWhichDate: dateValue }).done(function (data) {
+						var dateValue;
+						if (dates != null && dates.length > 0) {
+							dateValue = dates[0].dataset.val;
 
-								var pointerType = event.pointerType;
-								if (pointerType == "mouse") {
+						}
+						else {
+							var date = new Date();
+							dateValue = date.toJSON();
+						}
+						$.get(url, { postWhichDate: dateValue }).done(function (data) {
+
+							var pointerType = event.pointerType;
+							if (pointerType == "mouse") {
+								addClass(panel, 'cd-panel--is-visible');
+							}
+							else {
+								if (data != null && data != '') {
 									addClass(panel, 'cd-panel--is-visible');
 								}
-								else {
-									if (data != null && data != '') {
-										addClass(panel, 'cd-panel--is-visible');
-									}
-								}
-								if (data != null && data != '') {
-									placeholderElement.prepend(data);
-								}
+							}
+							if (data != null && data != '') {
+								placeholderElement.prepend(data);
+							}
 
-							});
-						}
+						});
+						
                     }
 					
 				});

@@ -16,27 +16,40 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> RB Pay Details</h4></div>
                 </div>
-                <div class="pull-left" style="color:green">10% of Tds deducted from every payment</div>
+                <div class="pull-left">
+                    @if (ViewBag.Type == "Pending")
+                    {
+                        <div class="feedback-tab-ac" onclick="ChangePaymentdetails('Pending')"><strong>Pending Payment</strong></div>
+                        <div class="feedback-tab" onclick="ChangePaymentdetails('Paid')"><strong>Paid</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="ChangePaymentdetails('Pending')"><strong>Pending Payment</strong></div>
+                        <div class="feedback-tab-ac" onclick="ChangePaymentdetails('Paid')"><strong>Paid</strong></div>
+                    }
+                </div>
+                <div class="pull-left" style="color:green;padding-left:20px">10% of Tds deducted from every payment</div>
                 <div class="pull-right">
                     <div><a href="../../Newassets/paymentdes.pdf" target="_blank">Risebird Payment Description Link</a></div>
                     <div>
                         @*@if (ViewBag.submit == "true")
-                            {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team.">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team." onclick="location.href='@Url.Action("ShareWithFN", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team." disabled>
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team."  data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
-                                </button>
-                            }*@
+                        {
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team.">
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team." onclick="location.href='@Url.Action("ShareWithFN", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
+                        </button>
+                        }
+                        else
+                        {
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Click here to Share with Finance Team." disabled>
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Share with Finance Team."  data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Submit for Payment</font></span>
+                        </button>
+                        }*@
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportRBDetails", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
-                            </button>*@
+                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportRBDetails", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
+                        </button>*@
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -225,6 +238,9 @@
             $("#meeting").show();
         }, 2000);
     };
+    function ChangePaymentdetails(type) {
+        window.location.href = "/Finance/RBPayment?type=" + type;
+    }
     //// script for loader ends here
 </script>
 <script>
@@ -282,6 +298,7 @@
             }
         });
     }
+
 </script>
 
 
