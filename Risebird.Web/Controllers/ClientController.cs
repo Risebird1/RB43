@@ -4544,25 +4544,18 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Client")
+                    
+                    var model = new ClientStatsVM();
+                    var _clientList = await _irfRepository.GetClients();
+                    if (profileName == "Client")
                     {
-                        var model = new ClientStatsVM();
-                        var _clientList = await _irfRepository.GetClients();
-                        if (profileName == "Client")
-                        {
-                            var clientName = HttpContext.Session.GetString("clientName")?.Trim();
-                            model.ClientName = clientName;
-                            model.id = _clientList.Where(x => x.Name == clientName).FirstOrDefault().id;
-                        }
-                        model.EmailId = emailid;
-                        model.ClientList = new SelectList(_clientList.OrderBy(x => x.Name), "id", "Name");
-                        return View(model);
+                        var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                        model.ClientName = clientName;
+                        model.id = _clientList.Where(x => x.Name == clientName).FirstOrDefault().id;
                     }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-
+                    model.EmailId = emailid;
+                    model.ClientList = new SelectList(_clientList.OrderBy(x => x.Name), "id", "Name");
+                    return View(model); 
                 }
                 else
                 {
