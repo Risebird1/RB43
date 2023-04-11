@@ -53,7 +53,7 @@ namespace Risebird.Web.Controllers
         /// <returns></returns>
 
         [HttpGet]
-        public async Task<IActionResult> RBPayment()
+        public async Task<IActionResult> RBPayment(string type)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -63,7 +63,20 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Interviewer")
                 {
+                    if (string.IsNullOrWhiteSpace(type))
+                    {
+                        type = "Pending";
+                    }
+                    ViewBag.Type = type;
                     var model = await _meetingService.RBDetails(emailid);
+                    if (type == "Paid")
+                    {
+                        model = model.Where(x => x.Status == "Paid").ToList();
+                    }
+                    else
+                    {
+                        model = model.Where(x => x.Status != "Paid").ToList();
+                    }
                     model = model.Select(x => { x.InterviewStatusDetails = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusDetails = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                     var sum = model.Where(x => x.Status == "Submitted" || x.Status == "Pending").Sum(x => x.Points) - model.Where(x => x.Status == "Advance").Sum(x => x.Points);
                     if (sum > 0)
@@ -131,7 +144,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public FileContentResult ExportRBDetails()
+        public FileContentResult ExportRBDetails(string type)
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payable Details");
@@ -146,8 +159,19 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
-
-                        var model = _meetingService.RBDetails(emailid);
+                        if (string.IsNullOrWhiteSpace(type))
+                        {
+                            type = "Pending";
+                        }
+                        var model = _meetingService.RBDetails(emailid).Result;
+                        if (type == "Paid")
+                        {
+                            model = model.Where(x => x.Status == "Paid").ToList();
+                        }
+                        else
+                        {
+                            model = model.Where(x => x.Status != "Paid").ToList();
+                        }
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -173,9 +197,9 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 11].Value = "Meeting Status";
 
                         int i = 2;
-                        if (model.Result.Count() > 0)
+                        if (model.Count() > 0)
                         {
-                            foreach (var item in model.Result)
+                            foreach (var item in model)
                             {
                                 int _location = 0;
                                 Sheet.Cells[i, 1].Value = item.Comment;
