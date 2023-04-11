@@ -2561,9 +2561,7 @@ namespace Risebird.Business
             {
                 var result = _meetingRespository.RBDetails(EmailId);
                 return result.Result;
-
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
