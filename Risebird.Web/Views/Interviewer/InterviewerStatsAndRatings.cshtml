@@ -8,11 +8,20 @@
 @*ViewBag.Profile*@
 
 @{
+    string panelclass = string.Empty;
     ViewData["Title"] = "Interviewer Stats";
     ViewBag.PageHeader = "Interviewer Stats";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.Usepl == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+        panelclass = "main-panel";
+    }
     //dynamic filter = null;
-    
+
     //string AssessmentGroupTemplate = string.Empty;
     //string SeniorityLevel = string.Empty;
     //string CountryType = string.Empty;
@@ -43,7 +52,7 @@
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
 
-<div class="main-panel" id="main-panel">
+<div class="@panelclass" id="main-panel">
 
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -54,13 +63,13 @@
                 </div>
 
                 @*<div class="pull-right">
-                    <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
+                <div>
+                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                <div class="mdc-button__ripple"></div>
+                </button>
 
-                    </div>
+                </div>
                 </div>*@
             </div>
         </div>
@@ -78,7 +87,7 @@
 
                                 <div>
                                     @await Html.PartialAsync("~/Views/Interviewer/InterviewerStatsAndRatingsPartialView.cshtml")
-                                    
+
                                 </div>
 
 
@@ -174,7 +183,7 @@
             $("#listTable").show();
         }, 2000);
     };
-    //// script for loader ends here
+                        //// script for loader ends here
 </script>
 
 
