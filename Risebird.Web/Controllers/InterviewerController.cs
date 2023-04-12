@@ -3563,13 +3563,13 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
-               
+
                 if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<InterviewerStatsVM> statsList;
                     statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
                     ViewBag.Profile = profileName;
-                    if(!string.IsNullOrEmpty(irfName))
+                    if (!string.IsNullOrEmpty(irfName))
                     {
                         ViewBag.IRFName = irfName;
                     }
@@ -3593,7 +3593,8 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsAndRatingsForClientByIRF(string clientEmailId, int? irfId = null, string irfName = null)
+        ///usepl is usePublicLayout
+        public async Task<IActionResult> InterviewerStatsAndRatingsForClientByIRF(string clientEmailId, bool usepl, int? irfId = null, string irfName = null)
         {
             try
             {
@@ -3608,12 +3609,17 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.irfId = irfId.Value;
                 }
+                ViewBag.Usepl = "";
+                if (usepl)
+                {
+                    ViewBag.Usepl = "Public";
+                }
                 return View("InterviewerStatsAndRatings", statsList);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null ;
+                return null;
             }
         }
 
@@ -3689,7 +3695,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                
+
                 if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<StatsDetailsVM> statsDetailsList;
@@ -3698,7 +3704,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.StatType = statType;
                     ViewBag.EmailId = interviewerEmailId + "(Interviewer)";
                     //ViewBag.DisplayType = "popup";
-                    if(irfId.HasValue)
+                    if (irfId.HasValue)
                     {
                         ViewBag.IRFId = irfId.Value;
                         ViewBag.IRFName = irfName;
