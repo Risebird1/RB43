@@ -3591,7 +3591,8 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsAndRatingsForClientByIRF(string clientEmailId, int? irfId = null, string irfName = null)
+        ///usepl is usePublicLayout
+        public async Task<IActionResult> InterviewerStatsAndRatingsForClientByIRF(string clientEmailId, bool usepl, int? irfId = null, string irfName = null)
         {
             try
             {
@@ -3605,6 +3606,11 @@ namespace Risebird.Web.Controllers
                 if (irfId != null && irfId.Value > 0)
                 {
                     ViewBag.irfId = irfId.Value;
+                }
+                ViewBag.Usepl = "";
+                if (usepl)
+                {
+                    ViewBag.Usepl = "Public";
                 }
                 return View("InterviewerStatsAndRatings", statsList);
             }
