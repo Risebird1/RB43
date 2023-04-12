@@ -779,7 +779,10 @@ namespace Risebird.Repository
                     if (dataset.Tables.Count > 2)
                     {
                         dt = dataset.Tables[2];
-                        _resultVM.Uniqueid = dt.Rows[0]["Uniqueid"] != null ? dt.Rows[0]["Uniqueid"].ToString() : null;
+                        if (dt.Rows.Count > 0)
+                        {
+                            _resultVM.Uniqueid = dt.Rows[0]["Uniqueid"] != null ? dt.Rows[0]["Uniqueid"].ToString() : null;
+                        }
                     }
                     //if (dataset.Tables.Count > 3)
                     //{

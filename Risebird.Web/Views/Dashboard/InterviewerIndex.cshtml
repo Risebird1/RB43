@@ -66,10 +66,236 @@
                 </div>
                 <div class="page-content-wrap dashboard">
                     <div class="row">
-                        <div class="col-md-9 col-sm-12">
+                        <div class="row col-md-6 col-sm-12">
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3><span><strong>Open Interviews</strong></span></h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div class="table-responsive" style="color: #74c0fc">
+                                                                <strong>@Model.OpenInterviewCount</strong>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("OpenInterview", "Interview")'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3><span><strong>My Interviews</strong></span></h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div class="table-responsive" style="color:limegreen">
+                                                                <strong> @Model.MyInterviewCount</strong>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("MyInterview", "Interview")'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3><span><strong>Pending Report</strong></span></h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div class="table-responsive" style="color:red">
+                                                                <strong> @Model.PendingReportCount</strong>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("MyInterview", "Interview")'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3><span style="font-size:10px"><strong>Payment Pending/Received</strong></span></h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div class="table-responsive">
+                                                                <div id="divPendingPayment">
+                                                                    0
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("RBPayment", "Finance")'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3><span><strong>Coded Name</strong></span></h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div class="table-responsive">
+                                                                <Strong>@Model.CodedName</Strong>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button style="border:none;background:none;color:transparent">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3><span><strong>QC Report</strong></span></h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div class="table-responsive" style="color:red">
+                                                                <strong> @Model.QCReportCount</strong>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("QCReportDetails", "Interview")'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3>
+                                                    <span>
+                                                        <strong>Client Rating</strong>
+                                                        <label id="divclientrating">0.0</label>
+                                                    </span>
+                                                </h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div id="clientrating" class="PieId" style="height:62px !important"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Client" })'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel panel-default">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div class="panel-title-box">
+                                                <h3>
+                                                    <span>
+                                                        <strong>Candidate Rating</strong>
+                                                        <label id="divcandidaterating">0.0</label>
+                                                    </span>
+                                                </h3>
+                                            </div>
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div>
+                                                        <div class="">
+                                                            <div id="candidaterating" class="PieId" style="height:62px !important"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align-last:end">
+                                                        <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Candidate" })'" style="border:none;background:none" title="Detail View">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
                             <div class="panel panel-default">
                                 <div id="survey-feedback">
-                                    <div class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback Survey </span><hr class='btop' />1. Overall Interview Rating<br/> 2. Overall Interviewer Rating<br/> 3. Scheduling Rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom" style="height:340px;overflow-y:auto">
+                                    <div class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback Survey </span><hr class='btop' />1. Overall Interview Rating<br/> 2. Overall Interviewer Rating<br/> 3. Scheduling Rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom">
                                         <div class="panel-title-box">
                                             <h3><span><strong>Important Announcement:</strong></span></h3>
                                         </div>
@@ -90,230 +316,6 @@
                                                         <strong>Menu --> My Profile </strong> or <strong>Click on Right top account menu -->My Profile</strong>
                                                     </li>
                                                 </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3>
-                                                <span>
-                                                    <strong>Client Rating</strong>
-                                                    <label id="divclientrating">0.0</label>
-                                                </span>
-                                            </h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div id="clientrating" class="PieId" style="height:62px !important"></div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Client" })'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3>
-                                                <span>
-                                                    <strong>Candidate Rating</strong>
-                                                    <label id="divcandidaterating">0.0</label>
-                                                </span>
-                                            </h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div id="candidaterating" class="PieId" style="height:62px !important"></div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Candidate" })'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>Open Interviews</strong></span></h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div class="table-responsive" style="color: #74c0fc">
-                                                            <strong>@Model.OpenInterviewCount</strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("OpenInterview", "Interview")'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>My Interviews</strong></span></h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div class="table-responsive" style="color:limegreen">
-                                                            <strong> @Model.MyInterviewCount</strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("MyInterview", "Interview")'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>Pending Report</strong></span></h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div class="table-responsive" style="color:red">
-                                                            <strong> @Model.PendingReportCount</strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("MyInterview", "Interview")'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>Payment Pending/Received</strong></span></h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div class="table-responsive">
-                                                            <div id="divPendingPayment">
-                                                                0
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("RBPayment", "Finance")'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>Coded Name</strong></span></h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div class="table-responsive">
-                                                            <Strong>@Model.CodedName</Strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button style="border:none;background:none;color:transparent">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-default">
-                                <div id="survey-feedback">
-                                    <div class="panel-heading" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>QC Report</strong></span></h3>
-                                        </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div>
-                                                    <div class="">
-                                                        <div class="table-responsive" style="color:red">
-                                                            <strong> @Model.QCReportCount</strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="text-align-last:end">
-                                                    <button onclick="location.href='@Url.Action("QCReportDetails", "Interview")'" style="border:none;background:none" title="Detail View">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                    </button>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
