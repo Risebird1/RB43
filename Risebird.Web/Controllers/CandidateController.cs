@@ -3335,7 +3335,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                     HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), 2, emailid)).ToList();
                     if (candidateData == null)
                     {
                         return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
@@ -3496,7 +3496,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(15), datatype, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
