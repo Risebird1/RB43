@@ -555,7 +555,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailID)
+        public async Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailID, string meetingLineUpType = null)
         {
             try
             {
@@ -563,6 +563,8 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("emailID", emailID);
+                    parameters.Add("type", meetingLineUpType);
+                    parameters.Add("timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }

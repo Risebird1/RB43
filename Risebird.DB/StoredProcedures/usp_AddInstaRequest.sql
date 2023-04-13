@@ -13,30 +13,34 @@ CREATE Procedure usp_AddInstaRequest
 @InstaRequestName varchar(50),        
 @AssessmentGroup int,        
 @JDLink varchar(1000),        
-@RequestedBy varchar(150)        
+@RequestedBy varchar(150),
+@CategoryId int,
+@CountryType int,
+@CompanyTypes int,
+@JobLevel int,
+@DifficultyLevel int,
+@EmploymentType int
 AS        
 BEGIN        
 IF NOT EXISTS (SELECT 1 FROM InstaRequests WHERE id=@id)            
 Begin  
 if Not Exists(Select 1 from InstaRequests WHERE InstaRequestName=@InstaRequestName and AssessmentGroup=@AssessmentGroup and RequestedBy=@RequestedBy)
 BEGIN
- Insert into [InstaRequests](InstaRequestName,AssessmentGroup,JDLink,RequestedBy,CreatedOn)          
- values(@InstaRequestName,@AssessmentGroup,@JDLink,@RequestedBy,dateadd(minute,330,GetDate()))          
+ Insert into [InstaRequests](InstaRequestName,AssessmentGroup,JDLink,RequestedBy,CreatedOn,CategoryId,CountryType,CompanyTypes,
+JobLevel,DifficultyLevel,EmploymentType)          
+ values(@InstaRequestName,@AssessmentGroup,@JDLink,@RequestedBy,dateadd(minute,330,GetDate()),@CategoryId,@CountryType,@CompanyTypes,
+@JobLevel,@DifficultyLevel,@EmploymentType)          
  Select id from InstaRequests WHERE InstaRequestName = @InstaRequestName and AssessmentGroup=@AssessmentGroup        
  END
 End        
 Else        
 BEGIN        
-Update InstaRequests Set JDLink=ISNULL(@JDLink,JDLink),InstaRequestName=ISNULL(@InstaRequestName,InstaRequestName) WHERE id=@id       
+Update InstaRequests Set JDLink=ISNULL(@JDLink,JDLink),InstaRequestName=ISNULL(@InstaRequestName,InstaRequestName),
+CategoryId=@CategoryId,CountryType=@CountryType,CompanyTypes=@CompanyTypes,JobLevel=@JobLevel,DifficultyLevel=@DifficultyLevel,
+EmploymentType=@EmploymentType WHERE id=@id       
 select @id       
 END        
   
 END    
     
-    
-  
-    
-  
-
-
 GO

@@ -14,7 +14,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Requested Date")]
         public DateTime RequestedDate { get; set; }
 
-        [Required(ErrorMessage = "Assessment Group is required.")]
         [Display(Name = "Assessment Group")]
         public string AssessmentGroup { get; set; }
         [Display(Name = "Candidate Name")]
@@ -49,7 +48,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Assessment Group List ")]
         public SelectList AssessmentGroupList { get; set; }
 
-        [Required(ErrorMessage = "Insta Request Name is required.")]
         [Display(Name = "Insta Request Name ")]
         [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string InstaRequestName { get; set; }
@@ -85,6 +83,7 @@ namespace Risebird.Entities.ViewModel
         public int JobLevel { get; set; }
         public string AssessmentGroupName { get; set; }
         public string[] PrimarySkills { get; set; }
+        public string PrimarySkillsid { get; set; }
     }
     public class InstaTechSkill
     {

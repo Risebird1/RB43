@@ -1572,7 +1572,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyInterview(int? Page, string searchValue)
+        public async Task<IActionResult> MyInterview(int? Page, string searchValue, string meetingLineUpType = null)
         {
             try
             {
@@ -1582,9 +1582,14 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
+                        if(string.IsNullOrEmpty(meetingLineUpType))
+                        {
+                            meetingLineUpType = MeetingLineUpType.Pending;
+                        }
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = await _meetingService.GetAllAssignedInterviews(emailid);
+                        //var myInterview = await _meetingService.GetAllAssignedInterviews(emailid);
+                        var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
                         var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
                         var isSME = await _interviewerService.CheckIfSME(emailid);
                         ViewBag.isNotificationAccepted = codedname.IsNotificationAccepted;
@@ -1721,6 +1726,7 @@ namespace Risebird.Web.Controllers
                             }
                             // item.Timer = 60;
                         }
+                        ViewBag.MeetingLineUpType = meetingLineUpType;
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -1855,7 +1861,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> MyInterview(MyInterviewFilter filter, int? Page, string searchValue)
+        public async Task<IActionResult> MyInterview(MyInterviewFilter filter, int? Page, string searchValue, string meetingLineUpType = null)
         {
             try
             {
@@ -1869,7 +1875,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
-                        return RedirectToAction("MyInterview", new { Page = Page, searchValue = searchValue });
+                        return RedirectToAction("MyInterview", new { Page = Page, searchValue = searchValue, meetingLineUpType = meetingLineUpType });
                     }
                     else
                     {
@@ -5074,7 +5080,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MyInterviewJson(string searchValue)
+        public async Task<IActionResult> MyInterviewJson(string searchValue, string meetingLineUpType = null)
         {
             try
             {
@@ -5085,9 +5091,14 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
+                        if (string.IsNullOrEmpty(meetingLineUpType))
+                        {
+                            meetingLineUpType = MeetingLineUpType.Pending;
+                        }
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = await _meetingService.GetAllAssignedInterviews(emailid);
+                        //var myInterview = await _meetingService.GetAllAssignedInterviews(emailid);
+                        var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -5199,6 +5210,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.endPage = Pageend;
                         ViewBag.totalPage = a;
                         ViewBag.totalentry = myInterview.Count;
+                        ViewBag.MeetingLineUpType = meetingLineUpType;
                         return PartialView("MyInterviewPartial", myInterview?.Take(10)?.ToList());
                         //return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
                     }

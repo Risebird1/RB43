@@ -4,6 +4,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using Risebird.Entities.Data
 @using System.Text.RegularExpressions
 @inject IHttpContextAccessor HttpContextAccessor
 @{
@@ -76,6 +77,36 @@
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Pending)
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
+                    }
+                    else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
+                    }
+                    else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Ongoing)
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
+                    }
+                </div>
                 <div class="col-md-4 pull-left">
                     <div class="pull-left myinterview">
 
@@ -1424,7 +1455,7 @@
         $.ajax({
             type: "POST",
             url: "/Interview/MyInterviewJson",
-            data: { 'searchValue': $('#txtmeeting_filter').val() },
+            data: { 'searchValue': $('#txtmeeting_filter').val(), 'meetingLineUpType' : '@ViewBag.MeetingLineUpType' },
             success: function (data) {
                 if (data != "failed") {
                     //bindtableData(data.result);
@@ -1436,7 +1467,7 @@
                     var totalentry = document.getElementById('id_totalentry').innerHTML;
 
                     //bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
-                    bindPages(totalPage, startPage, endPage, totalentry);
+                    bindPages(totalPage, startPage, endPage, totalentry, '@ViewBag.MeetingLineUpType');
                 }
             }
         });
@@ -1446,6 +1477,9 @@
         if (code == 13) {
             searchResult();
         }
+    }
+    function Changeurldetails(meetingLineUpType) {
+        window.location.href = "/Interview/MyInterview?meetingLineUpType=" + meetingLineUpType;
     }
     function bindtableData(data) {
 
@@ -1652,7 +1686,7 @@
         }
         $("#tblbodyMyInterview").empty().html(html);
     }
-    function bindPages(pagecount, startpage, endpage, totalcount) {
+    function bindPages(pagecount, startpage, endpage, totalcount, meetingLineUpType) {
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
@@ -1663,15 +1697,15 @@
                 html += '<li><a href="/Interview/MyInterview?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/MyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/MyInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interview/MyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '&meetingLineUpType=' + meetingLineUpType  + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interview/MyInterview?Page=' + pagecount + '&meetingLineUpType=' + meetingLineUpType + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             } else {
                 break;
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/MyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Interview/MyInterview?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interview/MyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '&meetingLineUpType=' + meetingLineUpType + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interview/MyInterview?Page=' + pagecount + '&meetingLineUpType=' + meetingLineUpType + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             }
         }
         html += '</ul>';

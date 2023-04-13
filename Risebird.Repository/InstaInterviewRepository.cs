@@ -86,6 +86,14 @@ namespace Risebird.Repository
                 parameters.Add("@AssessmentGroup", meeting.AssessmentGroup);
                 parameters.Add("@JDLink", meeting.JDLink);
                 parameters.Add("@RequestedBy", meeting.RequestedBy);
+
+                parameters.Add("@CategoryId", meeting.CategoryId);
+                parameters.Add("@CountryType", meeting.CountryType);
+                parameters.Add("@CompanyTypes", meeting.CompanyTypes);
+                parameters.Add("@JobLevel", meeting.JobLevel);
+                parameters.Add("@DifficultyLevel", meeting.DifficultyLevel);
+                parameters.Add("@EmploymentType", meeting.EmploymentType);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_AddInstaRequest", parameters,
