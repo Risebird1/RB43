@@ -27,7 +27,9 @@
         <thead>
             <tr>
                 <th>Interviewer</th>
+                @if(string.IsNullOrEmpty(clientEmailId)){
                 <th>Resume</th>
+                }
                 <th>Penalty Count</th>
                 <th>Client Rating</th>
                 <th>Total Meetings</th>
@@ -40,12 +42,12 @@
                 <th>Dropped</th>
                 @if(string.IsNullOrEmpty(clientEmailId))
                 {
-                    <th>No Show(Interviewer)</th>
-                    <th>No Show(Candidate)</th>
+                <th>No Show(Interviewer)</th>
+                <th>No Show(Candidate)</th>
                 }
                 else
                 {
-                    <th>No Show</th>
+                <th>No Show</th>
                 }
                 <th>Scheduled</th>
                 <th>Actions</th>
@@ -54,7 +56,9 @@
         <tfoot>
             <tr>
                 <th>Interviewer</th>
+                @if(string.IsNullOrEmpty(clientEmailId)){
                 <th>Resume</th>
+                }
                 <th>Penalty Count</th>
                 <th>Client Rating</th>
                 <th>Total Meetings</th>
@@ -89,55 +93,55 @@
             <tr>
                 @if(string.IsNullOrEmpty(clientEmailId))
                 {
-                    @if (!string.IsNullOrEmpty(item.InterviewerEmailId))
-                    {
-                        <td> @item.InterviewerEmailId </td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
+                @if (!string.IsNullOrEmpty(item.InterviewerEmailId))
+                {
+                <td> @item.InterviewerEmailId </td>
                 }
                 else
                 {
-                    @if (!string.IsNullOrEmpty(item.NickName))
-                    {
-                        <td> @item.NickName </td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
+                <td></td>
+                }
+                }
+                else
+                {
+                @if (!string.IsNullOrEmpty(item.NickName))
+                {
+                <td> @item.NickName </td>
+                }
+                else
+                {
+                <td></td>
+                }
                 }
 
                 @if(string.IsNullOrEmpty(clientEmailId))
                 {
-                    @if (item.ResumeLink != null && item.ResumeLink != "")
-                    {
-                        <td class="text-center">
-                            <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
-                        </td>
-                    }
-                    else
-                    {
-                        <td class="text-center">No Resume</td>
-                    }
+                @if (item.ResumeLink != null && item.ResumeLink != "")
+                {
+                <td class="text-center">
+                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                </td>
                 }
                 else
                 {
-                    @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
-                    {
-                        <td class="text-center">
-                            <a id="resumeId" target="_blank" title="Resume" href=@item.CodedResumeLink>Resume</a>
-                        </td>
-                    }
-                    else
-                    {
-                        <td class="text-center">No Resume</td>
-                    }
+                <td class="text-center">No Resume</td>
                 }
-                
-                
+                }
+                @*else
+                {
+                @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
+                {
+                <td class="text-center">
+                <a id="resumeId" target="_blank" title="Resume" href=@item.CodedResumeLink>Resume</a>
+                </td>
+                }
+                else
+                {
+                <td class="text-center">No Resume</td>
+                }
+                }*@
+
+
                 <td>@item.TotalPenalties</td>
                 <td>@(!string.IsNullOrEmpty(item.AverageClientRating) ? item.AverageClientRating : string.Empty)</td>
                 @if(string.IsNullOrEmpty(clientEmailId))
@@ -196,105 +200,105 @@
 
                 @if (item.TotalBorderLine > 0)
                 {
-                    @*<td title="Total Borderline" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Borderline')">
-                    @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
-                    </td>*@
-                    <td title="Total Borderline">
-                        <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
-                    }
-                    else
-                    {
-                    <td>@item.TotalBorderLine</td>
-                    }
-                    @if (item.TotalRejected > 0)
-                    {
-
-                    <td title="Total Rejected">
-                        <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
-                    }
-                    else
-                    {
-                    <td>@item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
-                    }
-                    @if (item.TotalProxy > 0)
-                    {
-                    @*<td title="Total Proxy" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Proxy')">
-                    @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
-                    </td>*@
-                    <td title="Total Proxy">
-                        <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
-                    }
-                    else
-                    {
-                    <td>@item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
-                    }
-                    @if (item.TotalDropped > 0)
-                    {
-                    @*<td title="Total Dropped" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Dropped')">
-                    @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
-                    </td>*@
-                    <td title="Total Dropped">
-                        <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
-                    }
-                    else
-                    {
-                    <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                    }
-                @if (item.TotalSelfNoShow > 0)
-                {
-
-                    <td title="No Show(Interviewer)">
-                        <a title="No Show(Interviewer)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowinterviewer, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
+                @*<td title="Total Borderline" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Borderline')">
+                @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                </td>*@
+                <td title="Total Borderline">
+                    <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
                 }
                 else
                 {
-                    <td>@item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                <td>@item.TotalBorderLine</td>
+                }
+                @if (item.TotalRejected > 0)
+                {
+
+                <td title="Total Rejected">
+                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
+                }
+                else
+                {
+                <td>@item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                }
+                @if (item.TotalProxy > 0)
+                {
+                @*<td title="Total Proxy" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Proxy')">
+                @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                </td>*@
+                <td title="Total Proxy">
+                    <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
+                }
+                else
+                {
+                <td>@item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }</td>
+                }
+                @if (item.TotalDropped > 0)
+                {
+                @*<td title="Total Dropped" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Dropped')">
+                @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
+                </td>*@
+                <td title="Total Dropped">
+                    <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
+                }
+                else
+                {
+                <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                }
+                @if (item.TotalSelfNoShow > 0)
+                {
+
+                <td title="No Show(Interviewer)">
+                    <a title="No Show(Interviewer)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowinterviewer, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
+                }
+                else
+                {
+                <td>@item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                 }
 
                 @if (item.TotalNoShowCandidate > 0)
                 {
 
-                    <td title="No Show(Candidate)">
-                        <a title="No Show(Candidate)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowcandidate, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
+                <td title="No Show(Candidate)">
+                    <a title="No Show(Candidate)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowcandidate, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
                 }
                 else
                 {
-                    <td>@item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                <td>@item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                 }
-                
-                    
 
-                    @if (item.Scheduled > 0)
-                    {
-                    
-                    <td title="Scheduled">
-                        <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
-                            @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
-                    }
-                    else
-                    {
-                    <td>@item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
-                    }
+
+
+                @if (item.Scheduled > 0)
+                {
+
+                <td title="Scheduled">
+                    <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId})">
+                        @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
+                }
+                else
+                {
+                <td>@item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                }
                 }
                 else
                 {
@@ -406,7 +410,7 @@
                 }
                 else
                 {
-                    <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                <td>@item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                 }
                 @if ((item.TotalNoShowCandidate + item.TotalSelfNoShow) > 0)
                 {
@@ -419,33 +423,33 @@
                 }
                 else
                 {
-                    <td>@(item.TotalNoShowCandidate + item.TotalSelfNoShow) { @(item.TotalMeetings != 0 ? ((item.TotalNoShowCandidate + item.TotalSelfNoShow) * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
+                <td>@(item.TotalNoShowCandidate + item.TotalSelfNoShow) { @(item.TotalMeetings != 0 ? ((item.TotalNoShowCandidate + item.TotalSelfNoShow) * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                 }
 
                 @if (item.Scheduled > 0)
                 {
-                
-                    <td title="Scheduled">
+
+                <td title="Scheduled">
                     <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId})">
-                            @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
-                        </a>
-                    </td>
+                        @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
+                    </a>
+                </td>
                 }
                 else
                 {
                 <td>@item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }</td>
                 }
                 }
-                
-                
 
-                
                 <td class="text-center">
+                    @if (ViewBag.Usepl != "Public")
+                    {
                     <span>
                         <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
                             <span onclick="javascript:OpenInterviewerFlagDetails('@item.InterviewerEmailId');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
                         </button>
                     </span>
+                    }
                     @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
                     {
                     <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>

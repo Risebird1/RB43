@@ -674,7 +674,7 @@ namespace Risebird.Web.Controllers
                             var comdate = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue);
                             if (comdate.Date == DateTime.Now.Date)
                             {
-                                int offsetbuffer = DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue).Hour;
+                                int offsetbuffer = (int)DateTime.Now.AddMinutes(-addontime).AddHours(buffertimevalue).TimeOfDay.TotalMinutes;
                                 //int valueset = Convert.ToInt32(Convert.ToDouble(item.End) - Convert.ToDouble(item.Start));
                                 //var valuecheck = Convert.ToDouble(item.End) - Convert.ToDouble(item.Start);
                                 //if (valueset < valuecheck)
