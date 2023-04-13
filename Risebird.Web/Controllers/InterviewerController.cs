@@ -2933,15 +2933,15 @@ namespace Risebird.Web.Controllers
                         DateTime? postWhichDateValue = null;
                         if (!string.IsNullOrEmpty(postWhichDate))
                         {
-                            if(diffOffset.HasValue && diffOffset.Value != 0)//it is not Indian Time
-                            {
-                                postWhichDateValue = DateTime.Now;//this, therefore is the indian time we need to pass
-                            }
-                            else
-                            {
-                                postWhichDateValue = Convert.ToDateTime(postWhichDate);
+                            //if(diffOffset.HasValue && diffOffset.Value != 0)//it is not Indian Time
+                            //{
+                            //    postWhichDateValue = DateTime.Now;//this, therefore is the indian time we need to pass
+                            //}
+                            //else
+                            //{
+                            //}
+                            postWhichDateValue = Convert.ToDateTime(postWhichDate);
 
-                            }
                         }
                         ClientFeedDataWrapper model = new ClientFeedDataWrapper();
                         //IEnumerable<ClientFeedDataVM> model = await _interviewerService.GetClientFeedForInterviewer(emailId, postWhichDateValue, interviewId);

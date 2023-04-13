@@ -14,42 +14,50 @@ var counter = 0;
 					event.preventDefault();
 					var url = $(this).data('url');
 					if (counter == 1) {
-						addClass(panel, 'cd-panel--is-visible');
-						$.get(url).done(function (data) {
-							placeholderElement.html('');
-							placeholderElement.html(data);
-						});
+						if (sessionStorage.getItem("DisplayPanel") == null || sessionStorage.getItem("DisplayPanel") === undefined || sessionStorage.getItem("DisplayPanel") == '') {
+							addClass(panel, 'cd-panel--is-visible');
+							$.get(url).done(function (data) {
+								placeholderElement.html('');
+								placeholderElement.html(data);
+							});
+
+							sessionStorage.setItem("DisplayPanel", false);
+						}
+						
 
 					}
 					else {
-						var dates = document.getElementsByClassName('date 1');
-						var dateValue;
-						var diffOffset = null;
+						if (sessionStorage.getItem("DisplayPanel") != false) {
+							var dates = document.getElementsByClassName('date 1');
+							var dateValue;
+							var diffOffset = null;
 
-						if (dates != null && dates.length > 0) {
-							dateValue = dates[0].dataset.val;
-						}
-						else {
-							var date = new Date();
-							dateValue = date.toJSON();
-							diffOffset = date.getTimezoneOffset();
-						}
-						
-						$.get(url, { postWhichDate: dateValue, diffOffset: diffOffset }).done(function (data) {
-							var pointerType = event.pointerType;
-							if (pointerType == "mouse") {
-								addClass(panel, 'cd-panel--is-visible');
+							if (dates != null && dates.length > 0) {
+								dateValue = dates[0].dataset.val;
 							}
 							else {
-								if (data != null && data != '') {
-									addClass(panel, 'cd-panel--is-visible');
-								}
-							}
-							if (data != null && data != '') {
-								placeholderElement.prepend(data);
+								var date = new Date();
+								dateValue = date.toJSON();
+								diffOffset = date.getTimezoneOffset();
 							}
 
-						});
+							$.get(url, { postWhichDate: dateValue, diffOffset: diffOffset }).done(function (data) {
+								var pointerType = event.pointerType;
+								if (pointerType == "mouse") {
+									addClass(panel, 'cd-panel--is-visible');
+								}
+								else {
+									if (data != null && data != '') {
+										addClass(panel, 'cd-panel--is-visible');
+									}
+								}
+								if (data != null && data != '') {
+									placeholderElement.prepend(data);
+								}
+
+							});
+
+						}
 						
                     }
 					
