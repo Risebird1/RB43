@@ -48,4 +48,3 @@ where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus 
                     
 END
 GO
-
