@@ -24,16 +24,18 @@ var counter = 0;
 					else {
 						var dates = document.getElementsByClassName('date 1');
 						var dateValue;
+						var diffOffset = null;
+
 						if (dates != null && dates.length > 0) {
 							dateValue = dates[0].dataset.val;
-
 						}
 						else {
 							var date = new Date();
 							dateValue = date.toJSON();
+							diffOffset = date.getTimezoneOffset();
 						}
-						$.get(url, { postWhichDate: dateValue }).done(function (data) {
-
+						
+						$.get(url, { postWhichDate: dateValue, diffOffset: diffOffset }).done(function (data) {
 							var pointerType = event.pointerType;
 							if (pointerType == "mouse") {
 								addClass(panel, 'cd-panel--is-visible');

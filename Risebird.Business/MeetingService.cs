@@ -740,6 +740,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<List<Meeting>> GetInterviewerAssignedInterviews(string emailID, string meetingLineUpType)
+        {
+            try
+            {
+                var assignedMeeting = (await _meetingRespository.GetAllAssignedInterview(emailID, meetingLineUpType)).OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<List<Meeting>> GetCandidateInterviews(string emailID, string status)
         {
             try
