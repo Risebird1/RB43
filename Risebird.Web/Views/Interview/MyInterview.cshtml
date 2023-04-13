@@ -119,20 +119,10 @@
                         <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
                     </div>
                 </div>
-                <div class="pull-left">
-                    <div class="pull-left filtercon">
-                        <div id="myinterview_3">
-                            <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                    <div class="mdc-button__ripple"></div>
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                
+                
 
-                <div class="col-md-8 pull-right">
+                <div class="col-md-12 pull-right">
                     <div>
                         <div>
                             @*<div class="pull-left">
@@ -143,6 +133,18 @@
 
                             </div>*@
                             <div>
+                                <div class="pull-left" style="margin-left:10px">
+                                    <div class="filtercon">
+                                        <div id="myinterview_3">
+                                            <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                    <div class="mdc-button__ripple"></div>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div id="myinterview_2">
                                     <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
                                 </div>
@@ -208,7 +210,7 @@
                                         </button>
 
 
-                                        <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
+                                        <form action="@Url.Action("MyInterview","Interview", new {meetingLineUpType = ViewBag.MeetingLineUpType})" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
 
                                             <div class="modal-body ">
                                                 <div class="row">
@@ -698,7 +700,7 @@
                                         </div>
 
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("MyInterview", new { Page = Page }))
+                                            @Html.PagedListPager(Model, Page => Url.Action("MyInterview", new { Page = Page, meetingLineUpType = ViewBag.MeetingLineUpType }))
                                         </div>
 
 
@@ -1455,7 +1457,7 @@
         $.ajax({
             type: "POST",
             url: "/Interview/MyInterviewJson",
-            data: { 'searchValue': $('#txtmeeting_filter').val(), 'meetingLineUpType' : '@ViewBag.MeetingLineUpType' },
+            data: { 'searchValue': $('#txtmeeting_filter').val(), 'meetingLineUpType' : '@ViewBag.MeetingLineUpType'},// 
             success: function (data) {
                 if (data != "failed") {
                     //bindtableData(data.result);
@@ -1467,7 +1469,7 @@
                     var totalentry = document.getElementById('id_totalentry').innerHTML;
 
                     //bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
-                    bindPages(totalPage, startPage, endPage, totalentry, '@ViewBag.MeetingLineUpType');
+                    bindPages(totalPage, startPage, endPage, totalentry, '@ViewBag.MeetingLineUpType');//
                 }
             }
         });
@@ -1686,7 +1688,8 @@
         }
         $("#tblbodyMyInterview").empty().html(html);
     }
-    function bindPages(pagecount, startpage, endpage, totalcount, meetingLineUpType) {
+    function bindPages(pagecount, startpage, endpage, totalcount, meetingLineUpType ) {//
+        debugger;
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';

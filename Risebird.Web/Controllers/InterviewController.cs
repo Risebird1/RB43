@@ -1582,7 +1582,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Interviewer")
                     {
-                        if(string.IsNullOrEmpty(meetingLineUpType))
+                        if (string.IsNullOrEmpty(meetingLineUpType))
                         {
                             meetingLineUpType = MeetingLineUpType.Pending;
                         }
