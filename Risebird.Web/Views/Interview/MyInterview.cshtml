@@ -82,28 +82,28 @@
                     {
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Upcoming)
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
-                    else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Ongoing)
+                    else if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Pending')"><strong>Pending Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Upcoming')"><strong>Upcoming Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Ongoing')"><strong>Ongoing Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('@MeetingLineUpType.Completed')"><strong>Completed Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('@MeetingLineUpType.Cancelled')"><strong>Cancelled Interviews</strong></div>
                     }
                 </div>
