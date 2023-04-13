@@ -10,7 +10,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[usp_MyInterviews]               
-@emailID varchar(200)                  
+@emailID varchar(200),
+@type varchar(30) = null,
+@timeNow datetime
 AS                
 BEGIN          
       
@@ -37,7 +39,12 @@ join  CandidatesMaster cm on ul.id=cm.UserId
 join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId              
 left join UserList ulh on ulh.EmailId = im.HRCoordinatorEmailId  
 left join Trans_QCFormReport tqc on tqc.Interviewid=im.id
-where interviewer =@emailIDParam and confirmationStatus = 1                        
+left join InterviewReport ir on ir.InterviewId = im.id
+where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus = 1) or
+(@type = 'Pending' and ir.id is null and dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  and im.confirmationStatus = 1) or 
+(@type = 'Ongoing' and im.interviewDate >= @timeNow  and  @timeNow >= dateadd(MINUTE, im.interviewDuration, im.interviewDate) and im.confirmationStatus = 1) or 
+(@type = 'Upcoming' and im.interviewDate > @timeNow and im.confirmationStatus = 1 ) or
+(@type = 'Cancelled' and cast(im.interviewDate as date) = cast( @timeNow as date) and im.confirmationStatus = 2))                  
                     
 END
 GO

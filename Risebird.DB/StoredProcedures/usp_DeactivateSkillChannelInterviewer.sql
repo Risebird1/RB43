@@ -11,16 +11,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_DeactivateSkillChannelInterviewer]
+Create PROCEDURE [dbo].[usp_DeactivateSkillChannelInterviewer]
 @irfId int,
 @interviewerEmail varchar(100)
 AS
+BEGIN
   Declare @interviewerUserId int = (select id from UserList where EmailId = @interviewerEmail)
 		
 	IF EXISTS (SELECT 1 FROM TransInterviewer where IRFId = @irfId and UserId = @interviewerUserId) 
 	BEGIN
-		update TransInterviewer set IsActive = 0 where IRFId = @irfId and UserId = @interviewerUserId
+		update TransInterviewer set IsActive = 0,IsAvailable=0 where IRFId = @irfId and UserId = @interviewerUserId
 	END
-
+END
 GO
 

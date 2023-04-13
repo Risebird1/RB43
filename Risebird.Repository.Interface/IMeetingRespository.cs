@@ -20,7 +20,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetClientMeetings(string emailId);
         Task<string> AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
-        Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailId);
+        Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailId, string meetingLineUpType = null);
         Task<bool> UpdateComments(InterviewComments interviewComments);
         Task<InterviewComments> GetInterviewComments(int interviewId);
         Task<IEnumerable<TransJoinability>> GetTransJoinability(int id);
