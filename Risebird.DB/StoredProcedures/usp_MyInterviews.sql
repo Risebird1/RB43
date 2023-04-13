@@ -41,8 +41,8 @@ left join UserList ulh on ulh.EmailId = im.HRCoordinatorEmailId
 left join Trans_QCFormReport tqc on tqc.Interviewid=im.id
 left join InterviewReport ir on ir.InterviewId = im.id
 where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus = 1) or
-(@type = 'Pending' and ir.id is null and dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  and im.confirmationStatus = 1) or 
-(@type = 'Ongoing' and im.interviewDate >= @timeNow  and  @timeNow >= dateadd(MINUTE, im.interviewDuration, im.interviewDate) and im.confirmationStatus = 1) or 
+(@type = 'Pending' and ir.id is null and (dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  or (@timeNow >= im.interviewDate  and  @timeNow <= dateadd(MINUTE, im.interviewDuration, im.interviewDate))) and im.confirmationStatus = 1) or 
+(@type = 'Completed' and @timeNow >= im.interviewDate  and ir.id is not null and im.confirmationStatus = 1) or 
 (@type = 'Upcoming' and im.interviewDate > @timeNow and im.confirmationStatus = 1 ) or
 (@type = 'Cancelled' and cast(im.interviewDate as date) = cast( @timeNow as date) and im.confirmationStatus = 2))                  
                     
