@@ -864,7 +864,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CandidatesJson(int id, string searchValue,string irfName)
+        public async Task<IActionResult> CandidatesJson(int id, string searchValue, string irfName)
         {
             int? Page = 1;
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -3712,6 +3712,8 @@ namespace Risebird.Web.Controllers
                 {
                     var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments, x.InterviewId)).Distinct();
+                    var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                     if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
                         firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
@@ -3720,10 +3722,8 @@ namespace Risebird.Web.Controllers
                     {
                         firstData = data.FirstOrDefault();
                     }
-                    firstData = data.FirstOrDefault();
 
                     var candidateTimeline = new CandidateTimelineVM();
-
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3743,7 +3743,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.interviewDate = firstData.interviewDate;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
-                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    //var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
