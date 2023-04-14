@@ -14,11 +14,11 @@ namespace Risebird.Entities.Data
         public static readonly string Rejected = "rejected";
         public static readonly string Borderline = "borderline";
         public static readonly string Proxy = "proxy";
-        public static readonly string Noshowinterviewer = "noshowinterviewer";
-        public static readonly string Noshowcandidate = "noshowcandidate";
+        public static readonly string Noshowinterviewer = "no show interviewer";
+        public static readonly string Noshowcandidate = "no show candidate";
         public static readonly string Dropped = "dropped";
         public static readonly string Pending = "pending";
         public static readonly string Scheduled = "scheduled";
-        public static readonly string NoShowAllInclusive = "noshowallinclusive";
+        public static readonly string NoShowAllInclusive = "no show";
     }
 }

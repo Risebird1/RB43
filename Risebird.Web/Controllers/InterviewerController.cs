@@ -3697,7 +3697,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, string interviewerEmailId = null, int? irfId = null, string irfName = null)
+        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3716,6 +3716,11 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.IRFId = irfId.Value;
                         ViewBag.IRFName = irfName;
+                    }
+                    ViewBag.UsePl = string.Empty;
+                    if (!string.IsNullOrEmpty(usePl))
+                    {
+                        ViewBag.UsePl = usePl;
                     }
                     return View("StatsDetails", statsDetailsList);
 
@@ -3737,7 +3742,7 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null)
+        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null)
         {
             try
             {
@@ -3751,6 +3756,11 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.IRFId = irfId.Value;
                     ViewBag.IRFName = irfName;
+                }
+                ViewBag.UsePl = string.Empty;
+                if (!string.IsNullOrEmpty(usePl))
+                {
+                    ViewBag.UsePl = usePl;
                 }
                 return View("StatsDetails", statsDetailsList);
             }
