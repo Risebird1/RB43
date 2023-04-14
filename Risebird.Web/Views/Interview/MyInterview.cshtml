@@ -397,10 +397,18 @@
                                                             <th>Instructions</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th>Client Instructions</th>
-                                                            <th id="myinterview_7">Meeting Link</th>
+                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                            {
+                                                                <th id="myinterview_7">Meeting Link</th>
+                                                            }
+                                                            
                                                             <th>Max Interview Duration</th>
-                                                            <th>Backup Link</th>
-                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                            {
+                                                                <th>Backup Link</th>
+                                                                <th class="disabled-sorting text-left">Actions</th>
+                                                            }
+                                                            
 
                                                         </tr>
 
@@ -418,10 +426,17 @@
                                                             <th>Instructions</th>
                                                             <th>Resume</th>
                                                             <th>Client Instructions</th>
-                                                            <th>Meeting Link</th>
+                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                            {
+                                                                <th>Meeting Link</th>
+                                                            }
                                                             <th>Max Interview Duration</th>
-                                                            <th>Backup Link</th>
-                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                            {
+                                                                <th>Backup Link</th>
+                                                                <th class="disabled-sorting text-left">Actions</th>
+                                                            }
+                                                            
 
                                                         </tr>
 
@@ -538,42 +553,52 @@
                                                                     </a>
 
                                                                 </td>
-                                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                                @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                 {
-                                                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                    @if (item.zoomLink != null && item.zoomLink != "")
                                                                     {
-                                                                        <td class="cadName">
-                                                                            <a target="_blank" onclick="CaptureMeetingOpenTime(@item.id)" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>Before 10 min only</td>
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-                                                                <td><strong>@item.interviewDuration</strong></td>
-                                                                @if (item.BackUpLink != null && item.BackUpLink != "")
-                                                                {
-                                                                    <td class="cadName">
-                                                                        <a target="_blank" title="Meeting Link" href=@item.BackUpLink>BackUp Meeting Link</a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.MeetingPlatform != "Zoom")
-                                                                    {
-                                                                        <td class="blinkMessage">Click here to generate backup meeting link(if failed to connect interview with primary link)</td>
+                                                                        @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a target="_blank" onclick="CaptureMeetingOpenTime(@item.id)" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>Before 10 min only</td>
+                                                                        }
                                                                     }
                                                                     else
                                                                     {
                                                                         <td></td>
                                                                     }
                                                                 }
-                                                                <td class="text-left">
+                                                                
+                                                                <td><strong>@item.interviewDuration</strong></td>
+                                                                @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                {
+                                                                    @if (item.BackUpLink != null && item.BackUpLink != "")
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a target="_blank" title="Meeting Link" href=@item.BackUpLink>BackUp Meeting Link</a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.MeetingPlatform != "Zoom")
+                                                                        {
+                                                                            <td class="blinkMessage">Click here to generate backup meeting link(if failed to connect interview with primary link)</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td></td>
+                                                                        }
+                                                                    }
+                                                                }
+                                                                
+                                                                @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                {
+                                                                    <td class="text-left">
                                                                     @{
                                                                         var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
                                                                     }
@@ -629,6 +654,9 @@
                                                                         </button>
                                                                     }
                                                                 </td>
+                                                                }
+
+                                                                
 
                                                             </tr>
 
@@ -638,7 +666,10 @@
                                                                         <tr>
                                                                             <th>Slot</th>
                                                                             <th>Candidate Email</th>
-                                                                            <th>Call HR</th>
+                                                                            @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                            {
+                                                                                <th>Call HR</th>
+                                                                            }
                                                                             <th>Meeting Status</th>
                                                                             <th>Interview Status</th>
                                                                             <th>Co-ordinating HR</th>
@@ -665,19 +696,22 @@
 
                                                                                 <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
                                                                             }
+                                                                            @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                            {
+                                                                                <td style="text-align:center">
+                                                                                    @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                                                    {
 
-                                                                            <td style="text-align:center">
-                                                                                @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
-                                                                                {
-
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
-                                                                                        <span onclick="CommonCallButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber', '@item.HRCoordinatorEmailId','@item.id', null, 'HR')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                                    </button>
+                                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                                                                                            <span onclick="CommonCallButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber', '@item.HRCoordinatorEmailId','@item.id', null, 'HR')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                                        </button>
 
 
-                                                                                }
+                                                                                    }
 
-                                                                            </td>
+                                                                                </td>
+                                                                            }
+                                                                            
                                                                             <td>@item.MeetingStatusDesc</td>
                                                                             <td>@item.InterviewStatusDesc</td>
                                                                             <td>@item.HRCoordinatorEmailId</td>
