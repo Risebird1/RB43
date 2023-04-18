@@ -57,6 +57,11 @@ Select Count(*) as QCReportCount from Trans_QCFormReport tq join InterviewMeetin
 where im.interviewer=@emailID
 
 Select ip.ResumeLink from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
+
+Select Avg(ic.VideoDuration) VideoDuration from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id 
+where interviewer=@emailID and im.Confirmationstatus=1 and ic.MeetingStatus in(4,6,7,8) 
+and ic.VideoDuration is not null
+
 END
 
 
