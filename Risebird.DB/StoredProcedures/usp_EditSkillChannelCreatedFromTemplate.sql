@@ -117,7 +117,18 @@ begin try
       
  SELECT @id, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
  --interviewers  
+<<<<<<< HEAD
  delete from TransInterviewer where IRFId = @id and IsActive=1 
+=======
+ --Start :Delete interviewers
+ Declare @Assessmentid int  
+Select @Assessmentid=AssessmentGroupid From IRF where id=@id  
+Declare @temptable Table(Userid int)  
+Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
+ --delete from TransInterviewer where IRFId=@id 
+ Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@id
+ --END: Delete interviewers
+>>>>>>> qaRelease
   
  INSERT INTO [dbo].[TransInterviewer](    
  [IRFId] ,    
