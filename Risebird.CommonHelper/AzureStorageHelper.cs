@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
 //using Microsoft.Azure.Management.Media;
 //using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +9,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -1242,6 +1244,28 @@ namespace Risebird.CommonHelper
             blob = GetCloudBlockBlob(containerName, filename);
             blob.UploadTextAsync(blobFile);
             return blob.Uri.ToString();
+        }
+        public IEnumerable<T> GetLogEntities<T>(string tableName) where T : TableEntity, new()
+        {
+            var table = GetTable(tableName);
+            var entities = new List<T>();
+            try
+            {
+                TableContinuationToken token = null;
+                var lowerlimit = DateTime.Today.AddDays(-2);
+                string dateRangeFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, lowerlimit);
+                do
+                {
+                    var queryResult = table.ExecuteQuerySegmentedAsync(new TableQuery<T>().Where(dateRangeFilter), token);
+                    entities.AddRange(queryResult.Result);
+                    token = queryResult.Result.ContinuationToken;
+                } while (token != null);
+            }
+            catch (StorageException)
+            {
+                return entities;
+            }
+            return entities;
         }
     }
 

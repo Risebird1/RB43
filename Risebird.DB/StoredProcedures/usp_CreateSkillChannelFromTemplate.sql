@@ -150,7 +150,7 @@ begin try
       
  SELECT @irfIntId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
  --interviewers  
- delete from TransInterviewer where IRFId= @irfIntId  
+ delete from TransInterviewer where IRFId= @irfIntId  and IsActive=1
   
  INSERT INTO [dbo].[TransInterviewer](    
  [IRFId] ,    

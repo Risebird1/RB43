@@ -178,7 +178,7 @@ BEGIN
 	SELECT * FROM @TechSkillBulkData 
 
 	--interviewers
-	delete from TransInterviewer where IRFId=@id 
+	delete from TransInterviewer where IRFId=@id and IsActive=1
 
 	INSERT INTO [dbo].[TransInterviewer](  
 	[IRFId] ,  
@@ -191,7 +191,7 @@ BEGIN
 	SELECT ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
     --emergency interviewers
-    delete from TransEmergencyInterviewer where IRFId=@id 
+    delete from TransEmergencyInterviewer where IRFId=@id and IsActive=1
 
 	INSERT INTO [dbo].[TransEmergencyInterviewer](  
 	[IRFId] ,  
