@@ -1406,6 +1406,11 @@ namespace Risebird.Repository
                         dt = dataset.Tables[4];
                         _resultVM.IsResumePresent = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? true : false;
                     }
+                    if (dataset.Tables.Count > 5)
+                    {
+                        dt = dataset.Tables[5];
+                        _resultVM.AvgInterviewTime = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
+                    }
                     return _resultVM;
                 }
             }

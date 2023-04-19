@@ -902,5 +902,21 @@ namespace Risebird.Web.Controllers
             var resultset = await _meetingService.SaveSauveyIRFReview(rating, comments, Emailid, IRFId);
             return Json("success");
         }
+        [HttpGet]
+        public async Task<IActionResult> PortalErrorList()
+        {
+            try
+            {
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var result = _azureTableStorageService.GetLogEntities<LogData>("Risebirdlogs");
+                return View(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
+                var result = new List<LogData>();
+                return View(result);
+            }
+        }
     }
 }
