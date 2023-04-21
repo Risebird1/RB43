@@ -591,7 +591,7 @@ namespace Risebird.Web.Controllers
                     {
                         valueset++;
                     }
-                    if (dayofweek != DateTime.Now.DayOfWeek.ToString().ToLower())
+                    if (dayofweek != DateTime.Now.AddMinutes(-addontime).DayOfWeek.ToString().ToLower())
                     {
                         //int valueset = Convert.ToInt32(Convert.ToDouble(item.End) - Convert.ToDouble(item.Start));
                         //var valuecheck = Convert.ToDouble(item.End) - Convert.ToDouble(item.Start);
@@ -738,7 +738,7 @@ namespace Risebird.Web.Controllers
                                                     DateTime value1 = new DateTime(year, month, (day + 1), newslot, newmin, 0);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
-                                                        if (slots > offsetbuffer )
+                                                        if (slots > offsetbuffer)
                                                         {
                                                             model.Add(((slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                                         }
