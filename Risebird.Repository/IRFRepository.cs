@@ -1966,7 +1966,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillChannelSME", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
+                    cmdUpdateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
 
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
