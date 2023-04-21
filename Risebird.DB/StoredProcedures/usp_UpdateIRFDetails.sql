@@ -180,11 +180,11 @@ BEGIN
  --interviewers  
  --Start :Delete interviewers
  Declare @Assessmentid int  
-Select @Assessmentid=AssessmentGroupid From IRF where id=@irfId  
+Select @Assessmentid=AssessmentGroupid From IRF where id=@id 
 Declare @temptable Table(Userid int)  
 Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
  --delete from TransInterviewer where IRFId=@id 
- Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@irfId
+ Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@id
  --END: Delete interviewers
   
  INSERT INTO [dbo].[TransInterviewer](    
