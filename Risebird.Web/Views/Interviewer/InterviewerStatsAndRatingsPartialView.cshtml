@@ -444,24 +444,23 @@
                 <td class="text-center">
                     @if (ViewBag.Usepl != "Public")
                     {
-                    <span>
-                        <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
-                            <span onclick="javascript:OpenInterviewerFlagDetails('@item.InterviewerEmailId');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
-                        </button>
-                    </span>
+                        <span>
+                            <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
+                                <span onclick="javascript:OpenInterviewerFlagDetails('@item.InterviewerEmailId');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
+                            </button>
+                        </span>
                     }
-                    @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                    @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && ViewBag.Usepl != "Public")
                     {
-                    <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
-
+                        <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
                     }
                     @if (irfId.HasValue && irfId.Value > 0)
                     {
-                    <span>
-                        <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to deactivate interviewer">
-                            <span title="Click here to deactivate Interviewer Profile" onclick="javascript:DeactivateInterviewer('@irfId', '@item.InterviewerEmailId', this.id);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                        </button>
-                    </span>
+                        <span>
+                            <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to deactivate interviewer">
+                                <span title="Click here to deactivate Interviewer Profile" onclick="javascript:DeactivateInterviewer('@irfId', '@item.InterviewerEmailId', this.id);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                            </button>
+                        </span>
                     }
 
                 </td>
