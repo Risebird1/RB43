@@ -600,7 +600,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("TestComplete", new { status = "Unauthorized" });
             }
 
-            var itemshareupdate = candidateShare.FirstOrDefault();
+            //var itemshareupdate = candidateShare.FirstOrDefault();
+            var itemshareupdate = candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.MCQId == Id).FirstOrDefault();
             await _mCQService.UpdateShareMCQEmailStatusByid(itemshareupdate.id, 1);
 
             values.ApplyingCompany = itemshareupdate.ApplyingCompany;
@@ -896,6 +897,7 @@ namespace Risebird.Web.Controllers
                 };
                 var resultretrun = await _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
                 HttpContext.Session.Remove("TestCandidateQuestion");
+                HttpContext.Session.Remove("QuestionSet");
                 return Json("TestSubmit");
             }
             catch (Exception)
