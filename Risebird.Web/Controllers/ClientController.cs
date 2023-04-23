@@ -858,6 +858,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Emailid = "";
@@ -876,7 +878,14 @@ namespace Risebird.Web.Controllers
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                         {
-                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                            if (clientName == "FoundIt (Monster.com)")
+                            {
+                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                            }
+                            else
+                            {
+                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                            }
                         }
 
                         //ViewBag.IsSelected = false;
@@ -953,6 +962,8 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = Emailid;
                     ViewBag.Emailid = Emailid;
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
                     ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
@@ -960,7 +971,14 @@ namespace Risebird.Web.Controllers
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                     {
-                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                        if (clientName == "FoundIt (Monster.com)")
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                        }
+                        else
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                        }
                     }
                     SetMeetingsProperties(meetings);
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
@@ -1320,14 +1338,22 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-
+                var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                clientName = clientName.Replace("\"", "");
                 var roleId = await _clientService.GetClientRoleByEmailId(emailid);
 
                 var selectedMeeting = new List<MeetingVM>();
                 var meetings = await _meetingService.GetClientMeetingList(emailid);
                 if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                 {
-                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    if (clientName == "FoundIt (Monster.com)")
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                    }
+                    else
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
                 }
 
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -2850,6 +2876,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
@@ -2867,7 +2895,14 @@ namespace Risebird.Web.Controllers
                             meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                             if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
                             {
-                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                                if (clientName == "FoundIt (Monster.com)")
+                                {
+                                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                                }
+                                else
+                                {
+                                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                                }
                             }
                             SetMeetingsProperties(meetings);
                             meetings = meetings.Where(x => x.intervieweStatusStatDesc == "Rejected").ToList();
@@ -3178,11 +3213,20 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+                var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                clientName = clientName.Replace("\"", "");
                 var meetings = await _meetingService.GetClientMeetingList(emailid);
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
                 {
-                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    if (clientName == "FoundIt (Monster.com)")
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                    }
+                    else
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
                 }
                 SetMeetingsProperties(meetings);
                 meetings = meetings.Where(x => x.intervieweStatusStatDesc == "Rejected").ToList();

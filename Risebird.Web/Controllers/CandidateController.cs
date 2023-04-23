@@ -3335,7 +3335,16 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                     HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+                    
+                    if (client.ClientName == "FoundIt (Monster.com)")
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-120), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+                    }
+                    else
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+                    }
+                   
                     if (candidateData == null)
                     {
                         return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
@@ -3495,8 +3504,15 @@ namespace Risebird.Web.Controllers
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), datatype, emailid)).ToList();
                 }
                 else
-                {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                {                    
+                    if (clientName == "FoundIt (Monster.com)")
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-120), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                    }
+                    else
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                    }
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
