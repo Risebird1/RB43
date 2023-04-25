@@ -43,10 +43,11 @@ CREATE TABLE [dbo].[IRF](
             [AudioCommentBy][varchar](100) NULL,
             [UpdatedBySME][int] NULL,
             [UpdatedBySMEAt][datetime] NULL,
-            [IsLocked][bit]null,
-            [flagcount][int]null,
-            [InterviewDuration][int]null,
-            [IsFixedInterviewduration][bit]null,
+            [IsLocked][bit] null,
+            [flagcount][int] null,
+            [InterviewDuration][int] null,
+            [IsFixedInterviewduration][bit] null,
+            [FixedAmount][int] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -400,6 +401,15 @@ BEGIN
     Add IsFixedInterviewduration bit null
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'FixedAmount')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add FixedAmount INT NULL
+END
 
 END
 

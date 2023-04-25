@@ -56,6 +56,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 --@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 @HRBulkData AS [dbo].[TransHR_TableType] READONLY,
+@FixedAmount int = null,
 @idIrf int output            
             
 AS            
@@ -99,7 +100,8 @@ Begin
 				   ,[IsMeetingAutoCancelled]
 				   ,[IsMeetingNotificationSend]
 				   ,[InterviewDuration]
-				   ,[IsFixedInterviewduration])            
+				   ,[IsFixedInterviewduration]
+				   ,[FixedAmount])            
 					   VALUES            
 						   (@IRFId,            
 				   @clientName,            
@@ -134,7 +136,8 @@ Begin
 				   @IsMeetingAutoCancelled,
 				   @IsMeetingNotificationSend,
 				   @InterviewDuration,
-				   @IsFixedInterviewduration)      
+				   @IsFixedInterviewduration,
+				   @FixedAmount)      
        
 					select @idIrf = SCOPE_IDENTITY()  
 				

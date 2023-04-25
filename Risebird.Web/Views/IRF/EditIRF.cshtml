@@ -1647,7 +1647,7 @@
                                                             <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
-                                                                        @Html.CheckBoxFor(m => m.IsFixedInterviewduration, new { @class = "mdc-checkbox__native-control" })
+                                                                        @Html.CheckBoxFor(m => m.IsFixedInterviewduration, new { @class = "mdc-checkbox__native-control", @onclick="ShowAmountIfChecked()" })
                                                                         <div class="mdc-checkbox__background">
                                                                             <svg class="mdc-checkbox__checkmark"
                                                                              viewBox="0 0 24 24">
@@ -1660,6 +1660,20 @@
                                                                     @Html.LabelFor(model => model.IsFixedInterviewduration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                     <i style="margin-right:-4vw" title="Fixed Interview duration(Select and rejected duration is same)" class="fa fa-info-circle"></i>
                                                                 </div>
+                                                            </div>
+                                                            @{
+                                                                string displayAmount = "none";
+                                                                if(Model.IsFixedInterviewduration)
+                                                                {
+                                                                    displayAmount = "block";
+                                                                }
+                                                            }
+                                                            <div class="col-md-4 col-sm-4 pull-left" style="display:@displayAmount" id="id_div_fixedAmount">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.FixedAmount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FixedAmount, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line", @max = "900", @min = "100" } })
+                                                                @Html.ValidationMessageFor(model => model.FixedAmount, "", new { @id = "error_FixedAmount", @class = "text-danger" })
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1778,6 +1792,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        
         var isLockedElement = document.getElementById("IsLocked");
         if (isLockedElement.checked) {
             isLockedElement.disabled = true;
@@ -2795,7 +2810,7 @@
             });
         }
         CheckCandidateavailabilityDetails();
-        CheckFixedInterviewDuration();
+        @*CheckFixedInterviewDuration();*@
     });
 
 </script>
@@ -4314,16 +4329,6 @@
             document.getElementById('IsMeetingAutoCancelled').disabled = true;
         }
     }
-    $('#InterviewDuration').on('change', function () {
-        CheckFixedInterviewDuration()
-    });
-    function CheckFixedInterviewDuration() {
-        var value = document.getElementById('InterviewDuration').value;
-        if (parseInt(value) == 30) {
-            document.getElementById('IsFixedInterviewduration').disabled = false;
-        } else {
-            document.getElementById('IsFixedInterviewduration').checked = false;
-            document.getElementById('IsFixedInterviewduration').disabled = true;
-        }
-    }
+    
+
 </script>
