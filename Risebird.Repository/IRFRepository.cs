@@ -1054,6 +1054,10 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
 
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
+
+
                     SqlParameter idIRFParam = new SqlParameter();
                     idIRFParam.ParameterName = "@idIrf";
                     idIRFParam.DbType = DbType.Int32;
@@ -1983,6 +1987,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
 
                     bool isSMEChanged = false;
 

@@ -1046,10 +1046,10 @@ namespace Risebird.Business
                 var irfDetails = await _meetingRespository.GetIRFDetails(irfId);
                 var levels = await _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
-                var check = await _meetingRespository.GetIRFbyId(irfId);
+                //var check = await _meetingRespository.GetIRFbyId(irfId);
                 var interviewDetails = await _meetingRespository.GetInterviewMeetingById(interviewId);
 
-                if (!check)
+                if (irfDetails == null)
                 {
                     return null;
                 }
@@ -1226,6 +1226,7 @@ namespace Risebird.Business
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 reportModel.Interviewer = interviewDetails.interviewer;
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
+                
                 return reportModel;
             }
             catch (Exception e)
