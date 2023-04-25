@@ -3505,7 +3505,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {                    
-                    if (clientName == "FoundIt (Monster.com)")
+                    if (client.ClientName == "FoundIt (Monster.com)")
                     {
                         candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-120), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
                     }
