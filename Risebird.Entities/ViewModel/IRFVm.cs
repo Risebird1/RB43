@@ -212,6 +212,9 @@ namespace Risebird.Entities.ViewModel
         public SelectList InterviewDurationList { get; set; }
         [Display(Name = "Fixed Interview Duration")]
         public bool IsFixedInterviewduration { get; set; }
+
+        [DisplayName("Fixed Amount")]
+        public int FixedAmount { get; set; }
     }
     public class InterviewerIds
     {
@@ -330,6 +333,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsLocked { get; set; }
         public int InterviewDuration { get; set; }
         public bool IsFixedInterviewduration { get; set; }
+        public int FixedAmount { get; set; }
+
     }
     public class SkillCahnnelDetailsVM
     {

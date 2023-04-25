@@ -18,18 +18,15 @@
             <th>Instructions</th>
             <th id="myinterview_6">Resume</th>
             <th>Client Instructions</th>
-            @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
-            {
-                <th id="myinterview_7">Meeting Link</th>
-            }
-            <th>Max Interview Duration</th>
             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
             {
+                <th id="myinterview_7">Meeting Link</th>
+                <th>Compensation Type</th>
+                <th>Max./Expected Interview Duration</th>
                 <th>Backup Link</th>
                 <th class="disabled-sorting text-left">Actions</th>
             }
             
-
         </tr>
 
     </thead>
@@ -48,11 +45,9 @@
             <th>Client Instructions</th>
             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
             {
-                <th>Meeting Link</th>
-            }
-            <th>Max Interview Duration</th>
-            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
-            {
+                <th id="myinterview_7">Meeting Link</th>
+                <th>Compensation Type</th>
+                <th>Max./Expected Interview Duration</th>
                 <th>Backup Link</th>
                 <th class="disabled-sorting text-left">Actions</th>
             }
@@ -184,17 +179,24 @@
 
                     }
 
-
                     else
                     {
                         <td></td>
                     }
-                }
-                
+                    <td>
 
-                <td><strong>@item.interviewDuration</strong></td>
-                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
-                {
+                        @if (item.IsFixedInterviewduration)
+                        {
+                            <strong>Fixed</strong>
+                        }
+                        else
+                        {
+                            <strong>Variable</strong>
+                        }
+
+                    </td>
+                    @*<td><strong>@item.interviewDuration</strong></td>*@
+                    <td><strong>@item.MaxInterviewDuration min.</strong></td>
                     @if (item.BackUpLink != null && item.BackUpLink != "")
                     {
                         <td class="cadName">
@@ -254,7 +256,6 @@
                     </td>
                 }
                 
-
             </tr>
 
             <tr class="collapse @item.id">

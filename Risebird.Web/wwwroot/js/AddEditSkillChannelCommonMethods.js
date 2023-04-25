@@ -112,3 +112,31 @@ function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour,
     }
 
 }
+
+function ShowAmountIfChecked() {
+    var checkBox = document.getElementById("IsFixedInterviewduration");
+
+    // Get the output text
+    var amountDiv = document.getElementById("id_div_fixedAmount");
+
+    // If the checkbox is checked, display the output text
+    if (checkBox.checked == true) {
+        amountDiv.style.display = "block";
+    }
+    else {
+        amountDiv.style.display = "none";
+    }
+}
+
+//$('#InterviewDuration').on('change', function () {
+//    CheckFixedInterviewDuration()
+//});
+//function CheckFixedInterviewDuration() {
+//    var value = document.getElementById('InterviewDuration').value;
+//    if (parseInt(value) == 30) {
+//        document.getElementById('IsFixedInterviewduration').disabled = false;
+//    } else {
+//        document.getElementById('IsFixedInterviewduration').checked = false;
+//        document.getElementById('IsFixedInterviewduration').disabled = true;
+//    }
+//}

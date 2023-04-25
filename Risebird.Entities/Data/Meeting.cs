@@ -114,5 +114,7 @@ namespace Risebird.Entities.Data
         public string ClientHREmailId { get; set; }
         public string StaffingAgencyEmailId { get; set; }
         public bool IsInterviewerActive { get; set; }
+        public bool IsFixedInterviewduration { get; set; }
+        public int MaxInterviewDuration { get; set; }
     }
 }
