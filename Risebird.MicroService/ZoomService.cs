@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -118,10 +119,11 @@ namespace Risebird.MicroService
 
                                 //upload the video to azure blob using the download_Url
 
-                                WebClient myWebClient = new WebClient();
+                                //WebClient myWebClient = new WebClient();
+                                HttpClient myWebClient = new HttpClient();
                                 string uploadedVideoUrl = string.Empty;
                                 string sasUrl = string.Empty;
-                                using (Stream myStream = myWebClient.OpenRead(downloadUrl))
+                                using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                 {
                                     var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
                                     var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
