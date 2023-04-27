@@ -4430,7 +4430,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@timeEnd", DateTime.Now.AddHours(-5));
+                    parameters.Add("@timeEnd", DateTime.Now.AddHours(-3));
                     parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
                     var result = await SqlMapper.QueryAsync<PendingVideoMeetingsData>(con, "usp_GetPendingVideoMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
@@ -5114,7 +5114,8 @@ namespace Risebird.Repository
             {
                 string query = string.Empty;
                 string checkquery = string.Empty;
-                if (status == 1 || (status == 4 && response == true))
+                //if (status == 1 || (status == 4 && response == true))
+                if (status == 1 || status == 4)
                 {
                     query = "Update im set IsCandidateResponsed=1,CandidateResponse=@status from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }

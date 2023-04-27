@@ -11,5 +11,8 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateSupportHR(Support hrDetails);
         Task<Support> GetSupportHR(int id);
         Task<bool> DeleteSupportHR(int id);
+        Task<bool> SaveRaisedIssueDetails(RaiseBugsVM model);
+        Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails();
+        Task<bool> UpdateRaisedRequestStatus(RaiseBugsVM model);
     }
 }

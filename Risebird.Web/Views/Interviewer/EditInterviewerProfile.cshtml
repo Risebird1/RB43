@@ -125,6 +125,13 @@
 
                                         @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @id = "err_assessmentgroup", @class = "text-danger" })
                                     </div>
+                                   
+
+
+                                </div>
+
+                                <div class="col-lg-4  col-md-4 col-sm-4 px-1">
+
                                     <div class="form-group">
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.IndiaServiceRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="required">*</span>
@@ -133,10 +140,6 @@
                                         @Html.ValidationMessageFor(model => model.IndiaServiceRate, "", new { @class = "text-danger" })
                                     </div>
 
-
-                                </div>
-
-                                <div class="col-lg-4  col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { id = "txt_LastName", @class = "form-control text-box single-line", @type = "text" } })
@@ -185,13 +188,13 @@
                                         @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999",@style="margin-top: 10px!important;" })
                                     </div>
 
-                                    <div class="form-group">
+                                    @*<div class="form-group">
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.OutsideIndiaServiceRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="required">*</span>
                                         </div>
-                                        <select class="select-css form-control webkitEnabled" asp-for="OutsideIndiaServiceRate" asp-items="Model.OutsideIndiaServiceRateList"></select>@*style="margin-top: 10px; height: 45px;"*@
+                                        <select class="select-css form-control webkitEnabled" asp-for="OutsideIndiaServiceRate" asp-items="Model.OutsideIndiaServiceRateList"></select>
                                         @Html.ValidationMessageFor(model => model.OutsideIndiaServiceRate, "", new { @class = "text-danger" })
-                                    </div>
+                                    </div>*@
 
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
