@@ -1,0 +1,54 @@
+﻿<div class="cd-panel cd-panel--from-right js-tr-window-main" style="z-index:4">
+    <header class="cd-panel__header">
+        <h1 style="font-weight: bold !important;font-size: 16px !important;font: inherit;">Raise Issue</h1>
+        <a href="#0" class="cd-panel__close js-tr-close">Close</a>
+    </header>
+
+    <div class="cd-panel__container">
+        <div class="cd-panel__content" id="raiseRequest_Bugs">
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var raiseBugTriggers = document.getElementsByClassName('js-tr-window-trigger');
+        if (raiseBugTriggers.length > 0) {
+            for (var i = 0; i < raiseBugTriggers.length; i++) {
+                var raiseBugClass = 'js-tr-window-' + raiseBugTriggers[i].getAttribute('data-panel');
+                var raiseBugpanel = document.getElementsByClassName(raiseBugClass)[0];
+                raiseBugTriggers[i].addEventListener('click', function (event) {
+                    event.preventDefault();
+                    var url = $(this).data('url');
+                    addClass(raiseBugpanel, 'cd-panel--is-visible');
+                    $.get(url).done(function (data) {
+                        $('#raiseRequest_Bugs').html('');
+                        $('#raiseRequest_Bugs').html(data);
+                    });
+                });
+
+                raiseBugpanel.addEventListener('click', function (event) {
+                    if (hasClass(event.target, 'js-tr-close') || hasClass(event.target, raiseBugClass)) {
+                        event.preventDefault();
+                        removeClass(raiseBugpanel, 'cd-panel--is-visible');
+                    }
+                });
+            }
+        }
+
+    })
+    function hasClass(el, className) {
+        if (el.classList) return el.classList.contains(className);
+        else return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+    }
+    function addClass(el, className) {
+        if (el.classList) el.classList.add(className);
+        else if (!hasClass(el, className)) el.className += " " + className;
+    }
+    function removeClass(el, className) {
+        if (el.classList) el.classList.remove(className);
+        else if (hasClass(el, className)) {
+            var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+            el.className = el.className.replace(reg, ' ');
+        }
+    }
+</script>

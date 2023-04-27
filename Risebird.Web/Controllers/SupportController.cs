@@ -18,12 +18,17 @@ namespace Risebird.Web.Controllers
         private ISupportService _supportService;
         private IUserService _userService;
         private readonly IDashboardService _dashboardService;
-        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IDashboardService dashboardService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+
+        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IDashboardService dashboardService, IFileMimeTypeHelper fileMimeTypeHelper, IAzureStorageHelper azureStorageHelper)
         {
             _supportService = supportService;
             _applicationErrorLogger = applicationErrorLogger;
             _userService = userService;
             _dashboardService = dashboardService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
+            _azureStorageHelper = azureStorageHelper;
         }
 
         [HttpGet]
@@ -389,5 +394,61 @@ namespace Risebird.Web.Controllers
             }
             return RedirectToAction("Alertmessage");
         }
+        #region Raise Tickets
+        public async Task<IActionResult> RaiseBugRequest()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = new RaiseBugsVM();
+                model.RequestType = "Technical";
+                model.RequestedBy = emailId;
+                return PartialView(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RaiseBugRequest(RaiseBugsVM model)
+        {
+            if (model.Attachment != null)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.Attachment);
+                if (fileMimeType == "image/jpg" || fileMimeType == "image/png" || fileMimeType == "image/jpeg")
+                {
+                    var fileName = model.Attachment.FileName;
+                    long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    fileName = unixTime.ToString() + "_" + fileName;
+                    await _azureStorageHelper.InsertBlob(fileName, "audios", model.Attachment);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    string uploadedaudioFileURL = blob.Uri.ToString();
+                    model.AttachmentURL = uploadedaudioFileURL;
+                }
+            }
+            var result = await _supportService.SaveRaisedIssueDetails(model);
+            if (result)
+            {
+                return Json("Request raised successfully.");
+            }
+            return Json("Request is not raised, Please try again.");
+        }
+        public async Task<IActionResult> RaisedRequests()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var model = await _supportService.GetRaisedIssueDetails();
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        #endregion
     }
 }

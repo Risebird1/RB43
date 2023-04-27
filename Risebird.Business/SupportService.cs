@@ -88,5 +88,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveRaisedIssueDetails(RaiseBugsVM model)
+        {
+            try
+            {
+                return await _supportRespository.SaveRaisedIssueDetails(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails()
+        {
+            try
+            {
+                return await _supportRespository.GetRaisedIssueDetails();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

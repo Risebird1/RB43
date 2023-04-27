@@ -172,6 +172,45 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> SaveRaisedIssueDetails(RaiseBugsVM model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@RequestType", model.RequestType);
+                parameters.Add("@Comment", model.Comment);
+                parameters.Add("@AttachmentURL", model.AttachmentURL);
+                parameters.Add("@RequestedBy", model.RequestedBy);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_SaveRaisedIssueDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<RaiseBugsVM>(con, "usp_GetRaisedIssues", null,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
