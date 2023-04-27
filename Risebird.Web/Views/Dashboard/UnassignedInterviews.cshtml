@@ -58,11 +58,13 @@
                 </div>
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
+                        @if (ViewBag.actionstatus != "NeedClarity")
+                        {
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                        }
                         @if (ViewBag.Actiontype == 0)
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -228,8 +230,11 @@
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
-                                                    <th>Meeting Status</th>
-                                                    @if (ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus != "NeedClarity")
+                                                    {
+                                                        <th>Meeting Status</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity")
                                                     {
                                                         <th>Interview Status</th>
                                                     }
@@ -276,8 +281,11 @@
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
-                                                    <th>Meeting Status</th>
-                                                    @if (ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus != "NeedClarity")
+                                                    {
+                                                        <th>Meeting Status</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity")
                                                     {
                                                         <th>Interview Status</th>
                                                     }
@@ -339,7 +347,9 @@
                                                                             </div>
                                                                         }}
                                                                     else
-                                                                    { <div></div>}
+                                                                    {
+                                                                        <div></div>
+                                                                    }
 
 
                                                                     <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
@@ -370,22 +380,25 @@
                                                         {
                                                             <td>@item.InterviewerMobileNumber</td>
                                                         }
-                                                        @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                        @if (ViewBag.actionstatus != "NeedClarity")
                                                         {
-                                                            <td>Scheduled</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            @if (item.MeetingStatusStatusDesc != "0")
+                                                            @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                             {
-                                                                <td> @item.MeetingStatusStatusDesc</td>
+                                                                <td>Scheduled</td>
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                                @if (item.MeetingStatusStatusDesc != "0")
+                                                                {
+                                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                        @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity")
                                                         {
                                                             @if (item.intervieweStatusStatDesc != "0")
                                                             {
@@ -467,7 +480,6 @@
                 <div class="col-md-12 ">
                     <div class="zoomMeeting_scroll">
                         <div id="divZoomMeetingHistory" class="pdr-20">
-
                         </div>
                     </div>
                 </div>
@@ -487,63 +499,63 @@
 
 <script type="text/javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
 
-            if ('@filter' != "") {
+        if ('@filter' != "") {
 
-                ApplySessionFilter();
-            }
-            //$("#Status").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
-            //$("#Client").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
-            //$("#ClientHREmail").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
+            ApplySessionFilter();
+        }
+        //$("#Status").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#Client").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#ClientHREmail").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
 
 
-        });
+    });
 
     function ResetFilter() {
-        var value=$("#hidactionstatus").val();
+        var value = $("#hidactionstatus").val();
         window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter?actionstatus=" + value;
 
-        }
-        function ApplySessionFilter() {
+    }
+    function ApplySessionFilter() {
 
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var status =  @Html.Raw(Json.Serialize(Status));
-            var client =  @Html.Raw(Json.Serialize(Client));
-            var clientHREmail =  @Html.Raw(Json.Serialize(ClientHREmail));
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var status = @Html.Raw(Json.Serialize(Status));
+        var client = @Html.Raw(Json.Serialize(Client));
+        var clientHREmail = @Html.Raw(Json.Serialize(ClientHREmail));
 
 
 
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            //$("#Status").val(status);
-            $("#Client").val(client);
-            $("#ClientHREmail").val(clientHREmail);
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        //$("#Status").val(status);
+        $("#Client").val(client);
+        $("#ClientHREmail").val(clientHREmail);
 
-            var form = $("#form").serialize();
+        var form = $("#form").serialize();
 
-        }
+    }
 
 
 

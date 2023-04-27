@@ -1,4 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.DashboardVM
+@using Risebird.Entities.Data;
 @using Risebird.Entities.Enum
 @{
 
@@ -130,13 +131,13 @@
                                     <td class="un-right">
                                         @*<div class="countdown__timer flip" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunassignedinterviewcount">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong></div>*@
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonunassignedinterviewcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonunassignedinterviewcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span>
@@ -157,13 +158,13 @@
 
 
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonunfilledmeetingstatuscount" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonunfilledmeetingstatuscount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span>
@@ -211,13 +212,13 @@
 
 
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAssignedCoordianter')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAssignedCoordianter')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonunfilledcommentscount" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAssignedCoordianter')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAssignedCoordianter')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonunfilledcommentscount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span>
@@ -241,13 +242,13 @@
 
 
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('ZoomLink')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonmissingzoomlinkcount" class="card-title">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('ZoomLink')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonmissingzoomlinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span>
@@ -270,13 +271,13 @@
 
 
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAttendedZoomLink')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('UnAttendedZoomLink')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink</span>
@@ -300,13 +301,13 @@
 
 
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('VideoLink')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonmissingvideolinkcount" class="card-title">@Model.NotUpdatedMeetingsObj.MissingVideoLink</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('VideoLink')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonmissingvideolinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingVideoLink</span>
@@ -329,13 +330,13 @@
 
 
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount" class="spinner-grow text-danger"></span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount_1" class="spinner-grow text-danger"></span>
@@ -355,13 +356,13 @@
                                 <tr>
                                     <td class="un-right">
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QCPendingReport')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonQCPendingReportCount" class="card-title">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QCPendingReport')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonQCPendingReportCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>
@@ -393,6 +394,29 @@
                                         </div>
                                     </td>
                                     <td class="text-left un-left"><strong>Client Rating</strong></td>
+                                </tr>
+                            </table>
+                        </li>
+                        <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <table width="100%">
+                                <tr>
+                                    <td class="un-right">
+                                        <div class="flipper">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
+                                                <div class="card-image">
+                                                    <div class="header-front"></div>
+                                                    <span style="cursor:pointer" id="ribbonNeedClarityCount" class="card-title">@Model.NotUpdatedMeetingsObj.NeedClarityCount</span>
+                                                </div>
+                                            </div>
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
+                                                <div class="card-image">
+                                                    <div class="header-back"></div>
+                                                    <span style="cursor:pointer" id="ribbonNeedClarityCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.NeedClarityCount</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-left un-left"><strong>Need Clarity</strong></td>
                                 </tr>
                             </table>
                         </li>
@@ -1163,11 +1187,11 @@
     @*//var meetingsData = '@Model.MeetingsData';*@
             //meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
     @*//var meetingsDataLabels = '@Model.MeetingsDataLabels';*@
-                                                                                //meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
-                                                                                //UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
+                                                                                        //meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
+                                                                                        //UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
 
 
-                                                                                var interviewerCountObj = [{ y: @Model.InterviewerCountObj.ApprovedCount, label: "Approved" },
+                                                                                        var interviewerCountObj = [{ y: @Model.InterviewerCountObj.ApprovedCount, label: "Approved" },
         { y: @Model.InterviewerCountObj.UnapprovedCount, label: "Unapproved" }]
 
         var chart = new CanvasJS.Chart("interviewers", {
@@ -1232,26 +1256,26 @@
             { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]*@
 
 
-                                                                                //var chart = new CanvasJS.Chart("candidatesPieId", {
-                                                                                //   theme: "light2",
-                                                                                //    width: 350,//in pixels
-                                                                                //    height: 200,//in pixels
-                                                                                //    animationEnabled: true,
-                                                                                //    title: null,
-                                                                                //    data: [{
-                                                                                //        type: "pie",
-                                                                                //        startAngle: 60,
-                                                                                //        innerRadius: 55,
-                                                                                //        indexLabelFontSize: 15,
-                                                                                //        indexLabelFontColor: "#9a9a9a",
-                                                                                //        indexLabel: "{label}  {y}",
-                                                                                //        toolTipContent: "<b>{label} </b>({y})",
+                                                                                        //var chart = new CanvasJS.Chart("candidatesPieId", {
+                                                                                        //   theme: "light2",
+                                                                                        //    width: 350,//in pixels
+                                                                                        //    height: 200,//in pixels
+                                                                                        //    animationEnabled: true,
+                                                                                        //    title: null,
+                                                                                        //    data: [{
+                                                                                        //        type: "pie",
+                                                                                        //        startAngle: 60,
+                                                                                        //        innerRadius: 55,
+                                                                                        //        indexLabelFontSize: 15,
+                                                                                        //        indexLabelFontColor: "#9a9a9a",
+                                                                                        //        indexLabel: "{label}  {y}",
+                                                                                        //        toolTipContent: "<b>{label} </b>({y})",
 
-                                                                                //        dataPoints: candidateCountObj
-                                                                                //    }]
-                                                                                //});
-                                                                               // chart.render();
-                                                                            });
+                                                                                        //        dataPoints: candidateCountObj
+                                                                                        //    }]
+                                                                                        //});
+                                                                                       // chart.render();
+                                                                                    });
 
 </script>
 <script>
@@ -1401,6 +1425,7 @@
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
                 $("#ribbonQCPendingReportCount").text(data.qCPendingReportCount);
                 $("#ribbonClientReviewCount").text(data.clientReviewRating);
+                $("#ribbonNeedClarityCount").text(data.needClarityCount);
 
                 if (getDeletedZoomMeetingsCount) {
                     var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
@@ -1422,6 +1447,7 @@
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
                 $("#ribbonQCPendingReportCount_1").text(data.qCPendingReportCount);
                 $("#ribbonClientReviewCount_1").text(data.clientReviewRating);
+                $("#ribbonNeedClarityCount_1").text(data.needClarityCount);
 
                 if (parseInt(data.unAttendedZoomLink) > 0) {
                     var bipsoundcount = localStorage.getItem("bipsoundcount");

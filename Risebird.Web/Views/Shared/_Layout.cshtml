@@ -90,7 +90,7 @@
     <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js?v=7" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <link href="~/css/SidePanel/style.css" rel="stylesheet" />
     <style>
         .swal2-popup .swal2-styled {
             box-shadow: none !important
@@ -158,7 +158,6 @@
                 color: white !important;
             }
 
-        
     </style>
 
     <style>
@@ -184,16 +183,16 @@
             z-index: 1;
         }
 
-        .dropdown-contentStats a {
-            color: black!important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
+            .dropdown-contentStats a {
+                color: black !important;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
 
-        .dropdown-contentStats a:hover {
-            background-color: #ddd;
-        }
+                .dropdown-contentStats a:hover {
+                    background-color: #ddd;
+                }
 
         .dropdownStats:hover .dropdown-contentStats {
             display: block;
@@ -242,7 +241,7 @@
         @Html.AntiForgeryToken()
 
 
-        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
+        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;z-index:5">
             <div class="pull-left">
                 <div class="navbar-wrapper w-full">
                     <div class="navbar-toggle">
@@ -264,7 +263,7 @@
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                             profileName = profileName.Trim('"');
-                            @if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
+                            @if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "Interviewer")
                             {
                                 <div class="pull-left">
                                     <div class="desktop-view topbar-item">
@@ -273,7 +272,17 @@
                                             var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
                                             var email = emailid.Trim('"');
                                         }
-                                        @if(profileName == "Client")
+                                        @if (profileName == "Interviewer" || profileName == "Client")
+                                        {
+                                            <div style="cursor:pointer" class="mdc-ripple-upgraded card-title-space js-tr-window-trigger" data-panel="main" data-url="@Url.Action("RaiseBugRequest","Support")">
+                                                <span data-toggle="tooltip" data-placement="top" title="Need Assistance" data-original-title="Tooltip on top">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bug" viewBox="0 0 16 16">
+                                                        <path d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A4.979 4.979 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A4.985 4.985 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623zM4 7v4a4 4 0 0 0 3.5 3.97V7H4zm4.5 0v7.97A4 4 0 0 0 12 11V7H8.5zM12 6a3.989 3.989 0 0 0-1.334-2.982A3.983 3.983 0 0 0 8 2a3.983 3.983 0 0 0-2.667 1.018A3.989 3.989 0 0 0 4 6h8z" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        }
+                                        @if (profileName == "Client")
                                         {
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Skill Channel Stats</font></span>
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> New Interview Request</font></span>
@@ -282,18 +291,18 @@
 
 
                                             @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
-                                            </button>
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCreateInterviewRequest", "InterviewRequest", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
-                                            </button>
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
-                                            </button>*@
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
+                                </button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCreateInterviewRequest", "InterviewRequest", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                </button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
+                                </button>*@
                                         }
-                                        @if (profileName != "Client")
+                                        @if (profileName != "Client" && profileName != "Interviewer")
                                         {
-                                            
+
                                             if (profileName == "Admin" || profileName == "SupportAdmin" || email.ToLower() == "vaibhaw_sachan@risebird.io")
                                             {
                                                 <span style="cursor:pointer;" onclick="location.href='@Url.Action("ClientInterviewsReview", "Survey")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Client Review</font></span>
@@ -321,9 +330,9 @@
                                         }
 
 
-                                        
+
                                     </div>
-                                    @if (profileName != "Client")
+                                    @if (profileName != "Client" && profileName != "Interviewer")
                                     {
                                         @if (profileName == "Admin")
                                         {
@@ -668,6 +677,7 @@
         @Html.Partial("_Navigation")
         <!-- Navigation end -->
         @RenderBody()
+        @await Html.PartialAsync("~/Views/Common/RaiseBugs.cshtml")
     </div>
     <!--   Core JS Files   -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -827,14 +837,14 @@
 
 
 
-        <script src='//fw-cdn.com/2398529/2998468.js'chat='true' widgetId='eb06f77e-bd1e-48c9-87fc-a292f4d27465'></script>
+        <script src='//fw-cdn.com/2398529/2998468.js' chat='true' widgetId='eb06f77e-bd1e-48c9-87fc-a292f4d27465'></script>
         <script type='text/javascript' src='https://widget.freshworks.com/widgets/eb06f77e-bd1e-48c9-87fc-a292f4d27465.js' async defer></script>
         <script>
             window.fwSettings = {
                 'widget_id': eb06f77e-bd1e-48c9-87fc-a292f4d27465
             };
             !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
-            
+
             // To set user email
             window.fcWidget.user.setEmail('@currentLoggedInUser');
 

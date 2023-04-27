@@ -51,9 +51,9 @@ namespace Risebird.CommonHelper
                         UserEmailId = userEmailid,
                         LogMessage = ex.Message,
                         InnerException = ex.InnerException != null ? ex.InnerException.StackTrace : "NA",
-                        FileName = query.FirstOrDefault()?.FileName.ToString(),
-                        MethodName = query.FirstOrDefault()?.Method.ToString(),
-                        ClassName = query.FirstOrDefault()?.Class.ToString(),
+                        FileName = query.FirstOrDefault()?.FileName?.ToString(),
+                        MethodName = query.FirstOrDefault()?.Method?.ToString(),
+                        ClassName = query.FirstOrDefault()?.Class?.ToString(),
                         LineNumber = query.FirstOrDefault().LineNumber,
                         Status = (int)LogStatus.Unresolved
                     };
