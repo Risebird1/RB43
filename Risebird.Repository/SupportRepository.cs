@@ -181,6 +181,7 @@ namespace Risebird.Repository
                 parameters.Add("@Comment", model.Comment);
                 parameters.Add("@AttachmentURL", model.AttachmentURL);
                 parameters.Add("@RequestedBy", model.RequestedBy);
+                parameters.Add("@RequestedOn", DateTime.Now);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -211,6 +212,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> UpdateRaisedRequestStatus(RaiseBugsVM model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", model.id);
+                parameters.Add("@Comment", model.Comment);
+                parameters.Add("@RequestedBy", model.RequestedBy);
+                parameters.Add("@RequestedOn", DateTime.Now);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_UpdateRaisedIssueDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

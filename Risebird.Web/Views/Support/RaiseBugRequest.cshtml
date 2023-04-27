@@ -6,10 +6,10 @@
         @Html.HiddenFor(model=>model.RequestedBy)
         <div class="row col-md-12 col-sm-12" style="padding-bottom:2%">
             <div class="col-md-6 col-sm-6">
-                @Html.RadioButtonFor(model=>model.RequestType,"Technical") Technical Issue
+                @Html.RadioButtonFor(model=>model.RequestType,"Technical") Technical
             </div>
             <div class="col-md-6 col-sm-6">
-                @Html.RadioButtonFor(model=>model.RequestType,"Support") Support Issue
+                @Html.RadioButtonFor(model=>model.RequestType,"Operation") Operation
             </div>
         </div>
         <div class="col-md-12 col-sm-12" style="padding-bottom:2%">
@@ -20,9 +20,11 @@
             @Html.TextBoxFor(model=>model.Attachment, new { @type = "file", @class = "form-control", @accept = ".png,.jpeg,.jpg" })
         </div>
     </div>
-    <div>
-        <div class="col-md-12 text-right">
-            <input type="submit" value="Submit request" />
+    <div class="card-footer ">
+        <div class="row">
+            <div class="col-md-12 mc-button-area">
+                <input type="submit" id="btnUpload" value="Submit Request" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+    </div>
         </div>
     </div>
 }

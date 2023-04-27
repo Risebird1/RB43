@@ -14,5 +14,6 @@ namespace Risebird.Repository.Interface
         Task<List<string>> GetAllSupportHREmails();
         Task<bool> SaveRaisedIssueDetails(RaiseBugsVM model);
         Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails();
+        Task<bool> UpdateRaisedRequestStatus(RaiseBugsVM model);
     }
 }

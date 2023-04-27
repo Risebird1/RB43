@@ -4205,7 +4205,7 @@ namespace Risebird.Repository
                                              IRFId = c.IRFId,
                                              IsEmergency = c.IsEmergency,
                                              MaxVideoDuration = c.MaxVideoDuration,
-                                             IsFixedInterviewduration=c.IsFixedInterviewduration
+                                             IsFixedInterviewduration = c.IsFixedInterviewduration
                                          }).ToList();
                         return resultset.ToList();
                     }
@@ -5114,7 +5114,8 @@ namespace Risebird.Repository
             {
                 string query = string.Empty;
                 string checkquery = string.Empty;
-                if (status == 1 || (status == 4 && response == true))
+                //if (status == 1 || (status == 4 && response == true))
+                if (status == 1 || status == 4)
                 {
                     query = "Update im set IsCandidateResponsed=1,CandidateResponse=@status from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }

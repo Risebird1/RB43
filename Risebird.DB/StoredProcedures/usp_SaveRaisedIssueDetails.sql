@@ -13,12 +13,11 @@ Create Procedure usp_SaveRaisedIssueDetails
 @RequestType varchar(10),  
 @Comment varchar(max),  
 @AttachmentURL varchar(1000),  
-@RequestedBy varchar(200)  
+@RequestedBy varchar(200),
+@RequestedOn datetime
 AS  
 BEGIN  
-Declare @RequestedOn datetime   
-set @RequestedOn=DATEADD(MINUTE,330,Getdate())  
-Insert into RaisedIssues(RequestType,Comment,AttachmentURL,RequestedBy,RequestedOn)   
-values(@RequestType,@Comment,@AttachmentURL,@RequestedBy,@RequestedOn)  
+Insert into RaisedIssues(RequestType,Comment,AttachmentURL,RequestedBy,RequestedOn,Status)   
+values(@RequestType,@Comment,@AttachmentURL,@RequestedBy,@RequestedOn,'Open')  
 END  
 GO

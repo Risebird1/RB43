@@ -5734,21 +5734,22 @@ namespace Risebird.Web.Controllers
             if (_meetingService.CheckInterviewCancellable(meetingid))
             {
                 var response = true;
-                if (status == 4)
-                {
-                    response = _meetingService.CheckInterviewClerityTime(meetingid);
-                }
+                //if (status == 4)
+                //{
+                //    response = _meetingService.CheckInterviewClerityTime(meetingid);
+                //}
                 var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
                 if (results == "Success")
                 {
-                    if (status == 4)
-                    {
-                        var clientHr = await _candidateService.FetchChannelOwnerByInterviewid(meetingid);
-                        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
-                        var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
-                        var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                    }
-                    if (status == 2 || status == 3 || (status == 4 && response == false))
+                    //if (status == 4)
+                    //{
+                    //    var clientHr = await _candidateService.FetchChannelOwnerByInterviewid(meetingid);
+                    //    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                    //    var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                    //    var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    //}
+                    //if (status == 2 || status == 3 || (status == 4 && response == false))
+                    if (status == 2 || status == 3)
                     {
                         var value = string.Empty;
                         if (status == 2)
@@ -5759,10 +5760,10 @@ namespace Risebird.Web.Controllers
                         {
                             value = "RESCHEDULE";
                         }
-                        else
-                        {
-                            value = "NEED MORE CLARITY";
-                        }
+                        //else
+                        //{
+                        //    value = "NEED MORE CLARITY";
+                        //}
                         //send mail scheduling link
                         var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
                         var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);

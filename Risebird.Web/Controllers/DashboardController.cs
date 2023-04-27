@@ -8,6 +8,7 @@ using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -1055,12 +1056,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                             HttpContext.Session.Remove("UnassignedInterviewsFilters");
-                        if (actionstatus == "DeletedZoomMeetings")
+                        if (actionstatus == RibbonActionType.DeletedZoomMeetings)
                         {
                             return RedirectToAction("DeletedZoomMeetings", new { /*actionStatus = actionstatus, */actionType = actiontype });
                         }
                         var modelList = new List<MeetingVM>();
-                        if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
+                        if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
                             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
@@ -1102,41 +1103,45 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                        if (actionstatus == "InterviewCount")
+                        if (actionstatus == RibbonActionType.InterviewCount)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
                         }
-                        else if (actionstatus == "MeetingStatus")
+                        else if (actionstatus == RibbonActionType.MeetingStatus)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Status Pending";
                         }
-                        else if (actionstatus == "QcPending")
+                        else if (actionstatus == RibbonActionType.QcPending)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Qc Pending";
                         }
-                        else if (actionstatus == "UnAssignedCoordianter" && actiontype == 0)
+                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 0)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
                         }
-                        else if (actionstatus == "UnAssignedCoordianter" && actiontype == 1)
+                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 1)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
                         }
-                        else if (actionstatus == "ZoomLink")
+                        else if (actionstatus == RibbonActionType.ZoomLink)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Missing Zoom Link";
                         }
-                        else if (actionstatus == "UnAttendedZoomLink")
+                        else if (actionstatus == RibbonActionType.UnAttendedZoomLink)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Participant Waiting";
                         }
-                        else if (actionstatus == "VideoLink")
+                        else if (actionstatus == RibbonActionType.VideoLink)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
                         }
-                        else if (actionstatus == "QCPendingReport" || actionstatus == "QCReport")
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
                             ViewBag.PageHeader = "911 Dashboard / QC Report";
+                        }
+                        else if (actionstatus == RibbonActionType.NeedClarity)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Need Clarity";
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
@@ -1180,44 +1185,44 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                        if (actionstatus == "InterviewCount")
+                        if (actionstatus == RibbonActionType.InterviewCount)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
                         }
-                        else if (actionstatus == "MeetingStatus")
+                        else if (actionstatus == RibbonActionType.MeetingStatus)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Status Pending";
                         }
-                        else if (actionstatus == "QcPending")
+                        else if (actionstatus == RibbonActionType.QcPending)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Qc Pending";
                         }
-                        else if (actionstatus == "UnAssignedCoordianter" && actiontype == 0)
+                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 0)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Unassigned RB Coordinator";
                         }
-                        else if (actionstatus == "UnAssignedCoordianter" && actiontype == 1)
+                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 1)
                         {
                             ViewBag.PageHeader = "911 Dashboard / PENDING CANDIDATE FEEDBACK";
                         }
-                        else if (actionstatus == "ZoomLink")
+                        else if (actionstatus == RibbonActionType.ZoomLink)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Missing Zoom Link";
                         }
-                        else if (actionstatus == "UnAttendedZoomLink")
+                        else if (actionstatus == RibbonActionType.UnAttendedZoomLink)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Participant Waiting";
                         }
-                        else if (actionstatus == "VideoLink")
+                        else if (actionstatus == RibbonActionType.VideoLink)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
                         }
-                        else if (actionstatus == "QCPendingReport" || actionstatus == "QCReport")
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
                             ViewBag.PageHeader = "911 Dashboard / QC Report";
                         }
                         var modelList = new List<MeetingVM>();
-                        if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
+                        if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
                             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
@@ -1264,7 +1269,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Actiontype = actiontype;
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            if (actionstatus == "UnAttendedZoomLink")
+                            if (actionstatus == RibbonActionType.UnAttendedZoomLink)
                             {
                                 filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
                             }

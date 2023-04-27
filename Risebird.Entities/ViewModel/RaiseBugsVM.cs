@@ -12,5 +12,6 @@ namespace Risebird.Entities.ViewModel
         public string RequestedBy { get; set; }
         public DateTime RequestedOn { get; set; }
         public string AttachmentURL { get; set; }
+        public string Status { get; set; }
     }
 }

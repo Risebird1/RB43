@@ -112,5 +112,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateRaisedRequestStatus(RaiseBugsVM model)
+        {
+            try
+            {
+                return await _supportRespository.UpdateRaisedRequestStatus(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

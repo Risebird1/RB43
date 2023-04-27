@@ -9,7 +9,7 @@
     var Header = "<div>Raised Requests</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-@*<link href="~/Newassets/css/support.css?v=7" rel="stylesheet" />*@
+
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
@@ -46,6 +46,7 @@
                                                 <th>Request Type</th>
                                                 <th>Issue Details</th>
                                                 <th>Attachments</th>
+                                                <th>Status</th>
                                                 <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
                                         </thead>
@@ -56,6 +57,7 @@
                                                 <th>Request Type</th>
                                                 <th>Issue Details</th>
                                                 <th>Attachments</th>
+                                                <th>Status</th>
                                                 <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
                                         </tfoot>
@@ -92,7 +94,19 @@
                                                         }
                                                     </td>
                                                     <td><a href="@item.AttachmentURL" target="_blank">Issue Image</a></td>
-                                                    <td></td>
+                                                    <td>@item.Status</td>
+                                                    <td>
+                                                        @if (item.Status?.ToLower() == "open")
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Close Request">
+                                                                <span onclick="openRaisedBugClosepopup(@item.id)" title="Close Request" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-door-closed-fill" viewBox="0 0 16 16">
+                                                                        <path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1h8zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                        }
+                                                    </td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -106,7 +120,34 @@
         </div>
     </div>
 </div>
-
+<div id="RaisedBugClosePopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Close Request <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeRaisedBugClosepopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <input type="hidden" id="txtrequestid" />
+            <div class="modal-body" style="color:black">
+                <input type="text" placeholder="Please enter comment" id="txtRaisedBugCloseComment" class="form-control" maxlength="1000" />
+            </div>
+            <div class="card-footer ">
+                <div class="row">
+                    <div class="col-md-12 mc-button-area">
+                        <input type="button" value="Submit" onclick="CloseRaisedBugRequest()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     function searchResult() {
         $('#supportList').DataTable();
@@ -186,6 +227,32 @@
         } else {
             $('#read_' + id).empty().html('Read less');
             $('#read_' + id).val('Readmore');
+        }
+    }
+    function openRaisedBugClosepopup(requestid) {
+        var modal = document.getElementById("RaisedBugClosePopup");
+        modal.style.display = "block";
+        $("#txtrequestid").val(requestid);
+    }
+    function closeRaisedBugClosepopup() {
+        var modal = document.getElementById("RaisedBugClosePopup");
+        modal.style.display = "none";
+    }
+    function CloseRaisedBugRequest() {
+        var comment = $("#txtRaisedBugCloseComment").val();
+        var requestid = $("#txtrequestid").val();
+        alert(requestid);
+        if (comment.trim() != '') {
+            $.ajax({
+                url: "/Support/UpdateRaisedRequestsStatus",
+                type: "POST",
+                data: { requestid: requestid, comment: comment },
+                success: function (message) {
+                    alert(message);
+                }
+            });
+        } else {
+            alert('Comment is required.');
         }
     }
 </script>

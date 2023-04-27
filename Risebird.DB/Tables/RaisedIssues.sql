@@ -9,6 +9,9 @@ CREATE TABLE [dbo].[RaisedIssues](
 	[RequestedBy] [varchar](200) NULL,
 	[RequestedOn] [datetime] NULL,
 	[Status] [varchar](10) NULL,
+	[StatusComment] [varchar](1000) NULL,
+	[ClosedBy] [varchar](200) NULL,
+	[ClosedOn] [datetime] NULL,
  CONSTRAINT [PK_RaisedIssues] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

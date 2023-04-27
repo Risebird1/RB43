@@ -449,6 +449,25 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> UpdateRaisedRequestsStatus(int requestid, string comment)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = new RaiseBugsVM();
+                model.id = requestid;
+                model.RequestedBy = emailId;
+                model.Comment = comment;
+                var result = await _supportService.UpdateRaisedRequestStatus(model);
+                return Json("Request is closed successfully.");
+            }
+            else
+            {
+                return Json("Please try again.");
+            }
+        }
         #endregion
     }
 }
