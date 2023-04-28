@@ -1169,10 +1169,10 @@
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
 
                                                                                 </td>
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink)) //CodedResumeLink
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
                                                                                     </td>
 
                                                                                 }
