@@ -120,10 +120,10 @@ Slide In Panel - by CodyHouse.co
           transform: translateY(-50px);
 }
 
-.cd-panel__header h1 {
-  color: #89ba2c;
-  padding-left: 5%;
-}
+    .cd-panel__header h1, pra {
+        color: #89ba2c;
+        padding-left: 5%;
+    }
 
 .cd-panel--from-right .cd-panel__header {
   right: 0;
