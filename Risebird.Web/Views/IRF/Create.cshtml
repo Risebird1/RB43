@@ -391,14 +391,15 @@
                                                                         <th width="20%" class="table_heading" style="display:@displayStatus">Per Interviewer Rate <span style="color:red">*</span></th>
 
                                                                         <th width="10%" class="table_heading"> Select </th>
-                                                                        @if (Model.Profile == "Client")
+                                                                        @*@if (Model.Profile == "Client")
                                                                         {
                                                                             <th width="30%" class="table_heading"> Coded Resume </th>
                                                                         }
                                                                         else
                                                                         {
                                                                             <th width="10%" class="table_heading"> Resume </th>
-                                                                        }
+                                                                        }*@
+                                                                        <th width="10%" class="table_heading"> Resume </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -437,7 +438,7 @@
                                                                             <td class="text-center">
                                                                                 @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
                                                                             </td>
-                                                                            @if (Model.Profile == "Client")
+                                                                            @*@if (Model.Profile == "Client")
                                                                             {
                                                                                 @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].CodedResumeLink))
                                                                                 {
@@ -453,23 +454,24 @@
                                                                                     </td>
                                                                                 }
 
+                                                                            }*@
+                                                                            @*else
+                                                                            {
+
+                                                                                
+
+                                                                            }*@
+                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                </td>
                                                                             }
                                                                             else
                                                                             {
-
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
-                                                                                    </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="">No Resume</a>
-                                                                                    </td>
-                                                                                }
-
+                                                                                <td class="cadName">
+                                                                                    <a onclick="" data-tooltip="">No Resume</a>
+                                                                                </td>
                                                                             }
 
                                                                         </tr>
@@ -508,7 +510,7 @@
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
-                                                                                @if (Model.Profile == "Client")
+                                                                                @*@if (Model.Profile == "Client")
                                                                                 {
                                                                                     @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
                                                                                     {
@@ -537,8 +539,19 @@
                                                                                             <a onclick="" data-tooltip="">No Resume</a>
                                                                                         </td>
                                                                                     }
+                                                                                }*@
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                                    </td>
                                                                                 }
-
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                    </td>
+                                                                                }
 
                                                                             </tr>
                                                                         }

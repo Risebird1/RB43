@@ -359,7 +359,8 @@
                                                                         <th width="50%" class="table_heading">Skills</th>
 
                                                                         <th width="10%" class="table_heading"> Select </th>
-                                                                        <th width="30%" class="table_heading"> Coded Resume </th>
+                                                                        @*<th width="30%" class="table_heading"> Coded Resume </th>*@
+                                                                        <th  class="table_heading"> Resume </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -383,10 +384,10 @@
                                                                             <td class="text-center">
                                                                                 @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
                                                                             </td>
-                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].CodedResumeLink))
+                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))//CodedResumeLink
                                                                             {
                                                                                 <td class="cadName">
-                                                                                    <a href="@Model.InterviewerCollection[0].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
                                                                                 </td>
 
                                                                             }
@@ -420,10 +421,10 @@
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))//CodedResumeLink
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
