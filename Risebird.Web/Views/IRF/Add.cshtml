@@ -832,10 +832,10 @@
                                                                                 <td>
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                                 </td>
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))//CodedResumeLink
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
                                                                                     </td>
 
                                                                                 }
