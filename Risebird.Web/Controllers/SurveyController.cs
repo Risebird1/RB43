@@ -761,7 +761,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SupportAdmin" || emailid.ToLower() == "vaibhaw_sachan@risebird.io")
+                if (profileName == "Admin" || profileName == "SupportAdmin")
                 {
                     var model = await _meetingService.FetchInterviewsReview();
                     ViewBag.Clients = model.Select(x => x.ClientName).Distinct().ToList();

@@ -46,7 +46,7 @@ namespace Risebird.MicroService
                         Mail _mail = new Mail
                         {
                             TO = item,
-                            CC = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;shahkar_alam@risebird.io",
+                            CC = "ashutosh@risebird.io",
                             Subject = "Risebird: New Uploaded Resumes"
                         };
                         DataTable dt = new DataTable();
