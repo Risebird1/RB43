@@ -28,6 +28,7 @@ Declare @AddPoint int
 Declare @Points float    
 Declare @FixedInterviewDuration bit
 Declare @FixedAmount int = null
+Declare @Interviewdate datetime
 
 Select @MeetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId      
 Select @InterviewStatus=InterviewStatus from InterviewComments where InterviewId=@interviewId      
@@ -41,6 +42,7 @@ select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId
 Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                           
 Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and (InterviewPoints.Type=@Type or InterviewPoints.Type='Redo')                            
 Select @FixedInterviewDuration=IsFixedInterviewduration From IRF where id=@Irfid   
+Select @Interviewdate=Interviewdate from InterviewMeetings where id=@interviewId                           
 
 if(@FixedInterviewDuration = 1)
 Begin
@@ -96,6 +98,10 @@ End
  End
  Else
  Begin
+ if(@VideoDuration>5 and @Interviewdate>='2023-05-01')
+ begin
+ set @VideoDuration=@VideoDuration-5;
+ end
 	if(@InterviewStatus=1 or @InterviewStatus=3)      
 	 Begin 
 		Set @MaxVideoDuration=ISNULL(@MaxVideoDuration,0)/2

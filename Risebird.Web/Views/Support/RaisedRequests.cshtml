@@ -195,6 +195,7 @@
         });
     });
 </script>
+
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
@@ -241,7 +242,6 @@
     function CloseRaisedBugRequest() {
         var comment = $("#txtRaisedBugCloseComment").val();
         var requestid = $("#txtrequestid").val();
-        alert(requestid);
         if (comment.trim() != '') {
             $.ajax({
                 url: "/Support/UpdateRaisedRequestsStatus",
