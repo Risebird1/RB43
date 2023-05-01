@@ -134,7 +134,15 @@
                                                         <td>Late Report Filled</td>
                                                         <td></td>
                                                     }
-                                                    <td style="width:11%; text-align: center;">@item.VideoDuration</td>
+                                                    @if (item.Date >= DateTime(2023, 05, 01) && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                                    {
+                                                        <td style="width:11%; text-align: center;">@(item.VideoDuration - 5)</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="width:11%; text-align: center;">@item.VideoDuration</td>
+                                                    }
+
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>
                                                     <td>@item.ExpectedDate</td>
