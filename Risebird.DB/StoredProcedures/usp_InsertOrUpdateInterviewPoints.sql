@@ -9,6 +9,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 Create Procedure usp_InsertOrUpdateInterviewPoints      
 @interviewId int      
 As      
@@ -170,7 +172,7 @@ END
   END       
     if(@Count=0)                            
     Begin                          
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@CandidateEmail,'Pending',GetDate(),0,0)                             
+    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@CandidateEmail,'Pending',GetDate(),0,0,0)                             
     END                            
    Else                            
     BEGIN                            
