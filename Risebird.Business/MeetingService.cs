@@ -3816,6 +3816,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<Meeting> GetMeetingDetails(int interviewId)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetMeetingDetails(interviewId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
