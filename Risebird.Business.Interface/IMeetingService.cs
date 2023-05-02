@@ -211,5 +211,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId);
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<List<Meeting>> GetInterviewerAssignedInterviews(string emailID, string meetingLineUpType);
+        Task<Meeting> GetMeetingDetails(int interviewId);
     }
 }

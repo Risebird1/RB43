@@ -16,5 +16,6 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string ClientName { get; set; }
         public string PrimarySkillInvite { get; set; }
+        public string MeetingLink { get; set; }
     }
 }

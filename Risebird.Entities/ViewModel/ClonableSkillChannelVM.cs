@@ -17,8 +17,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList Level { get; set; }
         //public SelectList LevelTech { get; set; }
         public SelectList Skills { get; set; }
-        public string CreatedBy { get; set; }
-        public string ModifiedBy { get; set; }
+        public new string CreatedBy { get; set; }
+        public new string ModifiedBy { get; set; }
         public string CompetencyLevelDesc { get; set; }
         public string SeniorityLevelDesc { get; set; }
         public string CountryTypeDesc { get; set; }

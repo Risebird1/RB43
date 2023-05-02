@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[usp_GetMeetingDetails]
 AS  
 Begin
 
-	select candidateEmail, interviewDate from InterviewMeetings where id =@meetingId
+	select candidateEmail, interviewDate, ClientHrContact, IRFId as IRFID from InterviewMeetings where id =@meetingId
 
 End
 GO
