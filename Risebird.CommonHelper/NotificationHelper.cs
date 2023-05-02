@@ -2667,8 +2667,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-
-        public async Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null)
+        public async Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, string meetingLink, int? irfId = null, int? interviewId = null)
         {
             try
             {
@@ -2681,7 +2680,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), ClientName, PrimarySkillInvite, timezone };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), ClientName, PrimarySkillInvite, timezone, meetingLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewNoReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
