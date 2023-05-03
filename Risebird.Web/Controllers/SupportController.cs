@@ -401,9 +401,12 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
                 var model = new RaiseBugsVM();
-                model.RequestType = "Technical";
+                model.RequestType = "Operation";
                 model.RequestedBy = emailId;
+                model.Requester = profileName;
                 return PartialView(model);
             }
             else

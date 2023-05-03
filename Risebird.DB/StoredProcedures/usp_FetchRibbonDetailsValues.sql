@@ -215,7 +215,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			end
 			else
 			begin
-				Select distinct im.*,im.id as InterviewId,cl.Name from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate
+				Select distinct im.*,im.id as InterviewId,cl.Name from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate
 			end
 		end
 		else
