@@ -79,6 +79,8 @@
 
     }
 
+    meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
+    interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
 
 }
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
