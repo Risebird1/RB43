@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -16,8 +17,6 @@
     string[] Status = new string[] { };
     string[] Client = new string[] { };
     string[] ClientHREmail = new string[] { };
-
-
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
 {
@@ -220,10 +219,11 @@
                                                         <th>Who Joined</th>
                                                     }
                                                     <th>Candidate Name</th>
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
+
                                                     <th>Candidate Email</th>
                                                     <th>Interviewer</th>
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
@@ -271,7 +271,7 @@
                                                         <th>Who Joined</th>
                                                     }
                                                     <th>Candidate Name</th>
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
@@ -364,6 +364,15 @@
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
                                                             <td>@item.MobileNumber</td>
+                                                        }
+                                                        @if (ViewBag.actionstatus == "NeedClarity")
+                                                        {
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
+                                                                    <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                </button>
+                                                            }
                                                         }
                                                         <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
@@ -495,7 +504,7 @@
 
 
 
-
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 <script type="text/javascript">
 
@@ -714,5 +723,5 @@
 </script>
 
 
-
+<script src="~/js/twiliocallmaker.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>

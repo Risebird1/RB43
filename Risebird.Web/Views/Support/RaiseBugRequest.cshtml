@@ -4,12 +4,13 @@
 {
     <div class="row">
         @Html.HiddenFor(model=>model.RequestedBy)
+        @Html.HiddenFor(model=>model.Requester)
         <div class="row col-md-12 col-sm-12" style="padding-bottom:2%">
             <div class="col-md-6 col-sm-6">
-                @Html.RadioButtonFor(model=>model.RequestType,"Technical") Technical
+                @Html.RadioButtonFor(model=>model.RequestType,"Operation") Operation
             </div>
             <div class="col-md-6 col-sm-6">
-                @Html.RadioButtonFor(model=>model.RequestType,"Operation") Operation
+                @Html.RadioButtonFor(model=>model.RequestType,"Technical") Technical
             </div>
         </div>
         <div class="col-md-12 col-sm-12" style="padding-bottom:2%">
@@ -24,7 +25,7 @@
         <div class="row">
             <div class="col-md-12 mc-button-area">
                 <input type="submit" id="btnUpload" value="Submit Request" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
-    </div>
+            </div>
         </div>
     </div>
 }

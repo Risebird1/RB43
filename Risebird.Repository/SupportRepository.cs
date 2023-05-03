@@ -182,6 +182,7 @@ namespace Risebird.Repository
                 parameters.Add("@AttachmentURL", model.AttachmentURL);
                 parameters.Add("@RequestedBy", model.RequestedBy);
                 parameters.Add("@RequestedOn", DateTime.Now);
+                parameters.Add("@Requester", model.Requester);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
