@@ -19,5 +19,6 @@ namespace Risebird.Entities.Data
         public static readonly string QCReport = "QCReport";
         public static readonly string NeedClarity = "NeedClarity";
         public static readonly string DeletedZoomMeetings = "DeletedZoomMeetings";
+        public static readonly string OpenIssues = "OpenIssues";
     }
 }

@@ -16,6 +16,7 @@ namespace Risebird.Entities.ViewModel
         public int QCPendingReportCount { get; set; }
         public double ClientReviewRating { get; set; }
         public int NeedClarityCount { get; set; }
+        public int OpenIssueCount { get; set; }
     }
     public class MeetingDetailsForParticipant
     {
