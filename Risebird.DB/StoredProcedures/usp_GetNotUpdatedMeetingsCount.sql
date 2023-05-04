@@ -51,6 +51,8 @@ where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.
   
 declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)
 
+declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open')
+
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
 --(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
@@ -76,7 +78,7 @@ declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetin
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
-@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume, @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount
+@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume, @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount
 
 END        
 ELSE        
@@ -104,9 +106,11 @@ where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.
 
 set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)
 
+set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')
+
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
-@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume, @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount
+@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume, @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount
 
 
 

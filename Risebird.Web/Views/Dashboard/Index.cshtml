@@ -208,36 +208,6 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('UnAssignedCoordianter')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledcommentscount">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span></strong></span>*@
-
-
-                                        <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAssignedCoordianter')">
-                                                <div class="card-image">
-                                                    <div class="header-front"></div>
-                                                    <span style="cursor:pointer" id="ribbonunfilledcommentscount" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span>
-                                                </div>
-                                            </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAssignedCoordianter')">
-                                                <div class="card-image">
-                                                    <div class="header-back"></div>
-                                                    <span style="cursor:pointer" id="ribbonunfilledcommentscount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledCommentsCount</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-                                    </td>
-                                    <td class="text-left un-left"><strong>Auto Cancelled Interview</strong></td>
-
-                                </tr>
-                            </table>
-                        </li>
-                        <li style="border: 0px; padding: 0px;  line-height: 30px;">
-                            <table width="100%">
-                                <tr>
-                                    <td class="un-right">
                                         @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
 
 
@@ -379,29 +349,6 @@
                                 <tr>
                                     <td class="un-right">
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="location.href='@Url.Action("ClientInterviewsReview", "Survey")'">
-                                                <div class="card-image">
-                                                    <div class="header-front"></div>
-                                                    <span style="cursor:pointer" id="ribbonClientReviewCount" class="card-title">@Model.NotUpdatedMeetingsObj.ClientReviewRating</span>
-                                                </div>
-                                            </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="location.href='@Url.Action("ClientInterviewsReview", "Survey")'">
-                                                <div class="card-image">
-                                                    <div class="header-back"></div>
-                                                    <span style="cursor:pointer" id="ribbonClientReviewCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.ClientReviewRating</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-left un-left"><strong>Client Rating</strong></td>
-                                </tr>
-                            </table>
-                        </li>
-                        <li style="border: 0px; padding: 0px;  line-height: 30px;">
-                            <table width="100%">
-                                <tr>
-                                    <td class="un-right">
-                                        <div class="flipper">
                                             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
@@ -417,6 +364,29 @@
                                         </div>
                                     </td>
                                     <td class="text-left un-left"><strong>Need Clarity</strong></td>
+                                </tr>
+                            </table>
+                        </li>
+                        <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <table width="100%">
+                                <tr>
+                                    <td class="un-right">
+                                        <div class="flipper">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
+                                                <div class="card-image">
+                                                    <div class="header-front"></div>
+                                                    <span style="cursor:pointer" id="ribbonOpenIssueCount" class="card-title">@Model.NotUpdatedMeetingsObj.OpenIssueCount</span>
+                                                </div>
+                                            </div>
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
+                                                <div class="card-image">
+                                                    <div class="header-back"></div>
+                                                    <span style="cursor:pointer" id="ribbonOpenIssueCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.OpenIssueCount</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-left un-left"><strong>Open Issue</strong></td>
                                 </tr>
                             </table>
                         </li>
@@ -1419,13 +1389,12 @@
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
-                $("#ribbonunfilledcommentscount").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
                 $("#ribbonQCPendingReportCount").text(data.qCPendingReportCount);
-                $("#ribbonClientReviewCount").text(data.clientReviewRating);
                 $("#ribbonNeedClarityCount").text(data.needClarityCount);
+                $("#ribbonOpenIssueCount").text(data.openIssueCount);
 
                 if (getDeletedZoomMeetingsCount) {
                     var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
@@ -1441,13 +1410,12 @@
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume_1").text(data.notProcessedCandidateResume);
-                $("#ribbonunfilledcommentscount_1").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
                 $("#ribbonQCPendingReportCount_1").text(data.qCPendingReportCount);
-                $("#ribbonClientReviewCount_1").text(data.clientReviewRating);
                 $("#ribbonNeedClarityCount_1").text(data.needClarityCount);
+                $("#ribbonOpenIssueCount_1").text(data.openIssueCount);
 
                 if (parseInt(data.unAttendedZoomLink) > 0) {
                     var bipsoundcount = localStorage.getItem("bipsoundcount");
@@ -1474,6 +1442,9 @@
     }
     function OpenRibbonDetailsUnProcessedResume(actionstatus) {
         window.location.href = "/Dashboard/UnProcessedResume";
+    }
+    function OpenRibbonDetailsRaisedIssue() {
+        window.location.href = "/Support/RaisedRequests";
     }
 </script>
 <script>
