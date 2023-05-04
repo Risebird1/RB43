@@ -17,9 +17,22 @@
     var currentMeetingStatus = Model.MeetingStatus.HasValue ? Model.MeetingStatus.Value : 0;
     var currentInterviewStatus = Model.InterviewStatus.HasValue ? Model.InterviewStatus.Value : 0;
 
+    string loggedInUser = string.Empty;
+    string loggedInUserDomain = string.Empty;
+    bool showGeneralNoShowStatus = false;
+
+    if(ViewBag.EmailId != null  && ViewBag.EmailId != string.Empty)
+    {
+        loggedInUser = ViewBag.EmailId;
+        loggedInUserDomain = loggedInUser.Split("@").LastOrDefault();
+    }
+    if(!string.IsNullOrEmpty(loggedInUserDomain) && loggedInUserDomain == "risebird.io")
+    {
+        showGeneralNoShowStatus = true;
+    }
     if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
     {
-        if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
+        if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus && !showGeneralNoShowStatus)
         {
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
@@ -68,13 +81,13 @@
         //if (timeSpan.TotalMinutes > 15)
         //{
         //    meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
-        //}
+    //}
 
     }
     else
     {
 
-        if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus)
+        if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus && !showGeneralNoShowStatus)
         {
             meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
@@ -87,6 +100,10 @@
 
     }
 
+    if(showGeneralNoShowStatus)
+    {
+        meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString()).ToList();
+    }
     meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
     interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
 

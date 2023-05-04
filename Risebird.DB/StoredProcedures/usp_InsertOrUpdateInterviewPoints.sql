@@ -9,8 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 Create Procedure usp_InsertOrUpdateInterviewPoints      
 @interviewId int      
 As      
@@ -122,7 +120,6 @@ END
   --End:Meeting Status 4 or 6 or 7 or 8      
  if(@meetingStatus=5 or @MeetingStatus=9)                               
   BEGIN                  
-  set @CandidateEmail='Penalty '+@CandidateEmail                  
   Declare @JobCountry varchar(50)                  
   Select @JobCountry=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId                  
   if(@JobCountry='India' or @JobCountry=1)                  
@@ -168,7 +165,6 @@ END
   set @AddPoint=250        
   END      
    END      
-  set @CandidateEmail=REPLACE(@CandidateEmail,'Penalty','')          
   END       
     if(@Count=0)                            
     Begin                          
