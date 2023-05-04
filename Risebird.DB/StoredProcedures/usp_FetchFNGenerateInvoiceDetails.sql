@@ -13,22 +13,52 @@ CREATE Procedure usp_FetchFNGenerateInvoiceDetails
 @se datetime
 AS
 BEGIN
+Declare @SubmitedPoints Table(
+Comment varchar(200),
+id int,
+Points int
+)
+Declare @AdvancedPoints Table(
+Comment varchar(200),
+id int,
+Points int
+)
+
 ;with CTE(paymentid,Comment,id, Points) as 
-(Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+(Select ip.id as paymentid,ul.EmailId as Comment,ul.id,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) as Points 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid 
 left join InterviewMeetings im on im.id = ip.InterviewId 
 where (ip.Status='Submitted' or ip.Status='Pending') and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st 
 and isNull(im.interviewdate,ip.Date)<=@se)
 Union 
-Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+Select ip.id as paymentid,ul.EmailId as Comment,ul.id,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) as Points 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid 
 left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId 
 where (ip.Status='Submitted' or ip.Status='Pending') and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st 
 and isNull(im.interviewdate,ip.Date)<=@se) 
 Union 
-Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+Select ip.id as paymentid,ul.EmailId as Comment,ul.id,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) as Points 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid 
 where (ip.Status='Submitted' or ip.Status='Pending') and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se))
+Insert into @SubmitedPoints
 Select Comment,id,Sum(Points) as Points from CTE group by Comment,id
+
+;with CTE(paymentid,Comment,id, Points) as 
+(Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId 
+where ip.Status='Advance' and interviewid!=0 
+Union 
+Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+from InterviewPoints ip join UserList ul on ul.id=ip.userid 
+left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId 
+where ip.Status='Advance' and interviewerid!=0  
+Union 
+Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+from InterviewPoints ip join UserList ul on ul.id=ip.userid 
+where ip.Status='Advance' and interviewerid=0 and Interviewid=0)
+Insert into @AdvancedPoints
+Select Comment,id,Sum(Points) as Points from CTE group by Comment,id
+
+Select sp.id,(Isnull(sp.Points,0)-Isnull(ap.Points,0)) as Points,sp.Comment From @SubmitedPoints sp left join @AdvancedPoints ap on sp.id=ap.id
 END
 GO

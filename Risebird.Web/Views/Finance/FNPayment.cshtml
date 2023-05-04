@@ -7,7 +7,11 @@
     ViewBag.PageHeader = "RB Payment Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    select * {
+        background-color: #42a5f5 !important;
+    }
+</style>
 <link href="~/Autocomplete/jquery-ui.min.css" rel="stylesheet" />
 <link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=54321" />
@@ -91,7 +95,6 @@
                         </div>
                     </div>
                     <div>
-
                     </div>
                 </div>
             </div>
@@ -409,7 +412,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                swal.fire("Successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
@@ -649,6 +652,8 @@
         html += '   <th>Type</th>';
         html += '   <th>Payment Status</th>';
         html += '   <th>Rate</th>';
+        html += '   <th>Points</th>';
+        html += '   <th>Penalty</th>';
         html += '   <th>Amnt</th>';
         html += '   <th>Video Duration<span class="durtime">(in mins)</span></th>';
         html += '   <th>Max Video Duration<span class="durtime">(in mins)</span></th>';
@@ -668,6 +673,8 @@
             html += '                               <td>' + data[i].type + '</td>';
             html += '                               <td>' + data[i].status + '</td>';
             html += '                               <td>' + data[i].rate + '</td>';
+            html += '                               <td>' + data[i].prePoints + '</td>';
+            html += '                               <td>' + data[i].penaltyamount + '</td>';
             html += '                               <td>' + data[i].points + '</td>';
 
             if (data[i].videoDuration == null) {

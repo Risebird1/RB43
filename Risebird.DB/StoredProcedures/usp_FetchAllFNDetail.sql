@@ -13,7 +13,7 @@ CREATE Procedure usp_FetchAllFNDetail
 AS
 BEGIN
 Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,
-(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,
+ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,
 irf.JobCountry as  PreferredLocation,ul.EmailId as InterviewerEmailid,IRF.ClientName,ic.VideoLink, ic.VideoDuration,uli.Emailid as ChannelOwner,
 CASE WHEN ip.Type='Interview' and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,ip.Points) 
 WHEN ip.Type='Interview' and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ip.Points) 
@@ -25,7 +25,7 @@ left join TransQualityController tqi on tqi.IRFId=irf.id and tqi.UserId=ip.Useri
 where ip.Status='Submitted' and ip.Interviewid!=0 
 Union 
 Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,
-(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,
+ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,
 '' as PreferredLocation,ul.EmailId as InterviewerEmailid ,'Interviewer' as ClientName,ic.VideoLink, null as VideoDuration,
 uli.Emailid as ChannelOwner,IsNull(ti.PerSuccessRate,ip.Points) as Rate,'' as PrimarySkillInvite,im.ISCId as IRFId,0 as IsEmergency,null as MaxVideoDuration 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId 
@@ -34,11 +34,11 @@ left join Userlist uli on uli.id=irf.risebirdhr left join TransInterviewerSkills
 where ip.Status='Submitted' and ip.Interviewerid!=0 
 Union 
 Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,
-(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,
+ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,
 '' as PreferredLocation,ul.EmailId as InterviewerEmailid ,'Interviewer' as ClientName,ic.VideoLink, null as VideoDuration,
 uli.Emailid as ChannelOwner,0 as Rate,'' as PrimarySkillInvite,'' as IRFId,0 as IsEmergency,null as MaxVideoDuration 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId 
-left join InterviewerComments ic on ic.InterviewId=im.id join InterviewerSkillsChannel  irf on IRF.InterviewerSkillId=im.ISCId 
+left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel  irf on IRF.InterviewerSkillId=im.ISCId 
 left join Userlist uli on uli.id=irf.risebirdhr where ip.Status='Submitted' and ip.Interviewerid=0 and ip.Interviewid=0
 END
 

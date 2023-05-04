@@ -15,17 +15,17 @@ CREATE Procedure usp_FetchFNToalAmountPaid
 AS
 BEGIN
 ;with CTE(paymentid,Comment,id, Points) as 
-(Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+(Select ip.id as paymentid,ul.EmailId as Comment,ul.id,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) as Points 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId 
 where ip.Status='Paid' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) 
 Union 
-Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+Select ip.id as paymentid,ul.EmailId as Comment,ul.id,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) as Points 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid 
 left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId 
 where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid!=0 
 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) 
 Union 
-Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points 
+Select ip.id as paymentid,ul.EmailId as Comment,ul.id,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) as Points 
 from InterviewPoints ip join UserList ul on ul.id=ip.userid 
 where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid=0 and Interviewid=0 and 
 (ip.Date>=@st and ip.Date<=@se)) Select *  from CTE
