@@ -12,6 +12,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var meetingStatusList = new List<SelectListItem>();
+    meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     var interviewStatusList = new List<SelectListItem>();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
     var currentMeetingStatus = Model.MeetingStatus.HasValue ? Model.MeetingStatus.Value : 0;
@@ -34,11 +35,11 @@
     {
         if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus && !showGeneralNoShowStatus)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
         else
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
+            meetingStatusList = meetingStatusList.ToList();
         }
 
         interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
@@ -48,11 +49,11 @@
 
         if (currentMeetingStatus != (int)MeetingStatus.DroppedBorderLine)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString() && x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
+            meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString() && x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
         }
         else
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
 
         if (currentInterviewStatus != (int)InterviewStatus.BorderLine)
@@ -66,7 +67,7 @@
 
         if (Model.HasDistinctParticipants == false)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
 
         }
         //var timeSpan = DateTime.Now - Convert.ToDateTime(Model.interviewDate);
@@ -81,11 +82,11 @@
 
         if (currentMeetingStatus != (int)MeetingStatus.NoShowStatus && !showGeneralNoShowStatus)
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
+            meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
         else
         {
-            meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString()).ToList();
+            meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString()).ToList();
         }
 
         interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
@@ -94,7 +95,7 @@
 
     if(showGeneralNoShowStatus)
     {
-        meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShow).ToString()).ToList();
+        meetingStatusList =  Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
     meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
     interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
