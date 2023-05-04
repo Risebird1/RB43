@@ -2957,6 +2957,7 @@ namespace Risebird.Web.Controllers
                 }
                 var email = HttpContext.Session.GetString("email");
                 email = email.Replace("\"", "");
+                ViewBag.EmailId = email;
                 bool isAdminHR = false;
                 bool isInterviewer = false;
                 ViewBag.actiontype = actiontype;

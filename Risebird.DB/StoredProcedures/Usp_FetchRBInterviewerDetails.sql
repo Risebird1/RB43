@@ -15,7 +15,7 @@ AS
 BEGIN                    
 If (@flag=2)                    
  begin                    
-  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,ir.InterviewDuration as MaxVideoDuration,
+  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,ir.InterviewDuration as MaxVideoDuration,
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate) ELSE '' END as Rate           
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join Client cl on cl.id=ir.Clientid                    
   left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=@UserId left join TransEmergencyInterviewer tei on tei.IRFId=ir.id and tei.UserId=@UserId                     
@@ -23,14 +23,14 @@ If (@flag=2)
   left join UserList ipul on ipul.EmailId=ip.Comment            
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Advance') and ip.Interviewid!=0                    
   Union                     
-  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                  
+  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                  
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,ISNULL(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     
   left join TransInterviewerSkillsLeadInterviewer ti on ti.InterviewerSkillId=ir.id and ti.UserId=@UserId              
   left join UserList ipul on ipul.EmailId=ip.Comment             
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Advance') and ip.Interviewerid!=0                  
   Union                     
-  Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                    
+  Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                    
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,ISNULL(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     
   left join TransInterviewerSkillsLeadInterviewer ti on ti.InterviewerSkillId=ir.id and ti.UserId=@UserId                     
@@ -38,7 +38,7 @@ If (@flag=2)
  End                    
 Else                    
  Begin                    
-  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,ir.InterviewDuration as MaxVideoDuration,                   
+  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,ir.InterviewDuration as MaxVideoDuration,                   
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate) ELSE '' END as Rate                     
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId           
 left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join Client cl on cl.id=ir.Clientid                    
@@ -48,7 +48,7 @@ left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IR
   left join UserList ipul on ipul.EmailId=ip.Comment           
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Advance') and ip.Interviewid!=0                    
   union                     
-  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                   
+  Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                   
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,IsNull(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId                     
   left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     
@@ -56,7 +56,7 @@ left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IR
   left join UserList ipul on ipul.EmailId=ip.Comment          
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Advance') and ip.Interviewerid!=0                    
   union                     
-  Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                  
+  Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                  
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,IsNull(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId                     
   left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     

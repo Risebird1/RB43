@@ -3726,27 +3726,11 @@ namespace Risebird.Repository
         {
             try
             {
-                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
-                var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Submitted' group by ul.EmailId,ul.id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<RBInterviewDetails>(query, null);
-                    _list = (List<RBInterviewDetails>)results;
-                }
-                var queryad = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Advance' group by ul.EmailId,ul.id";
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = await con.QueryAsync<RBInterviewDetails>(queryad, null);
-                    var resultset = (from c in _list
-                                     join p in results on c.id equals p.id into ps
-                                     from p in ps.DefaultIfEmpty()
-                                     select new RBInterviewDetails
-                                     {
-                                         id = c.id,
-                                         Points = p == null ? c.Points : c.Points - p.Points,
-                                         Comment = c.Comment
-                                     }).ToList();
-                    return resultset.Where(x => x.Points > 0).OrderBy(x => x.Comment).ToList();
+                    var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "FetchInitialFNDetails", null,
+                      commandType: CommandType.StoredProcedure);
+                    return (List<RBInterviewDetails>)result;
                 }
             }
             catch (SqlException ex)
@@ -3951,27 +3935,6 @@ namespace Risebird.Repository
                     var results = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "usp_FetchFNGenerateInvoiceDetails", dynamicParameters,
                       commandType: CommandType.StoredProcedure);
                     _list = (List<RBInterviewDetails>)results;
-                }
-                if (_list.Count > 0)
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "usp_FetchFNGenerateInvoiceDetailsAdvance", null,
-                      commandType: CommandType.StoredProcedure);
-                        var resultset = (from c in _list
-                                         join p in results on c.id equals p.id into ps
-                                         from p in ps.DefaultIfEmpty()
-                                         select new RBInterviewDetails
-                                         {
-                                             id = c.id,
-                                             Points = p == null ? c.Points : c.Points - p.Points,
-                                             Comment = c.Comment
-                                         }).ToList();
-                        return resultset.OrderBy(x => x.Comment).ToList();
-                    }
-                }
-                else
-                {
                     return _list.OrderBy(x => x.Comment).ToList();
                 }
             }
@@ -4124,6 +4087,8 @@ namespace Risebird.Repository
                                      {
                                          id = c.id,
                                          Points = p == null ? c.Points : c.Points - p.Points,
+                                         PrePoints = c.PrePoints,
+                                         Penaltyamount = c.Penaltyamount,
                                          Comment = c.Comment,
                                          Type = c.Type,
                                          InterviewId = c.InterviewId,
@@ -4166,52 +4131,9 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@se", se);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "usp_FetchFNAllGeneratedInvoiceDetails", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "usp_FetchFNAllGeneratedInvoiceDetails", dynamicParameters, commandTimeout: 600,
                     commandType: CommandType.StoredProcedure);
                     _list = (List<RBInterviewDetails>)results;
-                }
-                if (_list.Count > 0)
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "usp_FetchFNAllGeneratedInvoiceDetailsAdvance", null,
-                    commandType: CommandType.StoredProcedure);
-                        var resultset = (from c in _list
-                                         join p in results on c.Userid equals p.Userid into ps
-                                         from p in ps.DefaultIfEmpty()
-                                         select new RBInterviewDetails
-                                         {
-                                             id = c.id,
-                                             Points = p == null ? c.Points : c.Points - p.Points,
-                                             Comment = c.Comment,
-                                             Type = c.Type,
-                                             InterviewId = c.InterviewId,
-                                             Date = c.Date,
-                                             Status = c.Status,
-                                             PreferredLocation = c.PreferredLocation,
-                                             MeetingStatus = c.MeetingStatus,
-                                             candidateEmail = c.candidateEmail,
-                                             candidateName = c.candidateName,
-                                             Userid = c.Userid,
-                                             FirstName = c.FirstName,
-                                             ClientName = c.ClientName,
-                                             VideoLink = c.VideoLink,
-                                             InterviewerEmailid = c.InterviewerEmailid,
-                                             InterviewStatus = c.InterviewStatus,
-                                             VideoDuration = c.VideoDuration,
-                                             ChannelOwner = c.ChannelOwner,
-                                             Rate = c.Rate,
-                                             PrimarySkillInvite = c.PrimarySkillInvite,
-                                             IRFId = c.IRFId,
-                                             IsEmergency = c.IsEmergency,
-                                             MaxVideoDuration = c.MaxVideoDuration,
-                                             IsFixedInterviewduration = c.IsFixedInterviewduration
-                                         }).ToList();
-                        return resultset.ToList();
-                    }
-                }
-                else
-                {
                     return _list.ToList();
                 }
             }

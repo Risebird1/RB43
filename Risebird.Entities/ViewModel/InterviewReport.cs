@@ -387,6 +387,8 @@ namespace Risebird.Entities.ViewModel
         public string CrossCheckvalue { get; set; }
         public int? MaxVideoDuration { get; set; }
         public bool IsFixedInterviewduration { get; set; }
+        public int PrePoints { get; set; }
+        public int Penaltyamount { get; set; }
     }
     public class SchedulingLinkVM
     {
