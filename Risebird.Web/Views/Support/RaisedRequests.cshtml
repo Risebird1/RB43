@@ -20,6 +20,18 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                 </div>
+                <div class="pull-left">
+                    @if (ViewBag.Type == "Open")
+                    {
+                        <div class="feedback-tab-ac" onclick="ChangeIssueListdetails('Open')"><strong>Open Issue</strong></div>
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('Close')"><strong>Closed Issue</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('Open')"><strong>Open Issue</strong></div>
+                        <div class="feedback-tab-ac" onclick="ChangeIssueListdetails('Close')"><strong>Closed Issue</strong></div>
+                    }
+                </div>
                 <div class="pull-right">
                 </div>
             </div>
@@ -96,7 +108,14 @@
                                                             }
                                                         }
                                                     </td>
-                                                    <td><a href="@item.AttachmentURL" target="_blank">Issue Image</a></td>
+                                                    @if (!string.IsNullOrWhiteSpace(item.AttachmentURL))
+                                                    {
+                                                        <td><a href="@item.AttachmentURL" target="_blank">Issue Image</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
                                                     <td>@item.Status</td>
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -266,6 +285,9 @@
         } else {
             alert('Comment is required.');
         }
+    }
+    function ChangeIssueListdetails(type) {
+        window.location.href = "/Support/RaisedRequests?type=" + type;
     }
 </script>
 <script src="~/js/twiliocallmaker.js"></script>
