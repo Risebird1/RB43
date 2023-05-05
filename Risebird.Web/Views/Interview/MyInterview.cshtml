@@ -388,10 +388,8 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;">Date </th>
-                                                            <th style="text-align:left">Job Level</th>
                                                             <th style="text-align:left">JD-Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
-                                                            <th>Client</th>
                                                             <th>Job Location</th>
                                                             @*<th id="myinterview_5">JD Link</th>*@
                                                             <th>Instructions</th>
@@ -401,8 +399,7 @@
                                                             {
                                                                 <th id="myinterview_7">Meeting Link</th>
                                                                 <th>Compensation Type</th>
-                                                                <th>Max./Expected Interview Duration</th>
-                                                                <th>Backup Link</th>
+                                                                <th>Min. Interview Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
                                                             
@@ -413,10 +410,8 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;width:12%">Date</th>
-                                                            <th>Job Level</th>
                                                             <th>JD-Skills</th>
                                                             <th>Candidate Name</th>
-                                                            <th>Client</th>
                                                             <th>Job Location</th>
                                                             @*<th>JD Link</th>*@
                                                             <th>Instructions</th>
@@ -426,8 +421,7 @@
                                                             {
                                                                 <th>Meeting Link</th>
                                                                 <th>Compensation Type</th>
-                                                                <th>Max./Expected Interview Duration</th>
-                                                                <th>Backup Link</th>
+                                                                <th>Min. Interview Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
                                                             
@@ -455,7 +449,6 @@
                                                                         <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
                                                                     }
                                                                 </td>
-                                                                <td> @item.JobLevelDesc </td>
                                                                 <td>
                                                                     <button type="button" class="clickhere_btn pull-left">
                                                                         <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
@@ -486,7 +479,6 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                                <td>@item.ClientName</td>
 
                                                                 @*<td> @item.HeuristicProfileTypeDesc </td>*@
                                                                 @if (item.JobCountry == "1")
@@ -579,23 +571,6 @@
                                                                     </td>
                                                                     @*<td><strong>@item.interviewDuration Min.</strong></td>*@
                                                                     <td><strong>@item.MaxInterviewDuration Min.</strong></td>
-                                                                    @if (item.BackUpLink != null && item.BackUpLink != "")
-                                                                    {
-                                                                        <td class="cadName">
-                                                                            <a target="_blank" title="Meeting Link" href=@item.BackUpLink>BackUp Meeting Link</a>
-                                                                        </td>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.MeetingPlatform != "Zoom")
-                                                                        {
-                                                                            <td class="blinkMessage">Click here to generate backup meeting link(if failed to connect interview with primary link)</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-                                                                    }
                                                                     <td class="text-left">
                                                                         @{
                                                                             var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
