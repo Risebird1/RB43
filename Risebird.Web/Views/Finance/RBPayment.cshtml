@@ -138,14 +138,14 @@
                                                         <td>Late Report Filled</td>
                                                         <td></td>
                                                     }
-                                                    @if (item.Date >=new DateTime(2023, 05, 01) && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                                                   @* @if (item.Date >=new DateTime(2023, 05, 01) && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                                                     {
                                                         <td style="width:11%; text-align: center;">@(item.VideoDuration - 5)</td>
                                                     }
                                                     else
-                                                    {
+                                                    {*@
                                                         <td style="width:11%; text-align: center;">@item.VideoDuration</td>
-                                                    }
+                                                    @*}*@
 
                                                     <td>@item.PrePoints</td>
                                                     <td>@item.Penaltyamount</td>
