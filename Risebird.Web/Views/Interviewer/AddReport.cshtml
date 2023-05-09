@@ -32,8 +32,8 @@
                 <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="interviewgenerate_pdf" value="Generate PDF" onclick="getPDF()"></div>
             </div>
         </div>
-        <div class="row bl-bg">
-            <div class="col-md-12">
+        <div class="row bl-bg" id="pdfdownload">
+            <div class="col-md-12" >
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form interviewer" onsubmit="return CheckConditions()" id="reportForm_1">
@@ -1751,9 +1751,22 @@
 
     }
 </script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
 <script>
     function getPDF() {
+        var d = new Date();
+        var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
+        var element = document.getElementById("pdfdownload");
+        var opt = {
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 }
+        };
+        html2pdf(element, opt);
+    }
+</script>
+<script>
+    @*function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
         var HTML_Height = $(".canvas_div_pdf").height();
@@ -1785,7 +1798,7 @@
 
         });
 
-    }
+    }*@
 </script>
 <script>
 

@@ -26,7 +26,7 @@
             </div>
 
 
-            <div class="col-md-12">
+            <div class="col-md-12" id="pdfdownload">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
@@ -92,12 +92,12 @@
                                                 </div>
                                             </div>
                                             @*<div class="col-md-6 col-sm-6">
-            <div class="form-group">
-                @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            <div class="form-group">
+                                            @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-            </div>
-        </div>*@
+                                            @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                            </div>*@
                                         </div>
 
                                         <div class="row">
@@ -131,8 +131,8 @@
                                             </div>
 
                                         </div>
-                                        
-                                      
+
+
 
                                     </div>
                                 </div>
@@ -396,8 +396,21 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
 <script>
+    function getPDF() {
+        var d = new Date();
+        var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
+        var element = document.getElementById("pdfdownload");
+        var opt = {
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 }
+        };
+        html2pdf(element, opt);
+    }
+</script>
+@*<script>
     function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
@@ -431,7 +444,7 @@
             pdf.save(filename + ".pdf")
         });
     };
-</script>
+</script>*@
 <script>
     function submit() {
         document.getElementById("candidateForm").submit();
@@ -543,9 +556,9 @@
         document.getElementById("FitmentScore").value = fitmentScore;
 
 
-        
 
-        
+
+
         am4core.ready(function () {
 
             // Themes begin

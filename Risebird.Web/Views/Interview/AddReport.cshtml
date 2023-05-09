@@ -22,12 +22,12 @@
     string loggedInUserDomain = string.Empty;
     bool showGeneralNoShowStatus = false;
 
-    if(ViewBag.EmailId != null  && ViewBag.EmailId != string.Empty)
+    if (ViewBag.EmailId != null && ViewBag.EmailId != string.Empty)
     {
         loggedInUser = ViewBag.EmailId;
         loggedInUserDomain = loggedInUser.Split("@").LastOrDefault();
     }
-    if(!string.IsNullOrEmpty(loggedInUserDomain) && loggedInUserDomain == "risebird.io")
+    if (!string.IsNullOrEmpty(loggedInUserDomain) && loggedInUserDomain == "risebird.io")
     {
         showGeneralNoShowStatus = true;
     }
@@ -82,7 +82,7 @@
         //if (timeSpan.TotalMinutes > 15)
         //{
         //    meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
-    //}
+        //}
 
     }
     else
@@ -101,9 +101,9 @@
 
     }
 
-    if(showGeneralNoShowStatus)
+    if (showGeneralNoShowStatus)
     {
-        meetingStatusList =  Html.GetEnumSelectList<MeetingStatus>().ToList();
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
     meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
     interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
@@ -169,9 +169,9 @@
     <div class="mt50 col-md-12">
         <div class="pull-left mt-20">
             <div class="reportdropdown">
-                @if(ViewBag.PageReport != "Insta")
+                @if (ViewBag.PageReport != "Insta")
                 {
-                  <button class="reportdropbtn">Connect with the Interviewer</button>
+                    <button class="reportdropbtn">Connect with the Interviewer</button>
                 }
 
 
@@ -221,7 +221,7 @@
                 </div>*@
             </div>
         </div>
-        <div class="row bl-bg">
+        <div class="row bl-bg" id="pdfdownload">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
@@ -732,24 +732,24 @@
                                                 </video>
 
                                                 @*@if(ViewBag.PageReport == "Insta")
-                                                {
-                                                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                       <label style="width:100%; text-align:center">Note : If the video duration is less than 10 mins, its the shorter version of the entire Interview.</label>
-                                                    </div> 
-                                                }*@
+                                            {
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <label style="width:100%; text-align:center">Note : If the video duration is less than 10 mins, its the shorter version of the entire Interview.</label>
+                                            </div>
+                                            }*@
                                             }
                                         </div>
 
 
                                     </div><!--end of col-md-12-->
 
-                                    
-                                    
+
+
 
                                 </div>
                                 @if (ViewBag.PageReport != "Insta")
                                 {
-                                    
+
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
@@ -1756,6 +1756,12 @@
 
 <script>
     function getPDF() {
+        var interviewid=$("#InterviewId").val();
+        var irfid = $("#IRFId").val();
+        var url="/Interview/GenerateReportPDFFile?interviewId="+interviewid+"&irfId="+irfid;
+        window.open(url, "_blank");
+    }
+    @*function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
         var HTML_Height = $(".canvas_div_pdf").height();
@@ -1787,7 +1793,7 @@
 
         });
 
-    }
+    }*@
     function GeneratePublicUrl(index) {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";
@@ -2100,11 +2106,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                                        // Check document for changes
-                                                                                                        //$.validator.unobtrusive.parse(document);
+                                                                                                                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                                                                        // Check document for changes
+                                                                                                                                        //$.validator.unobtrusive.parse(document);
 
-                                                                                                    }
+                                                                                                                                    }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2204,7 +2210,7 @@
             });*@
 
 
-                                                                                                    }
+                                                                                                                                    }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2292,7 +2298,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                       return CheckLength(250);
+                                                       return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2472,7 +2478,7 @@
                 }
                 });*@
 
-                                                                                                        }
+                                                                                                                                        }
 
 
     });
@@ -2486,6 +2492,7 @@
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script src="~/js/Aadhaar.js"></script>
+
 <script>
     ; (function () {
 

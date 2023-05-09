@@ -376,7 +376,7 @@ function SetChartWithoutJoinabilitySelectability() {
     objGen.legendText = "General Skills Score";
     arr.push(objGen.y);
 
-    
+
 
     //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
     //document.getElementById("totScore").innerHTML = average;
@@ -880,7 +880,7 @@ function SetTechReportChart(techCollectionIdStartsWith) {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        min:0,
+                        min: 0,
                         //stepSize: 5,
                         ticks: {
                             stepSize: 5
@@ -892,7 +892,7 @@ function SetTechReportChart(techCollectionIdStartsWith) {
                         }
                     }]
                 },
-                responsive:false
+                responsive: false
             },
         };
 
@@ -928,7 +928,7 @@ function SetTechReportChart(techCollectionIdStartsWith) {
             document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
 
         }
-        
+
     }
 
 
