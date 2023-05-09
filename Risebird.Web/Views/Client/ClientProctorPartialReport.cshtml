@@ -141,7 +141,7 @@
                     <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
                 }
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12" id="pdfdownload">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
@@ -691,10 +691,23 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
 <script>
     function getPDF() {
+        var d = new Date();
+        var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
+        var element = document.getElementById("pdfdownload");
+        var opt = {
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 }
+        };
+        html2pdf(element, opt);
+    }
+</script>
+
+<script>
+    @*function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
         var HTML_Height = $(".canvas_div_pdf").height();
@@ -726,7 +739,7 @@
 
         });
 
-    }
+    }*@
     function GeneratePublicUrl(index) {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";

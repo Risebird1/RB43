@@ -670,7 +670,14 @@
         });
     }
 </script>
-
+<script>
+    function getPDF() {
+        var interviewid = $("#InterviewId").val();
+        var irfid = $("#IRFId").val();
+        var url = "/Interview/GenerateReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+        window.open(url, "_blank");
+    }
+</script>
 <script>
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -685,7 +692,7 @@
         }
     }
 
-    function getPDF() {
+    @*function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
         var HTML_Height = $(".canvas_div_pdf").height();
@@ -712,7 +719,7 @@
             var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
             pdf.save(filename + ".pdf")
         });
-    }
+    }*@
     function GeneratePublicUrl(index) {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";

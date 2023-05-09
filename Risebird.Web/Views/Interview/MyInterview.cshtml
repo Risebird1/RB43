@@ -446,7 +446,7 @@
                                                                     <div> @item.interviewDate</div>
                                                                     @if (item.Timer > 0)
                                                                     {
-                                                                        <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
+                                                                        <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 4 hours of the Interview Time then this interview will not be billable </span></a></div>
                                                                     }
                                                                 </td>
                                                                 <td>
@@ -1507,7 +1507,7 @@
 
             html += ' <td><div>' + data[i].interviewDate + '</div>';
             if (data[i].timer > 0) {
-                html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>';
+                html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 4 hours of the Interview Time then this interview will not be billable </span></a></div>';
             }
             html += '  </td>';
             html += ' <td> ' + data[i].jobLevelDesc + ' </td>';

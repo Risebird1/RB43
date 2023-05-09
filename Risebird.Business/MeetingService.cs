@@ -9,6 +9,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 namespace Risebird.Business
@@ -1226,7 +1227,7 @@ namespace Risebird.Business
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 reportModel.Interviewer = interviewDetails.interviewer;
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
-                
+                reportModel.LogoUrl = interviewDetails.LogoUrl;
                 return reportModel;
             }
             catch (Exception e)
