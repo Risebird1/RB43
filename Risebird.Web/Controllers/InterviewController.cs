@@ -1714,7 +1714,7 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in myInterview)
                         {
-                            var time = item.interviewDate.AddHours(2);
+                            var time = item.interviewDate.AddHours(4);
                             var currentTime = DateTime.UtcNow;
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
@@ -5749,7 +5749,7 @@ namespace Risebird.Web.Controllers
                     //    var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                     //}
                     //if (status == 2 || status == 3 || (status == 4 && response == false))
-                    if(status == 1) // availability confirmed
+                    if (status == 1) // availability confirmed
                     {
                         //get irfId and interviewdate, candidateEmail and clientHrEmail
 
@@ -7239,6 +7239,87 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("fail");
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GenerateReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                ViewBag.PageStatus = "Mainurl";
+                var email = HttpContext.Session.GetString("email");
+                email = email.Replace("\"", "");
+                ViewBag.EmailId = email;
+                bool isAdminHR = false;
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                string profileName = HttpContext.Session.GetString("profileName");
+                profileName = profileName.Replace("\"", "");
+                ViewBag.profile = profileName;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                string Logo = string.Empty;
+                //if (!string.IsNullOrWhiteSpace(model.LogoUrl))
+                //{
+                //    model.LogoUrl = await ImageUrlToBase64(model.LogoUrl);
+                //}
+                ViewBag.ClientLogo = model.LogoUrl;
+                ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+                if (profileName == "Client")
+                {
+                    var client = await _userRepository.GetClientUserDetails(email);
+                    model.IsQCRequired = client.IsQCRequired;
+                    model.IsRedoInterview = client.IsRedoInterview;
+                }
+                else
+                {
+                    model.IsQCRequired = false;
+                }
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    foreach (var question in model.QuestionsCollection)
+                    {
+                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                    }
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.Userid = _iRFService.GetUserId(email, profileName);
+                if (model.Userid != 0)
+                {
+                    await GetStatusList(model, irfId, model.Userid);
+                }
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                ViewBag.ClientDetails = "";
+
+                if (isClient || isClientSelected)
+                {
+                    ViewBag.ClientDetails = "client";
+                    return View(model);
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
+        public async Task<string> ImageUrlToBase64(string imageUrl)
+        {
+            using var httClient = new HttpClient();
+            var imageBytes = await httClient.GetByteArrayAsync(imageUrl);
+            return Convert.ToBase64String(imageBytes);
         }
     }
 }

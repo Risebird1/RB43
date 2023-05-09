@@ -658,9 +658,16 @@
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
-
 <script>
     function getPDF() {
+        var interviewid = $("#InterviewId").val();
+        var irfid = $("#IRFId").val();
+        var url = "/Interview/GenerateReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+        window.open(url, "_blank");
+    }
+</script>
+<script>
+    @*function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
         var HTML_Height = $(".canvas_div_pdf").height();
@@ -692,7 +699,7 @@
 
         });
 
-    }
+    }*@
     function GeneratePublicUrl(index) {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";

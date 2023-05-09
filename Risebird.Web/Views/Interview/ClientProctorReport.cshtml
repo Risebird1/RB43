@@ -112,7 +112,7 @@
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
             @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
-            <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>*@
+        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>*@
         }
         @if (ViewBag.profile == "Client")
         {
@@ -561,12 +561,10 @@
             </button>
             <div class="modal-body">
                 <div style="padding:10px" id="divAadhaarKYC">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
-
                         </div>
                     </div>
                 </div>
@@ -712,6 +710,14 @@
 </script>
 
 <script>
+    function getPDF() {
+        var interviewid = $("#InterviewId").val();
+        var irfid = $("#IRFId").val();
+        var url = "/Interview/GenerateReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+        window.open(url, "_blank");
+    }
+</script>
+<script>
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -725,7 +731,7 @@
         }
     }
 
-    function getPDF() {
+    @*function getPDF() {
 
         var HTML_Width = $(".canvas_div_pdf").width();
         var HTML_Height = $(".canvas_div_pdf").height();
@@ -739,36 +745,36 @@
 
 
         html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
-            canvas.getContext('2d');
+        canvas.getContext('2d');
 
-            var imgData = canvas.toDataURL("image/png", 1.0);
-            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
-            for (var i = 1; i <= totalPDFPages; i++) {
-                pdf.addPage(PDF_Width, PDF_Height);
-                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
-            }
-            var d = new Date();
-            var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
-            pdf.save(filename + ".pdf")
+        var imgData = canvas.toDataURL("image/png", 1.0);
+        var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+        for (var i = 1; i <= totalPDFPages; i++) {
+        pdf.addPage(PDF_Width, PDF_Height);
+        pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+        }
+        var d = new Date();
+        var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+        pdf.save(filename + ".pdf")
         });
-    }
-    function GeneratePublicUrl(index) {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "block";
-        var urlcurrent = window.location.href;
-        if (index == 1) {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
-            urlcurrent = urlcurrent.replace("ProctorReport", "ExecutiveReport");
+        }*@
+        function GeneratePublicUrl(index) {
+            var modal = document.getElementById("PublicUrlShareModel");
+            modal.style.display = "block";
+            var urlcurrent = window.location.href;
+            if (index == 1) {
+                urlcurrent = urlcurrent.replace("Public", "");
+                urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
+                urlcurrent = urlcurrent.replace("ProctorReport", "ExecutiveReport");
+            }
+            else {
+                urlcurrent = urlcurrent.replace("Public", "");
+                urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+                urlcurrent = urlcurrent.replace("ProctorReport", "InstaAddReport");
+            }
+            $("#txtvideoUrls").text(urlcurrent);
         }
-        else {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
-            urlcurrent = urlcurrent.replace("ProctorReport", "InstaAddReport");
-        }
-        $("#txtvideoUrls").text(urlcurrent);
-    }
     function closePublicUrlShareModel() {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "none";
