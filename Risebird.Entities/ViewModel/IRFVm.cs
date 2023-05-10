@@ -71,7 +71,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("No of Positions")]
         [Required]
         public int NoOfPosition { get; set; }
-        [DisplayName("Client Profile Type")]
+        [DisplayName("Plan Type")]
         public int Heuristicsscore { get; set; }
 
         [DisplayName("No of Interviews")]
