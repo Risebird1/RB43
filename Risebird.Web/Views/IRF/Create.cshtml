@@ -181,6 +181,43 @@
 
 
                                                 </div>
+                                                <div class="row">
+
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @{
+                                                                var countryTypeList = new List<SelectListItem>();
+                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "India" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Outside India" });
+                                                            }
+                                                            @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
+                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
+                                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList,  new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
+                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             </div>
                                         </div>
 
@@ -392,13 +429,13 @@
 
                                                                         <th width="10%" class="table_heading"> Select </th>
                                                                         @*@if (Model.Profile == "Client")
-                                                                        {
-                                                                            <th width="30%" class="table_heading"> Coded Resume </th>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <th width="10%" class="table_heading"> Resume </th>
-                                                                        }*@
+                                                                    {
+                                                                    <th width="30%" class="table_heading"> Coded Resume </th>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <th width="10%" class="table_heading"> Resume </th>
+                                                                    }*@
                                                                         <th width="10%" class="table_heading"> Resume </th>
                                                                     </tr>
                                                                 </thead>
@@ -439,28 +476,28 @@
                                                                                 @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
                                                                             </td>
                                                                             @*@if (Model.Profile == "Client")
-                                                                            {
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].CodedResumeLink))
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[0].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
-                                                                                    </td>
+                                                                    {
+                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].CodedResumeLink))
+                                                                    {
+                                                                    <td class="cadName">
+                                                                    <a href="@Model.InterviewerCollection[0].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
+                                                                    </td>
 
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="">No Resume</a>
-                                                                                    </td>
-                                                                                }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td class="cadName">
+                                                                    <a onclick="" data-tooltip="">No Resume</a>
+                                                                    </td>
+                                                                    }
 
-                                                                            }*@
+                                                                    }*@
                                                                             @*else
-                                                                            {
+                                                                    {
 
-                                                                                
 
-                                                                            }*@
+
+                                                                    }*@
                                                                             @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
                                                                             {
                                                                                 <td class="cadName">
@@ -511,35 +548,35 @@
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
                                                                                 @*@if (Model.Profile == "Client")
-                                                                                {
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
-                                                                                        </td>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="" data-tooltip="">No Resume</a>
-                                                                                        </td>
-                                                                                    }
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                                                                        </td>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="" data-tooltip="">No Resume</a>
-                                                                                        </td>
-                                                                                    }
-                                                                                }*@
+                                                                    {
+                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                    {
+                                                                    <td class="cadName">
+                                                                    <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
+                                                                    </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td class="cadName">
+                                                                    <a onclick="" data-tooltip="">No Resume</a>
+                                                                    </td>
+                                                                    }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                    {
+                                                                    <td class="cadName">
+                                                                    <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                    </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td class="cadName">
+                                                                    <a onclick="" data-tooltip="">No Resume</a>
+                                                                    </td>
+                                                                    }
+                                                                    }*@
                                                                                 @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                 {
                                                                                     <td class="cadName">
@@ -571,10 +608,10 @@
 
                                     @Html.HiddenFor(m => m.AssessmentGroupId)
                                     @Html.HiddenFor(m => m.CreatedFromTemplateId)
-                                    @Html.HiddenFor(m => m.JobCountry)
+                                    @*@Html.HiddenFor(m => m.JobCountry)*@
                                     @Html.HiddenFor(m => m.JobLevel)
-                                    @Html.HiddenFor(m => m.CompanyType)
-                                    @Html.HiddenFor(m => m.Heuristicsscore)
+                                    @*@Html.HiddenFor(m => m.CompanyType)
+                                    @Html.HiddenFor(m => m.Heuristicsscore)*@
                                     @Html.HiddenFor(m => m.Profile)
                                     @Html.HiddenFor(m => m.MeetingPlatform)
                                     @Html.HiddenFor(m => m.TemplateName)
@@ -852,7 +889,7 @@
                 document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
                 document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
                 document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
-                document.getElementById('InterviewDuration').value=data.interviewDuration;
+                document.getElementById('InterviewDuration').value = data.interviewDuration;
             }
         });
     }
@@ -1239,7 +1276,13 @@
                 else {
                     $('#error_JDLink').text("");
                 }
-
+                if ($('#Heuristicsscore').val() == "") {
+                    $('#error_Heuristicsscore').text("The Plan Type field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_Heuristicsscore').text("");
+                }
                 if (!flag) {
                     document.getElementById("btnPrev").style.display = "block";
                     $(".tab-menu li a").removeClass("active");
@@ -1442,18 +1485,18 @@
         return true;
     }
     function configurationChange() {
-        if($("#ClientId").val()!=''){
-        $.ajax({
-            type: "POST",
-            url: "/IRF/GetClientDetails",
-            data: { 'clientid': $("#ClientId").val() },
-            success: function (data) {
-                document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
-                document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
-                document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
-                document.getElementById('InterviewDuration').value=data.interviewDuration;
-            }
-        });
+        if ($("#ClientId").val() != '') {
+            $.ajax({
+                type: "POST",
+                url: "/IRF/GetClientDetails",
+                data: { 'clientid': $("#ClientId").val() },
+                success: function (data) {
+                    document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
+                    document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
+                    document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
+                    document.getElementById('InterviewDuration').value = data.interviewDuration;
+                }
+            });
         }
     }
 </script>
