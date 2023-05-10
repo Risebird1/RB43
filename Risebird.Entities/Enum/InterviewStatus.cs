@@ -191,8 +191,8 @@ namespace Risebird.Entities.Enum
     public enum CompanyType
     {
 
-        [Description("Product")]
-        Product = 1,
+        //[Description("Product")]
+        //Product = 1,
         [Description("Service")]
         Service = 2
     }

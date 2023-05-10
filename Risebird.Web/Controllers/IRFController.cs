@@ -6782,13 +6782,18 @@ namespace Risebird.Web.Controllers
                         }
                         model.Profile = profileName;
                         model.TemplateName = templateName;
+                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
+                        model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
                         return View(model);
                     }
                     else
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -6810,6 +6815,12 @@ namespace Risebird.Web.Controllers
             string emailId = string.Empty;
             try
             {
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -7208,7 +7219,7 @@ namespace Risebird.Web.Controllers
         //}
 
         [HttpGet]
-        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null )
+        public async Task<IActionResult> PublicSkillChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             ViewBag.emailid = emailid;
             //if(!string.IsNullOrEmpty(uniqueid))
@@ -7219,7 +7230,7 @@ namespace Risebird.Web.Controllers
 
             ViewBag.IsClientLogin = isClientLogin;
             ViewBag.Type = "IRF";
-            if(!isClientLogin)
+            if (!isClientLogin)
             {
                 ViewBag.PageStatus = "Public";
             }
@@ -7270,8 +7281,8 @@ namespace Risebird.Web.Controllers
             }
             return View("SkillChannelDetails", irfList);
         }
-        [HttpGet] 
-        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, bool isClientLogin = false, string uniqueid= null)
+        [HttpGet]
+        public async Task<IActionResult> ResetPublicSkillChannelDetailsFilter(string emailid, bool isClientLogin = false, string uniqueid = null)
         {
             try
             {

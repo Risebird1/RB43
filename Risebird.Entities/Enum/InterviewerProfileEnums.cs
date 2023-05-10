@@ -1227,12 +1227,12 @@ namespace Risebird.Entities.Enum
     }
     public enum Heuristicsscorelevel
     {
-        [Description("Basic")]
-        Basic = 1,
+        //[Description("Basic")]
+        //Basic = 1,
         [Description("Standard")]
         Standard = 2,
-        [Description("Standard+")]
-        StandardPlus = 3,
+        //[Description("Standard+")]
+        //StandardPlus = 3,
         [Description("Pro")]
         Pro = 4,
         [Description("Elite")]
