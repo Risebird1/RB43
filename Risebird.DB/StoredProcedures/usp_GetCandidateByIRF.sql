@@ -23,10 +23,11 @@ case
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
-ul.MobileNumber as Phone
+ul.MobileNumber as Phone, ula.EmailId as AddedByEmailId
 from Candidate ca   
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId   
 join UserList ul on ul.id = cm.UserId  
+left join UserList ula on ula.id = ca.AddedByUserId
 where ca.IRFId=@IRFId and ul.EmailId=@EmailId  
   
   

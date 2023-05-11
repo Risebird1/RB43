@@ -4959,11 +4959,20 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false)
         {
             DataTable dt = new DataTable();
-            dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
+            if(isResumeParser)
+            {
+                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
+                    new DataColumn("Import Status", typeof(string)), new DataColumn("CandidateResumeId", typeof(int)) });
+            }
+            else
+            {
+                dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)) });
+            }
+            
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -4978,7 +4987,16 @@ namespace Risebird.Repository
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
                             parameters.Add("@Phone", obj.Phone);
-                            parameters.Add("@AddedByUserId", userId);
+                            if(userId.HasValue)
+                            {
+                                parameters.Add("@AddedByUserId", userId);
+
+                            }
+                            else
+                            {
+                                parameters.Add("@AddedByUserId", obj.AddedByUserId);
+
+                            }
                             parameters.Add("@date", DateTime.Now);
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
@@ -4989,7 +5007,16 @@ namespace Risebird.Repository
                             await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                             var result = parameters.Get<string>("@operationStatus");
-                            dt.Rows.Add(obj.EmailId, result);
+                            if(isResumeParser)
+                            {
+                                dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
+
+                            }
+                            else
+                            {
+                                dt.Rows.Add(obj.EmailId, result);
+
+                            }
 
                         }
                         return dt;

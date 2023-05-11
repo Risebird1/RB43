@@ -18,8 +18,8 @@ CREATE PROCEDURE [dbo].usp_AddQuickCandidate
 @Phone varchar(200),      
 @AddedByUserId int,       
 @date datetime,      
-@ClientHREmail varchar(200),      
-@ProfileSource varchar(200),     
+@ClientHREmail varchar(200) = null,      
+@ProfileSource varchar(200) = null,     
 @WhatsappNumber varchar(15),  
 @operationStatus varchar(200) out      
       

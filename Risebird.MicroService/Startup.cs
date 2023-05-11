@@ -131,6 +131,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
             builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
             builder.Services.AddScoped<IVmHelper, VmHelper>();
+            builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
         }
 
 
