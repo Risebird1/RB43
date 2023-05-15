@@ -818,63 +818,6 @@
 </script>
 
 
-
-
-
-@if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-{
-    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    profileName = profileName.Trim('"');
-    @if (profileName == "Client" || profileName == "Interviewer" || (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client"))
-    {
-        @*<script src='//fw-cdn.com/2398529/2998468.js' chat='true'></script>
-        <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
-        <script>
-            window.fwSettings = {
-                'widget_id': 44000003946
-            };
-            !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
-
-        </script>*@
-
-
-
-        <script src='//fw-cdn.com/2398529/2998468.js' chat='true' widgetId='eb06f77e-bd1e-48c9-87fc-a292f4d27465'></script>
-        <script type='text/javascript' src='https://widget.freshworks.com/widgets/eb06f77e-bd1e-48c9-87fc-a292f4d27465.js' async defer></script>
-        <script>
-            window.fwSettings = {
-                'widget_id': eb06f77e - bd1e - 48c9- 87fc - a292f4d27465
-                                    };
-            !function () { if ("function" != typeof window.FreshworksWidget) { var n = function () { n.q.push(arguments) }; n.q = [], window.FreshworksWidget = n } }()
-
-            // To set user email
-            window.fcWidget.user.setEmail('@currentLoggedInUser');
-
-            // To set user properties
-            // Note that any other fields passed as properties which are not in the CRM Contact properties already, they will be ignored.
-            window.fcWidget.user.setProperties({
-                cf_plan: "Pro",                 // meta property 1
-                cf_status: "Active"             // meta property 2
-            });
-        </script>
-    }
-
-}
-
-@*@if (ViewBag.PageStatus == "Public" && ViewBag.profile == "Client")
-{
-    <script src='//fw-cdn.com/2398529/2998468.js'
-        chat='true'>
-    </script>
-   <script>
-	window.fwSettings={
-	'widget_id':44000003946
-	};
-	!function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}()
-    </script>
-    <script type='text/javascript' src='https://widget.freshworks.com/widgets/44000003946.js' async defer></script>
-
-}*@
 @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
 {
     var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
