@@ -51,7 +51,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
-@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
+@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 --@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
@@ -187,11 +187,12 @@ Begin
 					[IRFId] ,  
 					[UserId],  
 					[PerSuccessRate], 
+					[Surcharge],
 					[IsActive],
 					[IsAvailable],
 					[InterviewerId])  
     
-					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
 
 					--emergency interviewers
 
