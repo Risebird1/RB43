@@ -3338,11 +3338,11 @@ namespace Risebird.Web.Controllers
                     
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-120), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-150), DateTime.Now.AddDays(15), 2, emailid)).ToList();
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now, DateTime.Now.AddDays(15), 2, emailid)).ToList();
                     }
                    
                     if (candidateData == null)
@@ -3507,11 +3507,11 @@ namespace Risebird.Web.Controllers
                 {                    
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-120), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-150), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-23), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now, DateTime.Now.AddDays(15), datatype, emailid)).ToList();
                     }
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
