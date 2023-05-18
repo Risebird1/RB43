@@ -565,6 +565,7 @@ namespace Risebird.Business
                 model.InterviewDuration = IRF.InterviewDuration;
                 model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
                 model.FixedAmount = IRF.FixedAmount;
+                model.Surcharge = IRF.Surcharge;
                 return model;
             }
             catch (Exception e)
@@ -2414,6 +2415,26 @@ namespace Risebird.Business
                     companyTypeDesc = ((CompanyType)companyType).GetDescription();
                 }
                 var rate = await _irfRepository.GetInterviewerRate(userId, companyTypeDesc, countryType);
+                return rate;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null)
+        {
+            try
+            {
+                string planTypeDesc = null;
+                if (planType != null && planType.HasValue)
+                {
+                    planTypeDesc = ((Heuristicsscorelevel)planType).GetDescription();
+                }
+                var rate = await _irfRepository.GetRenewedInterviewerRate(planTypeDesc, countryType);
                 return rate;
             }
 

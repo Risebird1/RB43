@@ -1,4 +1,8 @@
-﻿function AddRow() {
+﻿var surchargeBase = 0;
+var surchargeMin = 0;
+var surchargeMax = 0;
+
+function AddRow() {
     //document.getElementById("btnUpload").disabled = false;
 
     var table = document.getElementById("SkillTable");
@@ -127,6 +131,70 @@ function ShowAmountIfChecked() {
         amountDiv.style.display = "none";
     }
 }
+
+function UpdateInterviewerRate(planType = null, countryType = null) {
+    if (planType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
+        //planType = $("#Heuristicsscore").val()
+
+        //var surchargeElem = document.getElementById("Surcharge");
+
+        if (planType == "2")//Standard
+        {
+            surchargeMax = 100;
+            //surchargeMin = 0;
+
+        }
+        else if (planType == "4")//Pro
+        {
+            surchargeMax = 200;
+            //surchargeMin = 101;
+            
+        }
+        else if (planType == "5")//Advanced
+        {
+            surchargeMax = 300;
+            //surchargeMin = 101;
+        }
+    }
+
+    if (countryType == null) {
+        countryType = $("#JobCountry").val()
+    }
+    if (planType == null) {
+        planType = $("#Heuristicsscore").val()
+    }
+
+    if (planType != null && planType != '' && countryType != null && countryType != '') {
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetRenewedInterviewerRate",
+            data: { 'planType': planType, 'countryType': countryType },
+            success: function (result) {
+                interviewerRate = result;
+            }
+        });
+    }
+    var interviewersList = $('[id^="InterviewerCollection"][id$="PerSuccessRate"]');
+    for (i = 0; i < interviewersList.length; i++) {
+        $("#" + interviewersList[i].id).val(interviewerRate);
+    }
+    var surchargeList = $('[id^="InterviewerCollection"][id$="Surcharge"]');
+    for (i = 0; i < surchargeList.length; i++) {
+            $("#" + surchargeList[i].id).val(interviewerRate);
+            $("#" + surchargeList[i].id).attr({
+               "max" : surchargeMax//,        
+               //"min" : 2          
+            });
+    }
+
+}
+
+function CheckSurchargeValueForEachInterviewer()
+{
+
+}
+
 
 //$('#InterviewDuration').on('change', function () {
 //    CheckFixedInterviewDuration()

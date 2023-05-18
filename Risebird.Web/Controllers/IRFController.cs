@@ -1025,6 +1025,21 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null)
+        {
+            try
+            {
+                var rate = await _irfService.GetRenewedInterviewerRate(planType, countryType);
+                return rate;
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
         [Authorize]
         public async Task<int> GetInterviewerQCRate(int userId)
         {

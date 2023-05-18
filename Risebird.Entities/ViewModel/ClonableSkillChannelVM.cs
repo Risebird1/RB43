@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
+using System.ComponentModel;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -40,6 +41,7 @@ namespace Risebird.Entities.ViewModel
         public int InterviewCounts { get; set; }
         public string PrimarySkills { get; set; }
         public string TaggedClients { get; set; }
+
     }
 }
 

@@ -48,8 +48,9 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@timeNow datetime,
 	@isSMEChanged bit output,
 	@IsLocked bit,
-	@InterviewDuration int,
-	@IsFixedInterviewduration bit,
+	@Surcharge int = null,
+	--@InterviewDuration int,
+	--@IsFixedInterviewduration bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -58,8 +59,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
-	@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
-	@FixedAmount int = null
+	@HRBulkData AS [dbo].[TransHR_TableType] READONLY
+	--@FixedAmount int = null
 	--@idRecommendation int,
 	--@RecommendationStatus bit,
 	--@RecommendationCategoryId int,
@@ -118,9 +119,10 @@ BEGIN
 	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
-	,[InterviewDuration]=@InterviewDuration
-	,[IsFixedInterviewduration]=@IsFixedInterviewduration
-	,[FixedAmount] = @FixedAmount
+	,[Surcharge] = @Surcharge
+	--,[InterviewDuration]=@InterviewDuration
+	--,[IsFixedInterviewduration]=@IsFixedInterviewduration
+	--,[FixedAmount] = @FixedAmount
 	Where id =@id        
     
 	

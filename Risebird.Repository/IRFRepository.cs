@@ -232,6 +232,33 @@ namespace Risebird.Repository
 
             }
         }
+
+        public async Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@planType", planType);
+                    parameters.Add("@countryType", countryType);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRenewedInterviewerRate", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+
+            }
+        }
         public async Task<int> GetInterviewerQCRate(int userId)
         {
             try
@@ -891,12 +918,13 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        interviewerDt.Columns.Add("Surcharge", typeof(int));
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
                         }
                     }
 
@@ -1048,14 +1076,20 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdCreateIRF.Parameters["@CreatedOn"].Value = irfDetails.CreatedOn;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsNewSkillChannel"].Value = true;//this is set true for all the skill channels created from May23 when changes to the financial model were instituted
                     
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
-                    cmdCreateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
+                    //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
+                    //cmdCreateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
+
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
+                    //cmdCreateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
+                    //cmdCreateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
 
 
                     SqlParameter idIRFParam = new SqlParameter();
@@ -1981,15 +2015,18 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
-                    
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
+                    //cmdUpdateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
 
                     bool isSMEChanged = false;
 
