@@ -9,6 +9,8 @@ CREATE TABLE [dbo].[PlanTypeChargesMaster](
 	[Country] [varchar](40) NOT NULL,
 	[CountryType] [int] NOT NULL,
 	[Rate][int] Not Null,
+	[DurationSelectedMin][int] Null,
+	[DurationRejectedMin][int] Null,
  CONSTRAINT [PK_PlanTypeChargesMaster] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

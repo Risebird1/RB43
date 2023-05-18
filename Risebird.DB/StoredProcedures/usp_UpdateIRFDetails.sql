@@ -55,7 +55,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 	@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
-	@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
+	@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
@@ -119,7 +119,6 @@ BEGIN
 	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
-	,[Surcharge] = @Surcharge
 	--,[InterviewDuration]=@InterviewDuration
 	--,[IsFixedInterviewduration]=@IsFixedInterviewduration
 	--,[FixedAmount] = @FixedAmount
@@ -196,6 +195,7 @@ BEGIN
 	[IRFId] ,  
 	[UserId],  
 	[PerSuccessRate], 
+	[Surcharge],
 	[IsActive],
 	[IsAvailable],
 	[InterviewerId])  

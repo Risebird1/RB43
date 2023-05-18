@@ -48,7 +48,6 @@ CREATE TABLE [dbo].[IRF](
             [InterviewDuration][int] null,
             [IsFixedInterviewduration][bit] null,
             [FixedAmount][int] null,
-            [Surcharge][int] null,
             [IsNewSkillChannel] [bit] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
@@ -413,15 +412,6 @@ BEGIN
     Add FixedAmount INT NULL
 END
 
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Surcharge')
-      AND Object_ID = Object_ID(N'IRF'))
-BEGIN
-    ALTER TABLE IRF
-    Add Surcharge int
-END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns

@@ -93,9 +93,15 @@
                                                         @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group" style="margin-bottom:20px;">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Risebird Scheduler</label>
+                                                        @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
+                                                    </div>
+                                                </div>
 
 
-                                                <div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
+                                                @*<div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
                                                     <div>
                                                         <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                                             <div class="mdc-radio mdc-radio--touch">
@@ -127,7 +133,7 @@
                                                     <div class="form-group" style="display:none" id="SchedulinglinkDiv">
                                                         @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
                                                     </div>
-                                                </div>
+                                                </div>*@
 
 
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
@@ -196,8 +202,8 @@
 
                                                             @{
                                                                 var countryTypeList = new List<SelectListItem>();
-                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "India" });
-                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Outside India" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "Offshore" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Onsite" });
                                                             }
 
                                                             @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate()"/*"TechSkillChanged()"*/ })
@@ -813,11 +819,12 @@
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                 }*@
 
-                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @disabled = "disabled" })
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1",  @readonly = "readonly"/*, @disabled = "disabled"*/  })
 
                                                                             </td>
                                                                             <td>
                                                                                 @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0", @max = "100" })
+                                                                                @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
 
                                                                             </td>
                                                                             <td class="action text-center">
@@ -862,11 +869,13 @@
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                     }*@
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @disabled = "disabled" })
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly"/*, @disabled = "disabled"*/ })
 
                                                                                 </td>
                                                                                 <td>
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0"})
+                                                                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+
                                                                                 </td>
                                                                                 <td class="action text-center">
 
@@ -1491,7 +1500,7 @@
         }
     }
 
-    function RadioLinkChanged(val) {
+    @*function RadioLinkChanged(val) {
         if (val == 'UploadLink') {
             document.getElementById("CalendlyLinkDiv").style.display = "block";
             document.getElementById("SchedulinglinkDiv").style.display = "none";
@@ -1502,7 +1511,7 @@
             document.getElementById("SchedulinglinkDiv").style.display = "block";
             document.getElementById("SchedulingLink").value = '';
         }
-    }
+    }*@
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1556,7 +1565,6 @@
 
 
     function CheckTotalWeightage() {
-
         //var ckeck = $("#irfForm").validate();
         var inCorrectCount = 0;
         var skillArray = ["SkillCollection", "Joinability", "Selectability", "SkillGeneral"];
@@ -1596,7 +1604,7 @@
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
         for (var i = 0; i < rowCount; i++) {
-            if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "") {
+            if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "") {
                 if (message == "") {
                     message = "Per Interviewer Rate should not be blank";
                 } else {
@@ -1606,7 +1614,7 @@
                 break;
             }
         }
-        var emetable = document.getElementById("EmergencyInterviewerTable");
+        @*var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
         for (var i = 0; i < emerowCount; i++) {
             if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "") {
@@ -1618,8 +1626,8 @@
                 newflag = true;
                 break;
             }
-        }
-        var qctable = document.getElementById("EmergencyInterviewerTable");
+        }*@
+        @*var qctable = document.getElementById("EmergencyInterviewerTable");
         var qcrowCount = qctable.rows.length;
         for (var i = 0; i < qcrowCount; i++) {
             if ($("#QualityController_" + i + "__PerQCRate").val() == "") {
@@ -1631,7 +1639,7 @@
                 newflag = true;
                 break;
             }
-        }
+        }*@
         if (newflag == true) {
             alert(message);
             return false;
@@ -1645,13 +1653,13 @@
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
-                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
 
                     return false;
                 }
             }
             document.getElementById("noInterviewer").innerHTML = "";
-            document.getElementById("noInterviewerDown").innerHTML = "";
+            //document.getElementById("noInterviewerDown").innerHTML = "";
             $("#btnUpload").attr("disabled", "disabled");
             return true;
         }
@@ -1663,12 +1671,12 @@
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all Interviewer entries.";
-                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
                     break;
 
                 }
                 document.getElementById("noInterviewer").innerHTML = "";
-                document.getElementById("noInterviewerDown").innerHTML = "";
+                //document.getElementById("noInterviewerDown").innerHTML = "";
             }
             return false;
         }
@@ -2396,7 +2404,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-    function AddRowEmergencyInterviewer() {
+    @*function AddRowEmergencyInterviewer() {
         //document.getElementById("btnUpload").disabled = false;
 
         var table = document.getElementById("EmergencyInterviewerTable");
@@ -2445,7 +2453,7 @@
         $.validator.unobtrusive.parse(document);
         //document.getElementById("btnUpload").disabled = false;
 
-    }
+    }*@
 
 
     function AddRowRecruiter() {
@@ -3322,7 +3330,7 @@
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 flag = !checkUniqueness();
-                if (document.getElementById('link').checked) {
+                @*if (document.getElementById('link').checked) {
                     if ($('#CalendlyLink').val() == "") {
                         $('#error_CalendlyLink').text("The CalendlyLink field is required.");
                         flag = true;
@@ -3330,7 +3338,7 @@
                     else {
                         $('#error_CalendlyLink').text("");
                     }
-                }
+                }*@
                 
                 if ($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
@@ -3846,7 +3854,7 @@
         document.getElementById("qcInterviewer").innerHTML = "";
         return false;
     }
-    function checkEmergencyDetails() {
+    @*function checkEmergencyDetails() {
         var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
         $("#count_Em").text(emerowCount - 1);
@@ -3868,7 +3876,7 @@
         }
         document.getElementById("emInterviewer").innerHTML = "";
         return false;
-    }
+    }*@
     $('#IsCandidateavailability').on('change', function () {
         CheckCandidateavailabilityDetails()
     });

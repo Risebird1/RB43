@@ -565,7 +565,7 @@ namespace Risebird.Business
                 model.InterviewDuration = IRF.InterviewDuration;
                 model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
                 model.FixedAmount = IRF.FixedAmount;
-                model.Surcharge = IRF.Surcharge;
+                //model.Surcharge = IRF.Surcharge;
                 return model;
             }
             catch (Exception e)

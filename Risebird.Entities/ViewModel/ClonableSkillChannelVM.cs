@@ -41,6 +41,9 @@ namespace Risebird.Entities.ViewModel
         public int InterviewCounts { get; set; }
         public string PrimarySkills { get; set; }
         public string TaggedClients { get; set; }
+        //public string Heuristicsscore { get; set; }
+        //public string JobCountry { get; set; }
+        //public string CompanyType { get; set; }
 
     }
 }

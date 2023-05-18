@@ -294,7 +294,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
+                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
                     return result.Distinct().ToList();
                 }
             }
@@ -1839,12 +1839,13 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        interviewerDt.Columns.Add("Surcharge", typeof(int));
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
                         }
                     }
 
@@ -2016,8 +2017,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
@@ -5884,10 +5885,15 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
+                    
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
+                    
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
 
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
@@ -5942,19 +5948,22 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        interviewerDt.Columns.Add("Surcharge", typeof(int));
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            if (irfDetails.JobCountry == "2")
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
-                            }
-                            else
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
-                            }
+                            //if (irfDetails.JobCountry == "2")
+                            //{
+                            //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
+                            //}
+                            //else
+                            //{
+                            //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
+                            //}
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, true, false);
+
                         }
                     }
 
