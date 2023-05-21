@@ -55,8 +55,8 @@ namespace Risebird.MicroService
                         && item.TimeZoneoffset.HasValue
                         && !item.TimeZonesValue.Contains("(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"))
                     {
-                        timeZoneValue = item.TimeZonesValue;
-                        if (item.TimeZoneoffset.Value > 0)
+                        timeZoneValue = item.TimeZonesValue.Split(")").Last();
+                        if (item.TimeZoneoffset.Value >= 0)
                         {
                             item.interviewDate = item.interviewDate.AddMinutes(330 + item.TimeZoneoffset.Value);
                         }
