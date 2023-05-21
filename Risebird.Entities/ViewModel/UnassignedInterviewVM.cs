@@ -17,5 +17,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string PrimarySkillInvite { get; set; }
         public string MeetingLink { get; set; }
+        public int? TimeZoneoffset { get; set; }
+        public string TimeZonesValue { get; set; }
     }
 }
