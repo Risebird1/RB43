@@ -59,7 +59,7 @@
                                             <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
                                             @*<li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>*@
-                                            <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>
+                                            @*<li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>*@
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
                                             @*<li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>*@
                                             <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
@@ -93,9 +93,15 @@
                                                         @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group" style="margin-bottom:20px;">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Risebird Scheduler</label>
+                                                        @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
+                                                    </div>
+                                                </div>
 
 
-                                                <div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
+                                                @*<div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
                                                     <div>
                                                         <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                                             <div class="mdc-radio mdc-radio--touch">
@@ -127,19 +133,25 @@
                                                     <div class="form-group" style="display:none" id="SchedulinglinkDiv">
                                                         @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
                                                     </div>
-                                                </div>
+                                                </div>*@
 
-
+                                                
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                        </div>
-                                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, "Select", new { @class = "select-css form-control" })
-                                                        @Html.ValidationMessageFor(model => model.PriorityLevelList, "", new { @id = "error_PriorityLevel", @class = "text-danger" })
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            
+                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null)" })
+
+                                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
+
                                                     </div>
                                                 </div>
+
+
+
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
@@ -154,37 +166,53 @@
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
                                                         @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
                                                     </div>
                                                 </div>
+
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
-                                                @*<div class="col-md-3 col-sm-3 pull-left">
+                                                @*<div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group" style="margin-bottom:20px;">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.Surcharge, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            </div>
+                                                            @Html.EditorFor(m => m.Surcharge, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "0" } })
+                                                            @Html.ValidationMessageFor(model => model.Surcharge, "", new { @id = "error_Surcharge", @class = "text-danger" })
 
-                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
-
-
-                                            <div class="mdc-checkbox">
-                                            @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
-
-
-                                            <div class="mdc-checkbox__background">
-                                            <svg class="mdc-checkbox__checkmark"
-                                            viewBox="0 0 24 24">
-                                            <path class="mdc-checkbox__checkmark-path"
-                                            fill="none"
-                                            d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                            </svg>
-                                            <div class="mdc-checkbox__mixedmark"></div>
-                                            </div>
-                                            <div class="mdc-checkbox__ripple"></div>
+                                                    </div>
+                                                </div>*@
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group" style="margin-bottom:20px;">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line"/*, @onchange = "TechSkillChanged()" */})
 
 
-                                            </div>
-                                            @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
-                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
 
-                                            </div>*@
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group" style="margin-bottom:20px;">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+
+                                                            @{
+                                                                var countryTypeList = new List<SelectListItem>();
+                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "Offshore" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Onsite" });
+                                                            }
+
+                                                        @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value)"/*"TechSkillChanged()"*/ })
+                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
+
+                                                    </div>
+                                                </div>
+                                                
 
                                                 <div class="col-md-3 col-sm-3 pull-left" style="display:none">
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
@@ -234,17 +262,15 @@
                                                             @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
 
                                                         </div>
-                                                        <div class="form-group">
+
+                                                        <div class="form-group" >
                                                             <div class="mandate">
-                                                                @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
-
-
-                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
-
-
+                                                            @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, "Select", new { @class = "select-css form-control" })
+                                                            @Html.ValidationMessageFor(model => model.PriorityLevelList, "", new { @id = "error_PriorityLevel", @class = "text-danger" })
                                                         </div>
+
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -252,33 +278,8 @@
                                                             @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
 
-
                                                         </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-
-                                                            @{
-                                                                var countryTypeList = new List<SelectListItem>();
-                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "India" });
-                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Outside India" });
-                                                            }
-
-                                                            @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
-                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css " })
-
-                                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
-
-
-                                                        </div>
+                                                        
 
                                                         <div class="form-group">
                                                             Upload Interview Instructions
@@ -333,27 +334,7 @@
 
 
                                                         </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @id = "error_NoOfIntterview", @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-1 button">&rsaquo;</button>
-                                                                <button type="button" class="down-1 button">&lsaquo;</button>
-                                                            </div>
-
-
-                                                        </div>
-                                                        <div class="form-group" style="margin-bottom:6px">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })
-
-                                                        </div>
+                                                        
                                                         <div class="form-group">
                                                             Upload JD <span class="red">*</span>
 
@@ -449,6 +430,29 @@
                                                             @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_JobLevel", @class = "text-danger" })
 
                                                         </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @id = "error_NoOfIntterview", @class = "text-danger" })
+                                                            <div class="spinner">
+                                                                <button type="button" class="up-1 button">&rsaquo;</button>
+                                                                <button type="button" class="down-1 button">&lsaquo;</button>
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="form-group" style="margin-bottom:6px">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })
+
+                                                        </div>
+
+
                                                         @Html.HiddenFor(m => m.Type)
                                                         @*<div class="form-group">
                                                     @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
@@ -784,6 +788,7 @@
                                                                         <th width="30%" class="table_heading">Resume</th>
                                                                         <th width="20%" class="table_heading">Skills</th>
                                                                         <th width="20%" class="table_heading">Per Interviewer Rate <span style="color:red">*</span></th>
+                                                                        <th width="20%" class="table_heading">Surcharge</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -805,7 +810,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
@@ -813,8 +818,15 @@
                                                                                 else
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                }*@
 
-                                                                                }
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1",  @readonly = "readonly"/*, @disabled = "disabled"*/  })
+
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0", @max = "100" })
+                                                                                @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
+
                                                                             </td>
                                                                             <td class="action text-center">
 
@@ -850,14 +862,21 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                    @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                    }
+                                                                                    }*@
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly"/*, @disabled = "disabled"*/ })
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0"})
+                                                                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+
                                                                                 </td>
                                                                                 <td class="action text-center">
 
@@ -880,7 +899,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-9">QC</h3>
+                                        @*<h3 class="tab_drawer_heading" rel="tab-9">QC</h3>
                                         <div class="tab-box" id="tab-9">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -971,8 +990,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-10">E.Interviewer</h3>
+                                        </div>*@
+                                        @*<h3 class="tab_drawer_heading" rel="tab-10">E.Interviewer</h3>
                                         <div class="tab-box" id="tab-10">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -999,7 +1018,6 @@
                                                                             </td>
 
                                                                             <td>
-                                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                                                 @Html.TextBox("EmergencyInterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                                             </td>
@@ -1068,7 +1086,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>*@
                                         <!--<h3 class="tab_drawer_heading" rel="tab-11">Resume Evaluator</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
@@ -1234,12 +1252,12 @@
                                                                 <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4 col-sm-4 pull-left">
+                                                        @*<div class="col-md-4 col-sm-4 pull-left">
                                                             @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                                             @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control"})
                                                             @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="col-md-4 col-sm-4 pull-left">
+                                                        </div>*@
+                                                        @*<div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                 <div class="mdc-checkbox">
                                                                     @Html.CheckBoxFor(m => m.IsFixedInterviewduration, new { @class = "mdc-checkbox__native-control", @onclick="ShowAmountIfChecked()" })
@@ -1255,14 +1273,14 @@
                                                                 @Html.LabelFor(model => model.IsFixedInterviewduration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 <i style="margin-right:-4vw" title="Fixed Interview duration(Select and rejected duration is same)" class="fa fa-info-circle"></i>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-4 col-sm-4 pull-left" style="display:none" id="id_div_fixedAmount">
+                                                        </div>*@
+                                                        @*<div class="col-md-4 col-sm-4 pull-left" style="display:none" id="id_div_fixedAmount">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.FixedAmount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             </div>
                                                             @Html.EditorFor(model => model.FixedAmount, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line", @max="900", @min = "100" } })
                                                             @Html.ValidationMessageFor(model => model.FixedAmount, "", new { @id = "error_FixedAmount", @class = "text-danger" })
-                                                        </div>
+                                                        </div>*@
                                                     </div>
                                                 </div>
                                             </div>
@@ -1388,6 +1406,8 @@
 </script>
 <script>
     var smesLoadedForAssessmentGroup;
+    var interviewerRate = 0;
+    
 </script>
 
 @*<script>
@@ -1481,18 +1501,18 @@
         }
     }
 
-    function RadioLinkChanged(val) {
+    @*function RadioLinkChanged(val) {
         if (val == 'UploadLink') {
             document.getElementById("CalendlyLinkDiv").style.display = "block";
             document.getElementById("SchedulinglinkDiv").style.display = "none";
-            document.getElementById("calendlylink").value = '';
+            document.getElementById("CalendlyLink").value = '';
         }
         else {
             document.getElementById("CalendlyLinkDiv").style.display = "none";
             document.getElementById("SchedulinglinkDiv").style.display = "block";
             document.getElementById("SchedulingLink").value = '';
         }
-    }
+    }*@
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1546,7 +1566,6 @@
 
 
     function CheckTotalWeightage() {
-
         //var ckeck = $("#irfForm").validate();
         var inCorrectCount = 0;
         var skillArray = ["SkillCollection", "Joinability", "Selectability", "SkillGeneral"];
@@ -1586,7 +1605,7 @@
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
         for (var i = 0; i < rowCount; i++) {
-            if ($("#InterviewerCollection_" + i + "__PerInterviewerRate").val() == "") {
+            if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "") {
                 if (message == "") {
                     message = "Per Interviewer Rate should not be blank";
                 } else {
@@ -1596,7 +1615,7 @@
                 break;
             }
         }
-        var emetable = document.getElementById("EmergencyInterviewerTable");
+        @*var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
         for (var i = 0; i < emerowCount; i++) {
             if ($("#EmergencyInterviewerCollection_" + i + "__PerEIRate").val() == "") {
@@ -1608,8 +1627,8 @@
                 newflag = true;
                 break;
             }
-        }
-        var qctable = document.getElementById("EmergencyInterviewerTable");
+        }*@
+        @*var qctable = document.getElementById("EmergencyInterviewerTable");
         var qcrowCount = qctable.rows.length;
         for (var i = 0; i < qcrowCount; i++) {
             if ($("#QualityController_" + i + "__PerQCRate").val() == "") {
@@ -1621,7 +1640,7 @@
                 newflag = true;
                 break;
             }
-        }
+        }*@
         if (newflag == true) {
             alert(message);
             return false;
@@ -1635,13 +1654,13 @@
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
-                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
 
                     return false;
                 }
             }
             document.getElementById("noInterviewer").innerHTML = "";
-            document.getElementById("noInterviewerDown").innerHTML = "";
+            //document.getElementById("noInterviewerDown").innerHTML = "";
             $("#btnUpload").attr("disabled", "disabled");
             return true;
         }
@@ -1653,12 +1672,12 @@
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all Interviewer entries.";
-                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
                     break;
 
                 }
                 document.getElementById("noInterviewer").innerHTML = "";
-                document.getElementById("noInterviewerDown").innerHTML = "";
+                //document.getElementById("noInterviewerDown").innerHTML = "";
             }
             return false;
         }
@@ -1714,22 +1733,20 @@
                 document.getElementById('IsCandidateavailability').checked = data.isCandidateavailability;
                 document.getElementById('IsMeetingAutoCancelled').checked = data.isMeetingAutoCancelled;
                 document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
-                document.getElementById('InterviewDuration').value = data.interviewDuration;
+                //document.getElementById('InterviewDuration').value = data.interviewDuration;
                 CheckCandidateavailabilityDetails();
             }
         });
     }
 
-    function TechSkillChanged() {
+    function AssessmentGroupChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
-        //var skills = "";
         var countryType = $("#JobCountry").val();
-        //var profileType = $("#Heuristicsscore").val();
-        var companyType = $("#CompanyType").val();
+        var planType = $("#Heuristicsscore").val();
+        //var companyType = $("#CompanyType").val();
         var interviewerSkills;
-        var interviewerRate;
-        var interviewerQCRate;
-        if (countryType == "1") {
+        //var interviewerQCRate;
+        @*if (countryType == "1") {
             interviewerQCRate = 350;
         }
         else if (countryType == "2") {
@@ -1737,7 +1754,7 @@
         }
         else {
             interviewerQCRate = 0;
-        }
+        }*@
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
@@ -1756,6 +1773,20 @@
                             interviewerSkills = result;
                         }
                     });
+                    @*if(planType != null && planType != '' && countryType != null && countryType != '')
+                    {
+                        UpdateInterviewerRate(planType, countryType);
+                    }*@
+
+                    @*$.ajax({
+                        type: "GET",
+                        async: false,
+                        url: "/IRF/GetInterviewerRate",
+                        data: { 'userId': data[0].value, 'companyType': companyType, 'countryType': countryType },
+                        success: function (result) {
+                            interviewerRate = result;
+                        }
+                    });
 
                     $.ajax({
                         type: "GET",
@@ -1765,7 +1796,7 @@
                         success: function (result) {
                             interviewerRate = result;
                         }
-                    });
+                    });*@
 
                     //$.ajax({
                     //    type: "GET",
@@ -1783,7 +1814,7 @@
                     $("#" + drpdowns[i].id + " option").remove();
                 }
 
-                var drpdownsEI = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
+                @*var drpdownsEI = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdownsEI.length; i++) {
                     $("#" + drpdownsEI[i].id + " option").remove();
                 }
@@ -1791,7 +1822,7 @@
                 var drpdownsQC = $('[id^="QualityController"][id$="UserId"]');
                 for (i = 0; i < drpdownsQC.length; i++) {
                     $("#" + drpdownsQC[i].id + " option").remove();
-                }
+                }*@
 
                 if (data.length > 0) {
 
@@ -1835,7 +1866,7 @@
                         //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
                         BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
                     }
-                    for (i = 0; i < drpdownsEI.length; i++) {
+                    @*for (i = 0; i < drpdownsEI.length; i++) {
                         //$("#" + drpdowns[i].id).append(option);
 
 
@@ -1858,9 +1889,9 @@
                         //EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
                         BindSkillsAndRate(drpdownsEI[i].id, interviewerSkills, 'EmergencyInterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
 
-                    }
+                    }*@
 
-                    for (i = 0; i < drpdownsQC.length; i++) {
+                    @*for (i = 0; i < drpdownsQC.length; i++) {
                         //$("#" + drpdowns[i].id).append(option);
 
 
@@ -1885,7 +1916,7 @@
                         BindSkillsAndRate(drpdownsQC[i].id, interviewerSkills, 'QualityController_' + i + '__PerSuccessRate', interviewerQCRate);
 
 
-                    }
+                    }*@
 
                 }
 
@@ -1894,6 +1925,58 @@
         });
 
     }
+
+    @*function UpdateInterviewerRate(planType = null, countryType = null)
+    {
+        if(planType != null){//means the drop down has been changed, hence we change the value , min, max for surcharge here
+            //planType = $("#Heuristicsscore").val()
+            
+            var surchargeElem = document.getElementById("Surcharge");
+
+            if(planType == "2")//Standard
+            {
+                surchargeElem.max = "100";
+                surchargeElem.min = "0";
+                surchargeElem.value = "0";
+            }
+            else if(planType == "4")//Pro
+            {
+                surchargeElem.max = "200";
+                surchargeElem.min = "101";
+                surchargeElem.value = "101";
+            }
+            else if(planType == "5")//Advanced
+            {
+                surchargeElem.max = "300";
+                surchargeElem.min = "201";
+                surchargeElem.value = "201";
+            }
+        }
+
+        if(countryType == null){
+            countryType = $("#JobCountry").val()
+        }
+        if(planType == null){
+            planType = $("#Heuristicsscore").val()
+        }
+        
+        if(planType != null && planType != '' && countryType != null && countryType != '')
+        {
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "/IRF/GetRenewedInterviewerRate",
+                data: { 'planType': planType, 'countryType': countryType },
+                success: function (result) {
+                    interviewerRate = result;
+                }
+            });
+        }
+        var interviewersList = $('[id^="InterviewerCollection"][id$="PerSuccessRate"]');
+        for (i = 0; i < interviewersList.length; i++) {
+            $("#" + interviewersList[i].id).val(interviewerRate);
+        }
+    }*@
 
     function checkStartDate(val) {
 
@@ -2269,7 +2352,7 @@
         $form.data("validator", null);
 
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //$.validator.unobtrusive.parse(document);
         //document.getElementById("btnUpload").disabled = false;
 
     }
@@ -2321,7 +2404,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-    function AddRowEmergencyInterviewer() {
+    @*function AddRowEmergencyInterviewer() {
         //document.getElementById("btnUpload").disabled = false;
 
         var table = document.getElementById("EmergencyInterviewerTable");
@@ -2370,7 +2453,7 @@
         $.validator.unobtrusive.parse(document);
         //document.getElementById("btnUpload").disabled = false;
 
-    }
+    }*@
 
 
     function AddRowRecruiter() {
@@ -2586,8 +2669,8 @@
         }
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
-        var companyType = $("#CompanyType").val();
-        var countryType = $("#JobCountry").val();
+        @*var companyType = $("#CompanyType").val();
+        var countryType = $("#JobCountry").val();*@
 
 
         $.ajax({
@@ -2598,8 +2681,8 @@
                 $("#" + skillElementid).val(data);
             }
         });
-
-        $.ajax({
+        $("#" + rateElementid).val(interviewerRate);
+        @*$.ajax({
             type: "GET",
             async: false,
             url: "/IRF/GetInterviewerRate",
@@ -2607,7 +2690,7 @@
             success: function (result) {
                 $("#" + rateElementid).val(result);
             }
-        });
+        });*@
 
     }
     function EmergencyInterviewerChanged(val, id) {
@@ -2700,7 +2783,7 @@
 
     }
 
-    function QCChanged(val, id) {
+    @*function QCChanged(val, id) {
         var index = id.split('_')[1];
         var searchFor = '[id^="QualityController"][id$="UserId"]';
 
@@ -2776,7 +2859,7 @@
         //});
 
 
-    }
+    }*@
 
 
     $(document).ready(function () {
@@ -2787,7 +2870,6 @@
         CheckJoinabilitySelectabilityRequired();
         CheckGeneralSkillRequired();
         if (@Model.TemplateId == null || @Model.TemplateId== 0) {
-            //TechSkillChanged();
             //Perform Ajax request.
 
             var id = $("#InterviewerCollection_0__UserId").val();
@@ -3186,7 +3268,7 @@
             //    document.getElementById("tab-9").style.display = "none";
             //}
 
-            else if (activeTab.trim() == "E.Interviewer") {
+            @*else if (activeTab.trim() == "E.Interviewer") {
                 $(".tab-menu li a").removeClass("active");
                 //var isQcRequired = document.getElementById('IsQCRequired').checked;
                 //if (isQcRequired) {
@@ -3202,7 +3284,7 @@
                 document.getElementById("tab-10").style.display = "none";
 
 
-            }
+            }*@
             //else if (activeTab.trim() == "Recommendation") {
             //    $(".tab-menu li a").removeClass("active");
             //    $("#rtab-10").addClass("active");
@@ -3220,8 +3302,8 @@
             //}
             else if (activeTab.trim() == "Coordinator") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-10").addClass("active");
-                document.getElementById("tab-10").style.display = "block";
+                $("#rtab-8").addClass("active");
+                document.getElementById("tab-8").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
 
             }
@@ -3248,7 +3330,7 @@
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 flag = !checkUniqueness();
-                if (document.getElementById('link').checked) {
+                @*if (document.getElementById('link').checked) {
                     if ($('#CalendlyLink').val() == "") {
                         $('#error_CalendlyLink').text("The CalendlyLink field is required.");
                         flag = true;
@@ -3256,14 +3338,8 @@
                     else {
                         $('#error_CalendlyLink').text("");
                     }
-                }
-                if ($('#PriorityLevel').val() == "") {
-                    $('#error_PriorityLevel').text("The PriorityLevel field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_PriorityLevel').text("");
-                }
+                }*@
+                
                 if ($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
                     flag = true;
@@ -3278,6 +3354,28 @@
                 }
                 else {
                     $('#error_AssessmentGroupId').text("");
+                }
+                if ($('#JobCountry').val() == "") {
+                    $('#error_JobCountry').text("The Job Country field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_JobCountry').text("");
+                }
+
+                if ($('#Heuristicsscore').val() == "") {
+                    $('#error_Heuristicsscore').text("The Plan Type field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_Heuristicsscore').text("");
+                }
+                if ($('#CompanyType').val() == "") {
+                    $('#error_CompanyType').text("The Company Type field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_CompanyType').text("");
                 }
                 //if ($('#uniqueMsg').val() != "") {
                 //    debugger;
@@ -3310,7 +3408,13 @@
                 else {
                     $('#error_ClientName').text("");
                 }
-
+                if ($('#PriorityLevel').val() == "") {
+                    $('#error_PriorityLevel').text("The PriorityLevel field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_PriorityLevel').text("");
+                }
                 if ($('#PrimarySkillInvite').val() == "") {
                     $('#error_PrimarySkillInvite').text("Primary skill field is required.");
                     flag = true;
@@ -3364,21 +3468,7 @@
                 else {
                     $('#error_JobLevel').text("");
                 }
-                if ($('#JobCountry').val() == "") {
-                    $('#error_JobCountry').text("The Job Country field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_JobCountry').text("");
-                }
-
-                if ($('#Heuristicsscore').val() == "") {
-                    $('#error_Heuristicsscore').text("The Plan Type field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_Heuristicsscore').text("");
-                }
+                
                 //if ($('#NoOfPosition').val() == "") {
                 //    $('#error_NoOfPosition').text("The No of Positions field is required.");
                 //    flag = true;
@@ -3491,19 +3581,8 @@
                 flag = checkInterviewerDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                    //var isQcRequired = document.getElementById('IsQCRequired').checked;
-                    //if (isQcRequired) {
-                    //    $("#rtab-9").addClass("active");
-                    //    document.getElementById("tab-9").style.display = "block";
-                    //    document.getElementById("tab-8").style.display = "none";
-                    //}
-                    //else {
-                    //    $("#rtab-10").addClass("active");
-                    //    document.getElementById("tab-10").style.display = "block";
-                    //    document.getElementById("tab-8").style.display = "none";
-                    //}
-                    $("#rtab-10").addClass("active");
-                    document.getElementById("tab-10").style.display = "block";
+                    $("#rtab-11").addClass("active");
+                    document.getElementById("tab-11").style.display = "block";
                     document.getElementById("tab-8").style.display = "none";
 
                 }
@@ -3517,17 +3596,16 @@
             //        document.getElementById("tab-9").style.display = "none";
             //    }
             //}
-            else if (activeTab.trim() == "E.Interviewer") {
+            @*else if (activeTab.trim() == "E.Interviewer") {
                 flag = checkEmergencyDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
                     document.getElementById("tab-10").style.display = "none";
-    @*document.getElementById("btnNext").style.display = "none";
-                        document.getElementById("btnUpload").style.display = "block";*@
-                                                }
-            }
+    
+                }
+            }*@
 
             else if (activeTab.trim() == "Coordinator") {
                 if (!flag) {
@@ -3776,7 +3854,7 @@
         document.getElementById("qcInterviewer").innerHTML = "";
         return false;
     }
-    function checkEmergencyDetails() {
+    @*function checkEmergencyDetails() {
         var emetable = document.getElementById("EmergencyInterviewerTable");
         var emerowCount = emetable.rows.length;
         $("#count_Em").text(emerowCount - 1);
@@ -3798,7 +3876,7 @@
         }
         document.getElementById("emInterviewer").innerHTML = "";
         return false;
-    }
+    }*@
     $('#IsCandidateavailability').on('change', function () {
         CheckCandidateavailabilityDetails()
     });

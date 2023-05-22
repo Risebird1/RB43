@@ -74,6 +74,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Plan Type")]
         public int Heuristicsscore { get; set; }
 
+        //public int Surcharge { get; set; }
+
         [DisplayName("No of Interviews")]
         [Required]
         public int NoOfIntterview { get; set; }
@@ -213,6 +215,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Fixed Amount")]
         public int FixedAmount { get; set; }
+        public bool IsNewSkillChannel { get; set; }
     }
     public class InterviewerIds
     {
@@ -332,6 +335,8 @@ namespace Risebird.Entities.ViewModel
         public int InterviewDuration { get; set; }
         public bool IsFixedInterviewduration { get; set; }
         public int FixedAmount { get; set; }
+        //public int Surcharge { get; set; }
+        public bool IsNewSkillChannel { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
