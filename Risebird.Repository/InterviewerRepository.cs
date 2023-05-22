@@ -439,6 +439,7 @@ namespace Risebird.Repository
             }
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@AssessmentGroupDifference", entity.AssessmentGroupDifference);
+            parameters.Add("@RemovedAssessmentGroups", entity.RemovedAssessmentGroups ?? null);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
             parameters.Add("@Isinstaavailable", entity.Isinstaavailable);
