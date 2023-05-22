@@ -48,18 +48,19 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@timeNow datetime,
 	@isSMEChanged bit output,
 	@IsLocked bit,
-	@Surcharge int = null,
 	--@InterviewDuration int,
 	--@IsFixedInterviewduration bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 	@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
-	@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
+	@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
+	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
-	@HRBulkData AS [dbo].[TransHR_TableType] READONLY
+	@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
+	@IsNewSkillChannel bit = null
 	--@FixedAmount int = null
 	--@idRecommendation int,
 	--@RecommendationStatus bit,
@@ -191,6 +192,8 @@ BEGIN
 	Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@id 
  --END: Delete interviewers
 
+ if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)
+ Begin
 	INSERT INTO [dbo].[TransInterviewer](  
 	[IRFId] ,  
 	[UserId],  
@@ -200,8 +203,23 @@ BEGIN
 	[IsAvailable],
 	[InterviewerId])  
     
+	SELECT ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+  
+ End
+ else
+ Begin
+	INSERT INTO [dbo].[TransInterviewer](  
+	[IRFId] ,  
+	[UserId],  
+	[PerSuccessRate], 
+	[IsActive],
+	[IsAvailable],
+	[InterviewerId])  
+    
 	SELECT ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
+ End
+	
     --emergency interviewers
     delete from TransEmergencyInterviewer where IRFId=@id 
 

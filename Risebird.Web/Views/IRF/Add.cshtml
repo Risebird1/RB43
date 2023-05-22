@@ -135,14 +135,15 @@
                                                     </div>
                                                 </div>*@
 
-
+                                                
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value)" })
+                                                            
+                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null)" })
 
                                                             @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
 
@@ -206,7 +207,7 @@
                                                                 countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Onsite" });
                                                             }
 
-                                                            @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate()"/*"TechSkillChanged()"*/ })
+                                                        @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value)"/*"TechSkillChanged()"*/ })
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
 
                                                     </div>
@@ -1772,7 +1773,6 @@
                             interviewerSkills = result;
                         }
                     });
-                    debugger;
                     @*if(planType != null && planType != '' && countryType != null && countryType != '')
                     {
                         UpdateInterviewerRate(planType, countryType);

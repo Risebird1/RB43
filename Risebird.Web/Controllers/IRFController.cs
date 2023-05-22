@@ -1888,7 +1888,7 @@ namespace Risebird.Web.Controllers
                     int abc;
                     if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        if (model.JobCountry?.ToUpper() == "INDIA")
+                        if (model.JobCountry?.ToUpper() == "INDIA" || model.JobCountry?.ToUpper() == "OFFSHORE")
                         {
                             model.JobCountry = "1";
                         }

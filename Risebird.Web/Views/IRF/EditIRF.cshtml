@@ -205,7 +205,7 @@
                                                             @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @disabled = "disabled" }) @*@onchange = "UpdateInterviewerRate(this.value)",*@  
 
                                                             @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
-
+                                                            @Html.HiddenFor(x=>x.Heuristicsscore)
                                                     </div>
                                                 </div>
 
@@ -269,7 +269,7 @@
 
                                                             @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
 
-
+                                                            @Html.HiddenFor(x=>x.CompanyType)
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
@@ -286,6 +286,7 @@
 
                                                             @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @disabled = "disabled" }) @*@onchange = "UpdateInterviewerRate()",*@ 
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
+                                                            @Html.HiddenFor(x=>x.JobCountry)
 
                                                     </div>
                                                 </div>
@@ -1161,7 +1162,7 @@
                                                 }
                                             </div>
                                         </div>
-                                        @*@{
+                                        @{
                                             string max = "100";
                                             //string min = string.Empty;
                                             if(Model.Heuristicsscore == 2)
@@ -1179,7 +1180,7 @@
                                                 max = "300";
                                                 //min = "201";
                                             }
-                                        }*@
+                                        }
                                         <h3 class="tab_drawer_heading" rel="tab-8">Interviewer</h3>
                                         <div class="tab-box" id="tab-8">
                                             <div class="tab-main-box">
@@ -1194,7 +1195,11 @@
                                                                         <th width="20%" class="table_heading">Resume</th>
                                                                         <th width="20%" class="table_heading">Skills</th>
                                                                         <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Surcharge</th>
+                                                                        @if(Model.IsNewSkillChannel)
+                                                                        {
+                                                                            <th width="10%" class="table_heading">Surcharge</th>
+
+                                                                        }
                                                                         <th width="10%" class="table_heading">Active</th>
                                                                         <th width="10%" class="table_heading">Availability</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
@@ -1226,10 +1231,22 @@
                                                                                 @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
 
                                                                             </td>
-                                                                            <td>
-                                                                                @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0"})
-                                                                                @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
-                                                                            </td>
+                                                                            @if(Model.IsNewSkillChannel)
+                                                                            {
+                                                                                <td>
+                                                                                    @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                    {
+                                                                                        @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0"})
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0", @max = max})
+                                                                                    }
+
+                                                                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
+                                                                                </td>
+                                                                            }
+                                                                            
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
                                                                             </td>
@@ -1283,14 +1300,25 @@
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                     }*@
-
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
 
                                                                                 </td>
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0"})
-                                                                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
-                                                                                </td>
+                                                                                @if(Model.IsNewSkillChannel)
+                                                                                {
+                                                                                    <td>
+                                                                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0"})
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0", @max = max})
+                                                                                        }
+                                                                                        @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+                                                                                    </td>
+
+                                                                                }
+                                                                                
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
@@ -1816,6 +1844,7 @@
                             @Html.HiddenFor(m => m.OldCompanyDetails)
                             @Html.HiddenFor(m => m.ResourceUrl)
                             @Html.HiddenFor(m => m.IsClone)
+                            @Html.HiddenFor(m => m.IsNewSkillChannel)
                             @if (Model.OldInterviewerCollection != null)
                             {
                                 for (int i = 0; i < Model.OldInterviewerCollection.Count(); i++)
@@ -2864,9 +2893,8 @@
     }
 </script>
 <script>
-    //var interviewerRate = 0;
     $(document).ready(function () {
-
+        UpdateInterviewerRateVariable();
         var countryType = $("#JobCountry").val();
         @*var interviewerQCRate;
         if (countryType == "1") {

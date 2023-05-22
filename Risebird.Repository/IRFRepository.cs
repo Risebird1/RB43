@@ -1839,13 +1839,24 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        interviewerDt.Columns.Add("Surcharge", typeof(int));
+                        if(irfDetails.IsNewSkillChannel)
+                        {
+                            interviewerDt.Columns.Add("Surcharge", typeof(int));
+
+                        }
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+                            if (irfDetails.IsNewSkillChannel)
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+                            }
+                            else
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            }
                         }
                     }
 
@@ -2017,6 +2028,10 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
 
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -2097,8 +2112,18 @@ namespace Risebird.Repository
                     }
                     if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                        if(irfDetails.IsNewSkillChannel)
+                        {
+                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
+                            cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
+
+                        }
+                        else
+                        {
+                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                            cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+
+                        }
                     }
                     if (emergencyInterviewerDt != null && emergencyInterviewerDt.Rows.Count > 0)
                     {

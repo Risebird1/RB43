@@ -475,7 +475,15 @@
                                                                                 }
                                                                             </td>
                                                                             <td style="display:@displayStatus">
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[0].Surcharge, new { @class = "form-control", @type = "number", @min = "0" , @value = "0"})
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                {
+                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[0].Surcharge, new { @class = "form-control", @type = "number", @min = "0" , @value = "0"})
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[0].Surcharge, new { @class = "form-control", @type = "number", @min = "0" , @value = "0"})
+
+                                                                                }
                                                                                 @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
 
                                                                             </td>

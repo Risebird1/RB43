@@ -215,6 +215,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Fixed Amount")]
         public int FixedAmount { get; set; }
+        public bool IsNewSkillChannel { get; set; }
     }
     public class InterviewerIds
     {
@@ -335,7 +336,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsFixedInterviewduration { get; set; }
         public int FixedAmount { get; set; }
         //public int Surcharge { get; set; }
-        
+        public bool IsNewSkillChannel { get; set; }
+
     }
     public class SkillCahnnelDetailsVM
     {

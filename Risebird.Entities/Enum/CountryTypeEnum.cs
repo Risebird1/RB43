@@ -4,10 +4,10 @@ namespace Risebird.Entities.Enum
 {
     public enum CountryTypeEnum
     {
-        [Description("India")]
-        India = 1,
+        [Description("Offshore")]
+        Offshore = 1,
 
-        [Description("Outside India")]
-        OutsideIndia = 2
+        [Description("Onsite")]
+        Onsite = 2
     }
 }

@@ -26,6 +26,12 @@ update ti set ti.isactive=0 from TransInterviewer ti join IRF on ti.IRFId=IRF.id
 left join @tbl_assessmentid tb on tb.id=IRF.AssessmentGroupid
 where ti.UserId=@Userid and ti.IsActive=1 and tb.id is null and IRF.AssessmentGroupid is not null
 
+update ti set ti.isactive=0 from TransClonableIRFInterviewer ti 
+join ClonableSkillChannel csc on csc.id = ti.ClonableIRFId
+join IRF on csc.CreatedFromIRFId=IRF.id 
+left join @tbl_assessmentid tb on tb.id=IRF.AssessmentGroupid
+where ti.UserId=@Userid and ti.IsActive=1 and tb.id is null and IRF.AssessmentGroupid is not null
+
 END
 GO
 

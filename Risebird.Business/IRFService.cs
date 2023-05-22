@@ -565,6 +565,7 @@ namespace Risebird.Business
                 model.InterviewDuration = IRF.InterviewDuration;
                 model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
                 model.FixedAmount = IRF.FixedAmount;
+                model.IsNewSkillChannel = IRF.IsNewSkillChannel;
                 //model.Surcharge = IRF.Surcharge;
                 return model;
             }
@@ -698,7 +699,7 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
 
-                    if (model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF) && result.Item2)
+                    if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF) && result.Item2)
                     {
                         //send notification to the sme here
                         var smeEmail = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
