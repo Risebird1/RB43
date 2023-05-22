@@ -654,9 +654,13 @@
         html += '   <th>Rate</th>';
         html += '   <th>Points</th>';
         html += '   <th>Penalty</th>';
+        html += '   <th>Surcharge</th>';
+        html += '   <th>CandidateRatingAmount</th>';
+        html += '   <th>ClientRatingAmount</th>';
+        html += '   <th>QCPoints</th>';
         html += '   <th>Amnt</th>';
         html += '   <th>Video Duration<span class="durtime">(in mins)</span></th>';
-        html += '   <th>Max Video Duration<span class="durtime">(in mins)</span></th>';
+        html += '   <th>Min Video Duration<span class="durtime">(in mins)</span></th>';
         html += '   <th>Meeting Status</th>';
         html += '   <th>Interview Status</th>';
         html += '</tr>';
@@ -675,6 +679,10 @@
             html += '                               <td>' + data[i].rate + '</td>';
             html += '                               <td>' + data[i].prePoints + '</td>';
             html += '                               <td>' + data[i].penaltyamount + '</td>';
+            html += '                               <td>' + data[i].surcharge + '</td>';
+            html += '                               <td>' + data[i].candidateRatingAmount + '</td>';
+            html += '                               <td>' + data[i].clientRatingAmount + '</td>';
+            html += '                               <td>' + data[i].qcPoints + '</td>';
             html += '                               <td>' + data[i].points + '</td>';
 
             if (data[i].videoDuration == null) {

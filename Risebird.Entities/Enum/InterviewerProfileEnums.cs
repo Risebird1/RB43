@@ -1235,7 +1235,7 @@ namespace Risebird.Entities.Enum
         //StandardPlus = 3,
         [Description("Pro")]
         Pro = 4,
-        [Description("Elite")]
+        [Description("Advanced")]
         Elite = 5
     }
     public enum AssassinationStatus

@@ -23,6 +23,10 @@ namespace Risebird.Entities.ViewModel
         public string ClientHREmail { get; set; }
         public string ProfileSource { get; set; }
         public string WhatsappNumber { get; set; }
+        public int CandidateResumeId { get; set; }// id from CandidateResume table
+        public int AddedByUserEmail { get; set; }
+
+
 
     }
 }

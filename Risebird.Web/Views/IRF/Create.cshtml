@@ -190,8 +190,8 @@
                                                             </div>
                                                             @{
                                                                 var countryTypeList = new List<SelectListItem>();
-                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "India" });
-                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Outside India" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "Offshore" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Onsite" });
                                                             }
                                                             @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
@@ -426,6 +426,8 @@
                                                                         <th width="50%" class="table_heading">Skills</th>
 
                                                                         <th width="20%" class="table_heading" style="display:@displayStatus">Per Interviewer Rate <span style="color:red">*</span></th>
+                                                                        
+                                                                        <th width="20%" class="table_heading" style="display:@displayStatus">Surcharge</th>
 
                                                                         <th width="10%" class="table_heading"> Select </th>
                                                                         @*@if (Model.Profile == "Client")
@@ -471,6 +473,19 @@
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
 
                                                                                 }
+                                                                            </td>
+                                                                            <td style="display:@displayStatus">
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
+                                                                                {
+                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[0].Surcharge, new { @class = "form-control", @type = "number", @min = "0" , @value = "0"})
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[0].Surcharge, new { @class = "form-control", @type = "number", @min = "0" , @value = "0"})
+
+                                                                                }
+                                                                                @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
+
                                                                             </td>
                                                                             <td class="text-center">
                                                                                 @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
@@ -532,7 +547,6 @@
                                                                                 </td>
                                                                                 <td>
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
-
                                                                                 </td>
                                                                                 <td style="display:@displayStatus">
                                                                                     @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
@@ -543,6 +557,11 @@
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                     }
+                                                                                </td>
+                                                                                <td style="display:@displayStatus">
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0", @value = "0"})
+                                                                                    @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
+
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)

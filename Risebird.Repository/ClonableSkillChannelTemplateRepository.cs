@@ -537,5 +537,25 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<ClonableSkillChannelVM> GetClonableSkillChannelDetails(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<ClonableSkillChannelVM>(con, "usp_GetClonableSkillChannelDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

@@ -33,6 +33,8 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
@@ -94,8 +96,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Date</th>
-                                                        <th>Slot</th>
-                                                        <th>Duration</th>
+                                                        <th>Interview Price</th>
+                                                        <th>Interview Duration (in Min.)</th>
                                                         <th id="openinterview_2">Candidate Name</th>
                                                         <th>JD-Skills</th>
                                                         <th id="openinterview_3">Resume</th>
@@ -114,17 +116,13 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th>Date</th>
-                                                        <th>Slot</th>
-                                                        <th>Duration</th>
+                                                        <th>Interview Price</th>
+                                                        <th>Interview Duration (in Min.)</th>
                                                         <th>Candidate Name</th>
                                                         <th>JD-Skills</th>
                                                         <th>Resume</th>
                                                         @*<th>JD Link</th>*@
-
-
                                                         <th class="disabled-sorting text-right">Actions</th>
-
-
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -133,8 +131,26 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate </td>
-                                                            <td> @item.interviewSlot </td>
-                                                            <td> @item.interviewDuration </td>
+                                                            @if (item.IsNewSkillChannel)
+                                                            {
+                                                                <td>
+                                                                    <div class="techinfocontainer">
+                                                                        ₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + 120)
+                                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                            <span class="tooltiptext">
+                                                                                <p>₹ 50: if QC points are 100/100 </p>
+                                                                                <p>₹ 50: Client Rating is 5/5 </p>
+                                                                                <p>₹ 20: Candidate Rating is 5/5 </p>
+                                                                            </span>
+                                                                        </i>
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + 120) </td>
+                                                            }
+                                                            <td> @item.interviewDuration (minimum)</td>
                                                             <td> @item.candidateName</td>
                                                             <td>
                                                                 <button type="button" class="clickhere_btn pull-left">

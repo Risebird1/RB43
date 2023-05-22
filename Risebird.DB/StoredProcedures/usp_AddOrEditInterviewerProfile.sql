@@ -50,7 +50,8 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @OutsideIndiaProductRate int,
 @loggedInUser varchar(50),
 @AssessmentGroupDifference varchar(100),
-@assessmentGroupList varchar(max) out 
+@assessmentGroupList varchar(max) out,
+@RemovedAssessmentGroups varchar(max)=null
             
 AS            
 
@@ -293,6 +294,25 @@ if(@AssessmentGroupDifference is not null and @AssessmentGroupDifference != '')
   End
 
 End 
-GO
 
+
+if(@RemovedAssessmentGroups is not null and @RemovedAssessmentGroups != '')
+  Begin
+    declare @tempRemovedFromAssessmentGroups table(assessmentGroupId varchar(5))
+  
+	  insert into @tempRemovedFromAssessmentGroups
+
+	  select value from string_split(@RemovedAssessmentGroups,',')
+	  
+	  --delete from TransInterviewer where id in 
+	  --(select * from @tempRemovedFromAssessmentGroups tra join irf on tra.assessmentGroupId = irf.AssessmentGroupId
+	  --join TransInterviewer ti on ti.IRFId = irf.id where ti.UserId = @UserId)
+	  
+
+	  update TransInterviewer set IsActive = 0 where id in 
+	  (select ti.id from @tempRemovedFromAssessmentGroups tra join irf on tra.assessmentGroupId = irf.AssessmentGroupId
+	  join TransInterviewer ti on ti.IRFId = irf.id where ti.UserId = @UserId)
+	
+  End
+GO
 

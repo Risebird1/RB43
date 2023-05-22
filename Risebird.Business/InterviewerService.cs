@@ -178,6 +178,7 @@ namespace Risebird.Business
             try
             {
                 List<string> assessmentGroupDiffArray = new List<string>();
+                List<string> removedAssessmentGroupArray = new List<string>();
                 foreach (var item in interviewerProfile.AssessmentGroupArray)
                 {
                     if (interviewerProfile.AssessmentGroupArrayOld == null
@@ -189,6 +190,21 @@ namespace Risebird.Business
                 if (assessmentGroupDiffArray != null && assessmentGroupDiffArray.Count() > 0)
                 {
                     interviewerProfile.AssessmentGroupDifference = string.Join(",", assessmentGroupDiffArray);
+                }
+                if(interviewerProfile.AssessmentGroupArrayOld != null)
+                {
+                    foreach (var item in interviewerProfile.AssessmentGroupArrayOld)
+                    {
+                        if(!interviewerProfile.AssessmentGroupArray.Contains(item))
+                        {
+                            removedAssessmentGroupArray.Add(item);
+
+                        }
+                    }
+                }
+                if (removedAssessmentGroupArray != null && removedAssessmentGroupArray.Count() > 0)
+                {
+                    interviewerProfile.RemovedAssessmentGroups = string.Join(",", removedAssessmentGroupArray);
                 }
                 //Edit Method
                 interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();

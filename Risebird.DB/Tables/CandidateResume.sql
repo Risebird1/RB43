@@ -7,7 +7,8 @@ CREATE TABLE [dbo].[CandidateResume](
 			[ResumeLink] [nvarchar](500) not NULL,
 			[AddedBy] [int] not NULL,
 			[AddedOn][DateTime] NOT NULL,
-			[IsProcessed][bit]
+			[IsProcessed][bit],
+			[IsResumeParsed][bit] null
 			CONSTRAINT [FK_CandidateResumes_IRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_CandidateResumes_AddedBy] FOREIGN KEY (AddedBy) REFERENCES UserList(id),
  CONSTRAINT [PK_CandidateResumes] PRIMARY KEY CLUSTERED 					
@@ -40,4 +41,11 @@ IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'IsProcessed')
 		alter table CandidateResume
 		Add IsProcessed bit
 	END
+
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'IsResumeParsed')
+AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+	alter table CandidateResume
+	Add IsResumeParsed bit null
+END
 Go

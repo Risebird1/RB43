@@ -285,8 +285,11 @@
         html += '   <th>Payment For</th>';
         html += '   <th>Type</th>';
         html += '   <th>Payment Status</th>';
-        html += '   <th>Points</th>';
-        html += '   <th>Penalty</th>';
+        html += '   <th>Base Pay</th>';
+        html += '   <th>Late Report Penalty</th>';
+        html += '   <th>Surcharge</th>';
+        html += '   <th>Variable Pay</th>';
+        html += '   <th>QC Amnt</th>';
         html += '   <th>Amnt</th>';
         html += '   <th>Video Duration<span class="durtime">(in mins)</span></th>';
         html += '   <th>Meeting Status</th>';
@@ -306,6 +309,9 @@
             html += '                               <td>' + data[i].status + '</td>';
             html += '                               <td>' + data[i].prePoints + '</td>';
             html += '                               <td>' + data[i].penaltyamount + '</td>';
+            html += '                               <td>' + data[i].surcharge + '</td>';
+            html += '                               <td>' + data[i].candidateRatingAmount + '</td>';
+            html += '                               <td>' + data[i].qcPoints + '</td>';
             html += '                               <td>' + data[i].points + '</td>';
 
             if (data[i].videoDuration == null) {
