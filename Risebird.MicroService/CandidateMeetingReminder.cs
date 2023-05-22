@@ -55,10 +55,10 @@ namespace Risebird.MicroService
                         && item.TimeZoneoffset.HasValue
                         && !item.TimeZonesValue.Contains("(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"))
                     {
-                        timeZoneValue = item.TimeZonesValue.Split(")").Last();
+                        timeZoneValue = item.TimeZonesValue.Split(")").ElementAtOrDefault(1);
                         if (item.TimeZoneoffset.Value >= 0)
                         {
-                            item.interviewDate = item.interviewDate.AddMinutes(330 + item.TimeZoneoffset.Value);
+                            item.interviewDate = item.interviewDate.AddMinutes(-(330 + item.TimeZoneoffset.Value));
                         }
                         else
                         {
@@ -164,7 +164,7 @@ namespace Risebird.MicroService
 
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, "IST", item.MeetingLink, item.Irfid, item.Interviewid);
+                        var emailresult = await _notificationHelper.SendInterviewNoReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid);
                     }
                 }
                 catch (Exception ex)
