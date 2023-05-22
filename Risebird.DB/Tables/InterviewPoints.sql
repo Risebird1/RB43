@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[InterviewPoints](
 	[InterviewerId] [int] NULL,
 	[PaymentHistoryId] [int] NULL,
 	[PenaltyAmount] [int] NULL,
+	[QCPoints] [int] NULL,
  CONSTRAINT [PK_InterviewPoints] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -47,6 +48,15 @@ IF Not EXISTS(
 BEGIN
     ALTER TABLE InterviewPoints
     Add  PenaltyAmount int
+END
+IF Not EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QCPoints')
+      AND Object_ID = Object_ID(N'InterviewPoints'))
+BEGIN
+    ALTER TABLE InterviewPoints
+    Add  QCPoints int
 END
 GO
 

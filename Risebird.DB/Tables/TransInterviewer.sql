@@ -64,6 +64,15 @@ BEGIN
     ALTER TABLE TransInterviewer
     Add IsSMEVerified bit null
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Surcharge')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add Surcharge int null
+END
 
 IF NOT EXISTS(
     SELECT *

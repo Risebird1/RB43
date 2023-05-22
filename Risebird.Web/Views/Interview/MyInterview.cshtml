@@ -119,17 +119,17 @@
                         <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
                     </div>
                 </div>
-                
-                
+
+
 
                 <div class="col-md-12 pull-right">
                     <div>
                         <div>
                             @*<div class="pull-left">
-                                <div id="myinterview_2">
-                                    <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
-                                </div>
-                                
+                            <div id="myinterview_2">
+                            <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
+                            </div>
+
 
                             </div>*@
                             <div>
@@ -163,13 +163,13 @@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
                                     <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
                                 </button>
-                                
+
                             </div>
 
                             @*<div class="pull-left">
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
-                                    <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
-                                </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
+                            <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
+                            </button>
                             </div>*@
 
                         </div>
@@ -402,7 +402,7 @@
                                                                 <th>Min. Interview Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
-                                                            
+
                                                         </tr>
 
                                                     </thead>
@@ -424,7 +424,7 @@
                                                                 <th>Min. Interview Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
-                                                            
+
                                                         </tr>
 
                                                     </tfoot>
@@ -461,13 +461,10 @@
                                                                 {
                                                                     @if (item.candidateName.Length > 26)
                                                                     {
-
                                                                         <td class="cadName">
                                                                             <a onclick="" data-tooltip="@item.candidateName"><span class="cname"> @item.candidateName</span> </a>
                                                                         </td>
-
                                                                     }
-
                                                                     else
                                                                     {
                                                                         <td class="cadName">
@@ -536,9 +533,8 @@
                                                                    data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id})">
                                                                         Client Instruction(s)
                                                                     </a>
-
                                                                 </td>
-                                                                @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                 {
                                                                     @if (item.zoomLink != null && item.zoomLink != "")
                                                                     {
@@ -559,7 +555,7 @@
                                                                     }
                                                                     <td>
 
-                                                                        @if(item.IsFixedInterviewduration)
+                                                                        @if (item.IsFixedInterviewduration)
                                                                         {
                                                                             <strong>Fixed</strong>
                                                                         }
@@ -567,7 +563,7 @@
                                                                         {
                                                                             <strong>Variable</strong>
                                                                         }
-                                                                        
+
                                                                     </td>
                                                                     @*<td><strong>@item.interviewDuration Min.</strong></td>*@
                                                                     <td><strong>@item.MaxInterviewDuration Min.</strong></td>
@@ -628,11 +624,6 @@
                                                                         }
                                                                     </td>
                                                                 }
-                                                                
-                                                                
-
-                                                                
-
                                                             </tr>
 
                                                             <tr class="collapse @item.id">
@@ -641,7 +632,7 @@
                                                                         <tr>
                                                                             <th>Slot</th>
                                                                             <th>Candidate Email</th>
-                                                                            @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                             {
                                                                                 <th>Call HR</th>
                                                                             }
@@ -671,22 +662,19 @@
 
                                                                                 <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
                                                                             }
-                                                                            @if(ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                            @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                             {
                                                                                 <td style="text-align:center">
                                                                                     @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                                                     {
-
                                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
                                                                                             <span onclick="CommonCallButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber', '@item.HRCoordinatorEmailId','@item.id', null, 'HR')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                                                         </button>
-
-
                                                                                     }
 
                                                                                 </td>
                                                                             }
-                                                                            
+
                                                                             <td>@item.MeetingStatusDesc</td>
                                                                             <td>@item.InterviewStatusDesc</td>
                                                                             <td>@item.HRCoordinatorEmailId</td>
@@ -1466,7 +1454,7 @@
         $.ajax({
             type: "POST",
             url: "/Interview/MyInterviewJson",
-            data: { 'searchValue': $('#txtmeeting_filter').val(), 'meetingLineUpType' : '@ViewBag.MeetingLineUpType'},// 
+            data: { 'searchValue': $('#txtmeeting_filter').val(), 'meetingLineUpType': '@ViewBag.MeetingLineUpType' },//
             success: function (data) {
                 if (data != "failed") {
                     //bindtableData(data.result);
@@ -1697,8 +1685,7 @@
         }
         $("#tblbodyMyInterview").empty().html(html);
     }
-    function bindPages(pagecount, startpage, endpage, totalcount, meetingLineUpType ) {//
-        debugger;
+    function bindPages(pagecount, startpage, endpage, totalcount, meetingLineUpType) {//
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
@@ -1709,7 +1696,7 @@
                 html += '<li><a href="/Interview/MyInterview?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Interview/MyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '&meetingLineUpType=' + meetingLineUpType  + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interview/MyInterview?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '&meetingLineUpType=' + meetingLineUpType + '" rel="next">&gt;</a></li>';
                 html += '<li class="PagedList-skipToLast"><a href="/Interview/MyInterview?Page=' + pagecount + '&meetingLineUpType=' + meetingLineUpType + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
             } else {
                 break;
