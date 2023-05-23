@@ -196,7 +196,7 @@
                                                                 </span>
                                                             </button>*@
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Create template from this Skills Channel for cloning">
-                                                                <span onclick="location.href='@Url.Action("Create", "ClonableSkillChannelTemplate", new { irfId = item.id, assessmentGroupId = item.AssessmentGroupId })'" title="Create template from this Skills Channel for cloning" class="mdc-fab__icon material-icons">
+                                                                <span onclick="location.href='@Url.Action("Create", "ClonableSkillChannelTemplate", new { irfId = item.id, assessmentGroupId = item.AssessmentGroupId, isNewSkillChannel = item.IsNewSkillChannel })'" title="Create template from this Skills Channel for cloning" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size:14px!important;" class="fa fa-files-o"></i>
                                                                 </span>
                                                             </button>

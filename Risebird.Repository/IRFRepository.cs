@@ -233,7 +233,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null)
+        public async Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null, int? irfId = null)
         {
             try
             {
@@ -242,6 +242,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@planType", planType);
                     parameters.Add("@countryType", countryType);
+                    parameters.Add("@irfId", irfId);
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRenewedInterviewerRate", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
@@ -5304,7 +5305,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup, ag.id as AssessmentGroupId, irf.CreatedFromTemplateId from IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
+                var query = "Select IRF.id,IRF.IRFId, irf.IsNewSkillChannel, ag.AssessmentGroup, ag.id as AssessmentGroupId, irf.CreatedFromTemplateId from IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
