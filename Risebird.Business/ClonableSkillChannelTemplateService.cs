@@ -47,12 +47,13 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId)
+        public async Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId, bool isNewSkillChannel = false)
         {
             try
             {
                 ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                 model.id = irfId;
+                model.IsNewSkillChannel = isNewSkillChannel;
                 //get tech skills, general skills, joinability, selectability from the irf
                 model.SkillCollection = (IList<TransSkill>)await _irfRepository.GetSkillsbyIRFid(irfId);
                 model.SkillGeneral = (IList<TransSkillGeneral>)_irfRepository.GetSkillsGeneralbyIRFid(irfId);
@@ -189,14 +190,28 @@ namespace Risebird.Business
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.Skills = new SelectList(Skillset, "id", "Name");
-            foreach (var item in model.InterviewerCollection)
+            if(model.IsNewSkillChannel)
             {
-                if (item.PerSuccessRate == 0)
+                //get interviewer rate from db
+                int interviewerRate = 0;
+                interviewerRate = await _irfRepository.GetRenewedInterviewerRate(null, null, model.id);
+                foreach (var item in model.InterviewerCollection)
                 {
-                    item.PerSuccessRate = 1000;
+                    item.PerSuccessRate = interviewerRate;
                 }
-
             }
+            else
+            {
+                foreach (var item in model.InterviewerCollection)
+                {
+                    if (item.PerSuccessRate == 0)
+                    {
+                        item.PerSuccessRate = 1000;
+                    }
+
+                }
+            }
+            
             return model;
         }
 

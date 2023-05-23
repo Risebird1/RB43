@@ -8,12 +8,12 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_OpenInterviews]     
+Create PROCEDURE [dbo].[usp_OpenInterviews] 
 @emailID varchar(200),  
 @timeNow datetime  
 AS    
 BEGIN    
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, IRF.interviewDuration, im.candidateEmail,   
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration,im.candidateEmail,   
 ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,    
 im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
@@ -28,6 +28,8 @@ inner join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail    
 join CandidatesMaster cm on cm.UserId = ulc.id    
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id    
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and ((pm.PlanType='Standard' and IRF.Heuristicsscore=2)
+or (pm.PlanType='Pro' and IRF.Heuristicsscore=4) or (pm.PlanType='Advanced' and IRF.Heuristicsscore=5))
 where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1   and  ul.IsActive=1
 END    
 

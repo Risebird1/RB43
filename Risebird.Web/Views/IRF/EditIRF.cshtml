@@ -3948,6 +3948,7 @@
     }
 
     function InterviewerChanged(val, id) {
+        var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
         var index = id.split('_')[1];
         var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
         if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
@@ -3957,8 +3958,7 @@
         //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
-        @*var companyType = $("#CompanyType").val();
-        var countryType = $("#JobCountry").val();*@
+        
 
         $.ajax({
             type: "GET",
@@ -3968,7 +3968,25 @@
                 $("#" + skillElementid).val(data);
             }
         });
-        $("#" + rateElementid).val(interviewerRate);
+        if(isNewSkillChannel)
+        {
+            $("#" + rateElementid).val(interviewerRate);
+
+        }
+        else
+        {
+            var companyType = $("#CompanyType").val();
+             var countryType = $("#JobCountry").val();
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "/IRF/GetInterviewerRate",
+                data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
+                success: function (result) {
+                    $("#" + rateElementid).val(result);
+                }
+            });
+        }
 
         @*$.ajax({
             type: "GET",

@@ -19,7 +19,7 @@ Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastNam
 ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,    
 irf.JobCountry as  PreferredLocation,ul.EmailId as InterviewerEmailid,IRF.ClientName,ic.VideoLink, ic.VideoDuration,uli.Emailid as ChannelOwner,    
 CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate)     
-ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency,IRF.InterviewDuration as MaxVideoDuration,IRF.IsFixedInterviewduration,
+ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency,Case When IRF.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as MaxVideoDuration,IRF.IsFixedInterviewduration,
 Case When ti.Surcharge>0 and IRF.IsNewSkillChannel=1 and ip.Points>0 then ti.Surcharge when ti.Surcharge=0 and IRF.IsNewSkillChannel=1 and ip.Points>0 then im.Surcharge Else 0 end as Surcharge,
 Case When cr.Question2=5 and IRF.IsNewSkillChannel=1 then 20 Else 0 END as CandidateRatingAmount,
 Case When clr.StarRating=5 and IRF.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints
@@ -30,6 +30,8 @@ left join TransEmergencyInterviewer tei on tei.IRFId=irf.id and tei.UserId=ip.Us
 left join TransQualityController tqi on tqi.IRFId=irf.id and tqi.UserId=ip.Userid   
 left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
 left join InterviewRatings clr on clr.Interviewid=im.id 
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and ((pm.PlanType='Standard' and IRF.Heuristicsscore=2)
+  or (pm.PlanType='Pro' and IRF.Heuristicsscore=4) or (pm.PlanType='Advanced' and IRF.Heuristicsscore=5))
 where ip.Interviewid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st     
 and isNull(im.interviewdate,ip.Date)<=@se)     
 Union       

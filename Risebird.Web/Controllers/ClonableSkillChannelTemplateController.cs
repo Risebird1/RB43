@@ -33,7 +33,7 @@ namespace Risebird.Web.Controllers
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
-        public async Task<IActionResult> Create(int irfId, int assessmentGroupId)
+        public async Task<IActionResult> Create(int irfId, int assessmentGroupId, bool isNewSkillChannel)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
-                        model = await _clonableSkillChannelTemplateService.GetTemplateDataFromSourceSkillChannel(irfId, assessmentGroupId);
+                        model = await _clonableSkillChannelTemplateService.GetTemplateDataFromSourceSkillChannel(irfId, assessmentGroupId, isNewSkillChannel);
                         if (profileName == "Admin" && model.ClonableTemplateQuestionsCollection != null && model.ClonableTemplateQuestionsCollection.Count() > 500)
                         {
                             model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection.Take(500).ToList();

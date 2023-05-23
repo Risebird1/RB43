@@ -86,6 +86,7 @@
                                                     <tr>
                                                         <th>Date</th>
                                                         <th>Interview Price</th>
+                                                        <th>Variable Pay</th>
                                                         <th>Interview Duration (in Min.)</th>
                                                         <th id="openinterview_2">Candidate Name</th>
                                                         <th>JD-Skills</th>
@@ -106,6 +107,7 @@
                                                     <tr>
                                                         <th>Date</th>
                                                         <th>Interview Price</th>
+                                                        <th>Variable Pay</th>
                                                         <th>Interview Duration (in Min.)</th>
                                                         <th>Candidate Name</th>
                                                         <th>JD-Skills</th>
@@ -126,11 +128,12 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate </td>
+                                                            <td>₹ @item.ExpectedPerHourRate</td>
                                                             @if (item.IsNewSkillChannel)
                                                             {
                                                                 <td>
                                                                     <div class="techinfocontainer">
-                                                                        ₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + 120)
+                                                                        ₹ 120
                                                                         <i class="fa fa-info-circle techinfoicon tooltipquestion">
                                                                             <span class="tooltiptext">
                                                                                 <p>₹ 50: if QC points are 100/100 </p>
@@ -143,7 +146,7 @@
                                                             }
                                                             else
                                                             {
-                                                                <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + 120) </td>
+                                                                <td>₹ 0 </td>
                                                             }
                                                             <td> @item.interviewDuration (minimum)</td>
                                                             <td> @item.candidateName</td>
