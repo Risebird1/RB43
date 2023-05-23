@@ -19,7 +19,7 @@ BEGIN
 declare @emailIDParam varchar(200)        
 set @emailIDParam=@emailID        
         
-select im.id, im.IRFId, im.interviewDate, im.interviewSlot, IRF.interviewDuration, ul.EmailId as candidateEmail,         
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ul.EmailId as candidateEmail,         
 ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,                
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,                
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,          
@@ -42,6 +42,8 @@ join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId
 left join UserList ulh on ulh.EmailId = im.HRCoordinatorEmailId    
 left join Trans_QCFormReport tqc on tqc.Interviewid=im.id  
 left join InterviewReport ir on ir.InterviewId = im.id  
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and ((pm.PlanType='Standard' and IRF.Heuristicsscore=2)
+or (pm.PlanType='Pro' and IRF.Heuristicsscore=4) or (pm.PlanType='Advanced' and IRF.Heuristicsscore=5))
 where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus = 1) or  
 (@type = 'Pending' and ir.id is null and (dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  or (@timeNow >= im.interviewDate  and  @timeNow <= dateadd(MINUTE, im.interviewDuration, im.interviewDate))) and im.confirmationStatus = 1) or   
 (@type = 'Completed' and @timeNow >= im.interviewDate  and ir.id is not null and im.confirmationStatus = 1) or   
