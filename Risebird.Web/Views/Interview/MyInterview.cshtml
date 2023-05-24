@@ -390,7 +390,6 @@
                                                             <th style="border-left: 0px !important;">Date </th>
                                                             <th style="text-align:left">JD-Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
-                                                            <th>Job Location</th>
                                                             @*<th id="myinterview_5">JD Link</th>*@
                                                             <th>Instructions</th>
                                                             <th id="myinterview_6">Resume</th>
@@ -398,8 +397,9 @@
                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                             {
                                                                 <th id="myinterview_7">Meeting Link</th>
-                                                                <th>Compensation Type</th>
-                                                                <th>Min. Interview Duration</th>
+                                                                <th>Interview Price</th>
+                                                                <th>Variable Pay</th>
+                                                                <th>Minimum Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
 
@@ -412,7 +412,6 @@
                                                             <th style="border-left: 0px !important;width:12%">Date</th>
                                                             <th>JD-Skills</th>
                                                             <th>Candidate Name</th>
-                                                            <th>Job Location</th>
                                                             @*<th>JD Link</th>*@
                                                             <th>Instructions</th>
                                                             <th>Resume</th>
@@ -420,8 +419,9 @@
                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                             {
                                                                 <th>Meeting Link</th>
-                                                                <th>Compensation Type</th>
-                                                                <th>Min. Interview Duration</th>
+                                                                <th>Interview Price</th>
+                                                                <th>Variable Pay</th>
+                                                                <th>Minimum Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
 
@@ -478,18 +478,6 @@
                                                                 }
 
                                                                 @*<td> @item.HeuristicProfileTypeDesc </td>*@
-                                                                @if (item.JobCountry == "1")
-                                                                {
-                                                                    <td>India</td>
-                                                                }
-                                                                else if (item.JobCountry == "2")
-                                                                {
-                                                                    <td>Outside India</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td> @item.JobCountry </td>
-                                                                }
                                                                 @*@if (item.JDLink != null && item.JDLink != "")
                                                             {
                                                             <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
@@ -553,18 +541,26 @@
                                                                     {
                                                                         <td></td>
                                                                     }
-                                                                    <td>
-
-                                                                        @if (item.IsFixedInterviewduration)
-                                                                        {
-                                                                            <strong>Fixed</strong>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <strong>Variable</strong>
-                                                                        }
-
-                                                                    </td>
+                                                                    <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
+                                                                    @if (item.IsNewSkillChannel)
+                                                                    {
+                                                                        <td>
+                                                                            <div class="techinfocontainer">
+                                                                                ₹ 120
+                                                                                <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                                    <span class="tooltiptext">
+                                                                                        <p>₹ 50: if QC points are 100/100 </p>
+                                                                                        <p>₹ 50: Client Rating is 5/5 </p>
+                                                                                        <p>₹ 20: Candidate Rating is 5/5 </p>
+                                                                                    </span>
+                                                                                </i>
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>₹ 0 </td>
+                                                                    }
                                                                     @*<td><strong>@item.interviewDuration Min.</strong></td>*@
                                                                     <td><strong>@item.MaxInterviewDuration Min.</strong></td>
                                                                     <td class="text-left">
@@ -630,7 +626,7 @@
                                                                 <td colspan="999" class="child-section">
                                                                     <table class="table table-striped">
                                                                         <tr>
-                                                                            <th>Slot</th>
+                                                                            <th>Job Location</th>
                                                                             <th>Candidate Email</th>
                                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                             {
@@ -643,13 +639,17 @@
 
                                                                         </tr>
                                                                         <tr>
-                                                                            @if (@item.interviewSlot == "Morning")
+                                                                            @if (item.JobCountry == "1")
                                                                             {
-                                                                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+                                                                                <td>India</td>
+                                                                            }
+                                                                            else if (item.JobCountry == "2")
+                                                                            {
+                                                                                <td>Outside India</td>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <td><a style="color: #4242bf;font-weight: bold"> @item.interviewSlot</a></td>
+                                                                                <td> @item.JobCountry </td>
                                                                             }
                                                                             @if (item.IsOnilne == 1)
                                                                             {
@@ -1480,211 +1480,214 @@
     function Changeurldetails(meetingLineUpType) {
         window.location.href = "/Interview/MyInterview?meetingLineUpType=" + meetingLineUpType;
     }
-    function bindtableData(data) {
+    //function bindtableData(data) {
 
-        var html = '';
-        if (data.length == 0) {
-            html += '  <tr>';
-            html += ' <td colspan="12" class="text-center">No data available in table</td>';
-            html += ' </tr>';
-        }
+    //    var html = '';
+    //    if (data.length == 0) {
+    //        html += '  <tr>';
+    //        html += ' <td colspan="12" class="text-center">No data available in table</td>';
+    //        html += ' </tr>';
+    //    }
 
-        for (var i = 0; i < data.length; i++) {
-            html += '<tr id=' + data[i].id + '>';
-            html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>'
+    //    for (var i = 0; i < data.length; i++) {
+    //        html += '<tr id=' + data[i].id + '>';
+    //        html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>'
 
-            html += ' <td><div>' + data[i].interviewDate + '</div>';
-            if (data[i].timer > 0) {
-                html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 4 hours of the Interview Time then this interview will not be billable </span></a></div>';
-            }
-            html += '  </td>';
-            html += ' <td> ' + data[i].jobLevelDesc + ' </td>';
+    //        html += ' <td><div>' + data[i].interviewDate + '</div>';
+    //        if (data[i].timer > 0) {
+    //            html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 4 hours of the Interview Time then this interview will not be billable </span></a></div>';
+    //        }
+    //        html += '  </td>';
+    //        html += ' <td> ' + data[i].jobLevelDesc + ' </td>';
 
-            html += ' <td class="callcandidatebtn" style="text-align:center">';
-            var oldDateObj = new Date();
-            var newDateObj = new Date();
-            var newObj = new Date();
-            newDateObj.setTime(oldDateObj.getTime() - (5 * 60 * 1000));
-            newObj.setTime(oldDateObj.getTime() + (65 * 60 * 1000));
-            if (data[i].mobileNumber != null && data[i].mobileNumber != "" && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
+    //        html += ' <td class="callcandidatebtn" style="text-align:center">';
+    //        var oldDateObj = new Date();
+    //        var newDateObj = new Date();
+    //        var newObj = new Date();
+    //        newDateObj.setTime(oldDateObj.getTime() - (5 * 60 * 1000));
+    //        newObj.setTime(oldDateObj.getTime() + (65 * 60 * 1000));
+    //        if (data[i].mobileNumber != null && data[i].mobileNumber != "" && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
 
-                html += '<button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">';
-                html += ' <span onclick="CommonCallButtonClick(' + "'" + data[i].candidateName + "'" + ',' + "'" + data[i].mobileNumber + "'" + ',' + "'" + data[i].candidateEmail + "'" + ',' + data[i].id + ',' + null + ',' + 'Candidate' + ')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>';
-                html += ' </button>';
-
-
-            }
-
-            html += '  </td>';
+    //            html += '<button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">';
+    //            html += ' <span onclick="CommonCallButtonClick(' + "'" + data[i].candidateName + "'" + ',' + "'" + data[i].mobileNumber + "'" + ',' + "'" + data[i].candidateEmail + "'" + ',' + data[i].id + ',' + null + ',' + 'Candidate' + ')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>';
+    //            html += ' </button>';
 
 
-            if (data[i].candidateName != null && data[i].candidateName != "") {
-                if (data[i].candidateName.length > 26) {
+    //        }
 
-                    html += ' <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 26) + '... </a></td>';
-
-                }
-
-                else {
-                    html += '  <td class="cadName"><a onclick="">' + data[i].candidateName + ' </a></td>';
-
-                }
-            }
-            else {
-                html += '   <td></td>';
-            }
-
-            if (data[i].jobCountry == "1") {
-                html += '<td>India</td>';
-            }
-            else if (data[i].jobCountry == "2") {
-                html += '<td>Outside India</td>';
-            }
-            else {
-                html += '<td></td>';
-            }
-
-            html += '  <td> ' + data[i].interviewDuration + ' </td>';
-            //if (data[i].jdLink != null && data[i].jdLink != "") {
-            //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
-            //}
-            //else {
-            //    html += ' <td>No JD</td>';
-            //}
-            if (data[i].companyDetails != null && data[i].companyDetails != "") {
-                html += '   <td><a id="companylinkId" target="_blank" title="Company Instructions" href=' + data[i].companyDetails + '>Company Instructions</a></td>';
-            }
-            else {
-                html += '<td>No Company Instructions</td>';
-            }
-            if (data[i].resumeLink != null && data[i].resumeLink != "") {
-                html += ' <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
-            }
-            else {
-                html += ' <td>No Resume</td>';
-            }
-            html += '<td><a href="#" data-toggle="clientInstructions-modal"';
-            html += 'data-interviewdate="' + data[i].interviewDate + '"';
-            //html += 'data-target="#clientInstructions"';
-            html += 'data-candidatename="' + data[i].candidateName + '"';
-            html += 'data-url= "/Interviewer/GetClientFeedForInterviewer?interviewId=' + data[i].id + '"';
-            html += 'data-target="#clientInstructions" > Client Instruction(s)</a ></td >'
-            if (data[i].zoomLink != null && data[i].zoomLink != "") {
-
-                html += ' <td class="cadName"><a onclick="CaptureMeetingOpenTime(' + data[i].id + ')" target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
-            }
-            else {
-                html += ' <td></td>';
-            }
-            html += ' <td>' + data[i].interviewDuration + '</td>';
-            if (data[i].backUpLink != null && data[i].backUpLink != "") {
-                html += '<td class="cadName">';
-                html += '<a target="_blank" title="Meeting Link" href=' + data[i].backUpLink + '>BackUp Meeting Link</a>';
-                html += '</td>';
-            }
-            else {
-                html += '<td></td>';
-            }
-            html += '   <td class="text-left">';
-            if (new Date(data[i].interviewDate) <= new Date('@DateTime.Now') && new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-750)')) {
-                html += '  <button id="myinterview_10" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">';
-                html += ' <a href ="/Interview/AddReport?interviewId=' + data[i].id + '&irfId=' + data[i].irfIntId + '" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a>';
-                html += ' </button>';
-            }
-
-            var interviewDate = new Date(new Date(data[i].interviewDate).toDateString());
-            var currentDate = new Date(new Date().toDateString());
-
-            if (interviewDate >= currentDate) {
-                html += '  <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">';
-                html += '  <span onclick="javascript:CheckTimeDifference(' + data[i].id + ',' + "'" + data[i].interviewDate + "'" + ');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>';
-                html += '  </button>';
-            }
-
-            html += '   <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">';
-            html += '  <a href = "/IRF/SampleQuestions?id=' + data[i].irfIntId + '&irf=' + data[i].iRFID + '" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></a>';
-            html += '  </button>';
-            html += '  <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey" style="position:relative;top:-1px;left:2px;">';
-            html += '  <span onclick="CandidateFeedback(' + data[i].id + ')" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="far fa-comments"></i></span>';
-            html += '</button>';
-            //html += '   <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">';
-            //html += ' <a href ="/Interview/VerifyMyInterviewAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfIntId + '&meetingId =' + data[i].id + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';
-            //html += ' </button>';
-            if (new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-30)') && data[i].meetingPlatform != "Zoom") {
-                html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Generate a backup Meeting Link" style="position:relative;top:-1px;left:2px;" onclick="GenerateBackupLink(' + data[i].id + ',' + data[i].iRFID + ',' + data[i].clientName + ',' + data[i].irfIntId + ')">';
-                html += '<span title="Generate a backup Meeting Link" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-external-link"></i></span>';
-                html += ' </button>';
-            }
+    //        html += '  </td>';
 
 
+    //        if (data[i].candidateName != null && data[i].candidateName != "") {
+    //            if (data[i].candidateName.length > 26) {
 
-            html += '  </td>';
+    //                html += ' <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 26) + '... </a></td>';
 
-            html += '  </tr>';
+    //            }
 
-            html += '    <tr class="collapse ' + data[i].id + '">';
-            html += '   <td colspan="999" class="child-section">';
-            html += '  <table class="table table-striped">';
-            html += '  <tr>';
-            html += '   <th>Slot</th>';
-            html += '  <th>Candidate Email</th>';
-            html += '  <th>Call HR</th>';
-            html += '  <th>Meeting Status</th>';
-            html += '  <th>Interview Status</th>';
-            html += '  <th>Co-ordinating HR</th>';
+    //            else {
+    //                html += '  <td class="cadName"><a onclick="">' + data[i].candidateName + ' </a></td>';
 
-            html += '  <th>Skill Channel</th>';
+    //            }
+    //        }
+    //        else {
+    //            html += '   <td></td>';
+    //        }
 
-            html += '  </tr>';
-            html += '  <tr>';
-            if (data[i].interviewSlot == "Morning") {
-                html += '   <td><a style="color:darkorange;font-weight: bold">' + data[i].interviewSlot + '</a></td>';
-            }
-            else {
-                html += '  <td> <a style="color: #4242bf;font-weight: bold"> ' + data[i].interviewSlot + '</a></td>';
-            }
+    //        if (data[i].jobCountry == "1") {
+    //            html += '<td>India</td>';
+    //        }
+    //        else if (data[i].jobCountry == "2") {
+    //            html += '<td>Outside India</td>';
+    //        }
+    //        else {
+    //            html += '<td></td>';
+    //        }
 
-            if (data[i].isOnilne == 1) {
-                html += '  <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')">' + data[i].candidateName + '<span class="dot" style="background-color:green"></span></a>';
-                html += ' </td>';
-            }
-            else {
+    //        html += '  <td> ' + data[i].interviewDuration + ' </td>';
+    //        //if (data[i].jdLink != null && data[i].jdLink != "") {
+    //        //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
+    //        //}
+    //        //else {
+    //        //    html += ' <td>No JD</td>';
+    //        //}
+    //        if (data[i].companyDetails != null && data[i].companyDetails != "") {
+    //            html += '   <td><a id="companylinkId" target="_blank" title="Company Instructions" href=' + data[i].companyDetails + '>Company Instructions</a></td>';
+    //        }
+    //        else {
+    //            html += '<td>No Company Instructions</td>';
+    //        }
+    //        if (data[i].resumeLink != null && data[i].resumeLink != "") {
+    //            html += ' <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
+    //        }
+    //        else {
+    //            html += ' <td>No Resume</td>';
+    //        }
+    //        html += '<td><a href="#" data-toggle="clientInstructions-modal"';
+    //        html += 'data-interviewdate="' + data[i].interviewDate + '"';
+    //        //html += 'data-target="#clientInstructions"';
+    //        html += 'data-candidatename="' + data[i].candidateName + '"';
+    //        html += 'data-url= "/Interviewer/GetClientFeedForInterviewer?interviewId=' + data[i].id + '"';
+    //        html += 'data-target="#clientInstructions" > Client Instruction(s)</a ></td >'
+    //        if (data[i].zoomLink != null && data[i].zoomLink != "") {
 
-                html += ' <td> ' + data[i].candidateName + '</td>';
-            }
-            html += '   <td style="text-align:center">';
-            if (data[i].hrMobileNumber != null && data[i].hrMobileNumber != '' && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
+    //            html += ' <td class="cadName"><a onclick="CaptureMeetingOpenTime(' + data[i].id + ')" target="_blank" title="Meeting Link" href=' + data[i].zoomLink + '>Meeting Link</a> </td>';
+    //        }
+    //        else {
+    //            html += ' <td></td>';
+    //        }
+    //        html += ' <td>' + data[i].interviewDuration + '</td>';
+    //        if (data[i].backUpLink != null && data[i].backUpLink != "") {
+    //            html += '<td class="cadName">';
+    //            html += '<a target="_blank" title="Meeting Link" href=' + data[i].backUpLink + '>BackUp Meeting Link</a>';
+    //            html += '</td>';
+    //        }
+    //        else {
+    //            html += '<td></td>';
+    //        }
+    //        html += '   <td class="text-left">';
+    //        if (new Date(data[i].interviewDate) <= new Date('@DateTime.Now') && new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-750)')) {
+    //            html += '  <button id="myinterview_10" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">';
+    //            html += ' <a href ="/Interview/AddReport?interviewId=' + data[i].id + '&irfId=' + data[i].irfIntId + '" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a>';
+    //            html += ' </button>';
+    //        }
 
-                html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">';
-                html += ' <span onclick = "CommonCallButtonClick(' + "'" + data[i].hrCoordinatorEmailId + "'" + ',' + "'" + data[i].hrMobileNumber + "'" + ',' + "'" + data[i].hrCoordinatorEmailId + "'" + ',' + data[i].id + ',' + null + ',' + 'HR' + ')" data-original-title="Tooltip on top" title = "Click here to call the candidate." class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span > ';
-                html += '  </button>';
+    //        var interviewDate = new Date(new Date(data[i].interviewDate).toDateString());
+    //        var currentDate = new Date(new Date().toDateString());
+
+    //        if (interviewDate >= currentDate) {
+    //            html += '  <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">';
+    //            html += '  <span onclick="javascript:CheckTimeDifference(' + data[i].id + ',' + "'" + data[i].interviewDate + "'" + ');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>';
+    //            html += '  </button>';
+    //        }
+
+    //        html += '   <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">';
+    //        html += '  <a href = "/IRF/SampleQuestions?id=' + data[i].irfIntId + '&irf=' + data[i].iRFID + '" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></a>';
+    //        html += '  </button>';
+    //        html += '  <button id="myinterview_8" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey" style="position:relative;top:-1px;left:2px;">';
+    //        html += '  <span onclick="CandidateFeedback(' + data[i].id + ')" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="far fa-comments"></i></span>';
+    //        html += '</button>';
+    //        //html += '   <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">';
+    //        //html += ' <a href ="/Interview/VerifyMyInterviewAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfIntId + '&meetingId =' + data[i].id + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>';
+    //        //html += ' </button>';
+    //        if (new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-30)') && data[i].meetingPlatform != "Zoom") {
+    //            html += '<button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Generate a backup Meeting Link" style="position:relative;top:-1px;left:2px;" onclick="GenerateBackupLink(' + data[i].id + ',' + data[i].iRFID + ',' + data[i].clientName + ',' + data[i].irfIntId + ')">';
+    //            html += '<span title="Generate a backup Meeting Link" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-external-link"></i></span>';
+    //            html += ' </button>';
+    //        }
 
 
-            }
 
-            html += ' </td>';
-            html += '  <td>' + data[i].meetingStatusDesc + '</td>';
-            if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
-                html += '  <td>' + data[i].interviewStatusDesc + '</td>';
-            }
-            else {
-                html += ' <td></td>';
-            }
+    //        html += '  </td>';
 
-            if (data[i].hrCoordinatorEmailId != null && data[i].hrCoordinatorEmailId != "") {
-                html += '  <td>' + data[i].hrCoordinatorEmailId + '</td>';
-            }
-            else {
-                html += ' <td></td>';
-            }
-            html += ' <td style="text-align: center">' + data[i].irfid + '</td>';
-            html += '  </tr>';
-            html += '  </table>';
-            html += '  </td>';
-            html += '  </tr>';
-        }
-        $("#tblbodyMyInterview").empty().html(html);
-    }
+    //        html += '  </tr>';
+
+    //        html += '    <tr class="collapse ' + data[i].id + '">';
+    //        html += '   <td colspan="999" class="child-section">';
+    //        html += '  <table class="table table-striped">';
+    //        html += '  <tr>';
+    //        html += '   <th>Job Location</th>';
+    //        html += '  <th>Candidate Email</th>';
+    //        html += '  <th>Call HR</th>';
+    //        html += '  <th>Meeting Status</th>';
+    //        html += '  <th>Interview Status</th>';
+    //        html += '  <th>Co-ordinating HR</th>';
+
+    //        html += '  <th>Skill Channel</th>';
+
+    //        html += '  </tr>';
+    //        html += '  <tr>';
+    //        if (data[i].jobCountry == "1") {
+    //            html += '<td>India</td>';
+    //        }
+    //        else if (data[i].jobCountry == "2") {
+    //            html += '<td>Outside India</td>';
+    //        }
+    //        else {
+    //            html += '<td></td>';
+    //        }
+
+    //        if (data[i].isOnilne == 1) {
+    //            html += '  <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')">' + data[i].candidateName + '<span class="dot" style="background-color:green"></span></a>';
+    //            html += ' </td>';
+    //        }
+    //        else {
+
+    //            html += ' <td> ' + data[i].candidateName + '</td>';
+    //        }
+    //        html += '   <td style="text-align:center">';
+    //        if (data[i].hrMobileNumber != null && data[i].hrMobileNumber != '' && newDateObj <= new Date(data[i].interviewDate) && new Date(data[i].interviewDate) <= newObj) {
+
+    //            html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">';
+    //            html += ' <span onclick = "CommonCallButtonClick(' + "'" + data[i].hrCoordinatorEmailId + "'" + ',' + "'" + data[i].hrMobileNumber + "'" + ',' + "'" + data[i].hrCoordinatorEmailId + "'" + ',' + data[i].id + ',' + null + ',' + 'HR' + ')" data-original-title="Tooltip on top" title = "Click here to call the candidate." class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span > ';
+    //            html += '  </button>';
+
+
+    //        }
+
+    //        html += ' </td>';
+    //        html += '  <td>' + data[i].meetingStatusDesc + '</td>';
+    //        if (data[i].interviewStatusDesc != null && data[i].interviewStatusDesc != "") {
+    //            html += '  <td>' + data[i].interviewStatusDesc + '</td>';
+    //        }
+    //        else {
+    //            html += ' <td></td>';
+    //        }
+
+    //        if (data[i].hrCoordinatorEmailId != null && data[i].hrCoordinatorEmailId != "") {
+    //            html += '  <td>' + data[i].hrCoordinatorEmailId + '</td>';
+    //        }
+    //        else {
+    //            html += ' <td></td>';
+    //        }
+    //        html += ' <td style="text-align: center">' + data[i].irfid + '</td>';
+    //        html += '  </tr>';
+    //        html += '  </table>';
+    //        html += '  </td>';
+    //        html += '  </tr>';
+    //    }
+    //    $("#tblbodyMyInterview").empty().html(html);
+    //}
     function bindPages(pagecount, startpage, endpage, totalcount, meetingLineUpType) {//
         var html = '';
         html += '<div class="pagination-container">';

@@ -9,24 +9,20 @@
         <tr>
             <th style="border-right: 0px !important;"></th>
             <th style="border-left: 0px !important;">Date </th>
-            <th style="text-align:left">Job Level</th>
             <th style="text-align:left">JD-Skills</th>
             <th id="myinterview_4">Candidate Name</th>
-            <th>Client</th>
-            <th>Job Location</th>
-            @*<th id="myinterview_5">JD Link</th>*@
             <th>Instructions</th>
             <th id="myinterview_6">Resume</th>
             <th>Client Instructions</th>
             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
             {
                 <th id="myinterview_7">Meeting Link</th>
-                <th>Compensation Type</th>
-                <th>Max./Expected Interview Duration</th>
-                <th>Backup Link</th>
+                <th>Interview Price</th>
+                <th>Variable Pay</th>
+                <th>Minimum Duration</th>
                 <th class="disabled-sorting text-left">Actions</th>
             }
-            
+
         </tr>
 
     </thead>
@@ -34,24 +30,20 @@
         <tr>
             <th style="border-right: 0px !important;"></th>
             <th style="border-left: 0px !important;width:12%">Date</th>
-            <th>Job Level</th>
             <th>JD-Skills</th>
             <th>Candidate Name</th>
-            <th>Client</th>
-            <th>Job Location</th>
-            @*<th>JD Link</th>*@
             <th>Instructions</th>
             <th>Resume</th>
             <th>Client Instructions</th>
             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
             {
                 <th id="myinterview_7">Meeting Link</th>
-                <th>Compensation Type</th>
-                <th>Max./Expected Interview Duration</th>
-                <th>Backup Link</th>
+                <th>Interview Price</th>
+                <th>Variable Pay</th>
+                <th>Minimum Duration</th>
                 <th class="disabled-sorting text-left">Actions</th>
             }
-            
+
 
         </tr>
 
@@ -77,7 +69,6 @@
                         <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
                     }
                 </td>
-                <td> @item.JobLevelDesc </td>
                 <td>
                     <button type="button" class="clickhere_btn pull-left">
                         <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
@@ -107,21 +98,6 @@
                 else
                 {
                     <td></td>
-                }
-                <td>@item.ClientName</td>
-
-                @*<td> @item.HeuristicProfileTypeDesc </td>*@
-                @if (item.JobCountry == "1")
-                {
-                    <td>India</td>
-                }
-                else if (item.JobCountry == "2")
-                {
-                    <td>Outside India</td>
-                }
-                else
-                {
-                    <td> @item.JobCountry </td>
                 }
                 @*@if (item.JDLink != null && item.JDLink != "")
             {
@@ -166,47 +142,42 @@
                 {
                     @if (item.zoomLink != null && item.zoomLink != "")
                     {
-
-                        <td class="cadName">
-                            @*<a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>*@
-                            <a href="#" title="Meeting Link" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
-                                data-interviewdate="@item.interviewDate" data-candidatename="@item.candidateName"
-                                data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = item.id, meetingLink = item.zoomLink})">
-                                Meeting Link
-                            </a>
-
-                        </td>
-
-                    }
-
-                    else
-                    {
-                        <td></td>
-                    }
-                    <td>
-
-                        @if (item.IsFixedInterviewduration)
+                        @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                         {
-                            <strong>Fixed</strong>
+                            <td class="cadName">
+                                <a target="_blank" onclick="CaptureMeetingOpenTime(@item.id)" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                            </td>
                         }
                         else
                         {
-                            <strong>Variable</strong>
+                            <td>Before 10 min only</td>
                         }
-
-                    </td>
-                    @*<td><strong>@item.interviewDuration</strong></td>*@
-                    <td><strong>@item.MaxInterviewDuration min.</strong></td>
-                    @if (item.BackUpLink != null && item.BackUpLink != "")
-                    {
-                        <td class="cadName">
-                            <a target="_blank" title="Meeting Link" href=@item.BackUpLink>BackUp Meeting Link</a>
-                        </td>
                     }
                     else
                     {
                         <td></td>
                     }
+                    <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
+                    @if (item.IsNewSkillChannel)
+                    {
+                        <td>
+                            <div class="techinfocontainer">
+                                ₹ 120
+                                <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                    <span class="tooltiptext">
+                                        <p>₹ 50: if QC points are 100/100 </p>
+                                        <p>₹ 50: Client Rating is 5/5 </p>
+                                        <p>₹ 20: Candidate Rating is 5/5 </p>
+                                    </span>
+                                </i>
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>₹ 0 </td>
+                    }
+                    <td><strong>@item.MaxInterviewDuration Min.</strong></td>
                     <td class="text-left">
                         @{
                             var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
@@ -255,14 +226,14 @@
                 </button>*@
                     </td>
                 }
-                
+
             </tr>
 
             <tr class="collapse @item.id">
                 <td colspan="999" class="child-section">
                     <table class="table table-striped">
                         <tr>
-                            <th>Slot</th>
+                            <th>Job Location</th>
                             <th>Candidate Email</th>
                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                             {
@@ -275,13 +246,17 @@
 
                         </tr>
                         <tr>
-                            @if (@item.interviewSlot == "Morning")
+                            @if (item.JobCountry == "1")
                             {
-                                <td><a style="color:darkorange;font-weight: bold"> @item.interviewSlot</a></td>
+                                <td>India</td>
+                            }
+                            else if (item.JobCountry == "2")
+                            {
+                                <td>Outside India</td>
                             }
                             else
                             {
-                                <td><a style="color: #4242bf;font-weight: bold"> @item.interviewSlot</a></td>
+                                <td> @item.JobCountry </td>
                             }
                             @if (item.IsOnilne == 1)
                             {
@@ -299,23 +274,16 @@
                                 <td style="text-align:center">
                                     @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                     {
-
                                         <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
                                             <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber','@item.id')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                         </button>
-
-
                                     }
-
                                 </td>
                             }
-                            
                             <td>@item.MeetingStatusDesc</td>
                             <td>@item.InterviewStatusDesc</td>
                             <td>@item.HRCoordinatorEmailId</td>
                             <td style="text-align: center"> @item.IRFID </td>
-
-
                         </tr>
                     </table>
                 </td>

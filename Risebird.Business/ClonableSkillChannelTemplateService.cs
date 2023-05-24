@@ -430,7 +430,16 @@ namespace Risebird.Business
                 model.MeetingPlatform = details.MeetingPlatform;
                 model.IsAadhaarVerificationRequired = details.IsAadhaarVerificationRequired;
                 model.Heuristicsscore = details.Heuristicsscore;
-                model.CompanyType = details.CompanyType;
+                if(details.CompanyType == "2")//Service
+                {
+                    model.CompanyType = details.CompanyType;
+
+                }
+                else
+                {
+                    model.CompanyType = "2";
+
+                }
                 model.JobCountry = details.JobCountry;
 
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
@@ -441,8 +450,7 @@ namespace Risebird.Business
                     model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
                     model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
                     //model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
-                    //model.JobLevel = model.IRFRecommendations.SeniorityLevelId;
-                    model.JobLevel = (int)JobLevels.SE;
+                    //model.JobLevel = (int)JobLevels.SE;
                     //model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
                     //model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
                 }

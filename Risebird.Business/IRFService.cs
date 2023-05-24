@@ -74,7 +74,7 @@ namespace Risebird.Business
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
-                    if (irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
+                    if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
                     {
                         //send notification to the sme here
                         var smeEmail = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
@@ -197,6 +197,18 @@ namespace Risebird.Business
                 return Name;
             }
 
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public Interviewer GetInterviewerSkillsAndResume(int id)
+        {
+            try
+            {
+                return _irfRepository.GetInterviewerSkillsAndResume(id);
+            }
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

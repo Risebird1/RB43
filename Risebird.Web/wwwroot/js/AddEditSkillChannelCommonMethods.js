@@ -132,41 +132,42 @@ function ShowAmountIfChecked() {
     }
 }
 
-function UpdateInterviewerRate(planType = null, countryType = null) {
-    //if (profile == "Admin" || profile == "SuperAdmin") {
+function UpdateInterviewerRate(planType = null, countryType = null, profile = null) {
+    if (profile != null && profile != "Admin" ) {
+        if (planType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
 
-    //}
+            //planType = $("#Heuristicsscore").val()
 
-    if (planType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
+            if (planType == "2")//Standard
+            {
+                surchargeMax = 100;
+                //surchargeMin = 0;
 
-        //planType = $("#Heuristicsscore").val()
+            }
+            else if (planType == "4")//Pro
+            {
+                surchargeMax = 200;
+                //surchargeMin = 101;
 
-        if (planType == "2")//Standard
-        {
-            surchargeMax = 100;
-            //surchargeMin = 0;
+            }
+            else if (planType == "5")//Advanced
+            {
+                surchargeMax = 300;
+                //surchargeMin = 101;
+            }
 
+            var surchargeList = $('[id^="InterviewerCollection"][id$="Surcharge"]');
+            for (i = 0; i < surchargeList.length; i++) {
+                $("#" + surchargeList[i].id).attr({
+                    "max": surchargeMax//,
+                    //"min" : 2
+                });
+            }
         }
-        else if (planType == "4")//Pro
-        {
-            surchargeMax = 200;
-            //surchargeMin = 101;
 
-        }
-        else if (planType == "5")//Advanced
-        {
-            surchargeMax = 300;
-            //surchargeMin = 101;
-        }
-
-        var surchargeList = $('[id^="InterviewerCollection"][id$="Surcharge"]');
-        for (i = 0; i < surchargeList.length; i++) {
-            $("#" + surchargeList[i].id).attr({
-                "max": surchargeMax//,
-                //"min" : 2
-            });
-        }
     }
+
+    
     commonUpdateRate(planType, countryType);
     //if (countryType == null) {
     //    countryType = $("#JobCountry").val()
