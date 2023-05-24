@@ -1280,7 +1280,7 @@
                                                                                 @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink)) //CodedResumeLink
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" id=@("InterviewerCollection_" + i +  "__ResumeLink") target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
                                                                                     </td>
 
                                                                                 }
@@ -3661,7 +3661,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+        $tr.find("input,select,hidden,a").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -3959,16 +3959,35 @@
         //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
-        
+        var resumeElementid = 'InterviewerCollection_' + index + '__ResumeLink';
+
 
         $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerSkillsAndResume",
+            data: { 'id': val },
+            success: function (result) {
+                $("#" + skillElementid).val(result.primarySkill);
+                //$("#" + resumeElementid).val(result.resumeLink);
+                const resumeItem = document.getElementById(resumeElementid);
+                var aTag = document.createElement('a');
+                aTag.setAttribute('href',result.resumeLink);
+                aTag.setAttribute('id', resumeElementid);
+                aTag.innerText = "Resume";
+                resumeItem.parentNode.replaceChild(aTag, resumeItem);
+                
+            }
+        });
+
+        @*$.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
-        });
+        });*@
         if(isNewSkillChannel)
         {
             $("#" + rateElementid).val(interviewerRate);
@@ -3989,15 +4008,6 @@
             });
         }
 
-        @*$.ajax({
-            type: "GET",
-            async: false,
-            url: "/IRF/GetInterviewerRate",
-            data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
-            success: function (result) {
-                $("#" + rateElementid).val(result);
-            }
-        });*@
         $("#" + id).val(val);
     }
 
