@@ -8,7 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 Create PROCEDURE [dbo].[usp_GetInterviewDetailsCount]              
 @emailID varchar(200),  
 @timeNow datetime    
@@ -61,6 +60,10 @@ Select ip.ResumeLink from InterviewerProfile ip join userlist ul on ip.userid=ul
 Select Avg(ic.VideoDuration) VideoDuration from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id 
 where interviewer=@emailID and im.Confirmationstatus=1 and ic.MeetingStatus in(4,6,7,8) 
 and ic.VideoDuration is not null
+
+Select ip.FirstTimePopupDisplayed from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
+
+update ip set ip.FirstTimePopupDisplayed=1 from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID and Isnull(ip.FirstTimePopupDisplayed,0)=0
 
 END
 

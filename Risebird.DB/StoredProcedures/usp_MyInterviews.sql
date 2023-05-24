@@ -9,7 +9,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_MyInterviews]                 
+Create PROCEDURE [dbo].[usp_MyInterviews]                 
 @emailID varchar(200),  
 @type varchar(30) = null,  
 @timeNow datetime  
@@ -32,8 +32,8 @@ ca.Phone as MobileNumber, ca.ResumeLink as resumeLink ,irf.id as irfIntId,irf.Cl
 ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, ulh.MobileNumber as HRMobileNumber,                
 cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration, irf.JDTiltle,ca.IsProctor,  
 IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL(IRF.MeetingPlatform,'Zoom') MeetingPlatform,  
-im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, irf.InterviewDuration as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,
-Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge
+im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,
+Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,irf.IsNewSkillChannel
 from InterviewMeetings im                   
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId     
 left join Client cl on cl.id=IRF.ClientId    
@@ -53,7 +53,5 @@ where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus 
 (@type = 'Cancelled' and cast(im.interviewDate as date) = cast( @timeNow as date) and im.confirmationStatus = 2))                    
                       
 END 
-
-
 
 GO

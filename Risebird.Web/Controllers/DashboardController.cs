@@ -1449,6 +1449,7 @@ namespace Risebird.Web.Controllers
                         //var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         ViewBag.isCodedResumePresent = false;
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
+                        ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         //Boradcastmessage
                         return View(model);
                     }
