@@ -1007,6 +1007,11 @@ namespace Risebird.Web.Controllers
             return name;
         }
 
+        [HttpGet]
+        public JsonResult GetInterviewerSkillsAndResume(int id)
+        {
+            return Json(_irfService.GetInterviewerSkillsAndResume(id));
+        }
 
         public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {

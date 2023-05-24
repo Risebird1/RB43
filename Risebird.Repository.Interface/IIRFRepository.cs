@@ -20,6 +20,7 @@ namespace Risebird.Repository.Interface
         bool AddIRFDetails(IRFVm irfDetails, out int irfID);
         IEnumerable<IRF> GetAllIRF(string emailid, string profileName);
         IEnumerable<Interviewer> GetInterviewerSkills();
+        public Interviewer GetInterviewerSkillsAndResume(int userId);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         IEnumerable<TransClientUser> GetTransClientUser(int id);
         //IEnumerable<TransInterviewer> GetTransInterviewer(int id);

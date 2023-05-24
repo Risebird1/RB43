@@ -142,8 +142,16 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            
-                                                            @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null)" })
+                                                            @if(Model.Profile == "Admin")
+                                                            {
+                                                                @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null, 'Admin')" })
+
+                                                            }
+                                                            else
+                                                            {
+                                                                 @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null)" })
+
+                                                            }
 
                                                             @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @id = "error_Heuristicsscore", @class = "text-danger" })
 
@@ -206,8 +214,16 @@
                                                                 countryTypeList.Add(new SelectListItem() { Value = "1", Text = "Offshore" });
                                                                 countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Onsite" });
                                                             }
+                                                            @if(Model.Profile == "Admin")
+                                                            {
+                                                                @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value, 'Admin')"/*"TechSkillChanged()"*/ })
 
-                                                        @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value)"/*"TechSkillChanged()"*/ })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value)"/*"TechSkillChanged()"*/ })
+
+                                                            }
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
 
                                                     </div>
@@ -801,7 +817,9 @@
                                                                             </td>
 
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="">No Resume</a>
+                                                                                @*<a onclick="" data-tooltip="">No Resume</a>*@
+                                                                                <a href="" target="_blank" id="InterviewerCollection_0__ResumeLink" data-tooltip="">Resume</a>
+
                                                                             </td>
 
                                                                             <td>
@@ -824,7 +842,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0", @max = "100" })
+                                                                                @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0"})
                                                                                 @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
 
                                                                             </td>
@@ -874,7 +892,9 @@
 
                                                                                 </td>
                                                                                 <td>
+                                                                                    
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0"})
+
                                                                                     @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
 
                                                                                 </td>
@@ -1689,7 +1709,7 @@
 
 
     function ClientChanged(clientId) {
-
+        debugger;
         $.ajax({
             type: "GET",
             url: "/IRF/GetClientUser",
@@ -1709,6 +1729,7 @@
                         drpdwnId.append(option);
                     });
                 }
+                ClientUserChanged(data[0].value, 'ClientCollection_0__ClientUserId');
                 var drpbilling = $("#BillingOwner");
                 $("#BillingOwner option").remove();
                 if (data.length > 0) {
@@ -1745,6 +1766,7 @@
         var planType = $("#Heuristicsscore").val();
         //var companyType = $("#CompanyType").val();
         var interviewerSkills;
+        var interviewerResume;
         //var interviewerQCRate;
         @*if (countryType == "1") {
             interviewerQCRate = 350;
@@ -1764,7 +1786,7 @@
             success: function (data) {
 
                 if (data.length > 0) {
-                    $.ajax({
+                    @*$.ajax({
                         type: "GET",
                         async: false,
                         url: "/IRF/GetInterviewerSkills",
@@ -1772,7 +1794,22 @@
                         success: function (result) {
                             interviewerSkills = result;
                         }
+                    });*@
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: "/IRF/GetInterviewerSkillsAndResume",
+                        data: { 'id': data[0].value },
+                        success: function (result) {
+                            debugger;
+                            //obj = JSON.parse(result);
+                            interviewerSkills = result.primarySkill;
+                            interviewerResume = result.resumeLink;
+                        }
                     });
+
+
                     @*if(planType != null && planType != '' && countryType != null && countryType != '')
                     {
                         UpdateInterviewerRate(planType, countryType);
@@ -1808,7 +1845,7 @@
                     //    }
                     //});
                 }
-
+                debugger;
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id + " option").remove();
@@ -1864,7 +1901,8 @@
                             }
                         }
                         //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
-                        BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
+                        @*BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate, interviewerResume);*@
+                        BindSkillsAndRateAndResume(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate, interviewerResume);
                     }
                     @*for (i = 0; i < drpdownsEI.length; i++) {
                         //$("#" + drpdowns[i].id).append(option);
@@ -2367,7 +2405,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+        $tr.find("input,select,hidden,a").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -2379,7 +2417,7 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-
+        debugger;
 
         // reset fields in the new row
         $tr.find("select").val("");
@@ -2649,12 +2687,19 @@
 
     }
 
-    function BindSkillsAndRate(id, data, rateElementId = null, rate = null) {
+    function BindSkillsAndRateAndResume(id, data, rateElementId = null, rate = null, resumeLink = null) {
+        debugger;
         var num = id.match(/(\d+)/);
         var index = num[0];
         var idArray = id.split('_');
         var skillElementid = idArray[0] + '_' + index + '__PrimarySkill';
         $("#" + skillElementid).val(data);
+        var resumeElementid = idArray[0] + '_' + index + '__ResumeLink';
+        if(resumeLink != null)
+        {
+            document.getElementById(resumeElementid).href = resumeLink;
+            document.getElementById(resumeElementid).innerHTML = "Resume";
+        }
         if (rate != null && rateElementId != null) {
             $("#" + rateElementId).val(rate);
 
@@ -2668,19 +2713,42 @@
             return;
         }
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
+        var resumeElementid = 'InterviewerCollection_' + index + '__ResumeLink';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
+        debugger;
+        //var resumeDivId =  'resumeElement_' + index;
         @*var companyType = $("#CompanyType").val();
         var countryType = $("#JobCountry").val();*@
 
 
-        $.ajax({
+       @* $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
+        });*@
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerSkillsAndResume",
+            data: { 'id': val },
+            success: function (result) {
+                debugger;
+                $("#" + skillElementid).val(result.primarySkill);
+                //$("#" + resumeElementid).val(result.resumeLink);
+                const resumeItem = document.getElementById(resumeElementid);
+                var aTag = document.createElement('a');
+                aTag.setAttribute('href',result.resumeLink);
+                aTag.setAttribute('id', resumeElementid);
+                aTag.innerText = "Resume";
+                resumeItem.parentNode.replaceChild(aTag, resumeItem);
+                @*const elementFile = document.getElementById("resumeDivId").children[0];
+                elementFile.replaceChild(aTag, elementFile.childNodes[0]);*@
+            }
         });
+
         $("#" + rateElementid).val(interviewerRate);
         @*$.ajax({
             type: "GET",
@@ -2744,6 +2812,7 @@
     }
 
     function ClientUserChanged(val, id) {
+        debugger;
         var index = id.split('_')[1];
         //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__ClientRoleId';
