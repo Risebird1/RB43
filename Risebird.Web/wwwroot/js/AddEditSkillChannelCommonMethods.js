@@ -133,7 +133,7 @@ function ShowAmountIfChecked() {
 }
 
 function UpdateInterviewerRate(planType = null, countryType = null, profile = null) {
-    if (profile != null && profile != "Admin" ) {
+if (profile != null && profile != "Admin" ) {
         if (planType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
 
             //planType = $("#Heuristicsscore").val()

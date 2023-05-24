@@ -2715,8 +2715,7 @@
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var resumeElementid = 'InterviewerCollection_' + index + '__ResumeLink';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
-        debugger;
-        //var resumeDivId =  'resumeElement_' + index;
+
         @*var companyType = $("#CompanyType").val();
         var countryType = $("#JobCountry").val();*@
 
@@ -2735,7 +2734,6 @@
             url: "/IRF/GetInterviewerSkillsAndResume",
             data: { 'id': val },
             success: function (result) {
-                debugger;
                 $("#" + skillElementid).val(result.primarySkill);
                 //$("#" + resumeElementid).val(result.resumeLink);
                 const resumeItem = document.getElementById(resumeElementid);
@@ -2744,8 +2742,7 @@
                 aTag.setAttribute('id', resumeElementid);
                 aTag.innerText = "Resume";
                 resumeItem.parentNode.replaceChild(aTag, resumeItem);
-                @*const elementFile = document.getElementById("resumeDivId").children[0];
-                elementFile.replaceChild(aTag, elementFile.childNodes[0]);*@
+                
             }
         });
 

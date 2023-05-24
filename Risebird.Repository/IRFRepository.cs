@@ -6004,7 +6004,7 @@ namespace Risebird.Repository
                             //{
                             //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
                             //}
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, true, false);
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
 
                         }
                     }

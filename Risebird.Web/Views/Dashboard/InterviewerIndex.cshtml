@@ -348,6 +348,72 @@
         <p>*Please upload your latest resume to process further.</p>
     </div>
 </div>
+<div id="InterviewerPaymentDetailsModel" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Notification <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeInterviewerPaymentDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="color:black">
+                Dear Interviewer,<br />
+
+                Congratulations!!, finally we are launching plans and flat payment model for IT services companies. Plans allow us to cater to different needs of customers and to offer competitive pricing which eventually brings more interviews demand for all our interviewers. Depending on the plan chosen by customer, you will get below mentioned flat payment irrespective of select or reject candidate.
+                <br />
+                For transparency, we will be showing base pay and variable pay in open interviews section and you are advised to assign the interview after careful consideration.
+                <br />
+                <strong>Base Pay</strong><br />
+                <div>
+                    1.Standard (S)- Minimum Interview duration = minimum 40 mins for select/reject<br />
+                    <ul>
+                        <li>INR 350 per completed interview for offshore</li>
+                        <li>INR 500 per completed interview for onsite</li>
+                    </ul>
+                    2.Pro (P)- Minimum Interview duration = minimum 50 mins for select/reject<br />
+                    <ul>
+                        <li>INR 420 per completed interview for offshore</li>
+                        <li>INR 840 per completed interview for onsite</li>
+                    </ul>
+                    3.Advanced (A)- Minimum Interview duration = minimum 60 mins for select/reject<br />
+                    <ul>
+                        <li>INR 500 per completed interview for offshore</li>
+                        <li>INR 1000 per completed interview for onsite</li>
+                    </ul>
+                </div>
+                <strong>Variable Pay - up to INR 120 per interview</strong><br />
+                <div>
+                    <ul>
+                        <li>QC rating => 100% error free or zero red flags = INR 50 per completed interview</li>
+                        <li>Client rating => 5 = INR 50 per completed interview</li>
+                        <li> Candidate rating=> 5 = INR 20 per completed interview</li>
+                    </ul>
+                </div>
+                <strong style="color:red">Penalties</strong><br />
+                <div>
+                    1. For completing interviews of lesser duration than mentioned above. 5 minutes grace is allowed. For example, if in standard interview your net duration is 30 mins, 5 min grace period will not result in any deduction but additional 5 mins will result in penalty (INR 50) will be deducted on pro rata basis<br />
+                    2. Late reports - for delay, which is more than 3 hours, 12 hrs, 24hrs<br />
+                    3. Unassignment of interviews- INR 250 for unassigning interviews<br />
+                    4. QC reports - red flag = INR 50 per red flag<br />
+                    5. Poor client rating (less than 4) = 50% of interview amount after RB QC review<br />
+                    6. Poor candidate rating (less than 4) = = 50% of interview amount after RB QC review<br />
+                    7. Redo request from client = = 100% of interview amount after RB QC review<br />
+                </div>
+                <strong>Surcharge - will be provided to handle exceptions. Our team will update if any surcharge is provided to you.</strong><br />
+                <div>For Product companies and Startups different pricing will be applicable which will be informed to you separately.</div>
+            </div>
+
+        </div>
+    </div>
+</div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -409,6 +475,14 @@
         });
     </script>
 }
+@if (!ViewBag.isFirstTimeLogin)
+{
+    <script>
+        $(document).ready(function () {
+            openInterviewerPaymentDetailsModel();
+        });
+    </script>
+}
 <script>
     //$(document).ready(function () {
     //    $.ajax({
@@ -421,6 +495,14 @@
     //});
 </script>
 <script>
+    function closeInterviewerPaymentDetailsModel() {
+        var model = document.getElementById("InterviewerPaymentDetailsModel");
+        model.style.display = "none";
+    }
+    function openInterviewerPaymentDetailsModel() {
+        var model = document.getElementById("InterviewerPaymentDetailsModel");
+        model.style.display = "block";
+    }
     function GenerateclientpaiChart(client) {
         var interviewerCountObj = [{ y: client, label: "Client" }, { y: (5 - parseFloat(client)) }]
         var chart = new CanvasJS.Chart("clientrating", {
