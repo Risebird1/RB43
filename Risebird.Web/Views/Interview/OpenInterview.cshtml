@@ -128,7 +128,7 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate </td>
-                                                            <td>₹ @item.ExpectedPerHourRate</td>
+                                                            <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
                                                             @if (item.IsNewSkillChannel)
                                                             {
                                                                 <td>

@@ -117,5 +117,6 @@ namespace Risebird.Entities.Data
         public bool IsFixedInterviewduration { get; set; }
         public int MaxInterviewDuration { get; set; }
         public bool IsNewSkillChannel { get; set; }
+        public int Surcharge { get; set; }
     }
 }

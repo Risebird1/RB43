@@ -19,7 +19,8 @@ im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewO
 im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,    
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,irf.JDTiltle,irf.id as irfIntId, ul.IsActive as IsInterviewerActive,   
-irf.JDLink,tirf.PerSuccessRate as ExpectedPerHourRate,irf.IsNewSkillChannel from InterviewMeetings im      
+irf.JDLink,tirf.PerSuccessRate as ExpectedPerHourRate,irf.IsNewSkillChannel,
+Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge from InterviewMeetings im      
 inner join IRF irf on im.IRFId=irf.IRFId
 join Client cl on cl.id=irf.Clientid
 inner join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId      
@@ -28,9 +29,8 @@ inner join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail    
 join CandidatesMaster cm on cm.UserId = ulc.id    
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id    
-left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and ((pm.PlanType='Standard' and IRF.Heuristicsscore=2)
-or (pm.PlanType='Pro' and IRF.Heuristicsscore=4) or (pm.PlanType='Advanced' and IRF.Heuristicsscore=5))
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore
 where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1   and  ul.IsActive=1
-END    
+END   
 
 GO 
