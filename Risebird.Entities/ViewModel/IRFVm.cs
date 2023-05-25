@@ -218,6 +218,9 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Fixed Amount")]
         public int FixedAmount { get; set; }
         public bool IsNewSkillChannel { get; set; }
+        public bool? IsValidIRFFromTemplate { get; set; }
+
+
     }
     public class InterviewerIds
     {
