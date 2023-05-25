@@ -4110,7 +4110,11 @@ namespace Risebird.Repository
                                          PrimarySkillInvite = c.PrimarySkillInvite,
                                          IRFId = c.IRFId,
                                          IsEmergency = c.IsEmergency,
-                                         MaxVideoDuration = c.MaxVideoDuration
+                                         MaxVideoDuration = c.MaxVideoDuration,
+                                         Surcharge = c.Surcharge,
+                                         CandidateRatingAmount = c.CandidateRatingAmount,
+                                         ClientRatingAmount = c.ClientRatingAmount,
+                                         QCPoints = c.QCPoints
                                      }).ToList();
                     return resultset.ToList();
                 }

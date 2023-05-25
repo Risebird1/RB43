@@ -23,9 +23,10 @@ BEGIN
    [ResumeLink],    
    [AddedBy],    
    [AddedOn],
-   [IsProcessed])    
+   [IsProcessed],
+   [IsResumeParsed])    
     
-   SELECT *,0 as IsProcessed FROM @CandidateResumeBulkData   
+   SELECT *, 0 as IsProcessed, 0 as IsResumeParsed FROM @CandidateResumeBulkData   
   
   commit tran  
  end try  

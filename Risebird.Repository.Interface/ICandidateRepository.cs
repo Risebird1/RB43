@@ -17,6 +17,7 @@ namespace Risebird.Repository.Interface
         Task<InterviewUsersDetails> FetchInterviewerDetails(int interviewid);
         Task<Candidate> GetCandidatesDetails(int irfId, int candidateId);
         Task<bool> AddResume(List<CandidateResume> resumeList);
+        Task<bool> UpdateCandidateResumeInBulk(List<CandidateResume> resumeList);
         Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId);
         Task<bool> DeleteCandidateResume(int id);
         Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId);
@@ -33,5 +34,6 @@ namespace Risebird.Repository.Interface
         Task<int> GetuniqueCandidateByEmailId(string emailId, string id);
         Task<string> GetCandidateUniqueId(string emailId);
         Task<Candidate> GetCandidateIRFMailDetails(string EmailId, int IRFid);
+        Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing();
     }
 }

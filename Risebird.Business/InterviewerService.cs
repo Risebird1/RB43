@@ -189,11 +189,11 @@ namespace Risebird.Business
                 {
                     interviewerProfile.AssessmentGroupDifference = string.Join(",", assessmentGroupDiffArray);
                 }
-                if (interviewerProfile.AssessmentGroupArrayOld != null)
+                if(interviewerProfile.AssessmentGroupArrayOld != null)
                 {
                     foreach (var item in interviewerProfile.AssessmentGroupArrayOld)
                     {
-                        if (!interviewerProfile.AssessmentGroupArray.Contains(item))
+                        if(!interviewerProfile.AssessmentGroupArray.Contains(item))
                         {
                             removedAssessmentGroupArray.Add(item);
 

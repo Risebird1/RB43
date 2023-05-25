@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -57,42 +58,50 @@ namespace Risebird.Web.Controllers
             }
             try
             {
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                if (result.Where(x => x.interviewid == model.interviewid).Count() > 0)
+                var results = await _surveyService.AddOrEditCandidateRating(model);
+                if (!results.IsUpdated)
                 {
-                    var resultset = result.Where(x => x.interviewid == model.interviewid).FirstOrDefault();
-                    resultset.Question1 = model.Question1;
-                    resultset.Question2 = model.Question2;
-                    resultset.Question3 = model.Question3;
-                    resultset.Question4 = model.Question4;
-                    resultset.Question5 = model.Question5;
-                    resultset.Question6 = model.Question6;
-                    resultset.Name = model.Name;
-                    resultset.Phone = model.Phone;
-                    await _azureTableStorageService.InsertEntity("RisebirdSurvey", resultset);
-                }
-                else
-                {
-                    //FetchCanddiateInterviewer
-                    var model1 = _meetingService.FetchCanddiateInterviewer(model.interviewid);
-                    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                    model.PartitionKey = date;
-                    model.RowKey = Guid.NewGuid().ToString();
-                    model.CreatedOn = DateTime.Now;
-                    model.Interviewerid = model1.id;
-                    model.PrimarySkill = model1.PrimarySkill;
-                    await _azureTableStorageService.InsertEntity("RisebirdSurvey", model);
-                    //Send mail to interviewer with candidate email address
                     Mail _mail = new Mail
                     {
-                        TO = model1.Interviewer,
+                        TO = results.Interviewer,
                         Subject = "Candidate Interview Feedback"
                     };
-                    var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
-
+                    var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, results.CandidateName);
                 }
-
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                //if (result.Where(x => x.interviewid == model.interviewid).Count() > 0)
+                //{
+                //    var resultset = result.Where(x => x.interviewid == model.interviewid).FirstOrDefault();
+                //    resultset.Question1 = model.Question1;
+                //    resultset.Question2 = model.Question2;
+                //    resultset.Question3 = model.Question3;
+                //    resultset.Question4 = model.Question4;
+                //    resultset.Question5 = model.Question5;
+                //    resultset.Question6 = model.Question6;
+                //    resultset.Name = model.Name;
+                //    resultset.Phone = model.Phone;
+                //    await _azureTableStorageService.InsertEntity("RisebirdSurvey", resultset);
+                //}
+                //else
+                //{
+                //    //FetchCanddiateInterviewer
+                //    var model1 = _meetingService.FetchCanddiateInterviewer(model.interviewid);
+                //    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                //    model.PartitionKey = date;
+                //    model.RowKey = Guid.NewGuid().ToString();
+                //    model.CreatedOn = DateTime.Now;
+                //    model.Interviewerid = model1.id;
+                //    model.PrimarySkill = model1.PrimarySkill;
+                //    await _azureTableStorageService.InsertEntity("RisebirdSurvey", model);
+                //    //Send mail to interviewer with candidate email address
+                //    Mail _mail = new Mail
+                //    {
+                //        TO = model1.Interviewer,
+                //        Subject = "Candidate Interview Feedback"
+                //    };
+                //    var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
+                //}
             }
             catch (Exception ex1)
             {
@@ -120,7 +129,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var modelData = new List<SurveyVM>();
+                //var modelData = new List<SurveyVM>();
                 int Clientid = 0;
                 ViewBag.profileName = profileName;
                 ViewBag.type = "Client";
@@ -130,108 +139,116 @@ namespace Risebird.Web.Controllers
                     if (type == "Candidate")
                     {
                         ViewBag.type = "Candidate";
-                        AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                        var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                        var _resultlist = (from data in result
-                                           select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
-                        _resultlist = _resultlist.Distinct().ToList();
-                        var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
-                        if (profileName == "Client")
-                        {
-                            var client = _userRepository.GetClientUserDetails(emailid);
-                            Clientid = client.Result.ClientId;
-                            var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
-                            foreach (var item in result)
-                            {
-                                if (interviewerids.Any(x => x == item.interviewid))
-                                {
-                                    if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                                    {
-                                        modelData.Add(new SurveyVM
-                                        {
-                                            interviewid = item.interviewid,
-                                            Question1 = item.Question1,
-                                            Question2 = item.Question2,
-                                            Question3 = item.Question3,
-                                            Question4 = item.Question4,
-                                            Question5 = item.Question5,
-                                            Question6 = item.Question6,
-                                            Name = item.Name,
-                                            EmailAddress = item.EmailAddress,
-                                            interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                            CommentforInterviewer = item.CommentforInterviewer,
-                                            PrimarySkill = item.PrimarySkill,
-                                            IsClient = true
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
-                        {
-                            var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
-                            foreach (var item in result)
-                            {
-                                if (interviewerids.Any(x => x == item.interviewid))
-                                {
-                                    if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                                    {
-                                        modelData.Add(new SurveyVM
-                                        {
-                                            interviewid = item.interviewid,
-                                            Question1 = item.Question1,
-                                            Question2 = item.Question2,
-                                            Question3 = item.Question3,
-                                            Question4 = item.Question4,
-                                            Question5 = item.Question5,
-                                            Question6 = item.Question6,
-                                            Name = item.Name,
-                                            EmailAddress = item.EmailAddress,
-                                            interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                            CommentforInterviewer = item.CommentforInterviewer,
-                                            PrimarySkill = item.PrimarySkill,
-                                            IsClient = true
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            var _resultinterview = (from data in result
-                                                    select new SurveyDetails { interviewid = data.interviewid }).ToList();
-                            _resultinterview = _resultinterview.Distinct().ToList();
-                            var ClientNamelist = _meetingService.FetchSurveyClientName(_resultinterview);
-                            foreach (var item in result)
-                            {
-                                if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                                {
-                                    modelData.Add(new SurveyVM
-                                    {
-                                        interviewid = item.interviewid,
-                                        Question1 = item.Question1,
-                                        Question2 = item.Question2,
-                                        Question3 = item.Question3,
-                                        Question4 = item.Question4,
-                                        Question5 = item.Question5,
-                                        Question6 = item.Question6,
-                                        Name = item.Name,
-                                        EmailAddress = item.EmailAddress,
-                                        interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                        CommentforInterviewer = item.CommentforInterviewer,
-                                        PrimarySkill = item.PrimarySkill,
-                                        Type = ClientNamelist.Where(x => x.interviewid == item.interviewid).FirstOrDefault()?.ClientName,
-                                    });
-                                }
-                            }
-                        }
+                        var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
+                        //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                        //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                        //var _resultlist = (from data in result
+                        //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
+                        //_resultlist = _resultlist.Distinct().ToList();
+                        //var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
+                        //if (profileName == "Client")
+                        //{
+                        //    var client = _userRepository.GetClientUserDetails(emailid);
+                        //    Clientid = client.Result.ClientId;
+                        //    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
+                        //    foreach (var item in result)
+                        //    {
+                        //        if (interviewerids.Any(x => x == item.interviewid))
+                        //        {
+                        //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                        //            {
+                        //                modelData.Add(new SurveyVM
+                        //                {
+                        //                    interviewid = item.interviewid,
+                        //                    Question1 = item.Question1,
+                        //                    Question2 = item.Question2,
+                        //                    Question3 = item.Question3,
+                        //                    Question4 = item.Question4,
+                        //                    Question5 = item.Question5,
+                        //                    Question6 = item.Question6,
+                        //                    Name = item.Name,
+                        //                    EmailAddress = item.EmailAddress,
+                        //                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                        //                    CommentforInterviewer = item.CommentforInterviewer,
+                        //                    PrimarySkill = item.PrimarySkill,
+                        //                    IsClient = true
+                        //                });
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                        //else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
+                        //{
+                        //    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
+                        //    foreach (var item in result)
+                        //    {
+                        //        if (interviewerids.Any(x => x == item.interviewid))
+                        //        {
+                        //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                        //            {
+                        //                modelData.Add(new SurveyVM
+                        //                {
+                        //                    interviewid = item.interviewid,
+                        //                    Question1 = item.Question1,
+                        //                    Question2 = item.Question2,
+                        //                    Question3 = item.Question3,
+                        //                    Question4 = item.Question4,
+                        //                    Question5 = item.Question5,
+                        //                    Question6 = item.Question6,
+                        //                    Name = item.Name,
+                        //                    EmailAddress = item.EmailAddress,
+                        //                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                        //                    CommentforInterviewer = item.CommentforInterviewer,
+                        //                    PrimarySkill = item.PrimarySkill,
+                        //                    IsClient = true
+                        //                });
+                        //            }
+                        //        }
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    var _resultinterview = (from data in result
+                        //                            select new SurveyDetails { interviewid = data.interviewid }).ToList();
+                        //    _resultinterview = _resultinterview.Distinct().ToList();
+                        //    var ClientNamelist = _meetingService.FetchSurveyClientName(_resultinterview);
+                        //    foreach (var item in result)
+                        //    {
+                        //        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                        //        {
+                        //            modelData.Add(new SurveyVM
+                        //            {
+                        //                interviewid = item.interviewid,
+                        //                Question1 = item.Question1,
+                        //                Question2 = item.Question2,
+                        //                Question3 = item.Question3,
+                        //                Question4 = item.Question4,
+                        //                Question5 = item.Question5,
+                        //                Question6 = item.Question6,
+                        //                Name = item.Name,
+                        //                EmailAddress = item.EmailAddress,
+                        //                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                        //                CommentforInterviewer = item.CommentforInterviewer,
+                        //                PrimarySkill = item.PrimarySkill,
+                        //                Type = ClientNamelist.Where(x => x.interviewid == item.interviewid).FirstOrDefault()?.ClientName,
+                        //            });
+                        //        }
+                        //    }
+                        //}
                         if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
+                            modelData = modelData.Where(x => x.Interviewdate >= filter.StartDate && x.Interviewdate <= filter.EndDate).ToList();
                             filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = modelData.Select(x => x.PrimarySkill).ToArray() : filter.ProfileSource = filter.ProfileSource;
                             filter.HREmail = filter.HREmail == null ? filter.HREmail = modelData.Select(x => x.Type).ToArray() : filter.HREmail = filter.HREmail;
                             modelData = modelData.Where(x => filter.ProfileSource.Contains(x.PrimarySkill)).ToList();
                             modelData = modelData.Where(x => filter.HREmail.Contains(x.Type)).ToList();
+                        }
+                        else
+                        {
+                            var startdate = DateTime.Now.AddDays(-15);
+                            var enddate = DateTime.Now;
+                            modelData = modelData.Where(x => x.Interviewdate >= startdate && x.Interviewdate <= enddate).ToList();
                         }
                         ViewBag.IRFId = "0";
                         return View(modelData);
@@ -315,39 +332,40 @@ namespace Risebird.Web.Controllers
             if (type == "Candidate")
             {
                 ViewBag.type = "Candidate";
-                var modelData = new List<SurveyVM>();
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                var _resultlist = (from data in result
-                                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
-                _resultlist = _resultlist.Distinct().ToList();
-                var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
-                var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
-                ViewBag.profileName = "";
-                foreach (var item in result)
-                {
-                    if (interviewerids.Any(x => x == item.interviewid))
-                    {
-                        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                        {
-                            modelData.Add(new SurveyVM
-                            {
-                                interviewid = item.interviewid,
-                                Question1 = item.Question1,
-                                Question2 = item.Question2,
-                                Question3 = item.Question3,
-                                Question4 = item.Question4,
-                                Question5 = item.Question5,
-                                Question6 = item.Question6,
-                                Name = item.Name,
-                                EmailAddress = item.EmailAddress,
-                                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                CommentforInterviewer = item.CommentforInterviewer,
-                                PrimarySkill = item.PrimarySkill
-                            });
-                        }
-                    }
-                }
+                //var modelData = new List<SurveyVM>();
+                var modelData = await _surveyService.GetCandidateRatingByIRFId(IRFId);
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                //var _resultlist = (from data in result
+                //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
+                //_resultlist = _resultlist.Distinct().ToList();
+                //var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
+                //var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
+                //ViewBag.profileName = "";
+                //foreach (var item in result)
+                //{
+                //    if (interviewerids.Any(x => x == item.interviewid))
+                //    {
+                //        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                //        {
+                //            modelData.Add(new SurveyVM
+                //            {
+                //                interviewid = item.interviewid,
+                //                Question1 = item.Question1,
+                //                Question2 = item.Question2,
+                //                Question3 = item.Question3,
+                //                Question4 = item.Question4,
+                //                Question5 = item.Question5,
+                //                Question6 = item.Question6,
+                //                Name = item.Name,
+                //                EmailAddress = item.EmailAddress,
+                //                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                //                CommentforInterviewer = item.CommentforInterviewer,
+                //                PrimarySkill = item.PrimarySkill
+                //            });
+                //        }
+                //    }
+                //}
 
                 return View("CandidateFeedBack", modelData);
             }
@@ -372,71 +390,71 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    int Clientid = 0;
-                    if (profileName == "Client")
-                    {
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        Clientid = client.Result.ClientId;
-                    }
-                    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
-                    var modelData = new List<SurveyVM>();
-                    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                    var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                    var _resultlist = (from data in result
-                                       select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
-                    _resultlist = _resultlist.Distinct().ToList();
-                    var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
-                    if (profileName == "Client")
-                    {
-                        foreach (var item in result)
-                        {
-                            if (interviewerids.Any(x => x == item.interviewid))
-                            {
-                                if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                                {
-                                    modelData.Add(new SurveyVM
-                                    {
-                                        interviewid = item.interviewid,
-                                        Question1 = item.Question1,
-                                        Question2 = item.Question2,
-                                        Question3 = item.Question3,
-                                        Question4 = item.Question4,
-                                        Question5 = item.Question5,
-                                        Question6 = item.Question6,
-                                        Name = item.Name,
-                                        EmailAddress = item.EmailAddress,
-                                        interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                        CommentforInterviewer = item.CommentforInterviewer,
-                                        PrimarySkill = item.PrimarySkill
-                                    });
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var item in result)
-                        {
-                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                            {
-                                modelData.Add(new SurveyVM
-                                {
-                                    interviewid = item.interviewid,
-                                    Question1 = item.Question1,
-                                    Question2 = item.Question2,
-                                    Question3 = item.Question3,
-                                    Question4 = item.Question4,
-                                    Question5 = item.Question5,
-                                    Question6 = item.Question6,
-                                    Name = item.Name,
-                                    EmailAddress = item.EmailAddress,
-                                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                    CommentforInterviewer = item.CommentforInterviewer,
-                                    PrimarySkill = item.PrimarySkill
-                                });
-                            }
-                        }
-                    }
+                    var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
+                    //if (profileName == "Client")
+                    //{
+                    //    var client = _userRepository.GetClientUserDetails(emailid);
+                    //    Clientid = client.Result.ClientId;
+                    //}
+                    //var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
+                    //var modelData = new List<SurveyVM>();
+                    //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                    //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                    //var _resultlist = (from data in result
+                    //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
+                    //_resultlist = _resultlist.Distinct().ToList();
+                    //var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
+                    //if (profileName == "Client")
+                    //{
+                    //    foreach (var item in result)
+                    //    {
+                    //        if (interviewerids.Any(x => x == item.interviewid))
+                    //        {
+                    //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                    //            {
+                    //                modelData.Add(new SurveyVM
+                    //                {
+                    //                    interviewid = item.interviewid,
+                    //                    Question1 = item.Question1,
+                    //                    Question2 = item.Question2,
+                    //                    Question3 = item.Question3,
+                    //                    Question4 = item.Question4,
+                    //                    Question5 = item.Question5,
+                    //                    Question6 = item.Question6,
+                    //                    Name = item.Name,
+                    //                    EmailAddress = item.EmailAddress,
+                    //                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                    //                    CommentforInterviewer = item.CommentforInterviewer,
+                    //                    PrimarySkill = item.PrimarySkill
+                    //                });
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    foreach (var item in result)
+                    //    {
+                    //        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                    //        {
+                    //            modelData.Add(new SurveyVM
+                    //            {
+                    //                interviewid = item.interviewid,
+                    //                Question1 = item.Question1,
+                    //                Question2 = item.Question2,
+                    //                Question3 = item.Question3,
+                    //                Question4 = item.Question4,
+                    //                Question5 = item.Question5,
+                    //                Question6 = item.Question6,
+                    //                Name = item.Name,
+                    //                EmailAddress = item.EmailAddress,
+                    //                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                    //                CommentforInterviewer = item.CommentforInterviewer,
+                    //                PrimarySkill = item.PrimarySkill
+                    //            });
+                    //        }
+                    //    }
+                    //}
                     if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
@@ -523,38 +541,39 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_CandidateFeedback.xlsx";
             try
             {
-                var modelData = new List<SurveyVM>();
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                var _resultlist = (from data in result
-                                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
-                _resultlist = _resultlist.Distinct().ToList();
-                var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
-                var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
-                foreach (var item in result)
-                {
-                    if (interviewerids.Any(x => x == item.interviewid))
-                    {
-                        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                        {
-                            modelData.Add(new SurveyVM
-                            {
-                                interviewid = item.interviewid,
-                                Question1 = item.Question1,
-                                Question2 = item.Question2,
-                                Question3 = item.Question3,
-                                Question4 = item.Question4,
-                                Question5 = item.Question5,
-                                Question6 = item.Question6,
-                                Name = item.Name,
-                                EmailAddress = item.EmailAddress,
-                                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                                CommentforInterviewer = item.CommentforInterviewer,
-                                PrimarySkill = item.PrimarySkill
-                            });
-                        }
-                    }
-                }
+                //var modelData = new List<SurveyVM>();
+                var modelData = await _surveyService.GetCandidateRatingByIRFId(IRFId);
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                //var _resultlist = (from data in result
+                //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
+                //_resultlist = _resultlist.Distinct().ToList();
+                //var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
+                //var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
+                //foreach (var item in result)
+                //{
+                //    if (interviewerids.Any(x => x == item.interviewid))
+                //    {
+                //        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                //        {
+                //            modelData.Add(new SurveyVM
+                //            {
+                //                interviewid = item.interviewid,
+                //                Question1 = item.Question1,
+                //                Question2 = item.Question2,
+                //                Question3 = item.Question3,
+                //                Question4 = item.Question4,
+                //                Question5 = item.Question5,
+                //                Question6 = item.Question6,
+                //                Name = item.Name,
+                //                EmailAddress = item.EmailAddress,
+                //                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                //                CommentforInterviewer = item.CommentforInterviewer,
+                //                PrimarySkill = item.PrimarySkill
+                //            });
+                //        }
+                //    }
+                //}
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:Z1"].Style.WrapText = true;
@@ -629,93 +648,94 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                int Clientid = 0;
-                if (profileName == "Client")
-                {
-                    var client = await _userRepository.GetClientUserDetails(emailid);
-                    Clientid = client.ClientId;
-                }
-                var modelData = new List<SurveyVM>();
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                if (profileName == "Client")
-                {
-                    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
-                    foreach (var item in result)
-                    {
-                        if (interviewerids.Any(x => x == item.interviewid))
-                        {
-                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                            {
-                                modelData.Add(new SurveyVM
-                                {
-                                    interviewid = item.interviewid,
-                                    Question1 = item.Question1,
-                                    Question2 = item.Question2,
-                                    Question3 = item.Question3,
-                                    Question4 = item.Question4,
-                                    Question5 = item.Question5,
-                                    Question6 = item.Question6,
-                                    Name = item.Name,
-                                    EmailAddress = item.EmailAddress,
-                                    CommentforInterviewer = item.CommentforInterviewer,
-                                    PrimarySkill = item.PrimarySkill,
-                                });
-                            }
-                        }
-                    }
-                }
-                else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
-                {
-                    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
-                    foreach (var item in result)
-                    {
-                        if (interviewerids.Any(x => x == item.interviewid))
-                        {
-                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                            {
-                                modelData.Add(new SurveyVM
-                                {
-                                    interviewid = item.interviewid,
-                                    Question1 = item.Question1,
-                                    Question2 = item.Question2,
-                                    Question3 = item.Question3,
-                                    Question4 = item.Question4,
-                                    Question5 = item.Question5,
-                                    Question6 = item.Question6,
-                                    Name = item.Name,
-                                    EmailAddress = item.EmailAddress,
-                                    CommentforInterviewer = item.CommentforInterviewer,
-                                    PrimarySkill = item.PrimarySkill,
-                                });
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var item in result)
-                    {
-                        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                        {
-                            modelData.Add(new SurveyVM
-                            {
-                                interviewid = item.interviewid,
-                                Question1 = item.Question1,
-                                Question2 = item.Question2,
-                                Question3 = item.Question3,
-                                Question4 = item.Question4,
-                                Question5 = item.Question5,
-                                Question6 = item.Question6,
-                                Name = item.Name,
-                                EmailAddress = item.EmailAddress,
-                                CommentforInterviewer = item.CommentforInterviewer,
-                                PrimarySkill = item.PrimarySkill,
-                            });
-                        }
-                    }
-                }
-                if (modelData != null && modelData.Count > 0)
+                //int Clientid = 0;
+                //if (profileName == "Client")
+                //{
+                //    var client = await _userRepository.GetClientUserDetails(emailid);
+                //    Clientid = client.ClientId;
+                //}
+                var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
+                //var modelData = new List<SurveyVM>();
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                //if (profileName == "Client")
+                //{
+                //    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
+                //    foreach (var item in result)
+                //    {
+                //        if (interviewerids.Any(x => x == item.interviewid))
+                //        {
+                //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                //            {
+                //                modelData.Add(new SurveyVM
+                //                {
+                //                    interviewid = item.interviewid,
+                //                    Question1 = item.Question1,
+                //                    Question2 = item.Question2,
+                //                    Question3 = item.Question3,
+                //                    Question4 = item.Question4,
+                //                    Question5 = item.Question5,
+                //                    Question6 = item.Question6,
+                //                    Name = item.Name,
+                //                    EmailAddress = item.EmailAddress,
+                //                    CommentforInterviewer = item.CommentforInterviewer,
+                //                    PrimarySkill = item.PrimarySkill,
+                //                });
+                //            }
+                //        }
+                //    }
+                //}
+                //else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
+                //{
+                //    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
+                //    foreach (var item in result)
+                //    {
+                //        if (interviewerids.Any(x => x == item.interviewid))
+                //        {
+                //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                //            {
+                //                modelData.Add(new SurveyVM
+                //                {
+                //                    interviewid = item.interviewid,
+                //                    Question1 = item.Question1,
+                //                    Question2 = item.Question2,
+                //                    Question3 = item.Question3,
+                //                    Question4 = item.Question4,
+                //                    Question5 = item.Question5,
+                //                    Question6 = item.Question6,
+                //                    Name = item.Name,
+                //                    EmailAddress = item.EmailAddress,
+                //                    CommentforInterviewer = item.CommentforInterviewer,
+                //                    PrimarySkill = item.PrimarySkill,
+                //                });
+                //            }
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    foreach (var item in result)
+                //    {
+                //        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                //        {
+                //            modelData.Add(new SurveyVM
+                //            {
+                //                interviewid = item.interviewid,
+                //                Question1 = item.Question1,
+                //                Question2 = item.Question2,
+                //                Question3 = item.Question3,
+                //                Question4 = item.Question4,
+                //                Question5 = item.Question5,
+                //                Question6 = item.Question6,
+                //                Name = item.Name,
+                //                EmailAddress = item.EmailAddress,
+                //                CommentforInterviewer = item.CommentforInterviewer,
+                //                PrimarySkill = item.PrimarySkill,
+                //            });
+                //        }
+                //    }
+                //}
+                if (modelData != null && modelData.Count() > 0)
                 {
                     var avgQ1 = modelData.Average(x => string.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
                     var avgQ2 = modelData.Average(x => string.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("#.##");

@@ -6201,17 +6201,17 @@ namespace Risebird.Web.Controllers
                         model.Redflags = redflag;
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
-                            if (!model.Isedit)
-                            {
-                                if (redflag > 0)
-                                {
-                                    await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
-                                }
-                            }
-                            else
-                            {
-                                await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
-                            }
+                            //if (!model.Isedit)
+                            //{
+                            //    if (redflag > 0)
+                            //    {
+                            //        await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            //    }
+                            //}
+                            //else
+                            //{
+                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            //}
                             var _clienthr = await _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
                             int rating = 0;
                             if (redflag > 16)

@@ -20,6 +20,7 @@ namespace Risebird.Repository.Interface
         bool AddIRFDetails(IRFVm irfDetails, out int irfID);
         IEnumerable<IRF> GetAllIRF(string emailid, string profileName);
         IEnumerable<Interviewer> GetInterviewerSkills();
+        public Interviewer GetInterviewerSkillsAndResume(int userId);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
         IEnumerable<TransClientUser> GetTransClientUser(int id);
         //IEnumerable<TransInterviewer> GetTransInterviewer(int id);
@@ -143,7 +144,8 @@ namespace Risebird.Repository.Interface
         Task<bool> AddQCCandidateStatus(int interviewId, string performedBy);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<Candidate> GetCandidateByIRF(int irfId, string emailId);
-        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
+        //Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
+        Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
@@ -157,6 +159,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<SkillCahnnelDetailsVM>> GetAllSkillChannelDetails();
         Task<int> GetInterviewerQCRate(int userId);
         Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null);
+        Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null, int? irfId = null);
         Task<bool> IsQuestionUsedInReport(string question);
         Task<bool> UpdateCancellationSource(int interviewid, string emailId);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);

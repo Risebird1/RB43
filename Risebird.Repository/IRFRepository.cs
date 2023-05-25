@@ -194,7 +194,23 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Interviewer>(
-                        con, "select intp.UserId,PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1  ", null, commandType: Text);
+                        con, "select intp.UserId, PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public Interviewer GetInterviewerSkillsAndResume(int userId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Interviewer>(
+                        con, $"select intp.UserId, intp.ResumeLink, PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.UserId= {userId}", null, commandType: Text)?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -216,6 +232,34 @@ namespace Risebird.Repository
                     parameters.Add("@companyType", companyType);
                     parameters.Add("@countryType", countryType);
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRate", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+
+            }
+        }
+
+        public async Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null, int? irfId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@planType", planType);
+                    parameters.Add("@countryType", countryType);
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRenewedInterviewerRate", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -267,7 +311,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
+                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
                     return result.Distinct().ToList();
                 }
             }
@@ -891,12 +935,13 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        interviewerDt.Columns.Add("Surcharge", typeof(int));
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
                         }
                     }
 
@@ -1048,14 +1093,20 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdCreateIRF.Parameters["@CreatedOn"].Value = irfDetails.CreatedOn;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsNewSkillChannel"].Value = true;//this is set true for all the skill channels created from May23 when changes to the financial model were instituted
+                    
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
+                    //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
-                    cmdCreateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
+                    //cmdCreateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
+                    //cmdCreateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
+                    //cmdCreateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
 
 
                     SqlParameter idIRFParam = new SqlParameter();
@@ -1805,12 +1856,24 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        if(irfDetails.IsNewSkillChannel)
+                        {
+                            interviewerDt.Columns.Add("Surcharge", typeof(int));
+
+                        }
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            if (irfDetails.IsNewSkillChannel)
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+                            }
+                            else
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            }
                         }
                     }
 
@@ -1982,14 +2045,21 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsLocked", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsLocked"].Value = irfDetails.IsLocked;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewDuration", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@InterviewDuration"].Value = irfDetails.InterviewDuration;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsFixedInterviewduration", SqlDbType.Bit));
+                    //cmdUpdateIRF.Parameters["@IsFixedInterviewduration"].Value = irfDetails.IsFixedInterviewduration;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@FixedAmount", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@FixedAmount"].Value = irfDetails.IsFixedInterviewduration ? irfDetails.FixedAmount : null;
 
                     bool isSMEChanged = false;
 
@@ -2059,8 +2129,18 @@ namespace Risebird.Repository
                     }
                     if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                        if(irfDetails.IsNewSkillChannel)
+                        {
+                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
+                            cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
+
+                        }
+                        else
+                        {
+                            cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                            cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+
+                        }
                     }
                     if (emergencyInterviewerDt != null && emergencyInterviewerDt.Rows.Count > 0)
                     {
@@ -4959,11 +5039,20 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId)
+        public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false)
         {
             DataTable dt = new DataTable();
-            dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
+            if(isResumeParser)
+            {
+                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
+                    new DataColumn("Import Status", typeof(string)), new DataColumn("CandidateResumeId", typeof(int)) });
+            }
+            else
+            {
+                dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)) });
+            }
+            
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -4978,7 +5067,16 @@ namespace Risebird.Repository
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
                             parameters.Add("@Phone", obj.Phone);
-                            parameters.Add("@AddedByUserId", userId);
+                            if(userId.HasValue)
+                            {
+                                parameters.Add("@AddedByUserId", userId);
+
+                            }
+                            else
+                            {
+                                parameters.Add("@AddedByUserId", obj.AddedByUserId);
+
+                            }
                             parameters.Add("@date", DateTime.Now);
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
@@ -4989,7 +5087,16 @@ namespace Risebird.Repository
                             await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                             var result = parameters.Get<string>("@operationStatus");
-                            dt.Rows.Add(obj.EmailId, result);
+                            if(isResumeParser)
+                            {
+                                dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
+
+                            }
+                            else
+                            {
+                                dt.Rows.Add(obj.EmailId, result);
+
+                            }
 
                         }
                         return dt;
@@ -5214,7 +5321,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup, ag.id as AssessmentGroupId, irf.CreatedFromTemplateId from IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
+                var query = "Select IRF.id,IRF.IRFId, irf.IsNewSkillChannel, ag.AssessmentGroup, ag.id as AssessmentGroupId, irf.CreatedFromTemplateId from IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
@@ -5820,10 +5927,15 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
+                    
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
+                    
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
 
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
@@ -5878,19 +5990,22 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        interviewerDt.Columns.Add("Surcharge", typeof(int));
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            if (irfDetails.JobCountry == "2")
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
-                            }
-                            else
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
-                            }
+                            //if (irfDetails.JobCountry == "2")
+                            //{
+                            //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
+                            //}
+                            //else
+                            //{
+                            //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
+                            //}
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+
                         }
                     }
 

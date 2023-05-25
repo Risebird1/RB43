@@ -9,6 +9,7 @@
         public int QCReportCount { get; set; }
         public bool IsResumePresent { get; set; }
         public int  AvgInterviewTime { get; set; }
+        public bool FirstTimePopupDisplayed { get; set; }
 
     }
 

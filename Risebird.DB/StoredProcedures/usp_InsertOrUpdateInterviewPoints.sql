@@ -28,8 +28,13 @@ Declare @AddPoint int
 Declare @Points float    
 Declare @FixedInterviewDuration bit
 Declare @FixedAmount int = null
+Declare @IsNewSkillChannel bit
+Declare @PlanType int
+Declare @JobCountry varchar(50)  
+Declare @RateForMin int=60
 Declare @Interviewdate datetime
 
+Select @JobCountry=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId                  
 Select @MeetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId      
 Select @InterviewStatus=InterviewStatus from InterviewComments where InterviewId=@interviewId      
 Select @VideoDuration=VideoDuration from InterviewComments where InterviewId=@interviewId      
@@ -41,9 +46,27 @@ Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on I
 select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId       
 Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                           
 Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and (InterviewPoints.Type=@Type or InterviewPoints.Type='Redo')                            
-Select @FixedInterviewDuration=IsFixedInterviewduration From IRF where id=@Irfid   
-Select @Interviewdate=Interviewdate from InterviewMeetings where id=@interviewId                           
+Select @FixedInterviewDuration=IsFixedInterviewduration From IRF where id=@Irfid and Isnull(IsNewSkillChannel,0)=0
+Select @IsNewSkillChannel=IsNewSkillChannel From IRF where id=@Irfid 
+Select @PlanType=Heuristicsscore From IRF where id=@Irfid 
+Select @Interviewdate=Interviewdate from InterviewMeetings where id=@interviewId   
 
+if(@IsNewSkillChannel=1)
+begin
+	if(@PlanType=2)
+	Begin
+	Select @MaxVideoDuration=DurationSelectedMin From PlanTypeChargesMaster where PlanType='Standard' and Countrytype=@JobCountry
+	End
+	else if(@PlanType=4)
+	Begin
+	Select @MaxVideoDuration=DurationSelectedMin From PlanTypeChargesMaster where PlanType='Pro' and Countrytype=@JobCountry
+	End
+	else if(@PlanType=5)
+	Begin
+	Select @MaxVideoDuration=DurationSelectedMin From PlanTypeChargesMaster where PlanType='Advanced' and Countrytype=@JobCountry
+	End
+	set @RateForMin=@MaxVideoDuration
+end
 if(@FixedInterviewDuration = 1)
 Begin
 	Select @FixedAmount=FixedAmount From IRF where id=@Irfid
@@ -76,19 +99,19 @@ End
   BEGIN  
   set @AddPoint=0  
   END  
- --Start:Meeting Status 1 or 3       
- if(@MeetingStatus=1 or @MeetingStatus=3)      
+ --Start:Meeting Status 3       
+ if(@MeetingStatus=3)      
  BEGIN      
 	 if(@VideoDuration>3)      
 	 begin      
-	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*3)/60),0)                          
+	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*3)/@RateForMin),0)                          
 	 end      
 	 else      
 	 begin      
-	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*ISNULL(@VideoDuration,0))/60),0)                          
+	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*ISNULL(@VideoDuration,0))/@RateForMin),0)                          
 	 end      
   END      
-  --End:Meeting Status 1 or 3       
+  --End:Meeting Status 3       
   --Start:Meeting Status 4 or 6 or 7 or 8      
   if(@MeetingStatus=4 or @MeetingStatus=6 or @MeetingStatus=7 or @MeetingStatus=8)      
  BEGIN 
@@ -98,21 +121,21 @@ End
  End
  Else
  Begin
- if(@VideoDuration>5 and @Interviewdate>='2023-05-01')
- begin
- set @VideoDuration=@VideoDuration-5;
- end
-	if(@InterviewStatus=1 or @InterviewStatus=3)      
+	 if(@VideoDuration>5 and @Interviewdate>='2023-05-01')
+	 begin
+	 set @VideoDuration=@VideoDuration-5;
+	 end
+	if(@IsNewSkillChannel!=1 and (@InterviewStatus=1 or @InterviewStatus=3))      
 	 Begin 
 		Set @MaxVideoDuration=ISNULL(@MaxVideoDuration,0)/2
 	 End      
 	 if(@VideoDuration>@MaxVideoDuration)      
 	 begin      
-	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*@MaxVideoDuration)/60),0)                          
+	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*@MaxVideoDuration)/@RateForMin),0)                          
 	 end      
 	 else      
 	 begin      
-	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*ISNULL(@VideoDuration,0))/60),0)                          
+	 set @AddPoint=Round(((ISNULL(@AddPoint,0)*ISNULL(@VideoDuration,0))/@RateForMin),0)                          
 	 end
  End
       
@@ -120,8 +143,6 @@ END
   --End:Meeting Status 4 or 6 or 7 or 8      
  if(@meetingStatus=5 or @MeetingStatus=9)                               
   BEGIN                  
-  Declare @JobCountry varchar(50)                  
-  Select @JobCountry=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId                  
   if(@JobCountry='India' or @JobCountry=1)                  
   BEGIN                  
   set @AddPoint=-200                  
@@ -168,7 +189,7 @@ END
   END       
     if(@Count=0)                            
     Begin                          
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@CandidateEmail,'Pending',GetDate(),0,0,0)                             
+    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@CandidateEmail,'Pending',GetDate(),0,0,0,0)                             
     END                            
    Else                            
     BEGIN                            
@@ -176,5 +197,6 @@ END
     END             
       
 END
+
 GO  
   

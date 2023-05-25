@@ -17,6 +17,6 @@
         public string NickName { get; set; }
         public bool IsSelect { get; set; }
         public bool IsSMEVerified { get; set; }
-        //public string CodedName { get; set; }
+        public int Surcharge { get; set; }
     }
 }

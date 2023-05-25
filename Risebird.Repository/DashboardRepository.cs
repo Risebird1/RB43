@@ -1053,6 +1053,11 @@ namespace Risebird.Repository
                         dt = dataset.Tables[5];
                         _resultVM.AvgInterviewTime = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
+                    if (dataset.Tables.Count > 6)
+                    {
+                        dt = dataset.Tables[6];
+                        _resultVM.FirstTimePopupDisplayed = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToBoolean(dt.Rows[0][0]) : false;
+                    }
                     return _resultVM;
                 }
             }

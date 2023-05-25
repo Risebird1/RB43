@@ -389,6 +389,10 @@ namespace Risebird.Entities.ViewModel
         public bool IsFixedInterviewduration { get; set; }
         public int PrePoints { get; set; }
         public int Penaltyamount { get; set; }
+        public int Surcharge { get; set; }
+        public int CandidateRatingAmount { get; set; }
+        public int ClientRatingAmount { get; set; }
+        public int QCPoints { get; set; }
     }
     public class SchedulingLinkVM
     {

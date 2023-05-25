@@ -111,12 +111,12 @@
                 <p>&nbsp;</p>
                 <p><b>4. What did you like about the video interviews event?</b></p>
                 <p>
-                    @Html.TextAreaFor(m => m.Question4, new { @class = "form-control" })
+                    @Html.TextAreaFor(m => m.Question4, new { @class = "form-control" ,@maxlength="1000"})
                 </p>
                 @Html.ValidationMessageFor(model => model.Question4, "", new { @class = "text-danger" })
                 <p><b>5. What did you dislike about the video interviews event? </b></p>
                 <p>
-                    @Html.TextAreaFor(m => m.Question5, new { @class = "form-control" })
+                    @Html.TextAreaFor(m => m.Question5, new { @class = "form-control",@maxlength="1000" })
                 </p>
                 @Html.ValidationMessageFor(model => model.Question5, "", new { @class = "text-danger" })
                 <p><b>6. How friendly was the Risebird staff from scheduling to completion of interviews ? </b></p>
@@ -136,12 +136,12 @@
                 @Html.ValidationMessageFor(model => model.Question6, "", new { @class = "text-danger" })
                 <p><b>7. Please share comment for Interviewer.</b></p>
                 <p>
-                    @Html.TextAreaFor(m => m.CommentforInterviewer, new { @class = "form-control" })
+                    @Html.TextAreaFor(m => m.CommentforInterviewer, new { @class = "form-control",@maxlength="1000" })
                 </p>
                 <p><b>8. Your Details</b></p>
                 <div>
                     @Html.LabelFor(model => model.Name)
-                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control mb10" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control mb10",@maxlength="100" })
                     @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
                 <div>
@@ -222,5 +222,5 @@
     function removeSpaces(string) {
         return string.split(' ').join('');
     }
-    //End: Captcha
+        //End: Captcha
 </script>

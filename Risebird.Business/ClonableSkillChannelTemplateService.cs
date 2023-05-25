@@ -47,12 +47,13 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId)
+        public async Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId, bool isNewSkillChannel = false)
         {
             try
             {
                 ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                 model.id = irfId;
+                model.IsNewSkillChannel = isNewSkillChannel;
                 //get tech skills, general skills, joinability, selectability from the irf
                 model.SkillCollection = (IList<TransSkill>)await _irfRepository.GetSkillsbyIRFid(irfId);
                 model.SkillGeneral = (IList<TransSkillGeneral>)_irfRepository.GetSkillsGeneralbyIRFid(irfId);
@@ -189,14 +190,28 @@ namespace Risebird.Business
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.Skills = new SelectList(Skillset, "id", "Name");
-            foreach (var item in model.InterviewerCollection)
+            if(model.IsNewSkillChannel)
             {
-                if (item.PerSuccessRate == 0)
+                //get interviewer rate from db
+                int interviewerRate = 0;
+                interviewerRate = await _irfRepository.GetRenewedInterviewerRate(null, null, model.id);
+                foreach (var item in model.InterviewerCollection)
                 {
-                    item.PerSuccessRate = 1000;
+                    item.PerSuccessRate = interviewerRate;
                 }
-
             }
+            else
+            {
+                foreach (var item in model.InterviewerCollection)
+                {
+                    if (item.PerSuccessRate == 0)
+                    {
+                        item.PerSuccessRate = 1000;
+                    }
+
+                }
+            }
+            
             return model;
         }
 
@@ -409,10 +424,23 @@ namespace Risebird.Business
 
                 //get all values from database
                 //var templateDetails = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelById(id);
-                var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(id);
+                //var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(id);
+                var details = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelDetails(id);
 
-                model.MeetingPlatform = meetingPlatform.MeetingPlatform;
-                model.IsAadhaarVerificationRequired = meetingPlatform.IsAadhaarVerificationRequired;
+                model.MeetingPlatform = details.MeetingPlatform;
+                model.IsAadhaarVerificationRequired = details.IsAadhaarVerificationRequired;
+                model.Heuristicsscore = details.Heuristicsscore;
+                if(details.CompanyType == "2")//Service
+                {
+                    model.CompanyType = details.CompanyType;
+
+                }
+                else
+                {
+                    model.CompanyType = "2";
+
+                }
+                model.JobCountry = details.JobCountry;
 
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
@@ -421,15 +449,14 @@ namespace Risebird.Business
                 {
                     model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
                     model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
-                    model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
-                    //model.JobLevel = model.IRFRecommendations.SeniorityLevelId;
-                    model.JobLevel = (int)JobLevels.SE;
-                    model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
-                    model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
+                    //model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
+                    //model.JobLevel = (int)JobLevels.SE;
+                    //model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
+                    //model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
                 }
 
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
-
+                
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
 

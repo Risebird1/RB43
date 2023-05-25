@@ -65,18 +65,18 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title"> FeedBack</h4></div>
                     </div>
-                        <div class="col-md-12">
-                            @if (ViewBag.type == "Client")
-                            {
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
-                                <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
-                            }
-                            else
-                            {
-                                <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
-                            }
-                        </div>
+                    <div class="col-md-12">
+                        @if (ViewBag.type == "Client")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                        }
+                    </div>
                     <div class="pull-right">
                         @if (ViewBag.PageName == "IRF")
                         {
@@ -91,8 +91,8 @@
                                 <div class="mdc-button__ripple"></div>
                             </button>
                             @*<span id="cfeedback_3">
-                                <i id="allinterview_3" data-intro='Click here to export the Candidate data in excel sheet' data-position='left' type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i>
-                            </span>*@
+                        <i id="allinterview_3" data-intro='Click here to export the Candidate data in excel sheet' data-position='left' type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i>
+                        </span>*@
                         }
                     </div>
                 </div>
@@ -123,6 +123,26 @@
                                                 <form action="@Url.Action("CandidateFeedBack", "Survey",new{type=@ViewBag.type})" method="post" id="form">
                                                     <div class="modal-body survey">
                                                         <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
@@ -234,13 +254,12 @@
                                                     <tr id=@item.interviewid>
                                                         <td class="candidate-details">
                                                             @if (item.Name != null && item.Name != "")
-                                                            {@if (item.Name.Length > 10)
+                                                            {
+                                                                @if (item.Name.Length > 10)
                                                                 {
                                                                     <div class="cadfName mtop-5 text-left">
                                                                         <a onclick="" data-tooltip="@item.Name"><strong>Name:</strong> <span class="cname"> @item.Name</span> </a>
                                                                     </div>
-
-
                                                                 }
                                                                 else
                                                                 {
@@ -248,10 +267,6 @@
                                                                         <a onclick=""><span class="cname"><strong>Name:</strong> @item.Name</span> </a>
                                                                     </div>
                                                                 }
-                                                            }
-                                                            else
-                                                            {
-
                                                             }
                                                             @if (item.EmailAddress != null && item.EmailAddress != "")
                                                             {
@@ -268,11 +283,6 @@
                                                                     </div>
                                                                 }
                                                             }
-                                                            else
-                                                            {
-
-                                                            }
-
                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                             {
                                                                 @if (item.PrimarySkill.Length > 18)
@@ -288,14 +298,6 @@
                                                                     </div>
                                                                 }
                                                             }
-                                                            else
-                                                            {
-
-                                                            }
-
-
-
-
                                                         </td>
                                                         @*@if (item.IsClient)
                                                     {
@@ -310,7 +312,6 @@
                                                             <td>
                                                                 @if (item.interviewerEmail != null && item.interviewerEmail != "")
                                                                 {
-
                                                                     @if (item.interviewerEmail.Length > 18)
                                                                     {
                                                                         <div class="text-left mtop-5">
@@ -323,11 +324,6 @@
                                                                             <a onclick=""> @item.interviewerEmail</a>
                                                                         </div>
                                                                     }
-
-
-                                                                }
-                                                                else
-                                                                {
                                                                 }
                                                             </td>
                                                         }
@@ -351,7 +347,6 @@
                                                         </td>
                                                         <td class="interviewer">
                                                             @*@item.Question2 out of 5*@
-
                                                             <input type="hidden" id="Question2_@i" value="@item.Question2" />
                                                             <div class="star-rating" style="pointer-events:none;">
                                                                 <input type="radio" id="Question2_5_@i" name="rating2_@i" value="5" />
@@ -365,8 +360,6 @@
                                                                 <input type="radio" id="Question2_1_@i" name="rating2_@i" value="1" />
                                                                 <label for="Question2_1_@i" class="star">&#9733;</label>
                                                             </div>
-
-
                                                         </td>
                                                         @if (item.Question3 == "1")
                                                         {
@@ -374,7 +367,6 @@
                                                                 <div style="width: 150px; white-space: initial;">
                                                                     <div>
                                                                         I am satisfied with the interviewer and evaluation process
-
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -385,13 +377,10 @@
                                                                 <div style="width: 150px; white-space: initial;">
                                                                     <div>
                                                                         I didn't get a fair chance and I can do better
-
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                         }
-
-
 
                                                         <td class="interview-com">
                                                             <div id="section">
@@ -417,25 +406,14 @@
                                                                                 @item.Question4.Substring(0, @item.Question4.Length)
                                                                             </p>
                                                                         </div>
-                                                                    }}
+                                                                    }
+                                                                }
                                                                 else
                                                                 {
                                                                     <div></div>
                                                                 }
-
-
-
-
-
-
-
-
-
-
                                                             </div>
-
                                                         </td>
-
 
                                                         <td class="interview-com">
                                                             <div id="section">
@@ -456,7 +434,6 @@
                                                                     else
                                                                     {
                                                                         <div class="article" style="white-space:initial;width:150px;">
-
                                                                             <p>
                                                                                 @item.Question5.Substring(0, @item.Question5.Length)
                                                                             </p>
@@ -465,22 +442,13 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <div>
-                                                                    </div>
+                                                                    <div></div>
                                                                 }
-
-
-
-
-
                                                             </div>
-
                                                         </td>
                                                         <td class="interviewer">
                                                             @*@item.Question6 out of 5*@
-
                                                             <input type="hidden" id="Question6_@i" value="@item.Question6" />
-
                                                             <div class="star-rating" style="pointer-events:none;">
                                                                 <input type="radio" id="Question6_5_@i" name="rating3_@i" value="5" />
                                                                 <label for="Question6_5_@i" class="star">&#9733;</label>
@@ -503,22 +471,18 @@
                                                                     </div>
                                                                 </div>
                                                             }
-
                                                             else
                                                             {
                                                                 <div style="width:250px;"></div>
                                                             }
                                                         </td>
-
                                                     </tr>
-
                                                     i++;
                                                 }
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <!-- end content-->
@@ -528,16 +492,11 @@
                 <!-- end col-md-12 -->
             </div>
             <!-- end row -->
-
-
-
         </div>
-
     </div>
 </div>
 <script>
     function dropDwnToolTips(id) {
-
         if (id.value == 0) {
             id.title = "";
         }
@@ -545,8 +504,6 @@
             id.title = id.value
         }
     }
-
-
 </script>
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
@@ -557,16 +514,12 @@
 
         function my_code() {
             var msg = '@ViewBag.Message';
-
-
-
             if (msg.includes("Success")) {
                 swal({
                     title: 'Successful',
                     text: '@ViewBag.Message',
                     type: 'success',
                     showConfirmButton: true
-
                 },
                     function (value) //confirm
                     {
@@ -574,7 +527,6 @@
                         window.location.href = '/User/Interviewers';
                     }
                 )
-
             }
             else {
                 swal({
@@ -589,12 +541,9 @@
                     }
                 )
             }
-
         }
-
         window.onload = my_code();
     </script>
-
 }
 
 
@@ -784,6 +733,10 @@
 
         var profileSource = @Html.Raw(Json.Serialize(ProfileSource));
         var hREmail = @Html.Raw(Json.Serialize(HREmail));
+        var _strtDte = @Html.Raw(Json.Serialize(strtDte));
+        var _endDte = @Html.Raw(Json.Serialize(endDte));
+        $("#StartDate").val(_strtDte);
+        $("#EndDate").val(_endDte);
         $("#ProfileSource").val(profileSource);
         $("#HREmail").val(hREmail);
         var form = $("#form").serialize();

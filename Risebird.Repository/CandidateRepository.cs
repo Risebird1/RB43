@@ -270,6 +270,44 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateCandidateResumeInBulk(List<CandidateResume> resumeList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable resumeListDt = new DataTable();
+                    resumeListDt.Columns.Add("id", typeof(int));
+                    resumeListDt.Columns.Add("IsProcessed", typeof(bool));
+                    resumeListDt.Columns.Add("IsResumeParsed", typeof(bool));
+
+
+                    foreach (var item in resumeList)
+                    {
+                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed);
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_CandidateResumeBulkUpdate", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@CandidateResumeBulkUpdateData", SqlDbType.Structured));
+                    cmd.Parameters["@CandidateResumeBulkUpdateData"].Value = resumeListDt;
+                    con.Open();
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId)
         {
             try
@@ -801,5 +839,26 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing()
+        {
+            try
+            {
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

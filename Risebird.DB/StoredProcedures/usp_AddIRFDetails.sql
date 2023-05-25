@@ -45,18 +45,19 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsMeetingNotificationSend bit,
 @SkillChannelSME int = null,
 @CreatedBy varchar(100) = null,
-@InterviewDuration int,
-@IsFixedInterviewduration bit,
+--@InterviewDuration int,
+--@IsFixedInterviewduration bit,
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
-@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
+@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 --@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 @HRBulkData AS [dbo].[TransHR_TableType] READONLY,
-@FixedAmount int = null,
+--@FixedAmount int = null,
+@IsNewSkillChannel bit = null,
 @idIrf int output            
             
 AS            
@@ -99,9 +100,11 @@ Begin
 				   ,[IsCandidateavailability]
 				   ,[IsMeetingAutoCancelled]
 				   ,[IsMeetingNotificationSend]
-				   ,[InterviewDuration]
-				   ,[IsFixedInterviewduration]
-				   ,[FixedAmount])            
+				   ,[IsNewSkillChannel]
+				   )
+				   --,[InterviewDuration]
+				   --,[IsFixedInterviewduration]
+				   --,[FixedAmount])            
 					   VALUES            
 						   (@IRFId,            
 				   @clientName,            
@@ -135,9 +138,11 @@ Begin
 				   @IsCandidateavailability,
 				   @IsMeetingAutoCancelled,
 				   @IsMeetingNotificationSend,
-				   @InterviewDuration,
-				   @IsFixedInterviewduration,
-				   @FixedAmount)      
+				   @IsNewSkillChannel
+				   )
+				   --@InterviewDuration,
+				   --@IsFixedInterviewduration,
+				   --@FixedAmount)      
        
 					select @idIrf = SCOPE_IDENTITY()  
 				
@@ -187,11 +192,12 @@ Begin
 					[IRFId] ,  
 					[UserId],  
 					[PerSuccessRate], 
+					[Surcharge],
 					[IsActive],
 					[IsAvailable],
 					[InterviewerId])  
     
-					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
 
 					--emergency interviewers
 

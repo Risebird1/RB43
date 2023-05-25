@@ -855,11 +855,10 @@ namespace Risebird.Web.Controllers
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
                         //Start: Auto Generate Scheduling Link 
-                        if (string.IsNullOrEmpty(irfDetails.CalendlyLink))
-                        {
-                            var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling");
-                            irfDetails.CalendlyLink = _schedulinglink;
-                        }
+
+                        var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling");
+                        irfDetails.CalendlyLink = _schedulinglink;
+
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
@@ -1008,6 +1007,11 @@ namespace Risebird.Web.Controllers
             return name;
         }
 
+        [HttpGet]
+        public JsonResult GetInterviewerSkillsAndResume(int id)
+        {
+            return Json(_irfService.GetInterviewerSkillsAndResume(id));
+        }
 
         public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {
@@ -1015,6 +1019,21 @@ namespace Risebird.Web.Controllers
             try
             {
                 var rate = await _irfService.GetInterviewerRate(userId, companyType, countryType);
+                return rate;
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null)
+        {
+            try
+            {
+                var rate = await _irfService.GetRenewedInterviewerRate(planType, countryType);
                 return rate;
 
             }
@@ -1874,7 +1893,7 @@ namespace Risebird.Web.Controllers
                     int abc;
                     if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        if (model.JobCountry?.ToUpper() == "INDIA")
+                        if (model.JobCountry?.ToUpper() == "INDIA" || model.JobCountry?.ToUpper() == "OFFSHORE")
                         {
                             model.JobCountry = "1";
                         }

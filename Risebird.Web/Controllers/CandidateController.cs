@@ -3096,7 +3096,7 @@ namespace Risebird.Web.Controllers
                                     var result = await _candidateService.AddResume(resumeList);
                                     if (result)
                                     {
-                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) has been uploaded Successfully!";
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded Successfully!";
                                     }
                                     else
                                     {
@@ -4210,7 +4210,7 @@ namespace Risebird.Web.Controllers
                         var result = await _candidateService.AddResume(resumeList);
                         if (result)
                         {
-                            return Json("Resume(s) has been uploaded Successfully!");
+                            return Json("Resume(s) uploaded Successfully!");
                         }
                         else
                         {

@@ -20,6 +20,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <div class="mt50">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -84,8 +85,9 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Date</th>
-                                                        <th>Slot</th>
-                                                        <th>Min. Interview Duration</th>
+                                                        <th>Interview Price</th>
+                                                        <th>Variable Pay</th>
+                                                        <th>Minimum Duration</th>
                                                         <th id="openinterview_2">Candidate Name</th>
                                                         <th>JD-Skills</th>
                                                         <th id="openinterview_3">Resume</th>
@@ -104,17 +106,14 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th>Date</th>
-                                                        <th>Slot</th>
-                                                        <th>Min. Interview Duration</th>
+                                                        <th>Interview Price</th>
+                                                        <th>Variable Pay</th>
+                                                        <th>Minimum Duration</th>
                                                         <th>Candidate Name</th>
                                                         <th>JD-Skills</th>
                                                         <th>Resume</th>
                                                         @*<th>JD Link</th>*@
-
-
                                                         <th class="disabled-sorting text-right">Actions</th>
-
-
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -129,7 +128,26 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate </td>
-                                                            <td> @item.interviewSlot </td>
+                                                            <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
+                                                            @if (item.IsNewSkillChannel)
+                                                            {
+                                                                <td>
+                                                                    <div class="techinfocontainer">
+                                                                        ₹ 120
+                                                                        <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                            <span class="tooltiptext">
+                                                                                <p>₹ 50: No RB QC Red Flags </p>
+                                                                                <p>₹ 50: Client Rating is 5/5 </p>
+                                                                                <p>₹ 20: Candidate Rating is 5/5 </p>
+                                                                            </span>
+                                                                        </i>
+                                                                    </div>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>₹ 0 </td>
+                                                            }
                                                             <td> @item.interviewDuration Min.</td>
                                                             <td> @item.candidateName</td>
                                                             <td>
@@ -147,13 +165,13 @@
                                                                 <td>No Resume</td>
                                                             }
                                                             @*@if (item.JDLink != null && item.JDLink != "")
-                                                                {
-                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No JD</td>
-                                                                }*@
+                                                        {
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No JD</td>
+                                                        }*@
 
 
 
@@ -215,7 +233,6 @@
             <input type="text" hidden id="txtinterviewid" />
             <div class="modal-body">
                 <div style="padding:10px" id="divcandidateskills">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
@@ -268,7 +285,7 @@
 
 @if (ViewBag.Message != null)
 {
-<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
             my_code();
         });
@@ -278,7 +295,7 @@
                 var codedname = $("#hidcodedname").val();
                 //swal.fire("Successful", '@ViewBag.Message', "success");
                 //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success");
-                swal.fire("For your privacy concerns","Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname, "success");
+                swal.fire("For your privacy concerns", "Please join meeting using browser in private or incognito mode only with your coded name : " + codedname, "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
@@ -287,7 +304,7 @@
         }
 
         //window.onload = my_code();
-</script>
+    </script>
 }
 
 

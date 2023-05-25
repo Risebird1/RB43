@@ -49,6 +49,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [BackUpLinkId][varchar] (200),
     [TimeZoneoffset][int],
     [TimeZonesValue][varchar] (200),
+    [Surcharge][int],
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -347,6 +348,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add TimeZonesValue varchar(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Surcharge')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add Surcharge int
 END
 
 END

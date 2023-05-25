@@ -45,8 +45,9 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @IsCandidateavailability bit,
 @IsMeetingAutoCancelled bit,
 @IsMeetingNotificationSend bit,
+@IsNewSkillChannel bit = null,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
-@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,  
+@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
             
 AS              
@@ -95,7 +96,8 @@ begin try
   ,[IsAadhaarVerificationRequired]
   ,[IsCandidateavailability]
   ,[IsMeetingAutoCancelled]
-  ,[IsMeetingNotificationSend])              
+  ,[IsMeetingNotificationSend]
+  ,[IsNewSkillChannel])              
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -130,7 +132,8 @@ begin try
   @IsAadhaarVerificationRequired ,
   @IsCandidateavailability,
   @IsMeetingAutoCancelled,
-  @IsMeetingNotificationSend)                                                                           
+  @IsMeetingNotificationSend,
+  @IsNewSkillChannel)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      
@@ -150,9 +153,6 @@ begin try
       
  SELECT @irfIntId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
  --interviewers  
-<<<<<<< HEAD
- delete from TransInterviewer where IRFId= @irfIntId  and IsActive=1
-=======
  --Start :Delete interviewers
  Declare @Assessmentid int  
 Select @Assessmentid=AssessmentGroupid From IRF where id=@irfIntId  
@@ -161,17 +161,17 @@ Insert into @temptable Select Userid from InterviewerProfile cross apply string_
  --delete from TransInterviewer where IRFId=@id 
  Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@irfIntId
  --END: Delete interviewers
->>>>>>> qaRelease
   
  INSERT INTO [dbo].[TransInterviewer](    
  [IRFId] ,    
  [UserId],    
- [PerSuccessRate],   
+ [PerSuccessRate],  
+ [Surcharge],
  [IsActive],  
  [IsAvailable],  
  [InterviewerId])    
       
- SELECT @irfIntId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
+ SELECT @irfIntId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
  as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
   
   

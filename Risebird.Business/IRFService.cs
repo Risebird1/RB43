@@ -13,6 +13,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
@@ -72,7 +73,7 @@ namespace Risebird.Business
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
-                    if (irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
+                    if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
                     {
                         //send notification to the sme here
                         var smeEmail = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
@@ -195,6 +196,18 @@ namespace Risebird.Business
                 return Name;
             }
 
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public Interviewer GetInterviewerSkillsAndResume(int id)
+        {
+            try
+            {
+                return _irfRepository.GetInterviewerSkillsAndResume(id);
+            }
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -563,6 +576,8 @@ namespace Risebird.Business
                 model.InterviewDuration = IRF.InterviewDuration;
                 model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
                 model.FixedAmount = IRF.FixedAmount;
+                model.IsNewSkillChannel = IRF.IsNewSkillChannel;
+                //model.Surcharge = IRF.Surcharge;
                 return model;
             }
             catch (Exception e)
@@ -695,7 +710,7 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
 
-                    if (model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF) && result.Item2)
+                    if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF) && result.Item2)
                     {
                         //send notification to the sme here
                         var smeEmail = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF).FirstOrDefault().EmailId;
@@ -1946,7 +1961,122 @@ namespace Risebird.Business
         //    }
         //}
 
+        public async Task AddCandidateUsingResumeParserJob(List<CandidateQuickAddModel> candidateList, int irfId)
+        {
+            try
+            {
+                string linkurl = _configuration["HostDetails:baseUrl"];
+                var data = await _irfRepository.AddQuickMultipleCandidates(candidateList, null, true);
 
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                var inviteCount = irf.TotalInvites;
+                var calendlyLink = irf.CalendlyLink;
+                var jdLink = irf.JDLink;
+                var client = await _clientService.GetClient(irf.ClientId);
+                var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                string primarySkill = string.Empty;
+                primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+
+                if (data != null)
+                {
+                    var candidateResumeList = new List<CandidateResume>();
+                    Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
+                    {
+                        string value = row.ItemArray[1].ToString();
+                        if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
+                        {
+                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = true });
+                            string candidateEmail = row.ItemArray[0].ToString();
+
+                            if (candidateEmail != null && calendlyLink != null)
+                            {
+                                var candidate = await _irfRepository.GetCandidateByIRF(irfId, candidateEmail);
+                                string mailResult = string.Empty;
+                                string oneTimeSchedulingLink = string.Empty;
+                                string oneTimeSchedulingLink1 = string.Empty;
+                                if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                                {
+                                    string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
+                                    var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
+                                    oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                                    if (string.IsNullOrEmpty(oneTimeSchedulingLink))
+                                    {
+                                        oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
+                                    }
+                                    oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                                }
+                                else
+                                {
+                                    oneTimeSchedulingLink = await _calendlyHelper.GenerateOneTimeSchedulingLink(irfId);
+                                    oneTimeSchedulingLink1 = oneTimeSchedulingLink;
+                                }
+
+                                if (irf.BussinessType == "B2B")
+                                {
+                                    mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;
+                                }
+                                else
+                                {
+                                    mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId).Result;
+                                }
+                                var index = data.Rows.IndexOf(row);
+                                if (mailResult.ToLower().Contains("success"))
+                                {
+
+                                    //data.Rows[index][1] = row.ItemArray[1].ToString() + "(Invitation sent successfully)";
+
+
+                                    if (candidate.TotalInvites == 0)
+                                    {
+                                        _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+
+                                    }
+
+                                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
+                                    var result = AddCandidateStatus(candidate.AddedByEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent).Result;
+
+                                }
+                                //else
+                                //{
+                                //    data.Rows[index][1] = row.ItemArray[1].ToString() + "(Failed to send invite)";
+
+                                //}
+
+                                //auto call candidate here
+                                try
+                                {
+                                    await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, "Risebird");
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                    return;
+                                }
+
+
+                            }
+                        }
+                    });
+                    //update CandidateResume table with isParsed and isProcessed bool values here
+                    if(candidateResumeList != null)
+                    {
+                        await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeList);
+                        //bulk update call to database
+                    }
+                }
+
+
+                return;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return;
+            }
+        }
         public async Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite, string linkurl)
         {
             StringBuilder sb = new StringBuilder();
@@ -2297,6 +2427,26 @@ namespace Risebird.Business
                     companyTypeDesc = ((CompanyType)companyType).GetDescription();
                 }
                 var rate = await _irfRepository.GetInterviewerRate(userId, companyTypeDesc, countryType);
+                return rate;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null)
+        {
+            try
+            {
+                string planTypeDesc = null;
+                if (planType != null && planType.HasValue)
+                {
+                    planTypeDesc = ((Heuristicsscorelevel)planType).GetDescription();
+                }
+                var rate = await _irfRepository.GetRenewedInterviewerRate(planTypeDesc, countryType);
                 return rate;
             }
 
