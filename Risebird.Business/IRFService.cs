@@ -2013,11 +2013,11 @@ namespace Risebird.Business
 
                                 if (irf.BussinessType == "B2B")
                                 {
-                                    mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;
+                                    mailResult = await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name??"Candidate", candidate?.ClientHRAttemptContact ?? string.Empty, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate?.ProfileSource??string.Empty, irfId);
                                 }
                                 else
                                 {
-                                    mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId).Result;
+                                    mailResult = await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name?? "Candidate", candidate?.ClientHRAttemptContact ?? string.Empty, candidate?.ProfileSource ?? string.Empty, irfId);
                                 }
                                 var index = data.Rows.IndexOf(row);
                                 if (mailResult.ToLower().Contains("success"))
