@@ -290,6 +290,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientQCRequired { get; set; }
         public bool IsClientRedoInterview { get; set; }
         public bool IsReportBlocked { get; set; }
+        public bool IsSurcharge { get; set; }
+        public int Surcharge { get; set; }
+        public string SurchargeComment { get; set; }
     }
     public class VedioComments
     {

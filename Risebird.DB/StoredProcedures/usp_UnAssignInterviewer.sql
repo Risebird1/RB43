@@ -20,7 +20,7 @@ Begin Try
    
  IF EXISTS (SELECT 1 FROM InterviewMeetings where Id = @meetingId)   
   BEGIN  
-      UPDATE InterviewMeetings Set interviewer = null where id = @meetingId  
+      UPDATE InterviewMeetings Set interviewer = null,Surcharge=0,SurchargeComment='' where id = @meetingId  
   END  
    
   End Try   

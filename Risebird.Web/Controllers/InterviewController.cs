@@ -7317,5 +7317,32 @@ namespace Risebird.Web.Controllers
             var imageBytes = await httClient.GetByteArrayAsync(imageUrl);
             return Convert.ToBase64String(imageBytes);
         }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (string.IsNullOrEmpty(surchargecomment))
+                {
+                    surchargecomment = "";
+                }
+                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail);
+                if (model)
+                {
+                    return Json("Surcharge details are updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update Surcharge details, please try again.");
+                }
+            }
+            else
+            {
+                return Json("Failed to update Surcharge details, please try again.");
+            }
+        }
     }
 }

@@ -72,6 +72,8 @@ SELECT [InterviewMeetings].id as imid
   ,IRF.MeetingPlatform
   ,IRF.JDTiltle
   ,cl.LogoLink as LogoUrl
+  ,InterviewMeetings.Surcharge
+  ,InterviewMeetings.SurchargeComment
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    
@@ -88,6 +90,7 @@ WHERE
       [InterviewMeetings].id = @interviewId    
     
 End
+
 GO
 
 
