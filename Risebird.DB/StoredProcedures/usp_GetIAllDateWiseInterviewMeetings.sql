@@ -37,12 +37,14 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource      
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId,
+  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
   from  InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                        
-  left join UserList uli on im.interviewer= uli.EmailId                     
+  left join UserList uli on im.interviewer= uli.EmailId 
+  left join TransInterviewer ti on ti.Userid=uli.id and ti.IRFId=IRF.id
   left join Userlist ulcu on IRF.BillingOwner  =ulcu.id     
   left join InterviewerProfile itp on itp.UserId = uli.id  
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                          
@@ -73,12 +75,14 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId,
+  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                        
-  left join UserList uli on im.interviewer= uli.EmailId                     
+  left join UserList uli on im.interviewer= uli.EmailId    
+  left join TransInterviewer ti on ti.Userid=uli.id and ti.IRFId=IRF.id
   left join Userlist ulcu on IRF.BillingOwner  =ulcu.id     
   left join InterviewerProfile itp on itp.UserId = uli.id  
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                          
@@ -110,13 +114,15 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId,
+  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId        
   join SeniorHR sh on sh.Clientid=IRF.ClientId      
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                        
-  left join UserList uli on im.interviewer= uli.EmailId                     
+  left join UserList uli on im.interviewer= uli.EmailId  
+  left join TransInterviewer ti on ti.Userid=uli.id and ti.IRFId=IRF.id
   left join Userlist ulcu on IRF.BillingOwner  =ulcu.id        
   left join InterviewerProfile itp on itp.UserId = uli.id  
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                          
@@ -146,12 +152,14 @@ else
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                  
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId 
-  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,im.BackUpLink,im.BackUpLinkId,
+  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                        
-  left join UserList uli on im.interviewer= uli.EmailId                     
+  left join UserList uli on im.interviewer= uli.EmailId  
+  left join TransInterviewer ti on ti.Userid=uli.id and ti.IRFId=IRF.id
   left join Userlist ulcu on IRF.BillingOwner  =ulcu.id     
    left join InterviewerProfile itp on itp.UserId = uli.id  
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                          
@@ -163,7 +171,7 @@ else
   where interviewDate >= @startDate AND interviewDate < @endDate                 
  End                          
                            
-End            
+End               
   
            
 GO

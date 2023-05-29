@@ -6458,5 +6458,26 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@surchargecomment", surchargecomment);
+                    parameters.Add("@surchargeamt", surchargeamt);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateSurchargeInterviewDetailsById", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

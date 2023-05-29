@@ -3831,6 +3831,28 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateCandidateFeedback;
+                    activityTrackerModel.Particulars = "Feedback for: " + CandidateEmail;
+                    activityTrackerModel.PerformedBy = emailId;
+                    activityTrackerModel.Summary = "Feedback Updated: Surcharge Updated";
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 

@@ -17,7 +17,7 @@ Select uli.EmailId,COUNT(im.id) as TotalCompletedInterview,uli.FirstName as Clie
 join Client cl on cl.id=IRF.ClientId
 join TransClientUser tc on tc.IRFId=IRF.id join UserList uli on uli.id=tc.ClientUserId  
 where interviewDate>=@startDate and interviewDate<=@endDate and 
-(ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) 
+(ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and uli.IsActive=1 and tc.IsActive=1
 group by uli.EmailId,uli.FirstName
 END
 Go
