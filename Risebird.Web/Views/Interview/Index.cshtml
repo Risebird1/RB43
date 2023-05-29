@@ -559,7 +559,16 @@
                                                                         </button>
                                                                     </span>
                                                                 }
-
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Surcharge">
+                                                                        <span onclick="UpdateSurchargeDetails(@item.imid,'@item.candidateEmail')" title="Add Surcharge" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                    </button>
+                                                                </span>
+                                                                @*<span class="interview_8">
+                                                        <button class="mdc-fab app-fab--absolute " aria-label="Comment">
+                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                        </button>
+                                                        </span>*@
                                                                 @if ((string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1) || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin"|| ViewBag.profile == "Quality Controller"))
                                                                 {
                                                                     <span class="interview_8">
@@ -1291,6 +1300,49 @@
         </div>
     </div>
 </div>
+<div id="UpdateSurchargeDetailsModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Surchange Details </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeUpdateSurchargeDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <input type="hidden" id="txtSurchargeinterviewid" />
+                    <input type="hidden" id="txtSurchargeCandidateEmaild" />
+                    <div style="padding:10px">
+                        <input type="number" id="txtSurchargeamt" class="form-control" placeholder="Surchange amount" />
+                    </div>
+                    <div style="padding:10px">
+                        <input type="text" id="txtSurchargeComment" class="form-control" maxlength="500" placeholder="Comment" />
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right nopad">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="SaveSurchargeInterviewId()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                            </div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="closeUpdateSurchargeDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
 
@@ -1854,6 +1906,49 @@
             }
         });
     }
+    function openUpdateSurchargeDetailsModel() {
+        var modal = document.getElementById("UpdateSurchargeDetailsModel");
+        modal.style.display = "block";
+    }
+    function closeUpdateSurchargeDetailsModel() {
+        var modal = document.getElementById("UpdateSurchargeDetailsModel");
+        modal.style.display = "none";
+    }
+    function UpdateSurchargeDetails(interviewid, candidateEmailid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interview/FetchInterviewVideoDetails",
+            data: { interviewid: interviewid },
+            success: function (data) {
+                openUpdateSurchargeDetailsModel();
+                $("#txtSurchargeCandidateEmaild").val(candidateEmailid);
+                $("#txtSurchargeinterviewid").val(interviewid);
+                $("#txtSurchargeamt").val(data.surcharge);
+                $("#txtSurchargeComment").val(data.surchargeComment);
+            }
+        });
+    }
+    function SaveSurchargeInterviewId() {
+        var surchargecomment = $("#txtSurchargeComment").val();
+        var surchargeamt = $("#txtSurchargeamt").val();
+        var interviewid = $("#txtSurchargeinterviewid").val();
+        var CandidateEmail = $("#txtSurchargeCandidateEmaild").val();
+        if (surchargecomment.trim() != '') {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/SaveVideoDetails",
+                data: { interviewid: interviewid, surchargecomment: surchargecomment, surchargeamt: surchargeamt, CandidateEmail: CandidateEmail },
+                success: function (data) {
+                    alert(data);
+                    closeUpdateSurchargeDetailsModel();
+                    window.location.href = "/Interview/Index";
+                }
+            });
+        } else {
+            alert("Comment is required field.");
+        }
+    }
+
     function OpenRedoFormModel(interviewid) {
         $.ajax({
             url: '/Interview/RejectRedoInterviewDetails',
