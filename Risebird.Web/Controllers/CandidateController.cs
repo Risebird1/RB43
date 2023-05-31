@@ -4450,7 +4450,7 @@ namespace Risebird.Web.Controllers
         /// <param name="IRFId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId, int type)
+        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId,int type)
         {
             try
             {
@@ -4461,10 +4461,6 @@ namespace Risebird.Web.Controllers
                     if (type == 1)
                     {
                         sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/TestPage?id=" + candidateUniqueId + "&IRFId=" + IRFId;
-                    }
-                    else if (type == 2)
-                    {
-                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/TestPagesecond?id=" + candidateUniqueId + "&IRFId=" + IRFId;
                     }
                     else
                     {
@@ -4613,56 +4609,6 @@ namespace Risebird.Web.Controllers
             return View("TestPage", CandidateDetails);
         }
 
-        public IActionResult TestPagesecond(string id, int IRFId)
-        {
-            var model = new CandidateIRFDetailsVM();
-            //var model = new Candidate();
-            ViewBag.PageType = "Public";
-            ViewBag.Id = id;
-            model.CandidateDetails.IRFId = IRFId;
-            return View(model);
-        }
-        public async Task<IActionResult> VerifiedTestPagesecond(string emailid, string id, int IRFid)
-        {
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-            ViewBag.id = id;
-            var CandidateDetails = await _candidateService.GetIRFDetailsForCandidate(emailid, IRFid);
-            if (CandidateDetails != null)
-            {
-                CandidateDetails.Meetings = CandidateDetails.Meetings.Select(x =>
-                {
-                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                    return x;
-                }).ToList();
-                CandidateDetails.CandidateDetails.IRFId = IRFid;
-                var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
-                if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
-                {
-                    CandidateDetails.IsReschedule = true;
-                    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
-                    {
-                        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
-                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
-                        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
-                    }
-                    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
-                }
-            }
-            foreach (var item in CandidateDetails.Meetings)
-            {
-                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                {
-                    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                    {
-                        item.MeetingStatusStatusDesc = "Status Pending";
-                    }
-                }
-            }
-            return View("TestPagesecond", CandidateDetails);
-        }
         [HttpPost]
         public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail)
         {
