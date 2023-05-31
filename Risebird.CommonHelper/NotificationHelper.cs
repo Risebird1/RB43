@@ -1037,7 +1037,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null)
+        public async Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogoLink = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null)
         {
             try
             {
@@ -1053,11 +1053,14 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                 }
-                string companyLogoLink = string.Empty;
-                string companyURL = string.Empty;
-                companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
-                companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
-                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
+                //string companyLogoLink = string.Empty;
+                //string companyURL = string.Empty;
+                //companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
+                string risebirdLogoLink =  _configuration["RisebirdDetails:RisebirdLogo"];
+                string risebirdURL =  _configuration["RisebirdDetails:RisebirdURL"];
+                //companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
+                //object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
+                object[] parameters = new object[] { clientURL, risebirdLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL, clientLogoLink, risebirdURL };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2104,7 +2107,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null)
+        public async Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
         {
             try
             {
@@ -2117,7 +2120,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, PrimarySkillInvite, timezone, meetingLink };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, PrimarySkillInvite, timezone, meetingLink, clientCompanyLink, clientLogoLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2128,7 +2131,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null)
+        public async Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
         {
             try
             {
@@ -2141,7 +2144,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, PrimarySkillInvite, timezone, meetingLink };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, PrimarySkillInvite, timezone, meetingLink, clientCompanyLink, clientLogoLink};
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;

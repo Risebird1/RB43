@@ -15,6 +15,8 @@ namespace Risebird.Entities.ViewModel
         public string staffingAgency { get; set; }
         public string MobileNumber { get; set; }
         public string ClientName { get; set; }
+        public string CompanyLink { get; set; } // Client Company Link
+        public string LogoLink { get; set; } // Client Logo Link
         public string PrimarySkillInvite { get; set; }
         public string MeetingLink { get; set; }
         public int? TimeZoneoffset { get; set; }

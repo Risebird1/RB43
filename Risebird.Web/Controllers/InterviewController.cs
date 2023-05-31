@@ -7262,6 +7262,7 @@ namespace Risebird.Web.Controllers
                 //{
                 //    model.LogoUrl = await ImageUrlToBase64(model.LogoUrl);
                 //}
+
                 ViewBag.ClientLogo = model.LogoUrl;
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 if (profileName == "Client")
