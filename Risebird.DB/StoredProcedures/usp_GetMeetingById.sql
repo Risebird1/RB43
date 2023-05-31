@@ -74,6 +74,7 @@ SELECT [InterviewMeetings].id as imid
   ,cl.LogoLink as LogoUrl
   ,InterviewMeetings.Surcharge
   ,InterviewMeetings.SurchargeComment
+  ,IRF.Heuristicsscore
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    
@@ -90,6 +91,8 @@ WHERE
       [InterviewMeetings].id = @interviewId    
     
 End
+
+
 
 GO
 
