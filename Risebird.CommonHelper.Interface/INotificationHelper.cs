@@ -47,7 +47,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         Task<string> SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName, string meetingurl, DateTime interviewdatetime, int offset);
         Task<string> CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
-        Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null);
+        Task<string> SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogoLink = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null, int? irfId = null);
         Task<string> RBPayNotification(Mail model, string emailid);
         Task<string> RBFNQueryNotification(Mail model, string query);
         Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
@@ -77,9 +77,9 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendPasswordresetNotification(Mail model);
         Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, string jdLink = null);
         Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink, int? irfId = null, int? interviewId = null);
-        Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null);
+        Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         //Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null);
-        Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null);
+        Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, string IRFName);
         Task<string> SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
         Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt);
