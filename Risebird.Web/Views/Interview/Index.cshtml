@@ -559,6 +559,7 @@
                                                                         </button>
                                                                     </span>
                                                                 }
+                                                                @if (item.IsSurcharge){
                                                                 <span>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Add Surcharge">
                                                                         <span onclick="UpdateSurchargeDetails(@item.imid,'@item.candidateEmail')" title="Add Surcharge" class="mdc-fab__icon material-icons">
@@ -568,6 +569,7 @@
                                                                         </span>
                                                                     </button>
                                                                 </span>
+                                                                }
                                                                 @*<span class="interview_8">
                                                         <button class="mdc-fab app-fab--absolute " aria-label="Comment">
                                                         <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
