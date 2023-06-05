@@ -1667,6 +1667,29 @@
         </div>
     </div>
 </div>
+
+<div id="QuestionNotificationModelPopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Interview Question Missing Alert</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeQuestionCollectionNotification()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px">
+                    Questions are not present for this interview, <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a> to add questions and then refresh the report before fill the report.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
 <script src="~/js/ModalFormServerValidation.js"></script>
@@ -1693,6 +1716,22 @@
         openSecureReportNotificationModel();
     </script>
 }
+@if (ViewBag.profile == "Interviewer")
+{
+    @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
+    {
+        <script>
+            function closeQuestionCollectionNotification() {
+                document.getElementById("QuestionNotificationModelPopup").style.display = "none";
+            }
+            function OpenQuestionCollectionNotification() {
+                document.getElementById("QuestionNotificationModelPopup").style.display = "block";
+            }
+            OpenQuestionCollectionNotification();
+        </script>
+    }
+}
+
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -1756,9 +1795,9 @@
 
 <script>
     function getPDF() {
-        var interviewid=$("#InterviewId").val();
+        var interviewid = $("#InterviewId").val();
         var irfid = $("#IRFId").val();
-        var url="/Interview/GenerateReportPDFFile?interviewId="+interviewid+"&irfId="+irfid;
+        var url = "/Interview/GenerateReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
         window.open(url, "_blank");
     }
     @*function getPDF() {
@@ -1775,39 +1814,39 @@
 
 
         html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
-            canvas.getContext('2d');
+        canvas.getContext('2d');
 
-            var imgData = canvas.toDataURL("image/png", 1.0);
-            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+        var imgData = canvas.toDataURL("image/png", 1.0);
+        var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
 
 
-            for (var i = 1; i <= totalPDFPages; i++) {
-                pdf.addPage(PDF_Width, PDF_Height);
-                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
-            }
-            var d = new Date();
+        for (var i = 1; i <= totalPDFPages; i++) {
+        pdf.addPage(PDF_Width, PDF_Height);
+        pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+        }
+        var d = new Date();
 
-            var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
-            pdf.save(filename + ".pdf")
+        var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+        pdf.save(filename + ".pdf")
 
         });
 
-    }*@
-    function GeneratePublicUrl(index) {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "block";
-        var urlcurrent = window.location.href;
-        if (index == 1) {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
+        }*@
+        function GeneratePublicUrl(index) {
+            var modal = document.getElementById("PublicUrlShareModel");
+            modal.style.display = "block";
+            var urlcurrent = window.location.href;
+            if (index == 1) {
+                urlcurrent = urlcurrent.replace("Public", "");
+                urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
+            }
+            else {
+                urlcurrent = urlcurrent.replace("Public", "");
+                urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+            }
+            $("#txtvideoUrls").text(urlcurrent);
         }
-        else {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
-        }
-        $("#txtvideoUrls").text(urlcurrent);
-    }
     function closePublicUrlShareModel() {
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "none";
@@ -2106,11 +2145,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                                                                        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                                                                        // Check document for changes
-                                                                                                                                        //$.validator.unobtrusive.parse(document);
+                                                                                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                                                                                            // Check document for changes
+                                                                                                                                                            //$.validator.unobtrusive.parse(document);
 
-                                                                                                                                    }
+                                                                                                                                                        }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2210,7 +2249,7 @@
             });*@
 
 
-                                                                                                                                    }
+                                                                                                                                                        }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2298,7 +2337,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                                       return CheckLength(250);
+                                                                           return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2478,7 +2517,7 @@
                 }
                 });*@
 
-                                                                                                                                        }
+                                                                                                                                                            }
 
 
     });
