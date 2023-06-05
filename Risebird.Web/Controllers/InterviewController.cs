@@ -7349,5 +7349,198 @@ namespace Risebird.Web.Controllers
                 return Json("Failed to update Surcharge details, please try again.");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> TestAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                ViewBag.PageStatus = "Mainurl";
+                string userMenus = HttpContext.Session.GetString("userMenus");
+
+                if (userMenus == null)
+                {
+                    return RedirectToAction("Index", "Home", new
+                    {
+                        url = "AddReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected
+                    });
+                }
+                var email = HttpContext.Session.GetString("email");
+                email = email.Replace("\"", "");
+                ViewBag.EmailId = email;
+                bool isAdminHR = false;
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                string profileName = HttpContext.Session.GetString("profileName");
+                ViewBag.profile = profileName.Replace("\"", "");
+                if (profileName != null)
+                {
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        isAdminHR = true;
+                    }
+                    else if (profileName == "Interviewer")
+                    {
+                        isInterviewer = true;
+                    }
+                }
+
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                if (model == null)
+                {
+                    if (isAdminHR)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else if (isInterviewer)
+                    {
+                        return RedirectToAction("MyInterview");
+                    }
+                }
+                if (profileName == "Client")
+                {
+                    var client = await _userRepository.GetClientUserDetails(email);
+                    model.IsQCRequired = client.IsQCRequired;
+                    model.IsRedoInterview = client.IsRedoInterview;
+                }
+                else
+                {
+                    model.IsQCRequired = false;
+                }
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    foreach (var question in model.QuestionsCollection)
+                    {
+                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                    }
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.Userid = _iRFService.GetUserId(email, profileName);
+                if (model.Userid != 0)
+                {
+                    await GetStatusList(model, irfId, model.Userid);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                ViewBag.ClientDetails = "";
+                if (TempData["SuccessErrorMessageQCForm"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                    TempData.Remove("SuccessErrorMessageQCForm");
+                }
+                if (isClient || isClientSelected)
+                {
+                    ViewBag.ClientDetails = "client";
+                    if (model.IsProctor)
+                    {
+                        return PartialView("ClientProctorReport", model);
+                    }
+                    else
+                    {
+                        return PartialView("ClientPartialReport", model);
+                    }
+                }
+                else
+                {
+                    if (model.IsProctor)
+                    {
+                        return View("ProctorReport", model);
+                    }
+                    else
+                    {
+                        return View(model);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GenerateTestReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                ViewBag.PageStatus = "Mainurl";
+                var email = HttpContext.Session.GetString("email");
+                email = email.Replace("\"", "");
+                ViewBag.EmailId = email;
+                bool isAdminHR = false;
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                string profileName = HttpContext.Session.GetString("profileName");
+                profileName = profileName.Replace("\"", "");
+                ViewBag.profile = profileName;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                string Logo = string.Empty;
+                ViewBag.ClientLogo = model.LogoUrl;
+                ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+                if (profileName == "Client")
+                {
+                    var client = await _userRepository.GetClientUserDetails(email);
+                    model.IsQCRequired = client.IsQCRequired;
+                    model.IsRedoInterview = client.IsRedoInterview;
+                }
+                else
+                {
+                    model.IsQCRequired = false;
+                }
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    foreach (var question in model.QuestionsCollection)
+                    {
+                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                    }
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.Userid = _iRFService.GetUserId(email, profileName);
+                if (model.Userid != 0)
+                {
+                    await GetStatusList(model, irfId, model.Userid);
+                }
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                ViewBag.ClientDetails = "";
+
+                if (isClient || isClientSelected)
+                {
+                    ViewBag.ClientDetails = "client";
+                    return View(model);
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
     }
 }
