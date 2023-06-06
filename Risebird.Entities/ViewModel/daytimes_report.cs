@@ -118,6 +118,7 @@ namespace Risebird.Entities.ViewModel
         public string LogoLink { get; set; }
         public string Name { get; set; }
         public string JDTiltle { get; set; }
+        public string CompanyLink { get; set; }
     }
     public class CandidateIRFData
     {

@@ -294,7 +294,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select Cl.LogoLink,Cl.Name,IRF.JDTiltle from IRF Left join Client Cl on Cl.id=IRF.ClientId where IRFId=@IRFId";
+                var query = "Select Cl.LogoLink,Cl.Name,IRF.JDTiltle, cl.CompanyLink from IRF Left join Client Cl on Cl.id=IRF.ClientId where IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
