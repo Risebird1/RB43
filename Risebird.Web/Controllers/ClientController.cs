@@ -180,7 +180,10 @@ namespace Risebird.Web.Controllers
                     Client clientToUpdate = await _clientService.GetClient(id);
                     SetBillingTypeDropDown(clientToUpdate);
                     if (clientToUpdate != null)
+                    {
+                        clientToUpdate.OldLogoLink = clientToUpdate.LogoLink;
                         return View("ClientUpdate", clientToUpdate);
+                    }
                     else
                         return RedirectToAction("List");
                 }
@@ -210,7 +213,7 @@ namespace Risebird.Web.Controllers
                         if (client.LogoFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.LogoFile);
-                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg" || fileMimeType == "image/tiff")
+                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg" || fileMimeType == "image/tiff" || fileMimeType == "image/png")
                             {
                                 var fileName = client.LogoFile.FileName.Replace(" ", "_");
                                 await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
@@ -218,6 +221,13 @@ namespace Risebird.Web.Controllers
                                 var blob = containerRef.GetBlockBlobReference(fileName);
                                 uploadedFileURL = blob.Uri.ToString();
                                 client.LogoLink = uploadedFileURL;
+                            }
+                        }
+                        else
+                        {
+                            if(!string.IsNullOrEmpty(client.OldLogoLink))
+                            {
+                                client.LogoLink = client.OldLogoLink;
                             }
                         }
                         if (client.VideoFile != null)
