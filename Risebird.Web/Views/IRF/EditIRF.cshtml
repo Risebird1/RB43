@@ -64,7 +64,7 @@
                                             @if (Model.Profile != "Client")
                                             {
                                                 <li id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
-                                                <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
+                                                <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@(Model.Selectability != null ? Model.Selectability.Count() : 0)</span></li>
                                                 <li id="li_generalSkill"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
                                                 <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
                                                 @*<li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>*@
@@ -2272,6 +2272,7 @@
 
     }
     function checkTabValidation(activeTab) {
+        debugger;
         var flag = false;
         if (activeTab.trim() == "Event Details") {
             var flagvalue = $("#hidisclone").val();
@@ -2462,6 +2463,7 @@
             return flag;
         }
         else if (activeTab.trim() == "Client") {
+            debugger;
             flag = checkClientDetails();
             return flag;
         }
@@ -2841,7 +2843,8 @@
         }
         document.getElementById("emInterviewer").innerHTML = "";
         return false;
-    }
+    }*@
+
     function checkClientDetails() {
         var table = document.getElementById("ClientTable");
         var rowCount = table.rows.length;
@@ -2856,7 +2859,7 @@
             }
         }
         return false;
-    }*@
+    }
 
 </script>
 <script>
