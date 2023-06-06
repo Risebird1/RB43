@@ -504,12 +504,12 @@ namespace Risebird.Business
                 //var transClientUser = _irfRepository.GetTransClientUser(id);
 
                 var transInterviewer = await _irfRepository.GetTransInterviewer(id);
-                var transQualityController = _irfRepository.GetTransQualityController(id);
+                //var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
-                var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
-                var transResumeEvaluator = _irfRepository.GetTransResumeEvaluator(id);
+                //var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
+                //var transResumeEvaluator = _irfRepository.GetTransResumeEvaluator(id);
                 var transHR = _irfRepository.GetTransHR(id);
-                var transRecruiter = _irfRepository.GetTransRecruiter(id);
+                //var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
                 //model.MeetingPlatform= IRF.meeting
 
@@ -521,7 +521,7 @@ namespace Risebird.Business
                 model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
                 model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
-                model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
+                //model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
                 model.JDLink = IRF.JDLink;
                 model.JDTiltle = IRF.JDTiltle;
                 model.JobCountry = IRF.JobCountry;
@@ -529,7 +529,7 @@ namespace Risebird.Business
                 model.NoOfIntterview = IRF.NoOfIntterview;
                 model.NoOfPosition = IRF.NoOfPosition;
                 model.PerMintuteRate = IRF.PerMintuteRate;
-                model.QualityController = (IList<TransQualityController>)(transQualityController);
+                //model.QualityController = (IList<TransQualityController>)(transQualityController);
                 model.RisebirdHr = IRF.RisebirdHr;
                 model.CompanyDetails = IRF.CompanyDetails;
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
@@ -541,8 +541,8 @@ namespace Risebird.Business
                     var transClientUser = _irfRepository.GetTransClientUser(id);
                     model.ClientCollection = (IList<TransClientUser>)(transClientUser);
                 }
-                model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
-                model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
+                //model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
+                //model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
                 model.HRCollection = (IList<TransHR>)(transHR);
                 model.ClientId = IRF.ClientId;
                 model.ClientName = IRF.ClientName;
