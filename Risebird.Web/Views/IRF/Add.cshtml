@@ -2405,7 +2405,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
 
-        $tr.find("input,select,hidden,a").attr("name", function () { // find name in the cloned row
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
