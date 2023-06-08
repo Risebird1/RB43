@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -483,100 +484,107 @@ namespace Risebird.Business
                 var model = new IRFVm();
 
                 //get all values from database
-                var IRF = _irfRepository.EditIRF(id);
-                if (IRF == null)
+                //var IRF = _irfRepository.EditIRF(id);
+                model = await _irfRepository.GetSkillChannelDetailsForUpdate(id);
+                if (model == null)
                     return null;
-                var IRFConfiguration = _irfRepository.EditIRFConfiguration(id);
-                if (!IRFConfiguration)
+                //var IRFConfiguration = _irfRepository.EditIRFConfiguration(id);
+                if (!model.EditIRFConfiguration)
                 {
-                    var _clientdetails = await _clientRepository.GetClient(id);
-                    if (_clientdetails != null)
-                    {
-                        IRF.IsCandidateavailability = _clientdetails.IsCandidateavailability;
-                        IRF.IsMeetingAutoCancelled = _clientdetails.IsMeetingAutoCancelled;
-                        IRF.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
-                        IRF.InterviewDuration = _clientdetails.InterviewDuration;
-                    }
+                    //var _clientdetails = await _clientRepository.GetClient(id);
+                    //if (_clientdetails != null)
+                    //{
+                    //    model.IsCandidateavailability = _clientdetails.IsCandidateavailability;
+                    //    model.IsMeetingAutoCancelled = _clientdetails.IsMeetingAutoCancelled;
+                    //    model.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
+                    //    model.InterviewDuration = _clientdetails.InterviewDuration;
+                    //}
+                    model.IsCandidateavailability = model.IsClientCandidateAvailablily;
+                    model.IsMeetingAutoCancelled = model.IsClientMeetingAutoCancelled;
+                    model.IsMeetingNotificationSend = model.IsClientMeetingNotificationSend;
+                    model.InterviewDuration = model.ClientInterviewDuration;
                 }
-                var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-                var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
-                var transJoinability = _irfRepository.GetTransJoinability(id);
+                //var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
+                //var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
+                //var transJoinability = _irfRepository.GetTransJoinability(id);
                 //var transClientUser = _irfRepository.GetTransClientUser(id);
 
-                var transInterviewer = await _irfRepository.GetTransInterviewer(id);
+                //var transInterviewer = await _irfRepository.GetTransInterviewer(id);
                 //var transQualityController = _irfRepository.GetTransQualityController(id);
-                var transSelectability = _irfRepository.GetTransSelectability(id);
+                //var transSelectability = _irfRepository.GetTransSelectability(id);
                 //var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
                 //var transResumeEvaluator = _irfRepository.GetTransResumeEvaluator(id);
-                var transHR = _irfRepository.GetTransHR(id);
+                //var transHR = _irfRepository.GetTransHR(id);
                 //var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
                 //model.MeetingPlatform= IRF.meeting
 
 
                 //assign values retrieved to the model
-                model.IsLocked = IRF.IsLocked;
-                model.id = IRF.id;
-                model.MeetingPlatform = IRF.MeetingPlatform;
-                model.ClientCompName = IRF.ClientCompName;
-                model.IRFId = IRF.IRFId;
-                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
+                model.id = id;
+
+                //model.IsLocked = IRF.IsLocked;
+                //model.MeetingPlatform = IRF.MeetingPlatform;
+                //model.ClientCompName = IRF.ClientCompName;
+                //model.IRFId = IRF.IRFId;
+                //model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
                 //model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
-                model.JDLink = IRF.JDLink;
-                model.JDTiltle = IRF.JDTiltle;
-                model.JobCountry = IRF.JobCountry;
-                model.Joinability = (IList<TransJoinability>)(transJoinability);
-                model.NoOfIntterview = IRF.NoOfIntterview;
-                model.NoOfPosition = IRF.NoOfPosition;
-                model.PerMintuteRate = IRF.PerMintuteRate;
+                //model.JDLink = IRF.JDLink;
+                //model.JDTiltle = IRF.JDTiltle;
+                //model.JobCountry = IRF.JobCountry;
+                //model.Joinability = (IList<TransJoinability>)(transJoinability);
+                //model.NoOfIntterview = IRF.NoOfIntterview;
+                //model.NoOfPosition = IRF.NoOfPosition;
+                //model.PerMintuteRate = IRF.PerMintuteRate;
                 //model.QualityController = (IList<TransQualityController>)(transQualityController);
-                model.RisebirdHr = IRF.RisebirdHr;
-                model.CompanyDetails = IRF.CompanyDetails;
-                model.SkillCollection = (IList<TransSkill>)(transTechSkills);
-                model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
-                model.Selectability = (IList<TransSelectability>)(transSelectability);
-                model.StartDate = IRF.StartDate;
-                if (!isClone)
-                {
-                    var transClientUser = _irfRepository.GetTransClientUser(id);
-                    model.ClientCollection = (IList<TransClientUser>)(transClientUser);
-                }
+                //model.RisebirdHr = IRF.RisebirdHr;
+                //model.CompanyDetails = IRF.CompanyDetails;
+                //model.SkillCollection = (IList<TransSkill>)(transTechSkills);
+                //model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
+                //model.Selectability = (IList<TransSelectability>)(transSelectability);
+                //model.StartDate = IRF.StartDate;
+                //if (!isClone)
+                //{
+                //    var transClientUser = _irfRepository.GetTransClientUser(id);
+                //    model.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                //}
                 //model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
                 //model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
-                model.HRCollection = (IList<TransHR>)(transHR);
-                model.ClientId = IRF.ClientId;
-                model.ClientName = IRF.ClientName;
-                model.CompanyType = IRF.CompanyType;
-                model.EndDate = IRF.EndDate;
-                model.JobLevel = IRF.JobLevel;
-                model.CalendlyLink = IRF.CalendlyLink;
-                model.TotalInvites = IRF.TotalInvites;
-                model.TotalBudget = IRF.TotalBudget;
-                model.IsBiometricEnabled = IRF.IsBiometricEnabled;
-                model.PriorityLevel = IRF.PriorityLevel;
-                model.Heuristicsscore = IRF.Heuristicsscore;
-                model.Type = IRF.BussinessType;
-                model.PrimarySkillInvite = IRF.PrimarySkillInvite;
-                model.AssessmentGroupId = IRF.AssessmentGroupId;
-                model.BillingOwner = IRF.BillingOwner;
-                var skillCount = transTechSkills.Count();
+                //model.HRCollection = (IList<TransHR>)(transHR);
+                //model.ClientId = IRF.ClientId;
+                //model.ClientName = IRF.ClientName;
+                //model.CompanyType = IRF.CompanyType;
+                //model.EndDate = IRF.EndDate;
+                //model.JobLevel = IRF.JobLevel;
+                //model.CalendlyLink = IRF.CalendlyLink;
+                //model.TotalInvites = IRF.TotalInvites;
+                //model.TotalBudget = IRF.TotalBudget;
+                //model.IsBiometricEnabled = IRF.IsBiometricEnabled;
+                //model.PriorityLevel = IRF.PriorityLevel;
+                //model.Heuristicsscore = IRF.Heuristicsscore;
+                //model.Type = IRF.BussinessType;
+                model.Type = model.BussinessType;
+                //model.PrimarySkillInvite = IRF.PrimarySkillInvite;
+                //model.AssessmentGroupId = IRF.AssessmentGroupId;
+                //model.BillingOwner = IRF.BillingOwner;
+                //var skillCount = transTechSkills.Count();
                 model.OldAssessmentGroupId = model.AssessmentGroupId;
                 model.OldCalendlyLink = model.CalendlyLink;
                 model.OldJDLink = model.JDLink;
                 model.OldInterviewerCollection = model.InterviewerCollection;
                 model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
                 model.OldSkillCollection = model.SkillCollection;
-                model.IsQCRequired = IRF.IsQCRequired;
-                model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
-                model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
-                model.IsAadhaarVerificationRequired = IRF.IsAadhaarVerificationRequired;
-                model.IsCandidateavailability = IRF.IsCandidateavailability;
-                model.IsMeetingAutoCancelled = IRF.IsMeetingAutoCancelled;
-                model.IsMeetingNotificationSend = IRF.IsMeetingNotificationSend;
-                model.InterviewDuration = IRF.InterviewDuration;
-                model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
-                model.FixedAmount = IRF.FixedAmount;
-                model.IsNewSkillChannel = IRF.IsNewSkillChannel;
+                //model.IsQCRequired = IRF.IsQCRequired;
+                //model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
+                //model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
+                //model.IsAadhaarVerificationRequired = IRF.IsAadhaarVerificationRequired;
+                //model.IsCandidateavailability = IRF.IsCandidateavailability;
+                //model.IsMeetingAutoCancelled = IRF.IsMeetingAutoCancelled;
+                //model.IsMeetingNotificationSend = IRF.IsMeetingNotificationSend;
+                //model.InterviewDuration = IRF.InterviewDuration;
+                //model.IsFixedInterviewduration = IRF.IsFixedInterviewduration;
+                //model.FixedAmount = IRF.FixedAmount;
+                //model.IsNewSkillChannel = IRF.IsNewSkillChannel;
                 //model.Surcharge = IRF.Surcharge;
                 return model;
             }
@@ -2013,11 +2021,11 @@ namespace Risebird.Business
 
                                 if (irf.BussinessType == "B2B")
                                 {
-                                    mailResult = await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name??"Candidate", candidate?.ClientHRAttemptContact ?? string.Empty, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate?.ProfileSource??string.Empty, irfId);
+                                    mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId).Result;
                                 }
                                 else
                                 {
-                                    mailResult = await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name?? "Candidate", candidate?.ClientHRAttemptContact ?? string.Empty, candidate?.ProfileSource ?? string.Empty, irfId);
+                                    mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink1)) ? oneTimeSchedulingLink1 : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId).Result;
                                 }
                                 var index = data.Rows.IndexOf(row);
                                 if (mailResult.ToLower().Contains("success"))
