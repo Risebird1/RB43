@@ -10,7 +10,7 @@
 @{
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
 
     var meetingStatusList = new List<SelectListItem>();
     meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
@@ -92,28 +92,8 @@
     </script>
 }
 <link href="~/newassets/css/report.css" rel="stylesheet" />
-<div class="main-panel" id="main-panel">
-    <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
-                </div>
-                <div class="pull-left">
-                </div>
-                <div class="pull-right">
-                    @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
-                    {
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="loader text-center">
-        <img src="~/Newassets/img/lazyload.gif" />
-    </div>
+<div id="main-panel" style="display:none">
+
 
     <div class="content dataloading client">
         <div class="row bl-bg">
@@ -121,6 +101,16 @@
             </div>
         </div>
         <div class="row bl-bg" id="pdfdownload">
+            <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
+                <div class="pull-left">
+                    <div class="navbar-wrapper w-full">
+                        <div id="txtpageHeader" class="navbar-brand" style=" line-height:50px!important;">
+                            <img style="position:relative;top:0px;width: 30%;" src="data:image/png;base64,@ViewBag.Risebirdlogo" />
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
@@ -138,16 +128,25 @@
                                             }
                                             @if (Model.MeetingStatus == 4)
                                             {
-                                                <p>Interview Status : @interviewtatusvalue </p>
+                                                var meetingcolor = "";
+                                                @if (Model.InterviewStatus == 2)
+                                                {
+                                                    meetingcolor = "green";
+                                                }
+                                                else if (Model.InterviewStatus == 3)
+                                                {
+                                                    meetingcolor = "red";
+                                                }
+                                                <h4>Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h4>
                                             }
                                             else
                                             {
-                                                <p>Interview Status : @meestingstatusvalue</p>
+                                                <h4>Interview Status : <strong>@meestingstatusvalue</strong></h4>
                                             }
                                         </div>
                                         <hr />
                                         <div style="padding-top:20px">
-                                            <p><h3>Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></h3></p>
+                                            <p><h4>Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></h4></p>
                                         </div>
                                         <div>
                                             @if (Model.TechSkillReportCollection != null)
@@ -172,61 +171,36 @@
                                         </div>
                                     </div>
                                     <div class="row col-md-8" style="background-color:white;padding-top:20px;padding-left:20px;border-radius: 25px;">
-                                        <div class="col-md-6">
-                                            @if (Model.resumeLink != null && Model.resumeLink != "")
-                                            {
-                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
-                                            }
-                                            else
-                                            {
-                                                <h2>@Model.CandidateName</h2>
-                                            }
-                                            <h5>@Model.JDTiltle</h5>
-                                            <h3>@Model.interviewDate</h3>
-                                        </div>
-                                        <div class="col-md-6">
-                                            @if (Model.FeedbackAudioLink != null)
-                                            {
-                                                <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
-                                            }
-                                        </div>
+                                        @if (Model.resumeLink != null && Model.resumeLink != "")
+                                        {
+                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h3>@Model.CandidateName</h3></a>
+                                        }
+                                        else
+                                        {
+                                            <h3>@Model.CandidateName</h3>
+                                        }
+                                        @Html.HiddenFor(m => m.CandidateName)
+                                        <h6>@Model.JDTiltle</h6>
+                                        <h6>@Model.interviewDate</h6>
+                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                        {
+                                            <div style="clear:both"></div>
+                                            <div style="padding-top:20px">
+                                                <a href="@Model.VideoLink"><h4>Interview Video Link</h4></a>
+                                                <hr />
+                                            </div>
+                                        }
                                         <div style="clear:both"></div>
                                         <div style="padding-top:20px">
-                                            <h3>INTERVIEW VIDEO</h3>
+                                            <h4>Interviewer Comment</h4>
                                             <hr />
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="videoConplayer">
-                                                    @Html.HiddenFor(x => Model.VideoLink)
-                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                                    {
-                                                        int appendTime = 0;
-                                                        if (Model.ThumbnailTimeSeconds == 0)
-                                                        {
-                                                            appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                            if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
-                                                            {
-                                                                appendTime = (Model.VideoDuration * 60) - 60;
-                                                            }
-                                                            else if ((Model.VideoDuration * 60) < 120)
-                                                            {
-                                                                appendTime = 0;
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            appendTime = Model.ThumbnailTimeSeconds;
-                                                        }
-                                                        var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                        <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                            <source src='@Model.VideoLink' type="video/mp4">
-                                                        </video>
-                                                    }
-                                                </div>
+                                            <div>
+                                                <p>@Model.InterviewerComment</p>
                                             </div>
                                         </div>
                                         <div style="clear:both"></div>
                                         <div style="padding-top:20px">
-                                            <h3>QUESTIONS DISCUSSED</h3>
+                                            <h4>Questions Discussed</h4>
                                             <hr />
                                             <div>
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
@@ -247,14 +221,6 @@
                                                         }
                                                     </ul>
                                                 }
-                                            </div>
-                                        </div>
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h3>INTERVIEWER COMMENT</h3>
-                                            <hr />
-                                            <div>
-                                                <p>@Model.InterviewerComment</p>
                                             </div>
                                         </div>
                                     </div>
@@ -465,42 +431,6 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
-<script>
-    function getPDF() {
-        var interviewid = $("#InterviewId").val();
-        var irfid = $("#IRFId").val();
-        var url = "/Interview/GenerateTestReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
-        window.open(url, "_blank");
-    }
-    function GeneratePublicUrl(index) {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "block";
-        var urlcurrent = window.location.href;
-        if (index == 1) {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
-        }
-        else {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
-        }
-        $("#txtvideoUrls").text(urlcurrent);
-    }
-    function closePublicUrlShareModel() {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "none";
-    }
-    function copyToClipboard(element) {
-        var temp = $("<input>");
-        $("body").append(temp);
-        temp.val($(element).text()).select();
-        document.execCommand("copy");
-        temp.remove();
-        $('#special_text').text('Copied');
-    }
-</script>
-
 <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
 <script>
 
@@ -581,6 +511,9 @@
             document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
         }
     }
+    window.onload = function () {
+        getPDF();
+    }
 </script>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -590,3 +523,24 @@
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script src="~/js/Aadhaar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
+<script>
+    function getPDF() {
+        var d = new Date();
+        var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
+        var element = document.getElementById("pdfdownload");
+        var opt = {
+            margin: [0, 0, 9, 0], //top, left, buttom, right,
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            pagebreak: { mode: 'avoid-all' }
+        };
+        html2pdf(element, opt);
+        timeout(5000);
+    }
+    function timeout(index) {
+        setTimeout('', index);
+        window.setTimeout(function () { window.close(); }, 5000);
+    }
+</script>
