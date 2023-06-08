@@ -89,6 +89,7 @@ namespace Risebird.Entities.ViewModel
         public double PerMintuteRate { get; set; }
 
         public DateTime CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
 
         public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
@@ -194,11 +195,11 @@ namespace Risebird.Entities.ViewModel
         public string CategoryName { get; set; }
         [Display(Name = "Aadhaar Verification Required")]
         public bool IsAadhaarVerificationRequired { get; set; }
-        [Display(Name = "Check Candidate Availability")]
+        [Display(Name = "Check candidate availability")]
         public bool IsCandidateavailability { get; set; }
         [Display(Name = "Participant Waiting Notification")]
         public bool IsMeetingNotificationSend { get; set; }
-        [Display(Name = "Auto Cancel Candidate Interview")]
+        [Display(Name = "Auto cancel candidate interview")]
         public bool IsMeetingAutoCancelled { get; set; }
 
         public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
@@ -206,20 +207,27 @@ namespace Risebird.Entities.ViewModel
         public string ModifiedBy { get; set; }
         public string SMEAudioCommentLink { get; set; }
         public bool IsValidCustom { get; set; }
-
-        [Display(Name = "Lock Requirement")]
         public bool IsLocked { get; set; }
         [Display(Name = "Interview Duration")]
         public int InterviewDuration { get; set; }
         public SelectList InterviewDurationList { get; set; }
-        [Display(Name = "Fixed Interview Duration")]
+        [Display(Name = "Is Fixed Interview duration")]
         public bool IsFixedInterviewduration { get; set; }
 
         [DisplayName("Fixed Amount")]
         public int FixedAmount { get; set; }
         public bool IsNewSkillChannel { get; set; }
-        public bool? IsValidIRFFromTemplate { get; set; }
-
+        public bool IsDeleted { get; set; }
+        public double Discount { get; set; }
+        public string BussinessType { get; set; }
+        public int flagcount { get; set; }
+        public string Comment { get; set; }
+        public int idProgress { get; set; }
+        public bool EditIRFConfiguration { get; set; }
+        public bool IsClientMeetingAutoCancelled { get; set; }
+        public bool IsClientCandidateAvailablily { get; set; }
+        public bool IsClientMeetingNotificationSend { get; set; }
+        public int ClientInterviewDuration { get; set; }
 
     }
     public class InterviewerIds

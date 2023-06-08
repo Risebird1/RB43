@@ -11,7 +11,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -549,6 +551,266 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    IRFVm _resultVM = new IRFVm();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetSkillChannelDetailsForUpdate", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null)
+                        {
+                            _resultVM.IRFId = !string.IsNullOrEmpty(dt.Rows[0]["IRFId"].ToString()) ? dt.Rows[0]["IRFId"].ToString() : null;
+                            _resultVM.ClientName = !string.IsNullOrEmpty(dt.Rows[0]["ClientName"].ToString()) ? dt.Rows[0]["ClientName"].ToString() : null;
+                            _resultVM.JDTiltle = !string.IsNullOrEmpty(dt.Rows[0]["JDTiltle"].ToString()) ? dt.Rows[0]["JDTiltle"].ToString() : null;
+                            _resultVM.CompanyType = !string.IsNullOrEmpty(dt.Rows[0]["CompanyType"].ToString()) ? dt.Rows[0]["CompanyType"].ToString() : null;
+                            _resultVM.ClientId = !string.IsNullOrEmpty(dt.Rows[0]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["ClientId"]) : 0;
+                            _resultVM.JobCountry = !string.IsNullOrEmpty(dt.Rows[0]["JobCountry"].ToString()) ? dt.Rows[0]["JobCountry"].ToString() : null;
+                            _resultVM.StartDate = !string.IsNullOrEmpty(dt.Rows[0]["StartDate"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["StartDate"]) : new DateTime();
+                            _resultVM.EndDate = !string.IsNullOrEmpty(dt.Rows[0]["EndDate"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["EndDate"]) : new DateTime();
+                            _resultVM.JDLink = !string.IsNullOrEmpty(dt.Rows[0]["JDLink"].ToString()) ? dt.Rows[0]["JDLink"].ToString() : null;
+                            _resultVM.NoOfPosition = !string.IsNullOrEmpty(dt.Rows[0]["NoOfPosition"].ToString()) ? Convert.ToInt32(dt.Rows[0]["NoOfPosition"]) : 0;
+                            _resultVM.NoOfIntterview = !string.IsNullOrEmpty(dt.Rows[0]["NoOfIntterview"].ToString()) ? Convert.ToInt32(dt.Rows[0]["NoOfIntterview"]) : 0;
+                            _resultVM.RisebirdHr = !string.IsNullOrEmpty(dt.Rows[0]["RisebirdHr"].ToString()) ? Convert.ToInt32(dt.Rows[0]["RisebirdHr"]) : 0;
+                            _resultVM.PerMintuteRate = !string.IsNullOrEmpty(dt.Rows[0]["PerMintuteRate"].ToString()) ? Convert.ToDouble(dt.Rows[0]["PerMintuteRate"]) : 0;
+                            _resultVM.IsDeleted = !string.IsNullOrEmpty(dt.Rows[0]["IsDeleted"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsDeleted"]) : false;
+                            _resultVM.JobLevel = !string.IsNullOrEmpty(dt.Rows[0]["JobLevel"].ToString()) ? Convert.ToInt32(dt.Rows[0]["JobLevel"]) : null;
+                            _resultVM.TotalInvites = !string.IsNullOrEmpty(dt.Rows[0]["TotalInvites"].ToString()) ? Convert.ToInt32(dt.Rows[0]["TotalInvites"]) : 0;
+                            _resultVM.CalendlyLink = !string.IsNullOrEmpty(dt.Rows[0]["CalendlyLink"].ToString()) ? dt.Rows[0]["CalendlyLink"].ToString() : null;
+                            _resultVM.CreatedOn = !string.IsNullOrEmpty(dt.Rows[0]["CreatedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["CreatedOn"]) : new DateTime();
+                            _resultVM.TotalBudget = !string.IsNullOrEmpty(dt.Rows[0]["TotalBudget"].ToString()) ? Convert.ToInt32(dt.Rows[0]["TotalBudget"]) : 0;
+                            _resultVM.Discount = !string.IsNullOrEmpty(dt.Rows[0]["Discount"].ToString()) ? Convert.ToDouble(dt.Rows[0]["Discount"]) : 0;
+                            _resultVM.IsBiometricEnabled = !string.IsNullOrEmpty(dt.Rows[0]["IsBiometricEnabled"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsBiometricEnabled"]) : false;
+                            _resultVM.PriorityLevel = !string.IsNullOrEmpty(dt.Rows[0]["PriorityLevel"].ToString()) ? Convert.ToInt32(dt.Rows[0]["PriorityLevel"]) : null;
+                            _resultVM.IsPaused = !string.IsNullOrEmpty(dt.Rows[0]["IsPaused"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsPaused"]) : false;
+                            _resultVM.CompanyDetails = !string.IsNullOrEmpty(dt.Rows[0]["CompanyDetails"].ToString()) ? dt.Rows[0]["CompanyDetails"].ToString() : null;
+                            _resultVM.Comment = !string.IsNullOrEmpty(dt.Rows[0]["Comment"].ToString()) ? dt.Rows[0]["Comment"].ToString() : null;
+                            _resultVM.idProgress = !string.IsNullOrEmpty(dt.Rows[0]["idProgress"].ToString()) ? Convert.ToInt32(dt.Rows[0]["idProgress"]) : 0;
+                            _resultVM.BussinessType = !string.IsNullOrEmpty(dt.Rows[0]["BussinessType"].ToString()) ? dt.Rows[0]["BussinessType"].ToString() : null;
+                            _resultVM.Heuristicsscore = !string.IsNullOrEmpty(dt.Rows[0]["Heuristicsscore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["Heuristicsscore"]) : 0;
+                            _resultVM.PrimarySkillInvite = !string.IsNullOrEmpty(dt.Rows[0]["PrimarySkillInvite"].ToString()) ? dt.Rows[0]["PrimarySkillInvite"].ToString() : null;
+                            _resultVM.BillingOwner = !string.IsNullOrEmpty(dt.Rows[0]["BillingOwner"].ToString()) ? Convert.ToInt32(dt.Rows[0]["BillingOwner"]) : 0;
+                            _resultVM.AssessmentGroupId = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupId"].ToString()) ? dt.Rows[0]["AssessmentGroupId"].ToString() : null;
+                            _resultVM.IsQCRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsQCRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsQCRequired"]) : false;
+                            _resultVM.IsJoinabilitySelectabilityRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsJoinabilitySelectabilityRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsJoinabilitySelectabilityRequired"]) : false;
+                            _resultVM.IsGeneralSkillRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsGeneralSkillRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsGeneralSkillRequired"]) : false;
+                            _resultVM.AudioComment = !string.IsNullOrEmpty(dt.Rows[0]["AudioComment"].ToString()) ? dt.Rows[0]["AudioComment"].ToString() : null;
+                            _resultVM.CreatedFromTemplateId = !string.IsNullOrEmpty(dt.Rows[0]["CreatedFromTemplateId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["CreatedFromTemplateId"]) : 0;
+                            _resultVM.ModifiedOn = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["ModifiedOn"]) : null;
+                            _resultVM.MeetingPlatform = !string.IsNullOrEmpty(dt.Rows[0]["MeetingPlatform"].ToString()) ? dt.Rows[0]["MeetingPlatform"].ToString() : null;
+                            _resultVM.IsAadhaarVerificationRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsAadhaarVerificationRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAadhaarVerificationRequired"]) : false;
+                            _resultVM.IsCandidateavailability = !string.IsNullOrEmpty(dt.Rows[0]["IsCandidateavailability"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsCandidateavailability"]) : false;
+                            _resultVM.IsMeetingNotificationSend = !string.IsNullOrEmpty(dt.Rows[0]["IsMeetingNotificationSend"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsMeetingNotificationSend"]) : false;
+                            _resultVM.IsMeetingAutoCancelled = !string.IsNullOrEmpty(dt.Rows[0]["IsMeetingAutoCancelled"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsMeetingAutoCancelled"]) : false;
+                            _resultVM.IsLocked = !string.IsNullOrEmpty(dt.Rows[0]["IsLocked"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsLocked"]) : false;
+                            _resultVM.flagcount = !string.IsNullOrEmpty(dt.Rows[0]["flagcount"].ToString()) ? Convert.ToInt32(dt.Rows[0]["flagcount"]) : 0;
+                            _resultVM.InterviewDuration = !string.IsNullOrEmpty(dt.Rows[0]["InterviewDuration"].ToString()) ? Convert.ToInt32(dt.Rows[0]["InterviewDuration"]) : 0;
+                            _resultVM.IsFixedInterviewduration = !string.IsNullOrEmpty(dt.Rows[0]["IsFixedInterviewduration"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsFixedInterviewduration"]) : false;
+                            _resultVM.FixedAmount = !string.IsNullOrEmpty(dt.Rows[0]["FixedAmount"].ToString()) ? Convert.ToInt32(dt.Rows[0]["FixedAmount"]) : 0;
+                            _resultVM.IsNewSkillChannel = !string.IsNullOrEmpty(dt.Rows[0]["IsNewSkillChannel"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsNewSkillChannel"]) : false;
+                            _resultVM.ClientCompName = !string.IsNullOrEmpty(dt.Rows[0]["ClientCompName"].ToString()) ? dt.Rows[0]["ClientCompName"].ToString() : null;
+                            _resultVM.IsClientCandidateAvailablily = !string.IsNullOrEmpty(dt.Rows[0]["IsClientCandidateAvailablily"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsClientCandidateAvailablily"]) : false;
+                            _resultVM.IsClientMeetingNotificationSend = !string.IsNullOrEmpty(dt.Rows[0]["IsClientMeetingNotificationSend"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsClientMeetingNotificationSend"]) : false;
+                            _resultVM.IsClientMeetingAutoCancelled = !string.IsNullOrEmpty(dt.Rows[0]["IsClientMeetingAutoCancelled"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsClientMeetingAutoCancelled"]) : false;
+                            _resultVM.ClientInterviewDuration = !string.IsNullOrEmpty(dt.Rows[0]["ClientInterviewDuration"].ToString()) ? Convert.ToInt32(dt.Rows[0]["ClientInterviewDuration"]) : 0;
+
+                        }
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransSkill> transTechSkills = new List<TransSkill>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transTechSkills.Add(new TransSkill
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    SkillId = !string.IsNullOrEmpty(dt.Rows[i]["SkillId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillId"]) : 0,
+                                    LevelId = !string.IsNullOrEmpty(dt.Rows[i]["LevelId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["LevelId"]) : 0,
+                                    Weightage = !string.IsNullOrEmpty(dt.Rows[i]["Weightage"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Weightage"]) : 0,
+                                    Concepts = !string.IsNullOrEmpty(dt.Rows[i]["Concepts"].ToString()) ? dt.Rows[i]["Concepts"].ToString() : null,
+                                    Natureofquestion = !string.IsNullOrEmpty(dt.Rows[i]["Natureofquestion"].ToString()) ? dt.Rows[i]["Natureofquestion"].ToString() : null,
+                                    Timelimit = !string.IsNullOrEmpty(dt.Rows[i]["Timelimit"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Timelimit"]) : 0,
+                                    SkillName = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null,
+
+
+                                });
+                            }
+                            _resultVM.SkillCollection = (IList<TransSkill>)(transTechSkills);
+                        }
+                    }
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransSkillGeneral> transGeneralSkills = new List<TransSkillGeneral>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transGeneralSkills.Add(new TransSkillGeneral
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    Type = !string.IsNullOrEmpty(dt.Rows[i]["Type"].ToString()) ? dt.Rows[i]["Type"].ToString() : null,
+                                    Value = !string.IsNullOrEmpty(dt.Rows[i]["Value"].ToString()) ? dt.Rows[i]["Value"].ToString() : null,
+                                    LevelId = !string.IsNullOrEmpty(dt.Rows[i]["LevelId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["LevelId"]) : 0,
+                                    Weightage = !string.IsNullOrEmpty(dt.Rows[i]["Weightage"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Weightage"]) : 0,
+
+                                });
+                            }
+                            _resultVM.SkillGeneral = (IList<TransSkillGeneral>)(transGeneralSkills);
+                        }
+                    }
+                    if (dataset.Tables.Count > 3)
+                    {
+                        dt = dataset.Tables[3];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransJoinability> transJoinability = new List<TransJoinability>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transJoinability.Add(new TransJoinability
+                                {
+                                    //id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    Type = !string.IsNullOrEmpty(dt.Rows[i]["Type"].ToString()) ? dt.Rows[i]["Type"].ToString() : null,
+                                    Value = !string.IsNullOrEmpty(dt.Rows[i]["Value"].ToString()) ? dt.Rows[i]["Value"].ToString() : null,
+                                    LevelId = !string.IsNullOrEmpty(dt.Rows[i]["LevelId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["LevelId"]) : 0,
+                                    Weightage = !string.IsNullOrEmpty(dt.Rows[i]["Weightage"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Weightage"]) : 0,
+
+                                });
+                            }
+                            _resultVM.Joinability = (IList<TransJoinability>)(transJoinability);
+                        }
+                    }
+                    if (dataset.Tables.Count > 4)
+                    {
+                        dt = dataset.Tables[4];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransInterviewer> transInterviewer = new List<TransInterviewer>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transInterviewer.Add(new TransInterviewer
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    InterviewerId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewerId"]) : 0,
+                                    UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0,
+                                    PerSuccessRate = !string.IsNullOrEmpty(dt.Rows[i]["PerSuccessRate"].ToString()) ? Convert.ToInt32(dt.Rows[i]["PerSuccessRate"]) : 0,
+                                    IsActive = !string.IsNullOrEmpty(dt.Rows[i]["IsActive"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsActive"]) : false,
+                                    IsAvailable = !string.IsNullOrEmpty(dt.Rows[i]["IsAvailable"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAvailable"]) : false,
+                                    IsSMEVerified = !string.IsNullOrEmpty(dt.Rows[i]["IsSMEVerified"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsSMEVerified"]) : false,
+                                    Surcharge = !string.IsNullOrEmpty(dt.Rows[i]["Surcharge"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Surcharge"]) : 0,
+                                    PrimarySkill = !string.IsNullOrEmpty(dt.Rows[i]["PrimarySkill"].ToString()) ? dt.Rows[i]["PrimarySkill"].ToString() : null,
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    NickName = !string.IsNullOrEmpty(dt.Rows[i]["NickName"].ToString()) ? dt.Rows[i]["NickName"].ToString() : null,
+                                    ResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["ResumeLink"].ToString()) ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
+
+                                });
+                            }
+                            _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                        }
+                    }
+                    if (dataset.Tables.Count > 5)
+                    {
+                        dt = dataset.Tables[5];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransSelectability> transSelectability = new List<TransSelectability>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transSelectability.Add(new TransSelectability
+                                {
+                                    //id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    Type = !string.IsNullOrEmpty(dt.Rows[i]["Type"].ToString()) ? dt.Rows[i]["Type"].ToString() : null,
+                                    Value = !string.IsNullOrEmpty(dt.Rows[i]["Value"].ToString()) ? dt.Rows[i]["Value"].ToString() : null,
+                                    LevelId = !string.IsNullOrEmpty(dt.Rows[i]["LevelId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["LevelId"]) : 0,
+                                    Weightage = !string.IsNullOrEmpty(dt.Rows[i]["Weightage"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Weightage"]) : 0,
+
+                                });
+                            }
+                            _resultVM.Selectability = (IList<TransSelectability>)(transSelectability);
+                        }
+                    }
+                    if (dataset.Tables.Count > 6)
+                    {
+                        dt = dataset.Tables[6];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransHR> transHR = new List<TransHR>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transHR.Add(new TransHR
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    HRId = !string.IsNullOrEmpty(dt.Rows[i]["HRId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["HRId"]) : 0,
+                                    UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0
+                                    
+                                });
+                            }
+                            _resultVM.HRCollection = (IList<TransHR>)(transHR);
+                        }
+                    }
+                    if (dataset.Tables.Count > 7)
+                    {
+                        dt = dataset.Tables[7];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<TransClientUser> transClientUser = new List<TransClientUser>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                transClientUser.Add(new TransClientUser
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
+                                    ClientUserId = !string.IsNullOrEmpty(dt.Rows[i]["ClientUserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientUserId"]) : 0,
+                                    ClientRoleId = !string.IsNullOrEmpty(dt.Rows[i]["ClientRoleId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientRoleId"]) : 0,
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    uniqueid = !string.IsNullOrEmpty(dt.Rows[i]["uniqueid"].ToString()) ? dt.Rows[i]["uniqueid"].ToString() : null,
+                                    IRFName = !string.IsNullOrEmpty(dt.Rows[i]["IRFName"].ToString()) ? dt.Rows[i]["IRFName"].ToString() : null,
+                                    FirstName = !string.IsNullOrEmpty(dt.Rows[i]["FirstName"].ToString()) ? dt.Rows[i]["FirstName"].ToString() : null,
+                                    Role = !string.IsNullOrEmpty(dt.Rows[i]["Role"].ToString()) ? dt.Rows[i]["Role"].ToString() : null,
+                                    
+                                });
+                            }
+                            _resultVM.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                        }
+                    }
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         public IEnumerable<ResumeEvaluator> GetResumeEvaluators()
         {
