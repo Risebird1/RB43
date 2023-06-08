@@ -89,6 +89,7 @@ namespace Risebird.Entities.ViewModel
         public double PerMintuteRate { get; set; }
 
         public DateTime CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
 
         public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
@@ -216,6 +217,18 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Fixed Amount")]
         public int FixedAmount { get; set; }
         public bool IsNewSkillChannel { get; set; }
+        public bool IsDeleted { get; set; }
+        public double Discount { get; set; }
+        public string BussinessType { get; set; }
+        public int flagcount { get; set; }
+        public string Comment { get; set; }
+        public int idProgress { get; set; }
+        public bool EditIRFConfiguration { get; set; }
+        public bool IsClientMeetingAutoCancelled { get; set; }
+        public bool IsClientCandidateAvailablily { get; set; }
+        public bool IsClientMeetingNotificationSend { get; set; }
+        public int ClientInterviewDuration { get; set; }
+
     }
     public class InterviewerIds
     {
