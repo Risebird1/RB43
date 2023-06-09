@@ -6877,6 +6877,7 @@ namespace Risebird.Web.Controllers
                                 await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model);
 
                             }
+                            model.IsValidIRFFromTemplate = false;
                             return View(model);
                         }
                         string uploadedFileURL = string.Empty;
