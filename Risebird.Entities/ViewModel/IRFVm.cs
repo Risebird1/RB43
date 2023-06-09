@@ -228,6 +228,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientCandidateAvailablily { get; set; }
         public bool IsClientMeetingNotificationSend { get; set; }
         public int ClientInterviewDuration { get; set; }
+        public bool? IsValidIRFFromTemplate { get; set; }
 
     }
     public class InterviewerIds
