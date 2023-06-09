@@ -640,6 +640,7 @@
                                     </div>
 
                                     @Html.HiddenFor(m => m.AssessmentGroupId)
+                                    @Html.HiddenFor(m => m.AssessmentGroupName)
                                     @Html.HiddenFor(m => m.CreatedFromTemplateId)
                                     @*@Html.HiddenFor(m => m.JobCountry)*@
                                     @Html.HiddenFor(m => m.JobLevel)
@@ -847,7 +848,11 @@
 
     }
 
-    function ClientChanged(element) {
+    function ClientChanged(element = null) {
+        if(element == null)
+        {
+            element = document.getElementById("ClientId");
+        }
 
         var clientCompanyName = $(element).find("option:selected").text();
         var clientId = $(element).val();
@@ -1231,6 +1236,12 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
+        var isValid = @Html.Raw(Json.Serialize(Model.IsValidIRFFromTemplate));
+        if(isValid != null && isValid == false)
+        {
+            ClientChanged(null);
+        }
+
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
 
