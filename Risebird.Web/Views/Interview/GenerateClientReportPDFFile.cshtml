@@ -93,8 +93,6 @@
 }
 <link href="~/newassets/css/report.css" rel="stylesheet" />
 <div id="main-panel" style="display:none">
-
-
     <div class="content dataloading client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -108,7 +106,9 @@
                             <img style="position:relative;top:0px;width: 30%;" src="data:image/png;base64,@ViewBag.Risebirdlogo" />
                         </div>
                     </div>
-
+                </div>
+                <div class="pull-right" style="text-align:right!important">
+                    <img style="position:relative;top:0px;width: 30%;" src="data:image/png;base64,@ViewBag.ClientLogo" />
                 </div>
             </nav>
             <div class="col-md-12">
@@ -137,16 +137,16 @@
                                                 {
                                                     meetingcolor = "red";
                                                 }
-                                                <h4>Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h4>
+                                                <h6>Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
                                             }
                                             else
                                             {
-                                                <h4>Interview Status : <strong>@meestingstatusvalue</strong></h4>
+                                                <h6>Status : <strong>@meestingstatusvalue</strong></h6>
                                             }
                                         </div>
                                         <hr />
                                         <div style="padding-top:20px">
-                                            <p><h4>Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></h4></p>
+                                            <p style="font-size:18px">Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></p>
                                         </div>
                                         <div>
                                             @if (Model.TechSkillReportCollection != null)
@@ -173,34 +173,34 @@
                                     <div class="row col-md-8" style="background-color:white;padding-top:20px;padding-left:20px;border-radius: 25px;">
                                         @if (Model.resumeLink != null && Model.resumeLink != "")
                                         {
-                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h3>@Model.CandidateName</h3></a>
+                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h5>@Model.CandidateName</h5></a>
                                         }
                                         else
                                         {
-                                            <h3>@Model.CandidateName</h3>
+                                            <h5>@Model.CandidateName</h5>
                                         }
                                         @Html.HiddenFor(m => m.CandidateName)
-                                        <h6>@Model.JDTiltle</h6>
-                                        <h6>@Model.interviewDate</h6>
+                                        <p>@Model.JDTiltle</p>
+                                        <p>@Model.interviewDate</p>
                                         @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                         {
                                             <div style="clear:both"></div>
-                                            <div style="padding-top:20px">
-                                                <a href="@Model.VideoLink"><h4>Click Here For Interview Video</h4></a>
+                                            <div style="padding-top:10px">
+                                                <a href="@Model.VideoLink"><p style="font-size:16px">Click Here For Interview Video</p></a>
                                                 <hr />
                                             </div>
                                         }
                                         <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h4>Interviewer Comment</h4>
+                                        <div style="padding-top:10px">
+                                            <p style="font-size:18px">Interviewer Comment</p>
                                             <hr />
                                             <div>
                                                 <p>@Model.InterviewerComment</p>
                                             </div>
                                         </div>
                                         <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h4>Questions Discussed</h4>
+                                        <div style="padding-top:10px">
+                                            <p style="font-size:18px">Questions Discussed</p>
                                             <hr />
                                             <div>
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
@@ -530,7 +530,7 @@
         var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
         var element = document.getElementById("pdfdownload");
         var opt = {
-            margin: [0, 0, 9, 0], //top, left, buttom, right,
+            margin: [0, 0, 10, 0], //top, left, buttom, right,
             filename: filename,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
