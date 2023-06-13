@@ -21,7 +21,8 @@ declare @rate int
 if(@irfId is not null)
 Begin
 	set @rate = (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @irfId) 
-	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfId))
+	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfId) 
+	and CompanyType = (select CompanyType from IRF where id = @irfId))
 
 End
 Else

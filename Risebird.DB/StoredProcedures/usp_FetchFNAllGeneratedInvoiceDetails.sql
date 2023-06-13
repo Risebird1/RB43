@@ -30,8 +30,7 @@ left join TransEmergencyInterviewer tei on tei.IRFId=irf.id and tei.UserId=ip.Us
 left join TransQualityController tqi on tqi.IRFId=irf.id and tqi.UserId=ip.Userid   
 left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
 left join InterviewRatings clr on clr.Interviewid=im.id 
-left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and ((pm.PlanType='Standard' and IRF.Heuristicsscore=2)
-  or (pm.PlanType='Pro' and IRF.Heuristicsscore=4) or (pm.PlanType='Advanced' and IRF.Heuristicsscore=5))
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
 where ip.Interviewid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st     
 and isNull(im.interviewdate,ip.Date)<=@se)     
 Union       

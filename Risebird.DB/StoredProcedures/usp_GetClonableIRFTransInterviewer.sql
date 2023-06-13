@@ -24,7 +24,8 @@ set @templateCreatedFromIrfId = (select CreatedFromIRFId from ClonableSkillChann
 if(@templateCreatedFromIrfId is not null and @templateCreatedFromIrfId > 0)
 Begin
 	set @rate = (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @templateCreatedFromIrfId) 
-	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @templateCreatedFromIrfId))
+	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @templateCreatedFromIrfId)
+    and CompanyType = (select CompanyType from IRF where id = @templateCreatedFromIrfId))
 
 End
 

@@ -27,8 +27,7 @@ If (@flag=2)
   left join UserList ipul on ipul.EmailId=ip.Comment
   left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
   left join InterviewRatings clr on clr.Interviewid=im.id 
-  left join PlanTypeChargesMaster pm on pm.CountryType=ir.JobCountry and ((pm.PlanType='Standard' and ir.Heuristicsscore=2)
-  or (pm.PlanType='Pro' and ir.Heuristicsscore=4) or (pm.PlanType='Advanced' and ir.Heuristicsscore=5))
+  left join PlanTypeChargesMaster pm on pm.CountryType=ir.JobCountry and pm.CompanyType=ir.CompanyType and pm.PlanTypeEnumValue=ir.Heuristicsscore
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Advance') and ip.Interviewid!=0                    
   Union                     
   Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,
@@ -67,8 +66,7 @@ Else
   left join UserList ipul on ipul.EmailId=ip.Comment           
   left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
   left join InterviewRatings clr on clr.Interviewid=im.id 
-  left join PlanTypeChargesMaster pm on pm.CountryType=ir.JobCountry and ((pm.PlanType='Standard' and ir.Heuristicsscore=2)
-  or (pm.PlanType='Pro' and ir.Heuristicsscore=4) or (pm.PlanType='Advanced' and ir.Heuristicsscore=5))
+  left join PlanTypeChargesMaster pm on pm.CountryType=ir.JobCountry and pm.CompanyType=ir.CompanyType and pm.PlanTypeEnumValue=ir.Heuristicsscore
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Advance') and ip.Interviewid!=0                    
   union                     
   Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,
