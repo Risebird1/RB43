@@ -132,27 +132,48 @@ function ShowAmountIfChecked() {
     }
 }
 
-function UpdateInterviewerRate(planType = null, countryType = null, profile = null) {
-if (profile != null && profile != "Admin" ) {
-        if (planType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
+function UpdateInterviewerRate(planType = null, countryType = null, profile = null, companyType = null) {
+    if (profile != null && profile != "Admin") {
+        if (planType != null && companyType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
 
             //planType = $("#Heuristicsscore").val()
 
             if (planType == "2")//Standard
             {
-                surchargeMax = 100;
+                if (companyType == "1")//Product based company
+                {
+                    surchargeMax = 100;
+
+                }
+                else {
+                    surchargeMax = 100;
+                }
                 //surchargeMin = 0;
 
             }
             else if (planType == "4")//Pro
             {
-                surchargeMax = 200;
+                if (companyType == "1")//Product based company
+                {
+                    surchargeMax = 150;
+
+                }
+                else {
+                    surchargeMax = 200;
+                }
                 //surchargeMin = 101;
 
             }
             else if (planType == "5")//Advanced
             {
-                surchargeMax = 300;
+                if (companyType == "1")//Product based company
+                {
+                    surchargeMax = 200;
+
+                }
+                else {
+                    surchargeMax = 300;
+                }
                 //surchargeMin = 101;
             }
 
@@ -166,36 +187,38 @@ if (profile != null && profile != "Admin" ) {
         }
 
     }
-
-    
-    commonUpdateRate(planType, countryType);
-    //if (countryType == null) {
-    //    countryType = $("#JobCountry").val()
-    //}
-    //if (planType == null) {
-    //    planType = $("#Heuristicsscore").val()
-    //}
-
-    //if (planType != null && planType != '' && countryType != null && countryType != '') {
-    //    $.ajax({
-    //        type: "GET",
-    //        async: false,
-    //        url: "/IRF/GetRenewedInterviewerRate",
-    //        data: { 'planType': planType, 'countryType': countryType },
-    //        success: function (result) {
-    //            interviewerRate = result;
-    //        }
-    //    });
-    //}
+    commonUpdateRate(planType, countryType, companyType);
     var interviewersList = $('[id^="InterviewerCollection"][id$="PerSuccessRate"]');
     for (i = 0; i < interviewersList.length; i++) {
         $("#" + interviewersList[i].id).val(interviewerRate);
     }
+    //if (planType != null && companyType != null) {
+        
+    //}
+    //if (countryType == null) {
+    //    countryType = $("#JobCountry").val()
+    //}
+    //if (planType == null) {
+    //    planType = $("#Heuristicsscore").val()
+    //}
+
+    //if (planType != null && planType != '' && countryType != null && countryType != '') {
+    //    $.ajax({
+    //        type: "GET",
+    //        async: false,
+    //        url: "/IRF/GetRenewedInterviewerRate",
+    //        data: { 'planType': planType, 'countryType': countryType },
+    //        success: function (result) {
+    //            interviewerRate = result;
+    //        }
+    //    });
+    //}
+   
     
 
 }
-function UpdateInterviewerRateVariable(planType = null, countryType = null) {
-    commonUpdateRate(planType, countryType);
+function UpdateInterviewerRateVariable(planType = null, countryType = null, companyType = null) {
+    commonUpdateRate(planType, countryType, companyType);
     //if (countryType == null) {
     //    countryType = $("#JobCountry").val()
     //}
@@ -215,20 +238,22 @@ function UpdateInterviewerRateVariable(planType = null, countryType = null) {
     //    });
     //}
 }
-function commonUpdateRate(planType = null, countryType = null) {
+function commonUpdateRate(planType = null, countryType = null, companyType = null) {
     if (countryType == null) {
         countryType = $("#JobCountry").val()
     }
     if (planType == null) {
         planType = $("#Heuristicsscore").val()
     }
-
-    if (planType != null && planType != '' && countryType != null && countryType != '') {
+    if (companyType == null) {
+        companyType = $("#CompanyType").val()
+    }
+    if (planType != null && planType != '' && countryType != null && countryType != '' && companyType != null && companyType != '') {
         $.ajax({
             type: "GET",
             async: false,
             url: "/IRF/GetRenewedInterviewerRate",
-            data: { 'planType': planType, 'countryType': countryType },
+            data: { 'planType': planType, 'countryType': countryType, 'companyType': companyType },
             success: function (result) {
                 interviewerRate = result;
             }

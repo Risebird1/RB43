@@ -100,7 +100,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email);
         Task<int> GetInterviewerQCRate(int userId);
         Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null);
-        Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null);
+        Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null, int? companyType = null);
         Task<bool> IsQuestionUsedInReport(string question);
         Task<IEnumerable<TransSkill>> GetTechSkillswithWeightage(int id);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
