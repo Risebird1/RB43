@@ -13,7 +13,8 @@ GO
 CREATE PROCEDURE [dbo].[usp_GetRenewedInterviewerRate]          
 @planType varchar(25) = null,
 @countryType int = null,
-@irfId int  = null
+@irfId int  = null,
+@companyType int = null
 AS          
 Begin  
 declare @rate int
@@ -21,13 +22,14 @@ declare @rate int
 if(@irfId is not null)
 Begin
 	set @rate = (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @irfId) 
-	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfId) 
+	and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @irfId)
 	and CompanyType = (select CompanyType from IRF where id = @irfId))
+	 
 
 End
 Else
 Begin
-set @rate = (select Rate from PlanTypeChargesMaster where CountryType = @countryType and PlanType = @planType)
+set @rate = (select Rate from PlanTypeChargesMaster where CountryType = @countryType and PlanType = @planType and CompanyType = @companyType)
 End
 
 select @rate

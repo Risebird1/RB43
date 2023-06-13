@@ -195,8 +195,14 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line"/*, @onchange = "TechSkillChanged()" */})
-
+                                                            @if(Model.Profile == "Admin")
+                                                            {
+                                                                @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, null, 'Admin', this.value)"})
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, null, null, this.value)"})
+                                                            }
 
                                                             @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
 
@@ -2929,7 +2935,7 @@
 
 
     $(document).ready(function () {
-        document.getElementById('CompanyType').value = 2;
+        //document.getElementById('CompanyType').value = 2;
 
 
         //CheckQCRequired();

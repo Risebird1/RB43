@@ -2445,7 +2445,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null)
+        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null, int? companyType = null)
         {
             try
             {
@@ -2454,7 +2454,7 @@ namespace Risebird.Business
                 {
                     planTypeDesc = ((Heuristicsscorelevel)planType).GetDescription();
                 }
-                var rate = await _irfRepository.GetRenewedInterviewerRate(planTypeDesc, countryType);
+                var rate = await _irfRepository.GetRenewedInterviewerRate(planTypeDesc, countryType, null, companyType);
                 return rate;
             }
 
