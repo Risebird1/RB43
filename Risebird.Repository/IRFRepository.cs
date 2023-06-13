@@ -251,7 +251,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null, int? irfId = null)
+        public async Task<int> GetRenewedInterviewerRate(string planType = null, int? countryType = null, int? irfId = null, int? companyType = null)
         {
             try
             {
@@ -261,6 +261,7 @@ namespace Risebird.Repository
                     parameters.Add("@planType", planType);
                     parameters.Add("@countryType", countryType);
                     parameters.Add("@irfId", irfId);
+                    parameters.Add("@companyType", companyType);
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRenewedInterviewerRate", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();

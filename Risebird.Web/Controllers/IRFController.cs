@@ -1029,11 +1029,11 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null)
+        public async Task<int> GetRenewedInterviewerRate(int? planType, int? countryType = null, int? companyType = null)
         {
             try
             {
-                var rate = await _irfService.GetRenewedInterviewerRate(planType, countryType);
+                var rate = await _irfService.GetRenewedInterviewerRate(planType, countryType, companyType);
                 return rate;
 
             }
