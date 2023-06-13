@@ -3338,7 +3338,7 @@ namespace Risebird.Web.Controllers
                     
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-150), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), 2, emailid)).ToList();
                     }
                     else
                     {
@@ -3507,13 +3507,14 @@ namespace Risebird.Web.Controllers
                 {                    
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-150), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
                     }
                     else
                     {
                         candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(15), datatype, emailid)).ToList();
                     }
                 }
+                ViewBag.ClientName = client.ClientName;
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
