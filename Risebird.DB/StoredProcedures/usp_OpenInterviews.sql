@@ -29,7 +29,7 @@ inner join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail    
 join CandidatesMaster cm on cm.UserId = ulc.id    
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id    
-left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
 where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1   and  ul.IsActive=1
 END   
 
