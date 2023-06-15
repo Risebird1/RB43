@@ -184,11 +184,11 @@
                                         <div class="col-md-7">
                                             @if (Model.resumeLink != null && Model.resumeLink != "")
                                             {
-                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h3>@Model.CandidateName</h3></a>
                                             }
                                             else
                                             {
-                                                <h2>@Model.CandidateName</h2>
+                                                <h3>@Model.CandidateName</h3>
                                             }
                                             <h5>@Model.JDTiltle</h5>
                                             <h5>@Model.interviewDate</h5>
@@ -199,40 +199,43 @@
                                                 <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
                                             }
                                         </div>
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h3>Interview Video</h3>
-                                            <hr />
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="videoConplayer">
-                                                    @Html.HiddenFor(x => Model.VideoLink)
-                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                                    {
-                                                        int appendTime = 0;
-                                                        if (Model.ThumbnailTimeSeconds == 0)
+                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                        {
+                                            <div style="clear:both"></div>
+                                            <div style="padding-top:20px">
+                                                <h3>Interview Video</h3>
+                                                <hr />
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="videoConplayer">
+                                                        @Html.HiddenFor(x => Model.VideoLink)
+                                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                         {
-                                                            appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                            if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                            int appendTime = 0;
+                                                            if (Model.ThumbnailTimeSeconds == 0)
                                                             {
-                                                                appendTime = (Model.VideoDuration * 60) - 60;
+                                                                appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                                if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                                {
+                                                                    appendTime = (Model.VideoDuration * 60) - 60;
+                                                                }
+                                                                else if ((Model.VideoDuration * 60) < 120)
+                                                                {
+                                                                    appendTime = 0;
+                                                                }
                                                             }
-                                                            else if ((Model.VideoDuration * 60) < 120)
+                                                            else
                                                             {
-                                                                appendTime = 0;
+                                                                appendTime = Model.ThumbnailTimeSeconds;
                                                             }
+                                                            var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                            <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                                <source src='@Model.VideoLink' type="video/mp4">
+                                                            </video>
                                                         }
-                                                        else
-                                                        {
-                                                            appendTime = Model.ThumbnailTimeSeconds;
-                                                        }
-                                                        var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                        <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                            <source src='@Model.VideoLink' type="video/mp4">
-                                                        </video>
-                                                    }
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
                                         <div style="clear:both"></div>
                                         <div style="padding-top:20px">
                                             <h3>Interviewer Comment</h3>
