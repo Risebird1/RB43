@@ -612,10 +612,21 @@
                                                                                 </td>
                                                                                 @if (!item.RedoInterview)
                                                                                 {
-                                                                                    @if (!item.IsReportBlocked &&  (item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                                                    @if (!item.IsReportBlocked && (item.InterviewStatus == 4 || item.InterviewStatus == 2))
                                                                                     {
                                                                                         <td>
-                                                                                            <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
+                                                                                            <span id="selectedcandidate_8">
+                                                                                                <a target="_blank" href="@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true})" title="Report">
+                                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                                                        <span title="Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                                    </button>
+                                                                                                </a>
+                                                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId,isClient = true})">
+                                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="New Report">
+                                                                                                        <span title="New Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                                    </button>
+                                                                                                </a>
+                                                                                            </span>
                                                                                         </td>
                                                                                     }
                                                                                     else
@@ -662,8 +673,8 @@
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
                                                                                         <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-@*                                                                                        <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
-*@                                                                                        <span id="selectedcandidate_@item.imid" class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.candidateEmail', '@item.MobileNumber', '@item.imid', null, 'Candidate')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                                                                        @*                                                                                        <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                                                                *@                                                                                        <span id="selectedcandidate_@item.imid" class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.candidateEmail', '@item.MobileNumber', '@item.imid', null, 'Candidate')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
                                                                                     }
 
                                                                                 </td>
@@ -938,34 +949,34 @@
                                             @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
                                             @*<div id="myCallModal" class="modal  modal-bg">
-                                                <!-- Modal content -->
-                                                <div class="modal-dialog modal-lg" role="document">
-                                                    <div class="modal-content ">
-                                                        <div class="filheader">
-                                                            <div class="filavatar">
-                                                                <span>
+                                            <!-- Modal content -->
+                                            <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content ">
+                                            <div class="filheader">
+                                            <div class="filavatar">
+                                            <span>
 
 
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                                                                </span>
-                                                            </div>
-                                                            <h5 class="modal-title pull-left">Call Candidate !</h5>
-                                                        </div>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                                                        </button>
-                                                        <div class="modal-body">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                            </span>
+                                            </div>
+                                            <h5 class="modal-title pull-left">Call Candidate !</h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                            </button>
+                                            <div class="modal-body">
 
-                                                            <h5 class="modal-title text-center" id="callingLabel">Calling...</h5>
+                                            <h5 class="modal-title text-center" id="callingLabel">Calling...</h5>
 
 
-                                                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
 
-                                                        </div>
+                                            </div>
 
-                                                    </div>
+                                            </div>
 
-                                                </div>
+                                            </div>
                                             </div>*@
 
 
@@ -1523,7 +1534,18 @@
             else { html += '<td></td>'; } if ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 8) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
             html += '<td class="interview-com">'; html += ' <div id="section">'; if (data[i].interviewerComment != null && data[i].interviewerComment != "") { if (data[i].interviewerComment.length > 28) { html += ' <div class="article">'; html += ' <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 28) + '</p>'; html += '<p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(28, data[i].interviewerComment.length - 28) + '</p>'; html += '</div>'; } else { html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>'; } }
             else { html += '<div></div>'; } html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>'; html += '</div>'; html += ' </td>';
-            if (!data[i].IsReportBlocked && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2)) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; }
+            if (!data[i].IsReportBlocked && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2)) 
+            { 
+                html += '<td><a target="_blank" href="/Client/Report?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient = true" title="Report">';
+                html += '<button class="mdc-fab app-fab--absolute" aria-label="Report">';
+                html += '<span title="Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
+                html += '</button>';
+                html += '</a>';
+                html += '<a target="_blank" href="/Interview/ClientReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient = true">';
+                html += '<button class="mdc-fab app-fab--absolute" aria-label="New Report">';
+                html += '<span title="New Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>';
+                html += '</button></a></td>';
+            }
             else { html += '   <td>No Report</td>'; }
             html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
             html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>';
@@ -1749,7 +1771,7 @@
     function OpenRedoFormModel(interviewid, interviewstatus) {
         $.ajax({
             url: '/Interview/RedoInterviewDetails',
-            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus,'type':'ClientSelect' },
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus, 'type': 'ClientSelect' },
             success: function (data) {
                 $('#divredoInterview').html('');
                 $('#divredoInterview').html(data);

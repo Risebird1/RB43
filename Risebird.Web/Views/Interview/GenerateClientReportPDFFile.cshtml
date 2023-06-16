@@ -260,6 +260,7 @@
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
+            <div class="col-md-12" style="text-align:center">---------------------------*** END OF THE REPORT ***---------------------------</div>
         </div>
         <!-- end row -->
 
@@ -334,30 +335,6 @@
     </div>
 </div>
 
-<div id="QuestionNotificationModelPopup" class="modal modal-bg" style="z-index:5">
-    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="mdc-fab__icon material-icons">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Interview Question Missing Alert</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeQuestionCollectionNotification()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div style="padding:10px">
-                    Questions are not present for this interview, <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a> to add questions and then refresh the report before fill the report.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
-
 <script src="~/js/ModalFormServerValidation.js"></script>
 @if (ViewBag.Message != null)
 {
@@ -375,27 +352,6 @@
             }
         }
     </script>
-}
-@if (ViewBag.profile == "Client")
-{
-    <script>
-        openSecureReportNotificationModel();
-    </script>
-}
-@if (ViewBag.profile == "Interviewer")
-{
-    @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
-    {
-        <script>
-            function closeQuestionCollectionNotification() {
-                document.getElementById("QuestionNotificationModelPopup").style.display = "none";
-            }
-            function OpenQuestionCollectionNotification() {
-                document.getElementById("QuestionNotificationModelPopup").style.display = "block";
-            }
-            OpenQuestionCollectionNotification();
-        </script>
-    }
 }
 
 <script>

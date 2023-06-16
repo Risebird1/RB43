@@ -430,16 +430,17 @@ namespace Risebird.Business
                 model.MeetingPlatform = details.MeetingPlatform;
                 model.IsAadhaarVerificationRequired = details.IsAadhaarVerificationRequired;
                 model.Heuristicsscore = details.Heuristicsscore;
-                if(details.CompanyType == "2")//Service
-                {
-                    model.CompanyType = details.CompanyType;
+                model.CompanyType = details.CompanyType;
+                //if(details.CompanyType == "2")//Service
+                //{
+                //    model.CompanyType = details.CompanyType;
 
-                }
-                else
-                {
-                    model.CompanyType = "2";
+                //}
+                //else
+                //{
+                //    model.CompanyType = "2";
 
-                }
+                //}
                 model.JobCountry = details.JobCountry;
 
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);

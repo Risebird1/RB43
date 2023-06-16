@@ -10,7 +10,7 @@
 @{
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
 
     var meetingStatusList = new List<SelectListItem>();
     meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
@@ -92,7 +92,7 @@
     </script>
 }
 <link href="~/newassets/css/report.css" rel="stylesheet" />
-<div class="main-panel" id="main-panel">
+<div @*class="main-panel"*@ id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -181,58 +181,61 @@
                                         </div>
                                     </div>
                                     <div class="row col-md-8" style="background-color:white;padding-top:20px;padding-left:20px;border-radius: 25px;">
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             @if (Model.resumeLink != null && Model.resumeLink != "")
                                             {
-                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h3>@Model.CandidateName</h3></a>
                                             }
                                             else
                                             {
-                                                <h2>@Model.CandidateName</h2>
+                                                <h3>@Model.CandidateName</h3>
                                             }
                                             <h5>@Model.JDTiltle</h5>
                                             <h5>@Model.interviewDate</h5>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-5">
                                             @if (Model.FeedbackAudioLink != null)
                                             {
                                                 <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
                                             }
                                         </div>
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h3>Interview Video</h3>
-                                            <hr />
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="videoConplayer">
-                                                    @Html.HiddenFor(x => Model.VideoLink)
-                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                                    {
-                                                        int appendTime = 0;
-                                                        if (Model.ThumbnailTimeSeconds == 0)
+                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                        {
+                                            <div style="clear:both"></div>
+                                            <div style="padding-top:20px">
+                                                <h3>Interview Video</h3>
+                                                <hr />
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="videoConplayer">
+                                                        @Html.HiddenFor(x => Model.VideoLink)
+                                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                         {
-                                                            appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                            if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                            int appendTime = 0;
+                                                            if (Model.ThumbnailTimeSeconds == 0)
                                                             {
-                                                                appendTime = (Model.VideoDuration * 60) - 60;
+                                                                appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                                if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                                {
+                                                                    appendTime = (Model.VideoDuration * 60) - 60;
+                                                                }
+                                                                else if ((Model.VideoDuration * 60) < 120)
+                                                                {
+                                                                    appendTime = 0;
+                                                                }
                                                             }
-                                                            else if ((Model.VideoDuration * 60) < 120)
+                                                            else
                                                             {
-                                                                appendTime = 0;
+                                                                appendTime = Model.ThumbnailTimeSeconds;
                                                             }
+                                                            var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                            <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                                <source src='@Model.VideoLink' type="video/mp4">
+                                                            </video>
                                                         }
-                                                        else
-                                                        {
-                                                            appendTime = Model.ThumbnailTimeSeconds;
-                                                        }
-                                                        var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                        <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                            <source src='@Model.VideoLink' type="video/mp4">
-                                                        </video>
-                                                    }
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
                                         <div style="clear:both"></div>
                                         <div style="padding-top:20px">
                                             <h3>Interviewer Comment</h3>
@@ -374,30 +377,6 @@
     </div>
 </div>
 
-<div id="QuestionNotificationModelPopup" class="modal modal-bg" style="z-index:5">
-    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="mdc-fab__icon material-icons">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Interview Question Missing Alert</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeQuestionCollectionNotification()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div style="padding:10px">
-                    Questions are not present for this interview, <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a> to add questions and then refresh the report before fill the report.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
-
 <script src="~/js/ModalFormServerValidation.js"></script>
 @if (ViewBag.Message != null)
 {
@@ -415,27 +394,6 @@
             }
         }
     </script>
-}
-@if (ViewBag.profile == "Client")
-{
-    <script>
-        openSecureReportNotificationModel();
-    </script>
-}
-@if (ViewBag.profile == "Interviewer")
-{
-    @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
-    {
-        <script>
-            function closeQuestionCollectionNotification() {
-                document.getElementById("QuestionNotificationModelPopup").style.display = "none";
-            }
-            function OpenQuestionCollectionNotification() {
-                document.getElementById("QuestionNotificationModelPopup").style.display = "block";
-            }
-            OpenQuestionCollectionNotification();
-        </script>
-    }
 }
 
 <script>
