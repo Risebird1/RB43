@@ -79,7 +79,7 @@ and im.confirmationStatus=1 and IsNull(ca.IsProctor,0)=0
   
 Update ip set ip.Points=tns.Points  
 Output INSERTED.interviewid as id,INSERTED.Userid into @UpdatedNoShowInterview  
-from InterviewPoints ip join @NoShowInterview tns on ip.InterviewerId=tns.id and ip.userid=tns.Userid and ip.Type='Interview' and Status='Pending'  
+from InterviewPoints ip join @NoShowInterview tns on ip.InterviewId=tns.id and ip.userid=tns.Userid and ip.Type='Interview' and Status='Pending'  
   
 Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount)               
 Select im.id as Interviewid,ul.id as userid,tns.Points as Points,'Interview' as Type,im.candidateEmail as Comment,'Pending' as Status,GETDATE() as Date,0 as InterviewerId,0 as PaymentHistoryId,0 as PenaltyAmount  
@@ -101,6 +101,5 @@ and ic.MeetingStatus=5 and ip.Type='Penalty' and ip.Comment like '%Late Report%'
 and Type='Interview')and Type='Penalty' and Comment like '%Late Report%'            
 --End: Will Delete after 15 days              
 END  
-  
 
 GO

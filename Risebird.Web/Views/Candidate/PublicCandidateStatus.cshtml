@@ -107,11 +107,12 @@
     }
 
     /*.mob_h {
-                            display: none !important
-                        }*/
+                                                display: none !important
+                                            }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
+
     .modal.in {
         background-color: rgba(0,0,0,0.5);
     }
@@ -139,34 +140,34 @@
 
                     <div class="pull-right">
                         <div>
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                    <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
-                                </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
+                            </button>
                             @if (ViewBag.ClientRole != "Client Admin")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                                     <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
                                 </button>
                                 @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
-                                </button>*@
+                            <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
+                            </button>*@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                     <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                                 </button>
                                 @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
-                                </button>*@
+                            <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
+                            </button>*@
                             }
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                    <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
-                                </button>
+                                <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
+                            </button>
                             <span>
-                                    <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
+                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
 
-                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                        <div class="mdc-button__ripple"></div>
-                                    </button>
-                                </span>
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            </span>
                             <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
 
 
@@ -358,9 +359,9 @@
                                                                 {
                                                                     var backcolor = "";
                                                                     @*@if (item.reportcount > 1)
-                                                                        {
-                                                                        backcolor = "#ea8611e3";
-                                                                        }*@
+                                                                {
+                                                                backcolor = "#ea8611e3";
+                                                                }*@
                                                                     <tr style="background-color:@backcolor">
                                                                         <td class="cadName text-left pl15">
                                                                             @if (item.CandidateName != null && item.CandidateName != "")
@@ -451,7 +452,7 @@
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         <td>@item.ProfileSource</td>
                                                                         <td>
-                                                                            @if(item.MailCount != 0)
+                                                                            @if (item.MailCount != 0)
                                                                             {
                                                                                 <div class="row">
                                                                                     <a href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
@@ -459,7 +460,7 @@
                                                                                     </a>
                                                                                 </div>
                                                                             }
-                                                                            @if(item.CallsCount != 0)
+                                                                            @if (item.CallsCount != 0)
                                                                             {
                                                                                 <div class="row">
                                                                                     <a href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
@@ -467,8 +468,8 @@
                                                                                     </a>
                                                                                 </div>
                                                                             }
-                                                                            
-                                                                            @if(item.WhatsappCount != 0)
+
+                                                                            @if (item.WhatsappCount != 0)
                                                                             {
                                                                                 <div class="row">
                                                                                     <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
@@ -476,15 +477,15 @@
                                                                                     </a>
                                                                                 </div>
                                                                             }
-                                                                            
+
                                                                         </td>
                                                                         @*<td>@item.NickName</td>*@
                                                                         <td>
                                                                             @if (item.CurrentStatus != "Scheduled")
                                                                             {
                                                                                 @*<button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                                                    <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                                    </button>*@
+                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                        </button>*@
                                                                                 <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
                                                                                     <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                 </a>
@@ -506,10 +507,10 @@
                                                                                 </span>
                                                                             </button>
                                                                             @*<button aria-label="Rate Interviewer" style="border:0px;background:none">
-                                                                                <span onclick="openpopUpRating('@item.CandidateName','@item.InterviewId')" title="Rate Interviewer">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
-                                                                                </span>
-                                                                                </button>*@
+                                                                        <span onclick="openpopUpRating('@item.CandidateName','@item.InterviewId')" title="Rate Interviewer">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
+                                                                        </span>
+                                                                        </button>*@
                                                                             @{
                                                                                 bool allowClientAction = false; //allow client action to remove or shortlist an interviewer
                                                                                 if (!string.IsNullOrEmpty(ViewBag.emailid))
@@ -518,9 +519,9 @@
                                                                                 }
                                                                             }
                                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Rate Interviewer" style="top:2px"
-                                                                                    data-toggle="ajax-modal" data-target="#addComment"
-                                                                                    data-interviewdate="@item.interviewDate"
-                                                                                    data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
+                                                                                data-toggle="ajax-modal" data-target="#addComment"
+                                                                                data-interviewdate="@item.interviewDate"
+                                                                                data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
                                                                                 <span title="Rate Interviewer" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-star"></i></span>
                                                                             </button>
                                                                             @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
@@ -532,22 +533,31 @@
                                                                                 </button>
                                                                             }
                                                                             @*@if (item.IsRedoInterview && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8))
-                                                                                {
-                                                                                    <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
-                                                                                        <span onclick="OpenRedoFormModel('@item.InterviewId','@item.CurrentStatus')" title="ReDo Interview" class="mdc-fab__icon material-icons">
-                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                                                                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                                                                                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                                                                                            </svg>
-                                                                                        </span>
-                                                                                    </button>
-                                                                                }*@
+                                                                        {
+                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                        <span onclick="OpenRedoFormModel('@item.InterviewId','@item.CurrentStatus')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                        </svg>
+                                                                        </span>
+                                                                        </button>
+                                                                        }*@
                                                                         </td>
                                                                         <td>
-                                                                            @if (!item.IsReportBlocked &&( (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
+                                                                            @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
                                                                             {
-
-                                                                                <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })'" title="Feedback Report">Report</a>
+                                                                                @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
+                                                                                <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
+                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                    </button>
+                                                                                </a>
+                                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="New Feedback Report">
+                                                                                        <span title="New Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                    </button>
+                                                                                </a>
                                                                             }
                                                                             else
                                                                             {
@@ -830,9 +840,9 @@
 <script src="~/js/common.js"></script>
 <script>
     $(document).on('hidden.bs.modal', function (event) {
-      if ($('.modal:visible').length) {
-        $('body').addClass('modal-open');
-      }
+        if ($('.modal:visible').length) {
+            $('body').addClass('modal-open');
+        }
     });
     $(document).ready(function () {
         if ($("#txtVideostatus").val() == "Public") {
@@ -1049,8 +1059,7 @@
     function callCandidate(phoneNumber) {
         var params = { "phoneNumber": phoneNumber };
 
-        if(phoneNumber !=null && phoneNumber.length >= 9)
-        {
+        if (phoneNumber != null && phoneNumber.length >= 9) {
             Twilio.Device.connect(params);
         }
     }
@@ -1109,7 +1118,7 @@
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, cancel it!',
-            cancelButtonText:'No',
+            cancelButtonText: 'No',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
@@ -1117,7 +1126,7 @@
                         type: 'POST',
                         data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
                         success: function (data) {
-                            if (data != null && data.toLowerCase().includes('success') ) {
+                            if (data != null && data.toLowerCase().includes('success')) {
                                 resolve(true);
                             }
                             else {
@@ -1272,7 +1281,14 @@
             html += '<td>';
             if (data[i].statusValue == "Meeting Status") {
                 if (!data[i].isReportBlocked && ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8) && (data[i].confirmationStatus == 1))) {
-                    html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true&actiontype=Candidate" title="Feedback Report">Report</a>';
+                    html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true&actiontype=Candidate" title="Feedback Report">';
+                    html += '<button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">';
+                    html += '<span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
+                    html += '</button></a>';
+                    html += '<a target="_blank" href="/Interview/ClientReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true">';
+                    html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" >';
+                    html += '<span title="Client Interview Report" class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class="bi bi-file-earmark-ruled" viewBox = "0 0 16 16" > <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /> </svg></span>';
+                    html += '</button></a>';
                 }
                 else {
                     html += '<p></p>';

@@ -194,7 +194,9 @@ namespace Risebird.Entities.Enum
         [Description("Product")]
         Product = 1,
         [Description("Service")]
-        Service = 2
+        Service = 2,
+        [Description("Premium")]
+        Premium = 3
     }
 
     public enum JobLevels
