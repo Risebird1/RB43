@@ -39,7 +39,7 @@ select ti.Id, ti.ClonableIRFId, ti.InterviewerId, ti.UserId, @rate as PerSuccess
 join  TransClonableIRFInterviewer ti on ti.UserId=c.UserId
 join InterviewerProfile ipr on ipr.UserId = ti.UserId
 join UserList ul on ul.id = ti.UserId
-where ClonableIRFId=@id
+where ClonableIRFId=@id and ul.IsActive = 1
 
 End
 
