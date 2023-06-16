@@ -1245,6 +1245,9 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        var interviewerRate = 0;
+
         var isValid = @Html.Raw(Json.Serialize(Model.IsValidIRFFromTemplate));
         if(isValid != null && isValid == false)
         {
