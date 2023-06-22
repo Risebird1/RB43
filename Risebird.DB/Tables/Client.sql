@@ -19,7 +19,9 @@ CREATE TABLE [dbo].[Client](
             [IsMeetingAutoCancelled] [bit] NULL,
             [IsQCRequired] [bit] NULL,
             [IsRedoInterview] [bit] NULL,
-            [IsClientCancelInterview] [bit] NULL
+            [IsClientCancelInterview] [bit] NULL,
+            [PaymentTerm] [int] NULL,
+            [GSTApplicable] [bit] NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -195,6 +197,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add IsClientCancelInterview bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PaymentTerm')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add PaymentTerm int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'GSTApplicable')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add GSTApplicable bit
 END
 END
 

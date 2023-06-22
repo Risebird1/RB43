@@ -28,7 +28,9 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @IsMeetingAutoCancelled bit,
 @IsQCRequired bit,
 @IsRedoInterview bit,
-@IsClientCancelInterview bit
+@IsClientCancelInterview bit,
+@PaymentTerm int,
+@GSTApplicable bit
 AS          
 Begin          
  Declare @Clientid int        
@@ -51,7 +53,9 @@ Begin
  ,[IsMeetingAutoCancelled]
  ,[IsQCRequired]
  ,[IsRedoInterview]
- ,[IsClientCancelInterview])        
+ ,[IsClientCancelInterview]
+ ,[PaymentTerm]
+ ,[GSTApplicable])        
      VALUES          
      (@clientName          
      ,@clientDescr          
@@ -69,7 +73,9 @@ Begin
   ,@IsMeetingAutoCancelled
   ,@IsQCRequired
   ,@IsRedoInterview
-  ,@IsClientCancelInterview)          
+  ,@IsClientCancelInterview
+  ,@PaymentTerm
+  ,@GSTApplicable)          
       
 set @Clientid=SCOPE_IDENTITY()
 Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32

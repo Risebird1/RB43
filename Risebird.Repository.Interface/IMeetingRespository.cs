@@ -228,7 +228,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration);
         Task<IEnumerable<ZoomMeetingsToBeDeleted>> GetZoomMeetingsToBeDeleted();
         Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid);
-        Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization);
+        Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization, int invoicesubmit);
         Task<bool> UpdateSingleParticipantFlagForMeeting();
         Task<IEnumerable<CommonInterviewDetailsVM>> GetUpcomingInterviewsCandidates();
         Task<List<string>> FetchCandidateZoomMeetingsIdForCancel();
@@ -253,5 +253,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId);
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt);
+        Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
     }
 }
