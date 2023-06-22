@@ -3566,11 +3566,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization)
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization, int invoicesubmit)
         {
             try
             {
-                var result = await _meetingRespository.SaveRevenueStatusDetails(clientid, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, Emailid, invoicerealization);
+                var result = await _meetingRespository.SaveRevenueStatusDetails(clientid, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, Emailid, invoicerealization, invoicesubmit);
                 return result;
             }
             catch (Exception e)
@@ -3851,6 +3851,19 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month)
+        {
+            try
+            {
+                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid,stdate, endate, year, month);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

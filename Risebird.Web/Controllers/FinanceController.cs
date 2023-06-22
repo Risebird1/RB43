@@ -1942,6 +1942,26 @@ namespace Risebird.Web.Controllers
                     foreach (var item in model)
                     {
                         totalamount = totalamount + (item.TotalCount * item.PerInterviewRate);
+                        if (item.GSTApplicable)
+                        {
+                            item.GST = "Yes";
+                            item.GSTAmount = (item.TotalCount * item.PerInterviewRate * 18) / 100;
+                        }
+                        else
+                        {
+                            item.GST = "No";
+                            item.GSTAmount = 0;
+                        }
+                        item.SystemInvoiceAmount = item.GSTAmount + (item.TotalCount * item.PerInterviewRate);
+                        item.TDSAmount = (item.TotalCount * item.PerInterviewRate * 10) / 100;
+                        if (item.invoicerealization == 1)
+                        {
+                            item.PaymentStatus = "Received";
+                        }
+                        else
+                        {
+                            item.PaymentStatus = "Pending";
+                        }
                     }
                     ViewBag.TotalRevenue = totalamount;
                     if (model != null)
@@ -1962,6 +1982,9 @@ namespace Risebird.Web.Controllers
                     var relizationstatus = from Invoicerealized s in Enum.GetValues(typeof(Invoicerealized))
                                            select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.RelizationStatus = new SelectList(relizationstatus, "ID", "Name");
+                    var submitionstatus = from Invoicesubmition s in Enum.GetValues(typeof(Invoicesubmition))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.SubmitionStatus = new SelectList(submitionstatus, "ID", "Name");
                     return View(model);
                 }
                 else
@@ -2104,10 +2127,10 @@ namespace Risebird.Web.Controllers
             {
                 model = new FnRevenueVM();
             }
-            return Json(new { currentStatus = model.CurrentStatus, poPending = model.POPendingAmount, invoiceamount = model.InvoiceAmount, invoicerealization = model.invoicerealization });
+            return Json(new { currentStatus = model.CurrentStatus, poPending = model.POPendingAmount, invoiceamount = model.InvoiceAmount, invoicerealization = model.invoicerealization, invoiceSubmitted = model.invoiceSubmitted });
         }
         [HttpPost]
-        public async Task<JsonResult> SaveRevenueStatusDetails(int id, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, int invoicerealization)
+        public async Task<JsonResult> SaveRevenueStatusDetails(int id, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, int invoicerealization, int invoicesubmit)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2121,7 +2144,7 @@ namespace Risebird.Web.Controllers
                 {
                     invoiceamount = 0;
                 }
-                var model = await _meetingService.SaveRevenueStatusDetails(id, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, emailid, invoicerealization);
+                var model = await _meetingService.SaveRevenueStatusDetails(id, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, emailid, invoicerealization, invoicesubmit);
                 if (model)
                 {
                     return Json("Save Successfully!");
@@ -2131,6 +2154,111 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail to save, Please relogin again!");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> CompletedInterviewExcelById(int id, string year, int month)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Completed Interviews");
+            //string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_CompletedInterview.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance")
+                    {
+                        int curyear = Convert.ToInt32(year);
+                        DateTime stdate = new DateTime(curyear, month, 1);
+                        DateTime endate = stdate.AddMonths(1);
+                        var model = await _meetingService.FetchCompletedInterviewsByClientId(id, stdate, endate, year, month);
+                        var client = model.FirstOrDefault().Client;
+                        fileName = "Risebird" + "_" + client + DateTime.Now.ToString("dd/MM/yyyy") + "_CompletedInterview.xlsx";
+                        int startColumn = 1; int endColumn = 15;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 15;
+                        }
+                        Sheet.Cells[1, 1].Value = "Interview Date";
+                        Sheet.Cells[1, 2].Value = "Candidate Email";
+                        Sheet.Cells[1, 3].Value = "Candidate Name";
+                        Sheet.Cells[1, 4].Value = "Meeting Status";
+                        Sheet.Cells[1, 5].Value = "Interview Status";
+                        Sheet.Cells[1, 6].Value = "Interviewer Comment";
+                        Sheet.Cells[1, 7].Value = "Video Link";
+                        Sheet.Cells[1, 8].Value = "Client HR";
+                        int i = 2;
+                        if (model.Count() > 0)
+                        {
+                            foreach (var item in model)
+                            {
+                                if (item.InterviewStatus.HasValue)
+                                {
+                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                }
+                                if (item.MeetingStatus.HasValue)
+                                {
+                                    item.MeetingStatusStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+                                }
+                                Sheet.Cells[i, 1].Value = item.interviewDate;
+                                Sheet.Cells[i, 2].Value = item.candidateEmail;
+                                Sheet.Cells[i, 3].Value = item.candidateName;
+                                Sheet.Cells[i, 4].Value = item.MeetingStatusStatusDesc;
+                                Sheet.Cells[i, 5].Value = item.intervieweStatusStatDesc;
+                                Sheet.Cells[i, 6].Value = item.InterviewerComment;
+                                if (!string.IsNullOrEmpty(item.VideoLink))
+                                {
+                                    try
+                                    {
+                                        Sheet.Cells[i, 7].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 7].Value = "Video Link";
+                                        Sheet.Cells[i, 7].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        Sheet.Cells[i, 7].Value = "No Video";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 7].Value = "No Video";
+                                }
+                                Sheet.Cells[i, 8].Value = item.ClientHrContact;
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "No data available in table !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
     }
