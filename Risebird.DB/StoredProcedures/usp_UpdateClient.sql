@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_UpdateClient]          
+Create PROCEDURE [dbo].[usp_UpdateClient]          
 @id int,          
 @clientName varchar(150),          
 @clientDescr varchar(250),          
@@ -27,7 +27,9 @@ CREATE PROCEDURE [dbo].[usp_UpdateClient]
 @IsMeetingAutoCancelled bit,
 @IsQCRequired bit,
 @IsRedoInterview bit,
-@IsClientCancelInterview bit
+@IsClientCancelInterview bit,
+@PaymentTerm int,
+@GSTApplicable bit
 AS          
 Begin          
       
@@ -53,6 +55,8 @@ SET
   ,[IsQCRequired]=@IsQCRequired
   ,[IsRedoInterview]=@IsRedoInterview
   ,[IsClientCancelInterview]=@IsClientCancelInterview
+  ,[PaymentTerm]=@PaymentTerm
+  ,[GSTApplicable]=@GSTApplicable
 WHERE          
       Id = @id          
 End     

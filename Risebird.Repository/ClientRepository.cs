@@ -219,6 +219,15 @@ namespace Risebird.Repository
             parameters.Add("@IsQCRequired", entity.IsQCRequired);
             parameters.Add("@IsRedoInterview", entity.IsRedoInterview);
             parameters.Add("@IsClientCancelInterview", entity.IsClientCancelInterview);
+            parameters.Add("@PaymentTerm", entity.PaymentTerm);
+            if (entity.GSTApplicable == 1)
+            {
+                parameters.Add("@GSTApplicable", true);
+            }
+            else
+            {
+                parameters.Add("@GSTApplicable", false);
+            }
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)

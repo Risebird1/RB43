@@ -39,3 +39,140 @@
 .reportdropdown:hover .reportdropdown-content {
     display: block;
 }
+
+.skillBackground {
+    color: #000 !important;
+    background-color: #f1f1f1 !important
+}
+
+.skill-round-xlarge {
+    border-radius: 3px;
+}
+
+.skill-small {
+    font-size: 11px !important
+}
+
+.skill-center {
+    text-align: center !important
+}
+
+.skill-teal {
+    color: #fff !important;
+    background-color: #009688 !important
+}
+
+.skillBackground {
+    color: #000 !important;
+    background-color: #f1f1f1 !important
+}
+
+.skill-round-xlarge {
+    border-radius: 3px;
+}
+
+.skill-small {
+    font-size: 11px !important
+}
+
+.skill-center {
+    text-align: center !important
+}
+
+.skill-teal {
+    color: #fff !important;
+    background-color: #009688 !important
+}
+
+#reportForm .report-heading {
+    color: #a39d9d;
+    padding: 5px 0px 5px 0px;
+}
+
+#reportForm .question ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+#reportForm h3 {
+    font-size: 1.3rem;
+}
+
+#reportForm h4 {
+    font-size: 16px;
+}
+
+#reportForm h2 {
+    font-size: 1.35rem;
+}
+
+#reportForm .question ul li {
+    font-size: 16px;
+    padding: 0px 30px;
+    list-style: none;
+    background-image: url(../../img/tick-mark-icon.svg);
+    background-repeat: no-repeat;
+    background-position: 10px 5px;
+    background-size: 2%;
+}
+
+#reportForm .question label {
+    font-size: 14px;
+    margin: 4px 20px;
+    color: #9A9A9A;
+    padding: 0px 10px;
+    font-weight: normal;
+}
+
+#reportForm hr {
+    padding: 0px;
+    margin-top: 0px;
+}
+
+#reportForm h3 svg {
+    padding: 5px 5px 5px 0px;
+    position: relative;
+    top: -4px;
+}
+
+.interview-status {
+    position: absolute;
+    top: -38px;
+    font-size: 1.4rem;
+}
+
+#reportForm video {
+    padding: 10px;
+    width: 100%;
+}
+
+.tech-skill-wrapper {
+    padding: 0px 10px 0px 0px;
+}
+
+.int-heading {
+    background-image: url(../../img/person-circle-outline-custom.svg);
+    background-repeat: no-repeat;
+    background-position: 1px 5px;
+    background-size: 7%;
+    padding: 10px 20px 10px 38px;
+    font-size: 16px;
+}
+
+.skill-heading {
+    background-image: url(../../img/user-gear-icon.svg);
+    background-repeat: no-repeat;
+    background-position: -1px 5px;
+    background-size: 30%;
+    padding: 10px 20px 10px 38px;
+    font-size: 16px;
+}
+
+.question-heading {
+    background-image: url(../../img/question-icon.svg);
+    background-repeat: no-repeat;
+    background-position: 0px 5px;
+    background-size: 14%;
+    padding: 10px 20px 10px 38px;
+    font-size: 16px;
+}

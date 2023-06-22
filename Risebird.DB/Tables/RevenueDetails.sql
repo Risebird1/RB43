@@ -17,6 +17,9 @@ CREATE TABLE [dbo].[RevenueDetails](
 	[BillingType] [int] NULL,
 	[BillingOwner] [int] NULL,
 	[invoicerealization] [int] NULL,
+	[invoiceDate] [datetime] NULL,
+	[invoiceSubmitted] [bit] NULL,
+	[invoiceSubmission] [datetime] NULL
  CONSTRAINT [PK_RevenueDetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -33,6 +36,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE RevenueDetails
     Add invoicerealization INT
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'invoiceDate')
+      AND Object_ID = Object_ID(N'RevenueDetails'))
+BEGIN
+    ALTER TABLE RevenueDetails
+    Add invoiceDate datetime
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'invoiceSubmitted')
+      AND Object_ID = Object_ID(N'RevenueDetails'))
+BEGIN
+    ALTER TABLE RevenueDetails
+    Add invoiceSubmitted bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'invoiceSubmission')
+      AND Object_ID = Object_ID(N'RevenueDetails'))
+BEGIN
+    ALTER TABLE RevenueDetails
+    Add invoiceSubmission datetime
 END
 END
 GO

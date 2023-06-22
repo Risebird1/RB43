@@ -16,4 +16,11 @@ namespace Risebird.Entities.Enum
         [Description("Not Received")]
         NotReceived = 2
     }
+    public enum Invoicesubmition
+    {
+        [Description("No")]
+        No = 0,
+        [Description("Yes")]
+        Yes = 1
+    }
 }
