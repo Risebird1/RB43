@@ -12,9 +12,12 @@
     ViewBag.PageHeader = "Interview Report";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 
-    var meetingStatusList = new List<SelectListItem>();
-    meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
-    var interviewStatusList = new List<SelectListItem>();
+    var meetingStatusList = new List<SelectListItem>
+    ();
+    meetingStatusList = Html.GetEnumSelectList<MeetingStatus>
+        ().ToList();
+    var interviewStatusList = new List<SelectListItem>
+        ();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
 }
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
@@ -22,30 +25,89 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
-<style>
-    .skillBackground {
-        color: #000 !important;
-        background-color: #f1f1f1 !important
-    }
+<!---  <style>
+      .skillBackground {
+          color: #000 !important;
+          background-color: #f1f1f1 !important
+      }
 
-    .skill-round-xlarge {
-        border-radius: 16px
-    }
+      .skill-round-xlarge {
+          border-radius: 16px
+      }
 
-    .skill-small {
-        font-size: 12px !important
-    }
+      .skill-small {
+          font-size: 12px !important
+      }
 
-    .skill-center {
-        text-align: center !important
-    }
+      .skill-center {
+          text-align: center !important
+      }
 
-    .skill-teal {
-        color: #fff !important;
-        background-color: #009688 !important
-    }
+      .skill-teal {
+          color: #fff !important;
+          background-color: #009688 !important
+      }
 
-</style>
+      .report-heading {
+          font-size: 14px;
+          color: #a39d9d;
+          padding: 5px 0px 5px 0px;
+      }
+
+      #reportForm h4 {
+          font-size: 16px;
+      }
+
+      #reportForm hr{
+          padding:0px;
+          margin-top:0px;
+      }
+
+      .question ul {
+          margin: 0px;
+          padding: 0px;
+      }
+
+          .question ul li {
+              font-size: 16px;
+              list-style: none;
+              padding:0px 30px;
+              background-image: url(../../img/tick-mark-icon.svg);
+              background-repeat: no-repeat;
+              background-position: 10px 5px;
+              background-size: 10%;
+          }
+
+      .question label {
+          font-size: 14px;
+          margin: 4px 20px;
+          color: #9A9A9A;
+          padding: 0px 10px;
+          font-weight: normal;
+      }
+
+      h3 svg {
+          padding: 5px;
+          position: relative;
+          top: -4px;
+      }
+
+      .interview-status {
+          position: absolute;
+          top: -38px;
+      }
+
+      video {
+          padding: 10px;
+      }
+
+      .tech-skill-wrapper {
+          padding: 0px 10px 0px 0px;
+      }
+
+
+
+  </style>--->
 @if (ViewBag.PageStatus == "Public")
 {
     <style>
@@ -121,8 +183,8 @@
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <div class="row" style="padding-top:20px">
-                                    <div class="col-md-4" style="padding-top:30px">
+                                <div class="row">
+                                    <div class="col-md-4">
                                         <div>
                                             @*<label>REPORT DETAILS</label>*@
                                             @{
@@ -140,16 +202,35 @@
                                                 {
                                                     meetingcolor = "red";
                                                 }
-                                                <h6>Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
+                                                <h6 style="text-transform:capitalize">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
                                             }
                                             else
                                             {
-                                                <h6>Status : <strong>@meestingstatusvalue</strong></h6>
+                                                <h6 style="text-transform:capitalize">Interview Status : <strong>@meestingstatusvalue</strong></h6>
                                             }
                                         </div>
+                                        @if (Model.resumeLink != null && Model.resumeLink != "")
+                                        {
+                                            <div class="report-heading">Candidate Name</div>
+                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
+                                        }
+                                        else
+                                        {
+                                            <div class="report-heading">Candidate Name</div>
+                                            <h2>@Model.CandidateName</h2>
+                                        }
+                                        @Html.HiddenFor(m => m.CandidateName)
+                                        <div class="report-heading">
+                                            Position
+                                        </div>
+                                        <h4>@Model.JDTiltle</h4>
+                                        <div class="report-heading">
+                                            Date of Interview
+                                        </div>
+                                        <h4>@Model.interviewDate</h4>
                                         <hr />
-                                        <div style="padding-top:20px">
-                                            <p style="font-size:18px">Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></p>
+                                        <div>
+                                            <div class="skill-heading"> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
                                         </div>
                                         <div>
                                             @if (Model.TechSkillReportCollection != null)
@@ -166,46 +247,42 @@
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                         <div class="skillBackground skill-round-xlarge skill-small">
-                                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                            @if (TechSkill_Score == 0)
+                                                            {
+                                                                <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+
+                                                            }
                                                         </div>
                                                     </div>
                                                 }
                                             }
                                         </div>
                                     </div>
-                                    <div class="row col-md-8" style="background-color:white;padding-top:20px;padding-left:20px;border-radius: 25px;">
-                                        @if (Model.resumeLink != null && Model.resumeLink != "")
-                                        {
-                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h5>@Model.CandidateName</h5></a>
-                                        }
-                                        else
-                                        {
-                                            <h5>@Model.CandidateName</h5>
-                                        }
-                                        @Html.HiddenFor(m => m.CandidateName)
-                                        <p>@Model.JDTiltle</p>
-                                        <p>@Model.interviewDate</p>
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            <div style="clear:both"></div>
-                                            <div style="padding-top:10px">
-                                                <a href="@Model.VideoLink"><p style="font-size:16px">Click Here For Interview Video</p></a>
-                                                <hr />
-                                            </div>
-                                        }
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:10px">
-                                            <p style="font-size:18px">Interviewer Comment</p>
+                                    <div class="row col-md-8">
+
+                                        <div>
+                                            <div class="int-heading">Interviewer Comment</div>
                                             <hr />
                                             <div>
                                                 <p>@Model.InterviewerComment</p>
                                             </div>
                                         </div>
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:10px">
-                                            <p style="font-size:18px">Questions Discussed</p>
+                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                        {
+
+                                            <div> <a href="@Model.VideoLink"><div style="font-size:16px">Click Here For Interview Video</div></a></div>
+
+
+                                        }
+
+                                        <div>
+                                            <div class="question-heading">Questions Discussed</div>
                                             <hr />
-                                            <div>
+                                            <div class="question">
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
                                                 {
                                                     <ul>
@@ -260,7 +337,6 @@
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
-            <div class="col-md-12" style="text-align:center">---------------------------*** END OF THE REPORT ***---------------------------</div>
         </div>
         <!-- end row -->
 
@@ -335,6 +411,30 @@
     </div>
 </div>
 
+<div id="QuestionNotificationModelPopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Interview Question Missing Alert</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeQuestionCollectionNotification()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px">
+                    Questions are not present for this interview, <a href="@Url.Action(" SampleQuestions", "IRF" , new { id=Model.IRFId, irf=Model.IRFName })" target="_blank">Click Here</a> to add questions and then refresh the report before fill the report.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
+
 <script src="~/js/ModalFormServerValidation.js"></script>
 @if (ViewBag.Message != null)
 {
@@ -352,6 +452,27 @@
             }
         }
     </script>
+}
+@if (ViewBag.profile == "Client")
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
+@if (ViewBag.profile == "Interviewer")
+{
+    @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
+    {
+        <script>
+            function closeQuestionCollectionNotification() {
+                document.getElementById("QuestionNotificationModelPopup").style.display = "none";
+            }
+            function OpenQuestionCollectionNotification() {
+                document.getElementById("QuestionNotificationModelPopup").style.display = "block";
+            }
+            OpenQuestionCollectionNotification();
+        </script>
+    }
 }
 
 <script>
