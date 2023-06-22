@@ -3342,7 +3342,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), 2, emailid)).ToList();
                     }
                    
                     if (candidateData == null)
@@ -3511,7 +3511,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(15), datatype, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), datatype, emailid)).ToList();
                     }
                 }
                 ViewBag.ClientName = client.ClientName;

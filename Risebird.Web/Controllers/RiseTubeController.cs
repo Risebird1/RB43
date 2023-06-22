@@ -248,8 +248,8 @@ namespace Risebird.Web.Controllers
                             {
                                 if (clientName == "FoundIt (Monster.com)")
                                 {
-                                    modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-120), DateTime.Now.Date, searchvalue, ClientId);
-                                    totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-120), DateTime.Now.Date, searchvalue, ClientId);
+                                    modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-200), DateTime.Now.Date, searchvalue, ClientId);
+                                    totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-200), DateTime.Now.Date, searchvalue, ClientId);
                                 }
                                 else
                                 {

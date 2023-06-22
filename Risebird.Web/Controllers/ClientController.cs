@@ -890,7 +890,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (clientName == "FoundIt (Monster.com)")
                             {
-                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
                             }
                             else
                             {
@@ -983,7 +983,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (clientName == "FoundIt (Monster.com)")
                         {
-                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
                         }
                         else
                         {
@@ -1358,7 +1358,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (clientName == "FoundIt (Monster.com)")
                     {
-                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
                     }
                     else
                     {
@@ -2907,7 +2907,7 @@ namespace Risebird.Web.Controllers
                             {
                                 if (clientName == "FoundIt (Monster.com)")
                                 {
-                                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
                                 }
                                 else
                                 {
@@ -3231,7 +3231,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (clientName == "FoundIt (Monster.com)")
                     {
-                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-120)).ToList();
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
                     }
                     else
                     {
