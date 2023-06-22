@@ -2162,7 +2162,7 @@ namespace Risebird.Web.Controllers
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Completed Interviews");
-            string filename = "";
+            string fileName = "";
             //string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_CompletedInterview.xlsx";
             try
             {
