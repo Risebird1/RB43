@@ -5911,7 +5911,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization)
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization, int invoicesubmit)
         {
             try
             {
@@ -5926,6 +5926,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@poPending", poPending);
                 dynamicParameters.Add("@Emailid", Emailid);
                 dynamicParameters.Add("@invoicerealization", invoicerealization);
+                if (invoicesubmit == 1)
+                {
+                    dynamicParameters.Add("@invoiceSubmitted", true);
+                }
+                else
+                {
+                    dynamicParameters.Add("@invoiceSubmitted", false);
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_AddOrUpdateRevenueStatusDetails", dynamicParameters,
@@ -6477,6 +6485,30 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var currentyear = Convert.ToInt32(year);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@clientid", clientid);
+                    parameters.Add("@StartDate", stdate);
+                    parameters.Add("@EndDate", endate);
+                    parameters.Add("@year", currentyear);
+                    parameters.Add("@month", month);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetCompletedInterviewsByClientIdDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return (List<MeetingVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

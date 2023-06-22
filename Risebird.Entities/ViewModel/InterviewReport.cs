@@ -431,5 +431,15 @@ namespace Risebird.Entities.ViewModel
         public int BillingOwnerid { get; set; }
         public string CurrentStatusDesc { get; set; }
         public int invoicerealization { get; set; }
+        public string GST { get; set; }
+        public int PaymentTerm { get; set; }
+        public int GSTAmount { get; set; }
+        public int SystemInvoiceAmount { get; set; }
+        public string PaymentStatus { get; set; }
+        public DateTime? invoiceDate { get; set; }
+        public bool invoiceSubmitted { get; set; }
+        public DateTime? invoiceSubmission { get; set; }
+        public int TDSAmount { get; set; }
+        public bool GSTApplicable { get; set; }
     }
 }

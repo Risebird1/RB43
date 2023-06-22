@@ -4294,6 +4294,9 @@ namespace Risebird.Web.Controllers
             var interviewduration = from InterviewDurationEnum s in Enum.GetValues(typeof(InterviewDurationEnum))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
+            var gstapplicable = from Invoicesubmition s in Enum.GetValues(typeof(Invoicesubmition))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.GSTApplicableList = new SelectList(gstapplicable, "ID", "Name");
         }
 
         public async Task<IActionResult> GetClientCommentsForReport(int interviewId, bool allowClientAction = false)

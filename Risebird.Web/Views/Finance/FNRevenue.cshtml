@@ -88,8 +88,18 @@
                                                             <th>Total Interviews</th>
                                                             <th>Per Interview Rate</th>
                                                             <th>Amount</th>
+                                                            <th>GST</th>
+                                                            <th>GST Amount</th>
+                                                            <th>System Invoice Amount</th>
                                                             <th>PO Pending Amount</th>
                                                             <th>Invoice Amount</th>
+                                                            <th>Invoice Submitted</th>
+                                                            <th>Invoice Submission</th>
+                                                            <th>Invoice Due Date</th>
+                                                            <th>Payment Status</th>
+                                                            <th>Payment Date</th>
+                                                            <th>TDS</th>
+                                                            <th>Pending</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -99,8 +109,18 @@
                                                             <th>Total Interviews</th>
                                                             <th>Per Interview Rate</th>
                                                             <th>Amount</th>
+                                                            <th>GST</th>
+                                                            <th>GST Amount</th>
+                                                            <th>System Invoice Amount</th>
                                                             <th>PO Pending Amount</th>
                                                             <th>Invoice Amount</th>
+                                                            <th>Invoice Submitted</th>
+                                                            <th>Invoice Submission</th>
+                                                            <th>Invoice Due Date</th>
+                                                            <th>Payment Status</th>
+                                                            <th>Payment Date</th>
+                                                            <th>TDS</th>
+                                                            <th>Pending</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
@@ -116,10 +136,41 @@
                                                                 <td>@item.Name<input type="hidden" id="hidclient_@item.id" value="@item.Name" /></td>
                                                                 <td>@item.TotalCount<input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" /></td>
                                                                 <td>@item.PerInterviewRate<input type="hidden" id="hidrate_@item.id" value="@item.PerInterviewRate" /></td>
-                                                                <td>@(item.TotalCount*item.PerInterviewRate)</td>
+                                                                <td>@(item.TotalCount * item.PerInterviewRate)</td>
+                                                                <td>@item.GST</td>
+                                                                <td>@item.GSTAmount</td>
+                                                                <td>@item.SystemInvoiceAmount</td>
                                                                 <td>@item.POPendingAmount</td>
                                                                 <td>@item.InvoiceAmount</td>
+                                                                @if (item.invoiceSubmitted)
+                                                                {
+                                                                    <td>Yes</td>
+                                                                    <td>@item.invoiceSubmission</td>
+                                                                    <td>@(item.invoiceSubmission?.AddMonths(item.PaymentTerm))</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                }
+                                                                <td>@item.PaymentStatus</td>
+                                                                @if (item.PaymentStatus == "Received")
+                                                                {
+                                                                    <td>@item.invoiceDate</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td>@item.TDSAmount</td>
+                                                                <td>0</td>
                                                                 <td>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Download Completed Interview List">
+                                                                        <span title="Download Completed Interview List" onclick="CompletedInterviewsExcel(@item.id)" class="mdc-fab__icon material-icons">
+                                                                            <i class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" style="font-size: 16px !important;color: white;" title="Download Completed Interview List" data-original-title="Tooltip on bottom"></i>
+                                                                        </span>
+                                                                    </button>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
                                                                         <span onclick="Details(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
@@ -212,6 +263,26 @@
                             <div class="col-md-12 col-sm-12 border-rv">
                                 <div class="form-group">
                                     <label class="control-label col-md-12 col-sm-12 desp-label">
+                                        Invoice Submited to client
+                                    </label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <select id="revenue_invoicesubmit" style="border:none;width:100%">
+                                            @foreach (var item in (SelectList)ViewBag.SubmitionStatus)
+                                            {
+                                                @if (item.Text != null && item.Text != "")
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label">
                                         Invoice realized
                                     </label>
                                     <div class="col-md-12 col-sm-12">
@@ -256,7 +327,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                swal.fire("Successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
@@ -365,6 +436,11 @@
         var year = $("#TdsSelectYear").val();
         window.location.href = "/Finance/FNRevenueByClient?id=" + clientid + "&year=" + year + "&month=" + month;
     }
+    function CompletedInterviewsExcel(clientid) {
+        var month = $("#ddlmonth").val();
+        var year = $("#TdsSelectYear").val();
+        window.location.href = "/Finance/CompletedInterviewExcelById?id=" + clientid + "&year=" + year + "&month=" + month;
+    }
 </script>
 <script>
     function DetailedView(clientid, billingtype) {
@@ -381,14 +457,17 @@
                 $("#revenue_invoicerealization").val(data.invoicerealization);
                 $("#revenue_clientid").val(clientid);
                 $("#revenue_billingtype").val(billingtype);
+                $("#revenue_invoicesubmit").val(data.invoiceSubmitted);
                 var model = document.getElementById("myModal");
                 model.style.display = "block";
                 if (data.currentStatus == "2") {
                     document.getElementById("revenue_txtPo").checked = true;
                     document.getElementById("revenue_popending").style.display = "block";
+                    document.getElementById("revenue_invoice").style.display = "none";
                 } else {
                     document.getElementById("revenue_txtinvoice").checked = true;
                     document.getElementById("revenue_invoice").style.display = "block";
+                    document.getElementById("revenue_popending").style.display = "none";
                 }
             }
         });
@@ -403,6 +482,7 @@
         var invoiceamount = $("#revenue_invoice").val();
         var poPending = $("#revenue_popending").val();
         var invoicerealization = $("#revenue_invoicerealization").val();
+        var invoicesubmit = $("#revenue_invoicesubmit").val();
         if (document.getElementById("revenue_txtinvoice").checked) {
             var currentStatus = 1;
         } else if (document.getElementById("revenue_txtPo").checked) {
@@ -414,7 +494,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Finance/SaveRevenueStatusDetails",
-                data: { 'id': clientid, 'year': year, 'month': month, 'billingType': billingtype, 'Detailid': 0, 'currentStatus': currentStatus, 'invoiceamount': invoiceamount, 'poPending': poPending, 'invoicerealization': invoicerealization },
+                data: { 'id': clientid, 'year': year, 'month': month, 'billingType': billingtype, 'Detailid': 0, 'currentStatus': currentStatus, 'invoiceamount': invoiceamount, 'poPending': poPending, 'invoicerealization': invoicerealization, 'invoicesubmit': invoicesubmit },
                 success: function (data) {
                     CloseMyModelPopup();
                     swal.fire("Save Successfully!").then(() => {

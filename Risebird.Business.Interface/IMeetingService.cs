@@ -189,7 +189,7 @@ namespace Risebird.Business.Interface
         Task<MeetingVM> GetInterviewMeetingById(int id);
         Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration, string CandidateEmail, string emailId);
         Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid);
-        Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization);
+        Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid, int invoicerealization, int invoicesubmit);
         Task<List<string>> FetchCandidateZoomMeetingsIdForCancel();
         Task<RedoInterviewVM> GetInterviewDetailsById(int id);
         Task<bool> SaveRedoInterviewDetails(RedoInterviewVM model);
@@ -212,6 +212,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<List<Meeting>> GetInterviewerAssignedInterviews(string emailID, string meetingLineUpType);
         Task<Meeting> GetMeetingDetails(int interviewId);
-        Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId,string CandidateEmail);
+        Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail);
+        Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
     }
 }

@@ -17,35 +17,15 @@
     var interviewStatusList = new List<SelectListItem>();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
 }
+
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
-<style>
-    .skillBackground {
-        color: #000 !important;
-        background-color: #f1f1f1 !important
-    }
+<link href="~/newassets/css/report.css" rel="stylesheet" />
 
-    .skill-round-xlarge {
-        border-radius: 16px
-    }
 
-    .skill-small {
-        font-size: 12px !important
-    }
-
-    .skill-center {
-        text-align: center !important
-    }
-
-    .skill-teal {
-        color: #fff !important;
-        background-color: #009688 !important
-    }
-
-</style>
 @if (ViewBag.PageStatus == "Public")
 {
     <style>
@@ -91,7 +71,6 @@
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
-<link href="~/newassets/css/report.css" rel="stylesheet" />
 <div @*class="main-panel"*@ id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -128,8 +107,8 @@
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <div class="row" style="padding-top:20px">
-                                    <div class="col-md-4" style="padding-top:30px">
+                                <div class="row">
+                                    <div class="col-md-3">
                                         <div>
                                             @*<label>REPORT DETAILS</label>*@
                                             @{
@@ -139,6 +118,7 @@
                                             @if (Model.MeetingStatus == 4)
                                             {
                                                 var meetingcolor = "";
+
                                                 @if (Model.InterviewStatus == 2)
                                                 {
                                                     meetingcolor = "green";
@@ -147,23 +127,45 @@
                                                 {
                                                     meetingcolor = "red";
                                                 }
-                                                <h3>Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h3>
+                                                <h2 class="interview-status">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
                                             }
                                             else
                                             {
-                                                <p>Interview Status : <strong>@meestingstatusvalue</strong></p>
+                                                <h2 class="interview-status">Interview Status : <strong>@meestingstatusvalue</strong></h2>
                                             }
                                         </div>
+                                        @if (Model.resumeLink != null && Model.resumeLink != "")
+
+                                        {
+                                            <div class="report-heading">Candidate Name</div>
+                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                        }
+                                        else
+                                        {
+                                            <div class="report-heading">Candidate Name</div>
+                                            <h2>@Model.CandidateName</h2>
+                                        }
+
+                                        <div class="report-heading">
+                                            Position
+                                        </div>
+
+                                        <h4>@Model.JDTiltle</h4>
+                                        <div class="report-heading">
+                                            Date of Interview
+                                        </div>
+                                        <h4>@Model.interviewDate</h4>
+
                                         <hr />
-                                        <div style="padding-top:20px">
-                                            <p><h3>Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></h3></p>
+                                        <div>
+                                            <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></h3>
                                         </div>
                                         <div>
                                             @if (Model.TechSkillReportCollection != null)
                                             {
                                                 @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                 {
-                                                    <div style="padding-top:10px">
+                                                    <div class="tech-skill-wrapper">
                                                         <p>@Model.TechSkillReportCollection[i].SkillName</p>
                                                         @{
                                                             var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
@@ -173,82 +175,79 @@
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                         <div class="skillBackground skill-round-xlarge skill-small">
-                                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                            @if (TechSkill_Score == 0)
+                                                            {
+                                                                <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+
+                                                            }
                                                         </div>
                                                     </div>
                                                 }
                                             }
                                         </div>
                                     </div>
-                                    <div class="row col-md-8" style="background-color:white;padding-top:20px;padding-left:20px;border-radius: 25px;">
-                                        <div class="col-md-7">
-                                            @if (Model.resumeLink != null && Model.resumeLink != "")
-                                            {
-                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h3>@Model.CandidateName</h3></a>
-                                            }
-                                            else
-                                            {
-                                                <h3>@Model.CandidateName</h3>
-                                            }
-                                            <h5>@Model.JDTiltle</h5>
-                                            <h5>@Model.interviewDate</h5>
-                                        </div>
-                                        <div class="col-md-5">
-                                            @if (Model.FeedbackAudioLink != null)
-                                            {
-                                                <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
-                                            }
-                                        </div>
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            <div style="clear:both"></div>
-                                            <div style="padding-top:20px">
-                                                <h3>Interview Video</h3>
-                                                <hr />
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <div class="videoConplayer">
-                                                        @Html.HiddenFor(x => Model.VideoLink)
-                                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#969191" d="M15,16H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM9,10h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,2H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm4.71,3.29a1,1,0,0,0-.33-.21.92.92,0,0,0-.76,0,1,1,0,0,0-.33.21,1.15,1.15,0,0,0-.21.33,1,1,0,0,0,.21,1.09A1,1,0,0,0,19,17a1,1,0,0,0,.38-.08,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1.15,1.15,0,0,0,19.71,15.29ZM20,8.94a1.31,1.31,0,0,0-.06-.27l0-.09a1.07,1.07,0,0,0-.19-.28h0l-6-6h0a1.07,1.07,0,0,0-.28-.19.32.32,0,0,0-.09,0A.88.88,0,0,0,13.05,2H7A3,3,0,0,0,4,5V19a3,3,0,0,0,3,3h8a1,1,0,0,0,0-2H7a1,1,0,0,1-1-1V5A1,1,0,0,1,7,4h5V7a3,3,0,0,0,3,3h3v2a1,1,0,0,0,2,0V9S20,9,20,8.94ZM15,8a1,1,0,0,1-1-1V5.41L16.59,8Zm4,10a1,1,0,0,0-1,1v2a1,1,0,0,0,2,0V19A1,1,0,0,0,19,18Z" /></svg>Interview Details</h3>
+                                            <hr />
+                                            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+
+                                                <div>
+                                                    @Html.HiddenFor(x => Model.VideoLink)
+                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                    {
+                                                        int appendTime = 0;
+                                                        if (Model.ThumbnailTimeSeconds == 0)
                                                         {
-                                                            int appendTime = 0;
-                                                            if (Model.ThumbnailTimeSeconds == 0)
+                                                            appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                            if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
                                                             {
-                                                                appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                                if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
-                                                                {
-                                                                    appendTime = (Model.VideoDuration * 60) - 60;
-                                                                }
-                                                                else if ((Model.VideoDuration * 60) < 120)
-                                                                {
-                                                                    appendTime = 0;
-                                                                }
+                                                                appendTime = (Model.VideoDuration * 60) - 60;
                                                             }
-                                                            else
+                                                            else if ((Model.VideoDuration * 60) < 120)
                                                             {
-                                                                appendTime = Model.ThumbnailTimeSeconds;
+                                                                appendTime = 0;
                                                             }
-                                                            var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                            <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                                <source src='@Model.VideoLink' type="video/mp4">
-                                                            </video>
                                                         }
-                                                    </div>
+                                                        else
+                                                        {
+                                                            appendTime = Model.ThumbnailTimeSeconds;
+                                                        }
+                                                        var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                        <video controls="controls" preload="metadata" class="vjs-tech interview">
+                                                            <source src='@Model.VideoLink' type="video/mp4">
+                                                        </video>
+                                                    }
                                                 </div>
                                             </div>
-                                        }
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h3>Interviewer Comment</h3>
-                                            <hr />
-                                            <div>
-                                                <p>@Model.InterviewerComment</p>
+                                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+
+
+                                                <h3><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
+                                                <hr />
+                                                <div>
+                                                    @if (Model.FeedbackAudioLink != null)
+                                                    {
+                                                        <audio style="margin-bottom:10px;" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                    }
+                                                    <p>@Model.InterviewerComment</p>
+
+
+
+                                                </div>
+
                                             </div>
                                         </div>
-                                        <div style="clear:both"></div>
-                                        <div style="padding-top:20px">
-                                            <h3>Questions Discussed</h3>
+
+
+                                        <div class="row">
+                                            <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>Questions Discussed</h3>
                                             <hr />
-                                            <div>
+                                            <div class="question">
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
                                                 {
                                                     <ul>
