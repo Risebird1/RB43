@@ -53,7 +53,7 @@ namespace Risebird.MicroService
                     
                     if (!string.IsNullOrWhiteSpace(item.TimeZonesValue) 
                         && item.TimeZoneoffset.HasValue
-                        && !item.TimeZonesValue.Contains("(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"))
+                        && !item.TimeZonesValue.Contains("Chennai"))
                     {
                         timeZoneValue = item.TimeZonesValue.Split(")").ElementAtOrDefault(1);
                         if (item.TimeZoneoffset.Value >= 0)
