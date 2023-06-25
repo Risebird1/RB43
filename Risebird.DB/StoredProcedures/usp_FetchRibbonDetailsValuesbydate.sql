@@ -23,13 +23,13 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
   begin  
    if (@Profile = 'SeniorHR' or @Profile = 'SupportAdmin')  
    begin  
-	select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+	select distinct *,IRF.Id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 	join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 	where confirmationStatus=1 and interviewer is null and ulsh.Emailid= @Emailid
    end  
    else  
    begin  
-    select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and interviewer is null
+    select distinct *,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and interviewer is null
    end  
   end  
   else  
