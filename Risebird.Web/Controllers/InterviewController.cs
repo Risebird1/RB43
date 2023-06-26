@@ -5731,13 +5731,14 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            if (_meetingService.CheckInterviewCancellable(meetingid))
+            if ((status == 1|| status == 2|| status == 4) && _meetingService.CheckInterviewCancellable(meetingid))
             {
                 var response = true;
                 //if (status == 4)
                 //{
                 //    response = _meetingService.CheckInterviewClerityTime(meetingid);
                 //}
+
                 var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
                 if (results == "Success")
                 {
@@ -5798,6 +5799,7 @@ namespace Risebird.Web.Controllers
                         }
                         return Json("Successfully status updated, " + value);
                     }
+                    
                     return Json("Thank you for confirming your interview.");
                 }
                 else if (results == "Already Present")
@@ -5808,6 +5810,10 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Status update failed. Please try again!");
                 }
+            }
+            else if (status == 3)
+            {
+                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
             }
             else
             {
