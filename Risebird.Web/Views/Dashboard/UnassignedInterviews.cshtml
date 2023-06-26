@@ -248,7 +248,7 @@
                                                     {
                                                         <th>Red Flags</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
@@ -299,7 +299,7 @@
                                                     {
                                                         <th>Red Flags</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Channel Owner</th>
                                                     }
@@ -428,7 +428,14 @@
                                                         {
                                                             <td>@item.Redflags</td>
                                                         }
-                                                        <td>@item.HRCoordinatorEmailId</td>
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "InterviewCount")
+                                                        {
+                                                            <td>@item.ChannelOwner</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.HRCoordinatorEmailId</td>
+                                                        }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
                                                             <td class="meeting-detail-icon">
