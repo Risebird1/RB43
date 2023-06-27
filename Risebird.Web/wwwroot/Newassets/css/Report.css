@@ -146,8 +146,53 @@
     width: 100%;
 }
 
+#reportForm .rqlevel {
+    color: #a2a0a0;
+    font-size: 12px;
+}
+
+.nodata-wrapper {
+    min-height: 400px;
+    display: table;
+    width: 100%;
+}
+
+.nodata-wrapper-pdf {
+    height: 300px;
+    display: table;
+    width: 100%;
+}
+
+.nodata-img {
+    vertical-align: middle;
+    display: table-cell;
+    text-align: center;
+    width: 100%;
+}
+
 .tech-skill-wrapper {
-    padding: 0px 10px 0px 0px;
+    padding: 10px 10px 0px 0px;
+}
+
+.nodata {
+    text-align: center;
+    font-size: 20px;
+    color: #c9c1c1;
+    padding: 20px;
+}
+
+    .nodata img {
+        width: 38px;
+        padding: 0px;
+    }
+
+    .nodata span {
+        padding: 10px;
+    }
+
+.note-skill {
+    margin: 30px 0px;
+    color: #454547b0;
 }
 
 .int-heading {

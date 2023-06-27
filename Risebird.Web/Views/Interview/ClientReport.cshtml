@@ -36,6 +36,7 @@
         .sidebar .navbar-minimize .btn {
             display: none !important
         }
+
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
@@ -166,11 +167,12 @@
                                                 @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                 {
                                                     <div class="tech-skill-wrapper">
-                                                        <p>@Model.TechSkillReportCollection[i].SkillName</p>
+                                                        <div>@Model.TechSkillReportCollection[i].SkillName</div>
                                                         @{
                                                             var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                         }
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                        <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
@@ -189,85 +191,118 @@
                                                 }
                                             }
                                         </div>
+                                        <p class="note-skill">
+                                            <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. For example 80% in any skill would mean 4/5
+                                            of required competency threshold.
+                                        </p>
+
                                     </div>
+
                                     <div class="col-md-9">
-                                        <div class="row">
-                                            <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#969191" d="M15,16H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM9,10h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,2H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm4.71,3.29a1,1,0,0,0-.33-.21.92.92,0,0,0-.76,0,1,1,0,0,0-.33.21,1.15,1.15,0,0,0-.21.33,1,1,0,0,0,.21,1.09A1,1,0,0,0,19,17a1,1,0,0,0,.38-.08,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1.15,1.15,0,0,0,19.71,15.29ZM20,8.94a1.31,1.31,0,0,0-.06-.27l0-.09a1.07,1.07,0,0,0-.19-.28h0l-6-6h0a1.07,1.07,0,0,0-.28-.19.32.32,0,0,0-.09,0A.88.88,0,0,0,13.05,2H7A3,3,0,0,0,4,5V19a3,3,0,0,0,3,3h8a1,1,0,0,0,0-2H7a1,1,0,0,1-1-1V5A1,1,0,0,1,7,4h5V7a3,3,0,0,0,3,3h3v2a1,1,0,0,0,2,0V9S20,9,20,8.94ZM15,8a1,1,0,0,1-1-1V5.41L16.59,8Zm4,10a1,1,0,0,0-1,1v2a1,1,0,0,0,2,0V19A1,1,0,0,0,19,18Z" /></svg>Interview Details</h3>
-                                            <hr />
-                                            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                        @if (Model.MeetingStatus == 1)
+                                        {
 
-                                                <div>
-                                                    @Html.HiddenFor(x => Model.VideoLink)
-                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                                    {
-                                                        int appendTime = 0;
-                                                        if (Model.ThumbnailTimeSeconds == 0)
-                                                        {
-                                                            appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                            if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
-                                                            {
-                                                                appendTime = (Model.VideoDuration * 60) - 60;
-                                                            }
-                                                            else if ((Model.VideoDuration * 60) < 120)
-                                                            {
-                                                                appendTime = 0;
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            appendTime = Model.ThumbnailTimeSeconds;
-                                                        }
-                                                        var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                        <video controls="controls" preload="metadata" class="vjs-tech interview">
-                                                            <source src='@Model.VideoLink' type="video/mp4">
-                                                        </video>
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                            <div class="row"><div class="nodata-wrapper"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
 
-
-                                                <h3><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#969191" d="M15,16H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM9,10h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,2H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm4.71,3.29a1,1,0,0,0-.33-.21.92.92,0,0,0-.76,0,1,1,0,0,0-.33.21,1.15,1.15,0,0,0-.21.33,1,1,0,0,0,.21,1.09A1,1,0,0,0,19,17a1,1,0,0,0,.38-.08,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1.15,1.15,0,0,0,19.71,15.29ZM20,8.94a1.31,1.31,0,0,0-.06-.27l0-.09a1.07,1.07,0,0,0-.19-.28h0l-6-6h0a1.07,1.07,0,0,0-.28-.19.32.32,0,0,0-.09,0A.88.88,0,0,0,13.05,2H7A3,3,0,0,0,4,5V19a3,3,0,0,0,3,3h8a1,1,0,0,0,0-2H7a1,1,0,0,1-1-1V5A1,1,0,0,1,7,4h5V7a3,3,0,0,0,3,3h3v2a1,1,0,0,0,2,0V9S20,9,20,8.94ZM15,8a1,1,0,0,1-1-1V5.41L16.59,8Zm4,10a1,1,0,0,0-1,1v2a1,1,0,0,0,2,0V19A1,1,0,0,0,19,18Z" /></svg>Interview Details</h3>
                                                 <hr />
-                                                <div>
-                                                    @if (Model.FeedbackAudioLink != null)
-                                                    {
-                                                        <audio style="margin-bottom:10px;" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
-                                                    }
-                                                    <p>@Model.InterviewerComment</p>
+                                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
 
-
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row">
-                                            <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>Questions Discussed</h3>
-                                            <hr />
-                                            <div class="question">
-                                                @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
-                                                {
-                                                    <ul>
-                                                        @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                    <div>
+                                                        @Html.HiddenFor(x => Model.VideoLink)
+                                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                         {
-                                                            var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
-                                                            @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                            int appendTime = 0;
+                                                            if (Model.ThumbnailTimeSeconds == 0)
                                                             {
-                                                                <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                                if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                                {
+                                                                    appendTime = (Model.VideoDuration * 60) - 60;
+                                                                }
+                                                                else if ((Model.VideoDuration * 60) < 120)
+                                                                {
+                                                                    appendTime = 0;
+                                                                }
                                                             }
                                                             else
                                                             {
-                                                                <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                appendTime = Model.ThumbnailTimeSeconds;
                                                             }
-                                                            <label>Rating : @valueslist</label>
+                                                            var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                            <video controls="controls" preload="metadata" class="vjs-tech interview">
+                                                                <source src='@Model.VideoLink' type="video/mp4">
+                                                            </video>
                                                         }
-                                                    </ul>
-                                                }
+                                                        else
+                                                        {
+                                                            <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                        }
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+
+
+                                                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
+                                                    <hr />
+                                                    <div>
+                                                        @if (Model.FeedbackAudioLink != null)
+                                                        {
+                                                            <audio style="margin-bottom:10px;" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                        }
+                                                        @if (Model.InterviewerComment != null)
+                                                        {
+                                                            <p>@Model.InterviewerComment</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                        }
+
+
+
+                                                    </div>
+
+                                                </div>
                                             </div>
-                                        </div>
+
+
+                                            <div class="row">
+                                                <h3><svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>Questions Discussed</h3>
+                                                <hr />
+                                                <div class="question">
+                                                    @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                    {
+                                                        <ul>
+                                                            @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                            {
+                                                                var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                                {
+                                                                    <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                }
+                                                                <label>Rating : @valueslist</label>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 @Html.HiddenFor(m => m.IsGeneralSkillRequired)
