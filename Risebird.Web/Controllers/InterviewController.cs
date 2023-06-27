@@ -568,7 +568,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 37].Value = item.BillingOwner;
                         if (profileName == "Client")
                         {
-                            var executiveurl = "https://portal.risebird.io/Interview/ClientReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId;
+                            var executiveurl = "https://portal.risebird.io/Interview/ClientReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId + "&isClient=True";
                             try
                             {
                                 Sheet.Cells[i, 38].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
