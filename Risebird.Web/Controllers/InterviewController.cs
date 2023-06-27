@@ -568,7 +568,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 37].Value = item.BillingOwner;
                         if (profileName == "Client")
                         {
-                            var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId + "&isClient=true";
+                            var executiveurl = "https://portal.risebird.io/Interview/ClientReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId;
                             try
                             {
                                 Sheet.Cells[i, 38].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
@@ -7355,6 +7355,8 @@ namespace Risebird.Web.Controllers
                 return Json("Failed to update Surcharge details, please try again.");
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -7477,6 +7479,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
