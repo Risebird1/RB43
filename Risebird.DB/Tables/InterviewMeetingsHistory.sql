@@ -48,6 +48,25 @@ BEGIN
     Add PerformedBy varchar(50)
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TimeZoneoffset')
+      AND Object_ID = Object_ID(N'InterviewMeetingsHistory'))
+BEGIN
+    ALTER TABLE InterviewMeetingsHistory
+    Add TimeZoneoffset int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TimeZonesValue')
+      AND Object_ID = Object_ID(N'InterviewMeetingsHistory'))
+BEGIN
+    ALTER TABLE InterviewMeetingsHistory
+    Add TimeZonesValue varchar(200)
+END
+
 End
 
 Go

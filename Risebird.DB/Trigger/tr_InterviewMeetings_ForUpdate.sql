@@ -36,7 +36,7 @@ BEGIN
  InterviewBiometryScore,	JoiningBiometryScore,	HRCoordinatorEmailId,	HRComment	,HRImageFileURL,
  ZoomMeetingId,	IsMeetingNotificationSent,	NotificationSentDate,	IsNotificationSentToEI,
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
- IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, ActionType, PerformedAt, PerformedBy)
+ IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, ActionType, PerformedAt, PerformedBy, TimeZoneoffset, TimeZonesValue)
 
  (select id, IRFId,	interviewDate, interviewSlot, interviewDuration, @candidateEmailId,	ClientHrContact, resumeLink,
  confirmationStatus, zoomLink, risebirdHR,	interviewer, IntervIewOnDevice,	PreferredLocation,
@@ -45,7 +45,7 @@ BEGIN
  InterviewBiometryScore, JoiningBiometryScore,	HRCoordinatorEmailId, HRComment, HRImageFileURL,
  ZoomMeetingId,	IsMeetingNotificationSent,	NotificationSentDate, IsNotificationSentToEI,
  IsRescheduleNotificationSent, EIAssigned, IsNotificationSentToCandidate, isAutoCancelled,
- IsCandidateResponsed,	CandidateResponse, ProctorReport, Cancellationsource, 'Updated', DATEADD(MINUTE, 330, getdate()), sModifiedBy
+ IsCandidateResponsed,	CandidateResponse, ProctorReport, Cancellationsource, 'Updated', DATEADD(MINUTE, 330, getdate()), sModifiedBy, TimeZoneoffset, TimeZonesValue
  from InterviewMeetings where id = @id) 
  
 
