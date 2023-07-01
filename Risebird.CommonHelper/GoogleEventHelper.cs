@@ -42,7 +42,7 @@ namespace Risebird.CommonHelper
             CalendarService service = new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "Risebird_test",
+                ApplicationName = "Risebird_calendar",
             });
             //Event eventcalendar = new Event()
             //{
@@ -132,7 +132,7 @@ namespace Risebird.CommonHelper
             CalendarService service = new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "Risebird_test",
+                ApplicationName = "Risebird_calendar",
             });
             var eventrequest = service.Events.Delete("primary", eventid);
             var requestDelete = await eventrequest.ExecuteAsync();
