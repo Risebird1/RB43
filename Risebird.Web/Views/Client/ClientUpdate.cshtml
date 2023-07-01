@@ -168,7 +168,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                        <div class="form-group">
+                                        <div class="form-group" style="padding-right:36px">
                                             @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
