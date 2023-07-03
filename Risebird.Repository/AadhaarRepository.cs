@@ -227,5 +227,32 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task SaveFaceMatchScorePercentage(string email, int score)
+        {
+            try
+            {
+                string conString = "Server=tcp:risebirdmcqdev.database.windows.net,1433;Initial Catalog=risebirdmcqdev;Persist Security Info=False;User ID=risebirdmcqadmin;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Max Pool Size=1000;";
+                using (SqlConnection con = new SqlConnection(conString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@email", email);
+                    parameters.Add("@score", score);
+
+                    await SqlMapper.QueryAsync(con, "usp_SaveFaceMatchScore", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return;
+                }
+            }
+            catch (SqlException ex)
+            {
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return;
+        }
     }
 }
