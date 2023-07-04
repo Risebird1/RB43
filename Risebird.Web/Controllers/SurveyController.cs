@@ -143,7 +143,7 @@ namespace Risebird.Web.Controllers
                        
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
+                            var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
                             modelData = modelData.Where(x => x.Interviewdate >= filter.StartDate && x.Interviewdate <= filter.EndDate).ToList();
                             filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = modelData.Select(x => x.PrimarySkill).ToArray() : filter.ProfileSource = filter.ProfileSource;
                             filter.HREmail = filter.HREmail == null ? filter.HREmail = modelData.Select(x => x.Type).ToArray() : filter.HREmail = filter.HREmail;
