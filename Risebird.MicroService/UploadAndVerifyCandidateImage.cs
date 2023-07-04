@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Connections;
 using Risebird.Repository.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using Risebird.CommonHelper.Interface;
+using Risebird.CommonHelper;
+using Risebird.Entities.Enum;
 
 namespace ScreenBackgroundJobs
 {
@@ -28,12 +31,13 @@ namespace ScreenBackgroundJobs
 
         //private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IAadhaarRepository _aadhaarRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly string client_code;
         private readonly string api_key;
         private readonly string salt;
         private readonly string apiendpoint;
         private static readonly RestClient client = new RestClient();
-        public UploadAndVerifyCandidateImage(IConfiguration configuration, IAadhaarRepository aadhaarRepository)
+        public UploadAndVerifyCandidateImage(IConfiguration configuration, IAadhaarRepository aadhaarRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             //_applicationErrorLogger = applicationErrorLogger;
@@ -42,7 +46,7 @@ namespace ScreenBackgroundJobs
             api_key = _configuration["AadhaarApiDetails:api_key"];
             salt = _configuration["AadhaarApiDetails:salt"];
             apiendpoint = _configuration["AadhaarApiDetails:endPoint"];
-            
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         [FunctionName("UploadAndVerifyCandidateImage")]
@@ -61,46 +65,60 @@ namespace ScreenBackgroundJobs
                 var data = JsonConvert.DeserializeObject<VerifyImageDTO>(requestBody);
 
                 var score = await Verification_FaceMatch_veri5(data);
+                log.LogInformation($"UploadAndVerifyCandidateImage : score api executed");
+
                 await _aadhaarRepository.SaveFaceMatchScorePercentage(data.candidateEmail, score);
 
+                log.LogInformation($"UploadAndVerifyCandidateImage : C# Http Trigger finished executing at {DateTime.Now}");
 
                 return new OkObjectResult(true);
+
             }
             catch (Exception ex)
             {
-                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                log.LogError($"UploadAndVerifyCandidateImage :Error executing at: {DateTime.Now}, Message : {ex.Message}");
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         public async Task<int> Verification_FaceMatch_veri5(VerifyImageDTO dto)
         {
-            var model = new AadhaarVM();
-            var datenow = GetCurrentUnixTimestampMillis();
-            SetHeaderValue(model.headers, datenow);
-            model.request.api_key = api_key;
-            model.request.request_id = Guid.NewGuid().ToString();
-            model.request.purpose = "VERIFY";
-            model.request.image_1 = dto.imageFirst; //ConvertImageURLToBase64(dto.imageFirst);
-            model.request.image_2 = dto.imageSecond; // ConvertImageURLToBase64(dto.imageSecond);
-            var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
-            model.request.hash = getHashSha256(hashstring);
-            
-            Dictionary<string, string> headers = new Dictionary<string, string>
+            try
+            {
+                var model = new AadhaarVM();
+                var datenow = GetCurrentUnixTimestampMillis();
+                SetHeaderValue(model.headers, datenow);
+                model.request.api_key = api_key;
+                model.request.request_id = Guid.NewGuid().ToString();
+                model.request.purpose = "VERIFY";
+                model.request.image_1 = dto.imageFirst; //ConvertImageURLToBase64(dto.imageFirst);
+                model.request.image_2 = dto.imageSecond; // ConvertImageURLToBase64(dto.imageSecond);
+                var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
+                model.request.hash = await getHashSha256(hashstring);
+
+                Dictionary<string, string> headers = new Dictionary<string, string>
             {
                 //{ "Authorization", "Basic " + accesskey },
                 { "Content-Type", "application/json" }
             };
 
-            //var response = await _httpRequestHelper.MakeHttpRequest(dto.apiendpoint + "getCaptcha", Method.Post, model, headers);
-            var response = await MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
+                //var response = await _httpRequestHelper.MakeHttpRequest(dto.apiendpoint + "getCaptcha", Method.Post, model, headers);
+                var response = await MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
 
-            var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
-            if (convertedResponse.response_status.status.ToLower() == "fail")
-            {
-                return 0;
+                var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
+                if (convertedResponse.response_status.status.ToLower() == "fail")
+                {
+                    return 0;
+                }
+                return convertedResponse.response_data.score;
             }
-            return convertedResponse.response_data.score;
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
         }
         public string GetCurrentUnixTimestampMillis()
         {
@@ -130,25 +148,33 @@ namespace ScreenBackgroundJobs
             _header.function_sub_code = "DEFAULT";
         }
 
-        public string ConvertImageURLToBase64(String url)
-        {
-            StringBuilder _sb = new StringBuilder();
-            Byte[] _byte = GetImage(url);
-            _sb.Append(Convert.ToBase64String(_byte, 0, _byte.Length));
-            return _sb.ToString();
-        }
+        //public string ConvertImageURLToBase64(String url)
+        //{
+        //    StringBuilder _sb = new StringBuilder();
+        //    Byte[] _byte = GetImage(url);
+        //    _sb.Append(Convert.ToBase64String(_byte, 0, _byte.Length));
+        //    return _sb.ToString();
+        //}
 
-        public string getHashSha256(string rawData)
+        public async Task<string> getHashSha256(string rawData)
         {
-            using (SHA256 sha256Hash = SHA256.Create())
+            try
             {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
+                using (SHA256 sha256Hash = SHA256.Create())
                 {
-                    builder.Append(bytes[i].ToString("x2"));
+                    byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        builder.Append(bytes[i].ToString("x2"));
+                    }
+                    return builder.ToString();
                 }
-                return builder.ToString();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
         public async Task<RestResponse> MakeHttpRequest(string endPoint, Method method, object jsonBody = null, Dictionary<string, string> headers = null, List<HttpParameters> parameters = null)
@@ -181,35 +207,35 @@ namespace ScreenBackgroundJobs
             }
             catch (Exception ex)
             {
-                //await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
-        private byte[] GetImage(string url)
-        {
-            Stream stream = null;
-            byte[] buf;
-            try
-            {
-                WebProxy myProxy = new WebProxy();
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-                stream = response.GetResponseStream();
-                using (BinaryReader br = new BinaryReader(stream))
-                {
-                    int len = (int)(response.ContentLength);
-                    buf = br.ReadBytes(len);
-                    br.Close();
-                }
-                stream.Close();
-                response.Close();
-            }
-            catch (Exception ex)
-            {
-                buf = null;
-            }
-            return (buf);
-        }
+        //private byte[] GetImage(string url)
+        //{
+        //    Stream stream = null;
+        //    byte[] buf;
+        //    try
+        //    {
+        //        WebProxy myProxy = new WebProxy();
+        //        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+        //        HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+        //        stream = response.GetResponseStream();
+        //        using (BinaryReader br = new BinaryReader(stream))
+        //        {
+        //            int len = (int)(response.ContentLength);
+        //            buf = br.ReadBytes(len);
+        //            br.Close();
+        //        }
+        //        stream.Close();
+        //        response.Close();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        buf = null;
+        //    }
+        //    return (buf);
+        //}
     }
 }
