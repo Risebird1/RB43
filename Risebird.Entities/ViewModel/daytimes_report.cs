@@ -102,6 +102,7 @@ namespace Risebird.Entities.ViewModel
         public int TimeZoneoffset { get; set; }
         public string schedulertype { get; set; }
         public bool reschedulerequest { get; set; }
+        public int interviewid { get; set; }
     }
     public class TimeslotsVM
     {

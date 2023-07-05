@@ -21,13 +21,14 @@ WHEN ip.Type='Interview' and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ip.
 WHEN ip.Type='Quality Controller' THEN IsNull(tqi.PerSuccessRate,ip.Points) ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency,Case When IRF.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as MaxVideoDuration,
 Case When ti.Surcharge>0 and IRF.IsNewSkillChannel=1 and ip.Points>0 then ti.Surcharge when ti.Surcharge=0 and IRF.IsNewSkillChannel=1 and ip.Points>0 then im.Surcharge Else 0 end as Surcharge,
 Case When cr.Question2=5 and IRF.IsNewSkillChannel=1 then 20 Else 0 END as CandidateRatingAmount,
-Case When clr.StarRating=5 and IRF.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints
+Case When (clr.StarRating=5 or clrs.Rating=5) and IRF.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints
 from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId 
 left join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFID=im.IRFId left join Client cl on cl.id=IRF.ClientId left join Userlist uli on uli.id=irf.risebirdhr 
 left join TransInterviewer ti on ti.IRFId=irf.id and ti.UserId=ip.Userid left join TransEmergencyInterviewer tei on tei.IRFId=irf.id and tei.UserId=ip.Userid 
 left join TransQualityController tqi on tqi.IRFId=irf.id and tqi.UserId=ip.Userid 
 left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
 left join InterviewRatings clr on clr.Interviewid=im.id 
+left join ClientCommentsForReport clrs on clrs.Interviewid=im.id  
 left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
 where ip.Status='Submitted' and ip.Interviewid!=0 
 Union 

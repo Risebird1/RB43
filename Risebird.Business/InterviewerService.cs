@@ -1002,11 +1002,11 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid)
+        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid,string type)
         {
             try
             {
-                var result = await _interviewerRepository.fetchClientFeedbackbyInterviewer(emailid);
+                var result = await _interviewerRepository.fetchClientFeedbackbyInterviewer(emailid, type);
                 return result;
             }
             catch (Exception e)

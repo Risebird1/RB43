@@ -786,6 +786,7 @@ namespace Risebird.Repository
                         _resultVM.CandidateDetails.ChannelOwnerEmail = dt.Rows[0]["ChannelOwnerEmail"] != null ? dt.Rows[0]["ChannelOwnerEmail"].ToString() : null;
                         _resultVM.CandidateDetails.ChannelOwnerMobile = dt.Rows[0]["ChannelOwnerMobile"] != null ? dt.Rows[0]["ChannelOwnerMobile"].ToString() : null;
                         _resultVM.CandidateDetails.ClientHRAttemptContact = dt.Rows[0]["ClientHRAttemptContact"] != null ? dt.Rows[0]["ClientHRAttemptContact"].ToString() : null;
+                        _resultVM.CandidateDetails.ClientHRAttemptContactMobile = dt.Rows[0]["ClientHRAttemptContactMobile"] != null ? dt.Rows[0]["ClientHRAttemptContactMobile"].ToString() : null;
                         //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)
@@ -843,7 +844,7 @@ namespace Risebird.Repository
         {
             try
             {
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,

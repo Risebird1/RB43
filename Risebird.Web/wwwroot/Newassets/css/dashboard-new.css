@@ -313,10 +313,14 @@ a.infos {
     top: 2px;
 }
 
+.time_tab {
+    text-align: center;
+    padding: 20px 0px;
+    font-size: 17px;
+}
+
 .time-left-txt {
-    position: relative;
-    top: 9px;
-    color: #376e0a;
+    color: #81bb51;
     line-height: 30px;
 }
 
@@ -328,16 +332,21 @@ a.infos {
 }
 
 .time-clock {
-    width: 55px;
-    height: 45px;
-    background: url(../../Newassets/img/clock.png) 2px 13px no-repeat;
+    width: 85px;
+    height: 70px;
+    text-align: center;
+    margin: 0px auto;
+    background: url(../../Newassets/img/clock-time.png) 0px 10px no-repeat;
+    background-size: 70%;
+    padding: 16px 15px;
 }
 
     .time-clock .timer {
-        padding-left: 36px;
         font-size: 15px;
-        padding-top: 20px;
+        padding-top: 15px;
         margin: 0px;
+        position: relative;
+        left: 45px;
     }
 
 .sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
@@ -5690,6 +5699,184 @@ input[type="date"].form-control {
         #divclientname .btn-group:hover .multiselect-selected-text {
             color: #383737;
         }
+
+/* Style the tab content */
+
+.tabcontent {
+    float: left;
+    padding: 20px;
+    width: 100%;
+    border-left: none;
+}
+
+.triangle-right {
+    width: 0;
+    height: 0;
+    border-top: 25px solid transparent;
+    border-left: 50px solid #555;
+    border-bottom: 25px solid transparent;
+}
+
+.interviewresponsebtn {
+    text-decoration: none;
+    padding: 10px 20px;
+    position: relative;
+    clear: both;
+    border-radius: 3px;
+    /*font-size: 1.2vw;*/
+    color: #fff;
+    cursor: pointer;
+}
+
+
+.tablinks.active {
+    /*background-color: #a7e8ba;*/
+    background-color: #e5e7ea !important;
+    box-shadow: none !important;
+    border-radius: 10px;
+}
+
+.candidate-tab .card-block {
+    background: #fff;
+    max-width: 230px;
+    height: 250px;
+    border-radius: 16px;
+    padding: 22px 16px;
+    width: 33%;
+    float: left;
+    position: relative;
+    border: none;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+}
+
+.candidate-tab .tabcontent p {
+    font-size: 15px;
+}
+
+.candidate-tab {
+    width: auto;
+    margin: 0px auto;
+}
+
+    .candidate-tab .card-block h1 {
+        color: #305887;
+        font-weight: bold;
+        font-size: 13px;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+.meeting-link {
+    margin: 20px 0px;
+    color: #3094e5;
+    font-weight: bold;
+}
+
+    .meeting-link .click_herebtn {
+        padding: 7px 35px;
+    }
+
+.company-logo {
+    text-align: center;
+    padding: 10px 10px;
+    margin: 10px 0px;
+}
+
+.candidate-tab b {
+    font-size: 16px;
+    font-weight: 600;
+    color: #204065;
+}
+
+.click_herebtn {
+    border-radius: 4px;
+    background-color: #42a5f5;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 14px;
+    padding: 7px;
+    width: 200px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+}
+
+    .click_herebtn span {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+        transition: 0.5s;
+    }
+
+        .click_herebtn span:after {
+            content: '\00bb';
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: -20px;
+            transition: 0.5s;
+        }
+
+    .click_herebtn:hover span {
+        padding-right: 25px;
+    }
+
+        .click_herebtn:hover span:after {
+            opacity: 1;
+            right: 0;
+        }
+
+.interview .click_herebtn {
+    background: none;
+    width: auto;
+    padding: 0px;
+    font-size: 15px;
+}
+
+    .interview .click_herebtn span:after {
+        top: 8px;
+    }
+
+.step {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 30px;
+    width: 60px;
+    border-radius: 0px 0px 120px 120px;
+    background-color: #204065;
+    color: #FFf;
+    text-align: center;
+}
+
+.follow ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+    .follow ul li {
+        font-size: 15px;
+        padding: 5px 27px;
+        list-style: none;
+        background-image: url(../../img/blue-tick.png);
+        background-repeat: no-repeat;
+        background-position: 0px 10px;
+        background-size: 2%;
+        color: #777575;
+    }
+
+.content-wrapper {
+    max-width: 752px;
+    margin: 0px auto;
+}
+
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -7230,6 +7417,10 @@ input[type="date"].form-control {
 }
 
 @media (max-width: 480px) {
+    .candidate-tab .card-block h1 {
+        font-size: 13px !important;
+        background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+    }
 
 
     #scoreChart tspan {
@@ -7383,6 +7574,18 @@ input[type="date"].form-control {
     .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
         font-size: 14px;
     }
+
+    .candidate-tab .card-block {
+        height: 150px !important;
+        width: 30% !important;
+        margin: 10px 6px !important;
+    }
+
+    .step {
+        width: 40px !important;
+        height: 20px !important;
+        font-size: 13px !important;
+    }
 }
 
 @media (max-width: 375px) {
@@ -7391,6 +7594,14 @@ input[type="date"].form-control {
         top: 6px;
         right: 95px;
     }
+
+    .candidate-tab .card-block {
+        height: 140px !important;
+    }
+
+        .candidate-tab .card-block h1 {
+            font-size: 11px !important;
+        }
 
     #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
         margin-bottom: 10px;

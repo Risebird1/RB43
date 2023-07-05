@@ -17,11 +17,12 @@ BEGIN
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,
   Case When ti.Surcharge>0 and ir.IsNewSkillChannel=1 and ip.Points>0 then ti.Surcharge when ti.Surcharge=0 and ir.IsNewSkillChannel=1 and ip.Points>0 then im.Surcharge Else 0 end as Surcharge,
   Case When cr.Question2=5 and ir.IsNewSkillChannel=1 then 20 Else 0 END as CandidateRatingAmount,
-  Case When clr.StarRating=5 and ir.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints
+  Case When (clr.StarRating=5 or clrs.Rating=5) and ir.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId                 
   left join UserList ipul on ipul.EmailId=ip.Comment   
   left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
   left join InterviewRatings clr on clr.Interviewid=im.id 
+  left join ClientCommentsForReport clrs on clrs.Interviewid=im.id  
   left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=ip.userid
   where ip.Status='Paid' and ip.Interviewid!=0 and ip.PaymentHistoryId=@PaymentHistoryId               
   Union                 
