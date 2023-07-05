@@ -1,0 +1,563 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model Risebird.Entities.ViewModel.ScheculeInterview
+@{
+    ViewData["Title"] = "Schedule Event";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .required::after {
+        content: "*";
+        font-weight: bold;
+        color: red;
+    }
+
+    .button {
+        position: relative !important;
+        padding: 13px 10px !important;
+        background: none !important;
+        font-weight: bold !important;
+        vertical-align: top !important;
+        border-radius: 4px !important;
+        transition: all 0.3s ease;
+        transition-property: width, transform;
+        width: 250px;
+        height: 52px;
+        margin-bottom: 8px;
+        color: var(--primary-color, rgb(0, 107, 255));
+        /* border: 1px solid #c0c1c3c2 !important;
+                                                                                                                                                    color: #9b9393;*/
+        font-size: 17px;
+        /* background: #e5e5e5 !important*/
+    }
+
+        .button span {
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            transition: 0.5s;
+        }
+
+            .button span:after {
+                content: '\00bb';
+                position: absolute;
+                opacity: 0;
+                top: 0;
+                right: -20px;
+                transition: 0.5s;
+            }
+
+        .button:hover:before {
+            content: "Confirm!";
+            background-color: #fff;
+            color: green;
+        }
+
+        .button:hover span {
+            padding-right: 25px;
+            display: none;
+        }
+
+            .button:hover span:after {
+                opacity: 1;
+                right: 0;
+            }
+
+    .swal2-popup .swal2-title {
+        font-size: 1.5em !important;
+        text-transform: capitalize !important;
+        font-weight: 500 !important;
+        margin-bottom: 12px !important;
+        text-transform: none !important;
+    }
+
+    .swal2-popup #swal2-content {
+        text-align: center;
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+        .swal2-popup #swal2-content span {
+            padding-top: 10px;
+            display: block;
+            color: grey;
+            font-size: 19px;
+            font-weight: normal;
+        }
+
+    .navbar {
+        display: none;
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+</style>
+
+<link href="~/css/Calender.css" rel="stylesheet" />
+<script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/css/intlTelInput.css" rel="stylesheet" />
+<style>
+    .intl-tel-input .selected-flag {
+        z-index: 4;
+    }
+</style>
+<input type="hidden" value="@ViewBag.id" id="txthiddenid" />
+<input type="hidden" value="@ViewBag.Start" id="txthiddenPageStatus" />
+<input type="hidden" value="6" id="txthiddenSlotdays" />
+<div class="sidebar-mini">
+    <div class="main-panel">
+        <div id="divExpire" style="display:none">
+            <h3>This Schedule Interview Link is expired or no longer in use.</h3>
+        </div>
+        <div id="divconfirm" style="display:none">
+            <h3>Your Interview is scheduled successfully for @ViewBag.interviewDate</h3>
+        </div>
+
+        <div id="divcalenderdetails">
+            <div class="calendar-con clearfix">
+                <div class="col-md-12">
+                    <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
+                        @if (!string.IsNullOrEmpty(Model._IRFDetails.LogoLink))
+                        {
+                            <div class="logo-box"><div class="log-wrap"><img src=@Model._IRFDetails.LogoLink class="logo-company"></div></div>
+                        }
+                        else
+                        {
+                            <div class="logo-box"><div class="log-wrap"><img src="https://d3v0px0pttie1i.cloudfront.net/uploads/team/avatar/93451/3022a64c.jpg" alt="Risebird | Tech |  Video Interviews | Hands-on"></div></div>
+                        }
+                        @*<h4>@Model._IRFDetails.JDTiltle | @Model._IRFDetails.Name |  Video Interviews | Hands-on</h4>*@
+                        <h1>@Model._IRFDetails.Name | @Model._IRFDetails.JDTiltle |  Video Interviews</h1>
+
+                        <div>
+                            <span class="pull-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                     width="20" height="20"
+                                     viewBox="0 0 172 172"
+                                     style=" fill:#000000;">
+                                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#9b9797"><path d="M86,6.88c-43.62608,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49392,79.12 79.12,79.12c43.62608,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49392,-79.12 -79.12,-79.12zM129.8084,43.61576l-34.71304,37.60264c0.7568,1.43448 1.22464,3.04784 1.22464,4.7816c0,2.6144 -1.00448,4.97768 -2.60752,6.79744l12.49408,22.49416c0.92536,1.65808 0.32336,3.75304 -1.33472,4.67496c-0.52976,0.29584 -1.10424,0.43344 -1.6684,0.43344c-1.21088,0 -2.38048,-0.63984 -3.01,-1.7716l-12.49064,-22.4804c-0.55728,0.09288 -1.118,0.172 -1.7028,0.172c-5.70008,0 -10.32,-4.61992 -10.32,-10.32c0,-5.70008 4.61992,-10.32 10.32,-10.32c1.4448,0 2.8208,0.30272 4.06952,0.83936l34.68208,-37.57512c1.29,-1.38976 3.46408,-1.48264 4.86072,-0.19264c1.39664,1.29 1.48264,3.46408 0.19608,4.86416z"></path></g></g>
+                                </svg>
+                            </span><span class="pull-left time-txt">1&nbsp;hr</span>
+                        </div>
+                    </div>
+
+                    <div id="calender" class="col-md-6 pull-left">
+
+                        <h1 id="app-name-portrait" class="center ">JSCalender</h1>
+                        <!-- h1 'off-color' class was removed -->
+                        <table style="background:#fff!important;">
+                            <thead class="color" style="background:#fff!important;">
+                                <tr>
+                                    <th colspan="7" class="border-color" style="background:#fff!important;">
+                                        <h4>Select a Date & Time</h4>
+                                        <h2 id="cal-month" class="cal-myr pull-left">july</h2>    <h2 id="cal-year" class="cal-myr pull-left">2018</h2>
+                                        <div class="icon-div">
+                                            <i class="fas fa-chevron-left icon">&nbsp; </i>
+
+                                            <i class="fas fa-chevron-right icon">&nbsp;</i>
+                                        </div>
+                                    </th>
+                                </tr>
+
+                                <tr>
+                                    <th class="weekday">Sun</th>
+                                    <th class="weekday">Mon</th>
+                                    <th class="weekday">Tue</th>
+                                    <th class="weekday">Wed</th>
+                                    <th class="weekday">Thu</th>
+                                    <th class="weekday">Fri</th>
+                                    <th class="weekday">Sat</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="table-body">
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td class="tooltip-container">
+                                        <span class="day">1</span>
+
+                                        <span class="tooltip"> this is pretty tooltip</span>
+                                    </td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <div class="txttimezone-con clearfix">
+                                <div class="select">
+                                    @Html.DropDownListFor(m=>m.TimeZones,Model.TimeZonesList,new{@id="ddlselecttimezone", @onchange="setoffsettime()", @class="drop-timezone"})
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="calenderTimeslot" class="col-md-4 pull-left">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="divCandidateDetails" style="display:none">
+            <div class="calendar-con clearfix">
+                <div class="col-md-12">
+                    <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
+                        @if (!string.IsNullOrEmpty(Model._IRFDetails.LogoLink))
+                        {
+                            <div class="logo-box"><div class="log-wrap"><img src=@Model._IRFDetails.LogoLink class="logo-company"></div></div>
+                        }
+                        else
+                        {
+                            <div class="logo-box"><div class="log-wrap"><img src="https://d3v0px0pttie1i.cloudfront.net/uploads/team/avatar/93451/3022a64c.jpg" alt="Risebird | Tech |  Video Interviews | Hands-on" class="logo-company"></div></div>
+                        }
+                        <h1>@Model._IRFDetails.Name | @Model._IRFDetails.JDTiltle |  Video Interviews</h1>
+
+                        <div class="date-time-txt">
+                            <span class="pull-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                     width="24" height="24"
+                                     viewBox="0 0 172 172"
+                                     style=" fill:#000000;">
+                                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#06c29c"><path d="M43,7.16667v14.33333h-7.16667c-7.88333,0 -14.33333,6.45 -14.33333,14.33333v100.33333c0,7.88333 6.45,14.33333 14.33333,14.33333h100.33333c7.88333,0 14.33333,-6.45 14.33333,-14.33333v-100.33333c0,-7.88333 -6.45,-14.33333 -14.33333,-14.33333h-7.16667v-14.33333h-14.33333v14.33333h-57.33333v-14.33333zM35.83333,35.83333h7.16667h14.33333h57.33333h14.33333h7.16667v14.33333h-100.33333zM35.83333,64.5h100.33333v71.66667h-100.33333z"></path></g></g>
+                                </svg>
+                            </span>
+                            <span><lable id="InterviewDateform"></lable></span>
+                        </div>
+                        <div class="row"><div class="col-md-12">TimeZone : <label id="txttimezoneform">Asia/Calcutta</label></div></div>
+                    </div>
+
+                    <div class="col-md-6 form-field-calender pull-left" style="padding-left:3vw">
+                        <form action="/InterviewScheduler/ReScheduleEvent" enctype="multipart/form-data" method="post">
+                            <div>
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary()
+                                @Html.HiddenFor(m => m.InterviewDate)
+                                @Html.HiddenFor(m => m.Uniqueid)
+                                @Html.HiddenFor(m => m.offset)
+                                @Html.HiddenFor(m => m._IRFDetails.LogoLink)
+                                @Html.HiddenFor(m => m._IRFDetails.Name)
+                                @Html.HiddenFor(m => m._IRFDetails.JDTiltle)
+                                @Html.HiddenFor(m => m.CountryCode)
+                                @Html.HiddenFor(m => m.ClientName)
+                                @Html.HiddenFor(m => m.TimeZonesValue)
+                                @Html.HiddenFor(m => m.schedulertype)
+                                @Html.HiddenFor(m => m.reschedulerequest)
+                                @Html.HiddenFor(m => m.interviewid)
+                                <h2>Enter Details</h2>
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-label required" })
+                                    </div>
+                                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                </div>
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label required" })
+
+                                    </div>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                </div>
+                                @if (!Model.reschedulerequest)
+                                {
+                                    <div class="form-group clearfix">
+                                        <div class="resume pull-left">
+                                            @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "form-label required" })
+                                        </div>
+                                        <div class="col-md-6 pull-left">
+                                            @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
+                                            @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
+                                            <span id="file-chosen"></span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Html.HiddenFor(m=>m.Resume)
+                                }
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.InterviewChannelId, htmlAttributes: new { @class = "form-label required" })
+                                    </div>
+                                    @Html.TextBoxFor(m => m.InterviewChannelId, new { @readonly = "readonly", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                </div>
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.HRCoordinator, htmlAttributes: new { @class = "form-label required" })
+                                    </div>
+                                    @if (Model._listhr != null && Model._listhr.Count() > 0)
+                                    {
+                                        @Html.DropDownListFor(m => m.HRCoordinator,Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
+                                        @Html.ValidationMessageFor(m => m.HRCoordinator,"",new{@class="text-danger"})
+                                    }
+                                </div>
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.LabelFor(model => model.StaffingAgiencies, htmlAttributes: new { @class = "form-label" })
+                                    </div>
+                                    @if (Model._liststaffing != null && Model._liststaffing.Count() > 0)
+                                    {
+                                        @Html.DropDownListFor(m => m.StaffingAgiencies,Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    }
+                                </div>
+                                <div class="form-group">
+                                    <div class="mandate">
+                                        @Html.Label("", "Please checkmark your available infra for the video interview", htmlAttributes: new { @class = "form-label required" })
+                                    </div>
+                                    <p> @Html.CheckBoxFor(m => m.Checkbox1) @Html.LabelFor(m => m.Checkbox1, htmlAttributes: new { @style = "font-weight:normal" }) </p>
+                                    <p> @Html.CheckBoxFor(m => m.Checkbox2) @Html.LabelFor(m => m.Checkbox2, htmlAttributes: new { @style = "font-weight:normal" }) </p>
+                                    @*<p> @Html.CheckBoxFor(m => m.Checkbox3) @Html.LabelFor(m => m.Checkbox3, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
+                                    <p> @Html.CheckBoxFor(m => m.Checkbox4) @Html.LabelFor(m => m.Checkbox4, htmlAttributes: new { @style = "font-weight:normal" }) </p>
+                                    @*<p> @Html.CheckBoxFor(m => m.Checkbox5) @Html.LabelFor(m => m.Checkbox5, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
+                                    @*<p> @Html.CheckBoxFor(m => m.Checkbox6) @Html.LabelFor(m => m.Checkbox6, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
+                                </div>
+                                @if (!Model.reschedulerequest)
+                                {
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(m => m.MobileNumber, htmlAttributes: new { @class = "form-label required" })
+                                        </div>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
+                                            @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Html.HiddenFor(m=>m.MobileNumber)
+                                    <div class="input-group" style="display:none">
+                                        @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                    </div>
+                                }
+                                <div class="clearfix"></div>
+
+                                @Html.HiddenFor(m=> m.MeetingPlatform)
+                                <div class="form-group">
+                                    <input type="submit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/InterviewCalender.js"></script>
+<script>
+    $(document).ready(function () {
+        setvalues();
+    });
+    function setvalues() {
+        var slotdays = $("#txthiddenSlotdays").val();
+        for (var i = 0; i < parseInt(slotdays); i++) {
+            const now1 = new Date();
+            const todayDay1 = now1.getDate(),
+                todayMonth1 = now1.getMonth(),
+                todayYear1 = now1.getFullYear();
+            const now = new Date().addDays(i);
+            const todayDay = now.getDate(),
+                todayMonth = now.getMonth(),
+                todayYear = now.getFullYear();
+            if (todayDay1 <= todayDay) {
+                var relativemonth = $("#cal-month").text();
+                var relativeyear = $("#cal-year").text();
+                var comparemonth = monthsStr[new Date().getMonth()];
+                var compareyear = new Date().getFullYear();
+                if (relativemonth == comparemonth && relativeyear == compareyear)
+                    document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: bold;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
+                //document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
+            }
+        }
+    }
+    var countrydetails;
+
+    $(document).ready(function () {
+        var timezonevalue = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        //$("#txttimezone").text(timezonevalue);
+        //$("#txttimezoneform").text(timezonevalue);
+        if ($("#txthiddenPageStatus").val() == 2) {
+            document.getElementById("divCandidateDetails").style.display = "block";
+            document.getElementById("divcalenderdetails").style.display = "none";
+            $("#telnumber").intlTelInput({
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js",
+                initialCountry: "in"
+            });
+        } else if ($("#txthiddenPageStatus").val() == 3) {
+            document.getElementById("divCandidateDetails").style.display = "none";
+            document.getElementById("divcalenderdetails").style.display = "none";
+            document.getElementById("divExpire").style.display = "block";
+        } else if ($("#txthiddenPageStatus").val() == 4) {
+            document.getElementById("divCandidateDetails").style.display = "none";
+            document.getElementById("divcalenderdetails").style.display = "none";
+            document.getElementById("divconfirm").style.display = "block";
+        }
+        $('.currMonth').click(function () {
+            $(".currMonth").removeClass('active-slot');
+            setvalues();
+            $(this).removeAttr('style', '');
+            $(this).addClass('active-slot');
+        });
+
+    });
+    Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+    var SelectDateValue = "";
+    function fetchTimeslots(selectdate) {
+        var slotdays = $("#txthiddenSlotdays").val();
+        var timeZonevalue = $("#ddlselecttimezone option:selected").text();
+        var flag = true;
+        for (var i = 0; i < parseInt(slotdays); i++) {
+            //var offset = (new Date()).getTimezoneOffset();
+            var valuesutc = $("#ddlselecttimezone").val();
+            var offset = -(parseFloat(valuesutc) * 60);
+            const now1 = new Date().addDays(i);
+            const todayDay1 = now1.getDay(),
+                todayDate1 = now1.getDate(),
+                todayMonth1 = now1.getMonth(),
+                todayYear1 = now1.getFullYear();
+            if (selectdate == todayDate1 && todayMonth1 == state.todayMonth && todayYear1 == state.todayYear) {
+                SelectDateValue = selectdate;
+                $.ajax({
+                    type: "POST",
+                    url: "/InterviewScheduler/FetchSlots",
+                    data: { day: selectdate, month: (state.todayMonth + 1), year: state.todayYear, id: $("#txthiddenid").val(), offset: offset, TimeZonevalue: timeZonevalue },
+                    success: function (data) {
+                        bindslots(data);
+                    }
+                });
+                flag = true
+                break;
+            }
+            else {
+                flag = false;
+            }
+        }
+        if (flag == false) {
+            bindslots("");
+            swal.fire('No slots available on', +selectdate + 'th ' + '' + monthsStr[state.todayMonth] + '&nbsp;' + state.todayYear + '<br/>' + '<span>Please select another date</span>');
+            $(".currMonth").removeClass('active-slot');
+            setvalues();
+        }
+    }
+    function bindslots(data) {
+        var html = '';
+        html += '<table><tbody>';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr><td><input type="hidden" id="txtslotid_' + i + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + i + ')"><span>' + data[i] + '</span></button></td></tr>';
+        }
+        html += '</tbody></table>';
+        $("#calenderTimeslot").empty().html(html);
+    }
+    function submitDate(i) {
+        //var offset = (new Date()).getTimezoneOffset();
+        var valuesutc = $("#ddlselecttimezone").val();
+        var offset = -(parseFloat(valuesutc) * 60);
+        var timeZonesValue = $("#ddlselecttimezone option:selected").text();
+        var timezonetext = document.querySelector("Select option[value='" + valuesutc + "']").innerHTML;
+        var timeslot = $("#txtslotid_" + i).val();
+        var datevalue = SelectDateValue + " " + (state.todayMonth + 1) + " " + state.todayYear + " " + timeslot;
+        var datevalueformate = timeslot + ", " + monthsStr[state.todayMonth] + " " + SelectDateValue + ", " + state.todayYear;
+        $("#InterviewDate").val(datevalue);
+        $("#offset").val(offset);
+        $("#InterviewDateform").text(datevalueformate);
+        $("#txttimezoneform").text(timeZonesValue);
+        $("#TimeZonesValue").val(timeZonesValue);
+        document.getElementById("divCandidateDetails").style.display = "block";
+        document.getElementById("divcalenderdetails").style.display = "none";
+        $(".calendly-inline-widget").attr('style', 'height:1100px')
+        $("#telnumber").intlTelInput({
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js",
+            initialCountry: "in"
+        });
+    }
+    function checkvalidation() {
+        var code_value = $(".selected-flag").attr("title").split(":")[1].trim();
+        $("#CountryCode").val(code_value);
+        return true;
+    }
+    function setoffsettime() {
+        var valuesutc = $("#ddlselecttimezone").val();
+        bindslots("");
+        $(".currMonth").removeClass('active-slot');
+        setvalues();
+    }
+    $(document).ready(function () {
+        let element = document.getElementById("ddlselecttimezone");
+        var offset = (new Date()).getTimezoneOffset();
+        var selectedvalue = (-parseFloat(offset) / 60);
+        element.value = selectedvalue;
+    });
+</script>
+
+
+<script>
+    const actualBtn = document.getElementById('ResumeFile');
+
+    const fileChosen = document.getElementById('file-chosen');
+
+    actualBtn.addEventListener('change', function () {
+        fileChosen.textContent = this.files[0].name
+    })
+</script>

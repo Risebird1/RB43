@@ -4450,7 +4450,7 @@ namespace Risebird.Web.Controllers
         /// <param name="IRFId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId,int type)
+        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId, int type)
         {
             try
             {
@@ -4460,7 +4460,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (type == 1)
                     {
-                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/TestPage?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + IRFId;
                     }
                     else
                     {
@@ -4547,7 +4547,7 @@ namespace Risebird.Web.Controllers
 
         #region CandidateTest
         [HttpGet]
-        public IActionResult TestPage(string id, int IRFId)
+        public IActionResult InterviewDetails(string id, int IRFId)
         {
             var model = new CandidateIRFDetailsVM();
             //var model = new Candidate();
@@ -4556,7 +4556,7 @@ namespace Risebird.Web.Controllers
             model.CandidateDetails.IRFId = IRFId;
             return View(model);
         }
-        public async Task<IActionResult> VerifiedTestPage(string emailid, string id, int IRFid)
+        public async Task<IActionResult> VerifiedInterviewDetails(string emailid, string id, int IRFid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
             ViewBag.id = id;
@@ -4606,7 +4606,12 @@ namespace Risebird.Web.Controllers
                     }
                 }
             }
-            return View("TestPage", CandidateDetails);
+            if (TempData["CreateInterviewMessage"] != null)
+            {
+                ViewBag.Message = TempData["CreateInterviewMessage"].ToString();
+                TempData.Remove("CreateInterviewMessage");
+            }
+            return View("InterviewDetails", CandidateDetails);
         }
 
         [HttpPost]

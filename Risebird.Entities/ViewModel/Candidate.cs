@@ -84,6 +84,8 @@ namespace Risebird.Entities.ViewModel
         public string StatusValue { get; set; }
         public int imid { get; set; }
         public int confirmationStatus { get; set; }
+        public int ClientPhoneNumber { get; set; }
+        public int ChanelOwnerPhoneNumber { get; set; }
         public int MeetingStatus { get; set; }
         public int InterviewStatus { get; set; }
         public string VideoLink { get; set; }
@@ -135,6 +137,7 @@ namespace Risebird.Entities.ViewModel
         public string CompanyVideoLink { get; set; }
         public string ChannelOwnerEmail { get; set; }
         public string ChannelOwnerMobile { get; set; }
+        public string ClientHRAttemptContactMobile { get; set; }
         public int CandidateResumeId {get; set;}// id from CandidateResume table
         public string AddedByEmailId { get; set;}// id from CandidateResume table
     }

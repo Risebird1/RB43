@@ -1,4 +1,5 @@
 using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -22,8 +23,10 @@ namespace Risebird.MicroService
         private readonly IIRFRepository _irfRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ITwilioHelper _twilioHelper;
+        private readonly IConfiguration _configuration;
+        private readonly string candidateDashboard;
 
-        public CandidateMeetingReminder(IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IMeetingService meetingService, IIRFService irfService, IIRFRepository irfRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper)
+        public CandidateMeetingReminder(IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IMeetingService meetingService, IIRFService irfService, IIRFRepository irfRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, IConfiguration configuration)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -33,6 +36,8 @@ namespace Risebird.MicroService
             _irfRepository = irfRepository;
             _whatsAppHelper = whatsAppHelper;
             _twilioHelper = twilioHelper;
+            _configuration = configuration;
+            candidateDashboard = _configuration["CandidateDashBoard:UseDashboard"];
         }
         [FunctionName("CandidateMeetingReminder")]
         public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
@@ -49,6 +54,8 @@ namespace Risebird.MicroService
                     string nobutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=2&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
                     string rescheulebutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
                     string needcleritybutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=4&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+                    string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + item.uniqueid + "&Irfid=" + item.Irfid;
+
                     if (item.Typefunction == 2)
                     {
                         //Send Notifications
@@ -57,7 +64,14 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        if (candidateDashboard == "1")
+                        {
+                            var emailresult = await _notificationHelper.SendInterviewRemindersecondOptional(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        }
+                        else
+                        {
+                            var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        }
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -79,7 +93,14 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        if (candidateDashboard == "1")
+                        {
+                            var emailresult = await _notificationHelper.SendInterviewReminderOptional(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        }
+                        else
+                        {
+                            var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        }
                         //Send  WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
@@ -100,7 +121,14 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.MeetingLink,item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        if (candidateDashboard == "1")
+                        {
+                            var emailresult = await _notificationHelper.SendInterviewReminderOptional(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        }
+                        else
+                        {
+                            var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, "IST", item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        }
                         //Send Call, WhatsApp and mail
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.CandidateEmail;
