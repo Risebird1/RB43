@@ -33,9 +33,12 @@ namespace ScreenBackgroundJobs
         private readonly IAadhaarRepository _aadhaarRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly string client_code;
-        private readonly string api_key;
-        private readonly string salt;
-        private readonly string apiendpoint;
+        //private readonly string api_key;
+        //private readonly string salt;
+        //private readonly string apiendpoint;
+        private readonly string faceCompareApiendpoint;
+        private readonly string faceCompare_api_key;
+        private readonly string faceCompare_salt;
         private static readonly RestClient client = new RestClient();
         public UploadAndVerifyCandidateImage(IConfiguration configuration, IAadhaarRepository aadhaarRepository, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -43,9 +46,12 @@ namespace ScreenBackgroundJobs
             //_applicationErrorLogger = applicationErrorLogger;
             _aadhaarRepository = aadhaarRepository;
             client_code = _configuration["AadhaarApiDetails:client_code"];
-            api_key = _configuration["AadhaarApiDetails:api_key"];
-            salt = _configuration["AadhaarApiDetails:salt"];
-            apiendpoint = _configuration["AadhaarApiDetails:endPoint"];
+            //api_key = _configuration["AadhaarApiDetails:api_key"];
+            //salt = _configuration["AadhaarApiDetails:salt"];
+            //apiendpoint = _configuration["AadhaarApiDetails:endPoint"];
+            faceCompareApiendpoint = _configuration["AadhaarApiDetails:faceCompareEndPoint"];
+            faceCompare_api_key = _configuration["AadhaarApiDetails:faceCompareApiKey"];
+            faceCompare_salt = _configuration["AadhaarApiDetails:faceCompareSalt"];
             _applicationErrorLogger = applicationErrorLogger;
         }
 
@@ -90,12 +96,13 @@ namespace ScreenBackgroundJobs
                 var model = new AadhaarVM();
                 var datenow = GetCurrentUnixTimestampMillis();
                 SetHeaderValue(model.headers, datenow);
-                model.request.api_key = api_key;
+                model.request.api_key = faceCompare_api_key;
                 model.request.request_id = Guid.NewGuid().ToString();
                 model.request.purpose = "VERIFY";
                 model.request.image_1 = dto.imageFirst; //ConvertImageURLToBase64(dto.imageFirst);
                 model.request.image_2 = dto.imageSecond; // ConvertImageURLToBase64(dto.imageSecond);
-                var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
+                //var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + api_key + "|" + salt;
+                var hashstring = model.headers.client_code + "|" + model.request.request_id + "|" + faceCompare_api_key + "|" + faceCompare_salt;
                 model.request.hash = await getHashSha256(hashstring);
 
                 Dictionary<string, string> headers = new Dictionary<string, string>
@@ -105,7 +112,7 @@ namespace ScreenBackgroundJobs
             };
 
                 //var response = await _httpRequestHelper.MakeHttpRequest(dto.apiendpoint + "getCaptcha", Method.Post, model, headers);
-                var response = await MakeHttpRequest(apiendpoint + "faceCompare", Method.Post, model, headers);
+                var response = await MakeHttpRequest(faceCompareApiendpoint + "faceCompare", Method.Post, model, headers);
 
                 var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
                 if (convertedResponse.response_status.status.ToLower() == "fail")
@@ -135,7 +142,7 @@ namespace ScreenBackgroundJobs
             _header.sub_client_code = client_code;
             _header.channel_code = "ANDROID_SDK";
             _header.channel_version = "1";
-            _header.stan = salt;
+            _header.stan = faceCompare_salt;
             _header.client_ip = "";
             _header.transmission_datetime = datenow;
             _header.operation_mode = "SELF";
