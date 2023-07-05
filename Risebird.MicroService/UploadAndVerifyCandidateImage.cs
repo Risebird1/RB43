@@ -105,7 +105,7 @@ namespace ScreenBackgroundJobs
             };
 
                 //var response = await _httpRequestHelper.MakeHttpRequest(dto.apiendpoint + "getCaptcha", Method.Post, model, headers);
-                var response = await MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
+                var response = await MakeHttpRequest(apiendpoint + "faceCompare", Method.Post, model, headers);
 
                 var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
                 if (convertedResponse.response_status.status.ToLower() == "fail")
