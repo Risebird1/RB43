@@ -32,12 +32,13 @@ Begin
 	end as [Name],ir.IRfId as IRFName,ul.EmailId, ul.MobileNumber, ul.uniqueid,
 	ir.JDTiltle, ir.JDLink, ir.ClientName, ir.CalendlyLink, ir.PrimarySkillInvite, cl.CompanyLink, 
 	cl.CompanyVideoLink, ulr.EmailId as ChannelOwnerEmail, 
-	ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact
+	ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact,ulr.MobileNumber as ClientHRAttemptContactMobile
 	from Candidate ca join irf ir on ca.IRFId=ir.id
 	join CandidatesMaster cm on cm.id=ca.CandidateMasterId
 	join Client cl on cl.id = ir.ClientId 
 	join UserList ul on ul.id = cm.UserId 
 	join UserList ulr on ulr.id = ir.RisebirdHr 
+	left join UserList ulcr on ulcr.EmailId = ca.ClientHRAttemptContact
 	where ul.IsActive =1 and ul.emailid =@EmailParam and ir.Id = @irfIdParam
 
 	select im.id as Interviewid, im.resumeLink, im.zoomLink, im.interviewDate, im.candidateEmail, im.interviewSlot,

@@ -33,5 +33,6 @@ namespace Risebird.Repository.Interface
         Task<bool> CheckEmailAddressAllow(string EmailId);
         Task<IEnumerable<InterviewAvailabilityResponse>> CheckInterviewScheduleavailability(string EmailId, string IRFId);
         Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid);
+        Task<string> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate);
     }
 }

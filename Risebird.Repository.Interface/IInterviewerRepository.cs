@@ -66,7 +66,7 @@ namespace Risebird.Repository.Interface
         Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
         Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
         string GetUserRolebyEmailid(string Emailid);
-        Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid);
+        Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid,string type);
         string FetchClientName(string IRFId);
         Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type);
         Task<List<string>> FetchAllPasswordResetDetails(int noofdays);

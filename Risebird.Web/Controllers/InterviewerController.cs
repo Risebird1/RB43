@@ -2580,44 +2580,29 @@ namespace Risebird.Web.Controllers
                 ViewBag.type = "Client";
                 if (profileName == "Interviewer")
                 {
+                    ViewBag.OverallRating = 0;
                     if (type == "Candidate")
                     {
                         ViewBag.type = "Candidate";
-                        AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                        var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                        interviewerid = await _userRepository.GetInterviewerid(emailid);
-                        result = result.Where(x => x.Interviewerid == interviewerid).ToList();
-                        var _resultinterview = (from data in result
-                                                select new SurveyDetails { interviewid = data.interviewid }).ToList();
-                        _resultinterview = _resultinterview.Distinct().ToList();
-                        var ClientNamelist = _meetingService.FetchSurveyClientName(_resultinterview);
-                        foreach (var item in result)
+                        modelData = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid, "Candidate");
+                        foreach (var item in modelData)
                         {
-                            if (modelData.Where(x => x.Interviewid == item.interviewid).Count() == 0)
-                            {
-                                var rating = !string.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
-                                modelData.Add(new InterviewerRating
-                                {
-                                    Interviewid = item.interviewid,
-                                    StarRating = Convert.ToInt32(rating),
-                                    Name = item.Name,
-                                    Emailid = item.EmailAddress,
-                                    Comment = item.CommentforInterviewer,
-                                    interviewdate = Convert.ToDateTime(ClientNamelist.Where(x => x.interviewid == item.interviewid).Select(x => x.interviewdate).FirstOrDefault())
-                                });
-                            }
+                            item.StarRating = item.Question2;
+                        }
+                        if (modelData.Count() != 0)
+                        {
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Question2).Average(), 2);
                         }
                     }
                     else
                     {
-                        var results = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid);
+                        var results = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid, "Client");
                         if (results != null)
                             modelData = results;
-                    }
-                    ViewBag.OverallRating = 0;
-                    if (modelData.Count() != 0)
-                    {
-                        ViewBag.OverallRating = Math.Round(modelData.Select(x => x.StarRating).Average(), 2);
+                        if (modelData.Count() != 0)
+                        {
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.StarRating).Average(), 2);
+                        }
                     }
                     return View(modelData);
                 }

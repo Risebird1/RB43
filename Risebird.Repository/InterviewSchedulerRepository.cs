@@ -408,7 +408,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> GenerateOneTimeEvent(string olduniqueid,string candidateEmail)
+        public async Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail)
         {
             try
             {
@@ -639,6 +639,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<string> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@interviewid", interviewid);
+                dp.Add("@source", "Reschedule on " + newinterviewdate.ToString());
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_UpdateReSchedulingInterview", dp,
+                            commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

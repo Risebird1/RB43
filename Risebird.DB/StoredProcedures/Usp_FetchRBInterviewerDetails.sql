@@ -18,7 +18,7 @@ If (@flag=2)
   ;with CTE as(Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,
   Case When ti.Surcharge>0 and ir.IsNewSkillChannel=1 and ip.Points>0 then ti.Surcharge when ti.Surcharge=0 and ir.IsNewSkillChannel=1 and ip.Points>0 then im.Surcharge Else 0 end as Surcharge,
   Case When cr.Question2=5 and ir.IsNewSkillChannel=1 then 20 Else 0 END as CandidateRatingAmount,
-  Case When clr.StarRating=5 and ir.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints,
+  Case When (clr.StarRating=5 or clrs.Rating=5) and ir.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints,
   isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,Case When ir.IsNewSkillChannel=1 then pm.DurationSelectedMin else ir.interviewDuration end as MaxVideoDuration,
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate) ELSE '' END as Rate           
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join Client cl on cl.id=ir.Clientid                    
@@ -27,6 +27,7 @@ If (@flag=2)
   left join UserList ipul on ipul.EmailId=ip.Comment
   left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
   left join InterviewRatings clr on clr.Interviewid=im.id 
+  left join ClientCommentsForReport clrs on clrs.Interviewid=im.id  
   left join PlanTypeChargesMaster pm on pm.CountryType=ir.JobCountry and pm.CompanyType=ir.CompanyType and pm.PlanTypeEnumValue=ir.Heuristicsscore
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Advance') and ip.Interviewid!=0                    
   Union                     
@@ -55,7 +56,7 @@ Else
   ;With CTE as(Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,(ip.Points*IsNull(ip.PenaltyAmount,0)/100) Penaltyamount,(ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) Points,
   Case When ti.Surcharge>0 and ir.IsNewSkillChannel=1 and ip.Points>0 then ti.Surcharge when ti.Surcharge=0 and ir.IsNewSkillChannel=1 and ip.Points>0 then im.Surcharge Else 0 end as Surcharge,
   Case When cr.Question2=5 and ir.IsNewSkillChannel=1 then 20 Else 0 END as CandidateRatingAmount,
-  Case When clr.StarRating=5 and ir.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints,
+  Case When (clr.StarRating=5 or clrs.Rating=5) and ir.IsNewSkillChannel=1 then 50 Else 0 END as ClientRatingAmount,ip.QCPoints,
   isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,Case When ir.IsNewSkillChannel=1 then pm.DurationSelectedMin else ir.interviewDuration end as MaxVideoDuration,
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate) ELSE '' END as Rate                     
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId           
@@ -66,6 +67,7 @@ Else
   left join UserList ipul on ipul.EmailId=ip.Comment           
   left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
   left join InterviewRatings clr on clr.Interviewid=im.id 
+  left join ClientCommentsForReport clrs on clrs.Interviewid=im.id  
   left join PlanTypeChargesMaster pm on pm.CountryType=ir.JobCountry and pm.CompanyType=ir.CompanyType and pm.PlanTypeEnumValue=ir.Heuristicsscore
   where ip.userid = @Userid and (ip.Status='Submitted' or ip.Status='Advance') and ip.Interviewid!=0                    
   union                     

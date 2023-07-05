@@ -657,7 +657,7 @@ namespace Risebird.Web.Controllers
                 { "Content-Type", "application/json" }
             };
 
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "faceCompare", Method.Post, model, headers);
 
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")

@@ -7538,5 +7538,17 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid)
+        {
+            if (!string.IsNullOrEmpty(uniqueid))
+            {
+                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
+                var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&interviewid=" + interviewid + "&type=" + 314915;
+                return Json(SchedulingLink);
+            }
+            return Json("");
+        }
     }
 }

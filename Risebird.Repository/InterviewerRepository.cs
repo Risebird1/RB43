@@ -2144,18 +2144,33 @@ namespace Risebird.Repository
             }
             return "";
         }
-        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid)
+        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid, string type)
         {
             try
             {
-                var query = "Select im.id as interviewid,im.interviewdate,im.candidateName as Name,ir.Comment,ir.StarRating  From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid where ul.Emailid=@Emailid";
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (type == "Candidate")
                 {
-                    DynamicParameters parametersRecomm = new DynamicParameters();
-                    parametersRecomm.Add("@Emailid", emailid);
-                    var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
-                             commandType: CommandType.Text);
-                    return results.ToList();
+                    var query = "Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId where im.confirmationStatus=1  and im.Interviewer=@Emailid";
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        DynamicParameters parametersRecomm = new DynamicParameters();
+                        parametersRecomm.Add("@Emailid", emailid);
+                        var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
+                                 commandType: CommandType.Text);
+                        return results.ToList();
+                    }
+                }
+                else
+                {
+                    var query = "Select im.id as interviewid,im.interviewdate,im.candidateName as Name,ir.Comment,ir.StarRating From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid where ul.Emailid=@Emailid union Select im.id as interviewid,im.interviewdate,im.candidateName as Name,ir.Comment,ir.Rating as StarRating From ClientCommentsForReport ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid where ul.Emailid=@Emailid";
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        DynamicParameters parametersRecomm = new DynamicParameters();
+                        parametersRecomm.Add("@Emailid", emailid);
+                        var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
+                                 commandType: CommandType.Text);
+                        return results.ToList();
+                    }
                 }
             }
             catch (SqlException e)

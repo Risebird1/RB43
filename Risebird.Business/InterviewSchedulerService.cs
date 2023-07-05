@@ -361,5 +361,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
