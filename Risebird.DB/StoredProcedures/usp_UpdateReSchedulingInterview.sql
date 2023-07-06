@@ -14,6 +14,8 @@ Create Procedure usp_UpdateReSchedulingInterview
 AS
 BEGIN
 Update InterviewMeetings set ConfirmationStatus=2,Cancellationsource=@source where id=@interviewid
-Select ul.uniqueid from InterviewMeetings im join UserList ul on im.candidateEmail=ul.EmailId
+Select ul.uniqueid,ulh.Emailid as ChannelOwner,im.InterviewDate,im.TimeZonesValue,im.TimeZoneoffset from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join UserList ul on im.candidateEmail=ul.EmailId
+left join UserList ulh on ulh.id=IRF.RisebirdHr
+where im.id=@interviewid
 END
 GO

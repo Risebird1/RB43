@@ -22,5 +22,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> WhatsAppSendInterviewerCommonInterviewDetails(WhatsAppVM whatsAppVM);
         Task<string> WhatsAppSendInterviewReminder(WhatsAppVM whatsAppVM);
         Task<string> WhatsAppSendClientCompleteInterview(WhatsAppVM whatsAppVM);
+        Task<string> WhatsAppSendCandidateDashboardReminder(WhatsAppVM whatsAppVM);
     }
 }
