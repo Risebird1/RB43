@@ -1,46 +1,25 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using RestSharp;
+﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Data.AffIndaModels;
-using Risebird.Entities.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
     public class AffIndaResumeParserHelper : IAffIndaResumeParserHelper
     {
-        private readonly IApplicationErrorLogger _applicationErrorLogger;
-        private readonly IConfiguration _configuration;
-        private readonly IHttpRequestHelper _httpRequestHelper;
+        private readonly IConfiguration _configuration;       
 
-        private readonly string apiKey;
-        private readonly string collectionId;
-        
-
-        public AffIndaResumeParserHelper(IApplicationErrorLogger applicationErrorLogger, IHttpRequestHelper httpRequestHelper,
-            IConfiguration configuration)
+        public AffIndaResumeParserHelper(IConfiguration configuration)
         {
-            _configuration = configuration;
-            _applicationErrorLogger = applicationErrorLogger;
-            _httpRequestHelper = httpRequestHelper;
-            apiKey = _configuration["AffIndaResumeParser:apiKey"];
-            collectionId = _configuration["AffIndaResumeParser:collectionId"];
-            
+            _configuration = configuration;            
         }
 
         public async Task<string> UploadAndParseResume(string fileUrl = null)
         {
+            var apiKey = _configuration["AffIndaResumeParser:apiKey"];
+            var collectionId = _configuration["AffIndaResumeParser:collectionId"];
             string result = string.Empty;
             //string fileNameWithExtension = string.Empty;
             //if(!string.IsNullOrEmpty(fileUrl))

@@ -75,7 +75,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendPublicUrlToInterviewer(Mail model, string UrlDetails);
         Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount);
         Task<string> SendPasswordresetNotification(Mail model);
-        Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, string jdLink = null);
+        Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, string jdLink = null, string clientLogoLink = null, string companyLink = null);
         Task<string> SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         //Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null);
@@ -108,5 +108,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendCandidateNeedClerityClientNotification(string message, string subject, string clienthr, string candidateemail);
         Task<string> SendInterviewReminderOptional(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string dashboardLink, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         Task<string> SendInterviewRemindersecondOptional(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string dashboardLink, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
+        Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId);
     }
 }

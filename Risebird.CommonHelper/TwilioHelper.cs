@@ -191,6 +191,8 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                FirstName = FirstName?.Trim().Replace(" ", "_");
+                interviewdate= interviewdate.Replace(" ", "_").Replace("/", "_");
                 var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", FirstName, interviewdate);
                 var url = new Uri(link);
                 TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);

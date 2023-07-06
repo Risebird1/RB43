@@ -8,16 +8,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
 using System;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Risebird.MicroService
 {

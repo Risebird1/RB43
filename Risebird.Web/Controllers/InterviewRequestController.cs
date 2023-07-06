@@ -390,7 +390,7 @@ namespace Risebird.Web.Controllers
                             if (_interviewRequestService.CreateInerviewRequest(meeting))
                             {
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
-                                var emaildids = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io;parvathi_sg@risebird.io";
+                                var emaildids = "ashutosh@risebird.io;talent@risebird.io;";
                                 if (!string.IsNullOrEmpty(meeting.Assignto))
                                 {
                                     emaildids = emaildids + ";" + meeting.Assignto;

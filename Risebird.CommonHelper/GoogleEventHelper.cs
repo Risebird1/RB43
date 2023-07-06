@@ -1,17 +1,15 @@
 ﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Calendar.v3;
+using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using System;
-using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Risebird.CommonHelper.Interface;
-using Google.Apis.Drive.v3;
-using System.Data;
-using Risebird.Entities.Data;
 
 namespace Risebird.CommonHelper
 {

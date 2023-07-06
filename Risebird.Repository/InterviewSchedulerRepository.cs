@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -295,7 +294,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select Cl.LogoLink,Cl.Name,IRF.JDTiltle from IRF Left join Client Cl on Cl.id=IRF.ClientId where IRFId=@IRFId";
+                var query = "Select Cl.LogoLink,Cl.Name,IRF.JDTiltle, cl.CompanyLink,IRF.id as inIRFid from IRF Left join Client Cl on Cl.id=IRF.ClientId where IRFId=@IRFId";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -620,6 +619,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
         public async Task<CandidateIRFData> CheckCandidateIRFDetails(string IRFId, string _uniqueid)
         {
             try
@@ -640,7 +640,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<string> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
         {
             try
             {
@@ -649,7 +649,7 @@ namespace Risebird.Repository
                 dp.Add("@source", "Reschedule on " + newinterviewdate.ToString());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_UpdateReSchedulingInterview", dp,
+                    var result = await SqlMapper.QueryAsync<RescheduleInterviewDetails>(con, "usp_UpdateReSchedulingInterview", dp,
                             commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }

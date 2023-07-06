@@ -1,18 +1,15 @@
-﻿using iTextSharp.text.pdf;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -183,7 +180,10 @@ namespace Risebird.Web.Controllers
                     Client clientToUpdate = await _clientService.GetClient(id);
                     SetBillingTypeDropDown(clientToUpdate);
                     if (clientToUpdate != null)
+                    {
+                        clientToUpdate.OldLogoLink = clientToUpdate.LogoLink;
                         return View("ClientUpdate", clientToUpdate);
+                    }
                     else
                         return RedirectToAction("List");
                 }
@@ -213,7 +213,7 @@ namespace Risebird.Web.Controllers
                         if (client.LogoFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.LogoFile);
-                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg" || fileMimeType == "image/tiff")
+                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg" || fileMimeType == "image/tiff" || fileMimeType == "image/png")
                             {
                                 var fileName = client.LogoFile.FileName.Replace(" ", "_");
                                 await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
@@ -221,6 +221,13 @@ namespace Risebird.Web.Controllers
                                 var blob = containerRef.GetBlockBlobReference(fileName);
                                 uploadedFileURL = blob.Uri.ToString();
                                 client.LogoLink = uploadedFileURL;
+                            }
+                        }
+                        else
+                        {
+                            if(!string.IsNullOrEmpty(client.OldLogoLink))
+                            {
+                                client.LogoLink = client.OldLogoLink;
                             }
                         }
                         if (client.VideoFile != null)
@@ -861,6 +868,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Emailid = "";
@@ -879,7 +888,14 @@ namespace Risebird.Web.Controllers
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.IsClientQCRequired = client.IsQCRequired; x.IsClientRedoInterview = client.IsRedoInterview; return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                         {
-                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                            if (clientName == "FoundIt (Monster.com)")
+                            {
+                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
+                            }
+                            else
+                            {
+                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                            }
                         }
 
                         //ViewBag.IsSelected = false;
@@ -956,6 +972,8 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = Emailid;
                     ViewBag.Emailid = Emailid;
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
                     ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
@@ -963,7 +981,14 @@ namespace Risebird.Web.Controllers
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                     {
-                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                        if (clientName == "FoundIt (Monster.com)")
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
+                        }
+                        else
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                        }
                     }
                     SetMeetingsProperties(meetings);
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
@@ -1323,14 +1348,22 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-
+                var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                clientName = clientName.Replace("\"", "");
                 var roleId = await _clientService.GetClientRoleByEmailId(emailid);
 
                 var selectedMeeting = new List<MeetingVM>();
                 var meetings = await _meetingService.GetClientMeetingList(emailid);
                 if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
                 {
-                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    if (clientName == "FoundIt (Monster.com)")
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
+                    }
+                    else
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
                 }
 
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -2853,6 +2886,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
@@ -2870,7 +2905,14 @@ namespace Risebird.Web.Controllers
                             meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                             if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
                             {
-                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                                if (clientName == "FoundIt (Monster.com)")
+                                {
+                                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
+                                }
+                                else
+                                {
+                                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                                }
                             }
                             SetMeetingsProperties(meetings);
                             meetings = meetings.Where(x => x.intervieweStatusStatDesc == "Rejected").ToList();
@@ -3181,11 +3223,20 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+                var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                clientName = clientName.Replace("\"", "");
                 var meetings = await _meetingService.GetClientMeetingList(emailid);
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 if (HttpContext.Session.GetString("RejectClientMeetingsfilters") == null)
                 {
-                    meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    if (clientName == "FoundIt (Monster.com)")
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-200)).ToList();
+                    }
+                    else
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
                 }
                 SetMeetingsProperties(meetings);
                 meetings = meetings.Where(x => x.intervieweStatusStatDesc == "Rejected").ToList();
@@ -4550,25 +4601,18 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Client")
+                    
+                    var model = new ClientStatsVM();
+                    var _clientList = await _irfRepository.GetClients();
+                    if (profileName == "Client")
                     {
-                        var model = new ClientStatsVM();
-                        var _clientList = await _irfRepository.GetClients();
-                        if (profileName == "Client")
-                        {
-                            var clientName = HttpContext.Session.GetString("clientName")?.Trim();
-                            model.ClientName = clientName;
-                            model.id = _clientList.Where(x => x.Name == clientName).FirstOrDefault().id;
-                        }
-                        model.EmailId = emailid;
-                        model.ClientList = new SelectList(_clientList.OrderBy(x => x.Name), "id", "Name");
-                        return View(model);
+                        var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                        model.ClientName = clientName;
+                        model.id = _clientList.Where(x => x.Name == clientName).FirstOrDefault().id;
                     }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-
+                    model.EmailId = emailid;
+                    model.ClientList = new SelectList(_clientList.OrderBy(x => x.Name), "id", "Name");
+                    return View(model); 
                 }
                 else
                 {

@@ -20,7 +20,11 @@ AS
 BEGIN  
   
 SET NOCOUNT ON;  
+<<<<<<< HEAD
+  DELETE from TransInterviewer where IRFID in (Select IRFId From @InterviewerBulkData) and IsActive=1
+=======
   DELETE from TransInterviewer where IRFID in (Select IRFId From @InterviewerBulkData) 
+>>>>>>> qaRelease
 --This row performs bulk copy of object DataTable to Table in SQL  
 INSERT INTO [dbo].[TransInterviewer](  
  [IRFId] ,  

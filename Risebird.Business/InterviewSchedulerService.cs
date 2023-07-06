@@ -361,7 +361,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
         {
             try
             {

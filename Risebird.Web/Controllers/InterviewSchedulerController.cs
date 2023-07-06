@@ -34,8 +34,10 @@ namespace Risebird.Web.Controllers
         private readonly IRisebirdMeetingsRepository _risebirdMeetings;
         private readonly INotificationHelper _notificationHelper;
         private readonly IRBMeetHelper _rBMeetHelper;
+        private readonly ICandidateService _candidateService;
+        private readonly string candidateDashboard;
 
-        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper)
+        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper, ICandidateService candidateService)
         {
             _interviewSchedulerservice = interviewSchedulerservice;
             _azureStorageHelper = azureStorageHelper;
@@ -44,6 +46,8 @@ namespace Risebird.Web.Controllers
             _risebirdMeetings = risebirdMeetings;
             _notificationHelper = notificationHelper;
             _rBMeetHelper = rBMeetHelper;
+            candidateDashboard = _configuration["CandidateDashBoard:UseDashboard"];
+            _candidateService = candidateService;
         }
         public IActionResult Index()
         {
@@ -365,7 +369,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("OtherProfile")))
                         {
-                            ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                            ModelState.AddModelError(string.Empty, "This Email Id can not be added. Try with another emailId or contact the Admin.");
                             return View(model);
                         }
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("PastComplete")))
@@ -523,7 +527,12 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-
+                        if (candidateDashboard == "1")
+                        {
+                            var candidateUniqueId = await _candidateService.GetCandidateUniqueId(model.Email);
+                            model._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
+                            jdDetails.JDLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&Irfid=" + model._IRFDetails.inIRFid;
+                        }
                         string accountEmail = "hire@risebird.io";
                         //Send Mail Notification
                         Mail _mail = new Mail
@@ -534,11 +543,11 @@ namespace Risebird.Web.Controllers
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
-                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                         }
                         else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                         {
-                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                         }
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
@@ -1103,7 +1112,10 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-
+                        if (candidateDashboard == "1")
+                        {
+                            jdDetails.JDLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateuniqueid.uniqueid + "&Irfid=" + candidateuniqueid.IRFId;
+                        }
                         string accountEmail = "hire@risebird.io";
                         //Send Mail Notification
                         Mail _mail = new Mail
@@ -1120,10 +1132,30 @@ namespace Risebird.Web.Controllers
                         {
                             _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
                         }
+                        //share mail yo channel owner and Client hr
+                        if (!string.IsNullOrWhiteSpace(candidateuniqueid.TimeZonesValue) && candidateuniqueid.TimeZoneoffset.HasValue && !candidateuniqueid.TimeZonesValue.Contains("Chennai"))
+                        {
+                            var timeZoneValue = candidateuniqueid.TimeZonesValue.Split(")").ElementAtOrDefault(1);
+                            if (candidateuniqueid.TimeZoneoffset.Value >= 0)
+                            {
+                                candidateuniqueid.InterviewDate = candidateuniqueid.InterviewDate.AddMinutes(-(330 + candidateuniqueid.TimeZoneoffset.Value));
+                            }
+                            else
+                            {
+                                candidateuniqueid.InterviewDate = candidateuniqueid.InterviewDate.AddMinutes(candidateuniqueid.TimeZoneoffset.Value);
+                            }
+                        }
+                        Mail _mailinfo = new Mail
+                        {
+                            TO = model.Email,
+                            CC = candidateuniqueid.ChannelOwner,
+                            Subject = model.ClientName + "Reschdule Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                        };
+                        _ = await _notificationHelper.SendReScheduleInterviewInfo(_mail, candidateuniqueid.InterviewDate, candidateuniqueid.TimeZonesValue, interviewdatetime, timezonevalue, model.Name, model.ClientName, jdDetails.JDTiltle, interviewId != 0 ? interviewId : new int?());
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
                         TempData["CreateInterviewMessage"] = "Your Interview is scheduled successfully for " + interviewdatetime;
-                        return RedirectToAction("VerifiedTestPage", "Candidate", new { emailid = model.Email, id = candidateuniqueid, IRFid = model._IRFDetails.Name });
+                        return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
                         //return View(model);
                     }
                     else

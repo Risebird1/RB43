@@ -26,23 +26,23 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public IEnumerable<Profile> GetProfiles()
+        public async Task<IEnumerable<Profile>> GetProfiles()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Profile>(
+                    return await SqlMapper.QueryAsync<Profile>(
                         con, "select * from Profile", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
