@@ -4561,7 +4561,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        #region CandidateTest
+        #region CandidateDashboard
         [HttpGet]
         public IActionResult InterviewDetails(string id, int IRFId)
         {
