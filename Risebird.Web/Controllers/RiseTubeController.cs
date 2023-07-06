@@ -196,6 +196,8 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
@@ -244,9 +246,16 @@ namespace Risebird.Web.Controllers
                         {
                             if (profileName == "Client")
                             {
-                                modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
-                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
-
+                                if (clientName == "FoundIt (Monster.com)")
+                                {
+                                    modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-200), DateTime.Now.Date, searchvalue, ClientId);
+                                    totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-200), DateTime.Now.Date, searchvalue, ClientId);
+                                }
+                                else
+                                {
+                                    modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
+                                    totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, DateTime.Now.Date.AddDays(-30), DateTime.Now.Date, searchvalue, ClientId);
+                                }
                             }
                             else if (profileName == "CuratedUser")
                             {
@@ -380,6 +389,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
+                    var clientName = HttpContext.Session.GetString("clientName")?.Trim();
+                    clientName = clientName.Replace("\"", "");
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
@@ -410,7 +421,15 @@ namespace Risebird.Web.Controllers
 
                             }
                             //modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], DateTime.Now.AddDays(-14), DateTime.Now);
-                            modelList1 = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, model.IRFId, DateTime.Now.AddDays(-29), DateTime.Now);
+                            if (clientName == "FoundIt (Monster.com)")
+                            {
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, model.IRFId, DateTime.Now.AddDays(-120), DateTime.Now);
+                            }
+                            else
+                            {
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsByIRFId(ClientId, emailId, model.IRFId, DateTime.Now.AddDays(-29), DateTime.Now);
+                            }
+
 
                         }
                         else if (profileName == "CuratedUser")

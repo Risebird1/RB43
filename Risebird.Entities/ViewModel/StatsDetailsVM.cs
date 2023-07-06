@@ -1,9 +1,4 @@
-﻿using Risebird.Entities.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -20,6 +15,6 @@ namespace Risebird.Entities.ViewModel
         public int irfId { get; set; }
         public DateTime? InterviewerJoinTime { get; set; }
         public int? interviewId { get; set; }
-        
+
     }
 }

@@ -378,16 +378,29 @@
                                                                 <td> @item.JDTiltle </td>
                                                             }
                                                             <td> @item.CandidateCount </td>
-                                                            <td> @item.CompletedInterviews </td>
-                                                            <td> @item.SelectedMeetings </td>
-                                                            <td> @item.RejectedMeetings </td>
+                                                            <td> @item.CompletedInterviews                                                                
+                                                               { @if (item.CandidateCount > 0){@((item.CompletedInterviews * 100) / @item.CandidateCount)}% }
+                                                            </td>
+                                                            <td> @item.SelectedMeetings
+                                                             { @if (item.CompletedInterviews > 0){@((item.SelectedMeetings * 100) / @item.CompletedInterviews)}% }</td>
+                                                            <td> @item.RejectedMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                }% }
+                                                            </td>
                                                             @if (ViewBag.profile != "Client")
                                                             {
                                                                 <td> @item.PendingCount </td>
                                                             }
-                                                            <td> @item.NotScheduledCount </td>
-                                                            <td> @item.ReScheduledCount </td>
-                                                            <td> @item.FutureScheduledMeetings </td>
+                                                            <td> @item.NotScheduledCount 
+                                                                 { @if (item.CandidateCount > 0){@((item.NotScheduledCount * 100) / @item.CandidateCount)}% }
+                                                            </td>
+                                                            <td> @item.ReScheduledCount 
+                                                                 { @if (item.CandidateCount > 0){@((item.ReScheduledCount * 100) / @item.CandidateCount)}% }
+                                                            </td>
+                                                            <td> @item.FutureScheduledMeetings
+                                                              { @if (item.CandidateCount > 0){@((item.FutureScheduledMeetings * 100) / @item.CandidateCount)}% }</td>
                                                             @if (ViewBag.profile == "Client")
                                                             {
                                                                 <td>

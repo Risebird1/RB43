@@ -100,7 +100,8 @@ Begin
 				   ,[IsCandidateavailability]
 				   ,[IsMeetingAutoCancelled]
 				   ,[IsMeetingNotificationSend]
-				   ,[IsNewSkillChannel])
+				   ,[IsNewSkillChannel]
+				   )
 				   --,[InterviewDuration]
 				   --,[IsFixedInterviewduration]
 				   --,[FixedAmount])            
@@ -137,7 +138,8 @@ Begin
 				   @IsCandidateavailability,
 				   @IsMeetingAutoCancelled,
 				   @IsMeetingNotificationSend,
-				   @IsNewSkillChannel)
+				   @IsNewSkillChannel
+				   )
 				   --@InterviewDuration,
 				   --@IsFixedInterviewduration,
 				   --@FixedAmount)      

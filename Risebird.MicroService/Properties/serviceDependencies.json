@@ -2,7 +2,8 @@
   "dependencies": {
     "storage1": {
       "type": "storage",
-      "connectionId": "AzureWebJobsStorage"
+      "connectionId": "AzureWebJobsStorage",
+      "dynamicId": null
     }
   }
 }

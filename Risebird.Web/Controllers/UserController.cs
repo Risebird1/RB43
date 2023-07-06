@@ -69,7 +69,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     ViewBag.profileName = profileName;
                     var model = await _userService.GetRisebirdUsers();
-                    List<Profile> profiles = _profileService.GetProfile();
+                    var profiles = await _profileService.GetProfile();
                     List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
                     ViewBag.profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
                     if (HttpContext.Session.GetString("RiseBirdUserfilters") != null)
@@ -155,7 +155,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var model = new UserList();
-                    List<Profile> profiles = _profileService.GetProfile();
+                    List<Profile> profiles = await _profileService.GetProfile();
 
                     List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Freemium Client", "MappingAdmin" };
                     List<string> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
 
                     else
                     {
-                        List<Profile> profiles = _profileService.GetProfile();
+                        List<Profile> profiles = await _profileService.GetProfile();
                         profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
@@ -249,7 +249,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.profileName = profileName;
                     if (user != null)
                     {
-                        List<Profile> profiles = _profileService.GetProfile();
+                        List<Profile> profiles = await _profileService.GetProfile();
 
                         List<string> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter", "MappingAdmin" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
@@ -304,7 +304,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        List<Profile> profiles = _profileService.GetProfile();
+                        List<Profile> profiles = await _profileService.GetProfile();
                         profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
                         var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -410,8 +410,11 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var model = new ClientUserVM();
-                    model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
-                    model.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
+                    {
+                        model.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                        model.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
+                    }
                     return View("ClientUserAdd", model);
                 }
                 else
@@ -439,7 +442,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
 
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
                     {
                         if (ModelState.IsValid)
                         {
@@ -541,17 +544,23 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    ClientUserVM clientUserVM = await _userService.GetClientUser(id);
-
-                    if (clientUserVM != null)
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                        profileName = profileName.Replace("\"", "");
-                        clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
-                        clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
-                        return View("ClientUserUpdate", clientUserVM);
+                        ClientUserVM clientUserVM = await _userService.GetClientUser(id);
+
+                        if (clientUserVM != null)
+                        {
+
+                            clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                            clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
+                            return View("ClientUserUpdate", clientUserVM);
+                        }
+                        else
+                            return RedirectToAction("ClientUsers");
                     }
                     else
                         return RedirectToAction("ClientUsers");
@@ -577,44 +586,52 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (ModelState.IsValid)
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || (emailid == "debjyoti_karmakar@risebird.io" || emailid == "abhilasha_gali@risebird.io"))
                     {
-                        if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        if (ModelState.IsValid)
                         {
-                            clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                            if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                            {
+                                clientUserVM.FirstName = clientUserVM.FirstName.Trim();
 
-                        }
-                        if (!string.IsNullOrEmpty(clientUserVM.LastName))
-                        {
-                            clientUserVM.LastName = clientUserVM.LastName.Trim();
+                            }
+                            if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                            {
+                                clientUserVM.LastName = clientUserVM.LastName.Trim();
 
-                        }
-                        if (!string.IsNullOrEmpty(clientUserVM.EmailId))
-                        {
-                            clientUserVM.EmailId = clientUserVM.EmailId.Trim();
-                            clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
+                            }
+                            if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                            {
+                                clientUserVM.EmailId = clientUserVM.EmailId.Trim();
+                                clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
 
-                        }
-                        if (await _userService.UpdateClientUser(clientUserVM))
-                        {
-                            TempData["SuccessErrorMessageClientUser"] = "Client User is updated Successfully";
-                            return RedirectToAction("ClientUsers");
+                            }
+                            if (await _userService.UpdateClientUser(clientUserVM))
+                            {
+                                TempData["SuccessErrorMessageClientUser"] = "Client User is updated Successfully";
+                                return RedirectToAction("ClientUsers");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageClientUser"] = "Updating Client User Failed";
+                                return RedirectToAction("ClientUsers");
+                            }
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageClientUser"] = "Updating Client User Failed";
-                            return RedirectToAction("ClientUsers");
+
+                            clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
+                            clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
+                            return View("ClientUserUpdate", clientUserVM);
                         }
                     }
                     else
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                        profileName = profileName.Replace("\"", "");
-                        clientUserVM.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
-                        clientUserVM.ClientRoles = new SelectList(await _clientService.GetClientRoles(), "id", "Name");
-                        return View("ClientUserUpdate", clientUserVM);
+                        return RedirectToAction("SignOut", "Session");
                     }
                 }
                 else

@@ -436,7 +436,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="panel-title-box">
-                                    <h3>Client IRF Feedback</h3>
+                                    <h3>Client Skill Channel Feedback</h3>
                                 </div>
                             </div>
                             <div id="CLientFeedbackId">
@@ -446,7 +446,7 @@
                                             <table class="table table-bordered table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th width="40%">IRF</th>
+                                                        <th width="40%">Skill Channel</th>
                                                         <th width="20%">Rating(Avg)</th>
                                                         <th width="20%">Min</th>
                                                         <th width="20%">Max</th>
@@ -1484,7 +1484,7 @@
             html += '</tr>';
         }
         if (data.length == 0) {
-            html = '<tr><td colspan="4">No Client IRF Feedback found for upcoming interviews</td></tr>';
+            html = '<tr><td colspan="4">No Client Feedback recieved over any Skill Channel.</td></tr>';
         }
         $("#tbClientFeedbackid").empty().html(html);
     }

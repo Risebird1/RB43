@@ -1,4 +1,8 @@
 ﻿using ExcelDataReader;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Drive.v3;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,24 +13,20 @@ using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Google.Apis.Calendar.v3.Data;
-using Risebird.Entities.Data;
-using System.Data;
 using System.Net;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Calendar.v3;
-using Google.Apis.Util.Store;
 using System.Threading;
 using Google.Apis.Drive.v3;
 using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
