@@ -2071,7 +2071,7 @@ namespace Risebird.CommonHelper
                 str.AppendLine("END:VCALENDAR");
                 byte[] byteArray = Encoding.ASCII.GetBytes(str.ToString());
                 MemoryStream stream = new MemoryStream(byteArray);
-                await msg.AddAttachmentAsync("invite.ics", stream);
+                await msg.AddAttachmentAsync("InterviewInvite.ics", stream);
                 //End: Attachment
                 return await SendMail(msg, null, interviewId);
             }
