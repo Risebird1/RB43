@@ -25,6 +25,7 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
+    [AllowAnonymous]
     public class CandidateController : Controller
     {
         private readonly ICandidateService _candidateService;
@@ -4510,6 +4511,7 @@ namespace Risebird.Web.Controllers
         /// <param name="Emailid"></param>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<JsonResult> CandidatePublicdetails(string id, string Emailid, string irfId)
         {
             var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
@@ -4534,11 +4536,12 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                return Json("This id does not have access!");
+                return Json("Not valid email id!");
             }
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> VerifiedSkillChannelDetails(string emailid, string id, int IRFid)
         {
             try
@@ -4563,6 +4566,7 @@ namespace Risebird.Web.Controllers
 
         #region CandidateDashboard
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult InterviewDetails(string id, int IRFId)
         {
             var model = new CandidateIRFDetailsVM();
@@ -4572,6 +4576,7 @@ namespace Risebird.Web.Controllers
             model.CandidateDetails.IRFId = IRFId;
             return View(model);
         }
+        [AllowAnonymous]
         public async Task<IActionResult> VerifiedInterviewDetails(string emailid, string id, int IRFid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
@@ -4631,6 +4636,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail)
         {
             var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);
