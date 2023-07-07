@@ -2107,7 +2107,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
+        public async Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string dashboardLink, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
         {
             try
             {
@@ -2120,7 +2120,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, PrimarySkillInvite, timezone, meetingLink, clientCompanyLink, clientLogoLink };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, dashboardLink, timezone, meetingLink, clientCompanyLink, clientLogoLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2131,7 +2131,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
+        public async Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string DashboardLink, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
         {
             try
             {
@@ -2144,7 +2144,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, PrimarySkillInvite, timezone, meetingLink, clientCompanyLink, clientLogoLink };
+                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), yesbutton, nobutton, rescheulebutton, needcleritybutton, ClientName, DashboardLink, timezone, meetingLink, clientCompanyLink, clientLogoLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
@@ -2908,48 +2908,31 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewReminderOptional(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string dashboardLink, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
+        public async Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId)
         {
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
+
                 foreach (var mail in toMails)
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), timezone, dashboardLink, ClientName, clientCompanyLink, clientLogoLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminderOptional.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
-                return await SendMail(msg, irfId, interviewId);
-            }
-            catch (Exception)
-            {
-                return "Failed to send mail. Please check all fields and try again.";
-            }
-        }
-        public async Task<string> SendInterviewRemindersecondOptional(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string dashboardLink, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null)
-        {
-            try
-            {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in ccMails)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { CandidateName, interviewdate.ToString(), timezone, dashboardLink, ClientName, clientCompanyLink, clientLogoLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewReminder2Optional.html");
+                var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
+                var newinterviewdate = newinterviewdatetime.ToString() + "(" + newtimezonevalue + ")";
+                object[] parameters = new object[] { ClientName, CandidateName, JDTiltle, newinterviewdate, interviewdate };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfo.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg, irfId, interviewId);
+                return await SendMail(msg, null, interviewId);
             }
             catch (Exception)
             {
