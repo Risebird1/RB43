@@ -90,8 +90,6 @@ namespace Risebird.MicroService
                         var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
                         if (candidateDashboard == "1")
                         {
-<<<<<<<<< Temporary merge branch 1
-=========
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
@@ -125,8 +123,8 @@ namespace Risebird.MicroService
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
-<<<<<<<<< Temporary merge branch 1
-=========
+                        if (candidateDashboard == "1")
+                        {
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
@@ -158,8 +156,8 @@ namespace Risebird.MicroService
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
-<<<<<<<<< Temporary merge branch 1
-=========
+                        if (candidateDashboard == "1")
+                        {
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
