@@ -57,7 +57,7 @@ namespace Risebird.MicroService
                     var primaryskill = item.PrimarySkillInvite;
                     string yesbutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=1&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
                     string nobutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=2&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
-                    string rescheulebutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
+                    string rescheulebutton = "https://portal.risebird.io/Interview/CandidateRescheduleMeetingsStatus?meetingid=" + item.Interviewid + "&status=3&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
                     string needcleritybutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=4&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;
 
                     if (!string.IsNullOrWhiteSpace(item.TimeZonesValue)
@@ -87,9 +87,11 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
+                        var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
                         if (candidateDashboard == "1")
                         {
-                            var emailresult = await _notificationHelper.SendInterviewRemindersecondOptional(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+<<<<<<<<< Temporary merge branch 1
+=========
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
@@ -99,7 +101,6 @@ namespace Risebird.MicroService
                         }
                         else
                         {
-                            var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
@@ -123,9 +124,9 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        if (candidateDashboard == "1")
-                        {
-                            var emailresult = await _notificationHelper.SendInterviewReminderOptional(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+<<<<<<<<< Temporary merge branch 1
+=========
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
@@ -135,7 +136,6 @@ namespace Risebird.MicroService
                         }
                         else
                         {
-                            var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
                             //Send  WhatsApp and mail
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
@@ -157,9 +157,9 @@ namespace Risebird.MicroService
                             TO = item.CandidateEmail,
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
-                        if (candidateDashboard == "1")
-                        {
-                            var emailresult = await _notificationHelper.SendInterviewReminderOptional(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+<<<<<<<<< Temporary merge branch 1
+=========
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
@@ -169,7 +169,6 @@ namespace Risebird.MicroService
                         }
                         else
                         {
-                            var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, item.PrimarySkillInvite, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, item.MeetingLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
                             //Send Call, WhatsApp and mail
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.CandidateEmail;

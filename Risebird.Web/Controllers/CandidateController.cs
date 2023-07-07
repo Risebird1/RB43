@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -21,11 +22,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [AllowAnonymous]
+   
     public class CandidateController : Controller
     {
         private readonly ICandidateService _candidateService;
@@ -49,12 +51,13 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
         private readonly ITrackPublicUrlAccessor _trackPublicUrlAccessor;
+        private readonly IAadhaarService _aadhaarService;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
-            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor)
+            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor, IAadhaarService aadhaarService)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -75,6 +78,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _configuration = configuration;
             _trackPublicUrlAccessor = trackPublicUrlAccessor;
+            _aadhaarService = aadhaarService;
         }
 
         [HttpGet]
@@ -3336,7 +3340,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                     HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
-                    
+
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
                         candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), 2, emailid)).ToList();
@@ -3345,7 +3349,7 @@ namespace Risebird.Web.Controllers
                     {
                         candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), 2, emailid)).ToList();
                     }
-                   
+
                     if (candidateData == null)
                     {
                         return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
@@ -3505,7 +3509,7 @@ namespace Risebird.Web.Controllers
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), datatype, emailid)).ToList();
                 }
                 else
-                {                    
+                {
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
                         candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
@@ -4511,7 +4515,6 @@ namespace Risebird.Web.Controllers
         /// <param name="Emailid"></param>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
         public async Task<JsonResult> CandidatePublicdetails(string id, string Emailid, string irfId)
         {
             var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
@@ -4541,7 +4544,6 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> VerifiedSkillChannelDetails(string emailid, string id, int IRFid)
         {
             try
@@ -4566,17 +4568,17 @@ namespace Risebird.Web.Controllers
 
         #region CandidateDashboard
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult InterviewDetails(string id, int IRFId)
+        public async Task<IActionResult> InterviewDetails(string id, int IRFId)
         {
             var model = new CandidateIRFDetailsVM();
             //var model = new Candidate();
             ViewBag.PageType = "Public";
             ViewBag.Id = id;
+            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(id);
             model.CandidateDetails.IRFId = IRFId;
-            return View(model);
+            return RedirectToAction("VerifiedInterviewDetails", new { emailid = candidateEmailid.EmailId, id = id, IRFid = IRFId });
+            //return View(model);
         }
-        [AllowAnonymous]
         public async Task<IActionResult> VerifiedInterviewDetails(string emailid, string id, int IRFid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
@@ -4636,7 +4638,6 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail)
         {
             var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);

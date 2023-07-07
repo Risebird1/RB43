@@ -103,6 +103,7 @@ namespace Risebird.Entities.ViewModel
         public string schedulertype { get; set; }
         public bool reschedulerequest { get; set; }
         public int interviewid { get; set; }
+        public int returnvaluetype { get; set; }
     }
     public class TimeslotsVM
     {

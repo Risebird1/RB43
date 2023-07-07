@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -5731,7 +5732,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            if ((status == 1|| status == 2|| status == 4) && _meetingService.CheckInterviewCancellable(meetingid))
+            if ((status == 1 || status == 2 || status == 4) && _meetingService.CheckInterviewCancellable(meetingid))
             {
                 var response = true;
                 //if (status == 4)
@@ -5795,11 +5796,12 @@ namespace Risebird.Web.Controllers
                             var olduniqueid = stepfirst.Split("=").LastOrDefault();
                             var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
                             oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                            //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink });
                             return Json(oneTimeSchedulingLink);
                         }
                         return Json("Successfully status updated, " + value);
                     }
-                    
+
                     return Json("Thank you for confirming your interview.");
                 }
                 else if (results == "Already Present")
@@ -5810,6 +5812,10 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Status update failed. Please try again!");
                 }
+            }
+            else if (status == 3)
+            {
+                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
             }
             else if (status == 3)
             {
@@ -7559,10 +7565,25 @@ namespace Risebird.Web.Controllers
             if (!string.IsNullOrEmpty(uniqueid))
             {
                 var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
-                var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&interviewid=" + interviewid + "&type=" + 314915;
+                var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
                 return Json(SchedulingLink);
             }
             return Json("");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CandidateRescheduleMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            if (_meetingService.CheckInterviewCancellable(meetingid))
+            {
+                var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, result.candidateEmail);
+                return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+            }
+            else
+            {
+                return Json("Fail to Update Status, Please try again");
+            }
         }
     }
 }
