@@ -92,7 +92,7 @@
                 <div class="candidate-tab">
                     <div class="tablinks card-block" onclick="openCity(event, 'Employer')">
                         <div class="step">1</div>
-                        <img src="~/img/int-img-1.png" /><h1>Job Details and Contacts</h1>
+                        <img src="~/img/int-img-1.png" /><h1>Job and Contacts Details</h1>
                     </div>
                     <div class="tablinks card-block" onclick="openCity(event, 'Interviews')" id="defaultOpen">
                         <div class="step">2</div>
@@ -232,6 +232,12 @@
     }
 </script>
 <script>
+     $(function() {
+        $(this).bind("contextmenu", function(e) {
+            e.preventDefault();
+        });
+    }); 
+
     function openCity(evt, tabid) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tabcontent");
