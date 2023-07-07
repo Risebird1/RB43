@@ -237,7 +237,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Schedule Interview
-        public async Task<IActionResult> ScheduleEvent(string id, string type, int interviewid)
+        public async Task<IActionResult> ScheduleEvent(string id, string type, int returnvaluetype, int interviewid)
         {
             var model = new ScheculeInterview();
             var result = await _interviewSchedulerservice.FetchDetailsByUniqueId(id);
@@ -334,6 +334,7 @@ namespace Risebird.Web.Controllers
             if (type == "314915")//314915: candidate
             {
                 model.interviewid = interviewid;
+                model.returnvaluetype = returnvaluetype;
                 return View("ReScheduleEvent", model);
             }
             return View(model);
@@ -1155,8 +1156,14 @@ namespace Risebird.Web.Controllers
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
                         TempData["CreateInterviewMessage"] = "Your Interview is scheduled successfully for " + interviewdatetime;
-                        return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
-                        //return View(model);
+                        if (model.returnvaluetype == 1)
+                        {
+                            return View(model);
+                        }
+                        else
+                        {
+                            return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
+                        }
                     }
                     else
                     {
