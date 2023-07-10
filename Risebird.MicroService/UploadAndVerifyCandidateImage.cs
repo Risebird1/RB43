@@ -119,7 +119,9 @@ namespace ScreenBackgroundJobs
                 {
                     return 0;
                 }
-                return convertedResponse.response_data.score;
+                var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] : "0";
+                return Convert.ToInt16(score);//convertedResponse.response_data.score
+                //return Convert.ToInt16(convertedResponse.response_data.score);
             }
             catch (Exception ex)
             {
