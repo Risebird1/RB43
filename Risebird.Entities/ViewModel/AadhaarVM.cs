@@ -24,7 +24,8 @@ namespace Risebird.Entities.ViewModel
         public string channel_version { get; set; }
         public string stan { get; set; }
         public string client_ip { get; set; }
-        public string transmission_datetime { get; set; }
+        //public string transmission_datetime { get; set; }
+        public long transmission_datetime { get; set; }
         public string operation_mode { get; set; }
         public string run_mode { get; set; }
         public string actor_type { get; set; }
