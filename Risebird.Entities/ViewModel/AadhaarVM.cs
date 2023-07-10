@@ -92,7 +92,8 @@ namespace Risebird.Entities.ViewModel
         public string nationality { get; set; }
         public string passportNumber { get; set; }
         public string passport_image { get; set; }
-        public int score { get; set; }
+        //public int score { get; set; }
+        public string score { get; set; }
     }
     public class AadhaarStatus
     {
