@@ -54,7 +54,7 @@
                     <div class="col-md-12">
                         <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
                         <div class="text-areadiv">
-                            <input type="text" id="txtcandidateEmailid" class="form-control" />
+                            <input type="text" id="txtcandidateEmailid" class="form-control" value="@Model.CandidateDetails.EmailId" />
                         </div>
                         <div class="mt-10 text-right">
 
@@ -282,7 +282,7 @@
             allowOutsideClick: false
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
-                location.reload(true);
+                //location.reload(true);
             }
             else if (result.dismiss === 'cancel') {
                 swal.fire(
@@ -332,6 +332,7 @@
                         },
                         success: function (result) {
                             swal.fire(result);
+                            location.reload();
                             resolve(result)
                         },
                         error: function () {

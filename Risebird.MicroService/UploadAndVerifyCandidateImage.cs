@@ -119,7 +119,9 @@ namespace ScreenBackgroundJobs
                 {
                     return 0;
                 }
-                return convertedResponse.response_data.score;
+                var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] : "0";
+                return Convert.ToInt16(score);//convertedResponse.response_data.score
+                //return Convert.ToInt16(convertedResponse.response_data.score);
             }
             catch (Exception ex)
             {
@@ -127,41 +129,69 @@ namespace ScreenBackgroundJobs
                 throw;
             }
         }
+        //public string GetCurrentUnixTimestampMillis()
+        //{
+        //    DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        //    DateTime localDateTime, univDateTime;
+        //    localDateTime = DateTime.Now;
+        //    univDateTime = localDateTime.ToUniversalTime();
+        //    return ((univDateTime - UnixEpoch).TotalMilliseconds).ToString();
+        //}
+
         public string GetCurrentUnixTimestampMillis()
         {
             DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             DateTime localDateTime, univDateTime;
             localDateTime = DateTime.Now;
             univDateTime = localDateTime.ToUniversalTime();
-            return ((univDateTime - UnixEpoch).TotalMilliseconds).ToString();
+            var millis = (univDateTime - UnixEpoch).TotalMilliseconds.ToString();
+            return millis.Split(".")[0];
         }
 
+        //public void SetHeaderValue(AadhaarHeader _header, string datenow)
+        //{
+        //    _header.client_code = client_code;
+        //    _header.sub_client_code = client_code;
+        //    _header.channel_code = "ANDROID_SDK";
+        //    _header.channel_version = "1";
+        //    _header.stan = faceCompare_salt;
+        //    _header.client_ip = "";
+        //    _header.transmission_datetime = datenow;
+        //    _header.operation_mode = "SELF";
+        //    _header.run_mode = "DEFAULT";
+        //    _header.actor_type = "DEFAULT";
+        //    _header.user_handle_type = "EMAIL";
+        //    _header.user_handle_value = "talent@risebird.io";
+        //    _header.location = "";
+        //    _header.function_code = "DEFAULT";
+        //    _header.function_sub_code = "DEFAULT";
+        //}
         public void SetHeaderValue(AadhaarHeader _header, string datenow)
         {
             _header.client_code = client_code;
             _header.sub_client_code = client_code;
-            _header.channel_code = "ANDROID_SDK";
-            _header.channel_version = "1";
-            _header.stan = faceCompare_salt;
+            _header.channel_code = "";// "ANDROID_SDK";
+            _header.channel_version = "";//"1";
+            _header.stan = GenerateRandomAlphanumeric();// faceCompare_salt + Guid.NewGuid().ToString();
             _header.client_ip = "";
-            _header.transmission_datetime = datenow;
-            _header.operation_mode = "SELF";
-            _header.run_mode = "DEFAULT";
-            _header.actor_type = "DEFAULT";
-            _header.user_handle_type = "EMAIL";
-            _header.user_handle_value = "talent@risebird.io";
+            _header.transmission_datetime = Convert.ToInt64(datenow);
+            _header.operation_mode = "DEFAULT";//"SELF";
+            _header.run_mode = "REAL";//"DEFAULT";
+            _header.actor_type = "CUSTOMER";// "DEFAULT";
+            _header.user_handle_type = "DEFAULT";// "EMAIL";
+            _header.user_handle_value = "DEFAULT";// "talent@risebird.io";
             _header.location = "";
             _header.function_code = "DEFAULT";
             _header.function_sub_code = "DEFAULT";
         }
 
-        //public string ConvertImageURLToBase64(String url)
-        //{
-        //    StringBuilder _sb = new StringBuilder();
-        //    Byte[] _byte = GetImage(url);
-        //    _sb.Append(Convert.ToBase64String(_byte, 0, _byte.Length));
-        //    return _sb.ToString();
-        //}
+        private string GenerateRandomAlphanumeric()
+        {
+            Guid guid = Guid.NewGuid();
+            string alphanumeric = Convert.ToBase64String(guid.ToByteArray());
+            alphanumeric = alphanumeric.Replace("/", "").Replace("+", "");//.Substring(0, 10);
+            return alphanumeric;
+        }
 
         public async Task<string> getHashSha256(string rawData)
         {
@@ -219,30 +249,5 @@ namespace ScreenBackgroundJobs
             }
         }
 
-        //private byte[] GetImage(string url)
-        //{
-        //    Stream stream = null;
-        //    byte[] buf;
-        //    try
-        //    {
-        //        WebProxy myProxy = new WebProxy();
-        //        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-        //        HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-        //        stream = response.GetResponseStream();
-        //        using (BinaryReader br = new BinaryReader(stream))
-        //        {
-        //            int len = (int)(response.ContentLength);
-        //            buf = br.ReadBytes(len);
-        //            br.Close();
-        //        }
-        //        stream.Close();
-        //        response.Close();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        buf = null;
-        //    }
-        //    return (buf);
-        //}
     }
 }

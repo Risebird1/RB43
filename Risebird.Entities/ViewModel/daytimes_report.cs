@@ -103,6 +103,7 @@ namespace Risebird.Entities.ViewModel
         public string schedulertype { get; set; }
         public bool reschedulerequest { get; set; }
         public int interviewid { get; set; }
+        public int returnvaluetype { get; set; }
     }
     public class TimeslotsVM
     {
@@ -120,6 +121,7 @@ namespace Risebird.Entities.ViewModel
         public string Name { get; set; }
         public string JDTiltle { get; set; }
         public string CompanyLink { get; set; }
+        public int inIRFid { get; set; }
     }
     public class CandidateIRFData
     {
@@ -129,5 +131,14 @@ namespace Risebird.Entities.ViewModel
         public string staffingAgency { get; set; }
         public string ClientHrContact { get; set; }
         public string MobileNumber { get; set; }
+    }
+    public class RescheduleInterviewDetails
+    {
+        public string uniqueid { get; set; }
+        public string ChannelOwner { get; set; }
+        public DateTime InterviewDate { get; set; }
+        public int? TimeZoneoffset { get; set; }
+        public string TimeZonesValue { get; set; }
+        public int IRFId { get; set; }
     }
 }
