@@ -73,6 +73,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> GetAllCancelIntervieList(DateTime startDate, DateTime endDate, string emailId = null)
+        {
+            try
+            {
+                return (await _meetingRespository.GetAllCancelInterview(startDate, endDate, emailId)).OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
         public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try

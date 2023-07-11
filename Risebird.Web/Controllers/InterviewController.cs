@@ -189,6 +189,9 @@ namespace Risebird.Web.Controllers
                             {
                                 modelList = await _meetingService.GetAllMeetingList(DateTime.Now.AddDays(-30), DateTime.Now.Date.AddDays(1), emailId);
                             }
+                            else if (type == "CancelInterviews") {
+                                modelList = await _meetingService.GetAllCancelIntervieList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
+                            }
                             else
                             {
                                 modelList = await _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
@@ -240,6 +243,12 @@ namespace Risebird.Web.Controllers
                             ViewBag.Type = "Interviews";
                             modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
                         }
+                        else if (type == "CancelInterviews")
+                        {
+                            ViewBag.Type = "CancelInterviews";
+                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                        }
+
                         else
                         {
                             ViewBag.Type = "TemplateInterviews";
