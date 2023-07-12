@@ -191,7 +191,7 @@ namespace Risebird.Web.Controllers
                                 modelList = await _meetingService.GetAllMeetingList(DateTime.Now.AddDays(-30), DateTime.Now.Date.AddDays(1), emailId);
                             }
                             else if (type == "CancelInterviews") {
-                                modelList = await _meetingService.GetAllCancelIntervieList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
+                                modelList = await _meetingService.GetAllCancelInterviewList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
                             }
                             else
                             {

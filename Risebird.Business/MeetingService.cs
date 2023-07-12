@@ -74,7 +74,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> GetAllCancelIntervieList(DateTime startDate, DateTime endDate, string emailId = null)
+        public async Task<List<MeetingVM>> GetAllCancelInterviewList(DateTime startDate, DateTime endDate, string emailId = null)
         {
             try
             {

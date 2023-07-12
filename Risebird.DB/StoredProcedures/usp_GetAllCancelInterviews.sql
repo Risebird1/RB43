@@ -8,7 +8,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[usp_GetAllCancelInterviews]                        
+CREATE PROCEDURE [dbo].[usp_GetAllCancelInterviews]                        
 @startDate datetime,                    
 @endDate datetime,            
 @EmailId varchar(100)=null            
@@ -40,7 +40,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   --left join TransInterviewer ti on ti.Userid=uli.id and ti.IRFId=IRF.id  --??
   left join Userlist ulcu on IRF.BillingOwner  =ulcu.id       
  -- left join InterviewerProfile itp on itp.UserId = uli.id --??   
-  left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                            
+  --left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                            
   join CandidatesMaster cm on ulc.id = cm.UserId                      
 --  left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id  --?                    
   left join Client cl on cl.id = irf.ClientId                             
@@ -48,8 +48,8 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
  -- join TransHR th on th.IRFId = irf.id   --??               
  --- join HR on HR.id = th.HRId                  
 --  join UserList ulhr on ulhr.id = HR.UserId  
-  left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId  --?
-  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType --?
+  --left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId  --?
+  --left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType --?
   where interviewDate >= @startDate AND interviewDate < @endDate and uli.EmailId=@EmailId AND im.confirmationStatus=2            
   Union                
   select distinct im.id imid,
@@ -139,10 +139,6 @@ select distinct
   where interviewDate >= @startDate AND interviewDate < @endDate  AND im.confirmationStatus=2              
  End                            
                              
-End                           
-    
-                   
-  
-           
+End                  
 GO
 
