@@ -34,7 +34,7 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessage");
 
                     }
-                    return View(_profileService.GetProfile());
+                    return View(await _profileService.GetProfile());
                 }
                 else
                 {

@@ -1,4 +1,6 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Risebird.Entities.ViewModel
 {
     public class TechSkillReport
     {
@@ -14,7 +16,9 @@
         public float WeightageActual { get; set; }
         public string TechComments { get; set; }
         public string Concepts { get; set; }
+        [Display(Name = "Nature of Question")]
         public string Natureofquestion { get; set; }
+        [Display(Name = "Time Limit")]
         public int Timelimit { get; set; }
     }
 }

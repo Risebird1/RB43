@@ -6,9 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -18,6 +20,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static iTextSharp.text.pdf.AcroFields;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -30,8 +34,10 @@ namespace Risebird.Web.Controllers
         private readonly IRisebirdMeetingsRepository _risebirdMeetings;
         private readonly INotificationHelper _notificationHelper;
         private readonly IRBMeetHelper _rBMeetHelper;
+        private readonly ICandidateService _candidateService;
+        private readonly string candidateDashboard;
 
-        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper)
+        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper, ICandidateService candidateService)
         {
             _interviewSchedulerservice = interviewSchedulerservice;
             _azureStorageHelper = azureStorageHelper;
@@ -40,6 +46,8 @@ namespace Risebird.Web.Controllers
             _risebirdMeetings = risebirdMeetings;
             _notificationHelper = notificationHelper;
             _rBMeetHelper = rBMeetHelper;
+            candidateDashboard = _configuration["CandidateDashBoard:UseDashboard"];
+            _candidateService = candidateService;
         }
         public IActionResult Index()
         {
@@ -229,7 +237,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Schedule Interview
-        public async Task<IActionResult> ScheduleEvent(string id)
+        public async Task<IActionResult> ScheduleEvent(string id, string type, int returnvaluetype, int interviewid)
         {
             var model = new ScheculeInterview();
             var result = await _interviewSchedulerservice.FetchDetailsByUniqueId(id);
@@ -323,6 +331,12 @@ namespace Risebird.Web.Controllers
                 model.TimeZonesList = items;
                 ViewBag.Start = 3;
             }
+            if (type == "314915")//314915: candidate
+            {
+                model.interviewid = interviewid;
+                model.returnvaluetype = returnvaluetype;
+                return View("ReScheduleEvent", model);
+            }
             return View(model);
         }
         [HttpPost]
@@ -356,7 +370,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("OtherProfile")))
                         {
-                            ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                            ModelState.AddModelError(string.Empty, "This Email Id can not be added. Try with another emailId or contact the Admin.");
                             return View(model);
                         }
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("PastComplete")))
@@ -514,7 +528,12 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-
+                        if (candidateDashboard == "1")
+                        {
+                            var candidateUniqueId = await _candidateService.GetCandidateUniqueId(model.Email);
+                            model._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
+                            jdDetails.JDLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&Irfid=" + model._IRFDetails.inIRFid;
+                        }
                         string accountEmail = "hire@risebird.io";
                         //Send Mail Notification
                         Mail _mail = new Mail
@@ -525,11 +544,11 @@ namespace Risebird.Web.Controllers
                         };
                         if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
-                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                         }
                         else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                         {
-                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                         }
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
@@ -961,7 +980,208 @@ namespace Risebird.Web.Controllers
             var content = response.Content;
             return "Delete successfully";
         }
+        [HttpPost]
+        public async Task<IActionResult> ReScheduleEvent(ScheculeInterview model)
+        {
+            var timeZones1 = TimeZoneInfo.GetSystemTimeZones();
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (var tzi in timeZones1)
+            {
+                items.Add(new SelectListItem { Text = tzi.DisplayName, Value = tzi.BaseUtcOffset.TotalHours.ToString() });
+            }
+            model.TimeZonesList = items;
+            if (ModelState.IsValid)
+            {
+                ViewBag.Start = 2;
+                DateTime interviewdatetime = new DateTime();
+                if (!string.IsNullOrEmpty(model.InterviewDate))
+                {
+                    var _date = model.InterviewDate.Split(" ");
+                    var _time = _date[3].Split(":");
+                    DateTime value = new DateTime(Convert.ToInt32(_date[2]), Convert.ToInt32(_date[1]), Convert.ToInt32(_date[0]), Convert.ToInt32(_time[0]), Convert.ToInt32(_time[1]), 0);
+                    interviewdatetime = value;
+                    model.TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(model.offset, value, model.TimeZonesValue);
+                    model.scheduleDate = value.AddMinutes(model.TimeZoneoffset);
+                }
+                if (model.schedulertype.ToUpper() == "IRF")
+                {
+                    var _interviewdetails = await _interviewSchedulerservice.CheckInterviewScheduleavailability(model.Email, model.InterviewChannelId);
+                    if (_interviewdetails != null)
+                    {
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("OtherProfile")))
+                        {
+                            ModelState.AddModelError(string.Empty, "This Email Id can not be added try with another emailId or Contact to Admin.");
+                            return View(model);
+                        }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("PastComplete")))
+                        {
+                            ModelState.AddModelError(string.Empty, "An interview has already been completed for you on" + _interviewdetails.Where(x => x.interviewtype.Contains("PastComplete")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
+                            return View(model);
+                        }
+                    }
+                }
+                string interviewOnDevice = string.Empty;
+                if (model.Checkbox1)
+                {
+                    interviewOnDevice = interviewOnDevice + " " + "Laptop or machine on which i can code";
+                }
+                if (model.Checkbox2)
+                {
+                    interviewOnDevice = interviewOnDevice + " " + "Quality Headphone";
+                }
+                if (model.Checkbox4)
+                {
+                    interviewOnDevice = interviewOnDevice + " " + "Working webcam";
+                }
+                var jdDetails = await _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
 
+                TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);
+                var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
+                if (_checkdetails)
+                {
+                    //string meetingLink;// = string.Empty;
+                    var zoomLink = new InstaZoomMeetingResponse();
+                    var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
+                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    {
+                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime);
+                        //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
+                        if (zoomLink == null)
+                        {
+                            ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
+                            return View(model);
+                        }
+                    }
+                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    {
+                        rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
+                    }
+                    string textreminder = string.Empty;
+                    if (!model.reschedulerequest)
+                    {
+                        textreminder = model.CountryCode + model.MobileNumber;
+                    }
+                    else
+                    {
+                        textreminder = model.MobileNumber;
+                    }
+                    bool result = false;
+                    int interviewId = 0;
+                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    {
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, out interviewId, zoomLink.accountemail);
+                    }
+                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    {
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, rbMeetingLinkResponse.meetingAgent, model.InterviewChannelId, rbMeetingLinkResponse.roomId, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, out interviewId);
+                    }
+                    if (result)
+                    {
+                        //Start: Cancel the previous meetings
+                        var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime);
+                        //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
+                        //End: Cancel the previous meetings
+                        _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        string timezonevalue = string.Empty;
+                        string hh = string.Empty;
+                        var valuecheck = (-model.offset / 60);
+                        if (valuecheck < 10 && valuecheck > 0)
+                        {
+                            hh = "0" + valuecheck;
+                        }
+                        if (valuecheck > -10 && valuecheck < 0)
+                        {
+                            hh = "-0" + valuecheck.ToString().Replace("-", "");
+                        }
+                        var offsetvalue = (hh + ":" + ((model.offset % 60) < 0 ? (-model.offset % 60) : (model.offset % 60))).ToString();
+                        var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                        foreach (TimeZoneInfo timeZone in timeZones)
+                        {
+                            if (timeZone.DisplayName.Contains(model.TimeZonesValue))
+                            {
+                                if (timeZone.DisplayName.Contains(offsetvalue))
+                                {
+                                    if (timeZone.IsDaylightSavingTime(interviewdatetime))
+                                    {
+                                        timezonevalue = timeZone.DaylightName;
+                                    }
+                                    else
+                                    {
+                                        timezonevalue = timeZone.StandardName;
+                                    }
+                                }
+                            }
+                        }
+                        if (candidateDashboard == "1")
+                        {
+                            jdDetails.JDLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateuniqueid.uniqueid + "&Irfid=" + candidateuniqueid.IRFId;
+                        }
+                        string accountEmail = "hire@risebird.io";
+                        //Send Mail Notification
+                        Mail _mail = new Mail
+                        {
+                            TO = model.Email,
+                            //CC = accountEmail,//zoomLink.accountemail,
+                            Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                        };
+                        if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                        {
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
+                        }
+                        else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                        {
+                            _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.JDLink?.Replace(" ", "%20"));
+                        }
+                        //share mail yo channel owner and Client hr
+                        if (!string.IsNullOrWhiteSpace(candidateuniqueid.TimeZonesValue) && candidateuniqueid.TimeZoneoffset.HasValue && !candidateuniqueid.TimeZonesValue.Contains("Chennai"))
+                        {
+                            var timeZoneValue = candidateuniqueid.TimeZonesValue.Split(")").ElementAtOrDefault(1);
+                            if (candidateuniqueid.TimeZoneoffset.Value >= 0)
+                            {
+                                candidateuniqueid.InterviewDate = candidateuniqueid.InterviewDate.AddMinutes(-(330 + candidateuniqueid.TimeZoneoffset.Value));
+                            }
+                            else
+                            {
+                                candidateuniqueid.InterviewDate = candidateuniqueid.InterviewDate.AddMinutes(candidateuniqueid.TimeZoneoffset.Value);
+                            }
+                        }
+                        Mail _mailinfo = new Mail
+                        {
+                            TO = model.Email,
+                            CC = candidateuniqueid.ChannelOwner,
+                            Subject = model.ClientName + "Reschdule Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
+                        };
+                        _ = await _notificationHelper.SendReScheduleInterviewInfo(_mail, candidateuniqueid.InterviewDate, candidateuniqueid.TimeZonesValue, interviewdatetime, timezonevalue, model.Name, model.ClientName, jdDetails.JDTiltle, interviewId != 0 ? interviewId : new int?());
+                        ViewBag.Start = 4;
+                        ViewBag.interviewDate = interviewdatetime;
+                        TempData["CreateInterviewMessage"] = "Your Interview is scheduled successfully for " + interviewdatetime;
+                        if (model.returnvaluetype == 1)
+                        {
+                            return View(model);
+                        }
+                        else
+                        {
+                            return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Please try again to schedule the event.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
+                    return View(model);
+                }
+            }
+            else
+            {
+                return View(model);
+            }
+        }
 
     }
 }

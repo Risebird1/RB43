@@ -63,6 +63,7 @@ namespace Risebird.Entities.Data
         public bool IsRedoInterview { get; set; }
         [Display(Name = "Cancel Interview")]
         public bool IsClientCancelInterview { get; set; }
+        public string OldLogoLink { get; set; }
         [Display(Name = "GST Applicable")]
         public int GSTApplicable { get; set; }
         [Display(Name = "Payment Term")]

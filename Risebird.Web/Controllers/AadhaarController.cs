@@ -181,7 +181,7 @@ namespace Risebird.Web.Controllers
             _header.channel_version = "1";
             _header.stan = salt;
             _header.client_ip = "";
-            _header.transmission_datetime = datenow;
+            _header.transmission_datetime = Convert.ToInt64(datenow);
             _header.operation_mode = "SELF";
             _header.run_mode = "DEFAULT";
             _header.actor_type = "DEFAULT";
@@ -657,22 +657,33 @@ namespace Risebird.Web.Controllers
                 { "Content-Type", "application/json" }
             };
 
-            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "getCaptcha", Method.Post, model, headers);
+            var response = await _httpRequestHelper.MakeHttpRequest(apiendpoint + "faceCompare", Method.Post, model, headers);
 
             var convertedResponse = JsonConvert.DeserializeObject<AadhaarResponse>(response.Content);
             if (convertedResponse.response_status.status.ToLower() == "fail")
             {
                 return 0;
             }
-            return convertedResponse.response_data.score;
+
+            var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] :"0";
+            return Convert.ToInt16(score);//convertedResponse.response_data.score
         }
+        //public string GetCurrentUnixTimestampMillis()
+        //{
+        //    DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        //    DateTime localDateTime, univDateTime;
+        //    localDateTime = DateTime.Now;
+        //    univDateTime = localDateTime.ToUniversalTime();
+        //    return ((univDateTime - UnixEpoch).TotalMilliseconds).ToString();
+        //}
         public string GetCurrentUnixTimestampMillis()
         {
             DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             DateTime localDateTime, univDateTime;
             localDateTime = DateTime.Now;
             univDateTime = localDateTime.ToUniversalTime();
-            return ((univDateTime - UnixEpoch).TotalMilliseconds).ToString();
+            var millis = (univDateTime - UnixEpoch).TotalMilliseconds.ToString();
+            return millis.Split(".")[0];
         }
     }
 }

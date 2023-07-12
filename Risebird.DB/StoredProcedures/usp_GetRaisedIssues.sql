@@ -12,6 +12,6 @@ GO
 Create Procedure usp_GetRaisedIssues
 AS
 BEGIN
-Select rs.*,ul.MobileNumber,ul.FirstName as Name from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy 
+Select rs.*,ul.MobileNumber,ul.FirstName as Name from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy order by RequestedOn  desc
 END
 GO

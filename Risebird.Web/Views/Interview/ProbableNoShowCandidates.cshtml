@@ -25,7 +25,7 @@
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
-                        <img style="visibility:hidden" src="img/chardin.png" data-position="right" />
+                        @*<img style="visibility:hidden" src="img/chardin.png" data-position="right" />*@
                         <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Probable No Show Candidates</h4></div>
@@ -58,17 +58,21 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Email</th>
+                                                <th>Mobile Number</th>
                                                 <th>Skill Channel</th>
                                                 <th>Actual Meeting Status</th>
 
+                                                <th style="text-align:center">Call</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Email</th>
+                                                <th>Mobile Number</th>
                                                 <th>Skill Channel</th>
                                                 <th>Actual Meeting Status</th>
+                                                <th style="text-align:center">Call</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -76,11 +80,21 @@
                                             {
                                                 foreach (var item in Model)
                                                 {
+                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                                     <tr>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.candidateEmail</td>
+                                                        <td>@item.MobileNumber</td>
                                                         <td>@item.IRFId</td>
                                                         <td>@item.MeetingStatusStatusDesc</td>
+                                                        <td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                                            }
+
+                                                        </td>
+                                                        
                                                     </tr>
                                                 }
                                             }
@@ -100,7 +114,9 @@
     <!-- end col-md-12 -->
 </div>
 <!-- end row -->
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
+<script src="~/js/twiliocallmaker.js"></script>
 
 <script type="text/javascript">
 

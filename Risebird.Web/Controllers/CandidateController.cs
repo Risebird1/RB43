@@ -1,5 +1,4 @@
-﻿using iTextSharp.text.pdf;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -49,12 +50,13 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
         private readonly ITrackPublicUrlAccessor _trackPublicUrlAccessor;
+        private readonly IAadhaarService _aadhaarService;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
-            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor)
+            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor, IAadhaarService aadhaarService)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -75,6 +77,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _configuration = configuration;
             _trackPublicUrlAccessor = trackPublicUrlAccessor;
+            _aadhaarService = aadhaarService;
         }
 
         [HttpGet]
@@ -105,13 +108,13 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(15), profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" ? emailid : null)).ToList();
                         }
                     }
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(15), profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" ? emailid : null)).ToList();
                     }
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
@@ -3336,7 +3339,16 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                     HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), 2, emailid)).ToList();
+
+                    if (client.ClientName == "FoundIt (Monster.com)")
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                    }
+                    else
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                    }
+
                     if (candidateData == null)
                     {
                         return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
@@ -3497,8 +3509,16 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                    if (client.ClientName == "FoundIt (Monster.com)")
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(7), datatype, emailid)).ToList();
+                    }
+                    else
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), datatype, emailid)).ToList();
+                    }
                 }
+                ViewBag.ClientName = client.ClientName;
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -4450,7 +4470,7 @@ namespace Risebird.Web.Controllers
         /// <param name="IRFId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId,int type)
+        public async Task<JsonResult> GetPublicURLCandidate(string Emailid, int IRFId, int type)
         {
             try
             {
@@ -4460,7 +4480,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (type == 1)
                     {
-                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/TestPage?id=" + candidateUniqueId + "&IRFId=" + IRFId;
+                        sendMailURL = "https://" + Request.Host.ToString() + "/Candidate/InterviewDetails?id=" + candidateUniqueId + "&IRFId=" + IRFId;
                     }
                     else
                     {
@@ -4545,18 +4565,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        #region CandidateTest
+        #region CandidateDashboard
         [HttpGet]
-        public IActionResult TestPage(string id, int IRFId)
+        public async Task<IActionResult> InterviewDetails(string id, int IRFId)
         {
             var model = new CandidateIRFDetailsVM();
             //var model = new Candidate();
             ViewBag.PageType = "Public";
             ViewBag.Id = id;
+            var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(id);
             model.CandidateDetails.IRFId = IRFId;
-            return View(model);
+            return RedirectToAction("VerifiedInterviewDetails", new { emailid = candidateEmailid.EmailId, id = id, IRFid = IRFId });
+            //return View(model);
         }
-        public async Task<IActionResult> VerifiedTestPage(string emailid, string id, int IRFid)
+        public async Task<IActionResult> VerifiedInterviewDetails(string emailid, string id, int IRFid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
             ViewBag.id = id;
@@ -4606,7 +4628,12 @@ namespace Risebird.Web.Controllers
                     }
                 }
             }
-            return View("TestPage", CandidateDetails);
+            if (TempData["CreateInterviewMessage"] != null)
+            {
+                ViewBag.Message = TempData["CreateInterviewMessage"].ToString();
+                TempData.Remove("CreateInterviewMessage");
+            }
+            return View("InterviewDetails", CandidateDetails);
         }
 
         [HttpPost]

@@ -140,104 +140,10 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.type = "Candidate";
                         var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
-                        //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                        //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                        //var _resultlist = (from data in result
-                        //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
-                        //_resultlist = _resultlist.Distinct().ToList();
-                        //var resultset = await _meetingService.FetchSurveyInterviewer(_resultlist);
-                        //if (profileName == "Client")
-                        //{
-                        //    var client = _userRepository.GetClientUserDetails(emailid);
-                        //    Clientid = client.Result.ClientId;
-                        //    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
-                        //    foreach (var item in result)
-                        //    {
-                        //        if (interviewerids.Any(x => x == item.interviewid))
-                        //        {
-                        //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                        //            {
-                        //                modelData.Add(new SurveyVM
-                        //                {
-                        //                    interviewid = item.interviewid,
-                        //                    Question1 = item.Question1,
-                        //                    Question2 = item.Question2,
-                        //                    Question3 = item.Question3,
-                        //                    Question4 = item.Question4,
-                        //                    Question5 = item.Question5,
-                        //                    Question6 = item.Question6,
-                        //                    Name = item.Name,
-                        //                    EmailAddress = item.EmailAddress,
-                        //                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                        //                    CommentforInterviewer = item.CommentforInterviewer,
-                        //                    PrimarySkill = item.PrimarySkill,
-                        //                    IsClient = true
-                        //                });
-                        //            }
-                        //        }
-                        //    }
-                        //}
-                        //else if (profileName == "SeniorHR" || profileName == "SupportAdmin")
-                        //{
-                        //    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
-                        //    foreach (var item in result)
-                        //    {
-                        //        if (interviewerids.Any(x => x == item.interviewid))
-                        //        {
-                        //            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                        //            {
-                        //                modelData.Add(new SurveyVM
-                        //                {
-                        //                    interviewid = item.interviewid,
-                        //                    Question1 = item.Question1,
-                        //                    Question2 = item.Question2,
-                        //                    Question3 = item.Question3,
-                        //                    Question4 = item.Question4,
-                        //                    Question5 = item.Question5,
-                        //                    Question6 = item.Question6,
-                        //                    Name = item.Name,
-                        //                    EmailAddress = item.EmailAddress,
-                        //                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                        //                    CommentforInterviewer = item.CommentforInterviewer,
-                        //                    PrimarySkill = item.PrimarySkill,
-                        //                    IsClient = true
-                        //                });
-                        //            }
-                        //        }
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    var _resultinterview = (from data in result
-                        //                            select new SurveyDetails { interviewid = data.interviewid }).ToList();
-                        //    _resultinterview = _resultinterview.Distinct().ToList();
-                        //    var ClientNamelist = _meetingService.FetchSurveyClientName(_resultinterview);
-                        //    foreach (var item in result)
-                        //    {
-                        //        if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
-                        //        {
-                        //            modelData.Add(new SurveyVM
-                        //            {
-                        //                interviewid = item.interviewid,
-                        //                Question1 = item.Question1,
-                        //                Question2 = item.Question2,
-                        //                Question3 = item.Question3,
-                        //                Question4 = item.Question4,
-                        //                Question5 = item.Question5,
-                        //                Question6 = item.Question6,
-                        //                Name = item.Name,
-                        //                EmailAddress = item.EmailAddress,
-                        //                interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
-                        //                CommentforInterviewer = item.CommentforInterviewer,
-                        //                PrimarySkill = item.PrimarySkill,
-                        //                Type = ClientNamelist.Where(x => x.interviewid == item.interviewid).FirstOrDefault()?.ClientName,
-                        //            });
-                        //        }
-                        //    }
-                        //}
-                        if (HttpContext.Session.GetString("CandidateTimelinefilters") != null)
+                       
+                        if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateTimelinefilters"));
+                            var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
                             modelData = modelData.Where(x => x.Interviewdate >= filter.StartDate && x.Interviewdate <= filter.EndDate).ToList();
                             filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = modelData.Select(x => x.PrimarySkill).ToArray() : filter.ProfileSource = filter.ProfileSource;
                             filter.HREmail = filter.HREmail == null ? filter.HREmail = modelData.Select(x => x.Type).ToArray() : filter.HREmail = filter.HREmail;
@@ -256,7 +162,10 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         var results = await _meetingService.FetchFeedbackDetails();
-                        results = results.Where(x => x.StarRating < 5).ToList();
+                        if (results != null)
+                        {
+                            results = results.Where(x => x.StarRating < 5).ToList();
+                        }
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
@@ -738,7 +647,7 @@ namespace Risebird.Web.Controllers
                 if (modelData != null && modelData.Count() > 0)
                 {
                     var avgQ1 = modelData.Average(x => string.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
-                    var avgQ2 = modelData.Average(x => string.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("0.00");
+                    var avgQ2 = modelData.Average(x => string.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("#.##");
                     var avgQ6 = modelData.Average(x => string.IsNullOrEmpty(x.Question6) ? 0 : Convert.ToInt32(x.Question6)).ToString("#.##");
                     return Json(new { avgQ1 = avgQ1, avgQ2 = avgQ2, avgQ6 = avgQ6 });
                 }
@@ -781,7 +690,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SupportAdmin" || emailid.ToLower() == "vaibhaw_sachan@risebird.io")
+                if (profileName == "Admin" || profileName == "SupportAdmin")
                 {
                     var model = await _meetingService.FetchInterviewsReview();
                     ViewBag.Clients = model.Select(x => x.ClientName).Distinct().ToList();

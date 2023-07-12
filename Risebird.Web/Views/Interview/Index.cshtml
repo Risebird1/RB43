@@ -551,7 +551,7 @@
                                                                 <!--<span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
                                                                 </button>
                                                                 </span>-->
-                                                                @if (item.interviewDate.AddHours(1) >= DateTime.Now)
+                                                                @if (item.interviewDate.AddHours(1) >= DateTime.Now || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin"|| ViewBag.profile == "Quality Controller") 
                                                                 {
                                                                     <span class="interview_7">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
@@ -576,7 +576,7 @@
                                                         <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
                                                         </button>
                                                         </span>*@
-                                                                @if (item.interviewDate < DateTime.Now && (string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1)))
+                                                                @if ((string.IsNullOrEmpty(item.VideoLink) || (!string.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1) || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin"|| ViewBag.profile == "Quality Controller"))
                                                                 {
                                                                     <span class="interview_8">
                                                                         <button class="mdc-fab app-fab--absolute " aria-label="Update Video Details">

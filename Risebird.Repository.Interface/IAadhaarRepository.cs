@@ -14,6 +14,7 @@ namespace Risebird.Repository.Interface
         Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
         Task<IEnumerable<AadhaarData>> GetAadharDetails();
         Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model);
+        Task SaveFaceMatchScorePercentage(string email, int score);
 
     }
 }

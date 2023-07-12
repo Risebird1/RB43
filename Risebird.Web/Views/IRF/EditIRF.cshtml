@@ -3973,12 +3973,12 @@
             success: function (result) {
                 $("#" + skillElementid).val(result.primarySkill);
                 //$("#" + resumeElementid).val(result.resumeLink);
-                const resumeItem = document.getElementById(resumeElementid);
+                @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);
                 aTag.setAttribute('id', resumeElementid);
                 aTag.innerText = "Resume";
-                resumeItem.parentNode.replaceChild(aTag, resumeItem);
+                resumeItem.parentNode.replaceChild(aTag, resumeItem);*@
                 
             }
         });

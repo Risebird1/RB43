@@ -42,14 +42,6 @@
             meetingStatusList = meetingStatusList.ToList();
         }
 
-        //if(currentInterviewStatus != (int)InterviewStatus.BorderLine)
-        //{
-        //    interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().Where(x=>x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
-        //}
-        //else
-        //{
-        //    interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
-        //}
         interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
     }
     else if (ViewBag.profile == "Interviewer")
@@ -1535,7 +1527,7 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-                                    @if (ViewBag.PageStatus != "PublicExternal" && ViewBag.profile != "Quality Controller")
+                                    @if (ViewBag.PageStatus != "PublicExternal")
                                     {
                                         <div class="col-md-12 mc-button-area">
                                             @if (Model.IsInterviewer)

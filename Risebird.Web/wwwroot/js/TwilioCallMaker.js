@@ -109,12 +109,34 @@ function CallButtonClick(candidateObj, indexid) {
     var appendText = "Calling... " + "<b>" + callRecipientName + "</b>";
     document.getElementById("callingLabel").innerHTML = appendText;
     recipientType = 'Candidate';
-    if (indexid == 1) {
+    if (typeof candidateObj.Phone === 'undefined') {
+        // color is undefined
+        callRecipient(candidateObj.mobileNumber);
+    }
+    else {
         callRecipient(candidateObj.Phone);
+
+    }
+    if (indexid == 1) {
+        if (typeof candidateObj.Phone === 'undefined') {
+            // color is undefined
+            callRecipient(candidateObj.mobileNumber);
+        }
+        else {
+            callRecipient(candidateObj.Phone);
+
+        }
     }
 
     else {
-        callRecipient(candidateObj.phone);
+        if (typeof candidateObj.Phone === 'undefined') {
+            // color is undefined
+            callRecipient(candidateObj.mobileNumber);
+        }
+        else {
+            callRecipient(candidateObj.phone);
+
+        }
     }
 }
 

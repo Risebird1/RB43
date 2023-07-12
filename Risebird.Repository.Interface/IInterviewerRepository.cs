@@ -66,7 +66,7 @@ namespace Risebird.Repository.Interface
         Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
         Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
         string GetUserRolebyEmailid(string Emailid);
-        Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid);
+        Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid,string type);
         string FetchClientName(string IRFId);
         Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type);
         Task<List<string>> FetchAllPasswordResetDetails(int noofdays);
@@ -95,7 +95,7 @@ namespace Risebird.Repository.Interface
         Task<bool> CheckIfSME(string loggedInUser);
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
-        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved,bool? IsActive);
+        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive);
         //Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved);
         Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null);
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail);

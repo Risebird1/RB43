@@ -12,7 +12,6 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
@@ -24,6 +23,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -101,7 +101,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -569,7 +569,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 37].Value = item.BillingOwner;
                         if (profileName == "Client")
                         {
-                            var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId + "&isClient=true";
+                            var executiveurl = "https://portal.risebird.io/Interview/ClientReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId + "&isClient=True";
                             try
                             {
                                 Sheet.Cells[i, 38].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
@@ -1151,7 +1151,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")//|| emailId.ToLower() == "parvathi_sg@risebird.io" || emailId.ToLower() == "ambika_ratkalle@risebird.io") 
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
                         if (meetingToUpdate == null)
@@ -1207,7 +1207,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         if (!string.IsNullOrEmpty(meetingUpdated.interviewer))
                         {
@@ -2968,7 +2968,7 @@ namespace Risebird.Web.Controllers
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         isAdminHR = true;
                     }
@@ -3084,7 +3084,7 @@ namespace Risebird.Web.Controllers
 
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         if (model.AudioFile != null)
                         {
@@ -3219,7 +3219,7 @@ namespace Risebird.Web.Controllers
                                 await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
-                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                             {
                                 return RedirectToAction("Index");
                             }
@@ -4955,7 +4955,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                 {
                     //fetch question details
                     var model1 = await _meetingService.FetchQuestionDetails(id);
@@ -5732,13 +5732,14 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            if (_meetingService.CheckInterviewCancellable(meetingid))
+            if ((status == 1 || status == 2 || status == 4) && _meetingService.CheckInterviewCancellable(meetingid))
             {
                 var response = true;
                 //if (status == 4)
                 //{
                 //    response = _meetingService.CheckInterviewClerityTime(meetingid);
                 //}
+
                 var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId, response);
                 if (results == "Success")
                 {
@@ -5795,10 +5796,12 @@ namespace Risebird.Web.Controllers
                             var olduniqueid = stepfirst.Split("=").LastOrDefault();
                             var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
                             oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                            //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink });
                             return Json(oneTimeSchedulingLink);
                         }
                         return Json("Successfully status updated, " + value);
                     }
+
                     return Json("Thank you for confirming your interview.");
                 }
                 else if (results == "Already Present")
@@ -5809,6 +5812,10 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Status update failed. Please try again!");
                 }
+            }
+            else if (status == 3)
+            {
+                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
             }
             else
             {
@@ -6020,8 +6027,10 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
                     ViewBag.PageFrom = "Completed";
+
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
@@ -6142,6 +6151,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.emailid = emailId;
                     if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
+                        ViewBag.profile = profileName;
                         var model = await _meetingService.FetchQCFormDetailsById(interviewid);
                         if (model == null)
                         {
@@ -6193,6 +6203,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.emailid = emailId;
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
+                        ViewBag.profile = profileName; ViewBag.profile = profileName;
                         model.Emailid = emailId;
                         var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
@@ -6609,6 +6620,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.PageFrom = "Resloved";
                     if (profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
@@ -7178,7 +7190,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         var model = await _meetingService.GetProbableNoShowCandidates();
                         model = model.Select(x =>
@@ -7345,6 +7357,8 @@ namespace Risebird.Web.Controllers
                 return Json("Failed to update Surcharge details, please try again.");
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -7467,6 +7481,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -7536,6 +7552,33 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid)
+        {
+            if (!string.IsNullOrEmpty(uniqueid))
+            {
+                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
+                var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
+                return Json(SchedulingLink);
+            }
+            return Json("");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CandidateRescheduleMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            if (_meetingService.CheckInterviewCancellable(meetingid))
+            {
+                var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, result.candidateEmail);
+                return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+            }
+            else
+            {
+                return Json("Fail to Update Status, Please try again");
             }
         }
     }
