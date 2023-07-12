@@ -247,6 +247,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        #region Page Click Details
         [HttpPost]
         public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction)
         {
@@ -264,5 +265,6 @@ namespace Risebird.Web.Controllers
             await _activityTrackerService.SaveCaptureClickDetails(model);
             return Json("");
         }
+        #endregion
     }
 }
