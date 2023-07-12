@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Org.BouncyCastle.Asn1;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -244,6 +245,24 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction)
+        {
+            string emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+            }
+            var model = new CapturePageDM();
+            model.ButtonAction = buttonaction;
+            model.currenturl = currenturl;
+            model.Functiontype = type;
+            model.PerformedBy = emailid;
+            await _activityTrackerService.SaveCaptureClickDetails(model);
+            return Json("");
         }
     }
 }
