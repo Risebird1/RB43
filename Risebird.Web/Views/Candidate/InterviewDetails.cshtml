@@ -133,7 +133,7 @@
                                     <b>Scheduled Interview</b>
                                     <br />
                                     <b style="color:grey;font-weight:normal;font-size:16px;"> Interview Time:</b>  @item.interviewDate
-                                    <p class="meeting-link"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span>Meeting Link</span></a></p>
+                                    <p class="meeting-link" onclick="captureclick('ZoomMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span>Meeting Link</span></a></p>
                                     <p>
                                         <div class="interview">
                                             <div class="click_herebtn pull-left">
@@ -386,5 +386,11 @@
         if (sec < 10 && sec >= 0) { sec = "0" + sec };
         if (sec < 0) { sec = "59" };
         return sec;
+    }
+</script>
+<script>
+    function captureclick(type) {
+        var currenturl = window.location.href;
+        alert(type + " " + currenturl);
     }
 </script>
