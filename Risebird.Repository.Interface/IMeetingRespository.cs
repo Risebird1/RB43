@@ -10,6 +10,7 @@ namespace Risebird.Repository.Interface
     {
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings();
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null);
+        Task<IEnumerable<MeetingVM>> GetAllCancelInterview(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> AddMeeting(AddUpdateMeetingVM meeting);
         Task<MeetingVM> GetInterviewMeetingById(int id);
         Task<bool> UpdateMeeting(AddUpdateMeetingVM meeting);
