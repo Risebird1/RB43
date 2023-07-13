@@ -150,11 +150,11 @@
         <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute" style="height:53px;margin-bottom:0px;padding-left:2px">
             @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
             {
-                <img style="position:relative;top:0px;width:8%" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+                <img class="logo-cm"  src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
             }
             else
             {
-                <img style="position:relative;top:0px;width:8%" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />
+                <img class="logo-cm" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />
             }
             <div class="pull-left" style="padding-left:1vw">
                 <div class="navbar-wrapper w-full">
