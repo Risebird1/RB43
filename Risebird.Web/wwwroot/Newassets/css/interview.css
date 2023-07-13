@@ -1980,8 +1980,11 @@ select:-moz-focusring {
     .tp25 {
         margin-top: 0px !important
     }
-
-    .call-time {
+    #reportForm .question ul li {
+        font-size: 14px!important;
+        padding: 0px 0px!important;
+    }
+        .call-time {
         margin: 0px 0px 0px 0px !important;
         left: 0px !important;
     }
