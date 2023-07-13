@@ -5274,7 +5274,7 @@ textarea {
     top: 20px;
 }
 
-}
+
 
 .mandate {
     position: relative;
@@ -5942,6 +5942,11 @@ input[type="date"].form-control {
         left: 15%;
         margin-left: -10px;
     }
+.logo-cm {
+    position: relative;
+    top: 0px;
+    width: 8%;
+}
 /***** Media queries *****/
 
 
@@ -6743,7 +6748,19 @@ input[type="date"].form-control {
         padding: 20px 10px;
         margin-bottom: 10px;
     }
-
+    .nodata {
+        text-align: center;
+        font-size: 17px!important;
+    }
+        .nodata img {
+        width: 26px!important;
+    }
+    .logo-cm {
+        position: relative;
+        top: 4px;
+        width: 13%!important;
+        left: 10px;
+    }
     .support .divider-rm {
         display: none;
     }
@@ -6848,8 +6865,11 @@ input[type="date"].form-control {
     #calenderTimeslot {
         left: 20px;
     }
-
-    .event .calendar-con {
+    .interview-status {
+        position: absolute!important;
+        top: -56px!important;
+    }
+        .event .calendar-con {
         min-width: 90% !important;
         max-width: 90% !important;
         margin: 40px auto 40px auto;
@@ -6934,7 +6954,12 @@ input[type="date"].form-control {
     [class^='col-lg-'] {
         margin-bottom: 10px;
     }
-
+    .logo-cm {
+        position: relative;
+        top: 4px!important;
+        width: 18%!important;
+        left: 10px!important;
+    }
     #userProfileForm .tab-menu ul li a {
         font-size: 15px;
     }
@@ -7123,7 +7148,14 @@ input[type="date"].form-control {
         width: 100%;
         float: left;
     }
-
+    #reportForm video {
+        width: calc(100% - 4px)!important;
+        padding:0px!important;
+    }
+    .generate-pdf {
+        position: relative!important;
+        left: 17px!important;
+    }
     #userProfileForm .avatar-upload {
         margin: 0px auto !important;
     }
@@ -7421,7 +7453,12 @@ input[type="date"].form-control {
         font-size: 13px !important;
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
     }
-
+    .logo-cm {
+        position: relative;
+        top: 4px!important;
+        width: 24%!important;
+        left: 10px!important;
+    }
 
     #scoreChart tspan {
         font-size: 11.5px;
@@ -7619,6 +7656,12 @@ input[type="date"].form-control {
         left: auto;
         right: 25px !important;
         top: 12px !important;
+    }
+    .logo-cm {
+        position: relative;
+        top: 3px;
+        width: 25%;
+        left: 10px;
     }
 }
 
