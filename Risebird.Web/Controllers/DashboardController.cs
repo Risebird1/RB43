@@ -1747,5 +1747,64 @@ namespace Risebird.Web.Controllers
             }
             return Json(results);
         }
+
+        [Authorize]
+        
+        public async Task <IActionResult> Dashboard_911()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var model = new DashboardVM();
+                        model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
+                        model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
+                        var progressDate = TempData.Peek("ProgressDate")?.ToString();
+                        if (!string.IsNullOrEmpty(progressDate))
+                        {
+                            model.ProgressDate = Convert.ToDateTime(progressDate);
+                            TempData.Keep("ProgressDate");
+                        }
+                        else
+                        {
+                            model.ProgressDate = DateTime.Now;
+                        }
+                        model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
+                        model.ProgressOptions = new SelectList(await _dashboardService.GetProgressOptions(), "id", "Name");
+                        var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
+                                            select new { ID = (int)s, Name = s.GetDescription() };
+                        model.AssassinationList = new SelectList(Assassination, "ID", "Name");
+                        
+                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
+                        interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
+                        foreach (var item in interviewmanagement)
+                        {
+                            item.interviewDate = item.interviewDate.Date;
+                        }
+                        model.InterviewManagement = interviewmanagement;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
