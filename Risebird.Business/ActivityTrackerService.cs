@@ -1,5 +1,6 @@
 ﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -31,6 +32,19 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+        public async Task<bool> SaveCaptureClickDetails(CapturePageDM model)
+        {
+            try
+            {
+                return await _activityTrackerRepository.SaveCaptureClickDetails(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
         }
     }
 }

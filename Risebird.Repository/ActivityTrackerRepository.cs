@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -81,6 +82,33 @@ namespace Risebird.Repository
 
             return false;
         }
+        public async Task<bool> SaveCaptureClickDetails(CapturePageDM model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@currenturl", model.currenturl);
+                parameters.Add("@PerformedBy", model.PerformedBy);
+                parameters.Add("@Functiontype", model.Functiontype);
+                parameters.Add("@ButtonAction", model.ButtonAction);
+                parameters.Add("@PerformedOn", DateTime.Now);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_SavePageClickDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
