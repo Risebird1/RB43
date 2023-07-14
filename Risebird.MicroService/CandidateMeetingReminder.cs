@@ -77,8 +77,7 @@ namespace Risebird.MicroService
 
 
 
-                    string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + item.uniqueid + "&Irfid=" + item.Irfid;
-
+                    string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.uniqueid + "?Irfid=" + item.Irfid;
                     if (item.Typefunction == 2)
                     {
                         //Send Notifications
