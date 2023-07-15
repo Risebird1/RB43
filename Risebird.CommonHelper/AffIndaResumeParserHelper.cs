@@ -9,11 +9,11 @@ namespace Risebird.CommonHelper
 {
     public class AffIndaResumeParserHelper : IAffIndaResumeParserHelper
     {
-        private readonly IConfiguration _configuration;       
+        private readonly IConfiguration _configuration;
 
         public AffIndaResumeParserHelper(IConfiguration configuration)
         {
-            _configuration = configuration;            
+            _configuration = configuration;
         }
 
         public async Task<string> UploadAndParseResume(string fileUrl = null)
@@ -128,7 +128,7 @@ namespace Risebird.CommonHelper
                 var body = await response.Content.ReadAsStringAsync();
                 result = body;
             }
-            
+
             return result;
 
             //RestResponse response = client.Execute(request);

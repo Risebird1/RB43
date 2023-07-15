@@ -9,7 +9,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 namespace Risebird.Business
@@ -73,6 +72,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> GetAllCancelInterviewList(DateTime startDate, DateTime endDate, string emailId = null)
+        {
+            try
+            {
+                return (await _meetingRespository.GetAllCancelInterview(startDate, endDate, emailId)).OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
         public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try
@@ -3857,7 +3871,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid,stdate, endate, year, month);
+                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid, stdate, endate, year, month);
                 return result;
             }
             catch (Exception e)

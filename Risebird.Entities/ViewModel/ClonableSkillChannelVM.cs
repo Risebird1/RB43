@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
-using System.ComponentModel;
 
 namespace Risebird.Entities.ViewModel
 {

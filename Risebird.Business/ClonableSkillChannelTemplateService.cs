@@ -190,7 +190,7 @@ namespace Risebird.Business
                 Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             model.Skills = new SelectList(Skillset, "id", "Name");
-            if(model.IsNewSkillChannel)
+            if (model.IsNewSkillChannel)
             {
                 //get interviewer rate from db
                 int interviewerRate = 0;
@@ -211,7 +211,7 @@ namespace Risebird.Business
 
                 }
             }
-            
+
             return model;
         }
 
@@ -457,7 +457,7 @@ namespace Risebird.Business
                 }
 
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
-                
+
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
 

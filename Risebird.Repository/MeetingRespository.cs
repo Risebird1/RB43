@@ -80,6 +80,34 @@ namespace Risebird.Repository
             return null;
         }
 
+
+        public async Task<IEnumerable<MeetingVM>> GetAllCancelInterview(DateTime startDate, DateTime endDate, string emailId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    parameters.Add("EmailId", emailId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetAllCancelInterviews", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         /// <summary>
         /// Risetube meeting
         /// </summary>
@@ -6341,7 +6369,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select cr.*,cl.Name as ClientName From ClientReviewDetails cr join UserList ul on cr.ClientEmailid=ul.EmailId left join ClientUser cu on cu.UserId=ul.id left join Client cl on cl.id=cu.ClientId";
+                var query = "Select cr.*,cl.Name as ClientName From ClientReviewDetails cr join UserList ul on cr.ClientEmailid=ul.EmailId join ClientUser cu on cu.UserId=ul.id join Client cl on cl.id=cu.ClientId order by CreatedOn desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<ClientReviewVM>(query, null);

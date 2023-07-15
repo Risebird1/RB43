@@ -665,7 +665,7 @@ namespace Risebird.Web.Controllers
                 return 0;
             }
 
-            var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] :"0";
+            var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] : "0";
             return Convert.ToInt16(score);//convertedResponse.response_data.score
         }
         //public string GetCurrentUnixTimestampMillis()

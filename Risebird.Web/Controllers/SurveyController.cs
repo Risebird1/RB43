@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -140,7 +139,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.type = "Candidate";
                         var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
-                       
+
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));

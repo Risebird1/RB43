@@ -245,5 +245,25 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+
+        #region Page Click Details
+        [HttpPost]
+        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction)
+        {
+            string emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+            }
+            var model = new CapturePageDM();
+            model.ButtonAction = buttonaction;
+            model.currenturl = currenturl;
+            model.Functiontype = type;
+            model.PerformedBy = emailid;
+            await _activityTrackerService.SaveCaptureClickDetails(model);
+            return Json("");
+        }
+        #endregion
     }
 }
