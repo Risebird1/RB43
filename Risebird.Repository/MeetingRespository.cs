@@ -6369,7 +6369,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select cr.*,cl.Name as ClientName From ClientReviewDetails cr join UserList ul on cr.ClientEmailid=ul.EmailId left join ClientUser cu on cu.UserId=ul.id left join Client cl on cl.id=cu.ClientId";
+                var query = "Select cr.*,cl.Name as ClientName From ClientReviewDetails cr join UserList ul on cr.ClientEmailid=ul.EmailId join ClientUser cu on cu.UserId=ul.id join Client cl on cl.id=cu.ClientId order by CreatedOn desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<ClientReviewVM>(query, null);

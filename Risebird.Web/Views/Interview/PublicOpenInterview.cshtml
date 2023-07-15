@@ -27,8 +27,8 @@
     }
 
     /*.mob_h {
-        display: none !important
-    }*/
+                display: none !important
+            }*/
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -73,7 +73,6 @@
                             <div id="tableID" class="second">
                                 <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                     <div class="col-sm-12 col-md-6">
-
                                     </div>
                                     <!--<div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
                                         <div id="meeting_filter" class="dataTables_filter">
@@ -97,12 +96,12 @@
                                                     <tr>
                                                         <th>Date</th>
                                                         <th>Interview Price</th>
+                                                        <th>Variable Pay</th>
                                                         <th>Interview Duration (in Min.)</th>
                                                         <th id="openinterview_2">Candidate Name</th>
                                                         <th>JD-Skills</th>
                                                         <th id="openinterview_3">Resume</th>
                                                         @*<th id="openinterview_4">JD Link</th>*@
-
                                                         @if (Model.Count() == 0)
                                                         {
                                                             <th id="openinterview_6" class="disabled-sorting text-right">Actions</th>
@@ -117,6 +116,7 @@
                                                     <tr>
                                                         <th>Date</th>
                                                         <th>Interview Price</th>
+                                                        <th>Variable Pay</th>
                                                         <th>Interview Duration (in Min.)</th>
                                                         <th>Candidate Name</th>
                                                         <th>JD-Skills</th>
@@ -131,11 +131,12 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate </td>
+                                                            <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
                                                             @if (item.IsNewSkillChannel)
                                                             {
                                                                 <td>
                                                                     <div class="techinfocontainer">
-                                                                        ₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + 120)
+                                                                        ₹ 120
                                                                         <i class="fa fa-info-circle techinfoicon tooltipquestion">
                                                                             <span class="tooltiptext">
                                                                                 <p>₹ 50: No RB QC Red Flags </p>
@@ -148,7 +149,7 @@
                                                             }
                                                             else
                                                             {
-                                                                <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + 120) </td>
+                                                                <td>₹ 0 </td>
                                                             }
                                                             <td> @item.interviewDuration (minimum)</td>
                                                             <td> @item.candidateName</td>
@@ -167,13 +168,13 @@
                                                                 <td>No Resume</td>
                                                             }
                                                             @*@if (item.JDLink != null && item.JDLink != "")
-                                                                {
-                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No JD</td>
-                                                                }*@
+                                                        {
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No JD</td>
+                                                        }*@
 
 
 
@@ -252,7 +253,6 @@
             <input type="text" hidden id="txtinterviewid" />
             <div class="modal-body">
                 <div style="padding:10px" id="divcandidateskills">
-
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
@@ -302,7 +302,7 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.includes("Success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                swal.fire("Successful", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");

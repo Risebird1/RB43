@@ -12,10 +12,12 @@ GO
 CREATE PROCEDURE [dbo].[usp_RisebirdClientUsersForNotification]     
 AS    
 BEGIN    
-select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.uniqueid from [ClientUser] cu    
+select distinct cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.uniqueid 
+from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId
+join [ClientUser] cu on cu.ClientId=IRF.ClientId   
 inner join [dbo].[UserList] ul on cu.UserId = ul.id    
 inner join [dbo].[Client] cl on cu.ClientId= cl.id    
 inner join [ClientRole] cr on cu.RoleId= cr.id    
-where ul.IsActive =1 and cu.RoleId!=9   
+where ul.IsActive =1 and cu.RoleId!=9 and im.interviewDate>=DATEADD(Day,-7, Getdate()) and im.interviewDate<=DATEADD(Day,7, Getdate()) 
 END
 GO
