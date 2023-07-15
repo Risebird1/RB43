@@ -1749,8 +1749,8 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        
-        public async Task <IActionResult> Dashboard_911()
+
+        public async Task<IActionResult> Dashboard_911()
         {
             try
             {
@@ -1780,7 +1780,7 @@ namespace Risebird.Web.Controllers
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
-                        
+
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
                         interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)

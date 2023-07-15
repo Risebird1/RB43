@@ -11,9 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -770,7 +768,7 @@ namespace Risebird.Repository
                                     IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
                                     HRId = !string.IsNullOrEmpty(dt.Rows[i]["HRId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["HRId"]) : 0,
                                     UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0
-                                    
+
                                 });
                             }
                             _resultVM.HRCollection = (IList<TransHR>)(transHR);
@@ -796,7 +794,7 @@ namespace Risebird.Repository
                                     IRFName = !string.IsNullOrEmpty(dt.Rows[i]["IRFName"].ToString()) ? dt.Rows[i]["IRFName"].ToString() : null,
                                     FirstName = !string.IsNullOrEmpty(dt.Rows[i]["FirstName"].ToString()) ? dt.Rows[i]["FirstName"].ToString() : null,
                                     Role = !string.IsNullOrEmpty(dt.Rows[i]["Role"].ToString()) ? dt.Rows[i]["Role"].ToString() : null,
-                                    
+
                                 });
                             }
                             _resultVM.ClientCollection = (IList<TransClientUser>)(transClientUser);
@@ -1358,7 +1356,7 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsNewSkillChannel"].Value = true;//this is set true for all the skill channels created from May23 when changes to the financial model were instituted
-                    
+
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -2119,7 +2117,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        if(irfDetails.IsNewSkillChannel)
+                        if (irfDetails.IsNewSkillChannel)
                         {
                             interviewerDt.Columns.Add("Surcharge", typeof(int));
 
@@ -2392,7 +2390,7 @@ namespace Risebird.Repository
                     }
                     if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     {
-                        if(irfDetails.IsNewSkillChannel)
+                        if (irfDetails.IsNewSkillChannel)
                         {
                             cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
                             cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
@@ -5305,7 +5303,7 @@ namespace Risebird.Repository
         public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false)
         {
             DataTable dt = new DataTable();
-            if(isResumeParser)
+            if (isResumeParser)
             {
                 dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)), new DataColumn("CandidateResumeId", typeof(int)) });
@@ -5315,7 +5313,7 @@ namespace Risebird.Repository
                 dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)) });
             }
-            
+
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -5330,7 +5328,7 @@ namespace Risebird.Repository
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
                             parameters.Add("@Phone", obj.Phone);
-                            if(userId.HasValue)
+                            if (userId.HasValue)
                             {
                                 parameters.Add("@AddedByUserId", userId);
 
@@ -5350,7 +5348,7 @@ namespace Risebird.Repository
                             await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                             var result = parameters.Get<string>("@operationStatus");
-                            if(isResumeParser)
+                            if (isResumeParser)
                             {
                                 dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
 
@@ -6190,10 +6188,10 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
 

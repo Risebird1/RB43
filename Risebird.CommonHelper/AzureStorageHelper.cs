@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 //using Microsoft.Azure.Management.Media;
 //using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +8,6 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;

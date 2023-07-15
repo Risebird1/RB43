@@ -9,7 +9,7 @@ namespace Risebird.Repository.Interface
         Task<List<ClientAudioFeedbackDetails>> FetchClientAudioFeedbackDetails();
         Task<List<ClientAudioFeedbackDetails>> FetchBroadcastMessages();
         Task<SurveyCandidateInterviewer> AddOrEditCandidateRating(SurveyVM model);
-        Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid,string profileName);
+        Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid, string profileName);
         Task<IEnumerable<SurveyVM>> GetCandidateRatingByIRFId(string IRFId);
     }
 }

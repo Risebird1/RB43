@@ -468,7 +468,7 @@
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
                                                         <th>Confirmation Status</th>
-                                                        <th>Cancellation source</th>
+                                                        
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
@@ -525,8 +525,7 @@
                                                         <th>Backup Link</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
-                                                        <th>Confirmation Status</th>
-                                                        <th>Cancellation source</th>
+                                                        <th>Confirmation Status</th>                                                       
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
@@ -555,11 +554,12 @@
                                                         <th>Current Employer</th>
                                                         <th>Emergency Interview</th>
                                                     }
-                                                    @if(ViewBag.Type==CancelInterviews){
+                                                    @if(ViewBag.Type==CancelInterviews)
+                                                    {
                                                     <th>Client Hr Contact</th>
                                                      <th>Client </th>
-                                                      <th>Billing Owner</th>
-                                                        <th>Cancellation Source</th>
+                                                     <th>Billing Owner</th>
+                                                     <th>Cancellation Source</th>
                                                     }
                                                 </tr>
                                             </tfoot>
@@ -812,32 +812,7 @@
                                                         {
                                                             <td class="text-center"> @item.confirmationStatus</td>
                                                         }
-                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                        {
-                                                            <td>@item.Cancellationsource</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
-                                                    {
-                                                    @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                                                    {
-                                                    <td class="text-center">
-                                                    <a style="color:hotpink; font-weight: bold">Status Pending</a>
-                                                    </td>
-
-                                                    }
-                                                    else
-                                                    {
-                                                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
-                                                    }
-                                                    }
-                                                    else
-                                                    {
-                                                    <td></td>
-                                                    }*@
+                                                        
                                                         @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
                                                             <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
@@ -956,19 +931,7 @@
                                                             <td>No</td>
                                                         }
                                                         <td>@item.interviewSlot</td>
-                                                        @*<td>@item.QCInterviewer</td>
-                                                    @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
-                                                    {
-                                                    <td>@item.QCStatusStatusDesc</td>
-
-                                                    }
-                                                    else
-                                                    {
-                                                    <td></td>
-
-                                                    }*@
-
-                                                        @*<td>@item.HRComment</td>*@
+                                                        
                                                         <td>@item.staffingAgency</td>
                                                         <td> @item.interviewDuration Min.</td>
                                                         @if (item.IsAadhaarVerificationRequired == null)

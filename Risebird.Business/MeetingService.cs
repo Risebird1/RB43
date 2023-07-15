@@ -9,7 +9,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 namespace Risebird.Business
@@ -3872,7 +3871,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid,stdate, endate, year, month);
+                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid, stdate, endate, year, month);
                 return result;
             }
             catch (Exception e)

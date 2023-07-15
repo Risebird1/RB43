@@ -9,7 +9,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using static Dapper.SqlMapper;
 
 namespace Risebird.Repository
 {
@@ -93,7 +92,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid,string profileName)
+        public async Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid, string profileName)
         {
             try
             {
