@@ -373,13 +373,18 @@ namespace Risebird.Web.Controllers
                 {
                     modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                 }
+                else if (type == "CancelInterviews")
+                {
+                    ViewBag.Type = "CancelInterviews";
+                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
+                }
                 else if (type == "Interviews")
                 {
-                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
                 else
                 {
-                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
                 Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
