@@ -13,6 +13,7 @@
 .reportdropdown {
     position: relative;
     display: inline-block;
+    right:10px;
 }
 
 .reportdropdown-content {
