@@ -5942,15 +5942,109 @@ input[type="date"].form-control {
         left: 15%;
         margin-left: -10px;
     }
-.logo-cm {
-    position: relative;
-    top: 0px;
-    width: 8%;
+.quality-con label {
+    font-weight: normal;
+    color: #373333cc;
+    line-height: 22px;
+    font-size: 15px;
+    padding: 10px;
 }
+.quality-con ul {
+    margin: 0px;
+    padding: 0px 10px;
+}
+.quality-con ul li {
+    font-size: 14.5px;
+    padding: 0px 30px;
+    list-style: none;
+    background-image: url(../../img/tick-mark-icon.svg);
+    background-repeat: no-repeat;
+    background-position: 10px 5px;
+    background-size: 2%;
+    color: #5f5959;
+}
+#addComment .star-rating {
+    display: flex;
+    direction: rtl;
+    font-size: 2.0em;
+    justify-content: space-around;
+    padding: 0 .2em;
+    text-align: center;
+    width: 300px;
+    margin:0px auto 10px auto;
+    
+}
+
+    #addComment .star-rating input {
+        display: none;
+    }
+
+    #addComment .star-rating label {
+        /*color: #ccc;*/
+        color: #e4e4e4;
+        cursor: pointer;
+    }
+
+    #addComment .star-rating :checked ~ label {
+        color: #f90;
+    }
+
+    #addComment .star-rating label:hover,
+    #addComment .star-rating label:hover ~ label {
+        color: #fc0;
+    }
+
+.box {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    color: #a79f9f;
+    padding: 20px;
+    position: relative;
+    margin: 5px 0px;
+    box-shadow: 1px 4px 14PX 0px rgba(0, 0, 0, 0.1);
+    float: left;
+}
+
+    .box.arrow-top:after {
+        content: " ";
+        position: absolute;
+        LEFT: 40px;
+        top: -15px;
+        border-top: none;
+        border-right: 15px solid transparent;
+        border-left: 15px solid transparent;
+        border-bottom: 15px solid #fff;
+    }
+
+    .box textarea {
+        height: 70px;
+        width: 100%;
+        border: 0px;
+        background:#fff;
+    }
+.int-date {
+    float: right;
+    margin: 5px;
+    position: relative;
+    right: 20px;
+}
+.audio-con{
+    width:300px;
+    margin:0px auto;
+
+}
+.audio-con button{
+    background:none;
+    border:none;
+}
+    .audio-con span {
+        font-size: 13PX;
+        font-family: 'Roboto';
+        display:block;
+    }
+
 /***** Media queries *****/
-
-
-
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
         position: absolute;

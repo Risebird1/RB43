@@ -12,23 +12,30 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
 <!-- Modal -->
 <div class="modal fade" style="height:1000px" id="addComment" tabindex="-1" role="dialog" aria-labelledby="addCommentLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCommentLabel">Rate the Interviewer</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
-                    <span aria-hidden="true">×</span>
+           
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img width="30" class="publicsharing-icon" src="~/Newassets/img/quality.png"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="addCommentLabel">Rate the Interviewer</h5>
+
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
+
+               
             </div>
             <div class="modal-body" id="comments_modal_body" style="max-height:400px; overflow:auto">
 
                 @if (Model.interviewDate != DateTime.MinValue)
                 {
-                    <p>Interview Date: <span style="font-style:italic; font-weight:bold">@Model.interviewDate.ToString("MM/dd/yyyy hh:mm tt")</span></p>
                 }
 
                 @if (Model.Profile == "Client")
-                {
+                {<p style="font-size:16px;margin:0px;text-align:center;">Share your rating with us </p>
                     <form asp-action="AddUpdateClientCommentsForReport">
 
                         <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
@@ -46,15 +53,18 @@
                             <label for="Q2_1" class="star">&#9733;</label>
                         </div>
                         <div class="form-group">
+                            <p class="int-date">Interview Date: <span style="font-style:italic; font-weight:bold">@Model.interviewDate.ToString("MM/dd/yyyy hh:mm tt")</span></p>
+
                             <label asp-for="Comment"></label>
                             @if (Model.Profile == "Client")
                             {
-                                <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%"></textarea>
+                                <div class="box arrow-top"> <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%"></textarea></div>
 
                             }
                             else
                             {
-                                <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%" readonly></textarea>
+                                <div class="box arrow-top">
+                                    <textarea asp-for="Comment" class="form-control" style="height: 200px; width:100%" readonly></textarea></div>
 
                             }
                             <span asp-validation-for="Comment" class="text-danger"></span>
