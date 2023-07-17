@@ -6044,6 +6044,13 @@ input[type="date"].form-control {
         display:block;
     }
 
+.logo-cm {
+    position: relative;
+    top: 4px;
+    width:9%;
+    left: 4px;
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -6851,8 +6858,8 @@ input[type="date"].form-control {
     }
     .logo-cm {
         position: relative;
-        top: 4px;
-        width: 13%!important;
+        top: -1px;
+         width: 11%!important;
         left: 10px;
     }
     .support .divider-rm {
@@ -6939,6 +6946,7 @@ input[type="date"].form-control {
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }
+   
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
@@ -7038,6 +7046,7 @@ input[type="date"].form-control {
         position: absolute;
         left: 30px !important;
     }
+  
 }
 
 
@@ -7050,8 +7059,7 @@ input[type="date"].form-control {
     }
     .logo-cm {
         position: relative;
-        top: 4px!important;
-        width: 18%!important;
+        top: 4px !important;
         left: 10px!important;
     }
     #userProfileForm .tab-menu ul li a {
@@ -7082,7 +7090,7 @@ input[type="date"].form-control {
         padding-left: 13px !important;
     }
     /* LOGIN */
-    .login-container {
+        .login-container {
         padding: 0px 10px;
     }
 
@@ -7549,8 +7557,8 @@ input[type="date"].form-control {
     }
     .logo-cm {
         position: relative;
-        top: 4px!important;
-        width: 24%!important;
+        top: -1px!important;
+      width: 23%!important;
         left: 10px!important;
     }
 
@@ -7754,12 +7762,16 @@ input[type="date"].form-control {
     .logo-cm {
         position: relative;
         top: 3px;
-        width: 25%;
         left: 10px;
     }
 }
 
 @media (max-width: 360px) {
+    .logo-cm {
+        position: relative;
+        top: 4px !important;
+        left: 10px!important;
+    }
     #scoreChart tspan {
         font-size: 9.3px;
     }
@@ -7829,8 +7841,8 @@ input[type="date"].form-control {
 }
 
 /* EOF BUTTONS */
-/* FORM ELEMENTS */
-.fa, .fas, .far {
+        /* FORM ELEMENTS */
+        .fa, .fas, .far {
     font-family: "Font Awesome 5 Pro";
     font-weight: 500;
 }
