@@ -3,26 +3,35 @@
 
 <div class="modal fade" style="height:1000px" id="addRecording" tabindex="-1" role="dialog" aria-labelledby="addRecordingLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content" style="width:750px">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addRecordingLabel">Record Audio Feedback</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
-                    <span aria-hidden="true">×</span>
+        <div class="modal-content">
+            
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img width="30" class="publicsharing-icon" src="~/Newassets/img/audio.png"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="addRecordingLabel">Record Audio Feedback</h5>
+
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
+
+
             </div>
             <div class="modal-body" id="recording_modal_body" style="max-height:400px">
                 <div class="row" id="divAudioRecording">
 
-                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
-                        <div class="pull-left" style="padding:10px"><button id="startClientRecButton" onclick="startClientRecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play"></i></button></div>
-                        <div class="pull-left" style="padding:10px"><button id="stopClientRecButton" type="button" onclick="stopClientRecording('@Model.InterviewId','@Model.irfid')" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
-                        <div class="pull-left" style="padding:10px"><button id="cancelClientRecButton" type="button" onclick="cancelClientRecording()" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
-
+                    <div class="col-md-12">
+                        <div class="audio-con">
+                            <div class="pull-left" style="padding:10px"><button id="startClientRecButton" onclick="startClientRecording()"  title="Start Recording"><img width="60" src="~/Newassets/img/record-start.png"><span>START</span></button></div>
+                            <div class="pull-left" style="padding:10px"><button id="stopClientRecButton" type="button" onclick="stopClientRecording('@Model.InterviewId','@Model.irfid')"  title="Stop Recording" disabled><img width="60" src="~/Newassets/img/record-stop.png"/><span>STOP</span></button></div>
+                            <div class="pull-left" style="padding:10px"><button id="cancelClientRecButton" type="button" onclick="cancelClientRecording()"  title="Cancel Recording" disabled><img width="60" src="~/Newassets/img/record-cancel.png" /><span>CANCEL</span></button></div>
+                        </div>
                     </div>
-                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                    <div class="col-md-12">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                <p style="font-size:18px" id="clientRecordingStatus"></p>
+                                <p style="font-size:17px;color: #7d7a7a;" id="clientRecordingStatus"></p>
 
                             </div>
                         </div>
