@@ -6050,6 +6050,9 @@ input[type="date"].form-control {
     width:9%;
     left: 4px;
 }
+.top-h{
+    height:auto;
+}
 
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -6057,7 +6060,9 @@ input[type="date"].form-control {
         position: absolute;
         right: -6px !important;
     }
-
+    .top-h {
+        height: auto!important;
+    }
     .staffclose-btn {
         border-radius: 5px !important;
         font-size: 12px !important;
@@ -6197,6 +6202,9 @@ input[type="date"].form-control {
 }
 
 @media only screen and (max-width: 1920px) {
+    .top-h {
+        height: auto;
+    }
     .allmeeting .candidate-details {
         width: 25%
     }
@@ -6462,6 +6470,9 @@ input[type="date"].form-control {
 
 
 @media only screen and (max-width: 1024px) {
+    .top-h {
+        height: 60px!important;
+    }
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 285px !important;
         height: 160px !important;
