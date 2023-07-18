@@ -24,7 +24,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
 <link href="~/newassets/css/report.css" rel="stylesheet" />
+<style>
+    
 
+
+    .tox-notifications-container {
+        display: none
+    }
+</style>
 
 @if (ViewBag.PageStatus == "Public")
 {
@@ -83,9 +90,45 @@
                 <div class="pull-left">
                 </div>
                 <div class="pull-right">
+                    @if (ViewBag.ClientDetails == "client")
+                    {
+                        <div class="pull-left mt-20">
+                            <div class="reportdropdown">
+                                <button class="reportdropbtn">Report Quality Issue</button>
+                                <div class="reportdropdown-content">
+                                    <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                        <text>Rate Interviewer</text>
+                                    </button>
+                                    <button style="margin-left: 10px; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
+                                        <text> Audio Feedback </text>
+                                    </button>
+                                    <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                        <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
+                                    </button>
+                                    @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                    {
+                                        <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
+                                        </button>
+                                    }
+                                    @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                    {
+                                        <button class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                            <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
                     @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
                     {
                         <div class="pull-right mt-20"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
+                    }
+                    @if (ViewBag.ClientDetails == "client")
+                    {
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
                     }
                 </div>
             </div>
@@ -342,11 +385,13 @@
 
     </div>
 
-</div>
+    </div>
 
 <div id="modal_clientComment_placeholder"></div>
 
-<div id="modal_clientAudio_placeholder"></div>
+@*<div id="modal_clientAudio_placeholder"></div>*@
+
+<div id="modal_clientAudioFeedback_placeholder"></div>
 
 <div id="PublicUrlShareModel" class="modal modal-bg">
     <!-- Modal content -->
@@ -411,7 +456,14 @@
     </div>
 </div>
 
+
+
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
+
 <script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/BroadcastMessage.js"></script>
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -427,6 +479,12 @@
                 swal.fire("Failed", '@ViewBag.Message', "error");
             }
         }
+    </script>
+}
+@if (ViewBag.profile == "Client")
+{
+    <script>
+        openSecureReportNotificationModel();
     </script>
 }
 

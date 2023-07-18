@@ -15,7 +15,7 @@
                 <div class="col-md-12">
                     <input type="hidden" id="hidmodelinterviewid" />
                     <input type="hidden" id="hidmodelirfId" />
-                    <input type="email" id="SecuremodelEmailid" placeholder="Enter Email Address to whom you want to sahre secure Url." class="form-control" />
+                    <input type="email" id="SecuremodelEmailid" placeholder="Enter Email Address to whom you want to share secure Url." class="form-control" />
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
@@ -67,13 +67,14 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                    <span><img width="30" class="publicsharing-icon" src="~/Newassets/img/quality.png"></span>
                 </div>
                 <h5 class="modal-title pull-left">Quality Issue</h5>
             </div>
             <div class="modal-body">
                 <div class="col-md-12">
-                    If you have any concerns with quality, use the above 'Report Quality Issue' button to leave feedback.
+                    <div class="quality-con">
+                    <label>If you have any concerns with quality, use the above <strong>'Report Quality Issue'</strong> button to leave feedback.</label>
                     <ul>
                         <li>Rate Interviewer</li>
                         <li>Audio Feedback</li>
@@ -81,6 +82,7 @@
                         <li>Report red flags</li>
                         <li>Redo Interview</li>
                     </ul>
+                    </div>
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
@@ -122,7 +124,8 @@
         var irfid = $("#hidmodelirfId").val();
         if (EmailId.trim() != "") {
             $.ajax({
-                url: '/Interview/ShareSecureReport',
+                //url: '/Interview/ShareSecureReport',
+                url: '/Interview/ShareSecureReportV2',
                 data: { 'Emailid': EmailId, interviewId: interviewId, irfid: irfid },
                 type: 'POST',
                 success: function (result) {
