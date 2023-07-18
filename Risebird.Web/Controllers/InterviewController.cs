@@ -7164,6 +7164,26 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
+
+        public async Task<JsonResult> ShareSecureReportV2(int interviewId, string irfId, string emailid)
+        {
+            try
+            {
+                //Guid uniqueid = Guid.NewGuid();
+                //var _uniqueid = await _meetingService.CheckReportClientUrlSave(emailid, uniqueid.ToString(), interviewId);
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/ClientReport?interviewId=" + interviewId + "&irfId=" + irfId;//+ "&uniqueid=" + uniqueid;
+                //if (!string.IsNullOrEmpty(_uniqueid))
+                //{
+                //    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/AddSecureReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + _uniqueid;
+                //}
+                return Json(sendreporturl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
         public async Task<string> SendbackupRescheduleMeetingInvite(int irfId, string CandidateemailId, int interviewid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
