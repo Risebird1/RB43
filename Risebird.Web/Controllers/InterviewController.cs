@@ -241,7 +241,7 @@ namespace Risebird.Web.Controllers
                         else if (type == "CancelInterviews")
                         {
                             ViewBag.Type = "CancelInterviews";
-                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
+                            modelList = modelList.Where(x => x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                         }
                         else
                         {
