@@ -190,9 +190,9 @@ namespace Risebird.Web.Controllers
                             var endDate = DateTime.Now.Date.AddDays(1);
                             if (type == "RedoInterviews")
                             {
-                                startDate=DateTime.Now.AddDays(-30);
+                                startDate = DateTime.Now.AddDays(-30);
                             }
-                            
+
                             modelList = await _meetingService.GetAllMeetingList(startDate, endDate, emailId);
 
                             modelList = modelList.Select(x =>
@@ -213,7 +213,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
-                                    }                                   
+                                    }
                                 }
                                 else
                                 {
@@ -241,7 +241,7 @@ namespace Risebird.Web.Controllers
                         else if (type == "CancelInterviews")
                         {
                             ViewBag.Type = "CancelInterviews";
-                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
+                            modelList = modelList.Where(x =>  x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                         }
                         else
                         {
