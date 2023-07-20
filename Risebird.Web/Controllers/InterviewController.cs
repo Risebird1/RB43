@@ -186,17 +186,15 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            var startDate = DateTime.Now.Date;
+                            var endDate = DateTime.Now.Date.AddDays(1);
                             if (type == "RedoInterviews")
                             {
-                                modelList = await _meetingService.GetAllMeetingList(DateTime.Now.AddDays(-30), DateTime.Now.Date.AddDays(1), emailId);
+                                startDate = DateTime.Now.AddDays(-30);
                             }
-                            else if (type == "CancelInterviews") {
-                                modelList = await _meetingService.GetAllCancelInterviewList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
-                            }
-                            else
-                            {
-                                modelList = await _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
-                            }
+
+                            modelList = await _meetingService.GetAllMeetingList(startDate, endDate, emailId);
+
                             modelList = modelList.Select(x =>
                             {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
@@ -216,10 +214,6 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
-                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
-                                    //{
-                                    //    item.MeetingStatusStatusDesc = "Completed";
-                                    //}
                                 }
                                 else
                                 {
@@ -242,18 +236,17 @@ namespace Risebird.Web.Controllers
                         else if (type == "Interviews")
                         {
                             ViewBag.Type = "Interviews";
-                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                         }
                         else if (type == "CancelInterviews")
                         {
                             ViewBag.Type = "CancelInterviews";
-                            modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                            modelList = modelList.Where(x =>  x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                         }
-
                         else
                         {
                             ViewBag.Type = "TemplateInterviews";
-                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                            modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                         }
                         return View(modelList);
                     }
@@ -7145,8 +7138,6 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
-
-        
         public async Task<JsonResult> ShareSecureReport(int interviewId, string irfId, string emailid)
         {
             try
@@ -7173,7 +7164,7 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _meetingService.CheckReportClientUrlSave(emailid, uniqueid.ToString(), interviewId);
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/ClientReport?interviewId=" + interviewId + "&irfId=" + irfId+ "&uniqueid=" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/ClientReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + uniqueid;
                 if (!string.IsNullOrEmpty(_uniqueid))
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Interview/ClientReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + _uniqueid;
@@ -7415,12 +7406,12 @@ namespace Risebird.Web.Controllers
                 ViewBag.IrfId = irfId;
                 if (!string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
                 {
-                    ViewBag.SecurelyShared = "True"; 
+                    ViewBag.SecurelyShared = "True";
                     ViewBag.UniqueId = uniqueid;
                     ViewBag.IsMatched = "";
                     return View(new InterviewReport());
                 }
-                else if(!string.IsNullOrEmpty(uniqueid) && !string.IsNullOrEmpty(publicEmailId))
+                else if (!string.IsNullOrEmpty(uniqueid) && !string.IsNullOrEmpty(publicEmailId))
                 {
                     ViewBag.SecurelyShared = "True";
                     ViewBag.UniqueId = uniqueid;
@@ -7435,7 +7426,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageStatus = "Mainurl";
                 string userMenus = HttpContext.Session.GetString("userMenus");
 
-                if(string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
+                if (string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
                 {
                     if (userMenus == null)
                     {
@@ -7446,7 +7437,6 @@ namespace Risebird.Web.Controllers
                     }
 
                 }
-                
                 var email = HttpContext.Session.GetString("email");
                 email = email.Replace("\"", "");
                 ViewBag.EmailId = email;
@@ -7551,8 +7541,6 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                //return RedirectToAction("MyInterview");
-                //return RedirectToAction("Error");
                 return null;
             }
         }
