@@ -507,7 +507,7 @@
                                                                         <td>No Instructions</td>
                                                                     }
                                                                 }
-                                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                                @if ( item.interviewDate<= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                                 }
@@ -651,17 +651,27 @@
                                                                             {
                                                                                 <td> @item.JobCountry </td>
                                                                             }
-                                                                            @if (item.IsOnilne == 1)
+                                                                            @if( item.interviewDate<= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now)
                                                                             {
-                                                                                <td>
-                                                                                    <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName<span class="dot" style="background-color:green"></span></a>
-                                                                                </td>
+                                                                                @if (item.IsOnilne == 1)
+                                                                                {
+                                                                                    <td>
+                                                                                        <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName<span class="dot" style="background-color:green"></span></a>
+                                                                                    </td>
+                                                                                }
+                                                                                else
+                                                                                {
+
+                                                                                    <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
+                                                                                }
+
                                                                             }
                                                                             else
                                                                             {
-
-                                                                                <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
+                                                                                <td>
+                                                                                </td>
                                                                             }
+                                                                            
                                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                             {
                                                                                 <td style="text-align:center">
