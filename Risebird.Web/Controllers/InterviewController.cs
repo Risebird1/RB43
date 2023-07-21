@@ -7485,8 +7485,12 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
-                    model.IsQCRequired = client.IsQCRequired;
-                    model.IsRedoInterview = client.IsRedoInterview;
+                    if(client != null)
+                    {
+                        model.IsQCRequired = client.IsQCRequired;
+                        model.IsRedoInterview = client.IsRedoInterview;
+                    }
+                    
                 }
                 else
                 {
@@ -7509,15 +7513,25 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                model.Userid = _iRFService.GetUserId(email, profileName);
-                if (model.Userid != 0)
+                if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
-                    await GetStatusList(model, irfId, model.Userid);
+                    model.Userid = 0;
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    model.Userid = _iRFService.GetUserId(email, profileName);
+
                 }
+
+                await GetStatusList(model, irfId, model.Userid);
+                //if (model.Userid != 0)
+                //{
+                //    await GetStatusList(model, irfId, model.Userid);
+                //}
+                //else
+                //{
+                //    return RedirectToAction("SignOut", "Session");
+                //}
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
                 if (TempData["SuccessErrorMessageQCForm"] != null)
