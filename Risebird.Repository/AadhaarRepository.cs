@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -10,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Risebird.Repository
 {
@@ -241,6 +243,75 @@ namespace Risebird.Repository
 
                     await SqlMapper.QueryAsync(con, "usp_SaveFaceMatchScore", parameters,
                          commandType: CommandType.StoredProcedure);
+                    return;
+                }
+            }
+            catch (SqlException ex)
+            {
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return;
+        }
+        public async Task SaveEmploymentDetails(SignzyEmployeeResponse model)
+        {
+            try
+            {
+                string conString = "Server=tcp:risebirdmcqdev.database.windows.net,1433;Initial Catalog=risebirdmcqdev;Persist Security Info=False;User ID=risebirdmcqadmin;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Max Pool Size=1000;";
+                using (SqlConnection con = new SqlConnection(conString))
+                {
+                    //Save employment details
+                    var _joiningdate = model.employmentSummary.recent_employer_data.date_of_joining;
+                    DateTime? joiningdate = !string.IsNullOrWhiteSpace(_joiningdate) ? Convert.ToDateTime(_joiningdate) : null;
+                    var _exitdate = model.employmentSummary.recent_employer_data.date_of_exit;
+                    DateTime? exitdate = !string.IsNullOrWhiteSpace(_exitdate) ? Convert.ToDateTime(_exitdate) : null;
+                    var _dob = model.uanDetails1.FirstOrDefault().date_of_birth;
+                    DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CandidateEmail", model.CandidateEmail);
+                    parameters.Add("@MobileNumber", model.MobileNumber);
+                    parameters.Add("@Name", model.uanDetails1.FirstOrDefault().name);
+                    parameters.Add("@CompanyName", model.employmentSummary.recent_employer_data.establishment_name);
+                    parameters.Add("@UAN", model.employmentSummary.recent_employer_data.matching_uan);
+                    parameters.Add("@JoiningDate", joiningdate);
+                    parameters.Add("@ExitDate", exitdate);
+                    parameters.Add("@TotalUAN", model.employmentSummary.uan_count);
+                    parameters.Add("@Isemployed", model.employmentSummary.is_employed);
+                    parameters.Add("@UANNumbers", string.Join(",", model.uanNumbers));
+                    parameters.Add("@DOB", dob);
+
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SaveEmploymentDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    var employmentid = result.FirstOrDefault();
+                    //Save UAN Details
+                    DataTable _uanDetails = new DataTable();
+                    _uanDetails.Columns.Add("EmploymentId", typeof(int));
+                    _uanDetails.Columns.Add("UAN", typeof(string));
+                    _uanDetails.Columns.Add("Name", typeof(string));
+                    _uanDetails.Columns.Add("Gender", typeof(string));
+                    _uanDetails.Columns.Add("DOB", typeof(DateTime));
+                    _uanDetails.Columns.Add("CompanyName", typeof(string));
+                    _uanDetails.Columns.Add("JoiningDate", typeof(DateTime));
+                    foreach (var item in model.uanDetails1)
+                    {
+                        var _dobitem = item.date_of_birth;
+                        DateTime? dobitem = !string.IsNullOrWhiteSpace(_dobitem) ? Convert.ToDateTime(_dobitem) : null;
+                        var _joinitem = item.date_of_joining;
+                        DateTime? joinitem = !string.IsNullOrWhiteSpace(_joinitem) ? Convert.ToDateTime(_joinitem) : null;
+                        _uanDetails.Rows.Add(employmentid, item.uanNumber, item.name, item.gender, dobitem, item.establishment_name, joinitem);
+                    }
+                    SqlCommand cmd = new SqlCommand("usp_SaveUANDetails", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@UANDetailBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@UANDetailBulkData"].Value = _uanDetails;
+                    con.Open();
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
                     return;
                 }
             }
