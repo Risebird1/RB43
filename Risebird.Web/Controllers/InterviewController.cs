@@ -7050,6 +7050,8 @@ namespace Risebird.Web.Controllers
                 return "Fail";
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> SecureReport(int interviewId, int irfId, string uniqueid, string emailid)
         {
