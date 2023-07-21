@@ -1,4 +1,5 @@
-﻿using Risebird.Entities.ViewModel;
+﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AadhaarData>> GetAadharDetails();
         Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model);
         Task SaveFaceMatchScorePercentage(string email, int score);
+        Task SaveEmploymentDetails(SignzyEmployeeResponse model);
 
     }
 }

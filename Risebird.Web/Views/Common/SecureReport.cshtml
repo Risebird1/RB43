@@ -124,7 +124,8 @@
         var irfid = $("#hidmodelirfId").val();
         if (EmailId.trim() != "") {
             $.ajax({
-                url: '/Interview/ShareSecureReport',
+                //url: '/Interview/ShareSecureReport',
+                url: '/Interview/ShareSecureReportV2',
                 data: { 'Emailid': EmailId, interviewId: interviewId, irfid: irfid },
                 type: 'POST',
                 success: function (result) {

@@ -190,9 +190,9 @@ namespace Risebird.Web.Controllers
                             var endDate = DateTime.Now.Date.AddDays(1);
                             if (type == "RedoInterviews")
                             {
-                                startDate=DateTime.Now.AddDays(-30);
+                                startDate = DateTime.Now.AddDays(-30);
                             }
-                            
+
                             modelList = await _meetingService.GetAllMeetingList(startDate, endDate, emailId);
 
                             modelList = modelList.Select(x =>
@@ -213,7 +213,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
-                                    }                                   
+                                    }
                                 }
                                 else
                                 {
@@ -7055,6 +7055,8 @@ namespace Risebird.Web.Controllers
                 return "Fail";
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> SecureReport(int interviewId, int irfId, string uniqueid, string emailid)
         {
@@ -7164,6 +7166,42 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Failed");
+            }
+        }
+
+        public async Task<JsonResult> ShareSecureReportV2(int interviewId, string irfId, string emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _meetingService.CheckReportClientUrlSave(emailid, uniqueid.ToString(), interviewId);
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/ClientReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + uniqueid;
+                if (!string.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/ClientReport?interviewId=" + interviewId + "&irfId=" + irfId + "&uniqueid=" + _uniqueid;
+                }
+                return Json(sendreporturl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> VerifySharedEmail(string uniqueid, string Emailid, int Interviewid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            HttpContext.Session.SetString("profileName", "Client");
+            var _checkdetails = await _meetingService.CheckReportClientShareDetails(Emailid, uniqueid, Interviewid);
+            if (_checkdetails)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("This EmailId does not have access.");
             }
         }
         public async Task<string> SendbackupRescheduleMeetingInvite(int irfId, string CandidateemailId, int interviewid)
@@ -7371,19 +7409,44 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
         {
             try
             {
+                ViewBag.InterviewId = interviewId;
+                ViewBag.IrfId = irfId;
+                if (!string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
+                {
+                    ViewBag.SecurelyShared = "True";
+                    ViewBag.UniqueId = uniqueid;
+                    ViewBag.IsMatched = "";
+                    return View(new InterviewReport());
+                }
+                else if (!string.IsNullOrEmpty(uniqueid) && !string.IsNullOrEmpty(publicEmailId))
+                {
+                    ViewBag.SecurelyShared = "True";
+                    ViewBag.UniqueId = uniqueid;
+                    ViewBag.IsMatched = "True";
+                }
+                else
+                {
+                    ViewBag.SecurelyShared = "";
+                    ViewBag.UniqueId = "";
+                    ViewBag.IsMatched = "";
+                }
                 ViewBag.PageStatus = "Mainurl";
                 string userMenus = HttpContext.Session.GetString("userMenus");
 
-                if (userMenus == null)
+                if (string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
                 {
-                    return RedirectToAction("Index", "Home", new
+                    if (userMenus == null)
                     {
-                        url = "AddReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected
-                    });
+                        return RedirectToAction("Index", "Home", new
+                        {
+                            url = "ClientReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected
+                        });
+                    }
+
                 }
                 var email = HttpContext.Session.GetString("email");
                 email = email.Replace("\"", "");
@@ -7489,7 +7552,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("MyInterview");
+                return null;
             }
         }
 
