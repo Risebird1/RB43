@@ -18,7 +18,8 @@ declare @hrId int
 set @hrId = (select HR.id from UserList ul join HR on HR.UserId=ul.id where EmailId=@EmailId and idProfile=2)     
 declare @userid int                    
 set @userid = (select id from UserList where EmailId=@EmailId)                                    
-select (Select Count(*) as Countunion from (select im.id from InterviewMeetings im join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id                
+select
+(Select Count(*) as Countunion from (select im.id from InterviewMeetings im join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id                
 where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrId and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1     
 union    
 select im.id from InterviewMeetings im join IRF on irf.irfid=im.IRFId                    

@@ -1143,6 +1143,10 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "911 Dashboard / Need Clarity";
                         }
+                        else if (actionstatus == RibbonActionType.ReScheduleCount)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Reschedule Interview";
+                        }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
@@ -1220,6 +1224,10 @@ namespace Risebird.Web.Controllers
                         else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
                             ViewBag.PageHeader = "911 Dashboard / QC Report";
+                        }
+                        else if (actionstatus == RibbonActionType.ReScheduleCount)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Reschedule Interview";
                         }
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
@@ -1749,8 +1757,8 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        
-        public async Task <IActionResult> Dashboard_911()
+        [HttpGet]
+        public async Task<IActionResult> Dashboard911()
         {
             try
             {
@@ -1780,7 +1788,7 @@ namespace Risebird.Web.Controllers
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
-                        
+
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
                         interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
