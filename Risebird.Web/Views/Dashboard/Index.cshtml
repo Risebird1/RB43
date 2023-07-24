@@ -66,10 +66,11 @@
     <!-- START PAGE CONTAINER -->
     <div class="page-container">
 
+        <!---Marqueee Start->
+      @*  <div class="page-content">
 
-        <div class="page-content">
 
-            @*<div class="pull-right desktop-view" style="margin-right:3%;margin-bottom:20px">
+            <div class="pull-right desktop-view" style="margin-right:3%;margin-bottom:20px">
             <div>
 
             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space ch-btn">
@@ -77,8 +78,8 @@
             </button>
 
             </div>
-            </div>*@
-            @*<nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute" style="height:53px;">
+            </div>
+            <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute" style="height:53px;">
             <div class="container-fluid mobpad">
             <div class="navbar-wrapper w-full">
             <div class="navbar-toggle">
@@ -116,7 +117,9 @@
             <span class="mobile-view-ac" onclick="location.href='@Url.Action("Index", "ActivityTracker")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19.07 4.93l-1.41 1.41C19.1 7.79 20 9.79 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-4.08 3.05-7.44 7-7.93v2.02C8.16 6.57 6 9.03 6 12c0 3.31 2.69 6 6 6s6-2.69 6-6c0-1.66-.67-3.16-1.76-4.24l-1.41 1.41C15.55 9.9 16 10.9 16 12c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-1.86 1.28-3.41 3-3.86v2.14c-.6.35-1 .98-1 1.72 0 1.1.9 2 2 2s2-.9 2-2c0-.74-.4-1.38-1-1.72V2h-1C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-2.76-1.12-5.26-2.93-7.07z" /></svg><font style="font-family:arial;"> ActivityTracker</font></span>
 
 
-            </nav>*@
+            </nav>
+
+
             <div style=" margin-bottom: 0px; top:0px; position: relative;">
 
                 <div class="marquees">
@@ -129,7 +132,10 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<div class="countdown__timer flip" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunassignedinterviewcount">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong></div>*@
+
+                                        <div class="countdown__timer flip" style="cursor:pointer" onclick="OpenRibbonDetails('InterviewCount')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunassignedinterviewcount">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong></div>
+
+
                                         <div class="flipper">
                                             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
                                                 <div class="card-image">
@@ -154,7 +160,8 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+                                       <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
 
 
                                         <div class="flipper">
@@ -208,7 +215,8 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+                                        <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
 
 
                                         <div class="flipper">
@@ -237,7 +245,8 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+                                        <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
 
 
                                         <div class="flipper">
@@ -267,7 +276,8 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+                                        <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
 
 
                                         <div class="flipper">
@@ -296,7 +306,8 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>*@
+
+                                        <span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')"><strong title="Unassigned Interview Count" style="color: red"><span id="ribbonunfilledmeetingstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong></span>
 
 
                                         <div class="flipper">
@@ -393,11 +404,20 @@
                     </ul>
                 </div>
             </div>
+           
+
+        </div>*@
+           <!---Marqueee End->
+
+
+
 
             <!-- PAGE CONTENT WRAPPER -->
             <div class="page-content-wrap dashboard">
 
-
+                <div class="row">
+              <div class="col-md-12"><div class="dashboard-view"><a onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'"><span class="dashboard-iconcolor"></span><span class="pull-left">911 Dashboard</span></a></div>
+                </div></div>
 
                 <!-- START DASHBOARD CHART -->
                 <div class="row">
@@ -1370,7 +1390,7 @@
     var setRibbonCalledCount = 0;
     var getDeletedZoomMeetingsCount = false;
     $(document).ready(function () {
-        setRibbon();
+       // setRibbon();
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>

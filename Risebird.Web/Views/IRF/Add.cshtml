@@ -1715,7 +1715,6 @@
 
 
     function ClientChanged(clientId) {
-        debugger;
         $.ajax({
             type: "GET",
             url: "/IRF/GetClientUser",
@@ -1808,7 +1807,6 @@
                         url: "/IRF/GetInterviewerSkillsAndResume",
                         data: { 'id': data[0].value },
                         success: function (result) {
-                            debugger;
                             //obj = JSON.parse(result);
                             interviewerSkills = result.primarySkill;
                             interviewerResume = result.resumeLink;
@@ -1851,7 +1849,6 @@
                     //    }
                     //});
                 }
-                debugger;
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id + " option").remove();
@@ -2384,6 +2381,7 @@
         $tr.find("input[type=hidden]").val("");
 
         $tr.find("a").val("");
+        
 
         // add cloned row as last row
         $("#ClientTable").find("tbody tr:last").after($tr);
@@ -2411,7 +2409,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row //,a
+        $tr.find("input,select,hidden, a").attr("name", function () { // find name in the cloned row //,a
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -2423,7 +2421,6 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-        debugger;
 
         // reset fields in the new row
         $tr.find("select").val("");
@@ -2431,7 +2428,9 @@
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=number]").val("");
 
-        $tr.find("a").val("");
+        //$tr.find("a").val("");
+        //$tr.find("a").href("");
+        $tr.find("a").attr("href", "");
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -2694,7 +2693,6 @@
     }
 
     function BindSkillsAndRateAndResume(id, data, rateElementId = null, rate = null, resumeLink = null) {
-        debugger;
         var num = id.match(/(\d+)/);
         var index = num[0];
         var idArray = id.split('_');
@@ -2742,6 +2740,9 @@
             success: function (result) {
                 $("#" + skillElementid).val(result.primarySkill);
                 //$("#" + resumeElementid).val(result.resumeLink);
+                const anchorElement = document.getElementById(resumeElementid);
+                anchorElement.href = result.resumeLink;
+                
                 @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);
@@ -2815,7 +2816,6 @@
     }
 
     function ClientUserChanged(val, id) {
-        debugger;
         var index = id.split('_')[1];
         //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__ClientRoleId';
@@ -3450,7 +3450,6 @@
                     $('#error_CompanyType').text("");
                 }
                 //if ($('#uniqueMsg').val() != "") {
-                //    debugger;
                 //    flag = true;
                 //}
                 if (!flag) {

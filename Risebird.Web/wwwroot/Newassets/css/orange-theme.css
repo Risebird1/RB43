@@ -259,7 +259,7 @@ textarea::-webkit-scrollbar {
 }
 
 #calender #current-day {
-    background: #e96529!important;
+    background: #e96529 !important;
 }
 
 #calender .weekday {
@@ -848,9 +848,11 @@ table.journey {
     background-size: 5% !important;
     padding: 10px !important;
 }
+
 .dashboardcode-bsmultiselect .form-control.focus {
-    border-color: #e96e28!important;
+    border-color: #e96e28 !important;
 }
+
 .skill [type="datetime-local"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
@@ -925,7 +927,8 @@ table.journey {
     color: #ea6e24;
     border: 1px #e30a13 solid;
 }
- .modal .select2-container--default .select2-selection--multiple {
+
+.modal .select2-container--default .select2-selection--multiple {
     background-color: white !important;
     border-bottom: 1px solid #aaa !important;
 }
@@ -934,6 +937,7 @@ table.journey {
     border-bottom: 2px solid rgb(234, 110, 36) !important;
     background-color: white !important;
 }
+
 .card .card-footer {
     background-color: #ecececb5;
     border: 0;
@@ -1140,9 +1144,20 @@ input[type="radio"]:checked {
     }
 
 
+.click-arrow:hover {
+    color: #fff;
+    background: #f88e4d;
+}
 
-
-
+.dashboard-count {
+    background: -webkit-linear-gradient(#f6b18994, #ea6b26) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+.dashboard-iconcolor {
+    color: #f28542!important;
+    background: #f98a46 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
