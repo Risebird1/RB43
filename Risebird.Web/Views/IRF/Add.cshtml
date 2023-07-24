@@ -2431,6 +2431,7 @@
         //$tr.find("a").val("");
         //$tr.find("a").href("");
         $tr.find("a").attr("href", "");
+        $tr.find("a").attr("data-tooltip", "");
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -2742,7 +2743,7 @@
                 //$("#" + resumeElementid).val(result.resumeLink);
                 const anchorElement = document.getElementById(resumeElementid);
                 anchorElement.href = result.resumeLink;
-                
+                $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
                 @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);
