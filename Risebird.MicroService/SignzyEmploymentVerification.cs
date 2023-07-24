@@ -55,10 +55,11 @@ namespace Risebird.MicroService
                     { "Authorization", employementapikey }
                 };
             var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
-            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with request body :  {response}");
+            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with raw body :  {response}");
             var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
             convertedResponse.MobileNumber = mobiledata.mobile;
             dynamic datavalue = JObject.Parse(response.Content);
+            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with response body :  {datavalue}");
             List<string> namesList = convertedResponse.uanNumbers.ToList();
             foreach (var data in datavalue.Children())
             {
@@ -100,6 +101,7 @@ namespace Risebird.MicroService
                     }
                 }
             }
+            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with final body :  {convertedResponse}");
             //Save response data
             await _aadhaarRepository.SaveEmploymentDetails(convertedResponse);
             return new OkObjectResult(true);
