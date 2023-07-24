@@ -14,6 +14,10 @@ namespace Risebird.Entities.Data
     }
     public class SignzyEmployeeResponse
     {
+        public SignzyEmployeeResponse()
+        {
+            uanDetails1 = new List<UanDetails>();
+        }
         public EmploymentSummary employmentSummary { get; set; }
         public List<UanDetails> uanDetails1 { get; set; }
         public string[] uanNumbers { get; set; }
