@@ -571,9 +571,11 @@ table.journey {
     background: #fff !important;
     border: 1px solid #ddd !important;
 }
+
 .irf-search #btnSearch {
-    background: #929292!important;
+    background: #929292 !important;
 }
+
 [type="date"] {
     background: #f5f5f5 url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
@@ -584,9 +586,11 @@ table.journey {
     background-size: 5% !important;
     padding: 10px !important;
 }
+
 .dashboardcode-bsmultiselect .form-control.focus {
     border-bottom: 2px #929292 solid !important;
 }
+
 .edit-share {
     background: url('../../img/editicon-grey.png') #fff no-repeat !important;
 }
@@ -741,7 +745,7 @@ table.journey {
 }
 
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
-    color: #47484a!important;
+    color: #47484a !important;
 }
 
 #myStatusListpopup .table-bordered td {
@@ -934,6 +938,7 @@ input[type="radio"]:checked {
     background-color: white !important;
     border-bottom: 1px solid #aaa !important;
 }
+
 .modal .select2-container--default.select2-container--focus .select2-selection--multiple {
     background-color: white !important;
     border-bottom: 1px solid rgb(146, 146, 146) !important;
@@ -1088,6 +1093,21 @@ table {
 .invoice-details .card-header.bg-w {
     background: #ebecf1 !important;
     border: none;
+}
+
+.click-arrow:hover {
+    color: #fff;
+    background: #727171;
+}
+
+.dashboard-count {
+    background: -webkit-linear-gradient(#97939094, #524f4e) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+.dashboard-iconcolor {
+    color: #727171 !important;
+    background: #727171 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
 
 @media only screen and (max-width: 767px) {

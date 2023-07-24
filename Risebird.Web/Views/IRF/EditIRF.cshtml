@@ -2272,7 +2272,6 @@
 
     }
     function checkTabValidation(activeTab) {
-        debugger;
         var flag = false;
         if (activeTab.trim() == "Event Details") {
             var flagvalue = $("#hidisclone").val();
@@ -2463,7 +2462,6 @@
             return flag;
         }
         else if (activeTab.trim() == "Client") {
-            debugger;
             flag = checkClientDetails();
             return flag;
         }
@@ -3664,7 +3662,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row //,a
+        $tr.find("input,select,hidden, a").attr("name", function () { // find name in the cloned row //,a
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -3684,8 +3682,10 @@
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=number]").val("");
         $tr.find("input[type=checkbox]").prop("checked", true);
-
-        $tr.find("a").val("");
+        //$tr.find("a").val("");
+        //$tr.find("a").href("");
+        $tr.find("a").attr("href", "");
+        $tr.find("a").attr("data-tooltip", "");
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -3973,6 +3973,9 @@
             success: function (result) {
                 $("#" + skillElementid).val(result.primarySkill);
                 //$("#" + resumeElementid).val(result.resumeLink);
+                const anchorElement = document.getElementById(resumeElementid);
+                anchorElement.href = result.resumeLink;
+                $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
                 @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);

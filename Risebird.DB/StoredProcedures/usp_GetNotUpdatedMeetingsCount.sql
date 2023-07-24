@@ -53,6 +53,10 @@ declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetin
 
 declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open')
 
+declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
+ left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2  and  CAST(interviewDate as DATE) >DATEADD(DAY,-7,CAST(@currentdate as DATE)))
+
+
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
 --(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
@@ -78,7 +82,9 @@ declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Op
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
-@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume, @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount
+@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,
+@QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount,
+@RescheduleInterviewMeetingCount as RescheduleInterviewMeetingCount
 
 END        
 ELSE        
@@ -108,9 +114,13 @@ set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im j
 
 set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')
 
+set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and CAST(interviewDate as DATE) >DATEADD(DAY,-7,CAST(@currentdate as DATE)))
+
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
-@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume, @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount
+@MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,
+@QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount,
+@RescheduleInterviewmeetingCount as RescheduleInterviewMeetingCount
 
 
 
@@ -129,5 +139,6 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 --where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7) as QCPendingReportCount    
 END        
 End
+
 
 GO

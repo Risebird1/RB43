@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Twilio.Base;
 using Microsoft.Azure.ApplicationInsights.Query;
 using Risebird.Entities.Data;
+using System.Linq;
 
 namespace Risebird.CommonHelper
 {
@@ -83,7 +84,7 @@ namespace Risebird.CommonHelper
                     int i = 0;
                     foreach (var row in response.Body.Results)
                     {
-                        if(i<1000)
+                        if(pageViewsDetails == null || pageViewsDetails.Count() < 1000)
                         {
                             var obj = new AppInsightsPageViews();
                             if (row["timestamp"] != null)
@@ -125,13 +126,18 @@ namespace Risebird.CommonHelper
                             }
                             if(obj!=null)
                             {
-                                pageViewsDetails.Add(obj);
+                                //if(!pageViewsDetails.Any(x=>x.timestamp == obj.timestamp && x.name ==obj.name && x.user_AuthenticatedId == obj.user_AuthenticatedId && x.url == obj.url && x.duration == obj.duration && x.client_City == obj.client_City && x.client_IP ==obj.client_IP))
+                                //{
+                                   
+                                //    i++;
 
+                                //}
+                                pageViewsDetails.Add(obj);
+                                pageViewsDetails = pageViewsDetails.Distinct().ToList();
                             }
                             //Console.WriteLine($"[{row["timestamp"]:s}][{row["resultCode"]}] Failed request to: {row["url"]}");
                         }
 
-                        i++;
                     }
                         
                 }
