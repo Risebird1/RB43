@@ -184,6 +184,34 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
    select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.Redflags from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and ul.EmailId=@emailID
   end  
  end  
+
+
+ If(@actionstatus ='ReScheduleCount')  
+ begin  
+  if (@actiontype = 0)  
+  begin  
+   if (@Profile = 'SeniorHR' or @Profile = 'HR')  
+   begin  
+	select distinct *,IRF.Id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+	join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+	where confirmationStatus=2 and ulsh.Emailid= @Emailid
+   end  
+   else  
+   begin  
+    select distinct *,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=2
+   end  
+  end  
+  else  
+  begin  
+   select distinct im.*,irf.*,cl.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
+   join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId   
+   where confirmationStatus=2 and ul.EmailId=@emailID   
+   union   
+   select distinct im.*,irf.*,cl.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr   
+   where confirmationStatus=2 and ul.EmailId=@emailID  
+  end  
+ end
+
  
 END
 GO

@@ -230,5 +230,37 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ul.EmailId=@emailID 
 		end
 	end
+
+	else If(@actionstatus ='ReScheduleCount')
+	begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				where confirmationStatus=2 and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ulsh.Emailid= @Emailid
+			end
+			else
+			begin
+				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr
+				where confirmationStatus=2 and DATEDIFF(DAY, interviewDate, GETDATE())<7
+			end
+		end
+		else
+		begin
+			select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where confirmationStatus=2 and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID 
+			union 
+			select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where confirmationStatus=7 and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID
+		end
+	end
 END
 GO

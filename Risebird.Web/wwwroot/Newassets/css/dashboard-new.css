@@ -6034,6 +6034,16 @@ input[type="date"].form-control {
     margin:0px auto;
 
 }
+.dashboard-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 100%;
+    display: block;
+    text-align: center;
+    padding: 10px !important;
+    vertical-align: middle;
+}
 .audio-con button{
     background:none;
     border:none;
@@ -6044,6 +6054,88 @@ input[type="date"].form-control {
         display:block;
     }
 
+.dashboard-icon img {
+    height: 100% !important;
+    max-height: 100% !important;
+}
+
+.dashboard-cat-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #1b1e24;
+    padding: 0px;
+    margin: 0px;
+    position: relative;
+    top: -11px;
+}
+
+.dashboard-count {
+    text-align: center;
+    margin: 0px auto;
+    display: block;
+    font-size: 30px;
+    position: relative;
+    left: 30px;
+    line-height: 25px;
+    padding: 10px;
+}
+
+.unassign {
+    background: #74c0fc;
+}
+
+.pending {
+    background: #f89d9de8;
+}
+
+.no-resume {
+    background: #79e0d1;
+}
+
+.zoom {
+    background: #28a0e882;
+}
+
+.open-issue {
+    background: #ff7f50ba;
+}
+
+.deleted {
+    background: #e02d2df5;
+}
+
+.waiting {
+    background: #18188069;
+}
+
+.clarity {
+    background: #25bd6a8a;
+}
+
+.report-pending {
+    background: #3bb5a0;
+}
+
+.video {
+    background: cadetblue;
+}
+
+.reschedule {
+    background: #ef483ec9;
+}
+
+.click-arrow {
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    color: #a79c9c;
+    background: #efefef;
+    border: none;
+    position: relative;
+    top: 10px;
+}
+
 .logo-cm {
     position: relative;
     top: 4px;
@@ -6053,7 +6145,30 @@ input[type="date"].form-control {
 .top-h{
     height:auto;
 }
+.dashboard-view {
+    text-align: right;
+    cursor: pointer;
+    top: 10px;
+    position: relative;
+    right: 0px;
+    float: right;
+    width: 181px;
+    line-height: 40px;
+    color: #244871;
+    font-weight: bold;
+}
 
+.dashboard-iconcolor {
+    padding: 10px 0px 10px 10px;
+    display: block;
+    background-size: 60% !important;
+    font-weight: bold;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    float: left;
+    margin-right: 8px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -6822,6 +6937,12 @@ input[type="date"].form-control {
     .post-image {
         width: 300px;
     }
+
+
+    .dashboard-cat-title {
+        left: 12px !important;
+        font-size: 12px !important;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -7256,19 +7377,22 @@ input[type="date"].form-control {
     }
 }
 
-@media (max-width: 767px) {
+@media only screen and (max-width: 767px) {
     #clientduser li {
         width: 100%;
         float: left;
     }
+
     #reportForm video {
-        width: calc(100% - 4px)!important;
-        padding:0px!important;
+        width: calc(100% - 4px) !important;
+        padding: 0px !important;
     }
+
     .generate-pdf {
-        position: relative!important;
-        left: 17px!important;
+        position: relative !important;
+        left: 17px !important;
     }
+
     #userProfileForm .avatar-upload {
         margin: 0px auto !important;
     }
@@ -7559,18 +7683,41 @@ input[type="date"].form-control {
         left: auto;
         right: -19px;
     }
+
+
+    .dashboard-icon {
+        margin: 0px auto !important;
+        float: none !important;
+        position: relative !important;
+        left: 0px !important;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 8px !important;
+        left: -10px !important;
+    }
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px !important;
+        text-align: center !important;
+    }
 }
 
-@media (max-width: 480px) {
+
+
+@media only screen and (max-width: 480px) {
     .candidate-tab .card-block h1 {
         font-size: 13px !important;
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
     }
+
     .logo-cm {
         position: relative;
-        top: -1px!important;
-      width: 23%!important;
-        left: 10px!important;
+        top: -1px !important;
+        width: 23% !important;
+        left: 10px !important;
     }
 
     #scoreChart tspan {
@@ -7670,9 +7817,34 @@ input[type="date"].form-control {
         left: auto;
         right: -19px;
     }
+
+    .click-arrow {
+        position: relative !important;
+        top: 10px !important;
+        left: -10px !important;
+    }
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px !important;
+        text-align: center !important;
+    }
 }
 
-@media (max-width: 415px) {
+
+@media only screen and (min-width: 480px) {
+
+    .dashboard-icon {
+        margin: 0px auto !important;
+        float: none !important;
+        position: relative !important;
+        left: 0px !important;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+
+
     .popup-text {
         display: none !important;
     }
@@ -7736,9 +7908,22 @@ input[type="date"].form-control {
         height: 20px !important;
         font-size: 13px !important;
     }
+
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px;
+        text-align: center;
+    }
+
+    .dashboard-count {
+        margin: 0px auto;
+        position: relative;
+        left: 80px;
+    }
 }
 
-@media (max-width: 375px) {
+@media only screen and (max-width: 375px) {
     .scheduling .action {
         position: absolute;
         top: 6px;
@@ -7770,19 +7955,33 @@ input[type="date"].form-control {
         right: 25px !important;
         top: 12px !important;
     }
+
     .logo-cm {
         position: relative;
         top: 3px;
         left: 10px;
     }
+
+    .dashboard-cat-title {
+        position: relative !important;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .dashboard-count {
+        position: relative !important;
+        left: 80px !important;
+        text-align: center !important;
+    }
 }
 
-@media (max-width: 360px) {
+@media only screen and (max-width: 360px) {
     .logo-cm {
         position: relative;
         top: 4px !important;
-        left: 10px!important;
+        left: 10px !important;
     }
+
     #scoreChart tspan {
         font-size: 9.3px;
     }
@@ -7848,6 +8047,12 @@ input[type="date"].form-control {
         left: -110px !important;
         top: 14px !important;
         width: 100%;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 8px !important;
+        left: -25px !important;
     }
 }
 
