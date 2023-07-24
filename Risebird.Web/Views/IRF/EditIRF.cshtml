@@ -2272,7 +2272,6 @@
 
     }
     function checkTabValidation(activeTab) {
-        debugger;
         var flag = false;
         if (activeTab.trim() == "Event Details") {
             var flagvalue = $("#hidisclone").val();
@@ -2463,7 +2462,6 @@
             return flag;
         }
         else if (activeTab.trim() == "Client") {
-            debugger;
             flag = checkClientDetails();
             return flag;
         }
@@ -3684,10 +3682,10 @@
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=number]").val("");
         $tr.find("input[type=checkbox]").prop("checked", true);
-
         //$tr.find("a").val("");
         //$tr.find("a").href("");
         $tr.find("a").attr("href", "");
+        $tr.find("a").attr("data-tooltip", "");
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -3977,6 +3975,7 @@
                 //$("#" + resumeElementid).val(result.resumeLink);
                 const anchorElement = document.getElementById(resumeElementid);
                 anchorElement.href = result.resumeLink;
+                $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
                 @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);
