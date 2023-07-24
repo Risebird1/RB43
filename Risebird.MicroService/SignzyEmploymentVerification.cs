@@ -48,12 +48,14 @@ namespace Risebird.MicroService
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with request body :  {requestBody}");
             var mobiledata = JsonConvert.DeserializeObject<SignzyEmployeeRequest>(requestBody);
+            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with request body :  {mobiledata}");
             Dictionary<string, string> headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" },
                     { "Authorization", employementapikey }
                 };
             var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
+            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with request body :  {response}");
             var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
             convertedResponse.MobileNumber = mobiledata.mobile;
             dynamic datavalue = JObject.Parse(response.Content);
