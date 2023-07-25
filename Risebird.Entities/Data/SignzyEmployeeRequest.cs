@@ -24,6 +24,7 @@ namespace Risebird.Entities.Data
         public string[] uanNumbers { get; set; }
         public string CandidateEmail { get; set; }
         public string MobileNumber { get; set; }
+        public string message { get; set; }
     }
     public class EmploymentSummary
     {
