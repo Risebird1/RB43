@@ -56,6 +56,7 @@ namespace Risebird.MicroService
             var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
             var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
             convertedResponse.MobileNumber = mobiledata.mobile;
+            convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             dynamic datavalue = JObject.Parse(response.Content);
             List<string> namesList = convertedResponse.uanNumbers.ToList();
             foreach (var data in datavalue.Children())
