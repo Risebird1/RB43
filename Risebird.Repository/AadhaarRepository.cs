@@ -19,6 +19,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
+        private readonly string employmentconnectionString;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public AadhaarRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
@@ -26,6 +27,7 @@ namespace Risebird.Repository
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            employmentconnectionString = _configuration["ConnectionString:EmploymentVerificationConnection"];
         }
         public async Task<bool> SaveAadhaarDetails(AadhaarData model)
         {
@@ -260,8 +262,7 @@ namespace Risebird.Repository
         {
             try
             {
-                string conString = "Server=tcp:risebirdmcqdev.database.windows.net,1433;Initial Catalog=risebirdmcqdev;Persist Security Info=False;User ID=risebirdmcqadmin;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Max Pool Size=1000;";
-                using (SqlConnection con = new SqlConnection(conString))
+                using (SqlConnection con = new SqlConnection(employmentconnectionString))
                 {
                     //Save employment details
                     var _joiningdate = model.employmentSummary.recent_employer_data.date_of_joining;

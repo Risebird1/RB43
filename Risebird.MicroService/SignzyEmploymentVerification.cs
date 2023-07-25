@@ -58,6 +58,7 @@ namespace Risebird.MicroService
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with raw body :  {response}");
             var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
             convertedResponse.MobileNumber = mobiledata.mobile;
+            convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             dynamic datavalue = JObject.Parse(response.Content);
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with response body :  {datavalue}");
             List<string> namesList = convertedResponse.uanNumbers.ToList();
