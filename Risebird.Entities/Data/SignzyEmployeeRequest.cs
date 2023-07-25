@@ -11,6 +11,7 @@ namespace Risebird.Entities.Data
     {
         public string mobile { get; set; }
         public string panNumber { get; set; }
+        public string CandidateEmail { get; set; }
     }
     public class SignzyEmployeeResponse
     {
