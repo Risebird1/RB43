@@ -166,28 +166,28 @@ namespace Risebird.MicroService
 
                                     log.LogInformation($"Zoom : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
 
-                                    if (result)
-                                    {
-                                        //delete recording
-                                        //create HTTP Request 
+                                    //if (result)
+                                    //{
+                                    //    //delete recording
+                                    //    //create HTTP Request 
 
-                                        var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"));
+                                    //    var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"));
 
-                                        var requestDeleteMeetingRecordings = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"), Method.Delete);
-                                        requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");
-                                        requestDeleteMeetingRecordings.AddHeader("authorization", "Bearer " + token);
-                                        RestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
-                                        //var content = response.Content;
-                                        if (responseDeleteMeetingRecordings.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
-                                        {
-                                            log.LogInformation($"Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} deleted at: {DateTime.Now}");
-                                        }
-                                        else
-                                        {
-                                            string message = (responseDeleteMeetingRecordings != null && responseDeleteMeetingRecordings.Content != null) ? responseDeleteMeetingRecordings.Content : string.Empty;
-                                            log.LogInformation($"Error! Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} could not be deleted! Message : {responseDeleteMeetingRecordings.Content ?? responseDeleteMeetingRecordings.StatusDescription}");
-                                        }
-                                    }
+                                    //    var requestDeleteMeetingRecordings = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"), Method.Delete);
+                                    //    requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");
+                                    //    requestDeleteMeetingRecordings.AddHeader("authorization", "Bearer " + token);
+                                    //    RestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
+                                    //    //var content = response.Content;
+                                    //    if (responseDeleteMeetingRecordings.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
+                                    //    {
+                                    //        log.LogInformation($"Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} deleted at: {DateTime.Now}");
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        string message = (responseDeleteMeetingRecordings != null && responseDeleteMeetingRecordings.Content != null) ? responseDeleteMeetingRecordings.Content : string.Empty;
+                                    //        log.LogInformation($"Error! Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} could not be deleted! Message : {responseDeleteMeetingRecordings.Content ?? responseDeleteMeetingRecordings.StatusDescription}");
+                                    //    }
+                                    //}
 
                                 }
                             }
