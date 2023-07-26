@@ -62,6 +62,7 @@ namespace Risebird.Entities.Data
         public bool Isemployed { get; set; }
         public string UANNumbers { get; set; }
         public DateTime DOB { get; set; }
+        public string message { get; set; }
     }
     public class UANDetailsDM
     {

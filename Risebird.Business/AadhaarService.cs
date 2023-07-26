@@ -1,5 +1,6 @@
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -115,6 +116,30 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails()
+        {
+            try
+            {
+                return await _aadhaarRepository.GetEmployementDetails();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<int> CheckEmployementDetails(string mobilenumber)
+        {
+            try
+            {
+                return await _aadhaarRepository.CheckEmployementDetails(mobilenumber);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return 0;
         }
     }
 }

@@ -265,24 +265,25 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(employmentconnectionString))
                 {
                     //Save employment details
-                    var _joiningdate = model.employmentSummary.recent_employer_data.date_of_joining;
+                    var _joiningdate = model.employmentSummary?.recent_employer_data.date_of_joining;
                     DateTime? joiningdate = !string.IsNullOrWhiteSpace(_joiningdate) ? Convert.ToDateTime(_joiningdate) : null;
-                    var _exitdate = model.employmentSummary.recent_employer_data.date_of_exit;
+                    var _exitdate = model.employmentSummary?.recent_employer_data.date_of_exit;
                     DateTime? exitdate = !string.IsNullOrWhiteSpace(_exitdate) ? Convert.ToDateTime(_exitdate) : null;
-                    var _dob = model.uanDetails1.FirstOrDefault().date_of_birth;
+                    var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
                     DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
                     var parameters = new DynamicParameters();
                     parameters.Add("@CandidateEmail", model.CandidateEmail);
                     parameters.Add("@MobileNumber", model.MobileNumber);
-                    parameters.Add("@Name", model.uanDetails1.FirstOrDefault().name);
-                    parameters.Add("@CompanyName", model.employmentSummary.recent_employer_data.establishment_name);
-                    parameters.Add("@UAN", model.employmentSummary.recent_employer_data.matching_uan);
+                    parameters.Add("@Name", model.uanDetails1.FirstOrDefault()?.name);
+                    parameters.Add("@CompanyName", model.employmentSummary?.recent_employer_data.establishment_name);
+                    parameters.Add("@UAN", model.employmentSummary?.recent_employer_data.matching_uan);
                     parameters.Add("@JoiningDate", joiningdate);
                     parameters.Add("@ExitDate", exitdate);
-                    parameters.Add("@TotalUAN", model.employmentSummary.uan_count);
-                    parameters.Add("@Isemployed", model.employmentSummary.is_employed);
+                    parameters.Add("@TotalUAN", model.employmentSummary?.uan_count);
+                    parameters.Add("@Isemployed", model.employmentSummary?.is_employed);
                     parameters.Add("@UANNumbers", string.Join(",", model.uanNumbers));
                     parameters.Add("@DOB", dob);
+                    parameters.Add("@message", model.message);
 
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_SaveEmploymentDetails", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -304,14 +305,17 @@ namespace Risebird.Repository
                         DateTime? joinitem = !string.IsNullOrWhiteSpace(_joinitem) ? Convert.ToDateTime(_joinitem) : null;
                         _uanDetails.Rows.Add(employmentid, item.uanNumber, item.name, item.gender, dobitem, item.establishment_name, joinitem);
                     }
-                    SqlCommand cmd = new SqlCommand("usp_SaveUANDetails", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@UANDetailBulkData", SqlDbType.Structured));
-                    cmd.Parameters["@UANDetailBulkData"].Value = _uanDetails;
-                    con.Open();
-                    if (cmd.ExecuteNonQuery() != 0)
+                    if (model.uanDetails1.Count() > 0)
                     {
-                        con.Close();
+                        SqlCommand cmd = new SqlCommand("usp_SaveUANDetails", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@UANDetailBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@UANDetailBulkData"].Value = _uanDetails;
+                        con.Open();
+                        if (cmd.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
                     return;
                 }
@@ -325,6 +329,50 @@ namespace Risebird.Repository
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return;
+        }
+        public async Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(employmentconnectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<EmploymentDetailsDM>(con, "usp_GetEmploymentDetails",
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<int> CheckEmployementDetails(string mobilenumber)
+        {
+            try
+            {
+                var query = "Select Count(*) from EmploymentDetails where MobileNumber=@MobileNumber";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@MobileNumber", mobilenumber);
+                using (SqlConnection con = new SqlConnection(employmentconnectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
         }
     }
 }
