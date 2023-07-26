@@ -5,16 +5,21 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static OfficeOpenXml.ExcelErrorValue;
 
 namespace Risebird.Web.Controllers
 {
@@ -33,10 +38,12 @@ namespace Risebird.Web.Controllers
         private readonly string passportUrl;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IHttpRequestHelper _httpRequestHelper;
+        private readonly HttpClient _httpClient;
+        private readonly CancellationToken _cancellationToken;
 
         public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
-            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper)
+            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -51,6 +58,7 @@ namespace Risebird.Web.Controllers
             password = _configuration["CandidatePassportVerfication:password"];
             passportUrl = _configuration["CandidatePassportVerfication:endPoint"];
             _httpRequestHelper = httpRequestHelper;
+            _httpClient = factory.GetHttpClient();
         }
 
         public IActionResult Index()
@@ -665,7 +673,7 @@ namespace Risebird.Web.Controllers
                 return 0;
             }
 
-            var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] :"0";
+            var score = convertedResponse.response_data.score != null ? convertedResponse.response_data.score.Split(".")[0] : "0";
             return Convert.ToInt16(score);//convertedResponse.response_data.score
         }
         //public string GetCurrentUnixTimestampMillis()
@@ -685,5 +693,65 @@ namespace Risebird.Web.Controllers
             var millis = (univDateTime - UnixEpoch).TotalMilliseconds.ToString();
             return millis.Split(".")[0];
         }
+
+        #region Employment Verification
+        public async Task<IActionResult> EmployementDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    //if (profileName == "Admin" || profileName == "SupportAdmin")
+                    //{
+                        var employmentdetails = await _aadhaarService.GetEmployementDetails();
+                        ViewBag.profile = profileName;
+                        return View(employmentdetails);
+                    //}
+                    //else
+                    //{
+                    //    return RedirectToAction("SignOut", "Session");
+                    //}
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index", "Interview");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> VerifyEmployment(string candidateemail, string mobilenumber)
+        {
+            if (!string.IsNullOrWhiteSpace(mobilenumber))
+            {
+                var employementdetails = await _aadhaarService.CheckEmployementDetails(mobilenumber);
+                if (employementdetails == 0)
+                {
+                    EmployementVerification(mobilenumber, candidateemail);
+                    return Json("Employment verification is in process, please look in the list in couple of seconds.");
+                }
+                else
+                {
+                    return Json("Already verified, please find in the employment detail list");
+                }
+            }
+            return Json("");
+        }
+        public async Task EmployementVerification(string mobile, string candidateEmail)
+        {
+            SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
+            mobiledata.mobile = mobile;
+            mobiledata.CandidateEmail = candidateEmail;
+            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SingzyEmploymentVerification";
+            var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
+            await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
+        }
+        #endregion
     }
 }

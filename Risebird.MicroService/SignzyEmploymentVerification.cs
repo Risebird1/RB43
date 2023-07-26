@@ -58,7 +58,7 @@ namespace Risebird.MicroService
             convertedResponse.MobileNumber = mobiledata.mobile;
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             dynamic datavalue = JObject.Parse(response.Content);
-            List<string> namesList = convertedResponse.uanNumbers.ToList();
+            List<string>? namesList = convertedResponse.uanNumbers?.ToList();
             foreach (var data in datavalue.Children())
             {
                 if (((JToken)data).Path == "uanDetails")
