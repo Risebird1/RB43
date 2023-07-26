@@ -7538,7 +7538,7 @@ namespace Risebird.Web.Controllers
                                 TO = emailid,
                                 Subject = "Invitation for " + Uniquedate.Title + " : " + item
                             };
-                            await _notificationHelper.SharedTestLinkClient(_mail1, Uniquedate.Title, "15", currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                            await _notificationHelper.SharedTestLinkClient(_mail1, Uniquedate.Title, "15", currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330, Uniquedate.logolink);
                         }
                         else
                         {

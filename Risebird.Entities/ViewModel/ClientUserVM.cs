@@ -51,5 +51,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientCancelInterview { get; set; }
         public int RoleId { get; set; }
         public bool IsActive { get; set; }
+        public string logolink { get; set; }
     }
 }

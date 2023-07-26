@@ -82,12 +82,12 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string DashboardLink, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, string IRFName);
         Task<string> SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
-        Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt);
-        Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset);
+        Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt, string clientlogo);
+        Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset, string clientlogo);
         Task<string> SendUnassignedInterviewsNotifications(List<string> interviwers, string meetingDate);
         Task<string> SendResumeUploadCounts(Mail model, DataTable dt, string Name);
         Task<string> SendQCFormDetails(Mail model, DataTable dt);
-        Task<string> SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt);
+        Task<string> SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt, string clientlogo);
         Task<string> SendInterviewAadhaarVerificationNotification(Mail model, string UrlDetails, string Name);
         Task<string> SendInteviewerRemovalNotification(Mail model, int totalinterview, int selectedinterview, int rejectedinterview, string interviewer, string Client, string IRFId, string clientemail);
         Task<string> SendRedoCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
