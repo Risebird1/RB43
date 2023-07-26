@@ -1,4 +1,5 @@
-﻿using Risebird.Entities.ViewModel;
+﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,5 +15,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AadhaarData>> GetAadharDetails();
         Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model);
         Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
+        Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails();
+        Task<int> CheckEmployementDetails(string mobilenumber);
     }
 }
