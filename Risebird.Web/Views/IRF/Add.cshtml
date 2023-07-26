@@ -878,7 +878,7 @@
                                                                                 else
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                        <a onclick="" data-tooltip="" id=@("InterviewerCollection_" + i +  "__ResumeLink")>No Resume</a>
                                                                                     </td>
                                                                                 }
                                                                                 <td>
@@ -2428,10 +2428,9 @@
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=number]").val("");
 
-        //$tr.find("a").val("");
-        //$tr.find("a").href("");
         $tr.find("a").attr("href", "");
         $tr.find("a").attr("data-tooltip", "");
+        $tr.find("a").html("");
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -2744,6 +2743,15 @@
                 const anchorElement = document.getElementById(resumeElementid);
                 anchorElement.href = result.resumeLink;
                 $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
+
+                if(result!=null && result.resumeLink !=null && result.resumeLink != '')
+                {
+                    $("#" + resumeElementid).html("Resume");
+                }
+                else
+                {
+                    $("#" + resumeElementid).html("No Resume");
+                }
                 @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);
