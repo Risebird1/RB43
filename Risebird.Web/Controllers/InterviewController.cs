@@ -7149,6 +7149,8 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
+        
         public async Task<JsonResult> ShareSecureReport(int interviewId, string irfId, string emailid)
         {
             try

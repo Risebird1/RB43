@@ -1287,7 +1287,7 @@
                                                                                 else
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                        <a onclick="" id=@("InterviewerCollection_" + i +  "__ResumeLink") data-tooltip="">No Resume</a>
                                                                                     </td>
                                                                                 }
                                                                                 <td>
@@ -3661,7 +3661,6 @@
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#InterviewerTable tr").length - 1;
-
         $tr.find("input,select,hidden, a").attr("name", function () { // find name in the cloned row //,a
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
@@ -3682,10 +3681,10 @@
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=number]").val("");
         $tr.find("input[type=checkbox]").prop("checked", true);
-        //$tr.find("a").val("");
-        //$tr.find("a").href("");
+
         $tr.find("a").attr("href", "");
         $tr.find("a").attr("data-tooltip", "");
+        $tr.find("a").html("");
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
@@ -3976,6 +3975,15 @@
                 const anchorElement = document.getElementById(resumeElementid);
                 anchorElement.href = result.resumeLink;
                 $("#" + resumeElementid).attr("data-tooltip", result.resumeLink);
+                if(result!=null && result.resumeLink !=null && result.resumeLink != '')
+                {
+                    $("#" + resumeElementid).html("Resume");
+
+                }
+                else
+                {
+                    $("#" + resumeElementid).html("No Resume");
+                }
                 @*const resumeItem = document.getElementById(resumeElementid);
                 var aTag = document.createElement('a');
                 aTag.setAttribute('href',result.resumeLink);
