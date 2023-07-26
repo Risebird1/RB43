@@ -703,16 +703,16 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin")
-                    {
+                    //if (profileName == "Admin" || profileName == "SupportAdmin")
+                    //{
                         var employmentdetails = await _aadhaarService.GetEmployementDetails();
                         ViewBag.profile = profileName;
                         return View(employmentdetails);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    //}
+                    //else
+                    //{
+                    //    return RedirectToAction("SignOut", "Session");
+                    //}
                 }
                 else
                 {
