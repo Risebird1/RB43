@@ -17,6 +17,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveCandidateVerificationDetails(candidateDetailsresult model);
         Task SaveFaceMatchScorePercentage(string email, int score);
         Task SaveEmploymentDetails(SignzyEmployeeResponse model);
-
+        Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails();
+        Task<int> CheckEmployementDetails(string mobilenumber);
     }
 }

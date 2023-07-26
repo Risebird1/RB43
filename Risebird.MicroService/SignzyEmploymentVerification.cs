@@ -60,8 +60,7 @@ namespace Risebird.MicroService
             convertedResponse.MobileNumber = mobiledata.mobile;
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             dynamic datavalue = JObject.Parse(response.Content);
-            log.LogInformation($"SignzyEmploymentVerification : Event data recieved with response body :  {datavalue}");
-            List<string> namesList = convertedResponse.uanNumbers.ToList();
+            List<string>? namesList = convertedResponse.uanNumbers?.ToList();
             foreach (var data in datavalue.Children())
             {
                 if (((JToken)data).Path == "uanDetails")
