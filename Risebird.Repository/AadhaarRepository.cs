@@ -236,8 +236,7 @@ namespace Risebird.Repository
         {
             try
             {
-                string conString = "Server=tcp:risebirdmcqdev.database.windows.net,1433;Initial Catalog=risebirdmcqdev;Persist Security Info=False;User ID=risebirdmcqadmin;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Max Pool Size=1000;";
-                using (SqlConnection con = new SqlConnection(conString))
+                using (SqlConnection con = new SqlConnection(employmentconnectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@email", email);
