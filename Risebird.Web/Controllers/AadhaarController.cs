@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -10,9 +11,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -40,10 +43,11 @@ namespace Risebird.Web.Controllers
         private readonly IHttpRequestHelper _httpRequestHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
+        private readonly IAadhaarRepository _aadhaarRepository;
 
         public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
-            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory)
+            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory, IAadhaarRepository aadhaarRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -59,6 +63,7 @@ namespace Risebird.Web.Controllers
             passportUrl = _configuration["CandidatePassportVerfication:endPoint"];
             _httpRequestHelper = httpRequestHelper;
             _httpClient = factory.GetHttpClient();
+            _aadhaarRepository = aadhaarRepository;
         }
 
         public IActionResult Index()
@@ -705,9 +710,9 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     //if (profileName == "Admin" || profileName == "SupportAdmin")
                     //{
-                        var employmentdetails = await _aadhaarService.GetEmployementDetails();
-                        ViewBag.profile = profileName;
-                        return View(employmentdetails);
+                    var employmentdetails = await _aadhaarService.GetEmployementDetails();
+                    ViewBag.profile = profileName;
+                    return View(employmentdetails);
                     //}
                     //else
                     //{
@@ -748,9 +753,63 @@ namespace Risebird.Web.Controllers
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
             mobiledata.mobile = mobile;
             mobiledata.CandidateEmail = candidateEmail;
-            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SingzyEmploymentVerification";
-            var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
-            await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
+            //var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SingzyEmploymentVerification";
+            //var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
+            //await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
+            var employementapikey = "aVjVGpYCV0lhN9sR2sT0GJJCon3ZDide";
+            var employementendpoint = "https://api-preproduction.signzy.app/api/v3/employment-verification/current-employer";
+            Dictionary<string, string> headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/json" },
+                    { "Authorization", employementapikey }
+                };
+            var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
+            var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
+            convertedResponse.MobileNumber = mobiledata.mobile;
+            convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
+            dynamic datavalue = JObject.Parse(response.Content);
+            List<string>? namesList = convertedResponse.uanNumbers?.ToList();
+            foreach (var data in datavalue.Children())
+            {
+                if (((JToken)data).Path == "uanDetails")
+                {
+                    foreach (var dataset in data.Children())
+                    {
+                        foreach (var item in namesList)
+                        {
+                            if (((JContainer)dataset).First.Path == "uanDetails." + item)
+                            {
+                                var datanew = ((JContainer)dataset).First;
+                                var internalNodes = datanew.Children().GetEnumerator();
+                                while (internalNodes.MoveNext())
+                                {
+                                    UanDetails _uandeails = new UanDetails();
+                                    var mainFamilies = internalNodes.Current;
+                                    var nodedetails = mainFamilies.Children().GetEnumerator();
+                                    while (nodedetails.MoveNext())
+                                    {
+                                        _uandeails.uanNumber = item;
+                                        var mainFamilies1 = nodedetails.Current;
+                                        if (((JProperty)mainFamilies1).Name == "basic_details")
+                                        {
+                                            _uandeails.date_of_birth = ((JProperty)mainFamilies1).Value["date_of_birth"].ToString();
+                                            _uandeails.gender = ((JProperty)mainFamilies1).Value["gender"].ToString();
+                                            _uandeails.name = ((JProperty)mainFamilies1).Value["name"].ToString();
+                                        }
+                                        else if (((JProperty)mainFamilies1).Name == "employment_details")
+                                        {
+                                            _uandeails.establishment_name = ((JProperty)mainFamilies1).Value["establishment_name"].ToString();
+                                            _uandeails.date_of_joining = ((JProperty)mainFamilies1).Value["date_of_joining"].ToString();
+                                        }
+                                    }
+                                    convertedResponse.uanDetails1.Add(_uandeails);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+             await _aadhaarRepository.SaveEmploymentDetails(convertedResponse);
         }
         #endregion
     }

@@ -270,6 +270,11 @@ namespace Risebird.Repository
                     DateTime? exitdate = !string.IsNullOrWhiteSpace(_exitdate) ? Convert.ToDateTime(_exitdate) : null;
                     var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
                     DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
+                    var Uannumbers = string.Empty;
+                    if (model.uanNumbers != null)
+                    {
+                        Uannumbers = string.Join(",", model.uanNumbers);
+                    }
                     var parameters = new DynamicParameters();
                     parameters.Add("@CandidateEmail", model.CandidateEmail);
                     parameters.Add("@MobileNumber", model.MobileNumber);
@@ -280,7 +285,7 @@ namespace Risebird.Repository
                     parameters.Add("@ExitDate", exitdate);
                     parameters.Add("@TotalUAN", model.employmentSummary?.uan_count);
                     parameters.Add("@Isemployed", model.employmentSummary?.is_employed);
-                    parameters.Add("@UANNumbers", string.Join(",", model.uanNumbers));
+                    parameters.Add("@UANNumbers", Uannumbers);
                     parameters.Add("@DOB", dob);
                     parameters.Add("@message", model.message);
 
@@ -321,11 +326,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return;
         }
