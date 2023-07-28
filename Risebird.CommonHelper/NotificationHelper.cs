@@ -2957,7 +2957,7 @@ namespace Risebird.CommonHelper
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
                 var newinterviewdate = newinterviewdatetime.ToString() + "(" + newtimezonevalue + ")";
                 object[] parameters = new object[] { ClientName, CandidateName, JDTiltle, newinterviewdate, interviewdate };
-                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfo.html");
+               // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfo.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfoV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;

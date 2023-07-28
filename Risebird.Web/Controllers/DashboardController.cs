@@ -1818,73 +1818,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<string> TestEmail()
-        {
-
-
-            //Mail _mail1 = new Mail
-            //{
-            //   TO = "ruma_bose@risebird.io",
-            //    Subject = "Invitation for .Net",
-            //};
-            //await _notificationHelper.SharedTestLinkClient(_mail1, ".Net", "156", "https://abc.com", "xyzruma", "https://google.com", DateTime.Now, "https://zoom.com", -330, "https://risebirdportal.blob.core.windows.net/clientlogos/UST.jpg");
-            // DataTable dt = new DataTable();
-
-            //Mail _mail1 = new Mail
-            //{
-            //    TO = "ruma_bose@risebird.io",
-            //    CC = "ruma.bose86@gmail.com",
-            //    Subject = "New Interview(s) Scheduled"
-            //};
-            //var emailsend1 = await _notificationHelper.SendClientCommonInterviewNotification(_mail1, dt, "https://risebirdportal.blob.core.windows.net/clientlogos/UST.jpg");
-            //Mail _mail1 = new Mail
-            //{
-            //    TO = "ruma_bose@risebird.io",
-            //    CC = "ruma.bose86@gmail.com",
-            //    Subject = "Skill Channel Stats Details :"
-            //};
-            //var emailsend = await _notificationHelper.SendSkillChannelStatsDetails(_mail1, "ruma", dt, "https://risebirdportal.blob.core.windows.net/clientlogos/TA_Digital.JPG");
-
-
-
-            //Mail _mail = new Mail
-            //{
-            //    TO = "ruma_bose@risebird.io",
-            //    CC = "ruma.bose86@gmail.com",
-            //    Subject = "Public URL for completed interview details"
-            //};
-            //var emailsend = await _notificationHelper.SendClientInterviewPublicURL(_mail, "runa", "https://google.com", "https://risebirdportal.blob.core.windows.net/clientlogos/TA_Digital.JPG");
-            //DataTable dt = new DataTable();
-            //Mail _mail1 = new Mail
-            //{
-            //    TO = "ruma_bose@risebird.io",
-            //    Subject = "Skill Channel rupa Feedback"
-            //};
-            //var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, "ruma", dt, "invitetext", "txt", "https://risebirdportal.blob.core.windows.net/clientlogos/UST.jpg");
-
-            //Mail _mail = new Mail
-            //{
-            //    TO = "ruma_bose@risebird.io",
-            //    Subject = "Feedback Risebird Services"
-            //};
-            //// ReviewURL = "https://portal.risebird.io/Survey/InterviewsReview?uniqueid=" + item.uniqueid;
-            //var emailsend = await _notificationHelper.SendClientRisebirdReview(_mail, "ruma123", "https://google.com", "https://risebirdportal.blob.core.windows.net/clientlogos/TA_Digital.JPG");
-
-            //var transclient = new List<TransClientUser>();
-            //transclient.Add(new TransClientUser { EmailId = "ruma_bose@risebird.io" });
-            //var emailsend = await _notificationHelper.SendRedoClientInvite("ruma", transclient, "teztskill","https://google.com","ruma.bose86@gmail.com","runa", "prashant_k@risebird.io", DateTime.Now.ToString(),"abc", "https://risebirdportal.blob.core.windows.net/clientlogos/TA_Digital.JPG");
-            Mail _mail = new Mail
-            {
-                TO = "ruma.bose86@gmail.com",
-                //CC = "hire@risebird.io",
-                Subject = "Invitation: ruma bose has scheduled"
-            };
-            _ = await _notificationHelper.SendInterviewInvite(_mail, "ruma_bose86@risebird.io", "https://google.com", "xyz", "runa", "hire@risebird.io", DateTime.Now, "rupa", "timezone", "beauty", 1, 123, "https://google.com)", "https://risebirdportal.blob.core.windows.net/clientlogos/TA_Digital.JPG", "abc.com");
-
-
-
-            return "";
-        }
+      
     }
 
 }
