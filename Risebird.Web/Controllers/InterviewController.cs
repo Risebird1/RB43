@@ -20,6 +20,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -7669,6 +7670,77 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail to Update Status, Please try again");
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetMeetingAudioText(int imid)
+        {
+            try
+            {
+                var model = new MeetingTranscriptModel();
+                int count = 0;
+                model.ConvertedText = string.Empty;
+                string fileContent = string.Empty;
+                //string transcriptUrl = string.Empty;
+                var transcriptUrl = await _meetingService.GetTranscriptUrlByMeeting(imid);
+                //transcriptUrl = "https://risebirdportal.blob.core.windows.net/transcripts/transcript_Example.txt";
+                
+                try
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        // Download the file content from the URL
+                        HttpResponseMessage response = await client.GetAsync(transcriptUrl);
+                        response.EnsureSuccessStatusCode(); // Check if the request was successful
+
+                        // Read the content as a string
+                        string content = await response.Content.ReadAsStringAsync();
+
+                        // Now you have the content of the file as a string. You can process it as needed.
+                        fileContent = content;
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    return null;
+                }
+                string convertedText = string.Empty;
+                if (!string.IsNullOrEmpty(fileContent))
+                {
+                    string[] keywords = TranscriptKeywords.Keywords;
+                    //var keywords = requiredEntry.KeyWords.Split(",");
+                    convertedText = fileContent.ToLower();
+
+                    foreach (var keyword in keywords)
+                    {
+                        var word = keyword.ToLower().Trim();
+                        if (convertedText.Contains(word))
+                        {
+                            foreach (Match m in Regex.Matches(convertedText, word))
+                            {
+                                count = count + 1;
+                            }
+
+                            //word = "<mark>" + word + "</mark>";
+                            word = " <span style=\"background-color:#42a5f5;padding:3px 5px;border-radius:3px;\">" + word + "</span>";
+                            word = " <span style=\"color:#fff;\">" + word + "</span>";
+                            word = " <span style=\"padding:0px 5px 0px 5px;\">" + word + "</span>";
+                            convertedText = convertedText.Replace(keyword, word);
+                        }
+
+                    }
+                }
+
+                model.ConvertedText = convertedText;
+                model.Total = count;
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

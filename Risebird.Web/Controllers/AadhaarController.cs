@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -10,9 +11,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -40,10 +43,11 @@ namespace Risebird.Web.Controllers
         private readonly IHttpRequestHelper _httpRequestHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
+        private readonly IAadhaarRepository _aadhaarRepository;
 
         public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
-            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory)
+            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory, IAadhaarRepository aadhaarRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -59,6 +63,7 @@ namespace Risebird.Web.Controllers
             passportUrl = _configuration["CandidatePassportVerfication:endPoint"];
             _httpRequestHelper = httpRequestHelper;
             _httpClient = factory.GetHttpClient();
+            _aadhaarRepository = aadhaarRepository;
         }
 
         public IActionResult Index()
@@ -705,9 +710,9 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     //if (profileName == "Admin" || profileName == "SupportAdmin")
                     //{
-                        var employmentdetails = await _aadhaarService.GetEmployementDetails();
-                        ViewBag.profile = profileName;
-                        return View(employmentdetails);
+                    var employmentdetails = await _aadhaarService.GetEmployementDetails();
+                    ViewBag.profile = profileName;
+                    return View(employmentdetails);
                     //}
                     //else
                     //{

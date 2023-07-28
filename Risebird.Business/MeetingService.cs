@@ -3880,6 +3880,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> GetTranscriptUrlByMeeting(int meetingId)
+        {
+            try
+            {
+                return await _meetingRespository.GetTranscriptUrlByMeeting(meetingId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

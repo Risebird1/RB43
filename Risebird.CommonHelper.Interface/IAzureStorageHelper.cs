@@ -25,7 +25,7 @@ namespace Risebird.CommonHelper.Interface
         Task<TableResult> RetriveByPartitionAndRowKeyAsync(string tableName, string partitionKey, string rowKey);
         IEnumerable<T> GetAllEntities<T>(string tableName) where T : TableEntity, new();
         Task InsertBlob(string filename, string containerName, IFormFile blobFile);
-        Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFIleStream = null);
+        Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFIleStream = null, Stream transcriptStream = null);
         string CheckIfFileExists(string containerName, string fileName);
         bool DeleteBlobContainerFile(string vhdName, string containerName);
         Task<bool> CheckBlobContainerFile(string vhdName, string containerName);
