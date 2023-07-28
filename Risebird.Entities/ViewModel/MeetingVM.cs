@@ -48,6 +48,8 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         //[Required(ErrorMessage = "Please enter Client HR Email Id.")]
         public string ClientHrContact { get; set; }
+        public string ClientEmail { get; set; }
+        public string Comment { get; set; }
 
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
@@ -133,6 +135,9 @@ namespace Risebird.Entities.ViewModel
         public string PreparationStatusDesc { get; set; }
         public string OfferStatusStatDesc { get; set; }
         public string MeetingStatusStatusDesc { get; set; }
+        public string FutureSchduleDate { get; set; }
+
+
         public string QCStatusStatusDesc { get; set; }
         [Display(Name = "Confirmation Status")]
         public SelectList ConfirmationStatusList { get; set; }
