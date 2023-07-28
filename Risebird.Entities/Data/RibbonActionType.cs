@@ -15,5 +15,6 @@
         public static readonly string DeletedZoomMeetings = "DeletedZoomMeetings";
         public static readonly string OpenIssues = "OpenIssues";
         public static readonly string ReScheduleCount = "ReScheduleCount";
+        public static readonly string PotentialRiskInterviewCount = "PotentialRiskInterviewCount";
     }
 }
