@@ -4401,6 +4401,32 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<PendingVideoMeetingsData>> GetZoomMeetingsToBeDeletedOnceUploadedOnBlob()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeEnd", DateTime.Now.AddHours(-3));
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
+                    var result = await SqlMapper.QueryAsync<PendingVideoMeetingsData>(con, "usp_GetZoomMeetingsToBeDeletedOnceUploadedOnBlob", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink, int videoDuration)
         {
             try
@@ -4412,6 +4438,32 @@ namespace Risebird.Repository
                     parameters.Add("@videoLink", videoLink);
                     parameters.Add("@videoDuration", videoDuration);
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateUploadedVideoLink", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateUploadedVideoLinkAndTranscriptLink(int interviewId, int? videoDuration = null, string videoLink = null, string transcriptLink = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@videoLink", videoLink);
+                    parameters.Add("@videoDuration", videoDuration);
+                    parameters.Add("@transcriptLink", transcriptLink);
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateUploadedVideoLinkAndTranscriptLink", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -6539,6 +6591,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public async Task<string> GetTranscriptUrlByMeeting(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetTranscriptUrlByMeeting", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Twilio.Types;
 
 namespace Risebird.MicroService
 {
@@ -27,6 +28,7 @@ namespace Risebird.MicroService
         private readonly ISASUrlHelper _sasUrlHelper;
 
         private readonly string ContainerName;
+        private readonly string TranscriptsContainer;
         //private readonly string SASConnectionString;
 
         public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
@@ -38,12 +40,13 @@ namespace Risebird.MicroService
             _zoomHelper = zoomHelper;
             _sasUrlHelper = sasUrlHelper;
             ContainerName = _configuration["SASURLSettings:ContainerName"];
+            TranscriptsContainer = _configuration["SASURLSettings:TranscriptsContainer"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
 
 
         }
         [FunctionName("ZoomService")]
-        public async Task Run([TimerTrigger("0 0 */1 * * *")] TimerInfo myTimer, ILogger log) //after every 1 hour
+        public async Task Run([TimerTrigger("0 0 */1 * * *")] TimerInfo myTimer, ILogger log) //after every 1 hour 
         {
             try
             {
@@ -58,13 +61,11 @@ namespace Risebird.MicroService
                 //get jwt authentication token 
                 //string token = ZoomToken();
                 string token = _zoomHelper.ZoomToken();
-                // zoom : upload video and dump video link in db
+                
                 Parallel.ForEach(pendingZoomMeetings, meeting =>
                 {
-
                     try
                     {
-
                         if (!string.IsNullOrEmpty(meeting.zoomLink))
                         {
                             //long zoommeetingId = 0;
@@ -92,8 +93,6 @@ namespace Risebird.MicroService
                             meeting.ZoomMeetingId = zoommeetingId;
                         }
 
-
-
                         //create HTTP Rest Client
                         //var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
                         var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"));
@@ -111,8 +110,9 @@ namespace Risebird.MicroService
                         if (convertedResponse != null && convertedResponse.recording_files != null && convertedResponse.recording_files.Count() > 0)
                         {
                             var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
-
-                            if (videoRecordingFiles != null || videoRecordingFiles.Count() == 1)
+                            string videoSasUrl = string.Empty;
+                            int? videoDuration = null;
+                            if (string.IsNullOrEmpty(meeting.VideoLink) && (videoRecordingFiles != null || videoRecordingFiles.Count() == 1))
                             {
                                 var recordingFile = videoRecordingFiles.FirstOrDefault();
                                 var downloadUrl = recordingFile.download_url;
@@ -122,7 +122,6 @@ namespace Risebird.MicroService
                                 //WebClient myWebClient = new WebClient();
                                 HttpClient myWebClient = new HttpClient();
                                 string uploadedVideoUrl = string.Empty;
-                                string sasUrl = string.Empty;
                                 using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                 {
                                     var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
@@ -145,55 +144,76 @@ namespace Risebird.MicroService
 
 
                                     //generate SAS URL from the uploaded video url
-                                    //var sas = CreateSasUrl();
                                     var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
 
                                     if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
                                     {
-                                        sasUrl = uploadedVideoUrl + "?" + sas;
+                                        videoSasUrl = uploadedVideoUrl + "?" + sas;
                                     }
                                 }
-                                if (!string.IsNullOrEmpty(sasUrl))
+                                if (!string.IsNullOrEmpty(videoSasUrl))
                                 {
                                     //get the video duration
                                     var startTime = Convert.ToDateTime(recordingFile.recording_start);
                                     var endTime = Convert.ToDateTime(recordingFile.recording_end);
 
                                     TimeSpan ts = endTime - startTime;
-                                    var videoDuration = Convert.ToInt32(Math.Round(ts.TotalMinutes));
-
-                                    //insert the SAS URL of the video in the database table
-                                    var result = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, sasUrl, videoDuration).Result;
-
-                                    log.LogInformation($"Zoom : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
-
-                                    //if (result)
-                                    //{
-                                    //    //delete recording
-                                    //    //create HTTP Request 
-
-                                    //    var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"));
-
-                                    //    var requestDeleteMeetingRecordings = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"), Method.Delete);
-                                    //    requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");
-                                    //    requestDeleteMeetingRecordings.AddHeader("authorization", "Bearer " + token);
-                                    //    RestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
-                                    //    //var content = response.Content;
-                                    //    if (responseDeleteMeetingRecordings.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
-                                    //    {
-                                    //        log.LogInformation($"Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} deleted at: {DateTime.Now}");
-                                    //    }
-                                    //    else
-                                    //    {
-                                    //        string message = (responseDeleteMeetingRecordings != null && responseDeleteMeetingRecordings.Content != null) ? responseDeleteMeetingRecordings.Content : string.Empty;
-                                    //        log.LogInformation($"Error! Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} could not be deleted! Message : {responseDeleteMeetingRecordings.Content ?? responseDeleteMeetingRecordings.StatusDescription}");
-                                    //    }
-                                    //}
+                                    videoDuration = Convert.ToInt32(Math.Round(ts.TotalMinutes));
 
                                 }
                             }
 
+                            var audioTranscriptFiles = convertedResponse.recording_files.Where(x => x.file_type == "TRANSCRIPT" && x.status.ToLower() == "completed");
+                            string transcriptSasUrl = string.Empty;
+                            if (!string.IsNullOrEmpty(meeting.AudioTranscriptFileLink) && (audioTranscriptFiles != null || audioTranscriptFiles.Count() == 1))
+                            {
+                                var transcriptFile = audioTranscriptFiles.FirstOrDefault();
+                                var downloadUrl = transcriptFile.download_url;
 
+                                //upload the video to azure blob using the download_Url
+
+                                HttpClient myWebClient = new HttpClient();
+                                string uploadedTranscriptUrl = string.Empty;
+                                using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                {
+                                    var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+                                    var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
+                                    long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                    fileName = fileName + "_" + unixTime.ToString();
+                                    try
+                                    {
+                                        uploadedTranscriptUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream).Result;
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                        return;
+                                    }
+
+                                    log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+
+                                    //generate SAS URL from the uploaded video url
+                                    var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+
+                                    if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                    {
+                                        transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                    }
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
+                            {
+
+                                //insert the SAS URL of the video, transcript and video duration in the database table
+                                _ = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl).Result;
+
+                                log.LogInformation($"Zoom : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+
+                            }
                         }
 
                     }
