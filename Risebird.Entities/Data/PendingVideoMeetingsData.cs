@@ -8,9 +8,10 @@ namespace Risebird.Entities.Data
         public string ZoomMeetingId { get; set; }
         public string zoomLink { get; set; }
         //public string ZoomId { get; set; }
-        //public string VideoLink { get; set; }
+        public string VideoLink { get; set; }
         public DateTime interviewDate { get; set; }
         public DateTime RequestedDate { get; set; }
         public string MeetingPlatform { get; set; }
+        public string AudioTranscriptFileLink { get; set; }
     }
 }

@@ -159,7 +159,9 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailID, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoMeetings();
+        Task<IEnumerable<PendingVideoMeetingsData>> GetZoomMeetingsToBeDeletedOnceUploadedOnBlob();
         Task<bool> UpdateUploadedVideoLink(int interviewId, string videoLink, int videoDuration);
+        Task<bool> UpdateUploadedVideoLinkAndTranscriptLink(int interviewId, int? videoDuration = null, string videoLink = null, string transcriptLink = null);
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);
@@ -255,5 +257,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt);
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
+        Task<string> GetTranscriptUrlByMeeting(int id);
     }
 }
