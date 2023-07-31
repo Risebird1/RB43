@@ -47,7 +47,7 @@ namespace Risebird.MicroService
                         Subject = "Feedback Risebird Services"
                     };
                     var ReviewURL = "https://portal.risebird.io/Survey/InterviewsReview?uniqueid=" + item.uniqueid;
-                    var emailsend = await _notificationHelper.SendClientRisebirdReview(_mail, item.ClientName, ReviewURL);
+                    var emailsend = await _notificationHelper.SendClientRisebirdReview(_mail, item.ClientName, ReviewURL, item.logolink);
                 }
                 catch (Exception ex)
                 {
