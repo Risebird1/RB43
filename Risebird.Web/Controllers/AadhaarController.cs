@@ -753,7 +753,7 @@ namespace Risebird.Web.Controllers
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
             mobiledata.mobile = mobile;
             mobiledata.CandidateEmail = candidateEmail;
-            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SingzyEmploymentVerification";
+            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SignzyEmploymentVerification";
             var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
