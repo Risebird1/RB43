@@ -12,7 +12,7 @@ GO
 CREATE PROCEDURE [dbo].[usp_RisebirdClientUsersForNotification]     
 AS    
 BEGIN    
-select distinct cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.uniqueid 
+select distinct cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.uniqueid, cl.logolink
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId
 join [ClientUser] cu on cu.ClientId=IRF.ClientId   
 inner join [dbo].[UserList] ul on cu.UserId = ul.id    

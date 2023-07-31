@@ -283,6 +283,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsBiometricEnabled { get; set; }
         public bool IsPaused { get; set; }
 
+
         public int? PriorityLevel { get; set; }
         public int? MeetingId { get; set; }
 
@@ -351,6 +352,7 @@ namespace Risebird.Entities.ViewModel
         public int FixedAmount { get; set; }
         //public int Surcharge { get; set; }
         public bool IsNewSkillChannel { get; set; }
+        public string LogoLink { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

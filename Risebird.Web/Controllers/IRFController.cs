@@ -7538,7 +7538,7 @@ namespace Risebird.Web.Controllers
                                 TO = emailid,
                                 Subject = "Invitation for " + Uniquedate.Title + " : " + item
                             };
-                            await _notificationHelper.SharedTestLinkClient(_mail1, Uniquedate.Title, "15", currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                            await _notificationHelper.SharedTestLinkClient(_mail1, Uniquedate.Title, "15", currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330, Uniquedate.logolink);
                         }
                         else
                         {
@@ -7740,10 +7740,12 @@ namespace Risebird.Web.Controllers
             var billingowner = await _irfService.GetIRFBillingOwnerById(irfId);
             var irfList = (await _irfService.GetAllIRFDetailsByIRFId(irfId))?.ToList();
             var _irfitem = irfList.FirstOrDefault();
-            string JDTitle = "";
+            string clientlogolink = string.Empty;
+            string JDTitle = string.Empty;
             DataTable dt = new DataTable();
             if (_irfitem != null)
             {
+                clientlogolink = _irfitem.LogoLink;
                 JDTitle = _irfitem.JDTiltle;
                 dt.Columns.AddRange(new DataColumn[5] { new DataColumn("Skill Channel", typeof(string)),
                             new DataColumn("Candidates", typeof(int)),
@@ -7762,7 +7764,7 @@ namespace Risebird.Web.Controllers
                         TO = item.EmailId,
                         Subject = "Skill Channel " + item.IRFName + " Feedback"
                     };
-                    var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, item.FirstName, dt, JDTitle, ReviewURL);
+                    var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, item.FirstName, dt, JDTitle, ReviewURL, clientlogolink);
                 }
                 catch (Exception e)
                 {
@@ -7777,7 +7779,7 @@ namespace Risebird.Web.Controllers
                     TO = billingowner.EmailId,
                     Subject = "Skill Channel " + billingowner.IRFId + " Feedback"
                 };
-                var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, billingowner.Name, dt, JDTitle, ReviewURL);
+                var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, billingowner.Name, dt, JDTitle, ReviewURL, clientlogolink);
             }
             catch (Exception e)
             {

@@ -10,6 +10,7 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -576,7 +577,8 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { model.BroadcastReciever, model.Message };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
@@ -1547,7 +1549,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName)
+        public async Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName, string clientlogo)
         {
             try
             {
@@ -1564,8 +1566,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { zoomlink, candidateName };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterview.html");
+                object[] parameters = new object[] { zoomlink, candidateName, clientlogo };
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterview.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewV2.html");
+
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
@@ -1668,7 +1672,8 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { UrlDetails, CandidateName };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaReportClientNotification.html");
+                //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaReportClientNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaReportClientNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -1692,7 +1697,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
+                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink};
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaClientInterviewLinkNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaClientInterviewLinkNotificationV2.html");
 
@@ -1746,7 +1751,8 @@ namespace Risebird.CommonHelper
 
 
                 object[] parameters = new object[] { UrlDetails };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoClient.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoClient.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoClientV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -2049,7 +2055,8 @@ namespace Risebird.CommonHelper
                 }
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
                 object[] parameters = new object[] { interviewdate, join_url, Email, accountemail, HRCoordinator, StaffingAgiencies, Name, ClientName, jdLink, clientLogoLink, companyLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
+                //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 //Start: Attachment
@@ -2211,7 +2218,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt)
+        public async Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt, string clientlogo)
         {
             try
             {
@@ -2244,7 +2251,7 @@ namespace Risebird.CommonHelper
                 }
                 sb.Append("</table>");
 
-                object[] parameters = new object[] { sb };
+                object[] parameters = new object[] { sb, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientCommonInterviewNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientCommonInterviewNotificationV2.html");
 
@@ -2257,7 +2264,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset)
+        public async Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset, string clientlogo)
         {
             try
             {
@@ -2270,7 +2277,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
 
-                object[] parameters = new object[] { title, timeduration, url, CandidateEmail, meetingurl, Reporturl };
+                object[] parameters = new object[] { title, timeduration, url, CandidateEmail, meetingurl, Reporturl, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInvitationTemplate.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInvitationTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2369,7 +2376,8 @@ namespace Risebird.CommonHelper
                 sb.Append("</table>");
 
                 object[] parameters = new object[] { Name, sb };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeDetailsCountNotification.html");
+                //string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeDetailsCountNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeDetailsCountNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
@@ -2427,7 +2435,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt)
+        public async Task<string> SendSkillChannelStatsDetails(Mail model, string Name, DataTable dt, string clientlogo)
         {
             try
             {
@@ -2460,7 +2468,7 @@ namespace Risebird.CommonHelper
                 }
                 sb.Append("</table>");
 
-                object[] parameters = new object[] { Name, sb };
+                object[] parameters = new object[] { Name, sb, clientlogo};
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientSkillChannelStatsNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientSkillChannelStatsNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2489,7 +2497,8 @@ namespace Risebird.CommonHelper
 
 
                 object[] parameters = new object[] { Name, UrlDetails };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AadhaarVerificationNotification.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AadhaarVerificationNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AadhaarVerificationNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -2553,8 +2562,9 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
 
-                object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink, calendlyLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteCandidate.html");
+                object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink, calendlyLink};
+                //   string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteCandidate.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteCandidateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
@@ -2565,7 +2575,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null)
+        public async Task<string> SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null, string clientlogo = null)
         {
             try
             {
@@ -2588,7 +2598,7 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
 
-                object[] parameters = new object[] { ClientName, emailId, interviewdate, primarySkill };
+                object[] parameters = new object[] { ClientName, emailId, interviewdate, primarySkill, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteClient.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RedoInviteClientV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2600,7 +2610,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl)
+        public async Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl, string clientlogo)
         {
             try
             {
@@ -2614,7 +2624,7 @@ namespace Risebird.CommonHelper
                 }
                 msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
-                object[] parameters = new object[] { Name, publicurl };
+                object[] parameters = new object[] { Name, publicurl, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublic.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublicV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2645,8 +2655,9 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateEmail, interviewDate };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewClerityClientNotification.html");
+                object[] parameters = new object[] { CandidateEmail, interviewDate};
+                //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewClerityClientNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewClerityClientNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -2732,7 +2743,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl)
+        public async Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo)
         {
             try
             {
@@ -2744,7 +2755,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { Name, reviewurl };
+                object[] parameters = new object[] { Name, reviewurl, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientRisebirdReview.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientRisebirdReviewV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2803,7 +2814,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendSkillChannelFeedbackNotification(Mail model, string Name, DataTable dt, string JDTitle, string ReviewURL)
+        public async Task<string> SendSkillChannelFeedbackNotification(Mail model, string Name, DataTable dt, string JDTitle, string ReviewURL, string clientlogo = null)
         {
             try
             {
@@ -2835,7 +2846,7 @@ namespace Risebird.CommonHelper
                 }
                 sb.Append("</table>");
 
-                object[] parameters = new object[] { Name, sb, JDTitle, ReviewURL };
+                object[] parameters = new object[] { Name, sb, JDTitle, ReviewURL, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientSkillChannelFeedbackNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientSkillChannelFeedbackNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -2861,7 +2872,8 @@ namespace Risebird.CommonHelper
 
 
                 object[] parameters = new object[] { skillChannelName, client, jdTitle, primarySkills };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssignedNotificationToSME.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssignedNotificationToSME.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssignedNotificationToSMEV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -2945,7 +2957,8 @@ namespace Risebird.CommonHelper
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
                 var newinterviewdate = newinterviewdatetime.ToString() + "(" + newtimezonevalue + ")";
                 object[] parameters = new object[] { ClientName, CandidateName, JDTiltle, newinterviewdate, interviewdate };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfo.html");
+               // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfo.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterviewInfoV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, null, interviewId);
