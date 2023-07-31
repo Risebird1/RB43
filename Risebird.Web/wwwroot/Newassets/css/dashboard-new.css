@@ -6101,6 +6101,10 @@ input[type="date"].form-control {
     background: #ff7f50ba;
 }
 
+
+.risk {
+    background: #F44336;
+}
 .deleted {
     background: #e02d2df5;
 }
@@ -6122,7 +6126,7 @@ input[type="date"].form-control {
 }
 
 .reschedule {
-    background: #ef483ec9;
+    background: #FFA726;
 }
 
 .click-arrow {
@@ -6144,6 +6148,15 @@ input[type="date"].form-control {
 }
 .top-h{
     height:auto;
+}
+.white-space {
+    width: 300px;
+    display: block;
+    overflow: hidden;
+    white-space: break-spaces;
+}
+.dashboard-count span{
+    cursor:pointer;
 }
 .dashboard-view {
     text-align: right;
@@ -6169,6 +6182,12 @@ input[type="date"].form-control {
     float: left;
     margin-right: 8px;
 }
+
+
+
+
+
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

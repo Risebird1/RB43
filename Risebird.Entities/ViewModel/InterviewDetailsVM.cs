@@ -31,5 +31,6 @@ namespace Risebird.Entities.ViewModel
         public string EmailId { get; set; }
         public int TotalCompletedInterview { get; set; }
         public string ClientName { get; set; }
+        public string logolink { get; set; }
     }
 }

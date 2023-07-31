@@ -3109,7 +3109,7 @@ namespace Risebird.Business
                 string primarySkill = string.Empty;
                 primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                 string oneTimeSchedulingLink = String.Empty;
-                await _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString());
+                await _notificationHelper.SendRedoClientInvite(client.Name, irfClientUsers.ToList(), primarySkill, oneTimeSchedulingLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, interviewdetails.interviewDate.ToString(), client.LogoLink);
                 return true;
             }
             catch (Exception ex)
