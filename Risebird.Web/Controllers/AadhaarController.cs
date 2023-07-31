@@ -738,7 +738,8 @@ namespace Risebird.Web.Controllers
                 var employementdetails = await _aadhaarService.CheckEmployementDetails(mobilenumber);
                 if (employementdetails == 0)
                 {
-                    await EmployementVerification(mobilenumber, candidateemail);
+                    EmployementVerification(mobilenumber, candidateemail);
+                    Task.Delay(100).Wait();
                     return Json("Employment verification is in process, please look in the list in couple of seconds.");
                 }
                 else
