@@ -56,12 +56,12 @@ namespace Risebird.Entities.Data
         public string CompanyName { get; set; }
         public string CandidateEmail { get; set; }
         public string UAN { get; set; }
-        public DateTime JoiningDate { get; set; }
-        public DateTime ExitDate { get; set; }
+        public DateTime? JoiningDate { get; set; }
+        public DateTime? ExitDate { get; set; }
         public int TotalUAN { get; set; }
         public bool Isemployed { get; set; }
         public string UANNumbers { get; set; }
-        public DateTime DOB { get; set; }
+        public DateTime? DOB { get; set; }
         public string message { get; set; }
     }
     public class UANDetailsDM
