@@ -58,7 +58,7 @@ namespace Risebird.MicroService
                                 CC = "talent@risebird.io",
                                 Subject = "Skill Channel Stats Details :" + DateTime.Now.AddDays(-30).ToShortDateString() + " to " + DateTime.Now.AddDays(7).ToShortDateString()
                             };
-                            var emailsend = await _notificationHelper.SendSkillChannelStatsDetails(_mail1, item.FirstName, dt);
+                            var emailsend = await _notificationHelper.SendSkillChannelStatsDetails(_mail1, item.FirstName, dt, item.logolink);
                         }
                     }
                     catch (Exception e)

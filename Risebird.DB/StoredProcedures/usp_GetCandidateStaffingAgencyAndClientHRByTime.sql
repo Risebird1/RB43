@@ -14,20 +14,22 @@ Create PROCEDURE [dbo].[usp_GetCandidateStaffingAgencyAndClientHRByTime]
 @etdate datetime =null
 AS  
 Begin  
-select distinct a.EmailId,a.Total,IRFId,PrimarySkill from (select ca.ProfileSource as EmailId,Count(ca.id) as Total,IRF.IRFId,IRF.PrimarySkillInvite as PrimarySkill from InterviewMeetings im   
+select distinct a.EmailId,a.Total,IRFId,PrimarySkill,logolink from (select ca.ProfileSource as EmailId,Count(ca.id) as Total,IRF.IRFId,IRF.PrimarySkillInvite as PrimarySkill, cl.logolink from InterviewMeetings im   
  join IRF on irf.IRFId =im.IRFId  
  join UserList ul on ul.EmailId = im.candidateEmail  
  join CandidatesMaster cm on cm.UserId = ul.id  
- join Candidate ca on ca.CandidateMasterId =cm.id and ca.IRFId =irf.id  
+ join Candidate ca on ca.CandidateMasterId =cm.id and ca.IRFId =irf.id 
+ join client cl on cl.id =  irf.clientid
  where im.interviewDate>=@stdate and im.interviewDate<@etdate
- group by ca.ProfileSource,IRF.IRFId,IRF.PrimarySkillInvite 
+ group by ca.ProfileSource,IRF.IRFId,IRF.PrimarySkillInvite, cl.logolink
  union  
- select ca.ClientHRAttemptContact as EmailId,Count(ca.id) as Total,IRF.IRFId,IRF.PrimarySkillInvite as PrimarySkill from InterviewMeetings im   
+ select ca.ClientHRAttemptContact as EmailId,Count(ca.id) as Total,IRF.IRFId,IRF.PrimarySkillInvite as PrimarySkill, cl.logolink from InterviewMeetings im   
  join IRF on irf.IRFId =im.IRFId  
  join UserList ul on ul.EmailId = im.candidateEmail  
  join CandidatesMaster cm on cm.UserId = ul.id  
  join Candidate ca on ca.CandidateMasterId =cm.id and ca.IRFId =irf.id  
- where im.interviewDate>=@stdate and im.interviewDate<@etdate group by ca.ClientHRAttemptContact,IRF.IRFId,IRF.PrimarySkillInvite) a  
+ join client cl on cl.id =  irf.clientid
+ where im.interviewDate>=@stdate and im.interviewDate<@etdate group by ca.ClientHRAttemptContact,IRF.IRFId,IRF.PrimarySkillInvite,cl.logolink) a  
  where EmailId is not null  
   
 End  

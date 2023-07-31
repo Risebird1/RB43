@@ -381,6 +381,39 @@
                                 </div>
                             </div>
 
+
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card">
+                                    <div id="survey-feedback">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Potential Risk Interviewer</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                            <strong> <span id="ribbonPotentialRiskInterviewCount" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             
                            
 
@@ -505,4 +538,5 @@ function TimeInterval()
         setTimeout(setRibbon, 90000);
     }
   
+
 </script>

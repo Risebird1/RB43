@@ -174,7 +174,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: Due to unforeseen circmstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
                         };
-                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName);
+                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
                         if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))

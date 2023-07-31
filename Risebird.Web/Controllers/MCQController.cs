@@ -1132,7 +1132,7 @@ namespace Risebird.Web.Controllers
                                     TO = ClientEmail,
                                     Subject = "Invitation for " + details.Title + " : " + item
                                 };
-                                await _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
+                                await _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330, "");
                             }
                             if (result.Contains("Mail sent successfully"))
                             {

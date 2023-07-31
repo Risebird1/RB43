@@ -13,7 +13,7 @@ AS
 BEGIN      
 ;With CTE AS(      
 Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,','))     
-Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,(ul.FirstName+ space(1) +ul.LastName) as InterviewerName,count(im.id) as TotalInterviews, CTE.ResumeLink,CTE.Isavailable as AvailableStatus,ul.IsActive,iav.IsVerified,iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey as MCQSetsValue,cid.inviteId,msl.PartitionKey as SMCQId     
+Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,(ul.FirstName+ space(1) +ul.LastName) as InterviewerName,count(im.id) as TotalInterviews, CTE.ResumeLink,CTE.Isavailable as AvailableStatus,ul.IsActive,iav.IsVerified,iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey as MCQSetsValue,cid.inviteId,msl.PartitionKey as SMCQId, cl.logolink     
 From CTE join Userlist ul on CTE.Userid=ul.id       
 left join InterviewMeetings im on im.interviewer=ul.EmailId  and (im.confirmationStatus=1 or im.confirmationStatus is null)      
 left join InterviewerAssessmentVerifications iav on iav.UserId=ul.id and iav.AssessmentId=CTE.value  
@@ -21,8 +21,10 @@ left join AssessmentGroup ag on ag.id=CTE.value
 left join MCQSets ms on ms.id=ag.MCQSetsValue  
 left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and cid.candidateEmail=ul.EmailId
 left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId
+left join irf on irf.irfid = im.irfid
+left join client cl on cl.id = irf.clientid
 where CTE.value = @Assessmentid     
-group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.IsVerified,iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey
+group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.IsVerified,iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,cl.logolink 
          
       
 END  

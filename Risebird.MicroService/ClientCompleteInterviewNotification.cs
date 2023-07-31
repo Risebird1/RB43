@@ -55,7 +55,7 @@ namespace Risebird.MicroService
                             CC = "talent@risebird.io",
                             Subject = "Public URL for completed interview details"
                         };
-                        var emailsend = await _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl);
+                        var emailsend = await _notificationHelper.SendClientInterviewPublicURL(_mail, item.ClientName, sendreporturl, item.logolink);
                         //Send on whatsApp
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.EmailId;

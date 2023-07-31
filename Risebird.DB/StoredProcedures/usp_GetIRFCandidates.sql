@@ -44,7 +44,7 @@ IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedR
 tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor    
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
-join UserList ul on ul.id = cm.UserId    
+join UserList ul on ul.id = cm.UserId
 left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id     
 where ca.IRFId = @IRFId and ca.ClientHRAttemptContact = @emailId) Cnd      
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,    

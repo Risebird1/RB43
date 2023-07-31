@@ -164,7 +164,7 @@ namespace Risebird.MicroService
 
                             var audioTranscriptFiles = convertedResponse.recording_files.Where(x => x.file_type == "TRANSCRIPT" && x.status.ToLower() == "completed");
                             string transcriptSasUrl = string.Empty;
-                            if (!string.IsNullOrEmpty(meeting.AudioTranscriptFileLink) && (audioTranscriptFiles != null || audioTranscriptFiles.Count() == 1))
+                            if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink) && (audioTranscriptFiles != null || audioTranscriptFiles.Count() == 1))
                             {
                                 var transcriptFile = audioTranscriptFiles.FirstOrDefault();
                                 var downloadUrl = transcriptFile.download_url;
