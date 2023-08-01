@@ -353,6 +353,7 @@ namespace Risebird.Entities.ViewModel
         public bool HasDistinctParticipants { get; set; }
         public bool AadhaarVerified { get; set; }
         public string Interviewer { get; set; }
+        public string AudioTranscriptFileLink { get; set; }
     }
     public class RBInterviewDetails
     {
