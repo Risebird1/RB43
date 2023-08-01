@@ -298,6 +298,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsSurcharge { get; set; }
         public int Surcharge { get; set; }
         public string SurchargeComment { get; set; }
+        public string AudioTranscriptFileLink { get; set; }
     }
     public class VedioComments
     {

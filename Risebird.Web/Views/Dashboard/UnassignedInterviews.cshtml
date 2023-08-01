@@ -279,7 +279,7 @@
                                                      @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -301,7 +301,7 @@
                                                     }
 
 
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount"  || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -374,7 +374,7 @@
                                                      @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -392,7 +392,7 @@
                                                     {
                                                         <th>Comment</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -543,7 +543,7 @@
                                                         @*PotentialRiskInterviewCount not allow*@
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount")
+                                                            @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                             {
                                                                 <td>@item.ChannelOwner</td>
                                                             }
@@ -578,7 +578,7 @@
                                                             {
                                                                 <td><span class="white-space">@item.Comment</span></td>
                                                             }
-                                                        @if (ViewBag.actionstatus == "ReScheduleCount")
+                                                        @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
                                                             <td class="meeting-detail-icon">
                                                                 <span class="interview_4">
