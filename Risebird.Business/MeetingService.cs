@@ -1243,6 +1243,7 @@ namespace Risebird.Business
                 reportModel.Interviewer = interviewDetails.interviewer;
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
                 reportModel.LogoUrl = interviewDetails.LogoUrl;
+                reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;
                 return reportModel;
             }
             catch (Exception e)
