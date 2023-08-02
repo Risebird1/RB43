@@ -87,14 +87,14 @@
                                                             <td>
                                                                 @if (item.CompanyName != null && item.CompanyName != "")
                                                                 {
-                                                                    @if (item.CompanyName.Length > 40)
+                                                                    @if (item.CompanyName.Length > 35)
                                                                     {
                                                                         <div class="article">
                                                                             <p style="margin-bottom:0px;">
-                                                                                @item.CompanyName.Substring(0, 40)
+                                                                                @item.CompanyName.Substring(0, 35)
                                                                             </p>
                                                                             <p class="moretext_@item.id moretext">
-                                                                                @item.CompanyName.Substring(40, @item.CompanyName.Length - 40)
+                                                                                @item.CompanyName.Substring(35, @item.CompanyName.Length - 35)
                                                                             </p>
                                                                         </div>
                                                                         <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
@@ -284,6 +284,7 @@
                     success: function (data) {
                         alert(data);
                         closeEmploymentVerifiationPopUp();
+                        location.reload();
                     }
                 });
             } else {
