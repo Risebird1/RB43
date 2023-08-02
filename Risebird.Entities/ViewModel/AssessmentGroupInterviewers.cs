@@ -8,5 +8,6 @@
         public string EmailId { get; set; }
         public string InterviewerName { get; set; }
         public bool IsSME { get; set; }
+
     }
 }

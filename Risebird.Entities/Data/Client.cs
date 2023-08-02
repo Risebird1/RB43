@@ -69,5 +69,6 @@ namespace Risebird.Entities.Data
         [Display(Name = "Payment Term")]
         public int PaymentTerm { get; set; }
         public SelectList GSTApplicableList { get; set; }
+
     }
 }

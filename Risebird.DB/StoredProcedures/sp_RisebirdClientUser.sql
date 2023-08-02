@@ -17,7 +17,7 @@ DECLARE @Role varchar(100)
 Select @Role=Name from Profile Where id in(Select idProfile From UserList where Emailid=@EmailId)
 if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN
-select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.IsActive from [ClientUser] cu  
+select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.IsActive, cl.logolink from [ClientUser] cu  
 inner join [dbo].[UserList] ul on cu.UserId = ul.id  
 inner join [dbo].[Client] cl on cu.ClientId= cl.id  
 inner join [ClientRole] cr on cu.RoleId= cr.id  
@@ -28,7 +28,7 @@ where ulsh.EmailId=@EmailId
 END
 ELSE
 BEGIN
-select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.IsActive from [ClientUser] cu  
+select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.IsActive,cl.logolink from [ClientUser] cu  
 inner join [dbo].[UserList] ul on cu.UserId = ul.id  
 inner join [dbo].[Client] cl on cu.ClientId= cl.id  
 inner join [ClientRole] cr on cu.RoleId= cr.id  

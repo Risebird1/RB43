@@ -30,8 +30,7 @@ join CandidatesMaster cm on cm.id=ca.CandidateMasterId
 where cs.[Status] =12 and ca.IRFId=@IRFId  
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId    
     
-    
-  select irf.id, irf.IRFId, irf.JDTiltle, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail,       
+  select irf.id, irf.IRFId, irf.JDTiltle, cl.LogoLink, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail,      
      
  (select count(UserId) from @TemporaryCandidateTableVariable where IRFId = irf.id) as CandidateCount,      
       

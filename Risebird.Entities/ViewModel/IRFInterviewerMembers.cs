@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public string inviteId { get; set; }
         public string SMCQId { get; set; }
         public string Assessmentgroup { get; set; }
+        public string logolink { get; set; }
         public int Assessmentid { get; set; }
     }
     public class AssessmentIRFListVM
