@@ -450,6 +450,14 @@
                             </button>
                         </span>
                     }
+                    <span>
+                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                            <span onclick="javascript:SuspiciousTypeDetails('@item.InterviewerEmailId');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
+                        </button>
+                    </span>
+
+
+
                     @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && ViewBag.Usepl != "Public")
                     {
                         <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.InterviewerEmailId', '@item.InterviewerPhone', '@item.InterviewerEmailId')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
@@ -501,6 +509,42 @@
         </div>
     </div>
 </div>
+
+
+
+
+<div id="SuspiciousTypeModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Suspicious Interviewer Details</h5>
+            </div>
+            <button onclick="closeSuspiciousTypeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="SuspiciousTypebody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnInterviewerEmail">
+                <label>Comment</label>
+                <input type="text" name="Comment" id="Comment" class="form-control" />
+                </form>
+            </div>
+            <div class="modal-footer">
+
+                <button class="btn btn-primary" onclick="SaveSuspiciousInterViewer()" id="btnSuspiciousSave">Save</button>
+
+                <button data-dismiss="modal" onclick="closeSuspiciousTypeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <script>
     function DeactivateInterviewer(irfId, interviewerEmail, elementId) {
         swal.fire({
@@ -588,4 +632,39 @@
             }
         });
     }
+    function closeSuspiciousTypeModal()
+    {
+        var modal = document.getElementById("SuspiciousTypeModal");
+        modal.style.display = "none";
+    }
+    function SuspiciousTypeDetails(Emailid) {
+        var modal = document.getElementById("SuspiciousTypeModal");
+        modal.style.display = "block";
+        $('#hdnInterviewerEmail').val(Emailid);
+       
+    }
+    function SaveSuspiciousInterViewer()
+    {
+    var comment=$('#Comment').val().trim();
+   
+    var emailId= $('#hdnInterviewerEmail').val();
+     if(comment!='')
+     {
+        $.ajax({
+            url: '/Interviewer/AddSuspiciousTypeComment',
+            data: { 'Email': emailId, 'Comment': comment },
+            type: "POST",
+            success: function (data) {
+                alert(data);
+               closeSuspiciousTypeModal();
+
+            }
+        });
+     }
+     else
+     {
+     alert("Please enter the comment.");
+     }
+    }
+
 </script>
