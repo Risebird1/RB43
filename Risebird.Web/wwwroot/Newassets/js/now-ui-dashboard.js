@@ -54,8 +54,14 @@ function debounce(func, wait, immediate) {
 
     if (isWindows) {
         // if we are on windows OS we activate the perfectScrollbar function
-        var ps = new PerfectScrollbar('.sidebar-wrapper');
-        var ps2 = new PerfectScrollbar('.main-panel');
+        const sideBars = document.getElementsByClassName("sidebar-wrapper");
+        if (sideBars != null && sideBars.length > 0) {
+            var ps = new PerfectScrollbar('.sidebar-wrapper');
+        }
+        const mainPanels = document.getElementsByClassName("main-panel");
+        if (mainPanels != null && mainPanels.length > 0) {
+            var ps2 = new PerfectScrollbar('.main-panel');
+        }
 
         $('html').addClass('perfect-scrollbar-on');
     } else {
