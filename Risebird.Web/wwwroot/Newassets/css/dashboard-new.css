@@ -1693,6 +1693,44 @@ audio {
 .interviewerSkills .overlay-relative {
     color: #fff !important;
 }
+.dashboard .flipper {
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+.dashboard .countdown__timer {
+    padding: 0em;
+    border: 0px solid black;
+    border-radius: 1px;
+    font-weight: bolder;
+    font-size: 30px;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    line-height: 25px;
+    text-align: center;
+}
+.dashboard
+.flipper.flip .back-card {
+    -webkit-transform: rotateY(0deg);
+    -moz-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    color: #544f4f;
+    background: #FFFFFF;
+    background: none;
+    background: none;
+    
+}
+
+.dashboard .flipper.flip .front-card {
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+.dashboard .countdown__timer.front-card:after, .dashboard .countdown__timer.back-card:after {
+    border-top: solid 0px #22222226;
+}
 
 .countdown__timer.front-card:after, .countdown__timer.back-card:after {
     border-top: solid 1px #22222226;
@@ -1721,6 +1759,15 @@ audio {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+
+.dashboard .countdown__timer.front-card .card-title {
+    background:none!important;
+}
+.dashboard .back-card, .dashboard .front-card{
+    font-family:inherit;
+}
+
 
 .flipper {
     position: relative;
@@ -1766,6 +1813,19 @@ audio {
     background: linear-gradient(to top, #DDDDDD 0%, #8F8F8F 100%);
     font-family: sans-serif;
     font-weight: bold;
+}
+
+.dashboard
+.front-card {
+    z-index: 2;
+    -webkit-transform: rotateY(0deg);
+    -moz-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    color: #544f4f;
+    background: #FFF;
+    font-family: inherit;
+    font-weight: bold;
+    position:inherit;
 }
 
 .flipper.flip .front-card {
@@ -6064,10 +6124,11 @@ input[type="date"].form-control {
     font-weight: 600;
     line-height: 20px;
     color: #1b1e24;
-    padding: 0px;
+    padding: 0px 0px 0px 5px;
     margin: 0px;
     position: relative;
     top: -11px;
+    text-align:left;
 }
 
 .dashboard-count {
@@ -6138,6 +6199,7 @@ input[type="date"].form-control {
     border: none;
     position: relative;
     top: 10px;
+    line-height:14px;
 }
 
 .logo-cm {
