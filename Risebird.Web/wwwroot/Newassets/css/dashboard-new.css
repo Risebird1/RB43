@@ -6032,7 +6032,7 @@ input[type="date"].form-control {
     text-align: center;
     width: 300px;
     margin:0px auto 10px auto;
-    
+    background:none;
 }
 
     #addComment .star-rating input {
@@ -6244,15 +6244,52 @@ input[type="date"].form-control {
     float: left;
     margin-right: 8px;
 }
+.transcript-btn {
+    float: right;
+    margin: 0px 10px;
+    padding: 6px 10px 8px 10px;
+}
+    .transcript-btn a{
+        border-radius:3px;
+    }
+    .transcript {
+        position: relative;
+        margin-bottom:10px;
+    }
+        .transcript .accordion-title {
+            position: relative;
+            margin: 0;
+            font-size: 1.25em;
+            font-weight: normal;
+            color: #fff;
+            cursor: pointer;
+        }
 
 
+            .transcript .accordion-title::after {
+                content: "";
+                position: absolute;
+                top: -40px;
+                right: 25px;
+                width: 0;
+                height: 0;
+                border: 8px solid transparent;
+                border-top-color: #000;
+            }
 
-
-
-
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+            .transcript .accordion-title.open::after {
+                content: "";
+                position: absolute;
+                top: -40px;
+                border: 8px solid transparent;
+                border-bottom-color: #000;
+            }
+        .transcript .focused {
+            background: #53a5f5!important;
+        }
+        /***** Media queries *****/
+        @media only screen and (min-width: 1920px) {
+            .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }

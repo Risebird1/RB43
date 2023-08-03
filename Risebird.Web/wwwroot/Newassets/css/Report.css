@@ -97,6 +97,8 @@
 
 #reportForm h3 {
     font-size: 1.3rem;
+    border-bottom: 1px #ccccccad dotted;
+    padding: 0px 10px 5px 10px;
 }
 
 #reportForm h4 {
