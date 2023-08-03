@@ -7715,7 +7715,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                                 //word = "<mark>" + word + "</mark>";
-                                word = " <span style=\"background-color:#42a5f5;padding:3px 5px;border-radius:3px;\">" + word + "</span>";
+                                word = " <span style=\"background-color:red;padding:3px 5px;border-radius:3px;\" class=\"highlighted\">" + word + "</span>";
                                 word = " <span style=\"color:#fff;\">" + word + "</span>";
                                 word = " <span style=\"padding:0px 5px 0px 5px;\">" + word + "</span>";
                                 convertedText = convertedText.Replace(keyword, word);
