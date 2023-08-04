@@ -58,8 +58,9 @@
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
-                    <h6 class="card-title">Interviewer Stats @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</h6>
-                    <div class="mobile-view"> <h4 class="card-title">Interviewer Stats @(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</h4></div>
+                    <div class="desktop-view">
+                        <h2 style="padding:5px;text-transform:capitalize;">Interviewer Stats <strong>@(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</strong></h2></div>
+                    <div class="mobile-view"> <h4 class="card-title">Interviewer Stats <strong>@(ViewBag.IRFName != null ? "(" + ViewBag.IRFName + ")" : string.Empty)</strong></h4></div>
                 </div>
 
                 @*<div class="pull-right">

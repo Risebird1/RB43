@@ -1428,5 +1428,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> AddSuspiciousTypeService(SuspiciousInterviewerVM model)
+        {
+            try
+            {
+                await _interviewerRepository.AddSuspiciousType(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
