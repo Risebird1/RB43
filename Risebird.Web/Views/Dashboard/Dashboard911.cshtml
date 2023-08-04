@@ -14,108 +14,258 @@
                     <div class="row">
                         <div class="row  col-sm-12">
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
+                                <div class="panel card flipper">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
+                                            <div class="panel-heading" data-position="bottom">
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span id="ribbonunassignedinterviewcount" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')"> @Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span>  </strong>
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonunassignedinterviewcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
                                                     </div>
 
                                                 </div>
                                             </div>
+
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
+                                            <div class="panel-heading" data-position="bottom">
 
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
-                                    <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
+                                                            </div>
+                                                           
+                                                          
+                                                             <div class="dashboard-count pull-left">
+                                                                 <div class="header-back"></div>
+                                                                <strong> <span style="cursor:pointer" id="ribbonunassignedinterviewcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong>
+                                                             </div>
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon pending"><img src="~/img/pending.png" /></span></div>
-
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Status Pending</strong></span></h3>
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span id="ribbonunfilledmeetingstatuscount" onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')"> @Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount </span> </strong>
-                                                        </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
                                                     </div>
 
                                                 </div>
                                             </div>
+
+
                                         </div>
+
                                     </div>
-                                </div>
+                                    </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
-                                    <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+    <div class="panel card flipper">
+        <div id="survey-feedback">
+            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
+                <div class="panel-heading" data-position="bottom">
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon no-resume"><img src="~/img/resume.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Not Processed Resume</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span  id="ribbonnotprocessedcandidateresume" onclick="OpenRibbonDetailsUnProcessedResume()">  @Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>  </strong>
-                                                        </div>
+                    <div id="slotsId">
+                        <div class="panel-body panel-body-table">
+                            <div class="col-md-3 pull-left"><span class="dashboard-icon pending"><img src="~/img/pending.png" /></span></div>
+                            <div class="col-md-9 pull-left">
+                                <div>
+                                    <h3 class="dashboard-cat-title"><span><strong>Status Pending</strong></span></h3>
+                                </div>
+                                <div class="dashboard-count pull-left">
+                                    <div class="header-front"></div>
+                                     <strong><span style="cursor:pointer" id="ribbonunfilledmeetingstatuscount" onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')"> @Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount </span></strong>
+                                </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetailsUnProcessedResume()" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="pull-right">
+                                    <button onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')" class="click-arrow" title="Detail View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                    </button>
                                 </div>
                             </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
+                <div class="panel-heading" data-position="bottom">
+
+                    <div id="slotsId">
+                        <div class="panel-body panel-body-table">
+                            <div class="col-md-3 pull-left"><span class="dashboard-icon pending"><img src="~/img/pending.png" /></span></div>
+                            <div class="col-md-9 pull-left">
+                                <div>
+                                    <h3 class="dashboard-cat-title"><span><strong>Status Pending</strong></span></h3>
+                                </div>
+                                <div class="dashboard-count pull-left">
+                                    <div class="header-back"></div>
+                                     <strong>  <span style="cursor:pointer" id="ribbonunfilledmeetingstatuscount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong>
+                                </div>
+
+                                <div class="pull-right">
+                                    <button onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')" class="click-arrow" title="Detail View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
-                                    <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon zoom"><img src="~/img/zoom-icon.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Missing Zoom Link</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong><span id="ribbonmissingzoomlinkcount" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">  @Model.NotUpdatedMeetingsObj.MissingZoomLink </span></strong>
-                                                        </div>
+    <div class="panel card flipper">
+        <div id="survey-feedback">
+            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
+                <div class="panel-heading" data-position="bottom">
+
+                    <div id="slotsId">
+                        <div class="panel-body panel-body-table">
+                            <div class="col-md-3 pull-left"><span class="dashboard-icon no-resume"><img src="~/img/resume.png" /></span></div>
+                            <div class="col-md-9 pull-left">
+                                <div>
+                                    <h3 class="dashboard-cat-title"><span><strong>Not Processed Resume</strong></span></h3>
+                                </div>
+                                <div class="dashboard-count pull-left">
+                                    <div class="header-front"></div>
+                                    <strong><span style="cursor:pointer" id="ribbonnotprocessedcandidateresume" onclick="OpenRibbonDetailsUnProcessedResume()">  @Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>  </strong>
+                                </div>
+
+                                <div class="pull-right">
+                                    <button onclick="OpenRibbonDetailsUnProcessedResume()" class="click-arrow" title="Detail View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
+                <div class="panel-heading" data-position="bottom">
+
+                    <div id="slotsId">
+                        <div class="panel-body panel-body-table">
+                            <div class="col-md-3 pull-left"><span class="dashboard-icon no-resume"><img src="~/img/resume.png" /></span></div>
+                            <div class="col-md-9 pull-left">
+                                <div>
+                                    <h3 class="dashboard-cat-title"><span><strong>Not Processed Resume</strong></span></h3>
+                                </div>
+                                <div class="dashboard-count pull-left">
+                                    <div class="header-back"></div>
+                                   <strong><span style="cursor:pointer" id="ribbonnotprocessedcandidateresume_1" class="card-title">@Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span></strong>
+                                </div>
+
+                                <div class="pull-right">
+                                    <button onclick="OpenRibbonDetailsUnProcessedResume()" class="click-arrow" title="Detail View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+                           <div class="col-lg-3 col-md-4 col-sm-6">
+    <div class="panel card flipper">
+        <div id="survey-feedback">
+            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
+                <div class="panel-heading" data-position="bottom">
+
+                    <div id="slotsId">
+                        <div class="panel-body panel-body-table">
+                            <div class="col-md-3 pull-left"><span class="dashboard-icon zoom"><img src="~/img/zoom-icon.png" /></span></div>
+                            <div class="col-md-9 pull-left">
+                                <div>
+                                    <h3 class="dashboard-cat-title"><span><strong>Missing Zoom Link</strong></span></h3>
+                                </div>
+                                <div class="dashboard-count pull-left">
+                                    <div class="header-front"></div>
+                                    <strong> <span style="cursor:pointer" id="ribbonmissingzoomlinkcount">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span></strong>
+
+                                </div>
+
+                                <div class="pull-right">
+                                    <button class="click-arrow" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')" title="Detail View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
+                <div class="panel-heading" data-position="bottom">
+
+                    <div id="slotsId">
+                        <div class="panel-body panel-body-table">
+                            <div class="col-md-3 pull-left"><span class="dashboard-icon zoom"><img src="~/img/zoom-icon.png" /></span></div>
+                            <div class="col-md-9 pull-left">
+                                <div>
+                                    <h3 class="dashboard-cat-title"><span><strong>Missing Zoom Link</strong></span></h3>
+                                </div>
+
+                                <div class="dashboard-count pull-left">
+                                    <div class="header-back"></div>
+                                  <strong> <span style="cursor:pointer" id="ribbonmissingzoomlinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span></strong>
+                                </div>
 
                                                         <div class="pull-right">
                                                             <button class="click-arrow" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')" class="click-arrow" title="Detail View">
@@ -129,30 +279,134 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
+                                <div class="panel card flipper">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
+                                            <div class="panel-heading" data-position="bottom">
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Participant waiting</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong><span id="ribbonUnAttendedZoomLinkcount" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink </span> </strong>
-                                                        </div>
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Participant waiting</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonUnAttendedZoomLinkcount" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink </span> </strong>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Participant waiting</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon video"><img src="~/img/missing-video.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Missing Video Link</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong> <span id="ribbonmissingvideolinkcount" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')"> @Model.NotUpdatedMeetingsObj.MissingVideoLink </span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon video"><img src="~/img/missing-video.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Missing Video Link</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer" id="ribbonmissingvideolinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingVideoLink</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -160,39 +414,10 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
+                                <div class="panel card flipper">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon video"><img src="~/img/missing-video.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Missing Video Link</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span id="ribbonmissingvideolinkcount" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')"> @Model.NotUpdatedMeetingsObj.MissingVideoLink </span> </strong>
-
-                                                        </div>
-
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
-                                    <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
+                                            <div class="panel-heading" data-position="bottom">
 
                                             <div id="slotsId">
                                                 <div class="panel-body panel-body-table">
@@ -206,17 +431,118 @@
                                                             <span id="ribbonDeletedZoomMeetingCount" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">0</span>
                                                         </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
+
                                                     </div>
 
+                                                </div>
+                                            </div>
+
+
+                                        </div>
 
 
 
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
+                                            <div class="panel-heading" data-position="bottom">
 
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon deleted"><img src="~/img/zoom-icon.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Deleted Zoom Meetings</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span id="ribbonDeletedZoomMeetingCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">0</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>QC Report Pending</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonQCPendingReportCount" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')"> @Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>  </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>QC Report Pending</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer" id="ribbonQCPendingReportCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -224,123 +550,140 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
+                                <div class="panel card flipper">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
+                                            <div class="panel-heading" data-position="bottom">
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>QC Report Pending</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong><span id="ribbonQCPendingReportCount" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')"> @Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>  </strong>
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon clarity"><img src="~/img/clarity.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Need Clarity</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonNeedClarityCount" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')"> @Model.NotUpdatedMeetingsObj.NeedClarityCount </span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
                                                     </div>
 
+                                                </div>
+                                            </div>
 
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon clarity"><img src="~/img/clarity.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Need Clarity</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer" id="ribbonNeedClarityCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.NeedClarityCount</span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
-                                    <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
-
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon clarity"><img src="~/img/clarity.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Need Clarity</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong><span id="ribbonNeedClarityCount" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')"> @Model.NotUpdatedMeetingsObj.NeedClarityCount </span> </strong>
-                                                        </div>
-
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
-                                    <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
-
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Open Issue</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span id="ribbonOpenIssueCount" onclick="OpenRibbonDetailsRaisedIssue()"> @Model.NotUpdatedMeetingsObj.OpenIssueCount </span> </strong>
-                                                        </div>
-
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetailsRaisedIssue()" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
 
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
+                                <div class="panel card flipper">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
+                                            <div class="panel-heading" data-position="bottom">
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon reschedule"><img src="~/img/reschedule.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>ReSchedule Interviews</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span id="ribbonReScheduleCount" onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')"> @Model.NotUpdatedMeetingsObj.RescheduleInterviewMeetingCount</span>  </strong>
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Open Issue</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer" id="ribbonOpenIssueCount" class="card-title">@Model.NotUpdatedMeetingsObj.OpenIssueCount</span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetailsRaisedIssue()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
                                                     </div>
 
+                                                </div>
+                                            </div>
 
 
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Open Issue</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer" id="ribbonOpenIssueCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.OpenIssueCount</span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetailsRaisedIssue()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -350,30 +693,70 @@
 
 
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card">
+                                <div class="panel card flipper">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')">
+                                            <div class="panel-heading" data-position="bottom">
 
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Potential Risk Interviewer</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <strong> <span id="ribbonPotentialRiskInterviewCount" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon reschedule"><img src="~/img/reschedule.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>ReSchedule Interviews</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonReScheduleCount" onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')"> @Model.NotUpdatedMeetingsObj.RescheduleInterviewMeetingCount</span>  </strong>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="pull-right">
-                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')" class="click-arrow" title="Detail View">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                            </button>
-                                                        </div>
                                                     </div>
 
+                                                </div>
+                                            </div>
 
 
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon reschedule"><img src="~/img/reschedule.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>ReSchedule Interviews</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonReScheduleCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')"> @Model.NotUpdatedMeetingsObj.RescheduleInterviewMeetingCount</span>  </strong>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -381,9 +764,78 @@
                                 </div>
                             </div>
 
-                            
-                           
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')">
+                                            <div class="panel-heading" data-position="bottom">
 
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Potential Risk Interviewer</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Potential Risk Interviewer</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
 
                         </div>
 
@@ -408,36 +860,29 @@
 <script type="text/javascript">
     var setRibbonCalledCount = 0;
     var getDeletedZoomMeetingsCount = false;
-   $(document).ready(function () {
-      
-     // TimeInterval();
-
-     setRibbon();
-       // $('[data-toggle="tooltip"]').tooltip();
-
+    $(document).ready(function () {
+        // TimeInterval();
+        setRibbon();
+        // $('[data-toggle="tooltip"]').tooltip();
     });
 
-function TimeIntervalUrl()
-{
-$.ajax({
-            type:'GET',
+    function TimeIntervalUrl() {
+        $.ajax({
+            type: 'GET',
             url: '/Dashboard/Dashboard911',
-            success:function(){
+            success: function () {
                 location.reload(true);
             }
-});
-}
-function TimeInterval()
-{
- 
+        });
+    }
+    function TimeInterval() {
         setInterval(TimeIntervalUrl, 90000);
-}
+    }
 </script>
 
 
 <script>
     function setRibbon() {
-
         if (setRibbonCalledCount == 0) {
             getDeletedZoomMeetingsCount = true;
         }
@@ -447,9 +892,7 @@ function TimeInterval()
         $.ajax({
             url: '/Dashboard/FetchRibbonValues',
             data: { 'section': 0, 'getDeletedZoomMeetingsCount': getDeletedZoomMeetingsCount },
-            success: function (data) 
-            {
-                
+            success: function (data) {
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
@@ -461,7 +904,7 @@ function TimeInterval()
                 $("#ribbonOpenIssueCount").text(data.openIssueCount);
                 $("#ribbonReScheduleCount").text(data.rescheduleInterviewMeetingCount);
                 $("#PotentialRiskInterviewCount").text(data.potentialRiskInterviewCount);
-                
+
                 //if (getDeletedZoomMeetingsCount) {
                 //    var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
                 //    if (classList != null && classList.includes("spinner")) {
@@ -498,12 +941,11 @@ function TimeInterval()
                 //else {
                 //    setRibbonCalledCount = 0;
                 //}
-               
+
             }
         });
-        //$(".flipper").toggleClass("flip");
-        setTimeout(setRibbon, 90000);
+        $(".flipper").toggleClass("flip");
+        setTimeout(setRibbon, 60000);
     }
-  
 
 </script>
