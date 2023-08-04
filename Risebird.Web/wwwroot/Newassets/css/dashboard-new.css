@@ -5936,6 +5936,19 @@ input[type="date"].form-control {
     max-width: 752px;
     margin: 0px auto;
 }
+#keycontainer {
+    float: left;
+    padding: 0px 10px;
+}
+#keycontainer div {
+    float: left;
+    background-color: red;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin: 3px;
+    color:#fff;
+    font-size:14px;
+}
 
 /***** Media queries *****/
 .copy-btn {

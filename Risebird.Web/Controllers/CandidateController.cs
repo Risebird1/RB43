@@ -2677,9 +2677,9 @@ namespace Risebird.Web.Controllers
                                             {
                                                 try
                                                 {
-                                                    string str = workSheet.Cells[rowIterator, 4].Value.ToString();
-                                                    int numberOfLetters = str.ToCharArray().Length;
-                                                    var phoneValidate = numberOfLetters >= 9 && int.TryParse(str, out int phoneNumber);
+                                                    string str = (workSheet.Cells[rowIterator, 4] != null && workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString()  : string.Empty;
+                                                    int numberOfLetters = !string.IsNullOrEmpty(str) ? str.ToCharArray().Length : 0;
+                                                    var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
                                                     var candidate = new CandidateQuickAddModel
                                                     {
                                                         Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
@@ -2688,7 +2688,7 @@ namespace Risebird.Web.Controllers
                                               ? workSheet.Cells[rowIterator, 3].Value.ToString()
                                               : string.Empty,
                                                         Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
-                                              ? ("+" + workSheet.Cells[rowIterator, 4].Value)
+                                              ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString())
                                               : string.Empty,
                                                         WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
                                               ? workSheet.Cells[rowIterator, 5].Value.ToString()
