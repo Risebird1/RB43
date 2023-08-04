@@ -3069,7 +3069,7 @@ namespace Risebird.Repository
                 dynamicParam.Add("@SuspiciousStatus", model.SuspiciousStatus);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync(conChange, "sp_InsertInterviewerSuspicious", dynamicParam,
+                    await SqlMapper.QueryAsync(conChange, "usp_InsertInterviewerSuspicious", dynamicParam,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
