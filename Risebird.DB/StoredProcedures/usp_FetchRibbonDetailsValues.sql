@@ -297,7 +297,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id=  irf.RisebirdHr 
-				where cr.Question2>=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ulsh.Emailid= @Emailid
+				where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ulsh.Emailid= @Emailid
 			end
 			else
 			begin
@@ -310,7 +310,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				join IRF on im.IRFId=irf.IRFId
 				join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=  irf.RisebirdHr
-				where cr.Question2>=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+				where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 			end
 		end
 		else
@@ -325,7 +325,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
-			where cr.Question2>=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID 
+			where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID 
 			union 
 			select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
 			cl.Name as Name,
@@ -335,7 +335,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			join IRF on im.IRFId=irf.IRFId 
 			join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
-			where cr.Question2>=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID
+			where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID
 		end
 	end
 

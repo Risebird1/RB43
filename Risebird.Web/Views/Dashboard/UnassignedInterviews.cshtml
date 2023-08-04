@@ -241,7 +241,7 @@
                                                     }
 
                                                     <th>Candidate Email</th>
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
                                                     <th>Interviewer</th>
                                                         }
@@ -252,7 +252,7 @@
                                                     @if (ViewBag.actionstatus != "ReScheduleCount")
                                                     {
                                                         //PotentialRiskInterviewCount not allow
-                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
                                                             @if (ViewBag.actionstatus != "NeedClarity")
                                                             {
@@ -340,7 +340,7 @@
                                                         <th>Candidate Contact</th>
                                                     }
                                                     <th>Candidate Email</th>
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
                                                     <th>Interviewer</th>
                                                         }
@@ -349,7 +349,7 @@
                                                         <th>Interviewer Contact</th>
                                                     }
 
-                                                @if (ViewBag.actionstatus != "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
                                                     {
                                                         //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
@@ -482,7 +482,7 @@
                                                             }
                                                         }
                                                         <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -501,7 +501,7 @@
                                                             <td>@item.InterviewerMobileNumber</td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
                                                             //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
@@ -585,7 +585,7 @@
                                                         }
                                                           @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
                                                             {
-                                                                <td><span >@item.Comment</span></td>
+                                                                <td><span class="white-space" >@item.Comment</span></td>
                                                             }
                                                         @if (ViewBag.actionstatus == "InterviewCount")
                                                         {

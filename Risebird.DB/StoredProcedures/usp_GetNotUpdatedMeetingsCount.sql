@@ -56,7 +56,8 @@ declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Op
 declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))
 
- declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2>=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+ declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+
 
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
@@ -88,6 +89,7 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @RescheduleInterviewMeetingCount as RescheduleInterviewMeetingCount,
 @PotentialRiskInterviewCount as PotentialRiskInterviewCount
 
+
 END        
 ELSE        
 BEGIN  
@@ -118,7 +120,8 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')
 
 set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))
 
-set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2>=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
@@ -126,6 +129,7 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount,
 @RescheduleInterviewmeetingCount as RescheduleInterviewMeetingCount,
 @PotentialRiskInterviewCount as PotentialRiskInterviewCount
+
 
 
 
