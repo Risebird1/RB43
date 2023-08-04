@@ -7709,6 +7709,7 @@ namespace Risebird.Web.Controllers
                         return null;
                     }
                     string convertedText = string.Empty;
+                    List<string> keywordsFoundList = new List<string>();
                     if (!string.IsNullOrEmpty(fileContent))
                     {
                         string[] keywords = TranscriptKeywords.Keywords;
@@ -7725,6 +7726,8 @@ namespace Risebird.Web.Controllers
                                     count = count + 1;
                                 }
 
+                                keywordsFoundList.Add(word);
+
                                 //word = "<mark>" + word + "</mark>";
                                 word = " <span style=\"background-color:red;padding:3px 5px;border-radius:3px;\" class=\"highlighted\">" + word + "</span>";
                                 word = " <span style=\"color:#fff;\">" + word + "</span>";
@@ -7734,7 +7737,10 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-
+                    if(keywordsFoundList!=null && keywordsFoundList.Count()>0)
+                    {
+                        model.KeywordsFound = string.Join(",", keywordsFoundList);
+                    }
                     model.ConvertedText = convertedText;
                     model.Total = count;
 

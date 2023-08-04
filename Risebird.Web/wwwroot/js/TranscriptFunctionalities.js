@@ -15,11 +15,24 @@ function GetMeetingAudioText(imid, transcriptUrl = null) {
                     transcriptElement.innerHTML = 'Not available';
                 }
                 else {
-
-                    var innerText = '<label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;">Total Keywords Match Found:</label><span class="matcnum" style="font-size: 17px; color:#1ca396;font-weight: 600;padding-left: 2px;">' + data.total + '</span><br>  <div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+                    if (data.keywordsFound != null && data.keywordsFound != '') {
+                       
+                    }
+                    var innerText = '<div class="clearfix"><label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;float:left">Suspicious Keywords Match Found:</label><span id="key" class="matcnum" style="foat:left"><h1  style="color:red;display:none;">' + data.keywordsFound + '</h1><div id=keycontainer></div></span></div><br>  <div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
                     totalHighlightedWords = data.total;
                     transcriptElement.innerHTML = innerText;
-
+                    const h1 = document.querySelector('h1');
+                        output = document.getElementById('keycontainer'),
+                        update = function () {
+                            var words = h1.textContent.trim().split(/,\s*/);
+                            while (output.firstChild) output.removeChild(output.firstChild);
+                            for (var i = 0; i < words.length; i++) {
+                                var div = document.createElement('div');
+                                div.textContent = words[i];
+                                output.appendChild(div);
+                            }
+                        };
+                    update();
                 }
 
             }
