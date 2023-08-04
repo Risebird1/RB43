@@ -1,6 +1,6 @@
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('sp_InsertInterviewerSuspicious'))
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_InsertInterviewerSuspicious'))
 BEGIN
-    DROP PROCEDURE dbo.InsertMeetings
+    DROP PROCEDURE dbo.usp_InsertInterviewerSuspicious
 END
 
 
@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create Procedure [dbo].[sp_InsertInterviewerSuspicious]
+Create Procedure [dbo].[usp_InsertInterviewerSuspicious]
 @Comment varchar(250),
 @Email varchar(50),
 @CreatedDate datetime,
