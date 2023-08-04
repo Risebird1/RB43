@@ -3753,6 +3753,37 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> AddSuspiciousTypeComment(string Email, string Comment)
+        {
+            try
+            {
+                SuspiciousInterviewerVM model = new SuspiciousInterviewerVM();
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                model.EmailId= Email;
+                model.Comment = Comment;
+                model.Createddate = DateTime.Now;
+                model.CreatedBy = emailId;
+                model.SuspiciousStatus = false;
+                var data = await _interviewerService.AddSuspiciousTypeService(model);
+                if (data == true)
+                {
+                    return Json("Suspicious Interviewer marked Successfully");
+                }
+                else
+                {
+                    return Json("Fail to marked Suspicious Interviewer, Try again after sometime.");
+                }
+         
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
