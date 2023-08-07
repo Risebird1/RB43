@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="row  col-sm-12">
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper1">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
                                             <div class="panel-heading" data-position="bottom">
@@ -80,7 +80,7 @@
                                     </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-    <div class="panel card flipper">
+    <div class="panel card flipper2">
         <div id="survey-feedback">
             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
                 <div class="panel-heading" data-position="bottom">
@@ -144,7 +144,7 @@
     </div>
 </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-    <div class="panel card flipper">
+    <div class="panel card flipper3">
         <div id="survey-feedback">
             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
                 <div class="panel-heading" data-position="bottom">
@@ -216,7 +216,7 @@
     </div>
 </div>
                            <div class="col-lg-3 col-md-4 col-sm-6">
-    <div class="panel card flipper">
+    <div class="panel card flipper4">
         <div id="survey-feedback">
             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
                 <div class="panel-heading" data-position="bottom">
@@ -281,7 +281,7 @@
                             </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper5">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
                                             <div class="panel-heading" data-position="bottom">
@@ -346,7 +346,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper6">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.VideoLink')">
                                             <div class="panel-heading" data-position="bottom">
@@ -413,76 +413,9 @@
                                     </div>
                                 </div>
                             </div>
+                          
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
-                                    <div id="survey-feedback">
-                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
-                                            <div class="panel-heading" data-position="bottom">
-
-                                            <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
-
-                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon deleted"><img src="~/img/zoom-icon.png" /></span></div>
-                                                    <div class="col-md-9 pull-left">
-                                                        <div>
-                                                            <h3 class="dashboard-cat-title"><span><strong>Deleted Zoom Meetings</strong></span></h3>
-                                                        </div>
-                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
-                                                            <span id="ribbonDeletedZoomMeetingCount" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">0</span>
-                                                        </div>
-
-                                                            <div class="pull-right">
-                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-
-
-
-                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
-                                            <div class="panel-heading" data-position="bottom">
-
-                                                <div id="slotsId">
-                                                    <div class="panel-body panel-body-table">
-                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon deleted"><img src="~/img/zoom-icon.png" /></span></div>
-                                                        <div class="col-md-9 pull-left">
-                                                            <div>
-                                                                <h3 class="dashboard-cat-title"><span><strong>Deleted Zoom Meetings</strong></span></h3>
-                                                            </div>
-
-                                                            <div class="dashboard-count pull-left">
-                                                                <div class="header-back"></div>
-                                                                <strong>
-                                                                    <span id="ribbonDeletedZoomMeetingCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">0</span>
-                                                                </strong>
-                                                            </div>
-
-                                                            <div class="pull-right">
-                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper7">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
                                             <div class="panel-heading" data-position="bottom">
@@ -550,7 +483,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper8">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
                                             <div class="panel-heading" data-position="bottom">
@@ -620,7 +553,7 @@
                             </div>
 
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper9">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
                                             <div class="panel-heading" data-position="bottom">
@@ -693,7 +626,7 @@
 
 
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper10">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ReScheduleCount')">
                                             <div class="panel-heading" data-position="bottom">
@@ -765,7 +698,7 @@
                             </div>
 
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper">
+                                <div class="panel card flipper11">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')">
                                             <div class="panel-heading" data-position="bottom">
@@ -835,8 +768,74 @@
                                     </div>
                                 </div>
                             </div>
-                          
 
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon deleted"><img src="~/img/zoom-icon.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Deleted Zoom Meetings</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                                <span id="ribbonDeletedZoomMeetingCount" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">0</span>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon deleted"><img src="~/img/zoom-icon.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Deleted Zoom Meetings</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span id="ribbonDeletedZoomMeetingCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')">0</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.DeletedZoomMeetings')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -893,58 +892,104 @@
             url: '/Dashboard/FetchRibbonValues',
             data: { 'section': 0, 'getDeletedZoomMeetingsCount': getDeletedZoomMeetingsCount },
             success: function (data) {
+                if (parseInt(data.unassignedInterviewsCount) != parseInt($("#ribbonunassignedinterviewcount").text())) {
+                    $(".flipper1").addClass("flipper");
+                }
+                else {
+                    $(".flipper1").removeClass("flipper");
+                }
+                   if (parseInt(data.unfilledMeetingStatusCount) != parseInt($("#ribbonunfilledmeetingstatuscount").text())) {
+                    $(".flipper2").addClass("flipper");
+                }
+                else {
+                    $(".flipper2").removeClass("flipper");
+                }
+                if (parseInt(data.notProcessedCandidateResume) != parseInt($("#ribbonnotprocessedcandidateresume").text())) {
+                    $(".flipper3").addClass("flipper");
+                }
+                else {
+                    $(".flipper3").removeClass("flipper");
+                }
+                if (parseInt(data.missingZoomLink) != parseInt($("#ribbonmissingzoomlinkcount").text())) {
+                    $(".flipper4").addClass("flipper");
+                }
+                else {
+                    $(".flipper4").removeClass("flipper");
+                }
+    
+                if (parseInt(data.unAttendedZoomLink) != parseInt($("#ribbonUnAttendedZoomLinkcount").text())) {
+                    $(".flipper5").addClass("flipper");
+                }
+                else {
+                    $(".flipper5").removeClass("flipper");
+                }
+                if (parseInt(data.missingVideoLink) != parseInt($("#ribbonmissingvideolinkcount").text())) {
+                    $(".flipper6").addClass("flipper");
+                }
+                else {
+                    $(".flipper6").removeClass("flipper");
+                }
+
+                if (parseInt(data.qcPendingReportCount) != parseInt($("#ribbonQCPendingReportCount").text())) {
+                    $(".flipper7").addClass("flipper");
+                }
+                else {
+                    $(".flipper7").removeClass("flipper");
+                }
+                if (parseInt(data.needClarityCount) != parseInt($("#ribbonNeedClarityCount").text())) {
+                    $(".flipper8").addClass("flipper");
+                }
+                else {
+                    $(".flipper8").removeClass("flipper");
+                }
+                if (parseInt(data.openIssueCount) != parseInt($("#ribbonOpenIssueCount").text())) {
+                    $(".flipper9").addClass("flipper");
+                }
+                else {
+                    $(".flipper9").removeClass("flipper");
+                }
+                if (parseInt(data.rescheduleInterviewMeetingCount) != parseInt($("#ribbonReScheduleCount").text())) {
+                    $(".flipper10").addClass("flipper");
+                }
+                else {
+                    $(".flipper10").removeClass("flipper");
+                }
+                if (parseInt(data.potentialRiskInterviewCount) != parseInt($("#ribbonPotentialRiskInterviewCount").text())) {
+                    $(".flipper11").addClass("flipper");
+                }
+                else {
+                    $(".flipper11").removeClass("flipper");
+                }
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
-                $("#ribbonQCPendingReportCount").text(data.qCPendingReportCount);
+                $("#ribbonQCPendingReportCount").text(data.qcPendingReportCount);
                 $("#ribbonNeedClarityCount").text(data.needClarityCount);
                 $("#ribbonOpenIssueCount").text(data.openIssueCount);
                 $("#ribbonReScheduleCount").text(data.rescheduleInterviewMeetingCount);
-                $("#PotentialRiskInterviewCount").text(data.potentialRiskInterviewCount);
+                $("#ribbonPotentialRiskInterviewCount").text(data.potentialRiskInterviewCount);
 
-                //if (getDeletedZoomMeetingsCount) {
-                //    var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
-                //    if (classList != null && classList.includes("spinner")) {
-                //        $("#ribbonDeletedZoomMeetingCount").removeClass("spinner-grow text-danger");
-                //        $("#ribbonDeletedZoomMeetingCount_1").removeClass("spinner-grow text-danger");
-                //        $("#ribbonDeletedZoomMeetingCount").addClass("card-title");
-                //        $("#ribbonDeletedZoomMeetingCount_1").addClass("card-title");
-                //    }
-                //    $("#ribbonDeletedZoomMeetingCount").text(data.upcomingMeetingsDeletedFromZoom);
-                //    $("#ribbonDeletedZoomMeetingCount_1").text(data.upcomingMeetingsDeletedFromZoom);
-                //}
-                //$("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
-                //$("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
-                //$("#ribbonnotprocessedcandidateresume_1").text(data.notProcessedCandidateResume);
-                //$("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
-                //$("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
-                //$("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
-                //$("#ribbonQCPendingReportCount_1").text(data.qCPendingReportCount);
-                //$("#ribbonNeedClarityCount_1").text(data.needClarityCount);
-                //$("#ribbonOpenIssueCount_1").text(data.openIssueCount);
+          
+                $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
+                $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
+                $("#ribbonnotprocessedcandidateresume_1").text(data.notProcessedCandidateResume);
+                $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
+                $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
+                $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
+                $("#ribbonQCPendingReportCount_1").text(data.qcPendingReportCount);
+                $("#ribbonNeedClarityCount_1").text(data.needClarityCount);
+                $("#ribbonOpenIssueCount_1").text(data.openIssueCount);
+                $("#ribbonReScheduleCount_1").text(data.rescheduleInterviewMeetingCount);
+                $("#ribbonPotentialRiskInterviewCount_1").text(data.potentialRiskInterviewCount);
 
-                //if (parseInt(data.unAttendedZoomLink) > 0) {
-                //    var bipsoundcount = localStorage.getItem("bipsoundcount");
-                //    if (parseInt(data.unAttendedZoomLink) > parseInt(bipsoundcount)) {
-                //        var audio = document.getElementById("chatAudio");
-                //        audio.play();
-                //    }
-                //}
-                //localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
-                //if (setRibbonCalledCount != 30) {
-                //    setRibbonCalledCount = setRibbonCalledCount + 1;
-
-                //}
-                //else {
-                //    setRibbonCalledCount = 0;
-                //}
-
+                $(".flipper").toggleClass("flip");
             }
         });
-        $(".flipper").toggleClass("flip");
+      
+      
         setTimeout(setRibbon, 60000);
     }
 
