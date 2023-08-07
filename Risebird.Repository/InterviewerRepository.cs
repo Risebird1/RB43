@@ -3084,6 +3084,30 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<bool> AddSuspiciousType(SuspiciousInterviewerVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@Email", model.EmailId);
+                dynamicParam.Add("@Comment",model.Comment);
+                dynamicParam.Add("@CreatedDate", model.Createddate);
+                dynamicParam.Add("@CreatedBy", model.CreatedBy);
+                dynamicParam.Add("@SuspiciousStatus", model.SuspiciousStatus);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_InsertInterviewerSuspicious", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 
 }
