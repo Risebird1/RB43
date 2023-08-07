@@ -2051,7 +2051,7 @@
         else if (surchargecomment.trim() != '') {
             $.ajax({
                 type: "POST",
-                url: "/Interview/SaveVideoDetails",
+                url: "/Interview/SaveSurchargeInterviewDetails",
                 data: { interviewid: interviewid, surchargecomment: surchargecomment, surchargeamt: surchargeamt, CandidateEmail: CandidateEmail },
                 success: function (data) {
                     alert(data);
