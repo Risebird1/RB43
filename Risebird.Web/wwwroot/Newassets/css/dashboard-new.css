@@ -1711,7 +1711,8 @@ audio {
     text-align: center;
 }
 .dashboard
-.flipper.flip .back-card {
+.flipper.flip .back-card, .dashboard
+.flipper1.flip .back-card {
     -webkit-transform: rotateY(0deg);
     -moz-transform: rotateY(0deg);
     transform: rotateY(0deg);
@@ -1719,7 +1720,6 @@ audio {
     background: #FFFFFF;
     background: none;
     background: none;
-    
 }
 
 .dashboard .flipper.flip .front-card {

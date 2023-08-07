@@ -1783,31 +1783,32 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = new DashboardVM();
-                        model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
+                        model.NotUpdatedMeetingsObj = new NotUpdatedMeetings();
+                        //model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
                         model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
-                        var progressDate = TempData.Peek("ProgressDate")?.ToString();
-                        if (!string.IsNullOrEmpty(progressDate))
-                        {
-                            model.ProgressDate = Convert.ToDateTime(progressDate);
-                            TempData.Keep("ProgressDate");
-                        }
-                        else
-                        {
-                            model.ProgressDate = DateTime.Now;
-                        }
-                        model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
-                        model.ProgressOptions = new SelectList(await _dashboardService.GetProgressOptions(), "id", "Name");
-                        var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
-                                            select new { ID = (int)s, Name = s.GetDescription() };
-                        model.AssassinationList = new SelectList(Assassination, "ID", "Name");
+                       // var progressDate = TempData.Peek("ProgressDate")?.ToString();
+                        //if (!string.IsNullOrEmpty(progressDate))
+                        //{
+                        //    model.ProgressDate = Convert.ToDateTime(progressDate);
+                        //    TempData.Keep("ProgressDate");
+                        //}
+                        //else
+                        //{
+                        //    model.ProgressDate = DateTime.Now;
+                        //}
+                        //model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
+                        //model.ProgressOptions = new SelectList(await _dashboardService.GetProgressOptions(), "id", "Name");
+                        //var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
+                        //                    select new { ID = (int)s, Name = s.GetDescription() };
+                        //model.AssassinationList = new SelectList(Assassination, "ID", "Name");
 
-                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
-                        interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
-                        foreach (var item in interviewmanagement)
-                        {
-                            item.interviewDate = item.interviewDate.Date;
-                        }
-                        model.InterviewManagement = interviewmanagement;
+                        //var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
+                        //interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
+                        //foreach (var item in interviewmanagement)
+                        //{
+                        //    item.interviewDate = item.interviewDate.Date;
+                        //}
+                        //model.InterviewManagement = interviewmanagement;
                         return View(model);
                     }
                     else

@@ -90,6 +90,7 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @PotentialRiskInterviewCount as PotentialRiskInterviewCount,
 @SuspeciousInterviewerCount as SuspeciousInterviewerCount
 
+
 END        
 ELSE        
 BEGIN  
@@ -130,6 +131,7 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @RescheduleInterviewmeetingCount as RescheduleInterviewMeetingCount,
 @PotentialRiskInterviewCount as PotentialRiskInterviewCount,
 @SuspeciousInterviewerCount as SuspeciousInterviewerCount
+
 
 
 
