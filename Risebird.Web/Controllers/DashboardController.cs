@@ -1157,7 +1157,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Suspicious Interview";
+                            ViewBag.PageHeader = "911 Dashboard / Suspicious Interviewer";
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
@@ -1240,6 +1240,14 @@ namespace Risebird.Web.Controllers
                         else if (actionstatus == RibbonActionType.ReScheduleCount)
                         {
                             ViewBag.PageHeader = "911 Dashboard / Reschedule Interview";
+                        }
+                        else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Potential Risk Interview";
+                        }
+                        else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
+                        {
+                            ViewBag.PageHeader = "911 Dashboard / Suspicious Interviewer";
                         }
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)

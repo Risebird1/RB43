@@ -304,11 +304,11 @@ namespace Risebird.Entities.ViewModel
         //For Suspicious Interviewer
         public string SuspiciousName { get; set; }
         public string SuspiciousEmail { get; set; }
-        public string InterviewerAddOn { get; set; }
-        public string InterviewerBy { get; set; }
+        public string InterviewAddedOn { get; set; }
+        public string CreatedBy { get; set; }
         public string ResumeLink { get; set; }
         public string SuspiciousComment { get; set; }
-        public string SuspiciousBy { get; set; }
+        public string SuspiciousAddedBy { get; set; }
         public string SuspiciousMobileNumber { get; set; }
     }
     public class VedioComments

@@ -321,11 +321,11 @@
                                                         
                                                     <th>Name</th>
                                                     <th>Email</th>
-                                                    <th>Interviewer Addon</th>
-                                                    <th>Interviewer By</th>
+                                                    <th>Interview Addedon</th>
+                                                    <th>Created By</th>
                                                     <th>Resume</th>
 													<th>Comment</th>
-                                                    <th>Created By</th>
+                                                    <th>Suspicious Added By</th>
                                                     <th>Mobile</th>
                                                     }
 
@@ -444,11 +444,11 @@
                                                         
                                                     <th>Name</th>
                                                     <th>Email</th>
-                                                    <th>Interviewer Addon</th>
-                                                    <th>Interviewer By</th>
+                                                    <th>Interview Addedon</th>
+                                                    <th>Created By</th>
                                                     <th>Resume</th>
                                                     <th>Comment</th>
-                                                    <th>Created By</th>
+                                                        <th>Suspicious Added By</th>
                                                     <th>Mobile</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
@@ -661,8 +661,8 @@
                                                         
                                                    <td>@item.SuspiciousName</td>
                                                    <td>@item.SuspiciousEmail</td>
-                                                   <td>@item.InterviewerAddOn</td>
-                                                   <td>@item.InterviewerBy</td>
+                                                            <td>@item.InterviewAddedOn</td>
+                                                   <td>@item.CreatedBy</td>
                                                   
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                                 {
@@ -677,8 +677,8 @@
                                                                 }
 
 
-                                                            <td><span class="white-space">@item.SuspiciousComment</span></td>
-                                                   <td>@item.SuspiciousBy</td>
+                                                    <td><span class="white-space">@item.SuspiciousComment</span></td>
+                                                            <td>@item.SuspiciousAddedBy</td>
                                                    <td>@item.SuspiciousMobileNumber</td>
                                                     }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
