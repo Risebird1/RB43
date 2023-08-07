@@ -105,23 +105,25 @@ namespace Risebird.MicroService
             }
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with final body :  {convertedResponse}");
             //Save response data
-            await _aadhaarRepository.SaveEmploymentDetails(convertedResponse);
-            
-            var _interviewer = new InterviewerProfileVM();
-            _interviewer.EmailId = convertedResponse.CandidateEmail;
-            _interviewer.isVerified = true;
-            if (convertedResponse.employmentSummary != null)
+            if (!string.IsNullOrEmpty(convertedResponse.employmentSummary?.recent_employer_data.matching_uan) || convertedResponse.message == "No record(s found")
             {
-                _interviewer.IsEmployed = convertedResponse.employmentSummary.is_employed;
-                _interviewer.CompanyName = convertedResponse.employmentSummary.recent_employer_data.establishment_name;
+                await _aadhaarRepository.SaveEmploymentDetails(convertedResponse);
+                var _interviewer = new InterviewerProfileVM();
+                _interviewer.EmailId = convertedResponse.CandidateEmail;
+                _interviewer.isVerified = true;
+                if (convertedResponse.employmentSummary != null)
+                {
+                    _interviewer.IsEmployed = convertedResponse.employmentSummary.is_employed;
+                    _interviewer.CompanyName = convertedResponse.employmentSummary.recent_employer_data.establishment_name;
+                }
+                else
+                {
+                    _interviewer.IsEmployed = false;
+                    _interviewer.CompanyName = string.Empty;
+                }
+                _interviewer.EmploymentComment = convertedResponse.message;
+                await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
             }
-            else
-            {
-                _interviewer.IsEmployed = false;
-                _interviewer.CompanyName = string.Empty;
-            }
-            _interviewer.EmploymentComment = convertedResponse.message;
-            await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
             return new OkObjectResult(true);
         }
     }
