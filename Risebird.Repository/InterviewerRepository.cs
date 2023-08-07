@@ -3056,6 +3056,33 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", _interviewer.EmailId);
+                    parameters.Add("@CompanyName", _interviewer.CompanyName ?? string.Empty);
+                    parameters.Add("@IsEmployed", _interviewer.IsEmployed);
+                    parameters.Add("@EmploymentComment", _interviewer.EmploymentComment ?? string.Empty);
+                    parameters.Add("@isVerified", _interviewer.isVerified);
+                    await SqlMapper.QueryAsync<InterviewerStatsVM>(con, "dbo.usp_SaveInterviewerEmploymentDetails", parameters, commandTimeout: 600,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
 
     }
 

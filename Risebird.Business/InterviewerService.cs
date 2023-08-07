@@ -189,11 +189,11 @@ namespace Risebird.Business
                 {
                     interviewerProfile.AssessmentGroupDifference = string.Join(",", assessmentGroupDiffArray);
                 }
-                if(interviewerProfile.AssessmentGroupArrayOld != null)
+                if (interviewerProfile.AssessmentGroupArrayOld != null)
                 {
                     foreach (var item in interviewerProfile.AssessmentGroupArrayOld)
                     {
-                        if(!interviewerProfile.AssessmentGroupArray.Contains(item))
+                        if (!interviewerProfile.AssessmentGroupArray.Contains(item))
                         {
                             removedAssessmentGroupArray.Add(item);
 
@@ -1002,7 +1002,7 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid,string type)
+        public async Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid, string type)
         {
             try
             {
@@ -1426,6 +1426,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveInterviewerEmploymentVerification(_interviewer);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

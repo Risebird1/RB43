@@ -220,5 +220,8 @@ namespace Risebird.Entities.ViewModel
         public bool isVerified { get; set; }
         public DateTime? LastLogin { get; set; }
         public string CreatedBy { get; set; }
+        public string EmploymentComment { get; set; }
+        public string CompanyName { get; set; }
+        public bool IsEmployed { get; set; }
     }
 }
