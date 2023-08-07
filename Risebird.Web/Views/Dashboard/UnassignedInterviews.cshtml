@@ -212,7 +212,7 @@
                                         <table id="meetingTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
                                                        
                                                             <th>IRF ID</th>
@@ -223,7 +223,10 @@
                                                         <th>Skill Channel ID</th>
                                                    
                                                     }
-                                                    <th>Interview Date</th>
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Interview Date</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "ReScheduleCount")
                                                     {
                                                         
@@ -234,14 +237,19 @@
                                                     {
                                                         <th>Who Joined</th>
                                                     }
-                                                    <th>Candidate Name</th>
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-
-                                                    <th>Candidate Email</th>
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Candidate Email</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
                                                     <th>Interviewer</th>
                                                         }
@@ -249,7 +257,7 @@
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
                                                         //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
@@ -265,8 +273,10 @@
 
                                                         }
                                                     }
-
-                                                    <th>Client Name</th>
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Client Name</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
                                                         <th>Client HR</th>
@@ -277,7 +287,7 @@
                                                         <th>Red Flags</th>
                                                     }
                                                      @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
@@ -305,6 +315,20 @@
                                                     <th>JD Title</th>
                                                     }
 
+
+                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
+                                                    {
+                                                        
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Interviewer Addon</th>
+                                                    <th>Interviewer By</th>
+                                                    <th>Resume</th>
+                                                    <th>Comment</th>
+                                                    <th>Created By</th>
+                                                    <th>Mobile</th>
+                                                    }
+
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount"  || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
@@ -313,7 +337,7 @@
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
                                                        
                                                             <th>IRF ID</th>
@@ -324,8 +348,11 @@
                                                         <th>Skill Channel ID</th>
                                                    
                                                     }
-                                                    <th>Interview Date</th>
-                                                      @if (ViewBag.actionstatus == "ReScheduleCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Interview Date</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "ReScheduleCount")
                                                     {
                                                         <th>Future Schedule Date</th>
                                                    
@@ -334,13 +361,19 @@
                                                     {
                                                         <th>Who Joined</th>
                                                     }
-                                                    <th>Candidate Name</th>
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    <th>Candidate Email</th>
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Candidate Email</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
                                                     <th>Interviewer</th>
                                                         }
@@ -349,7 +382,7 @@
                                                         <th>Interviewer Contact</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
                                                         //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
@@ -364,7 +397,10 @@
                                                             }
                                                         }
                                                     }
-                                                    <th>Client Name</th>
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
+                                                        <th>Client Name</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
                                                         <th>Client HR</th>
@@ -376,7 +412,7 @@
                                                     }
 
                                                      @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
@@ -401,6 +437,20 @@
                                                         
                                                     <th>JD Title</th>
                                                     }
+
+
+                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
+                                                    {
+                                                        
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Interviewer Addon</th>
+                                                    <th>Interviewer By</th>
+                                                    <th>Resume</th>
+                                                    <th>Comment</th>
+                                                    <th>Created By</th>
+                                                    <th>Mobile</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
@@ -412,16 +462,19 @@
                                                 {
 
                                                     <tr id=@item.Interviewid>
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                     @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount")
                                                     {
                                                        <td title=@item.IRFId> @item.IRFId </td>
                                                    
                                                     }
+                                                    @if(ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    {
                                                         <td> @item.interviewDate </td>
+                                                    }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount")
                                                         {
                                                             <td title=@item.IRFId> @item.FutureSchduleDate </td>
@@ -452,7 +505,8 @@
                                                                                     @item.WhoJoined.Substring(0, @item.WhoJoined.Length)
                                                                                 </p>
                                                                             </div>
-                                                                        }}
+                                                                        }
+                                                                    }
                                                                     else
                                                                     {
                                                                         <div></div>
@@ -467,7 +521,10 @@
 
                                                             </td>
                                                         }
-                                                        <td>@item.candidateName</td>
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                        {
+                                                            <td>@item.candidateName</td>
+                                                        }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
                                                             <td>@item.MobileNumber</td>
@@ -481,8 +538,11 @@
                                                                 </button>
                                                             }
                                                         }
-                                                        <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                        {
+                                                            <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+                                                        }
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -501,7 +561,7 @@
                                                             <td>@item.InterviewerMobileNumber</td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
                                                             //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
@@ -539,7 +599,10 @@
                                                             }
 
                                                     }
-                                                        <td>@item.Name</td>
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                        {
+                                                            <td>@item.Name</td>
+                                                        }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
                                                             <td>@item.ClientHrContact</td>
@@ -550,7 +613,7 @@
                                                             <td>@item.Redflags</td>
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
+                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
                                                             @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                             {
@@ -592,6 +655,31 @@
 
                                                             <td>@item.JDTiltle</td>
                                                         }
+                                                    @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
+                                                    {
+                                                        
+                                                   <td>@item.SuspiciousName</td>
+                                                   <td>@item.SuspiciousEmail</td>
+                                                   <td>@item.InterviewerAddOn</td>
+                                                   <td>@item.InterviewerBy</td>
+                                                  
+                                                                @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                                {
+                                                                <td>
+
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
+                                                                </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                <td>No Resume</td>
+                                                                }
+
+                                                     
+                                                   <td>@item.SuspiciousComment</td>
+                                                   <td>@item.SuspiciousBy</td>
+                                                   <td>@item.SuspiciousMobileNumber</td>
+                                                    }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
                                                             <td class="meeting-detail-icon">

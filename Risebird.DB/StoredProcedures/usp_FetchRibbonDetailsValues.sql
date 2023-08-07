@@ -339,6 +339,37 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		end
 	end
 
+
+	If(@actionstatus ='SuspeciousInterviewerCount')
+	begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+
+				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName, ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewerAddOn,ip.CreatedBy as InterviewerBy,ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
+				join SeniorHr sh on ul.id=sh.Userid
+				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
+			end
+			else
+			begin
+				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewerAddOn,ip.CreatedBy as InterviewerBy,ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,
+				si.CreatedBy as SuspiciousBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
+				where si.SuspiciousStatus=0
+			end
+		end
+		else
+		begin
+			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewerAddOn,ip.CreatedBy as InterviewerBy,ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
+				join SeniorHr sh on ul.id=sh.Userid
+				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
+			union 
+			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewerAddOn,ip.CreatedBy as InterviewerBy,ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
+				join SeniorHr sh on ul.id=sh.Userid
+				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
+				end
+	end
+
 END
 
 GO
