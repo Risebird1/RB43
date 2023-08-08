@@ -16,5 +16,6 @@
         public static readonly string OpenIssues = "OpenIssues";
         public static readonly string ReScheduleCount = "ReScheduleCount";
         public static readonly string PotentialRiskInterviewCount = "PotentialRiskInterviewCount";
+        public static readonly string SuspeciousInterviewerCount = "SuspeciousInterviewerCount";
     }
 }

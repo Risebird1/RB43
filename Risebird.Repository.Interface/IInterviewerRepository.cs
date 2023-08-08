@@ -101,5 +101,6 @@ namespace Risebird.Repository.Interface
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail);
         Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null);
         Task<bool> AddSuspiciousType(SuspiciousInterviewerVM model);
+        Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer);
     }
 }

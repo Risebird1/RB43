@@ -17,6 +17,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -3808,13 +3809,15 @@ namespace Risebird.Web.Controllers
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
+                var clientDetails = await _clientService.GetClientRoleAndCompanyNameByEmailId(Emailid);
+                var logolink = clientDetails.Item3;
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
                     CC = "talent@risebird.io",
                     Subject = "Candidate Status Update"
                 };
-                var emailsend1 = await _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);
+                var emailsend1 = await _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl, logolink);
                 if (emailsend1.Contains("successfully"))
                     return Json("Success");
                 else
