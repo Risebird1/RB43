@@ -5759,7 +5759,7 @@ namespace Risebird.Web.Controllers
                         //get irfId and interviewdate, candidateEmail and clientHrEmail
 
                         var meetingDetails = await _meetingService.GetMeetingDetails(meetingid);
-                        await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID);
+                        await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID, meetingDetails.logolink);
                     }
                     if (status == 2 || status == 3)
                     {
