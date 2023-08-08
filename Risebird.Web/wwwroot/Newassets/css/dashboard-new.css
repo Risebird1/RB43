@@ -6174,7 +6174,9 @@ input[type="date"].form-control {
 .open-issue {
     background: #ff7f50ba;
 }
-
+.suspicious {
+    background: #64c964;
+}
 
 .risk {
     background: #F44336;

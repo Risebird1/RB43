@@ -19,7 +19,7 @@ namespace Risebird.Entities.ViewModel
         public int OpenIssueCount { get; set; }
         public int RescheduleInterviewMeetingCount { get; set; }
         public int PotentialRiskInterviewCount { get; set; }
-        public int SuspeciousTypeCount { get; set; }
+        public int SuspeciousInterviewerCount { get; set; }
     }
     public class MeetingDetailsForParticipant
     {
