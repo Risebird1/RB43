@@ -19,7 +19,7 @@ CREATE PROCEDURE [dbo].[usp_GetClientRoleAndCompanyNameByEmailId]
 AS  
 Begin  
 
-select cu.ClientId, cl.[Name] from ClientUser cu join UserList ul on ul.id = cu.UserId
+select cu.ClientId, cl.[Name],cl.LogoLink from ClientUser cu join UserList ul on ul.id = cu.UserId
 join Client cl on cl.id = cu.ClientId
 where ul.EmailId = @emailId 
 

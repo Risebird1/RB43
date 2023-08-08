@@ -222,7 +222,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<Tuple<int, string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
+        public async Task<Tuple<int, string,string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
         {
             try
             {
