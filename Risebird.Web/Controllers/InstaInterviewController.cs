@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -39,8 +40,10 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly ISkillService _skillService;
+        private readonly IClientService _clientService;
+        
 
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService)
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService, IClientService clientService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -53,6 +56,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _skillService = skillService;
+            _clientService = clientService;
         }
         [Authorize]
         [HttpGet]
@@ -968,6 +972,8 @@ namespace Risebird.Web.Controllers
                                     accountEmail = "me";
                                 var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
                                 var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
+                                var clientDetails = await _clientService.GetClientRoleAndCompanyNameByEmailId(clientname);
+                                var logolink = clientDetails.Item3;
                                 //Send Mail to Client And Interviewer
                                 Mail _mail = new Mail
                                 {
@@ -980,7 +986,7 @@ namespace Risebird.Web.Controllers
                                     TO = clientname,
                                     Subject = "Risebird: Insta interview has been confirmed for " + CandidateName
                                 };
-                                var emailsend1 = await _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
+                                var emailsend1 = await _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate, logolink);
 
                             }
                             TempData["SuccessErrorMessage"] = result;
@@ -1267,12 +1273,14 @@ namespace Risebird.Web.Controllers
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + model.id + "&Requestedid=" + model.RequestId;
+                                var clientDetails = await _clientService.GetClientRoleAndCompanyNameByEmailId(model.RequestedBy);
+                                var logolink = clientDetails.Item3;
                                 Mail _mail1 = new Mail
                                 {
                                     TO = model.RequestedBy,
                                     Subject = "Insta Report URL of " + model.CandidateName + " - for Insta Interview"
                                 };
-                                var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                                var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName, logolink);
                             }
                             TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });

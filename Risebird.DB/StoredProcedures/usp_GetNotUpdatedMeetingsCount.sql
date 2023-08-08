@@ -57,7 +57,7 @@ declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from Intervi
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))
 
  declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
-
+ declare @SuspeciousInterviewerCount int=(select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=0)
 
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
@@ -87,7 +87,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,
 @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount,
 @RescheduleInterviewMeetingCount as RescheduleInterviewMeetingCount,
-@PotentialRiskInterviewCount as PotentialRiskInterviewCount
+@PotentialRiskInterviewCount as PotentialRiskInterviewCount,
+@SuspeciousInterviewerCount as SuspeciousInterviewerCount
 
 
 END        
@@ -121,14 +122,15 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')
 set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))
 
 set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
-
+set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.SuspiciousStatus=0)
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,
 @QCPendingReportCount as QCPendingReportCount,@NeedClarityCount as NeedClarityCount,@OpenIssueCount as OpenIssueCount,
 @RescheduleInterviewmeetingCount as RescheduleInterviewMeetingCount,
-@PotentialRiskInterviewCount as PotentialRiskInterviewCount
+@PotentialRiskInterviewCount as PotentialRiskInterviewCount,
+@SuspeciousInterviewerCount as SuspeciousInterviewerCount
 
 
 

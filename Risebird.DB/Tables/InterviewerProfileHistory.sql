@@ -35,7 +35,11 @@ CREATE TABLE [dbo].[InterviewerProfileHistory](
 	[ModifiedBy] [varchar](100) NULL,
 	[PerformedAt][datetime] NULL,
 	[PerformedBy][varchar](100) NULL,
-	[ActionType][varchar](15) NULL)
+	[ActionType][varchar](15) NULL,
+	[isVerified] [bit] NULL,
+	[CompanyName] [varchar](100) NULL,
+	[IsEmployed] [bit] NULL,
+	[EmploymentComment] [varchar](50) NULL)
 	
 
 End
