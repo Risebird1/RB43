@@ -94,7 +94,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendRedoClientInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string interviewdate, string staffingAgency = null, string clientlogo = null);
         Task<string> SendClientInterviewPublicURL(Mail model, string Name, string publicurl, string clientlogo);
         Task<string> SendInterviewClerityClientNotification(string CandidateEmail, string interviewDate, string ClientHR, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
-        Task<string> SendCandidateConfirmedNotificationToClient(string candidateEmail, string interviewDate, string clientHREmail, string skillChannelName);
+        Task<string> SendCandidateConfirmedNotificationToClient(string candidateEmail, string interviewDate, string clientHREmail, string skillChannelName, string clientlogo);
         //Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientLogoLink = null);
         Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);

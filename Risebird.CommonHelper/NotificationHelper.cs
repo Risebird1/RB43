@@ -119,7 +119,8 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { meetingDate };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotificationV2.html");//"InterviewMailTemplate.html"
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -252,7 +253,8 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, irfId);
@@ -1065,7 +1067,8 @@ namespace Risebird.CommonHelper
                 //companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
                 //object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
                 object[] parameters = new object[] { clientURL, risebirdLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL, clientLogoLink, risebirdURL };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplateV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
@@ -1194,7 +1197,8 @@ namespace Risebird.CommonHelper
 
 
                 object[] parameters = new object[] { amount, sb.ToString() };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotification.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RBFNPaymentConfirmationNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
@@ -1515,7 +1519,8 @@ namespace Risebird.CommonHelper
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 object[] parameters = new object[] { zoomlink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
@@ -1971,7 +1976,8 @@ namespace Risebird.CommonHelper
 
 
                 object[] parameters = new object[] { UrlDetails };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoInterviewer.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoInterviewer.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoInterviewerV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
@@ -2438,7 +2444,8 @@ namespace Risebird.CommonHelper
                 sb.Append("</table>");
 
                 object[] parameters = new object[] { sb };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCFormDetailsNotification.html");
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCFormDetailsNotification.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCFormDetailsNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
@@ -2682,7 +2689,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateConfirmedNotificationToClient(string candidateEmail, string interviewDate, string clientHREmail, string skillChannelName)
+        public async Task<string> SendCandidateConfirmedNotificationToClient(string candidateEmail, string interviewDate, string clientHREmail, string skillChannelName, string clientlogo)
         {
             try
             {
@@ -2695,7 +2702,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, null));
                 }
 
-                object[] parameters = new object[] { candidateEmail, interviewDate, skillChannelName };
+                object[] parameters = new object[] { candidateEmail, interviewDate, skillChannelName, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateConfirmedNotificationToClient.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateConfirmedNotificationToClientV2.html");
 
