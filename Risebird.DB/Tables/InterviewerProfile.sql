@@ -33,6 +33,9 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[IsInterest] [bit] NULL,
 	[isVerified] [bit] NULL,
 	[FirstTimePopupDisplayed] [bit] NULL,
+	[CompanyName] [varchar](100) NULL,
+	[IsEmployed] [bit] NULL,
+	[EmploymentComment] [varchar](50) NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -307,6 +310,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add FirstTimePopupDisplayed bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompanyName')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add CompanyName varchar(100)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsEmployed')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add IsEmployed bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EmploymentComment')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add EmploymentComment varchar(50)
 END
 
 End

@@ -18,6 +18,8 @@ using System.Linq;
 using Microsoft.OData.Edm;
 using Risebird.Repository.Interface;
 using Risebird.Repository;
+using Risebird.Business.Interface;
+using System.Reflection;
 
 namespace Risebird.MicroService
 {
@@ -26,15 +28,17 @@ namespace Risebird.MicroService
         private readonly IHttpRequestHelper _httpRequestHelper;
         private readonly IConfiguration _configuration;
         private readonly IAadhaarRepository _aadhaarRepository;
+        private readonly IInterviewerService _interviewerService;
         private readonly string employementapikey;
         private readonly string employementendpoint;
-        public SignzyEmploymentVerification(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IAadhaarRepository aadhaarRepository)
+        public SignzyEmploymentVerification(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IAadhaarRepository aadhaarRepository, IInterviewerService interviewerService)
         {
             _httpRequestHelper = httpRequestHelper;
             _configuration = configuration;
             _aadhaarRepository = aadhaarRepository;
             employementapikey = _configuration["EmploymentVerfication:apikey"];
             employementendpoint = _configuration["EmploymentVerfication:endPoint"];
+            _interviewerService = interviewerService;
         }
 
         [FunctionName("SignzyEmploymentVerification")]
@@ -101,7 +105,25 @@ namespace Risebird.MicroService
             }
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with final body :  {convertedResponse}");
             //Save response data
-            await _aadhaarRepository.SaveEmploymentDetails(convertedResponse);
+            if (!string.IsNullOrEmpty(convertedResponse.employmentSummary?.recent_employer_data.matching_uan) || convertedResponse.message == "No record(s found")
+            {
+                await _aadhaarRepository.SaveEmploymentDetails(convertedResponse);
+                var _interviewer = new InterviewerProfileVM();
+                _interviewer.EmailId = convertedResponse.CandidateEmail;
+                _interviewer.isVerified = true;
+                if (convertedResponse.employmentSummary != null)
+                {
+                    _interviewer.IsEmployed = convertedResponse.employmentSummary.is_employed;
+                    _interviewer.CompanyName = convertedResponse.employmentSummary.recent_employer_data.establishment_name;
+                }
+                else
+                {
+                    _interviewer.IsEmployed = false;
+                    _interviewer.CompanyName = string.Empty;
+                }
+                _interviewer.EmploymentComment = convertedResponse.message;
+                await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
+            }
             return new OkObjectResult(true);
         }
     }

@@ -24,12 +24,12 @@ BEGIN
  Experience, PreferredDomain, GitHubLink, ResumeLink,	CodedResumeLink, StackOverflowLink,	LinkedinLink,	
  Blog,	IsLeadInterviewer,	IsApproved,	Tag, AssessmentGroupId, Isinstaavailable, Isavailable, IsNotificationAccepted,
  CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy,
- PerformedAt, PerformedBy, ActionType)
+ PerformedAt, PerformedBy, ActionType,isVerified,CompanyName,IsEmployed,EmploymentComment)
 
  (select id, UserId, NickName,	AltEmailID,	DOB, Gender, AnnualSalary, Country,	City, AltMobileNumber, CurrentRole,
  Experience, PreferredDomain, GitHubLink, ResumeLink,	CodedResumeLink, StackOverflowLink,	LinkedinLink,	
  Blog,	IsLeadInterviewer,	IsApproved,	Tag, AssessmentGroupId, Isinstaavailable, Isavailable, IsNotificationAccepted,
- CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, dateadd(MINUTE, 330, getdate()), CreatedBy, 'Inserted'
+ CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, dateadd(MINUTE, 330, getdate()), CreatedBy, 'Inserted',isVerified,CompanyName,IsEmployed,EmploymentComment
  from InterviewerProfile where id = @id )
 
 END
