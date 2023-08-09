@@ -170,6 +170,7 @@ namespace Risebird.Web.Controllers
                             filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
                             filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName;
                             filter.AadhaarVerified = filter.AadhaarVerified == null ? filter.AadhaarVerified = modelList.Select(x => x.AadhaarVerified).ToArray() : filter.AadhaarVerified = filter.AadhaarVerified;
+                            filter.ChannelOwner = filter.ChannelOwner == null ? filter.ChannelOwner = modelList.Select(x => x.ChannelOwner).ToArray() : filter.ChannelOwner;
 
                             modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && filter.RFID.Contains(c.IRFId)
@@ -182,7 +183,8 @@ namespace Risebird.Web.Controllers
                             && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
                             && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)
                             && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)
-                            && ((filter.AadhaarVerified != null && filter.AadhaarVerified.Count() > 0) ? filter.AadhaarVerified.Contains(c.AadhaarVerified) : c.AadhaarVerified == false)).ToList();
+                            && ((filter.AadhaarVerified != null && filter.AadhaarVerified.Count() > 0) ? filter.AadhaarVerified.Contains(c.AadhaarVerified) : c.AadhaarVerified == false)
+                            && ((filter.ChannelOwner != null && filter.ChannelOwner.Count() > 0) ? filter.ChannelOwner.Contains(c.ChannelOwner) : c.ChannelOwner == null)).ToList();
 
                         }
                         else
@@ -337,6 +339,7 @@ namespace Risebird.Web.Controllers
                     filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                     filter.TemplateName = filter.TemplateName == null ? filter.TemplateName = modelList.Select(x => x.TemplateName).ToArray() : filter.TemplateName;
+                    filter.ChannelOwner = filter.ChannelOwner == null ? filter.ChannelOwner = modelList.Select(x => x.ChannelOwner).ToArray() : filter.ChannelOwner;
 
                     modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
@@ -347,7 +350,8 @@ namespace Risebird.Web.Controllers
                     && (filter.Interviewer.Count() > 0 ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
                     && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                     && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
-                    && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)).ToList();
+                    && ((filter.TemplateName != null && filter.TemplateName.Count() > 0) ? filter.TemplateName.Contains(c.TemplateName) : c.TemplateName == null)
+                    && ((filter.ChannelOwner != null && filter.ChannelOwner.Count() > 0) ? filter.ChannelOwner.Contains(c.ChannelOwner) : c.ChannelOwner == null)).ToList();
 
                     if (modelList.Count == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
@@ -427,9 +431,10 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 35].Value = "Coordinating HR";
                 Sheet.Cells[1, 36].Value = "Job Country";
                 Sheet.Cells[1, 37].Value = "Billing Owner";
+                Sheet.Cells[1, 38].Value = "Channel Owner";
                 if (profileName == "Client")
                 {
-                    Sheet.Cells[1, 38].Value = "Executive URL";
+                    Sheet.Cells[1, 39].Value = "Executive URL";
                 }
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -570,19 +575,20 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 35].Value = item.HRCoordinatorEmailId;
                         Sheet.Cells[i, 36].Value = item.JobCountry;
                         Sheet.Cells[i, 37].Value = item.BillingOwner;
+                        Sheet.Cells[i, 38].Value = item.ChannelOwner;
                         if (profileName == "Client")
                         {
                             var executiveurl = "https://portal.risebird.io/Interview/ClientReport?interviewId=" + item.Interviewid + "&irfId=" + item.irfIntId + "&isClient=True";
                             try
                             {
-                                Sheet.Cells[i, 38].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                                Sheet.Cells[i, 38].Value = "Executive Report";
-                                Sheet.Cells[i, 38].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 38].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 39].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                                Sheet.Cells[i, 39].Value = "Executive Report";
+                                Sheet.Cells[i, 39].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 39].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 38].Value = "No Report";
+                                Sheet.Cells[i, 39].Value = "No Report";
                             }
                         }
                         i++;
