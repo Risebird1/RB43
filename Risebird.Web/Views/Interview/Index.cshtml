@@ -24,6 +24,7 @@
     bool[] IsCandidateResponsed = new bool[] { };
     string[] TemplateName = new string[] { };
     bool[] AadhaarVerified = new bool[] { };
+    string[] ChannelOwner = new string[] { };
     var CancelInterviews ="CancelInterviews";
 }
 
@@ -44,6 +45,7 @@
     IsCandidateResponsed = filter.IsCandidateResponsed != null ? filter.IsCandidateResponsed : new bool[] { };
     TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
     AadhaarVerified = filter.AadhaarVerified != null ? filter.AadhaarVerified : new bool[] { };
+    ChannelOwner = filter.ChannelOwner != null ? filter.ChannelOwner : new string[] { };
 }
 <script>
     var Header = "Interviews";
@@ -324,6 +326,23 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ChannelOwner">
+                                                                    Channel Owner
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ChannelOwner" name="ChannelOwner" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.ChannelOwner).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
 
@@ -488,6 +507,7 @@
                                                         <th>Billing Owner</th>
                                                         <th>Cancellation Source</th>
                                                     }
+                                                    <th>Channel Owner</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -543,6 +563,8 @@
                                                      <th>Billing Owner</th>
                                                      <th>Cancellation Source</th>
                                                     }
+                                                    <th>Channel Owner</th>
+
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -951,6 +973,8 @@
                                                             <td>@item.Cancellationsource</td>
                                                             
                                                         }
+                                                        <td>@item.ChannelOwner</td>
+
                                                     </tr>
                                                 }
                                             </tbody>
@@ -1528,6 +1552,7 @@
         var isCandidateResponsed = @Html.Raw(Json.Serialize(IsCandidateResponsed));
         var templateName = @Html.Raw(Json.Serialize(TemplateName));
         var aadhaarVerified = @Html.Raw(Json.Serialize(AadhaarVerified));
+        var channelOwner = @Html.Raw(Json.Serialize(ChannelOwner));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -1541,7 +1566,7 @@
         $("#Client").val(client);
         $("#TemplateName").val(templateName);
         $("#AadhaarVerified").val(aadhaarVerified);
-        //var form = $("#form").serialize();
+        $("#ChannelOwner").val(channelOwner);
 
     }
 
