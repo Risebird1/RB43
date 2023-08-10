@@ -7,24 +7,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
     public class InstaInterviewService : IInstaInterviewService
     {
+        private IClientService _clientService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IInstaInterviewRepository _instaInterviewRepository;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
         private readonly IIRFRepository _irfRepository;
 
-        public InstaInterviewService(IApplicationErrorLogger applicationErrorLogger, IInstaInterviewRepository instaInterviewRepository, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IIRFRepository irfRepository)
+        public InstaInterviewService(IApplicationErrorLogger applicationErrorLogger, IInstaInterviewRepository instaInterviewRepository, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IIRFRepository irfRepository, IClientService clientService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _instaInterviewRepository = instaInterviewRepository;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
             _irfRepository = irfRepository;
+            _clientService = clientService;
         }
         public IEnumerable<InstaMeetingVM> GetAllInstaRequests(string emailId, string profileName)
         {
@@ -92,12 +95,14 @@ namespace Risebird.Business
                             RequiredSkill = RequiredSkill + "," + item.SkillId;
                     }
                     //Send mail to Client
+                    var clientDetails =  _clientService.GetClientRoleAndCompanyNameByEmailId(model.Result.RequestedBy).Result;
+                    var logolink = clientDetails.Item3;
                     Mail _mail = new Mail
                     {
                         TO = model.Result.RequestedBy,
                         Subject = "Risebird: Insta interview request for " + meeting.CandidateName
                     };
-                    var emailsend = _notificationHelper.InstaClientNotification(_mail, RequiredSkill);
+                    var emailsend = _notificationHelper.InstaClientNotification(_mail, RequiredSkill, logolink);
                     //meeting.RequestedBy
                     //Send mail to Interviewers
                     var Interviewers = _instaInterviewRepository.FetchInstaIntervieweByAssessmentGroup(model.Result.AssessmentGroup);

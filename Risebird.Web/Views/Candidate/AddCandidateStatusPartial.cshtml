@@ -1,0 +1,216 @@
+﻿@using Risebird.Entities.Enum;
+
+<div id="candidateStatusModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;color:#fff;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+            <div class="modal-body">
+
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="form-group">
+
+                        <label class="control-labeled">
+                            Status
+                        </label>
+
+                        <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="audio-upload">
+                            <label class="control-labeled">
+                                Upload Audio File
+                            </label>
+                            <div class="file-upload-wrapper" data-text="Select your file">
+                                <input name="file-upload-field" type="file" id="idAudioFile" class="file-upload-field" value="" accept=".mp3, .wav, .m4a">
+                            </div>
+                        </div>
+                      
+
+                        @*<form>
+                            <div class="file-upload-wrapper" data-text="Select your file">
+                                <input name="file-upload-field" id="idAudioFile" type="file" class="file-upload-field" accept=".mp3, .wav, .m4a">
+                            </div>
+                        </form>*@
+
+                        @*<label class="control-labeled">
+                        Upload Audio
+                        </label>
+                        <input type="file" id="idAudioFile" accept=".mp3, .wav, .m4a">*@
+
+                    </div>
+
+
+                
+                    <div class="form-group">
+
+                        <label class="control-labeled w-full">
+                            Comments
+                        </label>
+                        <input type="text" id="idComments" class="w-full" style="height:60px">
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <div class="col-md-12 col-sm-12">
+                            <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="statusListModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="statusListHeading"></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="statusListTableBody">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var irfStatusId;//since the property irfId already exists, hence this name
+    var candidateStatusId;
+    var irfStatusName;
+    var candidateStatusName;
+    var spanStatusModal = document.getElementById("candidateStatusPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanStatusModal.onclick = function () {
+        var modal = document.getElementById("candidateStatusModal");
+        modal.style.display = "none";
+    }
+
+    //function OpenStatusModalJson(irfId, candidateId) {
+    //    var irfname = $('#hidcandidatestatus' + irfId).val();
+    //    var itemname = $('#hiditem' + irfId).val();
+    //    OpenStatusModal(irfId, candidateId, irfname, itemname);
+    //}
+
+    function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
+        irfStatusId = irfId;
+        candidateStatusId = candidateId;
+        irfStatusName = irfName;
+        candidateStatusName = candidateName;
+
+        // Get the modal
+        var modal = document.getElementById("candidateStatusModal");
+
+        document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+    }
+
+
+    function SaveCandidateStatus() {
+
+        var comment = document.getElementById("idComments").value;
+        var audio_file = $("#idAudioFile")[0].files[0];
+        var statusValue = document.getElementById("statusDrpDwn").value;
+
+
+        var formdata = new FormData();
+        formdata.append('irfId', irfStatusId);
+        formdata.append('candidateId', candidateStatusId);
+        formdata.append('comment', comment);
+        formdata.append('audio_file', audio_file);
+        formdata.append('status', statusValue);
+        formdata.append('candidateName', candidateStatusName);
+        formdata.append('irfName', irfStatusName);
+
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/AddStatus",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                location.reload(true);
+            }
+        });
+    }
+
+    //$("form").on("change", ".file-upload-field", function () {
+    //    debugger;
+    //    $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+    //});
+</script>
+
+<script>
+    var closeStatusList = document.getElementById("statusListPopUp");
+    closeStatusList.onclick = function () {
+        var modal = document.getElementById("statusListModal");
+        modal.style.display = "none";
+    }
+    //function GetCandidateStatusListJson(irfId, candidateId) {
+
+    //    var itemname = $('#hiditem' + irfId).val();
+    //    var irfname = $('hidirfname').val();
+    //    GetCandidateStatusList(irfId, candidateId, irfname, itemname);
+    //}
+
+    function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
+        $.ajax({
+            url: '/Candidate/GetCandidateStatusList',
+            data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
+            success: function (data) {
+                var modal = document.getElementById("statusListModal");
+                modal.style.display = "block";
+                var appendText = 'Status list for ' + candidateName;
+                $('#statusListHeading').html('');
+                $('#statusListHeading').html(appendText);
+                $('#statusListTableBody').html('');
+                $('#statusListTableBody').html(data);
+
+
+            }
+        });
+    }
+
+
+</script>
+
+
+<script>
+    $(".audio-upload").on("change", ".file-upload-field", function () {
+        $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+    });
+</script>

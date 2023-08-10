@@ -517,7 +517,7 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public async Task<Tuple<int, string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
+        public async Task<Tuple<int, string,string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
         {
             try
             {
@@ -528,7 +528,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync(con, "[usp_GetClientRoleAndCompanyNameByEmailId]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return new Tuple<int, string>(result.FirstOrDefault().ClientId, result.FirstOrDefault().Name);
+                    return new Tuple<int, string,string>(result.FirstOrDefault().ClientId, result.FirstOrDefault().Name, result.FirstOrDefault().LogoLink);
                 }
             }
             catch (SqlException e)

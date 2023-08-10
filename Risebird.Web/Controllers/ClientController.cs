@@ -17,6 +17,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -225,7 +226,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            if(!string.IsNullOrEmpty(client.OldLogoLink))
+                            if (!string.IsNullOrEmpty(client.OldLogoLink))
                             {
                                 client.LogoLink = client.OldLogoLink;
                             }
@@ -3808,13 +3809,15 @@ namespace Risebird.Web.Controllers
                 {
                     sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
+                var clientDetails = await _clientService.GetClientRoleAndCompanyNameByEmailId(Emailid);
+                var logolink = clientDetails.Item3;
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
                     CC = "talent@risebird.io",
                     Subject = "Candidate Status Update"
                 };
-                var emailsend1 = await _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);
+                var emailsend1 = await _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl, logolink);
                 if (emailsend1.Contains("successfully"))
                     return Json("Success");
                 else
@@ -4295,7 +4298,7 @@ namespace Risebird.Web.Controllers
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.InterviewDurationList = new SelectList(interviewduration, "ID", "Name");
             var gstapplicable = from Invoicesubmition s in Enum.GetValues(typeof(Invoicesubmition))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
+                                select new { ID = (int)s, Name = s.GetDescription() };
             model.GSTApplicableList = new SelectList(gstapplicable, "ID", "Name");
         }
 
@@ -4601,7 +4604,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    
+
                     var model = new ClientStatsVM();
                     var _clientList = await _irfRepository.GetClients();
                     if (profileName == "Client")
@@ -4612,7 +4615,7 @@ namespace Risebird.Web.Controllers
                     }
                     model.EmailId = emailid;
                     model.ClientList = new SelectList(_clientList.OrderBy(x => x.Name), "id", "Name");
-                    return View(model); 
+                    return View(model);
                 }
                 else
                 {

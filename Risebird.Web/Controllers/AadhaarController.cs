@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -44,10 +45,11 @@ namespace Risebird.Web.Controllers
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
         private readonly IAadhaarRepository _aadhaarRepository;
+        private readonly IInterviewerService _interviewerService;
 
         public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
-            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory, IAadhaarRepository aadhaarRepository)
+            IFileMimeTypeHelper fileMimeTypeHelper, IHttpRequestHelper httpRequestHelper, HttpClientHelper factory, IAadhaarRepository aadhaarRepository, IInterviewerService interviewerService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -64,6 +66,7 @@ namespace Risebird.Web.Controllers
             _httpRequestHelper = httpRequestHelper;
             _httpClient = factory.GetHttpClient();
             _aadhaarRepository = aadhaarRepository;
+            _interviewerService = interviewerService;
         }
 
         public IActionResult Index()
@@ -759,5 +762,71 @@ namespace Risebird.Web.Controllers
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
         #endregion
+        public async Task EVInterviewer()
+        {
+            var model = _interviewerService.GetInterviewers();
+            int i = 0;
+            //Start: Employment Verification
+            //foreach (var item in model)
+            //{
+            //    try
+            //    {
+            //        if (!string.IsNullOrWhiteSpace(item.MobileNumber))
+            //        {
+            //            var mobilenumber = item.MobileNumber.Replace("+91", "").Replace("-", "");
+            //            if (mobilenumber.Length > 10)
+            //            {
+            //                mobilenumber = mobilenumber.Substring(mobilenumber.Length - 10);
+            //            }
+            //            var result = await VerifyEmployment(item.EmailId, mobilenumber);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+
+            //    }
+            //    i++;
+            //}
+            //End: Employment Verification
+
+            //Start : Employement Verification Mapping into InterivewerProfile
+            //var employmentdetails = await _aadhaarService.GetEmployementDetails();
+            //InterviewerProfileVM _interviewer;
+            //foreach (var item in model)
+            //{
+            //    try
+            //    {
+            //        if (!string.IsNullOrWhiteSpace(item.MobileNumber))
+            //        {
+            //            var mobilenumber = item.MobileNumber.Replace("+91", "").Replace("-", "");
+            //            if (mobilenumber.Length > 10)
+            //            {
+            //                mobilenumber = mobilenumber.Substring(mobilenumber.Length - 10);
+            //            }
+            //            var employmentverification = employmentdetails.Where(x => x.MobileNumber == mobilenumber).FirstOrDefault();
+            //            _interviewer = new InterviewerProfileVM();
+            //            _interviewer.EmailId = item.EmailId;
+            //            if (employmentverification != null)
+            //            {
+            //                _interviewer.isVerified = true;
+            //                _interviewer.IsEmployed = employmentverification.Isemployed;
+            //                _interviewer.CompanyName = employmentverification.CompanyName;
+            //                _interviewer.EmploymentComment = employmentverification.message;
+            //            }
+            //            else
+            //            {
+            //                _interviewer.isVerified = false;
+            //            }
+            //            var result = _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+
+            //    }
+            //    i++;
+            //}
+            //End : Employement Verification Mapping into InterivewerProfile
+        }
     }
 }
