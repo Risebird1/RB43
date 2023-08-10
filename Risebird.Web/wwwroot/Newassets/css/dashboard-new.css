@@ -6160,7 +6160,7 @@ input[type="date"].form-control {
 }
 
 .pending {
-    background: #f89d9de8;
+    background: #f89d9db5;
 }
 
 .no-resume {
@@ -6200,11 +6200,21 @@ input[type="date"].form-control {
 .video {
     background: cadetblue;
 }
-
+.icons-dash {
+    width: 40px !important;
+    left: -4px;
+    max-width: 40px !important;
+    position:relative;
+}
 .reschedule {
     background: #FFA726;
 }
-
+.redo {
+    background: #cd7a33;
+}
+.cancel {
+    background: #eb5454;
+}
 .click-arrow {
     border-radius: 100%;
     width: 30px;
