@@ -310,6 +310,8 @@ namespace Risebird.Entities.ViewModel
         public string SuspiciousComment { get; set; }
         public string SuspiciousAddedBy { get; set; }
         public string SuspiciousMobileNumber { get; set; }
+        public int CandidateMasterId { get; set; }
+
     }
     public class VedioComments
     {
