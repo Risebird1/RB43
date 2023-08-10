@@ -300,6 +300,10 @@ namespace Risebird.Entities.ViewModel
         public int Surcharge { get; set; }
         public string SurchargeComment { get; set; }
         public string AudioTranscriptFileLink { get; set; }
+        public bool isVerified { get; set; }
+        public bool IsEmployed { get; set; }
+        public string EmploymentComment { get; set; }
+        public string CompanyName { get; set; }
 
         //For Suspicious Interviewer
         public string SuspiciousName { get; set; }
