@@ -16,6 +16,7 @@
     string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ClientHR = new string[] { };
+    string[] ConfirmationStatus = new string[] { };
     string[] MeetingStatus = new string[] { };
     string[] InterviewStatus = new string[] { };
     string[] Interviewer = new string[] { };
@@ -37,6 +38,7 @@
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
     MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
@@ -360,7 +362,23 @@
                                                                         }
                                                                     </select>
                                                                 </div>
-                                                            </div>                                                          
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
+                                                                    Confirmation Status
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ConfirmationStatus" data-placeholder="None Selected" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
@@ -468,8 +486,8 @@
                                                         <th>Company Name</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
-                                                        
-                                                        
+                                                        <th>Confirmation Status</th>
+                                                        <th>Cancellation source</th>
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
@@ -527,7 +545,8 @@
                                                         <th>Company Name</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
-                                                                                                          
+                                                        <th>Confirmation Status</th>
+                                                        <th>Cancellation source</th>
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Candidate Response</th>
@@ -698,7 +717,7 @@
                                                                 </button>
                                                             }
 
-                                                              @if (ViewBag.Type != CancelInterviews)
+                                                            @if (ViewBag.Type != CancelInterviews)
                                                             {
 
                                                                 <span class="interview_9">
@@ -706,8 +725,9 @@
                                                                         <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                     </button>
                                                                 </span>
-                                                               
-                          
+                                                                @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
+
+                                                                {
                                                                     @*<span>
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
                                                         <span onclick="location.href = '@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
@@ -718,7 +738,7 @@
                                                                             <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                         </button>
                                                                     </a>
-                                                                
+                                                                }
                                                             }
                                                             @*<span>
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
@@ -1440,7 +1460,7 @@
                         </svg>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Surchange Details </h5>f
+                <h5 class="modal-title pull-left">Surchange Details </h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeUpdateSurchargeDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
@@ -1615,6 +1635,7 @@
         var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
         var rFID = @Html.Raw(Json.Serialize(RFID));
         var clientHR = @Html.Raw(Json.Serialize(ClientHR));
+        var confirmationStatus = @Html.Raw(Json.Serialize(ConfirmationStatus));
         var meetingStatus = @Html.Raw(Json.Serialize(MeetingStatus));
         var interviewStatus = @Html.Raw(Json.Serialize(InterviewStatus));
         var interviewer = @Html.Raw(Json.Serialize(Interviewer));
@@ -1630,6 +1651,7 @@
         $("#PrimarySkill").val(primarySkillsArr);
         $("#RFID").val(rFID);
         $("#ClientHR").val(clientHR);
+        $("#ConfirmationStatus").val(confirmationStatus);
         $("#MeetingStatus").val(meetingStatus);
         $("#InterviewStatus").val(interviewStatus);
         $("#Interviewer").val(interviewer);
