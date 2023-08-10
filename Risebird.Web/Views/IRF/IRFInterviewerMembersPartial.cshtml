@@ -32,7 +32,23 @@
 
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        var colorcode = "";
+                        @if (item.isVerified)
+                        {
+                            if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                            {
+                                colorcode = "aquamarine";
+                            }
+                            else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                            {
+                                colorcode = "#eed190";
+                            }
+                            else if (item.EmploymentComment.Contains("No record"))
+                            {
+                                colorcode = "lightcoral";
+                            }
+                        }
+                        <tr style="background:@colorcode" title="@item.CompanyName">
                             @if (item.Type == "Interviewer")
                             {
                                 <td style="color: #17c317">@item.Type</td>

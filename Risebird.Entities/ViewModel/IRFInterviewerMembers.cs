@@ -29,6 +29,10 @@ namespace Risebird.Entities.ViewModel
         public string Assessmentgroup { get; set; }
         public string logolink { get; set; }
         public int Assessmentid { get; set; }
+        public bool isVerified { get; set; }
+        public bool IsEmployed { get; set; }
+        public string EmploymentComment { get; set; }
+        public string CompanyName { get; set; }
     }
     public class AssessmentIRFListVM
     {
