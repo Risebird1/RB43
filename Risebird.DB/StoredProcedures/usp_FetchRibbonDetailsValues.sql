@@ -24,9 +24,11 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
 				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle from InterviewMeetings im 
-				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
-				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
-				join UserList ul on ul.id=  irf.RisebirdHr 
+				join IRF on im.IRFId=irf.IRFId 
+				join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId 
+				left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id= irf.RisebirdHr 
 				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ulsh.Emailid= @Emailid
 			end
 			else
@@ -374,6 +376,97 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
 				end
 	end
+
+
+
+	If(@actionstatus ='CancelledInterviewCount')
+	begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				where  confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID and im.RedoInterview=0
+			end
+			else
+			begin
+				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr
+				where confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and im.RedoInterview=0
+			end
+		end
+		else
+		begin
+			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID and im.RedoInterview=0
+			union 
+			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID and im.RedoInterview=0
+		end
+	end
+
+
+
+	If(@actionstatus ='RedoInterviewCount')
+	begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId,
+				IRF.JDTiltle,
+				IRF.JDLink as JDLinkv
+				--ca.ClientHRAttemptContact as CandidateClientHR
+				from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id= irf.RisebirdHr
+				--left join CandidatesMaster cm on ul.id = cm.UserId   
+				--left join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
+				where  ul.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+			end
+			else
+			begin
+				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId,
+				IRF.JDTiltle,
+				IRF.JDLink as JDLink
+			----	ca.ClientHRAttemptContact as CandidateClientHR
+				from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId
+				join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				--left join CandidatesMaster cm on ul.id = cm.UserId   
+				--left join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
+				where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+			end
+		end
+		else
+		begin
+			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId ,
+			IRF.JDTiltle,
+			IRF.JDLink as JDLin
+			from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			join UserList ulc on ulc.id=irf.RisebirdHr
+			where ul.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+			union 
+			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId,
+			IRF.JDTiltle,
+			IRF.JDLink as JDLink
+			from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
+			join UserList ulc on ulc.id= irf.RisebirdHr
+		
+			where ul.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+		end
+	end
+
 
 END
 
