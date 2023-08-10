@@ -90,12 +90,12 @@
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-                    else if(ViewBag.Type == "CancelInterviews")
+                    else if (ViewBag.Type == "CancelInterviews")
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div> 
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
 
                     else
@@ -105,7 +105,7 @@
                         <div class="feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-                    
+
                 </div>
                 <div class="pull-right">
                     <div>
@@ -476,14 +476,14 @@
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
                                                     @*Hide Columns for Cancel Intervies*@
-                                                      @if (ViewBag.Type != CancelInterviews)
+                                                    @if (ViewBag.Type != CancelInterviews)
                                                     {
                                                         <th>Type</th>
 
                                                         <th>JD Title</th>
 
                                                         <th>Meeting Link</th>
-                                                        <th>Backup Link</th>
+                                                        <th>Company Name</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
                                                         <th>Confirmation Status</th>
@@ -494,11 +494,11 @@
                                                         <th>Resume</th>
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
-                                                        
-                                                    
+
+
                                                         <th>Client HR</th>
-                                                            
-                                                   
+
+
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
                                                         <th>Video Duration</th>
@@ -535,14 +535,14 @@
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
-                                                   @*Hide Columns for Cancel Intervies*@
+                                                    @*Hide Columns for Cancel Intervies*@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
                                                         <th>Type</th>
                                                         <th>JD Title</th>
 
                                                         <th>Meeting Link</th>
-                                                        <th>Backup Link</th>
+                                                        <th>Company Name</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
                                                         <th>Confirmation Status</th>                                                       
@@ -552,9 +552,9 @@
                                                         <th>Resume</th>
                                                         <th>JD Link</th>
                                                         <th>Zoom ID</th>
-                                                        
+
                                                         <th>Client HR</th>
-                                                   
+
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
                                                         <th>Video Duration</th>
@@ -574,12 +574,12 @@
                                                         <th>Current Employer</th>
                                                         <th>Emergency Interview</th>
                                                     }
-                                                    @if(ViewBag.Type==CancelInterviews)
+                                                    @if (ViewBag.Type == CancelInterviews)
                                                     {
-                                                    <th>Client Hr Contact</th>
-                                                     <th>Client </th>
-                                                     <th>Billing Owner</th>
-                                                     <th>Cancellation Source</th>
+                                                        <th>Client Hr Contact</th>
+                                                        <th>Client </th>
+                                                        <th>Billing Owner</th>
+                                                        <th>Cancellation Source</th>
                                                     }
                                                     <th>Channel Owner</th>
 
@@ -588,10 +588,27 @@
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.imid>
+                                                    var colorcode = "";
+                                                    @if (item.isVerified)
+                                                    {
+                                                        if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                                                        {
+                                                            colorcode = "aquamarine";
+                                                        }
+                                                        else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                                                        {
+                                                            colorcode = "#eed190";
+                                                        }
+                                                        else if (item.EmploymentComment.Contains("No record"))
+                                                        {
+                                                            colorcode = "lightcoral";
+                                                        }
+                                                    }
+                                                    <tr id=@item.imid style="background:@colorcode">
                                                         <td class="text-center action">
                                                             @*For Hide All column in Cancel Intervies*@
-                                                              @if(ViewBag.Type!=CancelInterviews){
+                                                            @if (ViewBag.Type != CancelInterviews)
+                                                            {
                                                                 @if (ViewBag.Type != "RedoInterviews")
                                                                 {
                                                                     <span class="interview_4">
@@ -672,12 +689,6 @@
 
 
                                                                 }
-
-
-
-
-
-
                                                                 @if (item.IsAadhaarVerificationRequired == true)
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
@@ -705,7 +716,7 @@
                                                                 </button>
                                                             }
 
-                                                            @if (ViewBag.Type != CancelInterviews)
+                                                              @if (ViewBag.Type != CancelInterviews)
                                                             {
 
                                                                 <span class="interview_9">
@@ -716,10 +727,10 @@
                                                                
                           
                                                                     @*<span>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                        <span onclick="location.href = '@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                    </button>
-                                                                </span>*@
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                        <span onclick="location.href = '@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                        </button>
+                                                        </span>*@
                                                                     <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
                                                                             <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
@@ -727,6 +738,13 @@
                                                                     </a>
                                                                 
                                                             }
+                                                            @*<span>
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
+                                                                    <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
+                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </span>*@
                                                         </td>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
@@ -744,7 +762,7 @@
                                                                 @item.candidateName
                                                             </td>
                                                         }
-                                                      
+
 
                                                         @if (item.zoomLink != null && item.zoomLink != "")
                                                         {
@@ -754,244 +772,285 @@
                                                         {
                                                             <td style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                          @*Hide Columns for Cancel Intervies*@
+                                                        @*Hide Columns for Cancel Intervies*@
                                                         @if (ViewBag.Type != CancelInterviews)
                                                         {
-                                                        @if (item.IsProctor)
-                                                        {
-                                                            <td>Proctor</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>Interview</td>
-                                                        }
-                                                      
+                                                            @if (item.IsProctor)
+                                                            {
+                                                                <td>Proctor</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>Interview</td>
+                                                            }
+
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
-                                                        
 
-                                                        @if (item.zoomLink != null && item.zoomLink != "")
-                                                        {
-                                                            <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td><span style="color:red">No Meeting Link</span></td>
-                                                        }
-                                                        @if (item.BackUpLink != null && item.BackUpLink != "")
-                                                        {
-                                                            <td> <a id="BackUpLink" target="_blank" title="@item.BackUpLink" href=@item.BackUpLink>Backup Link</a> </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (@item.interviewer != null || @item.interviewer != "")
-                                                        {
-                                                            @if (item.IsInterviewerOnline == 1)
+
+                                                            @if (item.zoomLink != null && item.zoomLink != "")
                                                             {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
-                                                                </td>
+                                                                <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
                                                             }
                                                             else
                                                             {
-                                                                <td>
-                                                                    @item.interviewer
-                                                                </td>
+                                                                <td><span style="color:red">No Meeting Link</span></td>
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (@item.encodedresumeLink != null || @item.encodedresumeLink != "")
-                                                        {
-
-                                                            <td>
-
-                                                                <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.encodedresumeLink>Resume</a>
-                                                            </td>
-
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-
-                                                                <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink>Resume</a>
-                                                            </td>
-
-                                                        }
-
-                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                        {
-                                                            <td class="text-center">
-
-                                                                <a style="color:red"> @item.confirmationStatus</a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td class="text-center"> @item.confirmationStatus</td>
-                                                        }
-                                                        
-                                                        @if (item.MeetingStatusStatusDesc == "Status Pending")
-                                                        {
-                                                            <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>@item.MeetingStatusStatusDesc</td>
-
-                                                        }
-
-                                                        @if (item.InterviewStatus == 2)
-                                                        {
-                                                            <td class="text-center">
-                                                                <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.InterviewStatus == 4)
-                                                        {
-                                                            <td class="text-center">
-                                                                <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td class="text-center">@item.intervieweStatusStatDesc</td>
-                                                        }
-
-                                                        @if (item.IsCandidateResponsed)
-                                                        {
-                                                            @if (item.CandidateResponse == 1)
+                                                            @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                             {
-                                                                <td>Responded (Yes)</td>
-                                                            }
-                                                            else if (item.CandidateResponse == 3)
-                                                            {
-                                                                <td title="Candidate Request to Reschedule">Responded (Reschedule)</td>
-                                                            }
-                                                            else if (item.CandidateResponse == 4)
-                                                            {
-                                                                <td>Responded (Need More Clarity)</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>Responded (No)</td>
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No Response</td>
-                                                        }
-
-                                                        @if (item.resumeLink != null && item.resumeLink != "")
-                                                        {
-                                                            <td>
-
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No Resume</td>
-                                                        }
-                                                        @if (item.JDLink != null && item.JDLink != "")
-                                                        {
-                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No JD</td>
-                                                        }
-
-
-                                                        <td> @item.risebirdHR</td>
-                                                        
-
-                                                        @if (item.IsHrOnline == 1)
-                                                        {
-                                                            <td>
-                                                                <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                @item.CandidateClientHR
-                                                            </td>
-                                                        }
-                                                      
-                                                      
-                                                        <td> @item.ClientName </td>
-
-                                                        @if (item.VideoLink != null && item.VideoLink != "")
-                                                        {
-                                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink.Replace(" "," %20")>Video</a> </td>
-                                                            @if (item.VideoDuration > 0)
-                                                            {
-                                                                <td>@item.VideoDuration</td>
-
+                                                                @if(item.CompanyName.Length>30){
+                                                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                                }else{
+                                                                    <td>@item.CompanyName</td>
+                                                                }
                                                             }
                                                             else
                                                             {
                                                                 <td></td>
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No Video</td>
-                                                            <td>NA</td>
-                                                        }
-                                                        @if (item.IsEmergency)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        <td>@item.interviewSlot</td>
-                                                        
-                                                        <td>@item.staffingAgency</td>
-                                                        <td> @item.interviewDuration Min.</td>
-                                                        @if (item.IsAadhaarVerificationRequired == null)
-                                                        {
-                                                            <td>Not Mandatory</td>
-                                                        }
-                                                        else if (item.IsAadhaarVerificationRequired == true)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        <td>
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
-                                                                <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                                @if (item.IsInterviewerOnline == 1)
+                                                                {
+                                                                    <td>
+                                                                        <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>
+                                                                        @item.interviewer
+                                                                    </td>
+                                                                }
                                                             }
-                                                        </td>
-                                                        <td>@item.imid</td>
-                                                        @if (item.HasDistinctParticipants)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        <td> @item.joiningTime</td>
-                                                        <td> @item.preferredLocation</td>
-                                                        <td> @item.expectedPerHourRate</td>
-                                                        <td> @item.currentEmployerName</td>
-                                                        <td>
-                                                            @item.IsEmergency
-                                                        </td>
-                                                        
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if (@item.encodedresumeLink != null || @item.encodedresumeLink != "")
+                                                            {
+
+                                                                <td>
+
+                                                                    <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.encodedresumeLink>Resume</a>
+                                                                </td>
+
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>
+
+                                                                    <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink>Resume</a>
+                                                                </td>
+
+                                                            }
+
+                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                            {
+                                                                <td class="text-center">
+
+                                                                    <a style="color:red"> @item.confirmationStatus</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center"> @item.confirmationStatus</td>
+                                                            }
+                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                            {
+                                                                <td>@item.Cancellationsource</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
+                                                    {
+                                                    @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                                    {
+                                                    <td class="text-center">
+                                                    <a style="color:hotpink; font-weight: bold">Status Pending</a>
+                                                    </td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                    <td class="text-center">@item.MeetingStatusStatusDesc</td>
+                                                    }
+                                                    }
+                                                    else
+                                                    {
+                                                    <td></td>
+                                                    }*@
+                                                            @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                            {
+                                                                <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.MeetingStatusStatusDesc</td>
+
+                                                            }
+
+                                                            @if (item.InterviewStatus == 2)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.InterviewStatus == 4)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center">@item.intervieweStatusStatDesc</td>
+                                                            }
+
+                                                            @if (item.IsCandidateResponsed)
+                                                            {
+                                                                @if (item.CandidateResponse == 1)
+                                                                {
+                                                                    <td>Responded (Yes)</td>
+                                                                }
+                                                                else if (item.CandidateResponse == 3)
+                                                                {
+                                                                    <td title="Candidate Request to Reschedule">Responded (Reschedule)</td>
+                                                                }
+                                                                else if (item.CandidateResponse == 4)
+                                                                {
+                                                                    <td>Responded (Need More Clarity)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>Responded (No)</td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Response</td>
+                                                            }
+
+                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                            {
+                                                                <td>
+
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }
+                                                            @if (item.JDLink != null && item.JDLink != "")
+                                                            {
+                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No JD</td>
+                                                            }
+
+
+                                                            <td> @item.risebirdHR</td>
+
+
+                                                            @if (item.IsHrOnline == 1)
+                                                            {
+                                                                <td>
+                                                                    <a onclick="directopenChat('@item.CandidateClientHR')"><span class="dot" style="background-color:green"></span>     @item.CandidateClientHR </a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>
+                                                                    @item.CandidateClientHR
+                                                                </td>
+                                                            }
+
+
+                                                            <td> @item.ClientName </td>
+
+                                                            @if (item.VideoLink != null && item.VideoLink != "")
+                                                            {
+                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink.Replace(" "," %20")>Video</a> </td>
+                                                                @if (item.VideoDuration > 0)
+                                                                {
+                                                                    <td>@item.VideoDuration</td>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Video</td>
+                                                                <td>NA</td>
+                                                            }
+                                                            @if (item.IsEmergency)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                            <td>@item.interviewSlot</td>
+                                                            @*<td>@item.QCInterviewer</td>
+                                                    @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
+                                                    {
+                                                    <td>@item.QCStatusStatusDesc</td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                    <td></td>
+
+                                                    }*@
+
+                                                            @*<td>@item.HRComment</td>*@
+                                                            <td>@item.staffingAgency</td>
+                                                            <td> @item.interviewDuration Min.</td>
+                                                            @if (item.IsAadhaarVerificationRequired == null)
+                                                            {
+                                                                <td>Not Mandatory</td>
+                                                            }
+                                                            else if (item.IsAadhaarVerificationRequired == true)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                            <td>
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                                }
+                                                            </td>
+                                                            <td>@item.imid</td>
+                                                            @if (item.HasDistinctParticipants)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                            <td> @item.joiningTime</td>
+                                                            <td> @item.preferredLocation</td>
+                                                            <td> @item.expectedPerHourRate</td>
+                                                            <td> @item.currentEmployerName</td>
+                                                            <td>
+                                                                @item.IsEmergency
+                                                            </td>
+
                                                         }
                                                         @if (ViewBag.Type == CancelInterviews)
                                                         {
@@ -1001,7 +1060,7 @@
 
                                                             <td>@item.BillingOwner</td>
                                                             <td>@item.Cancellationsource</td>
-                                                            
+
                                                         }
                                                         <td>@item.ChannelOwner</td>
 
@@ -1399,7 +1458,7 @@
                         </svg>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Surchange Details </h5>
+                <h5 class="modal-title pull-left">Surchange Details </h5>f
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeUpdateSurchargeDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
@@ -2591,3 +2650,49 @@
 <script src="~/js/ModalFormServerValidation.js"></script>
 <script src="~/js/filtervalidation.js"></script>
 @*<script src="~/js/CallTwilio.js"></script>*@
+<script>
+    function InterviewerInsightsDetails(interviewer) {
+        $("#txtinterviewerInsites").text(interviewer);
+        openInterviewerInsightsModel();
+    }
+    function closeInterviewerInsightsModel() {
+        var modal = document.getElementById("InterviewerInsightsPopup");
+        modal.style.display = "none";
+    }
+    function openInterviewerInsightsModel() {
+        var modal = document.getElementById("InterviewerInsightsPopup");
+        modal.style.display = "block";
+    }
+</script>
+<div id="InterviewerInsightsPopup" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 18 18">
+                            <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Interviewer Details </h5>
+                <h5 id="txtinterviewerInsites"></h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeInterviewerInsightsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <table>
+                        <tr>
+                            <th>Interviewer</th>
+                            <td>Total Interviews</td>
+                            <td>Total Penalties</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

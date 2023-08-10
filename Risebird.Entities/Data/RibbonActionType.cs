@@ -17,5 +17,7 @@
         public static readonly string ReScheduleCount = "ReScheduleCount";
         public static readonly string PotentialRiskInterviewCount = "PotentialRiskInterviewCount";
         public static readonly string SuspeciousInterviewerCount = "SuspeciousInterviewerCount";
+        public static readonly string CancelledInterview = "CancelledInterviewCount";
+        public static readonly string RedoInterview = "RedoInterviewCount";
     }
 }
