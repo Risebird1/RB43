@@ -8396,9 +8396,11 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 }
 
 #statusListModal .scrollers {
-    height: 430px;
+    height: 390px;
 }
-
+.pagination .page-item.active > .page-link{
+    z-index:0;
+}
 .helper {
     position: absolute;
     top: 0;
