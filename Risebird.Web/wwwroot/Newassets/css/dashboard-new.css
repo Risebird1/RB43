@@ -6174,7 +6174,9 @@ input[type="date"].form-control {
 .open-issue {
     background: #ff7f50ba;
 }
-
+.suspicious {
+    background: #64c964;
+}
 
 .risk {
     background: #F44336;
@@ -12493,7 +12495,6 @@ body .top-panel {
     box-shadow: none !important;
     border: 0px #ccc solid !important;
 }
-
 
 .dataTables_filter input:-moz-placeholder {
     color: #999;

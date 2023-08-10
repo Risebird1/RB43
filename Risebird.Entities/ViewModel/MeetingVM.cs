@@ -304,6 +304,18 @@ namespace Risebird.Entities.ViewModel
         public bool IsEmployed { get; set; }
         public string EmploymentComment { get; set; }
         public string CompanyName { get; set; }
+
+        //For Suspicious Interviewer
+        public string SuspiciousName { get; set; }
+        public string SuspiciousEmail { get; set; }
+        public string InterviewAddedOn { get; set; }
+        public string CreatedBy { get; set; }
+        public string ResumeLink { get; set; }
+        public string SuspiciousComment { get; set; }
+        public string SuspiciousAddedBy { get; set; }
+        public string SuspiciousMobileNumber { get; set; }
+        public int CandidateMasterId { get; set; }
+
     }
     public class VedioComments
     {

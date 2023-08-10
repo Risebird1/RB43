@@ -358,6 +358,9 @@
                                                                             <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                 <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                                             </button>
+                                                                            <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status List">
+                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16" id="IconChangeColor"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" id="mainIconPathAttribute" fill="#ffffff"></path> </svg></span>
+                                                                            </button>
 
                                                                         }
 
@@ -829,8 +832,9 @@
 
                 </div>
             </div>-->
+            @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 
-            <div id="candidateStatusModal" class="modal modal-bg">
+            @*<div id="candidateStatusModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -866,11 +870,6 @@
                                         </div>
                                     </form>
 
-                                    @*<label class="control-labeled">
-                                    Upload Audio
-                                    </label>
-                                    <input type="file" id="idAudioFile" accept=".mp3, .wav, .m4a">*@
-
                                 </div>
                                 <div class="form-group">
 
@@ -897,9 +896,9 @@
                     </div>
 
                 </div>
-            </div>
+            </div>*@
 
-            <div id="statusListModal" class="modal modal-bg">
+            @*<div id="statusListModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -920,7 +919,7 @@
                     </div>
 
                 </div>
-            </div>
+            </div>*@
 
 
             <div id="importResultModal" class="modal modal-bg">
@@ -1436,16 +1435,16 @@
 <script src="~/js/TwilioCallMaker.js"></script>
 
 <script>
-    var irfStatusId;//since the property irfId already exists above, hence this name
-    var candidateStatusId;
-    var irfStatusName;
-    var candidateStatusName;
-    var spanStatusModal = document.getElementById("candidateStatusPopUp");
-    // When the user clicks on <span> (x), close the modal
-    spanStatusModal.onclick = function () {
-        var modal = document.getElementById("candidateStatusModal");
-        modal.style.display = "none";
-    }
+    //var irfStatusId;//since the property irfId already exists above, hence this name
+    //var candidateStatusId;
+    //var irfStatusName;
+    //var candidateStatusName;
+    //var spanStatusModal = document.getElementById("candidateStatusPopUp");
+    //// When the user clicks on <span> (x), close the modal
+    //spanStatusModal.onclick = function () {
+    //    var modal = document.getElementById("candidateStatusModal");
+    //    modal.style.display = "none";
+    //}
 
     function OpenStatusModalJson(irfId, candidateId) {
         var irfname = $('#hidcandidatestatus' + irfId).val();
@@ -1453,50 +1452,50 @@
         OpenStatusModal(irfId, candidateId, irfname, itemname);
     }
 
-    function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
-        irfStatusId = irfId;
-        candidateStatusId = candidateId;
-        irfStatusName = irfName;
-        candidateStatusName = candidateName;
+    //function OpenStatusModal(irfId, candidateId, irfName, candidateName) {
+    //    irfStatusId = irfId;
+    //    candidateStatusId = candidateId;
+    //    irfStatusName = irfName;
+    //    candidateStatusName = candidateName;
 
-        // Get the modal
-        var modal = document.getElementById("candidateStatusModal");
+    //    // Get the modal
+    //    var modal = document.getElementById("candidateStatusModal");
 
-        document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
+    //    document.getElementById("candidateStatusHeading").innerHTML = "Add status for " + candidateName;
 
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
+    //    // When the user clicks the button, open the modal
+    //    modal.style.display = "block";
 
-    }
-
-
-    function SaveCandidateStatus() {
-
-        var comment = document.getElementById("idComments").value;
-        var audio_file = $("#idAudioFile")[0].files[0];
-        var statusValue = document.getElementById("statusDrpDwn").value;
+    //}
 
 
-        var formdata = new FormData();
-        formdata.append('irfId', irfStatusId);
-        formdata.append('candidateId', candidateStatusId);
-        formdata.append('comment', comment);
-        formdata.append('audio_file', audio_file);
-        formdata.append('status', statusValue);
-        formdata.append('candidateName', candidateStatusName);
-        formdata.append('irfName', irfStatusName);
+    //function SaveCandidateStatus() {
 
-        $.ajax({
-            type: "POST",
-            url: "/Candidate/AddStatus",
-            contentType: false,
-            processData: false,
-            data: formdata,
-            success: function (data) {
-                location.reload(true);
-            }
-        });
-    }
+    //    var comment = document.getElementById("idComments").value;
+    //    var audio_file = $("#idAudioFile")[0].files[0];
+    //    var statusValue = document.getElementById("statusDrpDwn").value;
+
+
+    //    var formdata = new FormData();
+    //    formdata.append('irfId', irfStatusId);
+    //    formdata.append('candidateId', candidateStatusId);
+    //    formdata.append('comment', comment);
+    //    formdata.append('audio_file', audio_file);
+    //    formdata.append('status', statusValue);
+    //    formdata.append('candidateName', candidateStatusName);
+    //    formdata.append('irfName', irfStatusName);
+
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Candidate/AddStatus",
+    //        contentType: false,
+    //        processData: false,
+    //        data: formdata,
+    //        success: function (data) {
+    //            location.reload(true);
+    //        }
+    //    });
+    //}
 </script>
 <script>
     function AddCandidate(irfId, irfName) {
@@ -1520,11 +1519,11 @@
     }
 </script>
 <script>
-    var closeStatusList = document.getElementById("statusListPopUp");
-    closeStatusList.onclick = function () {
-        var modal = document.getElementById("statusListModal");
-        modal.style.display = "none";
-    }
+    //var closeStatusList = document.getElementById("statusListPopUp");
+    //closeStatusList.onclick = function () {
+    //    var modal = document.getElementById("statusListModal");
+    //    modal.style.display = "none";
+    //}
     function GetCandidateStatusListJson(irfId, candidateId) {
 
         var itemname = $('#hiditem' + irfId).val();
@@ -1532,23 +1531,23 @@
         GetCandidateStatusList(irfId, candidateId, irfname, itemname);
     }
 
-    function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
-        $.ajax({
-            url: '/Candidate/GetCandidateStatusList',
-            data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
-            success: function (data) {
-                var modal = document.getElementById("statusListModal");
-                modal.style.display = "block";
-                var appendText = 'Status list for ' + candidateName;
-                $('#statusListHeading').html('');
-                $('#statusListHeading').html(appendText);
-                $('#statusListTableBody').html('');
-                $('#statusListTableBody').html(data);
+    //function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
+    //    $.ajax({
+    //        url: '/Candidate/GetCandidateStatusList',
+    //        data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
+    //        success: function (data) {
+    //            var modal = document.getElementById("statusListModal");
+    //            modal.style.display = "block";
+    //            var appendText = 'Status list for ' + candidateName;
+    //            $('#statusListHeading').html('');
+    //            $('#statusListHeading').html(appendText);
+    //            $('#statusListTableBody').html('');
+    //            $('#statusListTableBody').html(data);
 
 
-            }
-        });
-    }
+    //        }
+    //    });
+    //}
 
 
 </script>
