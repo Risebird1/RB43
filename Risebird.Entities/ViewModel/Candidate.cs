@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -23,6 +24,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Resume Link")]
 
         public string ResumeLink { get; set; }
+
+        [DisplayName("Resume File(.docx,.doc,.pdf files only)")]
+        public IFormFile ResumeFile { get; set; }
 
         [Display(Name = "Encoded Resume Link")]
 

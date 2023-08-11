@@ -1034,6 +1034,22 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    if (model.ResumeFile != null)
+                    {
+                        string uploadedFileURL = string.Empty;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.ResumeFile);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.ResumeFile.FileName, "resumes", model.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            model.ResumeLink = uploadedFileURL;
+                        }
+
+                    }
+
                     result = await _irfService.AddCandidate(model, emailids, model.profileName);
 
                     if (model.Candidateesumeid > 0)
