@@ -8369,7 +8369,40 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     left: 10px;
     top: 2px;
 }
-
+.status {
+    padding: 3px 5px;
+    font-size: 12px;
+    text-transform: capitalize;
+    display: block;
+    border-radius: 3px;
+    text-align: center;
+    text-decoration:none;
+}
+.mscheduled {
+    background: #f2eefc;
+    color: #845adf;
+    max-width: 83px;
+}
+.mpending {
+    background: #fcebcd;
+    color: #fec14a;
+    width:92px;
+}
+.mcomplete {
+    background: #e9f8f4;
+    color: #40b888dd;
+    width: 83px;
+}
+.mdropped {
+    background: #e454301f;
+    color: #e6540fdb;
+    width: 83px;
+}
+.mnoshow {
+    background: #f89cbf24;
+    color: #eea0dddb;
+    max-width: 126px;
+}
 .overlay {
     position: absolute;
     top: 0;
