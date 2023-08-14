@@ -33,13 +33,14 @@ namespace Risebird.Repository
 
         public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
         {
-            try
+            try    
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetIAllInterviewMeetings", null,
                         commandType: CommandType.StoredProcedure);
                     return result;
+
                 }
             }
             catch (SqlException ex)
