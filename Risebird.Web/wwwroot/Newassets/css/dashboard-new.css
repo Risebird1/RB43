@@ -6206,8 +6206,31 @@ input[type="date"].form-control {
     max-width: 40px !important;
     position:relative;
 }
+.dashboard-smalltxt {
+    display: block;
+    font-size: 12px;
+    padding: 0px 0px 0px 11px;
+    color: #a49f9f;
+    line-height:1px;
+    position:relative;
+    top:7px;
+}
+
+.noshow{
+    background:grey;
+}
+.noshow-icon {
+    max-height: 95px!important;
+    height: 110%!important;
+    position: relative;
+    top: -1px;
+    left: -5px;
+}
 .reschedule {
-    background: #FFA726;
+    background: #fad402a6;
+}
+.risk-client {
+    background: #f79f09;
 }
 .redo {
     background: #cd7a33;
