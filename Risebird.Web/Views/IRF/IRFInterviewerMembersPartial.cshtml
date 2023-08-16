@@ -32,20 +32,20 @@
 
                     @foreach (var item in Model)
                     {
-                        var colorcode = "";
+                        var colorcode = "#bfd2f42b";
                         @if (item.isVerified)
                         {
                             if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
                             {
-                                colorcode = "aquamarine";
+                                colorcode = "#fff";
                             }
                             else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
                             {
-                                colorcode = "#eed190";
+                                colorcode = "#fcfccab5";
                             }
                             else if (item.EmploymentComment.Contains("No record"))
                             {
-                                colorcode = "lightcoral";
+                                colorcode = "#faddbfa3";
                             }
                         }
                         <tr style="background:@colorcode" title="@item.CompanyName">

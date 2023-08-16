@@ -6140,7 +6140,7 @@ input[type="date"].form-control {
     padding: 0px 0px 0px 5px;
     margin: 0px;
     position: relative;
-    top: -11px;
+    top: -6px;
     text-align:left;
 }
 
@@ -6154,8 +6154,10 @@ input[type="date"].form-control {
     line-height: 25px;
     padding: 10px;
 }
-
-.unassign {
+.dashboard .panel .panel-body {
+    padding: 5px;
+}
+    .unassign {
     background: #74c0fc;
 }
 
@@ -6192,7 +6194,6 @@ input[type="date"].form-control {
 .clarity {
     background: #25bd6a8a;
 }
-
 .report-pending {
     background: #3bb5a0;
 }
@@ -6206,8 +6207,31 @@ input[type="date"].form-control {
     max-width: 40px !important;
     position:relative;
 }
+.dashboard-smalltxt {
+    display: block;
+    font-size: 12px;
+    padding: 0px 0px 0px 11px;
+    color: #a49f9f;
+    line-height:1px;
+    position:relative;
+    top:7px;
+}
+
+.noshow{
+    background:grey;
+}
+.noshow-icon {
+    max-height: 95px!important;
+    height: 110%!important;
+    position: relative;
+    top: -1px;
+    left: -5px;
+}
 .reschedule {
-    background: #FFA726;
+    background: #fad402a6;
+}
+.risk-client {
+    background: #f79f09;
 }
 .redo {
     background: #cd7a33;
