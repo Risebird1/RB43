@@ -65,7 +65,13 @@ declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from Intervi
 
  declare @RedoInterviewCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+ declare @ProbableNoShowCount int=( select COUNT(pnc.id) from ProbableNoShowCandidates pnc  
+join InterviewMeetings im on im.id = pnc.InterviewId  
+join UserList ul on ul.id = pnc.CandidateUserId  
+join InterviewComments ic on ic.Interviewid=im.id where ul.EmailId= @Emailid)
 
+declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
+ left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3) 
 
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
@@ -98,7 +104,9 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @PotentialRiskInterviewCount as PotentialRiskInterviewCount,
 @SuspeciousInterviewerCount as SuspeciousInterviewerCount,
 @CancelledInterviewCount as CancelledInterviewCount,
-@RedoInterviewCount as RedoInterviewCount
+@RedoInterviewCount as RedoInterviewCount,
+@ProbableNoShowCount as ProbableNoShowCount,
+@PotentialRiskByClient as PotentialRiskByClient
 
 END        
 ELSE        
@@ -135,7 +143,12 @@ set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousIn
 set @CancelledInterviewCount=(select Count(im.id) from InterviewMeetings im  where confirmationStatus=2  and CAST(interviewDate as DATE) >=CAST(GETDATE() as DATE) and im.RedoInterview=0)
 set @RedoInterviewCount=(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId          
  left join UserList ulsh  on ulsh.id=  irf.RisebirdHr where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+set  @ProbableNoShowCount =(select COUNT(pnc.id) from ProbableNoShowCandidates pnc  
+join InterviewMeetings im on im.id = pnc.InterviewId  
+join UserList ul on ul.id = pnc.CandidateUserId  
+join InterviewComments ic on ic.Interviewid=im.id)
 
+set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
@@ -145,7 +158,9 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @PotentialRiskInterviewCount as PotentialRiskInterviewCount,
 @SuspeciousInterviewerCount as SuspeciousInterviewerCount,
 @CancelledInterviewCount as CancelledInterviewCount,
-@RedoInterviewCount as RedoInterviewCount
+@RedoInterviewCount as RedoInterviewCount,
+@ProbableNoShowCount as ProbableNoShowCount,
+@PotentialRiskByClient as PotentialRiskByClient
 
 
 
