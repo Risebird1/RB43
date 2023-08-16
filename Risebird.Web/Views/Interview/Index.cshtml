@@ -589,20 +589,20 @@
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-                                                    var colorcode = "";
+                                                    var colorcode = "#bfd2f42b";
                                                     @if (item.isVerified)
                                                     {
                                                         if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
                                                         {
-                                                            colorcode = "aquamarine";
+                                                            colorcode = "#fff";
                                                         }
                                                         else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
                                                         {
-                                                            colorcode = "#eed190";
+                                                            colorcode = "#fcfccab5";
                                                         }
                                                         else if (item.EmploymentComment.Contains("No record"))
                                                         {
-                                                            colorcode = "lightcoral";
+                                                            colorcode = "#faddbfa3";
                                                         }
                                                     }
                                                     <tr id=@item.imid style="background:@colorcode">
@@ -717,7 +717,7 @@
                                                                 </button>
                                                             }
 
-                                                            @if (ViewBag.Type != CancelInterviews)
+                                                              @if (ViewBag.Type != CancelInterviews)
                                                             {
 
                                                                 <span class="interview_9">
@@ -886,11 +886,40 @@
                                                     }*@
                                                             @if (item.MeetingStatusStatusDesc == "Status Pending")
                                                             {
-                                                                <td><a style="color:hotpink; font-weight: bold">@item.MeetingStatusStatusDesc</a></td>
+                                                                <td>
+                                                                    <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
                                                             }
+                                                           else if (item.MeetingStatusStatusDesc == "Completed"){
+    
+                                                                <td>
+                                                                    <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }  
+                                                             else if (item.MeetingStatusStatusDesc == "Scheduled"){
+    
+                                                                <td>
+                                                                    <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+
+                                                            else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                            {
+    
+                                                                <td>
+                                                                    <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                            {
+    
+                                                                <td>
+                                                                    <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            } 
                                                             else
                                                             {
-                                                                <td>@item.MeetingStatusStatusDesc</td>
+                                                                <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
 
                                                             }
 
@@ -898,6 +927,12 @@
                                                             {
                                                                 <td class="text-center">
                                                                     <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                              else if (item.InterviewStatus == 3)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                                 </td>
                                                             }
                                                             else if (item.InterviewStatus == 4)
@@ -1460,7 +1495,7 @@
                         </svg>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Surchange Details </h5>
+                <h5 class="modal-title pull-left">Surchange Details </h5>f
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeUpdateSurchargeDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>

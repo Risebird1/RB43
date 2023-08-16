@@ -6160,7 +6160,7 @@ input[type="date"].form-control {
 }
 
 .pending {
-    background: #f89d9de8;
+    background: #f89d9db5;
 }
 
 .no-resume {
@@ -6192,7 +6192,6 @@ input[type="date"].form-control {
 .clarity {
     background: #25bd6a8a;
 }
-
 .report-pending {
     background: #3bb5a0;
 }
@@ -6200,11 +6199,44 @@ input[type="date"].form-control {
 .video {
     background: cadetblue;
 }
-
-.reschedule {
-    background: #FFA726;
+.icons-dash {
+    width: 40px !important;
+    left: -4px;
+    max-width: 40px !important;
+    position:relative;
+}
+.dashboard-smalltxt {
+    display: block;
+    font-size: 12px;
+    padding: 0px 0px 0px 11px;
+    color: #a49f9f;
+    line-height:1px;
+    position:relative;
+    top:7px;
 }
 
+.noshow{
+    background:grey;
+}
+.noshow-icon {
+    max-height: 95px!important;
+    height: 110%!important;
+    position: relative;
+    top: -1px;
+    left: -5px;
+}
+.reschedule {
+    background: #fad402a6;
+}
+.risk-client {
+    background: #f79f09;
+}
+.redo {
+    background: #cd7a33;
+}
+.cancel {
+    background: #eb5454;
+}
 .click-arrow {
     border-radius: 100%;
     width: 30px;
@@ -8359,7 +8391,40 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     left: 10px;
     top: 2px;
 }
-
+.status {
+    padding: 3px 5px;
+    font-size: 12px;
+    text-transform: capitalize;
+    display: block;
+    border-radius: 3px;
+    text-align: center;
+    text-decoration:none;
+}
+.mscheduled {
+    background: #f2eefc;
+    color: #845adf;
+    max-width: 83px;
+}
+.mpending {
+    background: #fcebcd;
+    color: #fec14a;
+    width:92px;
+}
+.mcomplete {
+    background: #e9f8f4;
+    color: #40b888dd;
+    width: 83px;
+}
+.mdropped {
+    background: #e454301f;
+    color: #e6540fdb;
+    width: 83px;
+}
+.mnoshow {
+    background: #f89cbf24;
+    color: #eea0dddb;
+    max-width: 126px;
+}
 .overlay {
     position: absolute;
     top: 0;
@@ -8386,9 +8451,11 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 }
 
 #statusListModal .scrollers {
-    height: 430px;
+    height: 390px;
 }
-
+.pagination .page-item.active > .page-link{
+    z-index:0;
+}
 .helper {
     position: absolute;
     top: 0;

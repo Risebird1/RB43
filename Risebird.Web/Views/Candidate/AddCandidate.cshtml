@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.Candidate
 
 
-<form action="@Url.Action("Add", "Candidate",new { emailids=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
+<form action="@Url.Action("Add", "Candidate",new { emailids=ViewBag.emailid,id=ViewBag.id})" method="post" id="form" enctype="multipart/form-data" >
     <div class="row">
         <div class="col-md-6 col-sm-6 pr-1">
             <div class="form-group">
@@ -34,18 +34,71 @@
                 @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
                 @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @if (Model.Candidateesumeid > 0)
-                {
+            @if (Model.Candidateesumeid > 0)
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                     @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @ReadOnly = "Readonly" } })
-                }
-                else
-                {
+
+                    @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    Upload Resume <span class="red">*</span>
+
+
+                    <div class="mdc-touch-target-wrapper" style="top: 4px;
+                position: relative;">
+                        <div class="mdc-radio mdc-radio--touch">
+                            <input class="mdc-radio__native-control" type="radio" id="id_ResumeFile" name="Resume" value="Upload" onclick="RadioChanged(this.value)">
+                            <div class="mdc-radio__background">
+                                <div class="mdc-radio__outer-circle"></div>
+                                <div class="mdc-radio__inner-circle"></div>
+                            </div>
+                            <div class="mdc-radio__ripple"></div>
+                        </div>
+                    </div>
+                    Provide Resume Link <span class="red">*</span>
+
+                    <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                        <div class="mdc-radio mdc-radio--touch">
+                            <input class="mdc-radio__native-control" type="radio" id="id_ResumeLink" name="Resume" value="Link" onclick="RadioChanged(this.value)">
+                            <div class="mdc-radio__background">
+                                <div class="mdc-radio__outer-circle"></div>
+                                <div class="mdc-radio__inner-circle"></div>
+                            </div>
+                            <div class="mdc-radio__ripple"></div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="form-group" style="display:none" id="linkDiv">
+
+                    @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                     @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                }
-                @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
-            </div>
+
+
+                </div>
+
+
+                <div class="" style="display:none" id="uploadDiv">
+
+                    @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @id = "error_JDLink", @class = "text-danger" })
+
+                
+            }
+            
+
+            
+
             <div class="form-group">
                 @Html.LabelFor(model => model.ClientHRAttemptContact, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                 @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -73,3 +126,21 @@
     </div>
 </form>
 
+<script>
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("ResumeFile").value = '';
+
+        }
+    }
+
+</script>
