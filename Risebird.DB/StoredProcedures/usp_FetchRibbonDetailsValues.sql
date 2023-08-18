@@ -434,7 +434,8 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				IRF.IsAadhaarVerificationRequired,
 				Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration,
 				ca.Phone as MobileNumber,
-				case when ulc.LastName is null then ulc.FirstName                
+				case when ulc.LastName is null then ulc.FirstName 
+				
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                
   end as candidateName,
   im.id imid,
