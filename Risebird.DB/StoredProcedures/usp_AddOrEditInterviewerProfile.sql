@@ -68,9 +68,9 @@ Begin
 	  (select count(ipr.Id) as TotalInterviewers from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId cross apply string_split(ipr.AssessmentGroupId, ',') where a.value = value and ul.IsActive=1 group by value) b
 
 
-	  if exists(select top 1 assessmentGroupId from @temp where TotalInterviewers >=100)
+	  if exists(select top 1 assessmentGroupId from @temp where TotalInterviewers >=2000)
 	  Begin
-		set @assessmentGroupList = (select STRING_AGG(asg.AssessmentGroup, ',') from @temp tp join AssessmentGroup asg on asg.id = tp.assessmentGroupId where TotalInterviewers >= 100)
+		set @assessmentGroupList = (select STRING_AGG(asg.AssessmentGroup, ',') from @temp tp join AssessmentGroup asg on asg.id = tp.assessmentGroupId where TotalInterviewers >= 2000)
 		return
 	  End
 	   
