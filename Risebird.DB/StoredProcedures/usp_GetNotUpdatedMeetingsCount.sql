@@ -63,8 +63,15 @@ declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from Intervi
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)
  and im.RedoInterview=0) 
 
- declare @RedoInterviewCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+ declare @RedoInterviewCount int = (select Count(im.id)  from InterviewMeetings im                              
+  inner join IRF on im.IRFId = IRF.IRFId                              
+  left join UserList ulc on im.candidateEmail= ulc.EmailId 
+  join SeniorHr sh on sh.Clientid=irf.ClientId
+  join CandidatesMaster cm on ulc.id = cm.UserId                                             
+  left join Client cl on cl.id = irf.ClientId                             
+  join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
+where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())and ulc.Emailid= @Emailid)
+
  declare @ProbableNoShowCount int=( select COUNT(pnc.id) from ProbableNoShowCandidates pnc  
 join InterviewMeetings im on im.id = pnc.InterviewId  
 join UserList ul on ul.id = pnc.CandidateUserId  
@@ -141,8 +148,15 @@ set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeeting
 set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateRatings cr on im.id=cr.interviewid where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
 set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.SuspiciousStatus=0)
 set @CancelledInterviewCount=(select Count(im.id) from InterviewMeetings im  where confirmationStatus=2  and CAST(interviewDate as DATE) >=CAST(GETDATE() as DATE) and im.RedoInterview=0)
-set @RedoInterviewCount=(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId          
- left join UserList ulsh  on ulsh.id=  irf.RisebirdHr where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+
+set @RedoInterviewCount=(select Count(im.id)  from InterviewMeetings im                              
+  inner join IRF on im.IRFId = IRF.IRFId                              
+  left join UserList ulc on im.candidateEmail= ulc.EmailId                                                          
+  join CandidatesMaster cm on ulc.id = cm.UserId                                             
+  left join Client cl on cl.id = irf.ClientId                             
+  join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
+where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))
+
 set  @ProbableNoShowCount =(select COUNT(pnc.id) from ProbableNoShowCandidates pnc  
 join InterviewMeetings im on im.id = pnc.InterviewId  
 join UserList ul on ul.id = pnc.CandidateUserId  
