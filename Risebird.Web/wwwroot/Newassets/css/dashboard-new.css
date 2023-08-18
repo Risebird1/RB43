@@ -6140,7 +6140,7 @@ input[type="date"].form-control {
     padding: 0px 0px 0px 5px;
     margin: 0px;
     position: relative;
-    top: -11px;
+    top: -6px;
     text-align:left;
 }
 
@@ -6154,8 +6154,10 @@ input[type="date"].form-control {
     line-height: 25px;
     padding: 10px;
 }
-
-.unassign {
+.dashboard .panel .panel-body {
+    padding: 5px;
+}
+    .unassign {
     background: #74c0fc;
 }
 
