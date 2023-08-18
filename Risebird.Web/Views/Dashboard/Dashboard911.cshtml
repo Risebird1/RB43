@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="row  col-sm-12">
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper14">
+                                <div class="panel card flipper16">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="ProbableNoShow()">
                                             <div class="panel-heading" data-position="bottom">
@@ -88,6 +88,7 @@
                                     </div>
                                 </div>
                             </div>
+                           
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper12">
                                     <div id="survey-feedback">
@@ -159,8 +160,9 @@
                                     </div>
                                 </div>
                             </div>
+                           
                             <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="panel card flipper10">
+                                <div class="panel card flipper15">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')">
                                             <div class="panel-heading" data-position="bottom">
@@ -238,6 +240,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper11">
                                     <div id="survey-feedback">
@@ -309,6 +312,7 @@
                                     </div>
                                 </div>
                             </div>
+                           
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper14">
                                     <div id="survey-feedback">
@@ -376,6 +380,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper1">
                                     <div id="survey-feedback">
@@ -442,6 +447,7 @@
                                     </div>
                                     </div>
                             </div>
+                           
                             <div class="col-lg-3 col-md-4 col-sm-6">
     <div class="panel card flipper2">
         <div id="survey-feedback">
@@ -506,6 +512,7 @@
         </div>
     </div>
 </div>
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
     <div class="panel card flipper3">
         <div id="survey-feedback">
@@ -578,6 +585,7 @@
         </div>
     </div>
 </div>
+                            
                            <div class="col-lg-3 col-md-4 col-sm-6">
     <div class="panel card flipper4">
         <div id="survey-feedback">
@@ -643,6 +651,7 @@
                                 </div>
                             </div>
                             </div>
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper5">
                                     <div id="survey-feedback">
@@ -708,6 +717,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper6">
                                     <div id="survey-feedback">
@@ -776,7 +786,7 @@
                                     </div>
                                 </div>
                             </div>
-                          
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper7">
                                     <div id="survey-feedback">
@@ -845,6 +855,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper8">
                                     <div id="survey-feedback">
@@ -914,7 +925,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                           
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
@@ -986,8 +997,7 @@
                                     </div>
                                 </div>
                             </div>
-
-
+                           
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper10">
                                     <div id="survey-feedback">
@@ -1059,7 +1069,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                             
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card">
                                     <div id="survey-feedback">
@@ -1127,7 +1137,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
 
                             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -1198,7 +1207,6 @@
                                 </div>
                             </div>
 							
-                         
 
                         </div>
 
@@ -1335,7 +1343,7 @@
                     $(".flipper12").removeClass("flipper");
                 }
                  if (parseInt(data.cancelledInterviewCount) != parseInt($("#ribbonCancelledInterviewsCount").text())) {
-                    $(".flipper13").addClass("flipper");              
+                    $(".flipper13").addClass("flipper");   
                 }
                 else {
                     $(".flipper13").removeClass("flipper");
@@ -1349,6 +1357,22 @@
                     $(".flipper14").removeClass("flipper");
                 }
 
+                if (parseInt(data.potentialRiskByClient) != parseInt($("#ribbonPotentialRiskByClientCount").text())) {
+
+                    $(".flipper15").addClass("flipper");
+
+                }
+                else {
+                    $(".flipper15").removeClass("flipper");
+                }
+
+                if (parseInt(data.probableNoShowCount) != parseInt($("#ribbonProbableNoShowCount").text())) {
+                    $(".flipper16").addClass("flipper");
+
+                }
+                else {
+                    $(".flipper16").removeClass("flipper");
+                }
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
@@ -1363,6 +1387,8 @@
                 $("#ribbonSuspiciousInterviewerCount").text(data.suspiciousInterviewerCount);
                 $("#ribbonCancelledInterviewsCount").text(data.cancelledInterviewCount);
                 $("#ribbonRedoInterviewCount").text(data.redoInterviewCount);
+                $("#ribbonPotentialRiskByClientCount").text(data.potentialRiskByClient);
+                $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1378,8 +1404,8 @@
                 $("#ribbonSuspiciousInterviewerCount_1").text(data.suspiciousInterviewerCount);
                 $("#ribbonCancelledInterviewsCount_1").text(data.cancelledInterviewCount);
                 $("#ribbonRedoInterviewCount_1").text(data.redoInterviewCount);
-
-          
+                $("#ribbonPotentialRiskByClientCount_1").text(data.potentialRiskByClient);
+                $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
                 $(".flipper").toggleClass("flip");
             }
         });
