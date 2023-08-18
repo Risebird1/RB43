@@ -13,7 +13,7 @@ CREATE PROCEDURE usp_GetCandidateResumeForParsing
 AS
 BEGIN
 
-select top 10 id, IRFId, ResumeLink, AddedBy from CandidateResume where IsResumeParsed = 0 and IsProcessed = 0
+select top 10 id, IRFId, ResumeLink, AddedBy from CandidateResume where IsResumeParsed = 0 and IsProcessed = 0 order by id desc
 
 END   
 
