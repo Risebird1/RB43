@@ -204,6 +204,7 @@ namespace Risebird.Web.Controllers
                                 //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; 
                                 x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
                                 //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; 
+                               
                                 return x;
                             }).ToList();
                             foreach (var item in modelList)
@@ -229,12 +230,14 @@ namespace Risebird.Web.Controllers
                                     item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                                 }
                             }
+                            
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         }
                         if (type == "RedoInterviews")
                         {
                             ViewBag.Type = "RedoInterviews";
                             modelList = modelList.Where(x => x.RedoInterview == true).ToList();
+                        
                         }
                         else if (type == "Interviews")
                         {

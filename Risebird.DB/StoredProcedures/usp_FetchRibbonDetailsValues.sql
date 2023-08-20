@@ -420,54 +420,186 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId,
+				select distinct im.*, cl.Name as Client,ulc.EmailId as BillingOwner,IRF.id as irfIntId,
 				IRF.JDTiltle,
-				IRF.JDLink as JDLinkv
-				--ca.ClientHRAttemptContact as CandidateClientHR
-				from InterviewMeetings im 
-				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
-				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
-				join UserList ul on ul.id= irf.RisebirdHr
-				--left join CandidatesMaster cm on ul.id = cm.UserId   
-				--left join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
-				where  ul.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+				IRF.JDLink as JDLinkv,
+				ca.ClientHRAttemptContact as CandidateClientHR,
+				itp.CompanyName,
+				itp.CodedResumeLink as encodedresumeLink,
+				ca.ResumeLink as resumeLink,
+				ca.ClientHRAttemptContact as CandidateClientHR,
+				IRF.ClientName,
+				ic.VideoLink,
+				ic.VideoDuration,
+				IRF.IsAadhaarVerificationRequired,
+				Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration,
+				ca.Phone as MobileNumber,
+				case when ulc.LastName is null then ulc.FirstName 
+				
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                
+  end as candidateName,
+  im.id imid,
+  ulcho.EmailId as ChannelOwner,
+  ulc.EmailId as candidateEmail
+				from InterviewMeetings im                              
+                inner join IRF on im.IRFId = IRF.IRFId                              
+               left join UserList ulc on im.candidateEmail= ulc.EmailId 
+			   left join UserList uli on im.interviewer= uli.EmailId
+			   left join UserList ulcho on ulcho.id  = irf.RisebirdHr 
+			   left join InterviewerProfile itp on itp.UserId = uli.id
+			    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
+              join CandidatesMaster cm on ulc.id = cm.UserId                                             
+                left join Client cl on cl.id = irf.ClientId                             
+               join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
+			   left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType  
+				where  ulc.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 			end
 			else
 			begin
-				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId,
+				select distinct im.*, cl.Name as Client,ulc.EmailId as BillingOwner,IRF.id as irfIntId,
 				IRF.JDTiltle,
-				IRF.JDLink as JDLink
-			----	ca.ClientHRAttemptContact as CandidateClientHR
-				from InterviewMeetings im 
-				join IRF on im.IRFId=irf.IRFId
-				join Client cl on irf.ClientId=cl.id 
-				join UserList ul on ul.id=  irf.RisebirdHr 
-				--left join CandidatesMaster cm on ul.id = cm.UserId   
-				--left join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
+				IRF.JDLink as JDLink,
+			    ca.ClientHRAttemptContact as CandidateClientHR,
+				itp.CompanyName,
+				itp.CodedResumeLink as encodedresumeLink,
+				ca.ResumeLink as resumeLink,
+				ca.ClientHRAttemptContact as CandidateClientHR,
+				IRF.ClientName,
+				ic.VideoLink,
+				ic.VideoDuration,
+				IRF.IsAadhaarVerificationRequired,
+				Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration,
+				ca.Phone as MobileNumber,
+				case when ulc.LastName is null then ulc.FirstName                
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                
+  end as candidateName,
+  im.id imid,
+  ulcho.EmailId as ChannelOwner,
+  ulc.EmailId as candidateEmail
+				from InterviewMeetings im                              
+  inner join IRF on im.IRFId = IRF.IRFId                              
+  left join UserList ulc on im.candidateEmail= ulc.EmailId 
+  left join UserList uli on im.interviewer= uli.EmailId
+  left join UserList ulcho on ulcho.id  = irf.RisebirdHr 
+			   left join InterviewerProfile itp on itp.UserId = uli.id
+			    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
+  join CandidatesMaster cm on ulc.id = cm.UserId                                             
+  left join Client cl on cl.id = irf.ClientId                             
+  join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType  
 				where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 			end
 		end
 		else
 		begin
-			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId ,
+			select distinct im.*,cl.Name as Client,ulc.EmailId as BillingOwner,IRF.id as irfIntId ,
 			IRF.JDTiltle,
-			IRF.JDLink as JDLin
-			from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
-			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
-			join UserList ulc on ulc.id=irf.RisebirdHr
-			where ul.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+			IRF.JDLink as JDLin,
+			ca.ClientHRAttemptContact as CandidateClientHR,
+			itp.CompanyName,
+			itp.CodedResumeLink as encodedresumeLink,
+			ca.ResumeLink as resumeLink,
+			ca.ClientHRAttemptContact as CandidateClientHR,
+			IRF.ClientName,
+			ic.VideoLink,
+			ic.VideoDuration,
+			IRF.IsAadhaarVerificationRequired,
+			Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration,
+			ca.Phone as MobileNumber,
+			case when ulc.LastName is null then ulc.FirstName                
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                
+  end as candidateName,
+  im.id imid,
+  ulcho.EmailId as ChannelOwner,
+  ulc.EmailId as candidateEmail
+			from InterviewMeetings im                              
+  inner join IRF on im.IRFId = IRF.IRFId                              
+  left join UserList ulc on im.candidateEmail= ulc.EmailId 
+  left join UserList uli on im.interviewer= uli.EmailId
+  left join UserList ulcho on ulcho.id  = irf.RisebirdHr 
+			   left join InterviewerProfile itp on itp.UserId = uli.id
+			    left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
+  join CandidatesMaster cm on ulc.id = cm.UserId                                             
+  left join Client cl on cl.id = irf.ClientId                             
+  join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType  
+			where ulc.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 			union 
-			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId,
+			select distinct im.*,cl.Name as Client,ulc.EmailId as BillingOwner,IRF.id as irfIntId,
 			IRF.JDTiltle,
-			IRF.JDLink as JDLink
-			from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
-			join UserList ulc on ulc.id= irf.RisebirdHr
-		
-			where ul.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+			IRF.JDLink as JDLink,
+			ca.ClientHRAttemptContact as CandidateClientHR,
+			itp.CompanyName,
+			itp.CodedResumeLink as encodedresumeLink,
+			ca.ResumeLink as resumeLink,
+			ca.ClientHRAttemptContact as CandidateClientHR,
+			IRF.ClientName,
+			ic.VideoLink,
+			ic.VideoDuration,
+			IRF.IsAadhaarVerificationRequired,
+			Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration,
+			ca.Phone as MobileNumber,
+			case when ulc.LastName is null then ulc.FirstName                
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                
+  end as candidateName,
+  im.id imid,
+  ulcho.EmailId as ChannelOwner,
+  ulc.EmailId as candidateEmail
+			from InterviewMeetings im                              
+  inner join IRF on im.IRFId = IRF.IRFId                              
+  left join UserList ulc on im.candidateEmail= ulc.EmailId 
+  left join UserList uli on im.interviewer= uli.EmailId
+  left join UserList ulcho on ulcho.id  = irf.RisebirdHr 
+left join InterviewerProfile itp on itp.UserId = uli.id
+  join CandidatesMaster cm on ulc.id = cm.UserId 
+   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
+  left join Client cl on cl.id = irf.ClientId                             
+  join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId 
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType 
+			where ulc.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 		end
 	end
 
-
+	If(@actionstatus ='PotentialRiskByClient')
+	begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+				select distinct ccfr.Comment,im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId 
+				 from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				where  interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3 and ulsh.Emailid= @Emailid
+			end
+			else
+			begin
+				select distinct ccfr.Comment,im.*, IRF.id as irfIntId 
+				from  ClientCommentsForReport ccfr 
+				join InterviewMeetings im on ccfr.InterviewId=im.id
+				join IRF on im.IRFId=irf.IRFId  
+				where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
+			end
+		end
+		else
+		begin
+			select distinct ccfr.Comment,im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from  ClientCommentsForReport ccfr 
+			join InterviewMeetings im on ccfr.InterviewId=im.id
+			join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId
+			join Userlist ul on ul.id=HR.UserId 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
+			union 
+			select distinct ccfr.Comment,im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from  ClientCommentsForReport ccfr 
+				join InterviewMeetings im on ccfr.InterviewId=im.id
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join Userlist ul on ul.id=irf.RisebirdHr 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
+		end
+	end
 END
 
 GO
