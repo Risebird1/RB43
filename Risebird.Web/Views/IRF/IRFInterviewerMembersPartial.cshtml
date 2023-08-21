@@ -13,6 +13,7 @@
                         <th>EmailId</th>
                         <th class="text-center">Call</th>
                         <th>ResumeLink</th>
+                        <th>Company Name</th>
                         <th>Active</th>
                         <th>Available</th>
                         @if (ViewBag.Type != "IRF")
@@ -79,6 +80,21 @@
                             {
                                 <td class="text-center">No Resume</td>
                             }
+                            @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                            {
+                                @if (item.CompanyName.Length > 20)
+                                {
+                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0,19) ....</td>
+                                }
+                                else
+                                {
+                                    <td>@item.CompanyName</td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                             @if (item.IsActive)
                             {
                                 <td class="text-center">Yes</td>
@@ -141,6 +157,10 @@
                                             </a>
                                         </td>
                                     }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
                                 }
                                 else
                                 {
@@ -153,6 +173,10 @@
                                                 </button>
                                             </a>
                                         </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
                                     }
                                 }
                             }

@@ -26,7 +26,7 @@
     string[] TemplateName = new string[] { };
     bool[] AadhaarVerified = new bool[] { };
     string[] ChannelOwner = new string[] { };
-    var CancelInterviews ="CancelInterviews";
+    var CancelInterviews = "CancelInterviews";
 }
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
@@ -713,7 +713,7 @@
                                                                 </button>
                                                             }
 
-                                                              @if (ViewBag.Type != CancelInterviews)
+                                                            @if (ViewBag.Type != CancelInterviews)
                                                             {
 
                                                                 <span class="interview_9">
@@ -737,12 +737,12 @@
                                                                 }
                                                             }
                                                             @*<span>
-                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
-                                                                    <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                    </span>
-                                                                </button>
-                                                            </span>*@
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
+                                                        <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
+                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                        </span>
+                                                        </button>
+                                                        </span>*@
                                                         </td>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
@@ -795,9 +795,12 @@
                                                             }
                                                             @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                             {
-                                                                @if(item.CompanyName.Length>30){
+                                                                @if (item.CompanyName.Length > 30)
+                                                                {
                                                                     <td title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
-                                                                }else{
+                                                                }
+                                                                else
+                                                                {
                                                                     <td>@item.CompanyName</td>
                                                                 }
                                                             }
@@ -824,23 +827,17 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                            @if (@item.encodedresumeLink != null || @item.encodedresumeLink != "")
+                                                            @if (@item.encodedresumeLink != null && @item.encodedresumeLink != "")
                                                             {
-
                                                                 <td>
-
                                                                     <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.encodedresumeLink>Resume</a>
                                                                 </td>
-
-
                                                             }
                                                             else
                                                             {
                                                                 <td>
-
                                                                     <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink>Resume</a>
                                                                 </td>
-
                                                             }
 
                                                             @if (item.confirmationStatus.Trim() == "Cancelled")
@@ -886,14 +883,16 @@
                                                                     <span class="status mpending">@item.MeetingStatusStatusDesc</span>
                                                                 </td>
                                                             }
-                                                           else if (item.MeetingStatusStatusDesc == "Completed"){
-    
+                                                            else if (item.MeetingStatusStatusDesc == "Completed")
+                                                            {
+
                                                                 <td>
                                                                     <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
                                                                 </td>
-                                                            }  
-                                                             else if (item.MeetingStatusStatusDesc == "Scheduled"){
-    
+                                                            }
+                                                            else if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                            {
+
                                                                 <td>
                                                                     <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
                                                                 </td>
@@ -901,18 +900,18 @@
 
                                                             else if (item.MeetingStatusStatusDesc == "Dropped")
                                                             {
-    
+
                                                                 <td>
                                                                     <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
                                                                 </td>
                                                             }
                                                             else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
                                                             {
-    
+
                                                                 <td>
                                                                     <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
                                                                 </td>
-                                                            } 
+                                                            }
                                                             else
                                                             {
                                                                 <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
@@ -925,7 +924,7 @@
                                                                     <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                                 </td>
                                                             }
-                                                              else if (item.InterviewStatus == 3)
+                                                            else if (item.InterviewStatus == 3)
                                                             {
                                                                 <td class="text-center">
                                                                     <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
