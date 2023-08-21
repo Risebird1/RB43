@@ -354,8 +354,8 @@
                                                     <th>Interviewer resume Link</th>
                                                     <th>Confirmation Status</th>
                                                    <th>Cancellation source</th>
-                                                        <th>Meeting Status</th>
-                                                        <th>Interview Status</th>
+                                                       @* <th>Meeting Status</th>
+                                                        <th>Interview Status</th>*@
                                                         <th>Candidate Response</th>
                                                         <th>Resume</th>
                                                         <th>JD Link</th>
@@ -364,8 +364,8 @@
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
                                                         <th>Video Duration</th>
-                                                        <th>Emergency Interview</th>
-                                                        <th>Interview Slot</th>
+                                                        @*<th>Emergency Interview</th>
+                                                       <th>Interview Slot</th>*@
                                                         <th>Staffing Agency</th>
                                                         <th>Interview Duration</th>
                                                         <th>ID Verification</th>
@@ -529,8 +529,8 @@
                                                     <th>Interviewer resume Link</th>
                                                         <th>Confirmation Status</th>
                                                    <th>Cancellation source</th>
-                                                        <th>Meeting Status</th>
-                                                        <th>Interview Status</th>
+                                                        @*<th>Meeting Status</th>
+                                                        <th>Interview Status</th>*@
                                                         <th>Candidate Response</th>
                                                         <th>Resume</th>
                                                         <th>JD Link</th>
@@ -539,8 +539,8 @@
                                                         <th>Project Name</th>
                                                         <th>Video Link</th>
                                                         <th>Video Duration</th>
-                                                        <th>Emergency Interview</th>
-                                                        <th>Interview Slot</th>
+                                                        @* <th>Emergency Interview</th>
+                                                        <th>Interview Slot</th>*@
                                                         <th>Staffing Agency</th>
                                                         <th>Interview Duration</th>
                                                         <th>ID Verification</th>
@@ -949,7 +949,7 @@
                                                             <td></td>
                                                         }
 
-                                                            @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                            @*@if (item.MeetingStatusStatusDesc == "Status Pending")
                                                             {
                                                                 <td>
                                                                     <span class="status mpending">@item.MeetingStatusStatusDesc</span>
@@ -988,9 +988,9 @@
                                                             {
                                                                 <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
 
-                                                            }
+                                                            }*@
 
-                                                        @if (item.InterviewStatus == 2)
+                                                       @* @if (item.InterviewStatus == 2)
                                                         {
                                                             <td class="text-center">
                                                                 <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
@@ -1005,7 +1005,7 @@
                                                         else
                                                         {
                                                             <td class="text-center">@item.intervieweStatusStatDesc</td>
-                                                        }
+                                                        }*@
 
                                                         @if (item.IsCandidateResponsed)
                                                         {
@@ -1089,7 +1089,7 @@
                                                             <td>No Video</td>
                                                             <td>NA</td>
                                                         }
-                                                        @if (item.IsEmergency)
+                                                       @* @if (item.IsEmergency)
                                                         {
                                                             <td>Yes</td>
                                                         }
@@ -1097,7 +1097,7 @@
                                                         {
                                                             <td>No</td>
                                                         }
-                                                        <td>@item.interviewSlot</td>
+                                                        <td>@item.interviewSlot</td>*@
                                                     
 
                                                         <td>@item.staffingAgency</td>
