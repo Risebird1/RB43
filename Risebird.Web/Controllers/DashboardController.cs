@@ -1110,60 +1110,72 @@ namespace Risebird.Web.Controllers
                         ViewBag.actionstatus = actionstatus;
                         if (actionstatus == RibbonActionType.InterviewCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
+                            ViewBag.PageHeader = "Unassigned Interviews";
                         }
                         else if (actionstatus == RibbonActionType.MeetingStatus)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Status Pending";
+                            ViewBag.PageHeader = "Status Pending";
                         }
                         else if (actionstatus == RibbonActionType.QcPending)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Qc Pending";
+                            ViewBag.PageHeader = "Qc Pending";
                         }
                         else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 0)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
+                            ViewBag.PageHeader = "Auto Cancelled Interview";
                         }
                         else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 1)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
+                            ViewBag.PageHeader = "Auto Cancelled Interview";
                         }
                         else if (actionstatus == RibbonActionType.ZoomLink)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Missing Zoom Link";
+                            ViewBag.PageHeader = "Missing Zoom Link";
                         }
                         else if (actionstatus == RibbonActionType.UnAttendedZoomLink)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Participant Waiting";
+                            ViewBag.PageHeader = "Participant Waiting";
                         }
                         else if (actionstatus == RibbonActionType.VideoLink)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
+                            ViewBag.PageHeader = "Missing Video Link";
                         }
                         else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / QC Report";
+                            ViewBag.PageHeader = "QC Report";
                         }
-                        else if (actionstatus == RibbonActionType.NeedClarity)
+                        else if (actionstatus == RibbonActionType.PotentialRiskByClient)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Need Clarity";
-                        }
-                        else if (actionstatus == RibbonActionType.ReScheduleCount)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / Reschedule Interview";
+                            ViewBag.PageHeader = "Potential Risk By Client";
                         }
                         else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Potential Risk Interview";
+                            ViewBag.PageHeader = "Potential Risk By Candidate";
+                        }
+                        else if (actionstatus == RibbonActionType.NeedClarity)
+                        {
+                            ViewBag.PageHeader = "Need Clarity";
+                        }
+                        else if (actionstatus == RibbonActionType.ReScheduleCount)
+                        {
+                            ViewBag.PageHeader = "Reschedule Interview";
+                        }
+                        else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
+                        {
+                            ViewBag.PageHeader = "Potential Risk Interview";
                         }
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Suspicious Interviewer";
+                            ViewBag.PageHeader = "Suspicious Interviewer";
                         }
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Cancelled Interviwes";
+                            ViewBag.PageHeader = "Cancelled Interviwes";
                         }
+
+
+
+
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
@@ -1208,56 +1220,64 @@ namespace Risebird.Web.Controllers
                         ViewBag.actionstatus = actionstatus;
                         if (actionstatus == RibbonActionType.InterviewCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Unassigned Interviews";
+                            ViewBag.PageHeader = "Unassigned Interviews";
                         }
                         else if (actionstatus == RibbonActionType.MeetingStatus)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Status Pending";
+                            ViewBag.PageHeader = "Status Pending";
                         }
                         else if (actionstatus == RibbonActionType.QcPending)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Qc Pending";
+                            ViewBag.PageHeader = "Qc Pending";
                         }
-                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 0)
+                        else if (actionstatus == RibbonActionType.PotentialRiskByClient)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Unassigned RB Coordinator";
-                        }
-                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 1)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / PENDING CANDIDATE FEEDBACK";
-                        }
-                        else if (actionstatus == RibbonActionType.ZoomLink)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / Missing Zoom Link";
-                        }
-                        else if (actionstatus == RibbonActionType.UnAttendedZoomLink)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / Participant Waiting";
-                        }
-                        else if (actionstatus == RibbonActionType.VideoLink)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
-                        }
-                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / QC Report";
-                        }
-                        else if (actionstatus == RibbonActionType.ReScheduleCount)
-                        {
-                            ViewBag.PageHeader = "911 Dashboard / Reschedule Interview";
+                            ViewBag.PageHeader = "Potential Risk By Client";
                         }
                         else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Potential Risk Interview";
+                            ViewBag.PageHeader = "Potential Risk By Candidate";
+                        }
+                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 0)
+                        {
+                            ViewBag.PageHeader = "Unassigned RB Coordinator";
+                        }
+                        else if (actionstatus == RibbonActionType.UnAssignedCoordianter && actiontype == 1)
+                        {
+                            ViewBag.PageHeader = "PENDING CANDIDATE FEEDBACK";
+                        }
+                        else if (actionstatus == RibbonActionType.ZoomLink)
+                        {
+                            ViewBag.PageHeader = "Missing Zoom Link";
+                        }
+                        else if (actionstatus == RibbonActionType.UnAttendedZoomLink)
+                        {
+                            ViewBag.PageHeader = "Participant Waiting";
+                        }
+                        else if (actionstatus == RibbonActionType.VideoLink)
+                        {
+                            ViewBag.PageHeader = "Missing Video Link";
+                        }
+                        else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
+                        {
+                            ViewBag.PageHeader = "QC Report";
+                        }
+                        else if (actionstatus == RibbonActionType.ReScheduleCount)
+                        {
+                            ViewBag.PageHeader = "Reschedule Interview";
+                        }
+                        else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
+                        {
+                            ViewBag.PageHeader = "Potential Risk Interview";
                         }
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Suspicious Interviewer";
+                            ViewBag.PageHeader = "Suspicious Interviewer";
                         }
 
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Cancelled Interviwes";
+                            ViewBag.PageHeader = "Cancelled Interviwes";
                         }
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
