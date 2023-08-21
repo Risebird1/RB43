@@ -37,7 +37,7 @@
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.BufferTime, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
                                     <div class=" col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left nopad">
-                                        @Html.TextBoxFor(m => m.BufferTime, new { @class = "form-control", @type = "number", @min = "2", @max = "72" })
+                                        @Html.TextBoxFor(m => m.BufferTime, new { @class = "form-control text-box single-line", @type = "number", @min = "2", @max = "72" })
                                         @Html.ValidationMessageFor(model => model.BufferTime, "", new { @class = "text-danger" })
                                     </div>
                                 </div>

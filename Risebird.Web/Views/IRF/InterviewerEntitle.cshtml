@@ -14,12 +14,6 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/irf.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <!-- End Navbar -->
-
-
-
-
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -30,9 +24,6 @@
 
                 <div class="pull-right">
                     <div>
-
-
-
                         <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back</a>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="EditAssessment(0)" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Assessment Group </font></span></button>
                     </div>
@@ -40,15 +31,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -68,6 +50,7 @@
 
 
                             <div style="clear:both;padding:10px"></div>
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                             <table id="entitleTable" class="table table-striped table-bordered dt-responsive dataTable" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
@@ -116,7 +99,7 @@
                                                     <span onclick="EditAssessment(@item.id)" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span>
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewers List">
-                                                    <span onclick="javascript:getIRFMembers('@item.id');" title="Interviewers List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                        <span onclick="javascript:getIRFMembers('@item.id');" title="Interviewers List" class="mdc-fab__icon material-icons"><img src="~/img/user-list.png" width="17" /></span>
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Skill Channel List">
                                                     <span onclick="javascript:getIRFList('@item.id');" title="Skill Channel List" class="mdc-fab__icon material-icons">
@@ -129,11 +112,11 @@
                                                     </span>
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute priority" aria-label="Share Verification to interviewer" style="background: #59b259 !important" title="Share MCQ Set">
-                                                    <span onclick="javascript:ShareVerificationInterviewer('@item.id');" title="Share Verification to interviewer" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                                                    <span onclick="javascript:ShareVerificationInterviewer('@item.id');" title="Share Verification to interviewer" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
                                                 </button>
                                                 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                    <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME" class="mdc-fab__icon material-icons"><i class="fa-solid fa-user-check"></i></span>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit" style="position:relative;top:-3px;">
+                                                        <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME" class="mdc-fab__icon material-icons"><i style="font-size:13px;" class="fas fa-user-check"></i></span>
                                                 </button>
                                             </td>
 
@@ -141,7 +124,7 @@
                                     }
                                 </tbody>
                             </table>
-                            <div style="clear:both"></div>
+                            </div>
 
                             @*@Html.PagedListPager(Model, Page => Url.Action("InterviewerEntitle", new { Page = Page }))*@
                         </div>

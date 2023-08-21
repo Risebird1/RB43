@@ -3,7 +3,7 @@
 <div>
     @if (Model != null && Model.Count() != 0)
     {
-        <div id="style-2" class="scrollers" style="overflow-y:auto">
+        <div>
 
             <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                 <thead>
@@ -13,6 +13,7 @@
                         <th>EmailId</th>
                         <th class="text-center">Call</th>
                         <th>ResumeLink</th>
+                        <th>Company Name</th>
                         <th>Active</th>
                         <th>Available</th>
                         @if (ViewBag.Type != "IRF")
@@ -64,7 +65,7 @@
                             <td class="text-center">
                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                 {
-                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName', '@item.MobileNumber', '@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName','919830929409','@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
                                 }
 
                             </td>
@@ -78,6 +79,21 @@
                             else
                             {
                                 <td class="text-center">No Resume</td>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                            {
+                                @if (item.CompanyName.Length > 20)
+                                {
+                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0,19) ....</td>
+                                }
+                                else
+                                {
+                                    <td>@item.CompanyName</td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
                             }
                             @if (item.IsActive)
                             {
@@ -141,6 +157,10 @@
                                             </a>
                                         </td>
                                     }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
                                 }
                                 else
                                 {
@@ -153,6 +173,10 @@
                                                 </button>
                                             </a>
                                         </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
                                     }
                                 }
                             }
@@ -189,9 +213,10 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 <script src="~/Newassets/js/scrollBar.js"></script>
-
+<script src="~/js/twiliocallmaker.js"></script>
 <script type="text/javascript">
     $(".sb-container").scrollBox();
     function closeinterviewerFlagDetailsModal() {
