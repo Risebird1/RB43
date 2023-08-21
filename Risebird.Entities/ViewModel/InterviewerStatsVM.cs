@@ -21,5 +21,9 @@
         public string AverageClientRating { get; set; }
         public string NickName { get; set; }//CodedName
         public string CodedResumeLink { get; set; }
+        public bool isVerified { get; set; }
+        public bool IsEmployed { get; set; }
+        public string EmploymentComment { get; set; }
+        public string CompanyName { get; set; }
     }
 }
