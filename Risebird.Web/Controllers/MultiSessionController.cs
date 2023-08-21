@@ -36,7 +36,8 @@ namespace Risebird.Web.Controllers
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
-                string emailId = userClaims?.FindFirst("emails")?.Value;          
+                string emailId = userClaims?.FindFirst("emails")?.Value;
+                emailId = "pb00821397@techmahindra.com";
                 var sessionId = HttpContext.Session.Id;
                 await _userService.ClearSessionForOthersUsers(emailId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld(emailId, sessionId);
