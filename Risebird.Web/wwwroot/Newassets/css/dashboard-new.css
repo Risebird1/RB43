@@ -6370,6 +6370,38 @@ input[type="date"].form-control {
 .tox-notifications-container {
     display: none
 }
+.name-field {
+    font-size: 16px;
+    color: #260944;
+    font-family: "Raleway", sans-serif;
+}
+.email-field {
+    font-size: 13px;
+    color: #a9a9c8 !important;
+    font-family: "Open Sans", sans-serif;
+}
+.int-date {
+    color: #5b5b98!important
+}
+.selected {
+    background: #90ee9094;
+    color: forestgreen;
+    font-size: 13px;
+    padding: 1px 6px;
+    display: inline-block;
+    font-weight: 600;
+    border-radius: 0.2rem;
+}
+.rejected {
+    background: #fdebf3;
+    color: #ee4936;
+    font-size: 13px;
+    padding: 1px 6px;
+    display: inline-block;
+    font-weight: 600;
+    border-radius: 0.2rem;
+}
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -8454,7 +8486,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 .mdropped {
     background: #e454301f;
     color: #e6540fdb;
-    width: 83px;
+    width:113px;
 }
 .mnoshow {
     background: #f89cbf24;

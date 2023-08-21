@@ -11520,6 +11520,11 @@ table.dataTable thead .sorting_asc_disabled,
 table.dataTable thead .sorting_desc_disabled {
     cursor: pointer;
     position: relative;
+
+    font-size: 13px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+}
 }
 
     table.dataTable thead .sorting_asc_disabled:after,
