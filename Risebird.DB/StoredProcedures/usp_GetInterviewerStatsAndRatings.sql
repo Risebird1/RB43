@@ -9,6 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO      
                       
+                      
 CREATE PROCEDURE usp_GetInterviewerStatsAndRatings                              
 @timeNow datetime,  
 @irfId int = null,
@@ -196,7 +197,7 @@ Begin
  select  ul.EmailId as InterviewerEmailId, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,  
  tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,  
  tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating, 
- ipr.CodedResumeLink, ipr.NickName
+ ipr.CodedResumeLink, ipr.NickName,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment         
  from TransInterviewer tin   
  join UserList ul on ul.id = tin.UserId  
  join InterviewerProfile ipr on ipr.UserId = ul.id  
@@ -220,7 +221,7 @@ Begin
  select  ti.interviewer as InterviewerEmailId, ti.TotalMeetings, ticom.TotalCompletedMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,  
  tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,  
  tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId, tic.AverageRating as AverageClientRating,
- ipr.CodedResumeLink, ipr.NickName
+ ipr.CodedResumeLink, ipr.NickName,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment         
  from @tbl_Interviewer ti  
  left join @tbl_InterviewerCompleted ticom on ticom.interviewer = ti.interviewer  
  left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer  
@@ -237,40 +238,7 @@ Begin
  join UserList ul on ul.EmailId = ti.interviewer  
  join InterviewerProfile ipr on ipr.UserId = ul.id  
 End  
-  
-  
-  
-  
---select * into  #Temptable from (select  ti.interviewer as InterviewerEmailId, ti.TotalMeetings, tis.TotalSelected, tir.TotalRejected, tib.TotalBorderLine,  
---tip.TotalProxy, tid.TotalDropped, tins.TotalSelfNoShow, tinsc.TotalNoShowCandidate, tipen.StatusPending, tisch.Scheduled,  
---tipenal.TotalPenalties, ipr.ResumeLink, ul.MobileNumber as InterviewerPhone, ul.id as UserId  
---from @tbl_Interviewer ti  
---left join @tbl_InterviewerSelected tis on tis.interviewer = ti.interviewer  
---left join @tbl_InterviewerRejected tir on tir.interviewer = ti.interviewer  
---left join @tbl_InterviewerProxy tip on tip.interviewer = ti.interviewer  
---left join @tbl_InterviewerBorderLine tib on tib.interviewer = ti.interviewer  
---left join @tbl_InterviewerDropped tid on tid.interviewer = ti.interviewer  
---left join @tbl_InterviewerNoShow tins on tins.interviewer = ti.interviewer  
---left join @tbl_InterviewerNoShowCandidate tinsc on tinsc.interviewer = ti.interviewer  
---left join @tbl_InterviewerPending tipen on tipen.interviewer = ti.interviewer  
---left join @tbl_InterviewerScheduled tisch on tisch.interviewer = ti.interviewer  
---left join @tbl_InterviewerPenalties tipenal on tipenal.interviewer = ti.interviewer  
---join UserList ul on ul.EmailId = ti.interviewer  
---join InterviewerProfile ipr on ipr.UserId = ul.id) a  
-  
---if(@irfId is not null)  
---Begin  
--- select tt.* from TransInterviewer tio   
--- left join #Temptable tt on tio.UserId = tt.UserId  
--- where tio.IsActive=1 and tio.IRFId = @irfId  
---End  
---else  
---Begin  
--- select * from #Temptable  
---End  
-             
-        
-END 
+END
 
                         
        
