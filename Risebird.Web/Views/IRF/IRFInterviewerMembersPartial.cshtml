@@ -14,12 +14,8 @@
                         <th class="text-center">Call</th>
                         <th>Resume Link</th>
                         <th>Company Name</th>
-                        <th>Active</th>
                         <th>Available</th>
-                        @if (ViewBag.Type != "IRF")
-                        {
-                            <th>Verified</th>
-                        }
+                        <th>Response</th>
                         <th>Total Interviews</th>
                         <th>Action</th>
                         @if (ViewBag.Type != "IRF")
@@ -95,14 +91,6 @@
                             {
                                 <td></td>
                             }
-                            @if (item.IsActive)
-                            {
-                                <td class="text-center">Yes</td>
-                            }
-                            else
-                            {
-                                <td class="text-center">No</td>
-                            }
                             @if (ViewBag.Type == "IRF")
                             {
                                 @if (item.IsAvailable)
@@ -125,17 +113,7 @@
                                     <td></td>
                                 }
                             }
-                            @if (ViewBag.Type != "IRF")
-                            {
-                                @if (item.IsVerified)
-                                {
-                                    <td class="text-center">Verified</td>
-                                }
-                                else
-                                {
-                                    <td class="text-center">Not Verified</td>
-                                }
-                            }
+                            <td>@item.AvailabilityResponseDate</td>
                             <td class="text-center">@item.TotalInterviews</td>
                             <td>
                                 <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
@@ -215,7 +193,7 @@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 <script src="~/Newassets/js/scrollBar.js"></script>
-<script src="~/js/twiliocallmaker.js"></script>
+<script src="~/js/TwilioCallMaker.js"></script>
 <script type="text/javascript">
     $(".sb-container").scrollBox();
     function closeinterviewerFlagDetailsModal() {

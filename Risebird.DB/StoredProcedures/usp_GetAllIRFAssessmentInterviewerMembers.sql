@@ -14,7 +14,7 @@ AS
 Begin        
   select ti.IRFId, ul.EmailId, 
   ul.uniqueid,(ul.FirstName+' '+ul.LastName) as InterviewerName,ti.IsActive,ti.IsAvailable,  
-  IsNull(DATEDIFF(SECOND, IRF.SendIntervieweravailbilityOn, GetDate()),0) as AvailbilityHour  
+  IsNull(DATEDIFF(SECOND, IRF.SendIntervieweravailbilityOn, GetDate()),0) as AvailbilityHour,IRF.JDLink,ti.PerSuccessRate  
   from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId        
   join UserList ul on ul.id = ti.UserId        
   join IRF on irf.id = ti.IRFId        
