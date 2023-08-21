@@ -1162,15 +1162,25 @@ namespace Risebird.Web.Controllers
                         }
                         else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
                         {
-                            ViewBag.PageHeader = "Potential Risk Interview";
+                            ViewBag.PageHeader = "Potential Risk By Candidate Interview";
                         }
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
                             ViewBag.PageHeader = "Suspicious Interviewer";
                         }
-                        else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
+
+                        else if (actionstatus == RibbonActionType.CancelledInterview)
                         {
                             ViewBag.PageHeader = "Cancelled Interviwes";
+                        }
+
+                        else if (actionstatus == RibbonActionType.RedoInterview)
+                        {
+                            ViewBag.PageHeader = "Redo Interviwes";
+                        }
+                        else if (actionstatus == RibbonActionType.PotentialRiskByClient)
+                        {
+                            ViewBag.PageHeader = "Potential Risk By Client Interviwes";
                         }
 
 
@@ -1268,17 +1278,27 @@ namespace Risebird.Web.Controllers
                         }
                         else if (actionstatus == RibbonActionType.PotentialRiskInterviewCount)
                         {
-                            ViewBag.PageHeader = "Potential Risk Interview";
+                            ViewBag.PageHeader = "Potential Risk By Candidate Interview";
                         }
                         else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
                         {
                             ViewBag.PageHeader = "Suspicious Interviewer";
                         }
 
-                        else if (actionstatus == RibbonActionType.SuspeciousInterviewerCount)
+                        else if (actionstatus == RibbonActionType.CancelledInterview)
                         {
                             ViewBag.PageHeader = "Cancelled Interviwes";
                         }
+
+                        else if (actionstatus == RibbonActionType.RedoInterview)
+                        {
+                            ViewBag.PageHeader = "Redo Interviwes";
+                        }
+                        else if (actionstatus == RibbonActionType.PotentialRiskByClient)
+                        {
+                            ViewBag.PageHeader = "Potential Risk By Client Interviwes";
+                        }
+
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
