@@ -6562,7 +6562,7 @@ namespace Risebird.Web.Controllers
                                 TO = item.EmailId,
                                 Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
                             };
-                            var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
+                            var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.PerSuccessRate);
                         }
                     }
                     return Json("Emails sent successfully.");
@@ -7832,8 +7832,8 @@ namespace Risebird.Web.Controllers
             var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
             return View(interviewlist);
         }
-     
 
-       
+
+
     }
 }
