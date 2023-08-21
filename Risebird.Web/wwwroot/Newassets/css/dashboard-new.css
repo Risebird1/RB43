@@ -6336,9 +6336,43 @@ input[type="date"].form-control {
         .transcript .focused {
             background: #53a5f5!important;
         }
-        /***** Media queries *****/
-        @media only screen and (min-width: 1920px) {
-            .rbpay .sb-scrollbar {
+#skill_card .dropdown {
+    position: absolute;
+    display: inline-block;
+}
+#skill_card .dropdown-content {
+    display: none;
+    position: absolute;
+    bottom: -8px;
+    z-index: 1;
+}
+#skill_card .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+#skill_card .notification .badge {
+    left:15px;
+}
+
+#skill_card .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+#skill_card .tripledot:after {
+    content: '\2807';
+}
+#skill_card .dropdown-content button{
+    margin-bottom:2px;
+}
+.tox-notifications-container {
+    display: none
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -11905,10 +11939,12 @@ button.close {
 
 .insta-icon {
     position: relative;
-    top: 12px;
+    top: 2px;
     left: -35px;
 }
-
+.sendButton{
+    font-size:12px;
+}
 .instainterview .fa-clock:before {
     content: "\f017";
     position: absolute;
@@ -11920,10 +11956,10 @@ button.close {
 
 .instatxt {
     font-family: arial;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: normal;
     position: relative;
-    top: -6px;
+    top: 1px;
     padding-left: 25px;
 }
 

@@ -40,7 +40,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "[dbo].[usp_GetInterviewerDetails]", null,
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "[dbo].[usp_GetInterviewerDetails]", null,//usp_GetInterviewerDetails  usp_GetInterviewerDataRN
                         commandType: StoredProcedure);
                 }
             }
@@ -2371,10 +2371,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update ti set ti.IsAvailable=@status from InterviewerProfile ti join UserList ul on ul.id=ti.Userid Where ul.uniqueid=@uniqueid";
+                var query = "Update ti set ti.IsAvailable=@status, ti.AvailabilityResponseDate = @timeNow from InterviewerProfile ti join UserList ul on ul.id=ti.Userid Where ul.uniqueid=@uniqueid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@uniqueid", uniqueid);
                 dynamicParameters.Add("@status", status);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query(query, dynamicParameters);

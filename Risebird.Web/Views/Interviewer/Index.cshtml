@@ -1782,13 +1782,61 @@
 
     }
     function SendIntervieweravailability() {
-        $.ajax({
-            url: '/Interviewer/CheckAllIntervieweravailbility',
-            type: "POST",
-            success: function (data) {
-                swal.fire('Emails sent successfully.');
-            }
-        });
+        swal.fire({
+            title: 'Are you sure you want to send emails to all interviewers seeking their current availability status?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, send!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interviewer/CheckAllIntervieweravailbility',
+                        type: 'POST',
+                        success: function (result) {
+                            if (result == "Success") {
+                                swal.fire({
+                                    title: 'Sent!',
+                                    type: 'success',
+                                    html: '<p>Mails sent successfully.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            } else {
+                                swal.fire({
+                                    title: 'Fail to sent!',
+                                    type: 'error',
+                                    html: '<p>Failed to send the mails, Please try again.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error Sending!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        })
+
+
+
+
+
+        //$.ajax({
+        //    url: '/Interviewer/CheckAllIntervieweravailbility',
+        //    type: "POST",
+        //    success: function (data) {
+        //        swal.fire('Emails sent successfully.');
+        //    }
+        //});
     }
     function SendInviteCode() {
         $.ajax({
