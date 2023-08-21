@@ -223,5 +223,10 @@ namespace Risebird.Entities.ViewModel
         public string EmploymentComment { get; set; }
         public string CompanyName { get; set; }
         public bool IsEmployed { get; set; }
+
+        //to be removed
+        public int TotalMeetings { get; set; }
+        public int TotalCompletedMeetings { get; set; }
+        public DateTime? AvailabilityResponseDate { get; set; }
     }
 }

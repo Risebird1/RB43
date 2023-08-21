@@ -2875,7 +2875,7 @@ namespace Risebird.Web.Controllers
                         Mail _mail = new Mail
                         {
                             TO = item.EmailId,
-                            Subject = "Risebird: Availbility check for Upcoming Interviewes"
+                            Subject = "Risebird: Availbility check for Upcoming Interviews"
                         };
                         var emailresult = await _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
                     }
