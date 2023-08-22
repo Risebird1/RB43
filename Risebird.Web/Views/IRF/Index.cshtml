@@ -1107,7 +1107,7 @@
                                        </button>
                                    <!--form-->
 
-                                        <form id ="imageUploadForm" action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
+                                        <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
                                             @Html.AntiForgeryToken()
                                             <div class="upload_resume">
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -1327,6 +1327,10 @@
         var files = document.getElementById("ResumeFiles").value;
         if (files == null || files == "") {
             swal.fire("Error!", "Kindly select atleast one file to upload!", "error");
+            return false;
+        }
+        else if (files.length > 3) {
+            swal.fire("Only 3 files accepted.");
             return false;
         }
         return true;
@@ -1612,13 +1616,20 @@
                 output.innerHTML = children;
             }
 
-    $("#ResumeFiles").on("change", function () {
+ @*   $("#ResumeFiles").on("change", function () {
         if ($("#ResumeFiles")[0].files.length > 3) {
-            alert("You can select only 3 images");
-        } else {
-            $("#imageUploadForm").submit();
+            swal.fire("You can select only 3 images");
+            return false;
         }
+        return true;
     });
+
+    function onSelect(e) {
+        if (e.files.length > 5) {
+            swal.fire("Only 5 files accepted.");
+            e.preventDefault();
+        }
+    }*@
     </script>
 <script type="text/javascript">
 
