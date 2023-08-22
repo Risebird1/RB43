@@ -6370,30 +6370,63 @@ input[type="date"].form-control {
 .tox-notifications-container {
     display: none
 }
-ul.file-list {
-    font-family: arial;
-    list-style: none;
-    padding: 0px;
-    z-index: 10000;
-    position: absolute;
-    top: 4px;
+.drop-btn {
+    background: #4b6c9578;
+    border: 0px;
+    width: 320px;
+    border-radius: 6px;
+    font-size: 15px;
+    text-align: center;
+    padding: 13px 8px;
+    margin: 0px auto 20px auto;
+    display: block;
+}
+.drop-box {
+    margin: 10px 0;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 3px dotted #a3a3a3;
+    border-radius: 5px;
 }
 
- ul.file-list li {
-        float: left;
-        padding: 5px 0px 5px 3px;
-        font-size: 11px;
+.file-block {
+    border-radius: 3px;
+    background-color: rgb(144 147 153 / 20%);
+    margin: 5px;
+    color: initial;
+    font-size: 13px;
+    display: inline-flex;
+    line-height: 28px;
+}
+
+.file-delete {
+    display: flex;
+    width: 24px;
+    color: initial;
+    background-color: #6eb4ff00;
+    font-size: large;
+    justify-content: center;
+    margin-right: 3px;
+    cursor: pointer;
+}
+
+    .file-delete > span {
+        transform: rotate(45deg);
+        color: #c93d3d;
+        font-weight: 700;
     }
 
-.remove-list {
-    cursor: pointer;
-    margin: 0px 3px;
-    color: #ea2525;
-    font-weight: 600;
+.file-block > span.name {
+    padding-right: 10px;
+    width: max-content;
+    display: inline-flex;
 }
 
 #uploadResumesModal .modal-lg {
-    max-width: 750px !important;
+    max-width: 650px !important;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {

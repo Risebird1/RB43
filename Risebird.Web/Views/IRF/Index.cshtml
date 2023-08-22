@@ -45,11 +45,7 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 </style>
-<style>
-    
-  
 
-</style>
 
 <script>
     var Header = "<div id='skill_1'>Skills Channel</div>";
@@ -1115,14 +1111,24 @@
                                                     <div class="col-md-12 col-sm-12">
                                                         <div class="form-group">
                                                             <div class="col-sm-12">
-                                                                <h4 class="form-label">Please upload Resume</h4>
-                                                                <div class="custom-file">
-                                                                <input type="file" id="ResumeFiles" name="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc" onchange="javascript:updateList()">
-                                                                <label id="custom-file-label" for="file" class="custom-file-label">
-                                                                </label>  <ul id="fileList" class="file-list"></ul>
-@*                                                                <input class="custom-file-label" id="custom-file-label" placeholder="Choose File(s)..."  />
-*@                                                                </div>
-                                                           
+                                                            <div class="drop-box">
+                                                                <header>
+                                                                    <h4>Select File here</h4>
+                                                                </header>
+                                                                <p>Files Supported: PDF, DOC , DOCX</p>
+                                                                <label for="ResumeFiles">
+                                                                    <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span></a>
+
+                                                                </label>
+                                                                <input type="file" name="ResumeFiles" accept=".pdf, .docx, .doc" id="ResumeFiles" style="visibility: hidden; position: absolute;" multiple />
+
+                                                                  <div id="files-area">
+                                                                <span id="filesList">
+                                                                    <span id="files-names"></span>
+                                                                </span>
+                                                            </div>
+                                                            </div>
+                                                          
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1138,8 +1144,8 @@
 
                                                         <div class="col-md-12 mc-button-area text-right">
 
+                                                    <button style="margin:3px 0px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 
-                                                            <button style="margin:3px 0px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 
 
                                                         </div>
@@ -1329,10 +1335,10 @@
             swal.fire("Error!", "Kindly select atleast one file to upload!", "error");
             return false;
         }
-        else if (files.length > 3) {
+       @* else if (files.length > 3) {
             swal.fire("Only 3 files accepted.");
             return false;
-        }
+        }*@
         return true;
     }
 </script>
@@ -1605,32 +1611,46 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
-            updateList = function() {
-            var input = document.getElementById('ResumeFiles');
-                var output = document.getElementById('fileList');
-                var children = "";
-                for (var i = 0; i < input.files.length; ++i) {
-                    children += '<li>' + input.files.item(i).name + '<span class="remove-list" onclick="return this.parentNode.remove()">X</span>' + '</li>'
-                }
-                output.innerHTML = children;
-            }
 
- @*   $("#ResumeFiles").on("change", function () {
-        if ($("#ResumeFiles")[0].files.length > 3) {
-            swal.fire("You can select only 3 images");
-            return false;
+    const dt = new DataTransfer(); 
+
+    $("#ResumeFiles").on('change', function (e) {
+        for (var i = 0; i < this.files.length; i++) {
+            let fileBloc = $('<span/>', { class: 'file-block' }),
+                fileName = $('<span/>', { class: 'name', text: this.files.item(i).name });
+            fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                .append(fileName);
+            $("#filesList > #files-names").append(fileBloc);
+        };
+        // Ajout des fichiers dans l'objet DataTransfer
+        for (let file of this.files) {
+            dt.items.add(file);
         }
-        return true;
+        // Mise à jour des fichiers de l'input file après ajout
+        this.files = dt.files;
+
+        // EventListener pour le bouton de suppression créé
+        $('span.file-delete').click(function () {
+            let name = $(this).next('span.name').text();
+            // Supprimer l'affichage du nom de fichier
+            $(this).parent().remove();
+            for (let i = 0; i < dt.items.length; i++) {
+                // Correspondance du fichier et du nom
+                if (name === dt.items[i].getAsFile().name) {
+                    // Suppression du fichier dans l'objet DataTransfer
+                    dt.items.remove(i);
+                    continue;
+                }
+            }
+            // Mise à jour des fichiers de l'input file après suppression
+            document.getElementById('ResumeFiles').files = dt.files;
+        });
     });
 
-    function onSelect(e) {
-        if (e.files.length > 5) {
-            swal.fire("Only 5 files accepted.");
-            e.preventDefault();
-        }
-    }*@
     </script>
+  
 <script type="text/javascript">
 
     function ArchiveIRF(irfId, irfName) {
