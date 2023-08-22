@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,71 +11,34 @@ namespace Risebird.CommonHelper
     public class AffIndaResumeParserHelper : IAffIndaResumeParserHelper
     {
         private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public AffIndaResumeParserHelper(IConfiguration configuration)
+
+        public AffIndaResumeParserHelper(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public async Task<string> UploadAndParseResume(string fileUrl = null)
         {
-            var apiKey = _configuration["AffIndaResumeParser:apiKey"];
-            var collectionId = _configuration["AffIndaResumeParser:collectionId"];
-            string result = string.Empty;
-            //string fileNameWithExtension = string.Empty;
-            //if(!string.IsNullOrEmpty(fileUrl))
-            //{
-            //    var subName = fileUrl.Split("/").Last();
-            //    if(subName.Contains("?"))
-            //    {
-            //        fileNameWithExtension = subName.Split("?").First();
-            //    }
-            //    else
-            //    {
-            //        fileNameWithExtension = subName;
-            //    }
-            //}
-            //string extension = "." + fileNameWithExtension.Split(".").Last();
-            //HttpClient myWebClient = new HttpClient();
-            //Stream myStream = await myWebClient.GetStreamAsync(fileUrl);
-            //byte[] fileBytes = await myWebClient.GetByteArrayAsync(fileUrl);
-            //string encodedFile = Convert.ToBase64String(fileBytes);
-            //var fileInfo = new FileInfo(file.FileName);
-            //string contentType = string.Empty;
-
-            //switch (extension)
-            //{
-            //    case ".pdf":
-            //        contentType = "application/pdf";
-            //        break;
-            //    case ".txt":
-            //        contentType = "text/plain";
-            //        break;
-            //    case ".doc":
-            //        contentType = "application/msword";
-            //        break;
-            //    case ".docx":
-            //        contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-            //        break;
-            //    case ".dotx":
-            //        contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
-            //        break;
-            //    default:
-            //        contentType = "application/pdf";
-            //        break;
-            //}
-            //string fileNameWithExtension = fileInfo.Name + fileInfo.Extension;
-            var client = new HttpClient();
-            var request = new HttpRequestMessage
+            try
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("https://api.affinda.com/v3/documents"),
-                Headers =
+                var apiKey = _configuration["AffIndaResumeParser:apiKey"];
+                var collectionId = _configuration["AffIndaResumeParser:collectionId"];
+                string result = string.Empty;
+
+                var client = new HttpClient();
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://api.affinda.com/v3/documents"),
+                    Headers =
                 {
                     { "accept", "application/json" },
                     { "authorization", $"Bearer {apiKey}" },
                 },
-                Content = new MultipartFormDataContent
+                    Content = new MultipartFormDataContent
                 {
                     new StringContent("true")
                     {
@@ -86,20 +50,7 @@ namespace Risebird.CommonHelper
                             }
                         }
                     },
-                    //new StringContent($"data:{contentType};name={fileNameWithExtension};base64,{encodedFile}")
-                    //{
-                    //    Headers =
-                    //    {
-                    //        //ContentType = new MediaTypeHeaderValue("application/pdf"),
-                    //        ContentType = new MediaTypeHeaderValue(contentType),
-                    //        ContentDisposition = new ContentDispositionHeaderValue("form-data")
-                    //        {
-                    //            Name = "file",
-                    //            //FileName = "Neeta_Asodekar.pdf",
-                    //            FileName = fileNameWithExtension
-                    //        }
-                    //    }
-                    //},
+
                     new StringContent(fileUrl)//"WUOHbNXO"
                     {
                         Headers =
@@ -121,15 +72,22 @@ namespace Risebird.CommonHelper
                         }
                     },
                 },
-            };
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                result = body;
-            }
+                };
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    //response.StatusCode
+                    var body = await response.Content.ReadAsStringAsync();
+                    result = body;
+                }
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
 
             //RestResponse response = client.Execute(request);
 

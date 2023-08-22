@@ -1995,12 +1995,13 @@ namespace Risebird.Business
                 if (data != null)
                 {
                     var candidateResumeList = new List<CandidateResume>();
+                    
                     Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
                     {
                         string value = row.ItemArray[1].ToString();
                         if (!string.IsNullOrEmpty(value) && value.Contains("successfully"))
                         {
-                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = true });
+                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = true, IsResumeParsingFailed = false });
                             string candidateEmail = row.ItemArray[0].ToString();
 
                             if (candidateEmail != null && calendlyLink != null)
@@ -2073,7 +2074,14 @@ namespace Risebird.Business
 
                             }
                         }
+                        else
+                        {
+                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false });
+                        }
                     });
+
+
+
                     //update CandidateResume table with isParsed and isProcessed bool values here
                     if (candidateResumeList != null)
                     {
