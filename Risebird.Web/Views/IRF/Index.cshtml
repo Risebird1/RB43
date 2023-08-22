@@ -1107,7 +1107,7 @@
                                        </button>
                                    <!--form-->
 
-                                        <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
+                                        <form id ="imageUploadForm" action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
                                             @Html.AntiForgeryToken()
                                             <div class="upload_resume">
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -1612,6 +1612,13 @@
                 output.innerHTML = children;
             }
 
+    $("#ResumeFiles").on("change", function () {
+        if ($("#ResumeFiles")[0].files.length > 3) {
+            alert("You can select only 3 images");
+        } else {
+            $("#imageUploadForm").submit();
+        }
+    });
     </script>
 <script type="text/javascript">
 

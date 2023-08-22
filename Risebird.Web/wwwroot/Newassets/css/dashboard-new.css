@@ -6391,6 +6391,10 @@ ul.file-list {
     color: #ea2525;
     font-weight: 600;
 }
+
+#uploadResumesModal .modal-lg {
+    max-width: 750px !important;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
