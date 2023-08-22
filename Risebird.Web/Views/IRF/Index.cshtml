@@ -407,8 +407,8 @@
                                                                     </button>
 
 
-                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume" data-bs-toggle="modal" data-bs-target="#uploadResumesModal">
-                                                                        <span  title="Upload Resume" class="mdc-fab__icon material-icons">
+                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
+                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
                                                                             <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
                                                                         </span>
                                                                     </button>
@@ -1092,7 +1092,7 @@
 
                                 </div>
                             </div>
-                            <div class="modal fade" id="uploadResumesModal" tabindex="-1" role="dialog" aria-labelledby="UploadResumesModalLabel" aria-hidden="true">
+                            <div id="uploadResumesModal" class="modal modal-bg">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="upload_resume">
@@ -1105,6 +1105,63 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                    <!--form-->
+
+                                        <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
+                                            @Html.AntiForgeryToken()
+                                            <div class="canvas_div_pdf">
+                                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                                <div>
+                                                    @*<div class="col-md-6 col-sm-6">
+                                                    <div class="form-group" style="margin-bottom:10px;">
+                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                    </div>
+                                                    </div>*@
+                                                    @*<div class="col-md-6 col-sm-6">
+                                                    <div class="form-group" style="margin-bottom:10px;">
+                                                    @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                    </div>*@
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label class="form-label"></label>
+                                                            <div class="col-sm-12">
+                                                                <div class="custom-file">
+                                                                    <input type="file" id="ResumeFiles" name="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc">
+                                                                    <label class="custom-file-label">Choose File(s)...</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <input type ="hidden" name="IRFId" id="IRFId"/>
+                                                <input type="hidden" name="IRFName" id="IRFName" />
+                                                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+)
+
+                                                <div class="card-footer ">
+                                                    <div class="row">
+
+                                                        <div class="col-md-12 mc-button-area text-right">
+
+
+                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
 
@@ -1277,6 +1334,8 @@
         var searchValue = document.getElementById("idtxtSearch").value;
         window.location = "/IRF/Index?searchValue=" + searchValue;
     }
+
+
     function CheckIfFileSelected() {
         var files = document.getElementById("ResumeFiles").value;
         if (files == null || files == "") {
@@ -2349,11 +2408,22 @@
     }
 </script>
 <script>
+
+    function OpenUploadResumeModal(irfid, Irfname) {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "block";
+        $('#IRFId').val(irfid);
+        $('#IRFName').val(Irfname)
+    }
+
     function closeVoiceRecordingModal() {
         var modalBct = document.getElementById("VoiceRecordingModal");
         modalBct.style.display = "none";
         cancelRecording();
     }
+
+
+
     function OpenVoiceRecordingModal(irfid, Irfname) {
         $.ajax({
             type: "POST",
