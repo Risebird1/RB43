@@ -1101,38 +1101,28 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="UploadResumesModalLabel"> Upload Resume(s)</h5>
                                         </div>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+                                        
+                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" style="cursor:pointer;" onclick="closeUploadResumeModal()">&times;</span>
+                                       </button>
                                    <!--form-->
 
                                         <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
                                             @Html.AntiForgeryToken()
-                                            <div class="canvas_div_pdf">
+                                            <div class="upload_resume">
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                                <div>
-                                                    @*<div class="col-md-6 col-sm-6">
-                                                    <div class="form-group" style="margin-bottom:10px;">
-                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                    </div>
-                                                    </div>*@
-                                                    @*<div class="col-md-6 col-sm-6">
-                                                    <div class="form-group" style="margin-bottom:10px;">
-                                                    @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
-                                                    </div>*@
                                                     <div class="col-md-12 col-sm-12">
                                                         <div class="form-group">
-                                                            <label class="form-label"></label>
                                                             <div class="col-sm-12">
+                                                                <h4 class="form-label">Please upload Resume</h4>
                                                                 <div class="custom-file">
-                                                                    <input type="file" id="ResumeFiles" name="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc">
-                                                                    <label class="custom-file-label">Choose File(s)...</label>
-                                                                </div>
+                                                                <input type="file" id="ResumeFiles" name="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc" onchange="javascript:updateList()">
+                                                                <label id="custom-file-label" for="file" class="custom-file-label">
+                                                                </label>  <ul id="fileList" class="file-list"></ul>
+@*                                                                <input class="custom-file-label" id="custom-file-label" placeholder="Choose File(s)..."  />
+*@                                                                </div>
+                                                           
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1143,23 +1133,20 @@
                                                 <input type="hidden" name="IRFName" id="IRFName" />
                                                 <div asp-validation-summary="All" class="text-danger"></div>
 
-
-)
-
-                                                <div class="card-footer ">
-                                                    <div class="row">
+                                                <div class="card-footer">
+                                                 
 
                                                         <div class="col-md-12 mc-button-area text-right">
 
 
-                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
+                                                            <button style="margin:3px 0px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 
 
                                                         </div>
-                                                    </div>
+                                                   
                                                 </div>
 
-                                            </div>
+                                           
                                         </form>
 
                                     </div>
@@ -1614,7 +1601,18 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script>
+            updateList = function() {
+            var input = document.getElementById('ResumeFiles');
+                var output = document.getElementById('fileList');
+                var children = "";
+                for (var i = 0; i < input.files.length; ++i) {
+                    children += '<li>' + input.files.item(i).name + '<span class="remove-list" onclick="return this.parentNode.remove()">X</span>' + '</li>'
+                }
+                output.innerHTML = children;
+            }
 
+    </script>
 <script type="text/javascript">
 
     function ArchiveIRF(irfId, irfName) {
@@ -2416,13 +2414,16 @@
         $('#IRFName').val(Irfname)
     }
 
+    function closeUploadResumeModal() {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "none"
+    }
+
     function closeVoiceRecordingModal() {
         var modalBct = document.getElementById("VoiceRecordingModal");
         modalBct.style.display = "none";
         cancelRecording();
     }
-
-
 
     function OpenVoiceRecordingModal(irfid, Irfname) {
         $.ajax({
