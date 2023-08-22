@@ -8,7 +8,7 @@
 @{
     ViewData["Title"] = "Candidates Status";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
@@ -476,16 +476,16 @@
                                                                             @if (item.MailCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    <a href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
-                                                                                        Emails :  @item.MailCount
+                                                                                    Emails :   <a href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                       @item.MailCount
                                                                                     </a>
                                                                                 </div>
                                                                             }
                                                                             @if (item.CallsCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    <a href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
-                                                                                        Voice Calls : @item.CallsCount
+                                                                                    Voice Calls :  <a href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                       @item.CallsCount
                                                                                     </a>
                                                                                 </div>
                                                                             }
@@ -493,8 +493,8 @@
                                                                             @if (item.WhatsappCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
-                                                                                        Whatsapp Messages : @item.WhatsappCount
+                                                                                    Whatsapp Messages : <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                        @item.WhatsappCount
                                                                                     </a>
                                                                                 </div>
                                                                             }

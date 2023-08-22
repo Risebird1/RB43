@@ -6386,20 +6386,24 @@ input[type="date"].form-control {
 .selected {
     background: #90ee9094;
     color: forestgreen;
-    font-size: 13px;
+    font-size: 11px;
     padding: 1px 6px;
     display: inline-block;
     font-weight: 600;
     border-radius: 0.2rem;
+    position: relative;
+    top: -8px;
 }
 .rejected {
     background: #fdebf3;
     color: #ee4936;
-    font-size: 13px;
+    font-size: 11px;
     padding: 1px 6px;
     display: inline-block;
     font-weight: 600;
     border-radius: 0.2rem;
+    position: relative;
+    top: -8px;
 }
 }
 /***** Media queries *****/
