@@ -93,7 +93,7 @@
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-
+                    
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
@@ -732,6 +732,14 @@
                                                                     <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
                                                                             <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                }
+                                                                @if (item.CompanyName != null && item.CompanyName!="")
+                                                                {
+                                                                    <a target="_blank" onclick="javascript:BlckListCompanyModalDetails('@item.CompanyName');">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Black List Company">
+                                                                            <span title="Black List Company" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                         </button>
                                                                     </a>
                                                                 }
@@ -1524,8 +1532,72 @@
         </div>
     </div>
 </div>
+
+
+<div id="BlckListCompanyModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Black Listed Company Details</h5>
+            </div>
+            <button onclick="closeBlackListCompanyModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="BlackListCompanybody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnBlackListCompany">
+                    <label style="font-size:14px;">Comment</label>
+                    <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveBlckListCompanyModal()" id="btnBlackListCompanySave">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
+<script>
+    function closeBlackListCompanyModal() {
+        var modal = document.getElementById("BlckListCompanyModal");
+        modal.style.display = "none";
+    }
+    function BlckListCompanyModalDetails(CompanyName) {
+        var modal = document.getElementById("BlckListCompanyModal");
+        modal.style.display = "block";
+        $('#hdnBlackListCompany').val(CompanyName);
+
+    }
+    function SaveBlckListCompanyModal() {
+        var comment = $('#Comment').val().trim();
+
+        var CompanyName = $('#hdnBlackListCompany').val();
+        if (comment != '') {
+            $.ajax({
+                url: '/Interview/AddBlackListCompanyComment',
+                data: { 'CompanyName': CompanyName, 'Comment': comment },
+                type: "POST",
+                success: function (data) {
+                    alert(data);
+                    closeBlackListCompanyModal();
+
+                }
+            });
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+
+</script>
 
 <script>
     var closeMember = document.getElementById("membersPopUp");

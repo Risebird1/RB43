@@ -80,6 +80,8 @@ join InterviewComments ic on ic.Interviewid=im.id where ul.EmailId= @Emailid)
 declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3) 
 
+ declare @BlackListCompanyCount int=(select COUNT(Id) from BlackListedCompany where IsBlackList=0)
+
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
 --(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
@@ -113,7 +115,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @CancelledInterviewCount as CancelledInterviewCount,
 @RedoInterviewCount as RedoInterviewCount,
 @ProbableNoShowCount as ProbableNoShowCount,
-@PotentialRiskByClient as PotentialRiskByClient
+@PotentialRiskByClient as PotentialRiskByClient,
+@BlackListCompanyCount as BlackListCompanyCount
 
 END        
 ELSE        
@@ -163,6 +166,7 @@ join UserList ul on ul.id = pnc.CandidateUserId
 join InterviewComments ic on ic.Interviewid=im.id)
 
 set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)
+set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBlackList=0)
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
@@ -174,7 +178,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @CancelledInterviewCount as CancelledInterviewCount,
 @RedoInterviewCount as RedoInterviewCount,
 @ProbableNoShowCount as ProbableNoShowCount,
-@PotentialRiskByClient as PotentialRiskByClient
+@PotentialRiskByClient as PotentialRiskByClient,
+@BlackListCompanyCount as BlackListCompanyCount
 
 
 
