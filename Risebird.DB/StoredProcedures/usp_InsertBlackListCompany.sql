@@ -16,7 +16,7 @@ Create Procedure [dbo].[usp_InsertBlackListCompany]
 @CreatedBy varchar(50),
 @ModifyDate DateTime,
 @ModifyBy varchar(50),
-@CompanyName varchar(50)
+@CompanyName varchar(100)
 as
 begin
 if exists(select distinct * from BlackListedCompany where CompanyName=@CompanyName)
