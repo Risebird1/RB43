@@ -6152,7 +6152,7 @@ input[type="date"].form-control {
     position: relative;
     left: 30px;
     line-height: 25px;
-    padding: 10px;
+    padding:9px 10px;
 }
 .dashboard .panel .panel-body {
     padding: 5px;
@@ -6160,7 +6160,9 @@ input[type="date"].form-control {
     .unassign {
     background: #74c0fc;
 }
-
+.icons-blacklist{
+    width:24px;
+}
 .pending {
     background: #f89d9db5;
 }
@@ -6216,7 +6218,9 @@ input[type="date"].form-control {
     position:relative;
     top:7px;
 }
-
+.blacklist {
+    background: #92b079f0;
+}
 .noshow{
     background:grey;
 }
@@ -6247,7 +6251,7 @@ input[type="date"].form-control {
     background: #efefef;
     border: none;
     position: relative;
-    top: 10px;
+    top: 5px;
     line-height:14px;
 }
 
