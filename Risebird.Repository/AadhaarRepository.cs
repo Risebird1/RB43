@@ -402,5 +402,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> CheckCompanyStatus(string CompanyName)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(employmentconnectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CompanyName", CompanyName);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_checkBlackListCompany", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    if (result.FirstOrDefault() == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

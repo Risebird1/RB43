@@ -774,20 +774,27 @@ namespace Risebird.Web.Controllers
                 employementdetails = await _aadhaarService.GetEmployementDetailsByMobileNumber(mobilenumber);
                 if (employementdetails == null)
                 {
-                    //Check blacklisted company
-                    //ev verification
-                    //Save in db
+                    //TODO: Update According to blacklist data pr deployement
                     var model = await EmployementVerificationDetails(candidateemail, mobilenumber);
                     if (string.IsNullOrWhiteSpace(model.message))
                     {
-                        var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
-                        DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
-                        employementdetails.CandidateEmail = model.CandidateEmail;
-                        employementdetails.MobileNumber = model.MobileNumber;
-                        employementdetails.isVerified = true;
-                        if (model.employmentSummary != null)
+                        var companyname = model.employmentSummary?.recent_employer_data.establishment_name;
+                        var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
+                        if (companystatus)
                         {
-                            employementdetails.Isemployed = model.employmentSummary.is_employed;
+                            var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
+                            DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
+                            employementdetails.CandidateEmail = model.CandidateEmail;
+                            employementdetails.MobileNumber = model.MobileNumber;
+                            employementdetails.isVerified = true;
+                            if (model.employmentSummary != null)
+                            {
+                                employementdetails.Isemployed = model.employmentSummary.is_employed;
+                            }
+                        }
+                        else
+                        {
+                            employementdetails.message = "For this employment Company is in black list in our system.";
                         }
                     }
                     else
@@ -800,6 +807,14 @@ namespace Risebird.Web.Controllers
                     if (!string.IsNullOrWhiteSpace(employementdetails.message))
                     {
                         employementdetails.message = "No employement records are found, so we don't process further.";
+                    }
+                    else
+                    {
+                        var companystatus = await _aadhaarService.CheckCompanyStatus(employementdetails.CompanyName);
+                        if (!companystatus)
+                        {
+                            employementdetails.message = "For this employment Company is in black list in our system.";
+                        }
                     }
                 }
             }
