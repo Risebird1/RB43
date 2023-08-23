@@ -46,6 +46,8 @@ namespace Risebird.Web.Controllers
         private readonly CancellationToken _cancellationToken;
         private readonly IAadhaarRepository _aadhaarRepository;
         private readonly IInterviewerService _interviewerService;
+        private readonly string employementapikey;
+        private readonly string employementendpoint;
 
         public AadhaarController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService,
@@ -67,6 +69,8 @@ namespace Risebird.Web.Controllers
             _httpClient = factory.GetHttpClient();
             _aadhaarRepository = aadhaarRepository;
             _interviewerService = interviewerService;
+            employementapikey = _configuration["EmploymentVerfication:apikey"];
+            employementendpoint = _configuration["EmploymentVerfication:endPoint"];
         }
 
         public IActionResult Index()
@@ -764,28 +768,125 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber)
         {
+            var employementdetails = new EmploymentDetailsDM();
             if (!string.IsNullOrWhiteSpace(mobilenumber))
             {
-                var employementdetails = await _aadhaarService.GetEmployementDetailsByMobileNumber(mobilenumber);
+                employementdetails = await _aadhaarService.GetEmployementDetailsByMobileNumber(mobilenumber);
                 if (employementdetails == null)
                 {
+                    //Check blacklisted company
                     //ev verification
                     //Save in db
-                    return Json(employementdetails);
-                }
-                else
-                {
-                    if (string.IsNullOrWhiteSpace(employementdetails.message))
+                    var model = await EmployementVerificationDetails(candidateemail, mobilenumber);
+                    if (string.IsNullOrWhiteSpace(model.message))
                     {
-                        return Json(employementdetails);
+                        var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
+                        DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
+                        employementdetails.CandidateEmail = model.CandidateEmail;
+                        employementdetails.MobileNumber = model.MobileNumber;
+                        employementdetails.isVerified = true;
+                        if (model.employmentSummary != null)
+                        {
+                            employementdetails.Isemployed = model.employmentSummary.is_employed;
+                        }
                     }
                     else
                     {
-                        return Json("No employement records are found, so we don't process further.");
+                        employementdetails.message = "No employement records are found, so we don't process further.";
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(employementdetails.message))
+                    {
+                        employementdetails.message = "No employement records are found, so we don't process further.";
                     }
                 }
             }
-            return Json("Fail to verify,please check the details and try again.");
+            else
+            {
+                employementdetails.message = "Fail to verify,please check the details and try again.";
+            }
+            return Json(employementdetails);
+        }
+
+        public async Task<SignzyEmployeeResponse> EmployementVerificationDetails(string candidateemail, string mobilenumber)
+        {
+            SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
+            mobiledata.mobile = mobilenumber;
+            mobiledata.CandidateEmail = candidateemail;
+            Dictionary<string, string> headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/json" },
+                    { "Authorization", employementapikey }
+                };
+            var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
+            var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
+            convertedResponse.MobileNumber = mobiledata.mobile;
+            convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
+            dynamic datavalue = JObject.Parse(response.Content);
+            List<string>? namesList = convertedResponse.uanNumbers?.ToList();
+            foreach (var data in datavalue.Children())
+            {
+                if (((JToken)data).Path == "uanDetails")
+                {
+                    foreach (var dataset in data.Children())
+                    {
+                        foreach (var item in namesList)
+                        {
+                            if (((JContainer)dataset).First.Path == "uanDetails." + item)
+                            {
+                                var datanew = ((JContainer)dataset).First;
+                                var internalNodes = datanew.Children().GetEnumerator();
+                                while (internalNodes.MoveNext())
+                                {
+                                    UanDetails _uandeails = new UanDetails();
+                                    var mainFamilies = internalNodes.Current;
+                                    var nodedetails = mainFamilies.Children().GetEnumerator();
+                                    while (nodedetails.MoveNext())
+                                    {
+                                        _uandeails.uanNumber = item;
+                                        var mainFamilies1 = nodedetails.Current;
+                                        if (((JProperty)mainFamilies1).Name == "basic_details")
+                                        {
+                                            _uandeails.date_of_birth = ((JProperty)mainFamilies1).Value["date_of_birth"].ToString();
+                                            _uandeails.gender = ((JProperty)mainFamilies1).Value["gender"].ToString();
+                                            _uandeails.name = ((JProperty)mainFamilies1).Value["name"].ToString();
+                                        }
+                                        else if (((JProperty)mainFamilies1).Name == "employment_details")
+                                        {
+                                            _uandeails.establishment_name = ((JProperty)mainFamilies1).Value["establishment_name"].ToString();
+                                            _uandeails.date_of_joining = ((JProperty)mainFamilies1).Value["date_of_joining"].ToString();
+                                        }
+                                    }
+                                    convertedResponse.uanDetails1.Add(_uandeails);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //Save response data
+            if (!string.IsNullOrEmpty(convertedResponse.employmentSummary?.recent_employer_data.matching_uan) || convertedResponse.message == "No record(s found")
+            {
+                await _aadhaarService.SaveEmploymentDetails(convertedResponse);
+                var _interviewer = new InterviewerProfileVM();
+                _interviewer.EmailId = convertedResponse.CandidateEmail;
+                _interviewer.isVerified = true;
+                if (convertedResponse.employmentSummary != null)
+                {
+                    _interviewer.IsEmployed = convertedResponse.employmentSummary.is_employed;
+                    _interviewer.CompanyName = convertedResponse.employmentSummary.recent_employer_data.establishment_name;
+                }
+                else
+                {
+                    _interviewer.IsEmployed = false;
+                    _interviewer.CompanyName = string.Empty;
+                }
+                _interviewer.EmploymentComment = convertedResponse.message;
+                await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
+            }
+            return convertedResponse;
         }
         #endregion
         public async Task EVInterviewer()

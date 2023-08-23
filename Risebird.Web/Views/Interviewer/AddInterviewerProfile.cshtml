@@ -61,6 +61,8 @@
 
                                 @Html.HiddenFor(m => m.IsEdit)
                                 @Html.HiddenFor(m => m.CompanyName)
+                                @Html.HiddenFor(m => m.isVerified)
+                                @Html.HiddenFor(m => m.IsEmployed)
 
                                 <!-- Add Interviewer personal Details Start-->
                                 <div class="row">
@@ -1282,12 +1284,14 @@
                 type: 'POST',
                 data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
                 success: function (result) {
-                    if (!result.includes("Fail") && !result.includes('records')) {
+                    if (result.message == null && result.message == '') {
                         document.getElementById("divEVverification").style.display = "none";
                         document.getElementById("divEVverified").style.display = "block";
                         $("#txt_MobileNumber").val(result.mobileNumber);
                         $("#txt_EmailId").val(result.candidateEmail);
-                        $("#CompanyName").val(result.companyName);
+                        $("#CompanyName").val(result.companyName); 
+                        $("#isVerified").val(result.isVerified);
+                        $("#IsEmployed").val(result.isemployed);
                         $("#DOB").val(result.dob);
                     } else {
                         swal.fire(result);

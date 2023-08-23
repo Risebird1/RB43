@@ -153,5 +153,16 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task SaveEmploymentDetails(SignzyEmployeeResponse model)
+        {
+            try
+            {
+                await _aadhaarRepository.SaveEmploymentDetails(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+        }
     }
 }
