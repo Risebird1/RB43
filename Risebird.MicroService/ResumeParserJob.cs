@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -62,6 +63,8 @@ namespace Risebird.MicroService
 
                 var resumeList = await _candidateRepository.GetCandidateResumesForParsing();
                 var candidateList = new List<CandidateQuickAddModel>();
+                var candidateResumeList = new List<CandidateResume>();
+
                 foreach (var resume in resumeList)
                 {
                     // call the api for each of those resumes, return a candidate
@@ -95,14 +98,24 @@ namespace Risebird.MicroService
                             candidate.AddedByUserId = resume.AddedBy;
                             candidateList.Add(candidate);
                         }
+                        else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
+                        {
+                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
 
+                        }
                     }
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               
                         continue;
                     }
 
+                }
+
+                if(candidateResumeList !=null && candidateResumeList.Count() >0)
+                {
+                    await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeList);
                 }
 
                 // add the candidate to database and update IsProcessed and IsResumeParsed
