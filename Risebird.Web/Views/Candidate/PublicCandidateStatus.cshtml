@@ -395,12 +395,24 @@
                                                                             <span>
                                                                                 @if (item.CurrentStatus == "Selected")
                                                                                 {
-                                                                                    <p class="selected">@item.CurrentStatus</p>
+                                                                                    <p class="current selected">@item.CurrentStatus</p>
                                                                                 }
 
                                                                                 else if (item.CurrentStatus == "Rejected")
                                                                                 {
-                                                                                    <p class="rejected">@item.CurrentStatus</p>
+                                                                                    <p class="current rejected">@item.CurrentStatus</p>
+                                                                                }
+                                                                                else if (item.CurrentStatus == "Scheduled")
+                                                                                {
+                                                                                    <p class="current scheduled">@item.CurrentStatus</p>
+                                                                                }
+                                                                                 else if (item.CurrentStatus == "Cancelled")
+                                                                                {
+                                                                                    <p class="current cancelled">@item.CurrentStatus</p>
+                                                                                }
+                                                                                else if (item.CurrentStatus == "No Show(Candidate)")
+                                                                                {
+                                                                                    <p class="current noshowcandidate">@item.CurrentStatus</p>
                                                                                 }
                                                                                 else
                                                                                 {
@@ -493,7 +505,7 @@
                                                                             @if (item.WhatsappCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    Whatsapp Messages : <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                    <img src="~/img/whatsapp.png" />   Whatsapp Messages : <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
                                                                                         @item.WhatsappCount
                                                                                     </a>
                                                                                 </div>

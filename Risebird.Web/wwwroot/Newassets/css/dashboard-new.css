@@ -6377,15 +6377,13 @@ input[type="date"].form-control {
 }
 .email-field {
     font-size: 13px;
-    color: #a9a9c8 !important;
+    color: #70709d !important;
     font-family: "Open Sans", sans-serif;
 }
 .int-date {
     color: #5b5b98!important
 }
-.selected {
-    background: #90ee9094;
-    color: forestgreen;
+.current {
     font-size: 11px;
     padding: 1px 6px;
     display: inline-block;
@@ -6393,18 +6391,30 @@ input[type="date"].form-control {
     border-radius: 0.2rem;
     position: relative;
     top: -8px;
+}
+.selected {
+    background: #90ee9094;
+    color: forestgreen;
+ 
 }
 .rejected {
     background: #fdebf3;
     color: #ee4936;
-    font-size: 11px;
-    padding: 1px 6px;
-    display: inline-block;
-    font-weight: 600;
-    border-radius: 0.2rem;
-    position: relative;
-    top: -8px;
+ 
 }
+.scheduled {
+    background: #f2eefc;
+    color: #845adf;
+}
+.cancelled {
+    background: red;
+    color: #fff;
+}
+
+.noshowcandidate {
+    background: #f89cbf24;
+    color: #94207bbd;
+   
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -8477,6 +8487,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     color: #845adf;
     max-width: 83px;
 }
+
 .mpending {
     background: #fcebcd;
     color: #fec14a;
@@ -8494,7 +8505,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 }
 .mnoshow {
     background: #f89cbf24;
-    color: #eea0dddb;
+    color: #94207bbd;
     max-width: 126px;
 }
 .overlay {
