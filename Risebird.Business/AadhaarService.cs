@@ -141,5 +141,17 @@ namespace Risebird.Business
             }
             return 0;
         }
+        public async Task<EmploymentDetailsDM> GetEmployementDetailsByMobileNumber(string mobilenumber)
+        {
+            try
+            {
+                return await _aadhaarRepository.GetEmployementDetailsByMobileNumber(mobilenumber);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }

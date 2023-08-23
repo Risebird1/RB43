@@ -761,6 +761,32 @@ namespace Risebird.Web.Controllers
             var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
+        [HttpPost]
+        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber)
+        {
+            if (!string.IsNullOrWhiteSpace(mobilenumber))
+            {
+                var employementdetails = await _aadhaarService.GetEmployementDetailsByMobileNumber(mobilenumber);
+                if (employementdetails == null)
+                {
+                    //ev verification
+                    //Save in db
+                    return Json(employementdetails);
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(employementdetails.message))
+                    {
+                        return Json(employementdetails);
+                    }
+                    else
+                    {
+                        return Json("No employement records are found, so we don't process further.");
+                    }
+                }
+            }
+            return Json("Fail to verify,please check the details and try again.");
+        }
         #endregion
         public async Task EVInterviewer()
         {

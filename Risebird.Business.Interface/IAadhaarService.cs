@@ -17,5 +17,6 @@ namespace Risebird.Business.Interface
         Task<AadhaarData> FetchInterviewCandidateDetails(string candidateEmail);
         Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails();
         Task<int> CheckEmployementDetails(string mobilenumber);
+        Task<EmploymentDetailsDM> GetEmployementDetailsByMobileNumber(string mobilenumber);
     }
 }
