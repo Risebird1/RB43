@@ -406,7 +406,7 @@ namespace Risebird.Repository
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(employmentconnectionString))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@CompanyName", CompanyName);
