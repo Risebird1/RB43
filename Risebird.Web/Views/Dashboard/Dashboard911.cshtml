@@ -1211,10 +1211,10 @@
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
 
-                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon cancel"><img class="icons-dash" src="~/img/cancel-int.png" /></span></div>
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/blacklist.png" /></span></div>
                                                         <div class="col-md-9 pull-left">
                                                             <div>
-                                                                <h3 class="dashboard-cat-title"><span><strong>BlackList Company</strong></span></h3>
+                                                                <h3 class="dashboard-cat-title"><span><strong>BlackListed Company</strong></span></h3>
                                                             </div>
                                                             <div class="dashboard-count pull-left" style="color: #74c0fc">
                                                                 <span id="ribbonBlackListCompanyCount"BlackListCompany()">@Model.NotUpdatedMeetingsObj.BlackListCompanyCount</span>
@@ -1242,10 +1242,10 @@
 
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
-                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon cancel"><img class="icons-dash" src="~/img/cancel-int.png" /></span></div>
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/blacklist.png" /></span></div>
                                                         <div class="col-md-9 pull-left">
                                                             <div>
-                                                                <h3 class="dashboard-cat-title"><span><strong>BlackList Company</strong></span></h3>
+                                                                <h3 class="dashboard-cat-title"><span><strong>BlackListed Company</strong></span></h3>
                                                             </div>
 
                                                             <div class="dashboard-count pull-left">
@@ -1441,8 +1441,10 @@
                     $(".flipper16").removeClass("flipper");
                 }
 
-                 if (parseInt(data.probableNoShowCount) != parseInt($("#ribbonBlackListCompanyCount").text())) {
+                if (parseInt(data.blackListCompanyCount) != parseInt($("#ribbonBlackListCompanyCount").text())) {
+      
                     $(".flipper17").addClass("flipper");
+             
 
                 }
                 else {
@@ -1465,7 +1467,7 @@
                 $("#ribbonRedoInterviewCount").text(data.redoInterviewCount);
                 $("#ribbonPotentialRiskByClientCount").text(data.potentialRiskByClient);
                 $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
-                $("#ribbonBlackListCompanyCount").text(data.lackListCompanyCount);
+                $("#ribbonBlackListCompanyCount").text(data.blackListCompanyCount);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1484,7 +1486,7 @@
                 $("#ribbonPotentialRiskByClientCount_1").text(data.potentialRiskByClient);
                 $("#ribbonBlackListCompanyCount_1").text(data.blackListCompanyCount);
 
-                $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
+                $("#ribbonProbableNoShowCount_1").text(data.probableNoShowCount);
                 $(".flipper").toggleClass("flip");
             }
         });
