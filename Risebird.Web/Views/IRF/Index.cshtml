@@ -1088,78 +1088,6 @@
 
                                 </div>
                             </div>
-                          @*  <div id="uploadResumesModal" class="modal modal-bg">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="upload_resume">
-                                            <div class="uploadavatar">
-                                                <span class="fa fa-upload"></span>
-                                            </div>
-                                            <h5 class="modal-title pull-left" id="UploadResumesModalLabel"> Upload Resume(s)</h5>
-                                        </div>
-                                        
-                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" style="cursor:pointer;" onclick="closeUploadResumeModal()">&times;</span>
-                                       </button>
-                                   
-
-                                        <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
-                                            @Html.AntiForgeryToken()
-                                            <div class="upload_resume">
-                                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                            <div class="drop-box">
-                                                                <header>
-                                                                    <h4>Select File here</h4>
-                                                                </header>
-                                                                <p>Files Supported: PDF, DOC , DOCX</p>
-                                                                <label for="ResumeFiles">
-                                                                    <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span></a>
-
-                                                                </label>
-                                                                <input type="file" name="ResumeFiles" accept=".pdf, .docx, .doc" id="ResumeFiles" style="visibility: hidden; position: absolute;" multiple />
-
-                                                                  <div id="files-area">
-                                                                <span id="filesList">
-                                                                    <span id="files-names"></span>
-                                                                </span>
-                                                            </div>
-                                                            </div>
-                                                          
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-                                                <input type ="hidden" name="IRFId" id="IRFId"/>
-                                                <input type="hidden" name="IRFName" id="IRFName" />
-                                                <div asp-validation-summary="All" class="text-danger"></div>
-
-                                                <div class="card-footer">
-                                                 
-
-                                                        <div class="col-md-12 mc-button-area text-right">
-
-                                                    <button style="margin:3px 0px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
-
-
-
-                                                        </div>
-                                                   
-                                                </div>
-
-                                           
-                                        </form>
-
-                                    </div>
-                                </div>
-
-                            </div>
-*@
 
 
                         </div>
@@ -1609,45 +1537,7 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script>
 
-    const dt = new DataTransfer(); 
-
-    $("#ResumeFiles").on('change', function (e) {
-        for (var i = 0; i < this.files.length; i++) {
-            let fileBloc = $('<span/>', { class: 'file-block' }),
-                fileName = $('<span/>', { class: 'name', text: this.files.item(i).name });
-            fileBloc.append('<span class="file-delete"><span>+</span></span>')
-                .append(fileName);
-            $("#filesList > #files-names").append(fileBloc);
-        };
-        // Ajout des fichiers dans l'objet DataTransfer
-        for (let file of this.files) {
-            dt.items.add(file);
-        }
-        // Mise à jour des fichiers de l'input file après ajout
-        this.files = dt.files;
-
-        // EventListener pour le bouton de suppression créé
-        $('span.file-delete').click(function () {
-            let name = $(this).next('span.name').text();
-            // Supprimer l'affichage du nom de fichier
-            $(this).parent().remove();
-            for (let i = 0; i < dt.items.length; i++) {
-                // Correspondance du fichier et du nom
-                if (name === dt.items[i].getAsFile().name) {
-                    // Suppression du fichier dans l'objet DataTransfer
-                    dt.items.remove(i);
-                    continue;
-                }
-            }
-            // Mise à jour des fichiers de l'input file après suppression
-            document.getElementById('ResumeFiles').files = dt.files;
-        });
-    });
-
-    </script>*@
   
 <script type="text/javascript">
 
@@ -2443,17 +2333,6 @@
 </script>
 <script>
 
-  @* function OpenUploadResumeModal(irfid, Irfname) {
-        var modalBct = document.getElementById("uploadResumesModal");
-        modalBct.style.display = "block";
-        $('#IRFId').val(irfid);
-        $('#IRFName').val(Irfname)
-    }
-
-    function closeUploadResumeModal() {
-        var modalBct = document.getElementById("uploadResumesModal");
-        modalBct.style.display = "none"
-    }*@
 
     function closeVoiceRecordingModal() {
         var modalBct = document.getElementById("VoiceRecordingModal");
