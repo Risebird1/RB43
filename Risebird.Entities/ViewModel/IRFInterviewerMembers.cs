@@ -36,6 +36,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AvailabilityResponseDate { get; set; }
         public int PerSuccessRate { get; set; }
         public string JDLink { get; set; }
+        public string JDTitle { get; set; }
+        public int Interviewduration { get; set; }
     }
     public class AssessmentIRFListVM
     {

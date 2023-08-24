@@ -1,6 +1,7 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -16,12 +17,14 @@ namespace Risebird.MicroService
         private readonly IIRFService _irfService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
-        public CreateIRFCheckavailability(IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, INotificationHelper notificationHelper)
+        public CreateIRFCheckavailability(IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
             _notificationHelper = notificationHelper;
+            _whatsAppHelper = whatsAppHelper;
         }
 
         [FunctionName("CreateIRFCheckavailability")]
@@ -54,16 +57,32 @@ namespace Risebird.MicroService
                         sb.Append("</table>");
                         foreach (var item in model)
                         {
-                            if (!string.IsNullOrEmpty(item.EmailId))
+                            try
                             {
-                                string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id;
-                                string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id;
-                                Mail _mail = new Mail
+                                if (!string.IsNullOrEmpty(item.EmailId))
                                 {
-                                    TO = item.EmailId,
-                                    Subject = "Risebird: Availbility check for Skill Channel " + irf.IRFId + " Interviews"
-                                };
-                                var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.IRFId, item.JDLink, item.PerSuccessRate);
+                                    string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id;
+                                    string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id;
+                                    Mail _mail = new Mail
+                                    {
+                                        TO = item.EmailId,
+                                        Subject = "Risebird: Availbility check for Skill Channel " + irf.IRFId + " Interviews"
+                                    };
+                                    var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.IRFId, item.JDLink, item.PerSuccessRate);
+                                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                    _whatsAppVM.Emailid = item.EmailId;
+                                    _whatsAppVM.PrimarySkill = item.JDTitle;
+                                    _whatsAppVM.MessageValue = irf.IRFId;
+                                    _whatsAppVM.PerSuccessRate = item.PerSuccessRate;
+                                    _whatsAppVM.Interviewduration = item.Interviewduration;
+                                    _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
+                                    _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
+                                    await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
+                                }
+                            }
+                            catch (Exception ex1)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex1);
                             }
                         }
                     }

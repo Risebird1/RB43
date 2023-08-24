@@ -17,6 +17,9 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public string timezone { get; set; }
         public int irfId { get; set; }
+        public string PerSuccessRate { get; set; }
+        public string Interviewduration { get; set; }
+
     }
     public class WhatsAppVMResponse
     {
