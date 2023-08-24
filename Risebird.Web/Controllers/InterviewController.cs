@@ -7769,15 +7769,14 @@ namespace Risebird.Web.Controllers
                 model.CreatedBy = emailId;
                 model.ModifyDate = DateTime.Now;
                 model.ModifyBy = emailId;
-                model.IsBlackList = false;
                 var data = await _meetingService.AddBlackListCompanyService(model);
                 if (data == true)
                 {
-                    return Json("Black listed company marked Successfully");
+                    return Json("Blacklisted company marked Successfully");
                 }
                 else
                 {
-                    return Json("Fail to marked black listed company, Try again after sometime.");
+                    return Json("Failed to mark whether company is Blacklisted.");
                 }
 
             }

@@ -6626,7 +6626,6 @@ namespace Risebird.Repository
                 dynamicParam.Add("@CreatedBy", model.CreatedBy);
                 dynamicParam.Add("@ModifyDate", model.ModifyDate);
                 dynamicParam.Add("@ModifyBy", model.ModifyBy);
-                dynamicParam.Add("@IsBlackList", model.IsBlackList);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_InsertBlackListCompany", dynamicParam,

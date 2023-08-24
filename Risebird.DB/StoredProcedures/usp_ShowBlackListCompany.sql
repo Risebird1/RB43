@@ -20,5 +20,5 @@ ModifyDate,
 ModifyBy,
 IsBlackList,
 CompanyName
-from BlackListedCompany
+from BlackListedCompany where IsBlackList=1
  end

@@ -10,7 +10,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 Create Procedure [dbo].[usp_InsertBlackListCompany]
-@IsBlackList bit,
 @Comment varchar(150),
 @CreatedDate datetime ,
 @CreatedBy varchar(50),
@@ -25,6 +24,6 @@ update BlackListedCompany set Comment=@Comment,ModifyDate=@ModifyDate,ModifyBy=@
 end
 else
 begin
-Insert into BlackListedCompany(IsBlackList,Comment,CreatedDate,CreatedBy,CompanyName) Values(@IsBlackList,@Comment,@CreatedDate,@CreatedBy,@CompanyName)
+Insert into BlackListedCompany(IsBlackList,Comment,CreatedDate,CreatedBy,CompanyName) Values(1,@Comment,@CreatedDate,@CreatedBy,@CompanyName)
 end
 End
