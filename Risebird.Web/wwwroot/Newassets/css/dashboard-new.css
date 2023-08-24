@@ -6370,6 +6370,12 @@ input[type="date"].form-control {
 .tox-notifications-container {
     display: none
 }
+#uploadResumesModal .card-footer {
+    background-color: #56a9ff0a;
+    border: 0;
+    padding:10px;
+    border-top: 1px #eeeeee73 solid;
+}
 .drop-btn {
     background: #4b6c9578;
     border: 0px;
@@ -6382,7 +6388,7 @@ input[type="date"].form-control {
     display: block;
 }
 .drop-box {
-    margin: 10px 0;
+    margin: 10px 15px;
     padding: 30px;
     display: flex;
     align-items: center;
@@ -6397,7 +6403,7 @@ input[type="date"].form-control {
     background-color: rgb(144 147 153 / 20%);
     margin: 5px;
     color: initial;
-    font-size: 13px;
+    font-size: 12px;
     display: inline-flex;
     line-height: 28px;
 }

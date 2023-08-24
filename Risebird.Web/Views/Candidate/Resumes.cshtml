@@ -26,12 +26,12 @@
                         {
                             @if (Model.Profile == "Admin" || Model.Profile == "Client")
                             {
-                                <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
+                                <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'"></i></span>
                             }
                             @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin" || Model.Profile == "Client")
                             {
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#uploadResumesModal">
-                                    <span class="mdc-button__label"><span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
+                                    <span class="mdc-button__label"><span style="font-size:14px;" class="fa fa-cloud-upload" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             }
@@ -70,28 +70,48 @@
                                             <div class="canvas_div_pdf">
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                                <div>
+                                                <div class="upload_resume">
+
                                                     @*<div class="col-md-6 col-sm-6">
                                                             <div class="form-group" style="margin-bottom:10px;">
                                                                 @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                                 @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                                             </div>
-                                                        </div>*@
-                                                    @*<div class="col-md-6 col-sm-6">
+                                                        </div>
+                                                    <div class="col-md-6 col-sm-6">
                                                             <div class="form-group" style="margin-bottom:10px;">
                                                                 @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                                 @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                             </div>
-                                                        </div>*@
+                                                        </div>
+*@
+
                                                     <div class="col-md-12 col-sm-12">
-                                                        <div class="form-group">
+                                                     @*   <div class="form-group">
                                                             <label asp-for="ResumeFiles" class="form-label"></label>
                                                             <div class="col-sm-12">
                                                                 <div class="custom-file">
                                                                     <input asp-for="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc">
                                                                     <label class="custom-file-label">Choose File(s)...</label>
                                                                 </div>
+                                                            </div>
+                                                        </div>*@
+                                                        <div class="drop-box">
+                                                            <header>
+                                                                <h4>Select File here</h4>
+                                                            </header>
+                                                            <p>Files Supported: PDF, DOC , DOCX</p>
+                                                            <label for="ResumeFiles">
+                                                                <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span></a>
+
+                                                            </label>
+                                                            <input type="file" name="ResumeFiles" accept=".pdf, .docx, .doc" id="ResumeFiles" style="visibility: hidden; position: absolute;" multiple />
+
+                                                            <div id="files-area">
+                                                                <span id="filesList">
+                                                                    <span id="files-names"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -110,9 +130,11 @@
                                                     <div class="row">
 
                                                         <div class="col-md-12 mc-button-area text-right">
+                                                            <button style="margin:3px 10px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">
+                                                                <i style="font-size:14px; padding-right:10px;" class="fa fa-cloud-upload" aria-hidden="true"></i>
+                                                                Upload
+                                                            </button>
 
-
-                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 
 
                                                         </div>
@@ -256,8 +278,8 @@
         </div>
     </div>
 </div>
-
-@if (Model.Message != null)
+@*@await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
+*@@if (Model.Message != null)
 {
     <script type="text/javascript">
         $(document).ready(function () {
@@ -522,3 +544,56 @@
 </script>
 
 
+<script>
+
+    function OpenUploadResumeModal(irfid, Irfname) {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "block";
+        $('#IRFId').val(irfid);
+        $('#IRFName').val(Irfname)
+    }
+
+    function closeUploadResumeModal() {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "none"
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+    const dt = new DataTransfer();
+
+    $("#ResumeFiles").on('change', function (e) {
+        for (var i = 0; i < this.files.length; i++) {
+            let fileBloc = $('<span/>', { class: 'file-block' }),
+                fileName = $('<span/>', { class: 'name', text: this.files.item(i).name });
+            fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                .append(fileName);
+            $("#filesList > #files-names").append(fileBloc);
+        };
+        // Ajout des fichiers dans l'objet DataTransfer
+        for (let file of this.files) {
+            dt.items.add(file);
+        }
+        // Mise à jour des fichiers de l'input file après ajout
+        this.files = dt.files;
+
+        // EventListener pour le bouton de suppression créé
+        $('span.file-delete').click(function () {
+            let name = $(this).next('span.name').text();
+            // Supprimer l'affichage du nom de fichier
+            $(this).parent().remove();
+            for (let i = 0; i < dt.items.length; i++) {
+                // Correspondance du fichier et du nom
+                if (name === dt.items[i].getAsFile().name) {
+                    // Suppression du fichier dans l'objet DataTransfer
+                    dt.items.remove(i);
+                    continue;
+                }
+            }
+            // Mise à jour des fichiers de l'input file après suppression
+            document.getElementById('ResumeFiles').files = dt.files;
+        });
+    });
+
+</script>
