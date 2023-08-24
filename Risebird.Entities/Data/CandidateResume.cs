@@ -12,5 +12,6 @@ namespace Risebird.Entities.Data
         public DateTime AddedOn { get; set; }
         public bool IsProcessed { get; set; }
         public bool IsResumeParsed { get; set; }
+        public bool IsResumeParsingFailed { get; set; }
     }
 }

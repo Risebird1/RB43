@@ -281,11 +281,12 @@ namespace Risebird.Repository
                     resumeListDt.Columns.Add("id", typeof(int));
                     resumeListDt.Columns.Add("IsProcessed", typeof(bool));
                     resumeListDt.Columns.Add("IsResumeParsed", typeof(bool));
+                    resumeListDt.Columns.Add("IsResumeParsingFailed", typeof(bool));
 
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed);
+                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed);
                     }
 
                     SqlCommand cmd = new SqlCommand("usp_CandidateResumeBulkUpdate", con);

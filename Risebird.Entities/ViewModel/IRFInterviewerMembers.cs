@@ -33,6 +33,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsEmployed { get; set; }
         public string EmploymentComment { get; set; }
         public string CompanyName { get; set; }
+        public DateTime? AvailabilityResponseDate { get; set; }
+        public int PerSuccessRate { get; set; }
+        public string JDLink { get; set; }
     }
     public class AssessmentIRFListVM
     {
