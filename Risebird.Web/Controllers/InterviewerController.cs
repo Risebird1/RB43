@@ -47,9 +47,10 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly string codeapiendpoint;
         private readonly IAadhaarService _aadhaarService;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, IWhatsAppHelper whatsAppHelper)
 
         {
             _interviewerService = interviewerService;
@@ -69,6 +70,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             codeapiendpoint = _configuration["CodeApiEndPoint"];
             _aadhaarService = aadhaarService;
+            _whatsAppHelper = whatsAppHelper;
         }
 
 
@@ -3762,7 +3764,7 @@ namespace Risebird.Web.Controllers
                 SuspiciousInterviewerVM model = new SuspiciousInterviewerVM();
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                model.EmailId= Email;
+                model.EmailId = Email;
                 model.Comment = Comment;
                 model.Createddate = DateTime.Now;
                 model.CreatedBy = emailId;
@@ -3776,7 +3778,7 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Fail to marked Suspicious Interviewer, Try again after sometime.");
                 }
-         
+
             }
             catch (Exception ex)
             {
@@ -3784,6 +3786,57 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        #region Open Interview Notification: Public URL
+        [HttpPost]
+        public async Task<JsonResult> SendOpenURLNotification()
+        {
+            var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified");
+            foreach (var item in _AllInterviewerInterview)
+            {
+                if (!string.IsNullOrEmpty(item.EmailId))
+                {
+                    string sendreporturl = string.Empty;
+                    if (string.IsNullOrEmpty(item.uniqueid))
+                    {
+                        Guid uniqueid = Guid.NewGuid();
+                        var _uniqueid = await _clientService.PublicInterviewerUrlSave(item.EmailId, uniqueid.ToString());
+                        sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
+                        if (!string.IsNullOrEmpty(_uniqueid))
+                        {
+                            sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                        }
+                    }
+                    else
+                    {
+                        sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + item.uniqueid;
+                    }
+                    try
+                    {
+                        //Email Message Send
+                        Mail _mail1 = new Mail
+                        {
+                            TO = item.EmailId,
+                            CC = "talent@risebird.io",
+                            Subject = "New interviews have come up! Please assign."
+                        };
+                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total);
+                        //What's App Message Send
+                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        _whatsAppVM.Emailid = item.EmailId;
+                        _whatsAppVM.MessageValue = item.Total.ToString();
+                        _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
+                        _whatsAppVM.Event = "Interviewer Common Interview";
+                        await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            return Json("Success");
+        }
+        #endregion
     }
 }
 
