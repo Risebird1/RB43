@@ -774,6 +774,7 @@ namespace Risebird.Web.Controllers
                 employementdetails = await _aadhaarService.GetEmployementDetailsByMobileNumber(mobilenumber);
                 if (employementdetails == null)
                 {
+                    employementdetails = new EmploymentDetailsDM();
                     //TODO: Update According to blacklist data pr deployement
                     var model = await EmployementVerificationDetails(candidateemail, mobilenumber);
                     if (string.IsNullOrWhiteSpace(model.message))
