@@ -63,7 +63,7 @@ namespace Risebird.MicroService
                                     TO = item.EmailId,
                                     Subject = "Risebird: Availbility check for Skill Channel " + irf.IRFId + " Interviews"
                                 };
-                                var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.IRFId);
+                                var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.IRFId, item.JDLink, item.PerSuccessRate);
                             }
                         }
                     }
