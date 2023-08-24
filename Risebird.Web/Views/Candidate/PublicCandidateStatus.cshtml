@@ -107,8 +107,8 @@
     }
 
     /*.mob_h {
-                                                display: none !important
-                                            }*/
+  display: none !important
+     }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -126,14 +126,21 @@
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
 <div id="main-panel">
-    <div class="jumbotron">
+    <div>
         <div class="pt30 videocon">
             <div class="col-md-12 nopad">
                 <div class="card-header bg-w clearfix">
                     <img style="visibility:hidden" src="" data-position="right" />
                     <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
-                    <div class="pull-left risetubeheader">
-                        <h4 class="card-title"></h4>
+                    <div class="pull-left logo-area">
+                           @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
+            {
+                <img class="logo-cm"  src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+            }
+            else
+            {
+                <img class="logo-cm" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />
+            }
 
                         <div class="mobile-view"> <h4 class="card-title risetubeid">Journey</h4></div>
                     </div>
@@ -330,7 +337,7 @@
                                                                 <tr>
                                                                     <th class="text-left">Candidate Details</th>
                                                                     <th class="text-left">Interview Date</th>
-                                                                    <th id="status_4" class="text-left">JD Title</th>
+                                                                    @*<th id="status_4" class="text-left">JD Title</th>*@
                                                                  @*   <th id="status_8">Current Status</th>*@
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
@@ -344,7 +351,7 @@
                                                                 <tr>
                                                                     <th class="text-left">Candidate Detail</th>
                                                                     <th class="text-left">Interview Date</th>
-                                                                    <th class="text-left">JD Title</th>
+                                                                    @*<th class="text-left">JD Title</th>*@
                                                                @*     <th>Current Status</th>*@
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
@@ -366,14 +373,15 @@
                                                                 }*@
                                                                     <tr style="background-color:@backcolor">
                                                                         <td class="cadName text-left pl15">
-                                                                            
+                                                                            <div class="candidate-field">
+                                                                                <span class="pull-left">
                                                                             @if (item.CandidateName != null && item.CandidateName != "")
                                                                             {
                                                                                 @if (item.CandidateName.Length > 20)
                                                                                 {
                                                                                     @if (item.reportcount > 1)
                                                                                     {
-                                                                                        <p class="name-field" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ... <span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:18px;color:red"></span></p>
+                                                                                        <p class="name-field" title="@item.CandidateName"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName.Substring(0, 19) ... </p>
                                                                                     }
                                                                                     else
                                                                                     {
@@ -384,7 +392,7 @@
                                                                                 {
                                                                                     @if (item.reportcount > 1)
                                                                                     {
-                                                                                        <p class="name-field"> @item.CandidateName <span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:18px;color:red"></span></p>
+                                                                                        <p class="name-field"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName </p>
                                                                                     }
                                                                                     else
                                                                                     {
@@ -392,7 +400,34 @@
                                                                                     }
                                                                                 }
                                                                             }
-                                                                            <span>
+                                                                            </span><span class="pull-left">
+
+
+                                                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                        {
+
+                                                                            @if (item.PrimarySkill.Length > 22)
+                                                                            {
+                                                                                <p class="cadEmail text-left">
+                                                                                    <a class="pskill" data-tooltip="@item.PrimarySkill">( @item.PrimarySkill.Substring(0, 22) ...)</a>
+                                                                                </p>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <p class="text-left">
+                                                                                    <a class="pskill">(@item.PrimarySkill)</a>
+                                                                                </p>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p></p>
+                                                                        }
+                                                                        </span>
+                                                                        </div>
+
+
+                                                                            <div class="candidate-field">
                                                                                 @if (item.CurrentStatus == "Selected")
                                                                                 {
                                                                                     <p class="current selected">@item.CurrentStatus</p>
@@ -420,13 +455,13 @@
                                                                                 }
 
 
-                                                                    </span>
-                                                                            
+                                                                    </div>
+                                                                             <div class="candidate-field">
                                                                             @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
                                                                             {
-                                                                                @if (item.CandidateEmailId.Length > 20)
+                                                                                @if (item.CandidateEmailId.Length > 30)
                                                                                 {
-                                                                                    <p class="email-field" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 19) ...</p>
+                                                                                    <p class="email-field" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 30) ...</p>
                                                                                 }
                                                                                 else
                                                                                 {
@@ -434,11 +469,12 @@
                                                                                 }
                                                                             }
                                                                             <p class="email-field" hidden> @item.CandidateEmailId </p>
+                                                                            </div>
                                                                         </td>
                                                                         @if (item.interviewDate != DateTime.MinValue)
                                                                         {
-                                                                            <td class="cadEmail text-left pl15">
-                                                                                <span class="int-date"> @item.interviewDate</span>
+                                                                            <td class="cadEmail text-left">
+                                                                                <span class="int-datetime"> @item.interviewDate</span>
                                                                             </td>
                                                                         }
                                                                         else
@@ -446,7 +482,7 @@
                                                                             <td></td>
                                                                         }
 
-                                                                        @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                       @*                 @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                                         {
 
                                                                             @if (item.PrimarySkill.Length > 15)
@@ -465,7 +501,7 @@
                                                                         else
                                                                         {
                                                                             <td></td>
-                                                                        }
+                                                                        }*@
                                                                      @*   <td>
                                                                             @if (item.CurrentStatus == "Selected")
                                                                             {
@@ -488,26 +524,33 @@
                                                                             @if (item.MailCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    Emails :   <a href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                    <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                                                                        <a class="icon-link" href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
                                                                                        @item.MailCount
-                                                                                    </a>
+                                                                                    </a></span>
                                                                                 </div>
                                                                             }
                                                                             @if (item.CallsCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    Voice Calls :  <a href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                    <span class="icon-field">
+                                                                                        <img class="icon wp" src="~/img/voice-call.png" />  Voice Calls :
+                                                                                    </span>   <span class="icon-field">
+                                                                                        <a cass="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
                                                                                        @item.CallsCount
-                                                                                    </a>
+                                                                                    </a></span>
                                                                                 </div>
                                                                             }
 
                                                                             @if (item.WhatsappCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    <img src="~/img/whatsapp.png" />   Whatsapp Messages : <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                    <span class="icon-field">
+                                                                                        <img class="icon wp" src="~/img/whatsapp.png" />   Whatsapp Messages :
+                                                                                    </span>  <span class="icon-field">
+                                                                                        <a class="icon-link" href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
                                                                                         @item.WhatsappCount
-                                                                                    </a>
+                                                                                    </a></span>
                                                                                 </div>
                                                                             }
 

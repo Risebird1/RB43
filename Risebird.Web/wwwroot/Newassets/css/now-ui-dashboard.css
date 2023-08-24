@@ -11948,8 +11948,13 @@ table.dataTable > tfoot > tr > td {
     /* width: 150px;*/
     border-right: 0;
     border-bottom: 0;
+   
 }
-
+table.dataTable > tfoot > tr > th {
+    font-size: 13px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+}
 table.dataTable > thead > tr > th {
     border: none;
     padding: 5px;
