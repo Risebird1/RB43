@@ -85,6 +85,7 @@ namespace Risebird.MicroService
                             else
                             {
                                 //mark it as cant be parsed in the database
+                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false });
                                 continue;
                             }
                             if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
@@ -119,7 +120,7 @@ namespace Risebird.MicroService
                 }
 
                 // add the candidate to database and update IsProcessed and IsResumeParsed
-                if (candidateList != null)
+                if (candidateList != null && candidateList.Count() > 0)
                 {
                     foreach (var irfId in candidateList.Select(x => x.IRFId).Distinct())
                     {
