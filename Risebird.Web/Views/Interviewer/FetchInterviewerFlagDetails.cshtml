@@ -17,8 +17,8 @@
                 Last Login:
                 @if (string.IsNullOrEmpty(Model.CreatedBy))
                 {
-                   @Model.LastLogin
-                }
+                <span style="color:forestgreen;font-weight:bold;">@Model.LastLogin</span>
+            }
                 else
                 {
                     @(Model.LastLogin + " Added By - " + Model.CreatedBy)
@@ -39,15 +39,7 @@
             <th> Interested</th>
             </tr>
             </thead>
-    <tfoot>
-        <tr>
-            
-            <th>Lead Interviewer</th>
-            <th> Approved</th>
-            <th> Active</th>
-            <th> Interested</th>
-            </tr>
-            </tfoot>
+   
     <tbody>
         <tr>
            

@@ -62,8 +62,11 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
+#interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
+    background: #eae3e3!important;
+}
 
-.report-full-wrap #videoId {
+    .report-full-wrap #videoId {
     background: #fff;
     font-size: 12px;
     padding: 1px 7px;

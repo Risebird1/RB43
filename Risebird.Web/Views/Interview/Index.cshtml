@@ -469,8 +469,8 @@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th id='start'>Skill Channel ID</th>
                                                     <th>Interview Date</th>
-                                                    <th>Candidate Name</th>
-                                                    <th>Candidate Email</th>
+                                                    <th>Candidate Details</th>
+                                                    <th>Mobile Number</th>
                                                     @*Hide Columns for Cancel Intervies*@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
@@ -529,8 +529,8 @@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th>Skill Channel ID</th>
                                                     <th>Interview Date</th>
-                                                    <th>Candidate Name</th>
-                                                    <th>Candidate Email</th>
+                                                    <th>Candidate Details</th>
+                                                    <th>Mobile Number</th>
                                                     @*Hide Columns for Cancel Intervies*@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
@@ -764,29 +764,31 @@
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
 
-
+                                                        <td>
                                                         @if (item.IsOnline == 1)
                                                         {
-                                                            <td>
+                                                            <div>
                                                                 <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
-                                                            </td>
+                                                            </div>
                                                         }
                                                         else
                                                         {
-                                                            <td>
+                                                            <div>
                                                                 @item.candidateName
-                                                            </td>
+                                                            </div>
                                                         }
 
 
                                                         @if (item.zoomLink != null && item.zoomLink != "")
                                                         {
-                                                            <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+                                                            <div> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></div>
                                                         }
                                                         else
                                                         {
-                                                            <td style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
+                                                            <div style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></div>
                                                         }
+                                                        </td>
+                                                        <td>@item.MobileNumber</td>
                                                         @*Hide Columns for Cancel Intervies*@
                                                         @if (ViewBag.Type != CancelInterviews)
                                                         {

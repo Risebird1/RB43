@@ -3370,11 +3370,11 @@ table.interviewertable td.cadEmail {
 
 
     #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
-        padding: 2px 8px;
+        padding: 1px 8px;
         font-weight: normal !important;
         font-size: 14px;
         font-family: "Raleway", sans-serif;
-        background: #eae3e3;
+      
     }
 #interviewerFlagDetailsModal .table > tbody > tr > td {
     padding: 10px!important;
