@@ -33,7 +33,7 @@ namespace Risebird.Repository
 
         public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
         {
-            try    
+            try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -6612,6 +6612,32 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+
+        public async Task<bool> AddBlackListCompany(BlackListCompanyVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CompanyName", model.CompanyName);
+                dynamicParam.Add("@Comment", model.Comment);
+                dynamicParam.Add("@CreatedDate", model.CreatedDate);
+                dynamicParam.Add("@CreatedBy", model.CreatedBy);
+                dynamicParam.Add("@ModifyDate", model.ModifyDate);
+                dynamicParam.Add("@ModifyBy", model.ModifyBy);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_InsertBlackListCompany", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

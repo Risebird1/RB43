@@ -204,7 +204,7 @@ namespace Risebird.Web.Controllers
                                 //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; 
                                 x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
                                 //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; 
-                               
+
                                 return x;
                             }).ToList();
                             foreach (var item in modelList)
@@ -230,14 +230,14 @@ namespace Risebird.Web.Controllers
                                     item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                                 }
                             }
-                            
+
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         }
                         if (type == "RedoInterviews")
                         {
                             ViewBag.Type = "RedoInterviews";
                             modelList = modelList.Where(x => x.RedoInterview == true).ToList();
-                        
+
                         }
                         else if (type == "Interviews")
                         {
@@ -6713,7 +6713,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                if (string.IsNullOrEmpty(VideoURL))
+                if (string.IsNullOrWhiteSpace(VideoURL))
                 {
                     VideoURL = "";
                 }
@@ -7160,7 +7160,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        
+
         public async Task<JsonResult> ShareSecureReport(int interviewId, string irfId, string emailid)
         {
             try
@@ -7497,12 +7497,12 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
-                    if(client != null)
+                    if (client != null)
                     {
                         model.IsQCRequired = client.IsQCRequired;
                         model.IsRedoInterview = client.IsRedoInterview;
                     }
-                    
+
                 }
                 else
                 {
@@ -7692,7 +7692,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(transcriptUrl))
                 {
                     int count = 0;
-                    
+
                     string fileContent = string.Empty;
 
                     //var transcriptUrl = await _meetingService.GetTranscriptUrlByMeeting(imid);
@@ -7746,7 +7746,7 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    if(keywordsFoundList!=null && keywordsFoundList.Count()>0)
+                    if (keywordsFoundList != null && keywordsFoundList.Count() > 0)
                     {
                         model.KeywordsFound = string.Join(",", keywordsFoundList);
                     }
@@ -7764,5 +7764,39 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> AddBlackListCompanyComment(string CompanyName, string Comment)
+        {
+            try
+            {
+               
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                BlackListCompanyVM model = new BlackListCompanyVM();
+                model.CompanyName = CompanyName;
+                model.Comment = Comment;
+                model.CreatedDate = DateTime.Now;
+                model.CreatedBy = emailId;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = emailId;
+                var data = await _meetingService.AddBlackListCompanyService(model);
+                if (data == true)
+                {
+                    return Json("Blacklisted company marked Successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether company is Blacklisted.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

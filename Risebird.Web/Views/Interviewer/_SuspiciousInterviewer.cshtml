@@ -1,0 +1,58 @@
+﻿
+<div id="SuspiciousTypeModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Suspicious Interviewer Details</h5>
+            </div>
+            <button onclick="closeSuspiciousTypeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="SuspiciousTypebody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnInterviewerEmail">
+                    <label style="font-size:14px;">Comment</label>
+                    <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveSuspiciousInterViewer()" id="btnSuspiciousSave">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function closeSuspiciousTypeModal() {
+        var modal = document.getElementById("SuspiciousTypeModal");
+        modal.style.display = "none";
+    }
+    function SuspiciousTypeDetails(Emailid) {
+        var modal = document.getElementById("SuspiciousTypeModal");
+        modal.style.display = "block";
+        $('#hdnInterviewerEmail').val(Emailid);
+    }
+    function SaveSuspiciousInterViewer() {
+        var comment = $('#Comment').val().trim();
+        var emailId = $('#hdnInterviewerEmail').val();
+        if (comment != '') {
+            $.ajax({
+                url: '/Interviewer/AddSuspiciousTypeComment',
+                data: { 'Email': emailId, 'Comment': comment },
+                type: "POST",
+                success: function (data) {
+                    alert(data);
+                    closeSuspiciousTypeModal();
+                }
+            });
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+</script>
