@@ -34,10 +34,10 @@ namespace Risebird.Entities.ViewModel
         public string EmploymentComment { get; set; }
         public string CompanyName { get; set; }
         public DateTime? AvailabilityResponseDate { get; set; }
-        public int PerSuccessRate { get; set; }
+        public string PerSuccessRate { get; set; }
         public string JDLink { get; set; }
         public string JDTitle { get; set; }
-        public int Interviewduration { get; set; }
+        public string Interviewduration { get; set; }
     }
     public class AssessmentIRFListVM
     {
