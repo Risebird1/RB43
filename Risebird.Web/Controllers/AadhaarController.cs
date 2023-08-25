@@ -812,7 +812,7 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         var companystatus = await _aadhaarService.CheckCompanyStatus(employementdetails.CompanyName);
-                        if (!companystatus)
+                        if (companystatus != null)
                         {
                             employementdetails.message = "For this employment Company is in black list in our system.";
                         }
