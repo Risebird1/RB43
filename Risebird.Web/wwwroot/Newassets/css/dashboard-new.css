@@ -5964,7 +5964,15 @@ input[type="date"].form-control {
     color:#fff;
     font-size:14px;
 }
-
+.flex-w{
+    display:flex;
+}
+.int-table .action span button, .int-table .action span a {
+    margin-right: 3px;
+}
+.int-table table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+    max-width: 330px !important;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
