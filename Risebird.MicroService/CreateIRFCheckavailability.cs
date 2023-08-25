@@ -73,7 +73,7 @@ namespace Risebird.MicroService
                                     _whatsAppVM.Emailid = item.EmailId;
                                     _whatsAppVM.PrimarySkill = item.JDTitle;
                                     _whatsAppVM.MessageValue = irf.IRFId;
-                                    _whatsAppVM.PerSuccessRate = item.PerSuccessRate;
+                                    _whatsAppVM.PerSuccessRate = item.PerSuccessRate.ToString();
                                     _whatsAppVM.Interviewduration = item.Interviewduration;
                                     _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
                                     _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
