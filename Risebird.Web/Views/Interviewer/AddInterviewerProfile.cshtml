@@ -1284,7 +1284,7 @@
                 type: 'POST',
                 data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
                 success: function (result) {
-                    if (result.message == null && result.message == '') {
+                    if (result.message == null) {
                         document.getElementById("divEVverification").style.display = "none";
                         document.getElementById("divEVverified").style.display = "block";
                         $("#txt_MobileNumber").val(result.mobileNumber);
@@ -1294,7 +1294,7 @@
                         $("#IsEmployed").val(result.isemployed);
                         $("#DOB").val(result.dob);
                     } else {
-                        swal.fire(result);
+                        swal.fire(result.message);
                     }
                 }
             });
