@@ -344,43 +344,8 @@
         </div>
     </div>
 </div>
-<div id="uploadResumesModal" class="modal modal-bg">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
-                </div>
-                <h5 class="modal-title pull-left">Upload Resume(s)</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" style="cursor:pointer;" onclick="closeuploadResumesModal()">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div class="col-md-12 col-sm-12">
-                    <input type="hidden" id="txtIRFId" />
-                    <input type="hidden" id="txtIRFName" />
-                    <div class="form-group">
-                        <label class="form-label"></label>
-                        <div class="col-sm-12">
-                            <div class="custom-file">
-                                <input type="file" class="choose-file" multiple accept=".pdf, .docx, .doc" id="ResumeFiles" style="margin-bottom: 10px;" />
-                                @*<input asp-for="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc">*@
-                                <label class="custom-file-label">Choose File(s)...</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12 col-sm-12 text-right">
-                    <button type="button" onclick="UploadCandidateResume()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Upload</button>
-                    <button type="button" onclick="closeuploadResumesModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
-                </div>
-            </div>
 
-        </div>
-    </div>
-</div>
+
 <div id="CopySchedulinglinkModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -416,6 +381,8 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
+
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script>
     function openSkillpopup(id) {
