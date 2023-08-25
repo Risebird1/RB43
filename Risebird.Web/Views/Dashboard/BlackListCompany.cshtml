@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.BlackListCompanyVM>
+@{
+    ViewData["Title"] = "BlackListCompany";
+}
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                       
+                        <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">BlackList Company</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                        </button>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+
+                            <div style="overflow-x:scroll" class="scrollbar">
+                                <div id="tableID" class="second">
+                                    <table id="detailsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Company Name</th>
+                                                <th>Comment</th>
+                                                <th>Created On</th>
+                                                <th>Created By</th>
+                                                <th>Modify On</th>
+                                                <th>Modify Date</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Company Name</th>
+                                                <th>Comment</th>
+                                                <th>Created On</th>
+                                                <th>Created By</th>
+                                                <th>Modify On</th>
+                                                <th>Modify Date</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @if (Model != null && Model.Count() > 0)
+                                            {
+                                                foreach (var item in Model)
+                                                {
+                                                    
+                                                    <tr>
+                                                        <td>@item.CompanyName</td>
+                                                        <td>@item.Comment</td>
+                                                        <td>@item.CreatedDate</td>
+                                                        <td>@item.CreatedBy</td>
+                                                        <td>@item.ModifyDate</td>
+                                                        <td>@item.ModifyBy</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end content-->
+        </div>
+        <!--  end card  -->
+    </div>
+    <!-- end col-md-12 -->
+</div>
+

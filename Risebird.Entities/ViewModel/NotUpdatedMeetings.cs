@@ -24,6 +24,7 @@ namespace Risebird.Entities.ViewModel
         public int RedoInterviewCount { get; set; }
         public int ProbableNoShowCount { get; set; }
         public int PotentialRiskByClient { get; set; }
+        public int BlackListCompanyCount { get; set; }
 
     }
     public class MeetingDetailsForParticipant

@@ -627,5 +627,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<BlackListCompanyVM>> GetBlackkListComapany()
+        {
+            try
+            {
+                return await _dashboardRespository.GeBlackListCompany();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

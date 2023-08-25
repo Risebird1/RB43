@@ -572,11 +572,6 @@
 
                         </div>
 
-
-
-
-
-
                     </div>
                 </div>
 
@@ -1207,6 +1202,73 @@
                                 </div>
                             </div>
 							
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper17">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="BlackListCompany()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/blacklist.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Blacklisted Company</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                                <span id="ribbonBlackListCompanyCount"BlackListCompany()">@Model.NotUpdatedMeetingsObj.BlackListCompanyCount</span>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="BlackListCompany()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="BlackListCompany()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/blacklist.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Blacklisted Company</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span id="ribbonBlackListCompanyCount_1" class="card-title" onclick="BlackListCompany()">@Model.NotUpdatedMeetingsObj.BlackListCompanyCount</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="BlackListCompany()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -1231,6 +1293,11 @@
     {
      window.location.href = "/Interview/ProbableNoShowCandidates";
     }
+     function BlackListCompany()
+    {
+        window.location.href = "/Dashboard/BlackListCompany";
+    }
+
 </script>
 <script type="text/javascript">
     var setRibbonCalledCount = 0;
@@ -1373,6 +1440,17 @@
                 else {
                     $(".flipper16").removeClass("flipper");
                 }
+
+                if (parseInt(data.blackListCompanyCount) != parseInt($("#ribbonBlackListCompanyCount").text())) {
+      
+                    $(".flipper17").addClass("flipper");
+             
+
+                }
+                else {
+                    $(".flipper17").removeClass("flipper");
+                }
+
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
@@ -1389,6 +1467,7 @@
                 $("#ribbonRedoInterviewCount").text(data.redoInterviewCount);
                 $("#ribbonPotentialRiskByClientCount").text(data.potentialRiskByClient);
                 $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
+                $("#ribbonBlackListCompanyCount").text(data.blackListCompanyCount);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1405,7 +1484,8 @@
                 $("#ribbonCancelledInterviewsCount_1").text(data.cancelledInterviewCount);
                 $("#ribbonRedoInterviewCount_1").text(data.redoInterviewCount);
                 $("#ribbonPotentialRiskByClientCount_1").text(data.potentialRiskByClient);
-                $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
+                $("#ribbonBlackListCompanyCount_1").text(data.blackListCompanyCount);
+                $("#ribbonProbableNoShowCount_1").text(data.probableNoShowCount);
                 $(".flipper").toggleClass("flip");
             }
         });
