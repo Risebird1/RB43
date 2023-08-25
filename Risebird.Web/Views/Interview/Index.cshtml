@@ -476,7 +476,7 @@
                                                     {
                                                         <th>Type</th>
 
-                                                        @*<th>JD Title</th>*@
+                                                        <th>JD Title</th>
 
                                                         <th>Meeting Link</th>
                                                         <th>Company Name</th>
@@ -505,7 +505,7 @@
                                                         <th>Staffing Agency</th>
                                                         <th>Interview Duration</th>
                                                         <th>ID Verification</th>
-                                                        @*<th style="text-align:center">Call</th>*@
+                                                        
                                                         <th>ReportId</th>
                                                         <th>Has Distinct Participants</th>
                                                         <th>Expected Joining Time</th>
@@ -535,7 +535,7 @@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
                                                         <th>Type</th>
-                                                       @* <th>JD Title</th>*@
+                                                       <th>JD Title</th>
 
                                                         <th>Meeting Link</th>
                                                         <th>Company Name</th>
@@ -562,7 +562,6 @@
                                                         <th>Staffing Agency</th>
                                                         <th>Interview Duration</th>
                                                         <th>ID Verification</th>
-                                                       @* <th style="text-align:center">Call</th>*@
                                                         <th>ReportId</th>
                                                         <th>Has Distinct Participants</th>
                                                         <th>Expected Joining Time</th>
@@ -765,30 +764,33 @@
                                                         <td> @item.interviewDate </td>
 
                                                         <td>
+                                                           
+                                                         
                                                         @if (item.IsOnline == 1)
                                                         {
-                                                            <div>
-                                                               <span class="name-field pull-left"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a> </span><span class="pull-left">( @item.JDTiltle.Split("|")[0])</span>
-                                                            </div>
+                                                           
+                                                               <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
                                                         }
                                                         else
                                                         {
-                                                            <div>
-                                                              <span class="name-field pull-left">  @item.candidateName</span><span class="pull-left">(@item.JDTiltle.Split("|")[0])</span>
-                                                            </div>
+                                                           
+                                                              <span class="name-field">  @item.candidateName</span>
+                                                            
                                                         }
-
+                                                       
+                                                       
+                                                       
 
                                                         @if (item.zoomLink != null && item.zoomLink != "")
                                                         {
-                                                            <div class="email-field"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></div>
+                                                            <span class="email-field"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
                                                         }
                                                         else
                                                         {
-                                                            <div class="email-field" style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></div>
+                                                            <span class="email-field" style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
                                                         }
                                                         </td>
-                                                        <td>
+                                                        <td style="padding:0px 7px;">
                                                              <span class="call-area">
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
@@ -808,7 +810,7 @@
                                                                 <td>Interview</td>
                                                             }
 
-                                                           @* <td> @item.JDTiltle.Split("|")[0] </td>*@
+                                                           <td> @item.JDTiltle.Split("|")[0] </td>
 
 
                                                             @if (item.zoomLink != null && item.zoomLink != "")
@@ -823,11 +825,11 @@
                                                             {
                                                                 @if (item.CompanyName.Length > 30)
                                                                 {
-                                                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                                    <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>@item.CompanyName</td>
+                                                                    <td style="font-size:13px; color:brown">@item.CompanyName</td>
                                                                 }
                                                             }
                                                             else
@@ -855,14 +857,14 @@
                                                             }
                                                             @if (@item.encodedresumeLink != null && @item.encodedresumeLink != "")
                                                             {
-                                                                <td>
-                                                                    <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.encodedresumeLink>Resume</a>
+                                                                <td class="text-center">
+                                                                    <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Interviewer Resume" href=@item.encodedresumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
                                                                 </td>
                                                             }
                                                             else
                                                             {
-                                                                <td>
-                                                                    <a id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink>Resume</a>
+                                                               <td class="text-center">
+                                                                    <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
                                                                 </td>
                                                             }
 
@@ -995,7 +997,7 @@
                                                             {
                                                                 <td>
 
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
+                                                                    <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@item.resumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
                                                                 </td>
                                                             }
                                                             else
@@ -1085,13 +1087,6 @@
                                                             {
                                                                 <td>No</td>
                                                             }
-                                                           @* <td>
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-                                                                    <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
-                                                                }
-                                                            </td>*@
                                                             <td>@item.imid</td>
                                                             @if (item.HasDistinctParticipants)
                                                             {
