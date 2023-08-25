@@ -49,5 +49,6 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetUpcomingMeetingsDeletedFromZoom(string emailId);
         Task<List<AlterMessage>> FetchAlertMessageList();
         Task<string> AddAlertMessage(AlterMessage model);
+        Task<IEnumerable<BlackListCompanyVM>> GetBlackkListComapany();
     }
 }

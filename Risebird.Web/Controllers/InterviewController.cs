@@ -7753,5 +7753,39 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> AddBlackListCompanyComment(string CompanyName, string Comment)
+        {
+            try
+            {
+               
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                BlackListCompanyVM model = new BlackListCompanyVM();
+                model.CompanyName = CompanyName;
+                model.Comment = Comment;
+                model.CreatedDate = DateTime.Now;
+                model.CreatedBy = emailId;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = emailId;
+                var data = await _meetingService.AddBlackListCompanyService(model);
+                if (data == true)
+                {
+                    return Json("Blacklisted company marked Successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether company is Blacklisted.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
