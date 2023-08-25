@@ -5967,11 +5967,11 @@ input[type="date"].form-control {
 .flex-w{
     display:flex;
 }
-.int-table .action span button, .int-table .action span a {
+.int-table .action span button, .int-table .action span a, .int-table .action span span {
     margin-right: 3px;
 }
 .int-table table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-    max-width: 330px !important;
+    max-width: 370px !important;
 }
 /***** Media queries *****/
 .copy-btn {
