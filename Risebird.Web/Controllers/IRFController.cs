@@ -6563,15 +6563,6 @@ namespace Risebird.Web.Controllers
                                 Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
                             };
                             var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.PerSuccessRate);
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.EmailId;
-                            _whatsAppVM.PrimarySkill = item.JDTitle;
-                            _whatsAppVM.MessageValue = irf.IRFId;
-                            _whatsAppVM.PerSuccessRate = item.PerSuccessRate.ToString();
-                            _whatsAppVM.Interviewduration = item.Interviewduration;
-                            _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
-                            _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
-                            await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
                         }
                     }
                     return Json("Emails sent successfully.");
