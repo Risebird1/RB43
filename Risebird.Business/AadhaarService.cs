@@ -164,7 +164,7 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
         }
-        public async Task<bool> CheckCompanyStatus(string CompanyName)
+        public async Task<BlackListCompanyVM> CheckCompanyStatus(string CompanyName)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
-            return false;
+            return null;
         }
     }
 }

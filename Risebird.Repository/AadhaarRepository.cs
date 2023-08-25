@@ -402,7 +402,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> CheckCompanyStatus(string CompanyName)
+        public async Task<BlackListCompanyVM> CheckCompanyStatus(string CompanyName)
         {
             try
             {
@@ -410,12 +410,9 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@CompanyName", CompanyName);
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_checkBlackListCompany", parameters,
+                    var result = await SqlMapper.QueryAsync<BlackListCompanyVM>(con, "usp_checkBlackListCompany", parameters,
                          commandType: CommandType.StoredProcedure);
-                    if (result.FirstOrDefault() == 0)
-                    {
-                        return true;
-                    }
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -426,7 +423,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return false;
+            return null;
         }
     }
 }

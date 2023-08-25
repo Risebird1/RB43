@@ -20,6 +20,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails();
         Task<int> CheckEmployementDetails(string mobilenumber);
         Task<EmploymentDetailsDM> GetEmployementDetailsByMobileNumber(string mobilenumber);
-        Task<bool> CheckCompanyStatus(string CompanyName);
+        Task<BlackListCompanyVM> CheckCompanyStatus(string CompanyName);
     }
 }

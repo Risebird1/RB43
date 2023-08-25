@@ -10,6 +10,6 @@ Create Procedure usp_checkBlackListCompany
 @CompanyName varchar(100)
 AS
 Begin
-select Count(*) totalcount From BlackListedCompany where CompanyName=@CompanyName and IsBlackList=1
+select * From BlackListedCompany where CompanyName=@CompanyName and IsBlackList=1
 END
 GO
