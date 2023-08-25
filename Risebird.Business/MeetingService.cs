@@ -3893,6 +3893,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> AddBlackListCompanyService(BlackListCompanyVM model)
+        {
+            try
+            {
+                await _meetingRespository.AddBlackListCompany(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }
 
