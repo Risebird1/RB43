@@ -3370,18 +3370,20 @@ table.interviewertable td.cadEmail {
 
 
     #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
-        padding: 4px 8px;
+        padding: 2px 8px;
         font-weight: normal !important;
         font-size: 14px;
         font-family: "Raleway", sans-serif;
+        background: #eae3e3;
     }
-
-
+#interviewerFlagDetailsModal .table > tbody > tr > td {
+    padding: 10px!important;
+}
     #interviewerMemberModal .table > tbody > tr > td {
-        padding: 5px;
-        border-right: 1px solid #dee2e68f !important;
-        border-left: 1px solid #dee2e68f;
-    }
+    padding: 5px;
+    border-right: 1px solid #dee2e68f !important;
+    border-left: 1px solid #dee2e68f;
+}
 .interviewertable td.interview-com {
     max-width: 280px;
 }
@@ -5973,6 +5975,14 @@ input[type="date"].form-control {
 .int-table table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
     max-width: 370px !important;
 }
+.interviewer-name {
+    font-size: 17px;
+    color: forestgreen;
+    font-weight: bold;
+    position: relative;
+    top: -6px;
+}
+
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -6416,7 +6426,6 @@ input[type="date"].form-control {
     color: #fff;
     padding: 2px 6px;
     font-size: 12px;
-    border-radius: 3px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -12730,9 +12739,8 @@ body .top-panel {
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-    color: #504e4e !important;
+    color: #504e4e;
 }
-
 #mySchedulingLinkpopup .mCSB_inside > .mCSB_container {
     margin-right: 9px;
 }
