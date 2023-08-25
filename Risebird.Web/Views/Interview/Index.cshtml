@@ -460,7 +460,7 @@
                                     </div>
 
                                 </div>
-                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                <div style="overflow-x:scroll" class="scrollbar int-table" id="style-2">
 
                                     <div id="tableID" class="second ">
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
@@ -602,7 +602,7 @@
                                                         }
                                                     }
                                                     <tr id=@item.imid style="background:@colorcode">
-                                                        <td class="text-center action">
+                                                        <td class="text-center interview-action flex-w action">
                                                             @*For Hide All column in Cancel Intervies*@
                                                             @if (ViewBag.Type != CancelInterviews)
                                                             {
@@ -614,7 +614,7 @@
                                                                         </button>
                                                                     </span>
                                                                     <span class="interview_5">
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Candidate Feedback" style=" position: relative; top: -3px;">
+                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Candidate Feedback" style="cursor:">
                                                                             <span onclick="CandidateFeedback(@item.imid)" title="Candidate Survey Feedback" class="mdc-fab__icon material-icons">
                                                                                 <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
                                                                             </span>
@@ -667,11 +667,11 @@
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                     {
-                                                                        <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                                        <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                     {
-                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;cursor:pointer" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -3px; position: relative;cursor:pointer;margin-right:3px;" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
                                                                     }
                                                                     @if (item.IsBiometricEnabled == true)
                                                                     {
@@ -688,9 +688,9 @@
                                                                 }
                                                                 @if (item.IsAadhaarVerificationRequired == true)
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data" style="margin: 0px 3px;">
                                                                         <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
-                                                                            <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" style="border-radius:50%" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
+                                                                            <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
                                                                         </span>
                                                                     </button>
                                                                 }
@@ -730,10 +730,19 @@
                                                         </button>
                                                         </span>*@
                                                                     <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
                                                                             <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                         </button>
                                                                     </a>
+                                                                    @if(!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                                    {
+                                                                       <span>
+                                                                            <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                                <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                       </button>
+                                                                        </span> 
+                                                                        
+                                                                    }
                                                                 }
                                                             }
                                                             @*<span>
@@ -1524,6 +1533,8 @@
         </div>
     </div>
 </div>
+
+  @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
 
