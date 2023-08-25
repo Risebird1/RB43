@@ -6427,6 +6427,21 @@ input[type="date"].form-control {
     padding: 2px 6px;
     font-size: 12px;
 }
+.int-table .name-field {
+    font-size: 16px;
+    color: #5e3787;
+    font-family: "Raleway", sans-serif;
+    line-height:14px;
+}
+
+.int-table .email-field {
+    font-size: 13px;
+    color: #676772 !important;
+    font-family: "Open Sans", sans-serif;
+    line-height: 19px;
+    position: relative;
+    top: 9px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
