@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.IRFInterviewerMembers>
-
+<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
 <div>
     @if (Model != null && Model.Count() != 0)
     {
@@ -11,8 +11,8 @@
                         <th>Type</th>
                         <th class="text-center">Mobile</th>
                         <th>EmailId</th>
-                        <th class="text-center">Call</th>
-                        <th>Resume Link</th>
+@*                        <th class="text-center">Call</th>
+*@                        <th>Resume Link</th>
                         <th>Company Name</th>
                         <th>Available</th>
                         <th>Response</th>
@@ -55,21 +55,26 @@
                             {
                                 <td style="color: #ff7bf5">@item.Type</td>
                             }
-                            <td class="text-center">@item.MobileNumber</td>
+                            <td class="text-center flex-w">
+                                <span class="call-area">
+                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                    {
 
-                            <td>@item.EmailId</td>
-                            <td class="text-center">
-                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                {
-                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName','@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
-                                }
+                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName','@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+                                    }
 
+                                </span>@item.MobileNumber
                             </td>
+
+                            <td title="@item.EmailId">@item.EmailId</td>
+                          @*  <td class="text-center">
+                               
+                            </td>*@
 
                             @if (item.ResumeLink != null && item.ResumeLink != "")
                             {
                                 <td class="text-center">
-                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                    <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-5px;" src="~/img/resume-icon.png" width="21" />Resume</a>
                                 </td>
                             }
                             else
@@ -80,11 +85,11 @@
                             {
                                 @if (item.CompanyName.Length > 20)
                                 {
-                                    <td title="@item.CompanyName">@item.CompanyName.Substring(0,19) ....</td>
+                                    <td title="@item.CompanyName"><span style="font-size:13px; color:brown">@item.CompanyName.Substring(0,19) ....</span></td>
                                 }
                                 else
                                 {
-                                    <td>@item.CompanyName</td>
+                                    <td><span style="font-size:13px; color:brown">@item.CompanyName</span></td>
                                 }
                             }
                             else
@@ -95,11 +100,11 @@
                             {
                                 @if (item.IsAvailable)
                                 {
-                                    <td class="text-center">Yes</td>
+                                    <td class="text-center"><span class="avail">Yes</span></td>
                                 }
                                 else
                                 {
-                                    <td class="text-center">No</td>
+                                    <td class="text-center"><span class="noavail">No</span></td>
                                 }
                             }
                             else
@@ -114,11 +119,26 @@
                                 }
                             }
                             <td>@item.AvailabilityResponseDate</td>
-                            <td class="text-center">@item.TotalInterviews</td>
+                            <td class="text-center">
+                                <span style="width: 30px !important;
+    height: 30px !important;
+    background: #eeeeee78;
+    display: inline-block;
+    border-radius: 100%;
+    line-height: 32px;">@item.TotalInterviews</span>
+                            </td>
                             <td>
                                 <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
                                     <span onclick="javascript:OpenInterviewerFlagDetails('@item.EmailId');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
                                 </button>
+                                @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                                {
+                                    <span>
+                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                            <span onclick="javascript:SuspiciousTypeDetails('@item.EmailId');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                        </button>
+                                    </span>
+                                }
                             </td>
                             @if (ViewBag.Type != "IRF")
                             {
@@ -190,6 +210,8 @@
         </div>
     </div>
 </div>
+
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 <script src="~/Newassets/js/scrollBar.js"></script>
