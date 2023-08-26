@@ -29,6 +29,9 @@ body {
     border: 0px !important;
     border-radius: 0px;
 }
+#interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
+    background: #eae3e3 !important;
+}
 
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #000 !important

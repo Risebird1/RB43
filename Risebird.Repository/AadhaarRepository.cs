@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -377,6 +378,52 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return 0;
+        }
+        public async Task<EmploymentDetailsDM> GetEmployementDetailsByMobileNumber(string mobilenumber)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(employmentconnectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@mobilenumber", mobilenumber);
+                    var result = await SqlMapper.QueryAsync<EmploymentDetailsDM>(con, "usp_GetEmploymentDetailsByMobilenumber", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<BlackListCompanyVM> CheckCompanyStatus(string CompanyName)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CompanyName", CompanyName);
+                    var result = await SqlMapper.QueryAsync<BlackListCompanyVM>(con, "usp_checkBlackListCompany", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
