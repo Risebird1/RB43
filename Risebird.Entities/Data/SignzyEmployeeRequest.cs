@@ -63,6 +63,7 @@ namespace Risebird.Entities.Data
         public string UANNumbers { get; set; }
         public DateTime? DOB { get; set; }
         public string message { get; set; }
+        public bool isVerified { get; set; }
     }
     public class UANDetailsDM
     {

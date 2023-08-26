@@ -27,6 +27,9 @@ body {
 .alert.alert-info {
     background-color: #eb833c;
 }
+#interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
+    background: #eae3e3 !important;
+}
 
 .Fnactive-header-button {
     background-color: #b74709 !important;

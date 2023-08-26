@@ -804,5 +804,48 @@ namespace Risebird.CommonHelper
                 return "Failed to send message. Please check all fields and try again.";
             }
         }
+        public async Task<string> WhatsAppSkillChannelInterviewerAvailbility(WhatsAppVM _whatsAppVM)
+        {
+            try
+            {
+                var Emailid = _whatsAppVM.Emailid.Split(";");
+                foreach (var item in Emailid)
+                {
+                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
+                    if (!string.IsNullOrEmpty(dataResult.Item1))
+                    {
+                        _whatsAppVM.UserName = dataResult.Item2;
+                        _whatsAppVM.Emailid = item;
+                        _whatsAppVM.CountryCode = "+91";
+                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
+                        await WhatsAppTrackUser(_whatsAppVM);
+
+                        Dictionary<string, string> headers = new Dictionary<string, string>
+                                {
+                                    { "Authorization", "Basic " + accesskey },
+                                    { "Content-Type", "application/json" }
+                                };
+
+                        List<HttpParameters> parameters = new List<HttpParameters>
+                        {
+                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Name\":\"" + dataResult.Item2 + "\",\r\n        \"IRFName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"JDTitle\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"PerSuccessRate\":\"" + _whatsAppVM.PerSuccessRate + "\",\r\n        \"Interviewduration\":\"" + _whatsAppVM.Interviewduration + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
+                        };
+                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
+
+                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+                        if (obj != null)
+                        {
+                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
+                        }
+                    }
+                }
+                return "Message sent successfully.";
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send message. Please check all fields and try again.";
+            }
+        }
     }
 }
