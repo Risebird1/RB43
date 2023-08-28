@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[ScheduleInterviewEvent](
 	[Concurrency] [int] NULL,
 	[BufferTime] [int] default 12,
 	[CandidateEmail] [varchar](200) NULL,
+	[TimeSlotDays] [int] NULL,
  CONSTRAINT [PK_ScheduleInterviewEvent] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -75,6 +76,15 @@ IF NOT EXISTS(
 	BEGIN
 		ALTER TABLE [ScheduleInterviewEvent]
 		Add CandidateEmail varchar(200)
+	END
+	IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TimeSlotDays')
+      AND Object_ID = Object_ID(N'ScheduleInterviewEvent'))
+	BEGIN
+		ALTER TABLE [ScheduleInterviewEvent]
+		Add TimeSlotDays int
 	END
 GO
 
