@@ -17,10 +17,10 @@
                         <th>Response</th>
                         <th>Total Interviews</th>
                         <th>Action</th>
-                        @if (ViewBag.Type != "IRF")
+                       @* @if (ViewBag.Type != "IRF")
                         {
                             <th>Report</th>
-                        }
+                        }*@
 
                     </tr>
                 </thead>
@@ -126,12 +126,7 @@
                             }
                             <td>@item.AvailabilityResponseDate</td>
                             <td class="text-center">
-                                <span style="width: 30px !important;
-    height: 30px !important;
-    background:#d2cece66;
-    display: inline-block;
-    border-radius: 100%;
-    line-height: 32px;">@item.TotalInterviews</span>
+                                <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@item.TotalInterviews</span>
                             </td>
                             <td>
                                 <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
@@ -146,7 +141,7 @@
                                     </span>
                                 }
                             </td>
-                            @if (ViewBag.Type != "IRF")
+                            @*@if (ViewBag.Type != "IRF")
                             {
                                 @if (item.AssessmentVerificationType == "MCQ")
                                 {
@@ -182,7 +177,7 @@
                                         <td></td>
                                     }
                                 }
-                            }
+                            }*@
                         </tr>
                     }
 
