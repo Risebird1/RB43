@@ -11,7 +11,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]            
-            
 @UserId int,            
 @FirstName varchar(150),            
 @LastName nvarchar(150),            
@@ -48,13 +47,14 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IndiaProductRate int,  
 @OutsideIndiaServiceRate int,  
 @OutsideIndiaProductRate int,
+@isVerified bit,
+@CompanyName varchar(100),
+@IsEmployed bit,
 @loggedInUser varchar(50),
 @AssessmentGroupDifference varchar(100),
 @assessmentGroupList varchar(max) out,
 @RemovedAssessmentGroups varchar(max)=null
-            
 AS            
-
 Begin
   set @assessmentGroupList = ''
   if(@AssessmentGroupDifference is not null and @AssessmentGroupDifference != '')
@@ -219,7 +219,10 @@ Declare @v_User_Id int;
    [AssessmentGroupId],  
    [Isinstaavailable],
    [CreatedBy],
-   [CreatedOn])  
+   [CreatedOn],
+   [isVerified],
+   [CompanyName],
+   [IsEmployed])  
    --[IsServiceDomain],  
    --[IsProductDomain],  
    --[IndiaServiceRate],  
@@ -250,7 +253,10 @@ Declare @v_User_Id int;
    @AssessmentGroupId,  
    @Isinstaavailable,
    @loggedInUser,
-   dateadd(MINUTE, 330, getdate()))  
+   dateadd(MINUTE, 330, getdate()),
+   @isVerified,
+   @CompanyName,
+   @IsEmployed)  
    --@IsServiceDomain,  
    --@IsProductDomain,  
    --@IndiaServiceRate,  
@@ -274,45 +280,30 @@ Declare @v_User_Id int;
 	insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)  
 	values (@v_User_Id, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)  
 	end  
-     
-	 
-
-
 End  
-
-	
 End
-
 
 if(@AssessmentGroupDifference is not null and @AssessmentGroupDifference != '')
   Begin
-    
-	  --insert into @temp
+    --insert into @temp
 	  insert into AssessmentGroupInterviewers
 	  select a.value, @InterviewerProfileId, 0, @loggedInUser, GETDATE(), null, null from string_split(@AssessmentGroupDifference,',') a
-	  
   End
-
-End 
-
-
+   
 if(@RemovedAssessmentGroups is not null and @RemovedAssessmentGroups != '')
   Begin
     declare @tempRemovedFromAssessmentGroups table(assessmentGroupId varchar(5))
-  
-	  insert into @tempRemovedFromAssessmentGroups
-
-	  select value from string_split(@RemovedAssessmentGroups,',')
+  	  insert into @tempRemovedFromAssessmentGroups
+	  	  select value from string_split(@RemovedAssessmentGroups,',')
 	  
 	  --delete from TransInterviewer where id in 
 	  --(select * from @tempRemovedFromAssessmentGroups tra join irf on tra.assessmentGroupId = irf.AssessmentGroupId
 	  --join TransInterviewer ti on ti.IRFId = irf.id where ti.UserId = @UserId)
 	  
-
 	  update TransInterviewer set IsActive = 0 where id in 
 	  (select ti.id from @tempRemovedFromAssessmentGroups tra join irf on tra.assessmentGroupId = irf.AssessmentGroupId
 	  join TransInterviewer ti on ti.IRFId = irf.id where ti.UserId = @UserId)
-	
-  End
+   End 
+End
 GO
 

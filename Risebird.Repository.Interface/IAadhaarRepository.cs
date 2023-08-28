@@ -19,5 +19,7 @@ namespace Risebird.Repository.Interface
         Task SaveEmploymentDetails(SignzyEmployeeResponse model);
         Task<IEnumerable<EmploymentDetailsDM>> GetEmployementDetails();
         Task<int> CheckEmployementDetails(string mobilenumber);
+        Task<EmploymentDetailsDM> GetEmployementDetailsByMobileNumber(string mobilenumber);
+        Task<BlackListCompanyVM> CheckCompanyStatus(string CompanyName);
     }
 }
