@@ -1941,7 +1941,7 @@ namespace Risebird.Web.Controllers
                 var data = await _dashboardService.UndoBlackListCompanyService(model);
                 if (data == true)
                 {
-                    return Json("Approved blacklisted company marked Successfully");
+                    return Json("Approved blacklisted company has been marked successfully");
                 }
                 else
                 {

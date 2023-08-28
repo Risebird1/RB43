@@ -2,6 +2,18 @@
 @{
     ViewData["Title"] = "BlackListCompany";
 }
+<script>
+    var Header = "<div>BlackListed Company</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<style>
+    .swal2-popup .swal2-title {
+        font-size: 1.5em !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        line-height: 28px;
+    }
+</style>
 <div class="main-panel" id="main-panel">
     <div >
         <div class="pt30">
@@ -73,8 +85,8 @@
                                                            </span>
 
                                                             <span>
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Approved Blacklist Company">
-                                                                    <span onclick="approvedBlackListCompany('@item.CompanyName');" title="Approved Blacklist Company" class="mdc-fab__icon touch">
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Approve Blacklist Company">
+                                                                    <span onclick="approvedBlackListCompany('@item.CompanyName');" title="Approve Blacklist Company" class="mdc-fab__icon touch">
                                                                         <img src="~/img/approve-blk.png" width="18"/>
                                                                     </span>
                                                                 </button>
