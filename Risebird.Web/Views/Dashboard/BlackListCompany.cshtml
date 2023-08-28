@@ -112,7 +112,7 @@
                 data: { 'CompanyName': CompanyName},
                 type: "POST",
                 success: function (data) {
-                    
+                    swal.fire(data);
                 }
             });
         }
@@ -122,14 +122,15 @@
     }
 
     function approvedBlackListCompany(CompanyName) {
-       alert(CompanyName);
+      
         if (CompanyName != '') {
             $.ajax({
                 url: '/Dashboard/ApprovedBlackListCompany',
                 data: { 'CompanyName': CompanyName},
                 type: "POST",
                 success: function (data) {
-                    
+                   // swal.fire(data);
+                    location.reload(true);
                 }
             });
         }
