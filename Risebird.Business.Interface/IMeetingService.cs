@@ -216,5 +216,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail);
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
         Task<string> GetTranscriptUrlByMeeting(int meetingId);
+        Task<bool> AddBlackListCompanyService(BlackListCompanyVM model);
     }
 }

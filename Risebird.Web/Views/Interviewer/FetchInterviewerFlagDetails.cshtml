@@ -4,69 +4,68 @@
         padding-bottom: 10px !important;
     }
 </style>
+
 @Html.HiddenFor(m=>m.EmailId)
-<div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-3 col-lg-3">
-        Interviewer
+<div class="col-md-12 col-lg-12 paddingclass">
+  
+    <div class="pull-left">
+        <span class="interviewer-name"> @Model.EmailId</span>
     </div>
-    <div class="col-md-6 col-lg-6">
-        @Model.EmailId
-    </div>
-</div>
-@if (Model.LastLogin != null)
-{
-    <div class="row col-md-12 col-lg-12 paddingclass">
-        <div class="col-md-3 col-lg-3">
-            Last Login
-        </div>
-        <div class="col-md-9 col-lg-9">
-            @if (string.IsNullOrEmpty(Model.CreatedBy))
-            {
-                @Model.LastLogin
+    @if (Model.LastLogin != null)
+    {
+            <div class="pull-right">
+                Last Login:
+                @if (string.IsNullOrEmpty(Model.CreatedBy))
+                {
+                <span style="color:forestgreen;font-weight:bold;">@Model.LastLogin</span>
             }
-            else
-            {
-                @(Model.LastLogin + " Added By - " + Model.CreatedBy)
-            }
-        </div>
-    </div>
-}
-<div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-3 col-lg-3">
-        Lead Interviewer
-    </div>
-    <div class="col-md-6 col-lg-6">
-        @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]{   new SelectListItem { Text = "No", Value = "false" },
-        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsLeadInterviewer()" })
-    </div>
-</div>
-<div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-3 col-lg-3">
-        Approved
-    </div>
-    <div class="col-md-6 col-lg-6">
-        @Html.DropDownListFor(model => model.IsApproved, new[]{   new SelectListItem { Text = "No", Value = "false" },
-        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsApproved()" })
-    </div>
-</div>
-<div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-3 col-lg-3">
-        Active
-    </div>
-    <div class="col-md-6 col-lg-6">
-        @Html.DropDownListFor(model => model.IsActive, new[]{   new SelectListItem { Text = "No", Value = "false" },
-        new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "select-css form-control text-box single-line",@onchange="changeIsActive()" })
-    </div>
-</div>
-<div class="row col-md-12 col-lg-12 paddingclass">
-    <div class="col-md-3 col-lg-3">
-        Interested
-    </div>
-    <div class="col-md-6 col-lg-6">
-        @Model.IsInterested
-    </div>
+                else
+                {
+                    @(Model.LastLogin + " Added By - " + Model.CreatedBy)
+                }
+            </div>
+   
+    }
 </div>
 
+
+<table id="" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+           
+            <th>Lead Interviewer</th>
+            <th> Approved</th>
+            <th> Active</th>
+            <th> Interested</th>
+            </tr>
+            </thead>
+   
+    <tbody>
+        <tr>
+           
+     
+            <td>
+                <div class="custom-select">
+                @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]{   new SelectListItem { Text = "No", Value = "false" },
+                new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "text-box single-line",@onchange="changeIsLeadInterviewer()" })
+                </div>
+            </td>
+            <td>
+                <div class="custom-select">
+                @Html.DropDownListFor(model => model.IsApproved, new[]{   new SelectListItem { Text = "No", Value = "false" },
+                new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "text-box single-line",@onchange="changeIsApproved()" })
+           </div>
+            </td>
+            <td>
+                <div class="custom-select">
+                @Html.DropDownListFor(model => model.IsActive, new[]{   new SelectListItem { Text = "No", Value = "false" },
+                new SelectListItem { Text = "Yes", Value = "true"} },new { @class = "text-box single-line",@onchange="changeIsActive()" })
+           </div>
+            </td>
+            <td> @Model.IsInterested</td>
+        </tr>
+        </tbody>
+</table>
 <script>
     function changeIsLeadInterviewer() {
         var Emailid = $("#EmailId").val();
@@ -102,3 +101,62 @@
         });
     }
 </script>
+
+<style>
+    .custom-select {
+        position: relative;
+    }
+
+
+        .custom-select select {
+        width: 95px;
+        font-size: 1.2rem;
+        padding: 10px 30px 10px 10px;
+        border: 1px silver solid;
+            background-color: #e9e8e840;
+        color: grey;
+        outline: none;
+    }
+
+    .custom-select span {
+        position: absolute;
+        width: 40px;
+        height: 100%;
+        background-color: #1e1e26;
+        right: 0;
+        top: 0;
+        pointer-events: none;
+    }
+
+        .custom-select span::before {
+            position: absolute;
+            content: "";
+            border-style: solid;
+            border-width: 7px;
+            border-color: transparent transparent #5b6287 transparent;
+            top: 14%;
+            left: 35%;
+        }
+
+    .custom-select span::after {
+            position: absolute;
+            content: "";
+            border-style: solid;
+            border-width: 7px;
+            border-color: #5b6287 transparent transparent transparent;
+            top: 56%;
+            left: 35%;
+        }
+        option{
+        left: 0;
+        z-index: 999;
+        margin: 0 0;
+        padding: 10px;
+        list-style: none;
+        border: 1px solid #ccc;
+        background-color: #eee;
+        -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    </style>

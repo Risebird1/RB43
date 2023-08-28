@@ -38,7 +38,6 @@ namespace Risebird.Web.Controllers
                 name = "Ruma";
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-               
                 var sessionId = HttpContext.Session.Id;
                 await _userService.ClearSessionForOthersUsers(emailId);
                 var menuData = await _userService.GetMenuBasedOnUserEmailld(emailId, sessionId);

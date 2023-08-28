@@ -450,6 +450,9 @@ namespace Risebird.Repository
             parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
             parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);
             parameters.Add("@OutsideIndiaProductRate", entity.OutsideIndiaProductRate);
+            parameters.Add("@isVerified", entity.isVerified);
+            parameters.Add("@CompanyName", entity.CompanyName);
+            parameters.Add("@IsEmployed", entity.IsEmployed);
             //parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output);
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 

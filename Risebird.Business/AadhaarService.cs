@@ -141,5 +141,40 @@ namespace Risebird.Business
             }
             return 0;
         }
+        public async Task<EmploymentDetailsDM> GetEmployementDetailsByMobileNumber(string mobilenumber)
+        {
+            try
+            {
+                return await _aadhaarRepository.GetEmployementDetailsByMobileNumber(mobilenumber);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+        public async Task SaveEmploymentDetails(SignzyEmployeeResponse model)
+        {
+            try
+            {
+                await _aadhaarRepository.SaveEmploymentDetails(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+        }
+        public async Task<BlackListCompanyVM> CheckCompanyStatus(string CompanyName)
+        {
+            try
+            {
+                return await _aadhaarRepository.CheckCompanyStatus(CompanyName);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }
