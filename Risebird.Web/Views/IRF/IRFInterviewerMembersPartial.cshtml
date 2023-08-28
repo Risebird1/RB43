@@ -8,9 +8,9 @@
             <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                 <thead>
                     <tr>
-                        <th>Type</th>
-                        <th class="text-center">Mobile</th>
                         <th>EmailId</th>
+                       @* <th>Type</th>*@
+                        <th class="text-center">Mobile</th>
                         <th>Resume Link</th>
                         <th>Company Name</th>
                         <th>Available</th>
@@ -46,14 +46,15 @@
                             }
                         }
                         <tr style="background:@colorcode" title="@item.CompanyName">
-                            @if (item.Type == "Interviewer")
+                          @*  @if (item.Type == "Interviewer")
                             {
                                 <td style="color: #17c317">@item.Type</td>
                             }
                             else
                             {
                                 <td style="color: #ff7bf5">@item.Type</td>
-                            }
+                            }*@
+                            <td title="@item.EmailId">@item.EmailId</td>
                             <td class="text-center flex-w">
                                 <span class="call-area">
                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -65,7 +66,7 @@
                                 </span>@item.MobileNumber
                             </td>
 
-                            <td title="@item.EmailId">@item.EmailId</td>
+                           
                           
 
                             @if (item.ResumeLink != null && item.ResumeLink != "")
@@ -108,8 +109,16 @@
                             {
                                 @if (@item.AvailableStatus != "0")
                                 {
-                                    <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
-                                }
+                                    @if (item.IsAvailable)
+                                    {
+                                        <td class="text-center"><span class="avail">Yes</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center"><span class="noavail">No</span></td>
+                                    }
+@*                                    <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
+*@                                }
                                 else
                                 {
                                     <td></td>
@@ -119,7 +128,7 @@
                             <td class="text-center">
                                 <span style="width: 30px !important;
     height: 30px !important;
-    background: #eeeeee78;
+    background:#d2cece66;
     display: inline-block;
     border-radius: 100%;
     line-height: 32px;">@item.TotalInterviews</span>
