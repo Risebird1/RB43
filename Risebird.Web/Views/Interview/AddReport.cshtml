@@ -2298,6 +2298,7 @@
     function CheckConditions() {
 
         return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount() && InterviewStatusChangedValue()); //&& CheckQuestionsTiming()
+
     }
 
     function CheckLength(length) {
@@ -2313,15 +2314,26 @@
             return false;
         }
     }
-    function InterviewStatusChangedValue() {
+
+   
+
+ function InterviewStatusChangedValue() {
+        var msg = '';
         var interviewStatusValue = document.getElementById("InterviewStatus").value;
          if (interviewStatusValue == 2 ){
-            swal.fire("successful",'Are you sure you want to select the candidate for the interview', "success");
+            msg ='Are you sure you want to select the candidate for the interview';
          }
          else if(interviewStatusValue == 3){
-            swal.fire("Failed", 'Are you sure you want to reject the candidate for the interview', "error");
+            msg ='Are you sure you want to reject the candidate for the interview';
          }
-     }
+      if(window.confirm(msg)){
+          return true;
+      }
+      else{
+          return false;
+      }
+      
+    }
     function CheckInterviewerComments() {
         //var interviewStatusElem = document.getElementById("InterviewStatus");
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
