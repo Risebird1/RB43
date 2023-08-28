@@ -29,8 +29,8 @@
                 <th>Interviewer</th>
                 @if(string.IsNullOrEmpty(clientEmailId)){
                 <th>Resume</th>
-                }
                 <th>Company Name</th>
+                }
                 <th>Penalty Count</th>
                 <th>Client Rating</th>
                 <th>Total Meetings</th>
@@ -59,8 +59,8 @@
                 <th>Interviewer</th>
                 @if(string.IsNullOrEmpty(clientEmailId)){
                 <th>Resume</th>
-                }
                 <th>Company Name</th>
+                }
                 <th>Penalty Count</th>
                 <th>Client Rating</th>
                 <th>Total Meetings</th>
@@ -142,21 +142,7 @@
                 {
                 <td class="text-center">No Resume</td>
                 }
-                }
-                @*else
-                {
-                @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
-                {
-                <td class="text-center">
-                <a id="resumeId" target="_blank" title="Resume" href=@item.CodedResumeLink>Resume</a>
-                </td>
-                }
-                else
-                {
-                <td class="text-center">No Resume</td>
-                }
-                }*@
-
+                
                 @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                 {
                    @if (item.CompanyName.Length > 30)
@@ -172,6 +158,20 @@
                 {
                    <td></td>
                 }
+                }
+                @*else
+                {
+                @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
+                {
+                <td class="text-center">
+                <a id="resumeId" target="_blank" title="Resume" href=@item.CodedResumeLink>Resume</a>
+                </td>
+                }
+                else
+                {
+                <td class="text-center">No Resume</td>
+                }
+                }*@
 
                 <td>@item.TotalPenalties</td>
                 <td>@(!string.IsNullOrEmpty(item.AverageClientRating) ? item.AverageClientRating : string.Empty)</td>
