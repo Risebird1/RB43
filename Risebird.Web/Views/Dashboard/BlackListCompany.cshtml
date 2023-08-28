@@ -3,7 +3,7 @@
     ViewData["Title"] = "BlackListCompany";
 }
 <div class="main-panel" id="main-panel">
-    <div class="jumbotron">
+    <div >
         <div class="pt30">
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
@@ -68,13 +68,15 @@
                                                         <td>
                                                             <span>
                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Undo Blacklist Company">
-                                                                    <span onclick="undoBlackListCompany('@item.CompanyName');" title="Undo Blacklist Company" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                    <span onclick="undoBlackListCompany('@item.CompanyName');" title="Undo Blacklist Company" class="mdc-fab__icon touch"><svg width="20" height="20" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 7V9.5V12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M7.875 9.5H14.875C20.375 9.5 20.375 18 14.875 18C11.875 18 4.875 18 4.875 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11.375 13L7.875 9.5L11.375 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> </svg></span>
                                                                   </button>
                                                            </span>
 
                                                             <span>
                                                                 <button class="mdc-fab app-fab--absolute " aria-label="Approved Blacklist Company">
-                                                                    <span onclick="approvedBlackListCompany('@item.CompanyName');" title="Approved Blacklist Company" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                    <span onclick="approvedBlackListCompany('@item.CompanyName');" title="Approved Blacklist Company" class="mdc-fab__icon touch">
+                                                                        <img src="~/img/approve-blk.png" width="18"/>
+                                                                    </span>
                                                                 </button>
                                                             </span>
                                                         </td>
@@ -140,3 +142,25 @@
     }
 </script>
 
+    <script>
+    $(document).ready(function () {
+        applyDataTable();
+        //$('#detailsTable').DataTable();
+    });
+
+    function applyDataTable() {
+        $('#detailsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+    }
+    </script>
