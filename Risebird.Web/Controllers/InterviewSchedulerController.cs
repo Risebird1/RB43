@@ -280,7 +280,14 @@ namespace Risebird.Web.Controllers
                     }
                     model.ClientName = model._IRFDetails.Name;
                     model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
-                    model.TimeSlotDays = result.FirstOrDefault().TimeSlotDays;
+                    if (result.FirstOrDefault().TimeSlotDays >= 1)
+                    {
+                        model.TimeSlotDays = result.FirstOrDefault().TimeSlotDays;
+                    }
+                    else
+                    {
+                        model.TimeSlotDays = 6;
+                    }
                     var timeZones = TimeZoneInfo.GetSystemTimeZones();
                     List<SelectListItem> items = new List<SelectListItem>();
                     foreach (var tzi in timeZones)
