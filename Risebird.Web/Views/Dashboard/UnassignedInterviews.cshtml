@@ -250,6 +250,7 @@
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
                                                         <th>Who Joined</th>
+                                                        <th>Meeting Link</th>
                                                     }
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
@@ -425,6 +426,7 @@
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
                                                         <th>Who Joined</th>
+                                                        <th>Meeting Link</th>
                                                     }
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
@@ -570,8 +572,6 @@
                                                 @foreach (var item in Model)
                                                 {
 
-
-
                                                     <tr id=@item.Interviewid>
                                                         @if (ViewBag.actionstatus == "RedoInterviewCount")
                                                         {
@@ -592,14 +592,11 @@
                                                                     </button>
                                                                 </span>
 
-
-
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
                                                                         <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                     </button>
                                                                 </a>
-
 
                                                             </td>
                                                         }
@@ -607,7 +604,6 @@
                                                         @if (ViewBag.actionstatus == "CancelledInterviewCount")
                                                         {
                                                             <td>
-
                                                                 <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
                                                                     <span onclick="location.href = '@Url.Action("SendRescheduleInvite", "Interview", new { irfId = item.irfIntId, CandidateemailId = item.candidateEmail,interviewid=item.imid })'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
@@ -623,8 +619,6 @@
                                                                 </button>
                                                             </td>
                                                         }
-
-
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
@@ -632,7 +626,6 @@
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
-
                                                         }
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                         {
@@ -641,7 +634,6 @@
                                                         @if (ViewBag.actionstatus == "ReScheduleCount")
                                                         {
                                                             <td title=@item.IRFId> @item.FutureSchduleDate </td>
-
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
@@ -663,7 +655,6 @@
                                                                         else
                                                                         {
                                                                             <div class="article">
-
                                                                                 <p>
                                                                                     @item.WhoJoined.Substring(0, @item.WhoJoined.Length)
                                                                                 </p>
@@ -674,14 +665,14 @@
                                                                     {
                                                                         <div></div>
                                                                     }
-
-
                                                                     <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
-
-
                                                                 </div>
-
-
+                                                            </td>
+                                                            <td>
+                                                                @if (!string.IsNullOrWhiteSpace(item.zoomLink))
+                                                                {
+                                                                    <a href=@item.zoomLink>Meeting link</a>
+                                                                }
                                                             </td>
                                                         }
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")

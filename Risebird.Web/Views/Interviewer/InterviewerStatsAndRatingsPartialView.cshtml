@@ -90,21 +90,24 @@
             int i = 0;
             foreach (var item in Model)
             {
-            var colorcode = "#bfd2f42b";
-            @if (item.isVerified)
-            {
-            if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
-            {
-            colorcode = "#fff";
-            }
-            else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
-            {
-            colorcode = "#fcfccab5";
-            }
-            else if (item.EmploymentComment.Contains("No record"))
-            {
-            colorcode = "#faddbfa3";
-            }
+            var colorcode = "";
+            @if(string.IsNullOrEmpty(clientEmailId)){
+                colorcode = "#bfd2f42b";
+                @if (item.isVerified)
+                {
+                    if (item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                    {
+                    colorcode = "#fff";
+                    }
+                    else if (!item.IsEmployed && string.IsNullOrWhiteSpace(item.EmploymentComment))
+                    {
+                    colorcode = "#fcfccab5";
+                    }
+                    else if (item.EmploymentComment.Contains("No record"))
+                    {
+                    colorcode = "#faddbfa3";
+                    }
+                }
             }
             <tr style="background:@colorcode">
                 @if(string.IsNullOrEmpty(clientEmailId))
@@ -142,21 +145,21 @@
                 {
                 <td class="text-center">No Resume</td>
                 }
-                
+
                 @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                 {
-                   @if (item.CompanyName.Length > 30)
-                   {
-                        <td title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
-                   }
-                   else
-                   {
-                        <td>@item.CompanyName</td>
-                   }
+                @if (item.CompanyName.Length > 30)
+                {
+                <td title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
                 }
                 else
                 {
-                   <td></td>
+                <td>@item.CompanyName</td>
+                }
+                }
+                else
+                {
+                <td></td>
                 }
                 }
                 @*else
@@ -518,7 +521,7 @@
 
     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
     @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
-    
+
 
 
 </div>
@@ -628,5 +631,5 @@
             }
         });
     }
-    
+
 </script>
