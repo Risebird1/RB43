@@ -1942,7 +1942,6 @@ namespace Risebird.Web.Controllers
                 if (data == true)
                 {
                     return Json("Approved blacklisted company marked Successfully");
-                    RedirectToAction("ApprovedBlackListCompany","DashBoard");
                 }
                 else
                 {
