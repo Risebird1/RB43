@@ -1182,7 +1182,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Potential Risk By Client Interviwes";
                         }
-                      
+
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
@@ -1295,7 +1295,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Potential Risk By Client Interviwes";
                         }
-                      
+
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
@@ -1527,6 +1527,14 @@ namespace Risebird.Web.Controllers
                         ViewBag.isCodedResumePresent = false;
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
+                        if (model.VideoConfirmation == 0)
+                        {
+                            ViewBag.VideoConfirmationPopup = true;
+                        }
+                        else
+                        {
+                            ViewBag.VideoConfirmationPopup = false;
+                        }
                         //Boradcastmessage
                         return View(model);
                     }
@@ -1878,7 +1886,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         var model = await _dashboardService.GetBlackkListComapany();
-                      
+
                         return View(model);
                     }
                     else

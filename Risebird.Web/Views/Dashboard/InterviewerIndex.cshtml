@@ -48,9 +48,9 @@
             <div class="col-md-12 pull-left">
                 <div class="pull-left myinterview">
                     @*<div class="marquees">
-                        <ul class="marquees-content">
-                            <li style="border: 0px; padding: 0px;  line-height: 30px;">As per updated SLA from customer, we will deduct 50% interview amount in case fail to update Report within 3 hrs and deduct 100% interview amount in case fail to update Report within 24 hrs. Due to unavoidable market changes, interview rates for outside India meetings have been reduced to ₹1150/Hour.</li>
-                        </ul>
+                    <ul class="marquees-content">
+                    <li style="border: 0px; padding: 0px;  line-height: 30px;">As per updated SLA from customer, we will deduct 50% interview amount in case fail to update Report within 3 hrs and deduct 100% interview amount in case fail to update Report within 24 hrs. Due to unavoidable market changes, interview rates for outside India meetings have been reduced to ₹1150/Hour.</li>
+                    </ul>
                     </div>*@
 
                     <div class="mobile-view"> <h4 class="card-title"> Dashboard</h4></div>
@@ -308,8 +308,8 @@
                                                 <ul>
                                                     <li>
                                                         <strong><span style="color:red">New Fixed Interview Pricing Policy- </span></strong> <a id="documentid" target="_blank" title="New Interview Policy" href="https://risebirdportal.blob.core.windows.net/template/NewInterviewPricingPolicy.pdf">Click here</a>
-                                                         <br />
-                                                         <strong>Note:</strong> Flat pricing will be applicable on new JDs, ongoing JDs and interviews will have ongoing pricing" and " For transparency,  base pay and variable pay will be visible in the open interviews section and you are advised to assign the interview after careful consideration.
+                                                        <br />
+                                                        <strong>Note:</strong> Flat pricing will be applicable on new JDs, ongoing JDs and interviews will have ongoing pricing" and " For transparency,  base pay and variable pay will be visible in the open interviews section and you are advised to assign the interview after careful consideration.
                                                     </li>
                                                     <li>
                                                         <strong><span style="color:red">Net time of interview- </span></strong>All IAAS platform manually start the recording after the candidate arrival and settlement but Risebird starts the recording  by default automatically, which results in counting unproductive minutes . Our customers have stopped paying for unproductive minutes time in the start and are counting net time which is 5 minutes less than total recorded time. Given the ongoing recession in tech hiring we don't have much say in customer decisions and request your cooperation. From May onwards , net interview time will be applicable for your payments.
@@ -419,6 +419,40 @@
         </div>
     </div>
 </div>
+
+<div id="InterviewerVideoConfirmModel" class="modal modal-bg" style="z-index:6">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Interview Video Confirmation <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span onclick="closeInterviewerVideoConfirmModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>*@
+            <div class="modal-body" style="color:black">
+                <div><strong>Open your video, earn 10-20% more on every interview - Yes, No, Need clarity</strong></div>
+                <ul>
+                    <li>Risebird is rewarding interviewers who are opening their video throughout the length of the interviews. Interviewers with video-on track record, will be part of preferred interviewer list and future interviews allotment will be prioritised for such interviewers</li>
+                    <li>Yes, we know that opening the video may concern you about your identity disclosure</li>
+                    <li>But think more, just a video stream can reveal your identity ? Can someone just memorize your video and find on the internet what your name is, which company you work for  :) ? NO</li>
+                    <li>Risebird never shares, resume, email, phone, company name or any other personal information with its customers</li>
+                    <li><strong>All interview video recordings get deleted automatically from all records within 15 days</strong></li>
+                    <li>Video is shared through secure URLs , only authorized people can access it. They can not download it, they can not screen record it. Most of the customer just browse the video for few minutes to check the authenticity, they hardly have time to check the whole recording</li>
+                    <li>If you say YES, Risebird will team will verify your interview recording and if video is found on than 10%-20% extra will be paid in your payment cycle . In couple of weeks it will be shown in Payment Tab. This payment is conditional to the fact that your interview feedback report is not having significant penalty</li>
+                </ul>
+            </div>
+            <div class="model-footer row">
+                <input type="button" onclick="InterviewerVideoConfirmationStatus(1)" value="Yes" class="col-md-6 form-control" />
+                <input type="button" onclick="InterviewerVideoConfirmationStatus(2)" value="No" class="col-md-6 form-control" />
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -485,6 +519,14 @@
     <script>
         $(document).ready(function () {
             openInterviewerPaymentDetailsModel();
+        });
+    </script>
+}
+@if (ViewBag.VideoConfirmationPopup)
+{
+    <script>
+        $(document).ready(function () {
+            openInterviewerVideoConfirmModel();
         });
     </script>
 }
@@ -569,6 +611,25 @@
                 modal.style.display = "block";
                 $('#divresumepopup').html('');
                 $('#divresumepopup').html(data);
+            }
+        });
+    }
+    function closeInterviewerVideoConfirmModel() {
+        var model = document.getElementById("InterviewerVideoConfirmModel");
+        model.style.display = "none";
+    }
+    function openInterviewerVideoConfirmModel() {
+        var model = document.getElementById("InterviewerVideoConfirmModel");
+        model.style.display = "block";
+    }
+    function InterviewerVideoConfirmationStatus(response) {
+        $.ajax({
+            url: '/Interviewer/UpdateVideoConfirmationStatus',
+            type: 'POST',
+            data: { responsestatus: response }
+            success: function (data) {
+                swal.fire(data);
+                closeInterviewerVideoConfirmModel();
             }
         });
     }
