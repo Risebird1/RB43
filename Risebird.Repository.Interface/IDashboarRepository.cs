@@ -50,5 +50,7 @@ namespace Risebird.Repository.Interface
         Task<List<AlterMessage>> FetchAlertMessageList();
         Task<string> AddAlertMessage(AlterMessage model);
         Task<IEnumerable<BlackListCompanyVM>> GeBlackListCompany();
+        Task<bool> UndoBlackListCompany(BlackListCompanyVM model);
+        Task<bool> ApprovedBlackListCompany(BlackListCompanyVM model);
     }
 }
