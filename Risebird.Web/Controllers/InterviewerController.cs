@@ -2866,33 +2866,21 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = await _interviewerService.GetAllInterviewerMembers();
-                int i = 0;
                 foreach (var item in model)
                 {
-                    try
+                    if (!string.IsNullOrEmpty(item.EmailId))
                     {
-                        if (i > 8526)
+                        string yesbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid;
+                        string nobutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid;
+                        string cleritybutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=3&uniqueid=" + item.uniqueid;
+                        string nodropbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=4&uniqueid=" + item.uniqueid;
+                        Mail _mail = new Mail
                         {
-                            if (!string.IsNullOrEmpty(item.EmailId))
-                            {
-                                string yesbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid;
-                                string nobutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid;
-                                string cleritybutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=3&uniqueid=" + item.uniqueid;
-                                string nodropbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=4&uniqueid=" + item.uniqueid;
-                                Mail _mail = new Mail
-                                {
-                                    TO = item.EmailId,
-                                    Subject = "Risebird: Availbility check for Upcoming Interviews"
-                                };
-                                var emailresult = await _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
-                            }
-                        }
+                            TO = item.EmailId,
+                            Subject = "Risebird: Availbility check for Upcoming Interviews"
+                        };
+                        var emailresult = await _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
                     }
-                    catch (Exception ex1)
-                    {
-
-                    }
-                    i++;
                 }
                 return Json("Success");
             }
@@ -3848,7 +3836,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
-        #endregion 
+        #endregion
         #region Interviewer Video Confirmation
         [HttpPost]
         public async Task<JsonResult> UpdateVideoConfirmationStatus(int responsestatus)
