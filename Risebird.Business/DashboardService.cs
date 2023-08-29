@@ -640,5 +640,33 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> UndoBlackListCompanyService(BlackListCompanyVM model)
+        {
+            try
+            {
+                await _dashboardRespository.UndoBlackListCompany(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApprovedBlackListCompanyService(BlackListCompanyVM model)
+        {
+            try
+            {
+                await _dashboardRespository.UndoBlackListCompany(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

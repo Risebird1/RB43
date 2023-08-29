@@ -6154,7 +6154,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Create QCForm
-        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid)
+        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid,string pageStatus)
         {
             try
             {
@@ -6165,6 +6165,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
+                    ViewBag.pageStatus = pageStatus;
                     if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         ViewBag.profile = profileName;

@@ -1152,5 +1152,50 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<bool> UndoBlackListCompany(BlackListCompanyVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CompanyName", model.CompanyName);
+                dynamicParam.Add("@ModifyDate", model.ModifyDate);
+                dynamicParam.Add("@ModifyBy", model.ModifyBy);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_undoBlackListCompany", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApprovedBlackListCompany(BlackListCompanyVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CompanyName", model.CompanyName);
+                dynamicParam.Add("@ModifyDate", model.ModifyDate);
+                dynamicParam.Add("@ModifyBy", model.ModifyBy);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_ApprovedBlacklistCompany", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
