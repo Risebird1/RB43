@@ -1180,11 +1180,13 @@
                                                     {
                                                        <td>
                                                        
-                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
-                                                                    <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                  <a target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                            <span >
                                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
                                                                     </span>
-                                                                </button>
+                                                                        </button>
+                                                                    </a>
                                                        
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
