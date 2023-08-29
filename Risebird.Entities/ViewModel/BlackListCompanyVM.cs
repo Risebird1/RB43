@@ -15,5 +15,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime ModifyDate { get; set; }
         public string ModifyBy { get; set;}
         public string CompanyName { get; set;}
+        public bool IsApprovedBlacklistCompany { get; set;}
     }
 }

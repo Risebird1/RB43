@@ -1897,7 +1897,64 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> UndoBlackListCompany(string CompanyName)
+        {
+            try
+            {
 
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                BlackListCompanyVM model = new BlackListCompanyVM();
+                model.CompanyName = CompanyName;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = emailId;
+                var data = await _dashboardService.UndoBlackListCompanyService(model);
+                if (data == true)
+                {
+                    return Json("Undo blacklisted company marked Successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether undo blacklisted company.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ApprovedBlackListCompany(string CompanyName)
+        {
+            try
+            {
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                BlackListCompanyVM model = new BlackListCompanyVM();
+                model.CompanyName = CompanyName;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = emailId;
+                var data = await _dashboardService.UndoBlackListCompanyService(model);
+                if (data == true)
+                {
+                    return Json("Approved blacklisted company has been marked successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether approved blacklisted company.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
 
     }
