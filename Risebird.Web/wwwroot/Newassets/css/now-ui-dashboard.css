@@ -316,15 +316,19 @@
             box-shadow: none;
         }
 
+    .btn-primary.btn {
+        background-color: #8fb2e4 !important;
+        border-color: #8fb2e4!important;
+    }
 
-
-
-
-
-.btn-success {
-    background-color: #18ce0f;
-    color: #FFFFFF;
-}
+        .btn-primary.btn:hover, .btn-primary.btnactive {
+            background-color: #42a5f5!important;
+            border-color: #42a5f5!important;
+        }
+        .btn-success {
+            background-color: #18ce0f;
+            color: #FFFFFF;
+        }
 
     .btn-success:hover,
     .btn-success:focus,

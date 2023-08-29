@@ -20,6 +20,23 @@ body {
     padding: 0px !important;
 }
 
+.btn-xs {
+    font-size: 0.75rem;
+    padding: 0.438rem 1rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    color:#fff;
+}
+
+.sharp.btn-xs {
+    padding: 0.1175rem;
+    width: 1.625rem;
+    height: 1.625rem;
+    min-width: 1.625rem;
+    min-height: 1.625rem;
+    border-radius: 0.375rem;
+}
+
 .table td, .table th {
     padding: 0.75rem;
     vertical-align: top;
@@ -4784,8 +4801,9 @@ ul.panel-controls > li > .dropdown-menu {
 
     .btn.btn-xs,
     .btn-group-xs > .btn {
-        font-size: 10px;
         padding: 0px 5px;
+        font-size: 12px;
+        line-height: 25px;
     }
 
 .btn-default {
@@ -6079,6 +6097,7 @@ input[type="date"].form-control {
     width: 300px;
     margin:0px auto 10px auto;
     background:none;
+    border:0px;
 }
 
     #addComment .star-rating input {
@@ -6116,7 +6135,7 @@ input[type="date"].form-control {
         content: " ";
         position: absolute;
         LEFT: 40px;
-        top: -15px;
+        top: -14px;
         border-top: none;
         border-right: 15px solid transparent;
         border-left: 15px solid transparent;
@@ -6612,9 +6631,23 @@ input[type="date"].form-control {
     .welcome span {
         color: mediumspringgreen;
     }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+.btn-calling, .btn-calling:hover {
+    background: #1ba51be0 !important;
+    color: #fff;
+    border-color: #1ba51be0 !important;
+}
+.btn-rating, .btn-rating:hover {
+    background: #f6b445c7;
+    border-color: #f6b445c7;
+}
+.fixed-header {
+    position: fixed;
+    top: 0px;
+    z-index: 1000;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -11493,9 +11526,11 @@ blockquote {
 }
 
 .trash-btn {
-    background: #d20505 !important;
+    background: #d2050596 !important;
     color: #fff !important;
+    border-color: #d2050566 !important;
 }
+
 
 .go-btn {
     background: green !important;
