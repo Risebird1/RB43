@@ -37,6 +37,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[IsEmployed] [bit] NULL,
 	[EmploymentComment] [varchar](50) NULL,
 	[AvailabilityResponseDate] [datetime] NULL,
+	[VideoConfirmation] [int] NULL
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -348,6 +349,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add AvailabilityResponseDate datetime
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VideoConfirmation')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add VideoConfirmation int
 END
 
 End

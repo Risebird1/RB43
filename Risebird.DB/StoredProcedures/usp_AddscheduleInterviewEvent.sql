@@ -8,7 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 Create Procedure usp_AddscheduleInterviewEvent    
 @id int,    
 @EventName varchar(150),    
@@ -18,25 +17,22 @@ Create Procedure usp_AddscheduleInterviewEvent
 @duration int,    
 @Uniqueid varchar(50),
 @Concurrency int,
-@BufferTime int
+@BufferTime int,
+@TimeSlotDays int
 AS    
 BEGIN    
 if(@id>0)    
 BEGIN    
-Update ScheduleInterviewEvent set SkillChannel=@SkillChannel,StartDate=@StartDate,EndDate=@EndDate,Concurrency=@Concurrency,BufferTime=@BufferTime where id=@id    
+Update ScheduleInterviewEvent set SkillChannel=@SkillChannel,StartDate=@StartDate,EndDate=@EndDate,Concurrency=@Concurrency,BufferTime=@BufferTime,TimeSlotDays=@TimeSlotDays where id=@id    
 Select @id    
 END    
 ELSE    
 BEGIN    
-Insert into ScheduleInterviewEvent(EventName,SkillChannel,StartDate,EndDate,duration,Uniqueid,IsActive,Concurrency,BufferTime)    
-values(@EventName,@SkillChannel,@StartDate,@EndDate,@duration,@Uniqueid,1,@Concurrency,@BufferTime)    
+Insert into ScheduleInterviewEvent(EventName,SkillChannel,StartDate,EndDate,duration,Uniqueid,IsActive,Concurrency,BufferTime,TimeSlotDays)    
+values(@EventName,@SkillChannel,@StartDate,@EndDate,@duration,@Uniqueid,1,@Concurrency,@BufferTime,@TimeSlotDays)    
     
 Select SCOPE_IDENTITY()    
 END    
 END  
-
-
-
-
 
 GO

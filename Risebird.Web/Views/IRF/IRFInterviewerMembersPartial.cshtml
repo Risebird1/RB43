@@ -9,18 +9,21 @@
                 <thead>
                     <tr>
                         <th>EmailId</th>
-                       @* <th>Type</th>*@
+                        @* <th>Type</th>*@
                         <th class="text-center">Mobile</th>
                         <th>Resume Link</th>
                         <th>Company Name</th>
                         <th>Available</th>
-                        <th>Response</th>
-                        <th>Total Interviews</th>
-                        <th>Action</th>
                         @if (ViewBag.Type != "IRF")
                         {
-                            <th>Report</th>
+                            <th>Response</th>
                         }
+                        <th>Total Interviews</th>
+                        <th>Action</th>
+                        @* @if (ViewBag.Type != "IRF")
+                    {
+                    <th>Report</th>
+                    }*@
 
                     </tr>
                 </thead>
@@ -46,14 +49,14 @@
                             }
                         }
                         <tr style="background:@colorcode" title="@item.CompanyName">
-                          @*  @if (item.Type == "Interviewer")
-                            {
-                                <td style="color: #17c317">@item.Type</td>
-                            }
-                            else
-                            {
-                                <td style="color: #ff7bf5">@item.Type</td>
-                            }*@
+                            @*  @if (item.Type == "Interviewer")
+                    {
+                    <td style="color: #17c317">@item.Type</td>
+                    }
+                    else
+                    {
+                    <td style="color: #ff7bf5">@item.Type</td>
+                    }*@
                             <td title="@item.EmailId">@item.EmailId</td>
                             <td class="text-center flex-w">
                                 <span class="call-area">
@@ -66,8 +69,8 @@
                                 </span>@item.MobileNumber
                             </td>
 
-                           
-                          
+
+
 
                             @if (item.ResumeLink != null && item.ResumeLink != "")
                             {
@@ -109,29 +112,19 @@
                             {
                                 @if (@item.AvailableStatus != "0")
                                 {
-                                    @if (item.IsAvailable)
-                                    {
-                                        <td class="text-center"><span class="avail">Yes</span></td>
-                                    }
-                                    else
-                                    {
-                                        <td class="text-center"><span class="noavail">No</span></td>
-                                    }
-@*                                    <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
-*@                                }
+                                    <td title="@item.AvailableStatus" style="overflow:hidden">@item.AvailableStatus</td>
+                                }
                                 else
                                 {
                                     <td></td>
                                 }
                             }
-                            <td>@item.AvailabilityResponseDate</td>
+                            @if (ViewBag.Type != "IRF")
+                            {
+                                <td>@item.AvailabilityResponseDate</td>
+                            }
                             <td class="text-center">
-                                <span style="width: 30px !important;
-    height: 30px !important;
-    background:#d2cece66;
-    display: inline-block;
-    border-radius: 100%;
-    line-height: 32px;">@item.TotalInterviews</span>
+                                <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@item.TotalInterviews</span>
                             </td>
                             <td>
                                 <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
@@ -146,43 +139,43 @@
                                     </span>
                                 }
                             </td>
-                            @if (ViewBag.Type != "IRF")
-                            {
-                                @if (item.AssessmentVerificationType == "MCQ")
-                                {
-                                    @if (!string.IsNullOrEmpty(item.SMCQId))
-                                    {
-                                        <td>
-                                            <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.MCQSetsValue,SMCQId=item.SMCQId })'>
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                </button>
-                                            </a>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                }
-                                else
-                                {
-                                    @if (!string.IsNullOrEmpty(item.inviteId))
-                                    {
-                                        <td>
-                                            <a target="_blank" href='@Url.Action("CodeInviteReport", "Interviewer", new { inviteid = item.inviteId })'>
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                </button>
-                                            </a>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                }
-                            }
+                            @*@if (ViewBag.Type != "IRF")
+                    {
+                    @if (item.AssessmentVerificationType == "MCQ")
+                    {
+                    @if (!string.IsNullOrEmpty(item.SMCQId))
+                    {
+                    <td>
+                    <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.MCQSetsValue,SMCQId=item.SMCQId })'>
+                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                    </button>
+                    </a>
+                    </td>
+                    }
+                    else
+                    {
+                    <td></td>
+                    }
+                    }
+                    else
+                    {
+                    @if (!string.IsNullOrEmpty(item.inviteId))
+                    {
+                    <td>
+                    <a target="_blank" href='@Url.Action("CodeInviteReport", "Interviewer", new { inviteid = item.inviteId })'>
+                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                    <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                    </button>
+                    </a>
+                    </td>
+                    }
+                    else
+                    {
+                    <td></td>
+                    }
+                    }
+                    }*@
                         </tr>
                     }
 

@@ -650,6 +650,7 @@ namespace Risebird.Web.Controllers
             model_report.duration = 60;
             model_report.Concurrency = 10;
             model_report.BufferTime = 18;
+            model_report.TimeSlotDays = 6;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
             var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
             if (model != null)
