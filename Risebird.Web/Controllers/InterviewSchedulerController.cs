@@ -82,6 +82,7 @@ namespace Risebird.Web.Controllers
             model_report.StartDate = DateTime.Now.AddHours(12);
             model_report.EndDate = DateTime.Now.AddDays(60);
             model_report.Concurrency = 10;
+            model_report.TimeSlotDays = 6;
             await SetDropDownTime(model_report);
             return View(model_report);
         }
@@ -275,6 +276,14 @@ namespace Risebird.Web.Controllers
                     }
                     model.ClientName = model._IRFDetails.Name;
                     model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
+                    if (result.FirstOrDefault().TimeSlotDays >= 1)
+                    {
+                        model.TimeSlotDays = result.FirstOrDefault().TimeSlotDays;
+                    }
+                    else
+                    {
+                        model.TimeSlotDays = 6;
+                    }
                     var timeZones = TimeZoneInfo.GetSystemTimeZones();
                     List<SelectListItem> items = new List<SelectListItem>();
                     foreach (var tzi in timeZones)
