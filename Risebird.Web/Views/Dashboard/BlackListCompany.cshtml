@@ -2,8 +2,20 @@
 @{
     ViewData["Title"] = "BlackListCompany";
 }
+<script>
+    var Header = "<div>BlackListed Company</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<style>
+    .swal2-popup .swal2-title {
+        font-size: 1.5em !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        line-height: 28px;
+    }
+</style>
 <div class="main-panel" id="main-panel">
-    <div class="jumbotron">
+    <div >
         <div class="pt30">
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
@@ -37,6 +49,7 @@
                                     <table id="detailsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
+                                                <th>Action</th>
                                                 <th>Company Name</th>
                                                 <th>Comment</th>
                                                 <th>Created On</th>
@@ -48,6 +61,7 @@
                                         </thead>
                                         <tfoot>
                                             <tr>
+                                                <th>Action</th>
                                                 <th>Company Name</th>
                                                 <th>Comment</th>
                                                 <th>Created On</th>
@@ -63,6 +77,24 @@
                                                 {
                                                     
                                                     <tr>
+                                                        <td>
+                                                            @if (item.IsApprovedBlacklistCompany != true)
+                                                            {
+                                                            <span>
+                                                                   <button class="mdc-fab app-fab--absolute " aria-label="Undo Blacklist Company">
+                                                                    <span onclick="undoBlackListCompany('@item.CompanyName');" title="Undo Blacklist Company" class="mdc-fab__icon touch"><svg width="20" height="20" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 7V9.5V12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M7.875 9.5H14.875C20.375 9.5 20.375 18 14.875 18C11.875 18 4.875 18 4.875 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11.375 13L7.875 9.5L11.375 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> </svg></span>
+                                                                  </button>
+                                                           </span>
+                                                          
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Approve Blacklist Company">
+                                                                        <span onclick="approvedBlackListCompany('@item.CompanyName');" title="Approve Blacklist Company" class="mdc-fab__icon touch">
+                                                                            <img src="~/img/approve-blk.png" width="18"/>
+                                                                        </span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                        </td>
                                                         <td>@item.CompanyName</td>
                                                         <td>@item.Comment</td>
                                                         <td>@item.CreatedDate</td>
@@ -88,3 +120,64 @@
     <!-- end col-md-12 -->
 </div>
 
+<script>
+    function undoBlackListCompany(CompanyName) {
+       alert(CompanyName);
+        if (CompanyName != '') {
+            $.ajax({
+                url: '/Dashboard/UndoBlackListCompany',
+                data: { 'CompanyName': CompanyName},
+                type: "POST",
+                success: function (data) {
+                    swal.fire(data);
+                }
+            });
+        }
+        else {
+            swal.fire("Please undo the blacklist company.");
+        }
+    }
+
+    function approvedBlackListCompany(CompanyName) {
+      
+        if (CompanyName != '') {
+            $.ajax({
+                url: '/Dashboard/ApprovedBlackListCompany',
+                data: { 'CompanyName': CompanyName},
+                type: "POST",
+                success: function (data) {
+                   swal.fire(data).then(function()
+                   {
+                   location.reload(true);
+                   });
+                }
+            });
+        }
+        else {
+            swal.fire("Please approved the blacklist company.");
+        }
+    }
+</script>
+
+    <script>
+    $(document).ready(function () {
+        applyDataTable();
+        //$('#detailsTable').DataTable();
+    });
+
+    function applyDataTable() {
+        $('#detailsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+    }
+    </script>

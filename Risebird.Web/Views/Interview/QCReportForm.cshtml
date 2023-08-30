@@ -334,49 +334,52 @@
                             </div>
                             @if (Model.Profile != "Interviewer")
                             {
-                                <div class="card-footer ">
-                                    <div class="row">
-                                        <div class="col-md-12 mc-button-area">
-                                            @if (Model.Type == "Completed")
-                                            {
-                                                <a href="/Interview/CompletedInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "ClientAll")
-                                            {
-                                                <a href="/Client/AllMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "ClientSelect")
-                                            {
-                                                <a href="/Client/SelectedMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "ClientReject")
-                                            {
-                                                <a href="/Client/RejectedMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "ClientPublic")
-                                            {
-                                                <a href="/Candidate/PublicCandidateStatus?emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "ClientAddReport")
-                                            {
-                                                <a href="/Client/Report?interviewId=@Model.Interviewid&irfId=@Model.IRFId" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "InterviewAddReport")
-                                            {
-                                                <a href="/Interview/AddReport?interviewId=@Model.Interviewid&irfId=@Model.IRFId" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else if (Model.Type == "SecureAddReport")
-                                            {
-                                                <a href="/Interview/SecureReport?interviewId=@Model.Interviewid&irfId=@Model.IRFId&emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            else
-                                            {
-                                                <a href="/Interview/ResolvedRedFlagsInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
-                                            }
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
+                                @if (ViewBag.pageStatus != "1")
+                                {
+                                    <div class="card-footer ">
+                                        <div class="row">
+                                            <div class="col-md-12 mc-button-area">
+                                                @if (Model.Type == "Completed")
+                                                {
+                                                    <a href="/Interview/CompletedInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "ClientAll")
+                                                {
+                                                    <a href="/Client/AllMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "ClientSelect")
+                                                {
+                                                    <a href="/Client/SelectedMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "ClientReject")
+                                                {
+                                                    <a href="/Client/RejectedMeetings" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "ClientPublic")
+                                                {
+                                                    <a href="/Candidate/PublicCandidateStatus?emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "ClientAddReport")
+                                                {
+                                                    <a href="/Client/Report?interviewId=@Model.Interviewid&irfId=@Model.IRFId" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "InterviewAddReport")
+                                                {
+                                                    <a href="/Interview/AddReport?interviewId=@Model.Interviewid&irfId=@Model.IRFId" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else if (Model.Type == "SecureAddReport")
+                                                {
+                                                    <a href="/Interview/SecureReport?interviewId=@Model.Interviewid&irfId=@Model.IRFId&emailid=@Model.Emailid&id=@Model.uniqueid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/Interview/ResolvedRedFlagsInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                                }
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             }
                         </form>
                     </div>

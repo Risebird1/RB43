@@ -29,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         public string schedulertype { get; set; }
         public bool IsSingleUse { get; set; }
         public int duration { get; set; }
+        public int TimeSlotDays { get; set; }
     }
     public class daytimes_report
     {
@@ -55,6 +56,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "BufferTime(in Hr.)")]
         public int BufferTime { get; set; }
         public string MeetingPlatform { get; set; }
+        [Display(Name = "Number of days Slot open at a time")]
+        public int TimeSlotDays { get; set; }
     }
     public class ScheculeInterview
     {
@@ -104,6 +107,7 @@ namespace Risebird.Entities.ViewModel
         public bool reschedulerequest { get; set; }
         public int interviewid { get; set; }
         public int returnvaluetype { get; set; }
+        public int TimeSlotDays { get; set; }
     }
     public class TimeslotsVM
     {
