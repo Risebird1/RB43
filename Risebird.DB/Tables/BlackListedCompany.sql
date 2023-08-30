@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[BlackListedCompany](
 	[ModifyBy] [varchar](50) NULL,
 	[Comment] [varchar](150) NULL,
 	[CompanyName] [varchar](100) NULL,
+	[IsApprovedBlacklistCompany] [bit] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

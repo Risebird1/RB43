@@ -20,7 +20,7 @@ as
 begin
 if exists(select distinct * from BlackListedCompany where CompanyName=@CompanyName)
 begin
-update BlackListedCompany set Comment=@Comment,ModifyDate=@ModifyDate,ModifyBy=@ModifyBy where CompanyName=@CompanyName
+update BlackListedCompany set Comment=@Comment,ModifyDate=@ModifyDate,ModifyBy=@ModifyBy,IsBlackList=1 where CompanyName=@CompanyName
 end
 else
 begin

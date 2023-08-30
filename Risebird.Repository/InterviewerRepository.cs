@@ -2353,8 +2353,8 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "select EmailId,uniqueid,(IsNUll(FirstName,'')+' '+ISnull(LastName,'')) as InterviewerName from UserList where idProfile=3 and DATEDIFF(Day,LastLogin,Getdate())>90";
-                var query = "select EmailId,uniqueid,(IsNUll(FirstName,'')+' '+ISnull(LastName,'')) as InterviewerName from UserList ul join InterviewerProfile ip on ip.Userid=ul.id where idProfile=3 and ip.AvailabilityResponseDate is null and ul.IsActive=1";
+                var query = "select EmailId,uniqueid,(IsNUll(FirstName,'')+' '+ISnull(LastName,'')) as InterviewerName from UserList where idProfile=3 and DATEDIFF(Day,LastLogin,Getdate())>90";
+                //var query = "select EmailId,uniqueid,(IsNUll(FirstName,'')+' '+ISnull(LastName,'')) as InterviewerName from UserList ul join InterviewerProfile ip on ip.Userid=ul.id where idProfile=3 and ip.AvailabilityResponseDate is null and ul.IsActive=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QueryAsync<IRFInterviewerMembers>(query, null);
