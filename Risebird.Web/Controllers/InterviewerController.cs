@@ -3845,7 +3845,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-               // var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
+               var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
                 return Json("Successfully updated youir response.");
             }
             else
