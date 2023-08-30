@@ -477,7 +477,27 @@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
-
+<script>
+    function closeInterviewerVideoConfirmModel() {
+        var model = document.getElementById("InterviewerVideoConfirmModel");
+        model.style.display = "none";
+    }
+    function openInterviewerVideoConfirmModel() {
+        var model = document.getElementById("InterviewerVideoConfirmModel");
+        model.style.display = "block";
+    }
+    function InterviewerVideoConfirmationStatus(response) {
+        $.ajax({
+            url: '/Interviewer/UpdateVideoConfirmationStatus',
+            type: 'POST',
+            data: { responsestatus: response },
+                success: function (data) {
+                swal.fire(data);
+                closeInterviewerVideoConfirmModel();
+            }
+        });
+    }
+</script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -614,23 +634,5 @@
             }
         });
     }
-    function closeInterviewerVideoConfirmModel() {
-        var model = document.getElementById("InterviewerVideoConfirmModel");
-        model.style.display = "none";
-    }
-    function openInterviewerVideoConfirmModel() {
-        var model = document.getElementById("InterviewerVideoConfirmModel");
-        model.style.display = "block";
-    }
-    function InterviewerVideoConfirmationStatus(response) {
-        $.ajax({
-            url: '/Interviewer/UpdateVideoConfirmationStatus',
-            type: 'POST',
-            data: { responsestatus: response }
-            success: function (data) {
-                swal.fire(data);
-                closeInterviewerVideoConfirmModel();
-            }
-        });
-    }
+  
 </script>
