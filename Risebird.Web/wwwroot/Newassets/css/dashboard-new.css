@@ -6550,6 +6550,10 @@ input[type="date"].form-control {
 .ml {
     width: 24%;
 }
+.vc {
+    width: 20%;
+    transform: rotate(15deg);
+}
 .icon {
     height: 20px !important;
     position: relative;
@@ -6644,6 +6648,10 @@ input[type="date"].form-control {
     position: fixed;
     top: 0px;
     z-index: 1000;
+}
+.modal textarea.form-control:focus {
+    border: 0px !important;
+    border-bottom:0px!important;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {

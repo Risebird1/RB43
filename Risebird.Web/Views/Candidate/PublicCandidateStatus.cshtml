@@ -625,9 +625,9 @@
                                                                             {
                                                                                 <div class="row">
                                                                                     <span class="icon-field">
-                                                                                        <img class="icon wp" src="~/img/voice-call.png" />  Voice Calls :
+                                                                                        <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
                                                                                     </span>   <span class="icon-field">
-                                                                                        <a cass="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                        <a class="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
                                                                                        @item.CallsCount
                                                                                     </a></span>
                                                                                 </div>
