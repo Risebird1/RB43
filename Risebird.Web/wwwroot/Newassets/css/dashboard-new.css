@@ -444,7 +444,7 @@ a.infos {
 }
 
 table tr td:hover, .table-striped tbody tr:hover {
-    box-shadow: 3px 4px 8px 2px rgb(0 0 0 / 5%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    box-shadow: 0 0 25px #868b903b;
 }
 
 table tr td.relatedvideo:hover {
