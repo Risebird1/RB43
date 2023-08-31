@@ -147,7 +147,7 @@
         @Html.AntiForgeryToken()
 
 
-        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-h" style="margin-bottom:0px;padding:0px">
+        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-h" style="margin-bottom:0px;padding:0px;z-index:100;position:fixed;top:0px;">
          @*   @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
             {
                 <img class="logo-cm"  src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
@@ -181,20 +181,32 @@
                     }
                     </div>*@
                     <div class="user user-r pull-left">
+                      
 
-                        @if (@HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername") != null)
+                     @*   @if (@HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername") != null)
                         {
                             var CurrentUsername = HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername");
                             CurrentUsername = CurrentUsername.Trim('"').Split('@')[0];
                             <div class="welcome">  <span>Welcome</span> !&nbsp; @CurrentUsername</div>
-                        }
-                        <h6 class="main-notification-title">
+                        }*@
+                    
+                        @if (User.Identity.IsAuthenticated)
+                        {
                             @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
                             {
-                                emailId = HttpContextAccessor.HttpContext.Session.GetString("email");
-                                var email = emailId.Trim('"');
+                                var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                var email = emailid.Trim('"');
+                                <span>
+                                    @email
+                                </span>
                             }
-                        </h6>
+                            else
+                            {
+                                <span>
+                                    "Logged In User";
+                                </span>
+                            }
+                        }
                     </div>
 
                 </div>

@@ -6646,12 +6646,39 @@ input[type="date"].form-control {
 }
 .fixed-header {
     position: fixed;
-    top: 0px;
+    top: 44px;
     z-index: 1000;
+    width: 100%;
 }
 .modal textarea.form-control:focus {
     border: 0px !important;
     border-bottom:0px!important;
+}
+.topheader-link {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: brown;
+    border-radius: 40px;
+    float: left;
+    padding-left: 7px;
+    margin-right: 6px;
+    float: left;
+}
+.topheader-link-wrap {
+    width: auto;
+    margin-right: 30px;
+    color: #ffff;
+    padding: 0px 10px;
+    font-size: 12px;
+    border: 0px;
+    background: none;
+    position: absolute;
+    top: -38px;
+    z-index: 100000000;
+    left: 0px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
