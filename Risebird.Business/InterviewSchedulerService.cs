@@ -373,5 +373,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<CandidateIRFData> CheckCandidateDetailsByEmail(string IRFId, string Emailid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckCandidateDetailsByEmail(IRFId, Emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
