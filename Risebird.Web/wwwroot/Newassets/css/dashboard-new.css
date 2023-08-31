@@ -6650,7 +6650,13 @@ input[type="date"].form-control {
     z-index: 1000;
     width: 100%;
 }
-.modal textarea.form-control:focus {
+.fixeds {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+    .modal textarea.form-control:focus {
     border: 0px !important;
     border-bottom:0px!important;
 }
@@ -6663,8 +6669,8 @@ input[type="date"].form-control {
     background: brown;
     border-radius: 40px;
     float: left;
-    padding-left: 7px;
-    margin-right: 6px;
+    padding-left: 0px;
+    margin-right: 0px;
     float: left;
 }
 .topheader-link-wrap {
@@ -6679,6 +6685,10 @@ input[type="date"].form-control {
     top: -38px;
     z-index: 100000000;
     left: 0px;
+}
+.user-mail{
+    position:relative;
+    top:10px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -8340,8 +8350,17 @@ input[type="date"].form-control {
         top: 0px !important;
         text-align: center !important;
     }
-}
 
+    .topheader-link-wrap {
+        width: 155px;
+        font-size: 10px;
+    }
+
+    .topheader-link {
+        width: 23px;
+        height: 23px;
+    }
+}
 
 @media only screen and (min-width: 480px) {
 
@@ -11401,7 +11420,9 @@ blockquote {
 .pad10 {
     padding: 10px;
 }
-
+.pad7 {
+    padding: 7px;
+}
 .timer {
     display: inline;
     padding: 2px 8px;

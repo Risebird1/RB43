@@ -124,9 +124,9 @@
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
 <div id="main-panel">
     <div>
-        <div class="pt30 videocon" style="margin-top:35px;">
+        <div class="pt30 videocon" style="margin-top:40px;">
             <div class="col-md-12 nopad">
-                <div class="card-header bg-w clearfix fixed-header ">
+                <div class="card-header bg-w clearfix fixed-header" style="border-bottom: 4px solid #844fc1;">
                     <img style="visibility:hidden" src="" data-position="right" />
                     <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                     <div class="pull-left logo-area">
@@ -147,8 +147,8 @@
 
           
                             <button type="button" class="topheader-link-wrap"  data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
-                                <span class="topheader-link"><i class="fa fa-envelope me-lg-2"></i></span>
-                                <div class="d-lg-inline-flex" style="padding: 7px 0px;">
+                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true"></i></span>
+                                <div class="d-lg-inline-flex pad7">
                                     Skill Channel Stats
                                 </div>
                             
@@ -175,8 +175,8 @@
                             </button>*@
 
                             <button type="button" class="topheader-link-wrap" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;">
-                                <span class="topheader-link"><i class="fa fa-envelope me-lg-2"></i></span>
-                                <div class="d-lg-inline-flex" style="padding: 7px 0px;">
+                                <span class="topheader-link"><i class="fa fa-users"></i></span>
+                                <div class="d-lg-inline-flex pad7">
                                     Manage Interviews
                                 </div>
 
@@ -1537,3 +1537,15 @@
     })(jQuery);
 </script>
 <script src="~/js/filtervalidation.js"></script>
+
+<script>
+    //var stickyOffset = $('.fixed-header').offset().top;
+
+    $(window).scroll(function () {
+        var sticky = $('.fixed-header'),
+            scroll = $(window).scrollTop();
+
+        if (scroll >= 80) sticky.addClass('fixeds');
+        else sticky.removeClass('fixeds');
+    });
+</script>

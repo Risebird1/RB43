@@ -196,8 +196,8 @@
                             {
                                 var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
                                 var email = emailid.Trim('"');
-                                <span>
-                                    @email
+                                <span class="user-mail">
+                                  <span style="color:palegreen">Logged as</span>  @email
                                 </span>
                             }
                             else

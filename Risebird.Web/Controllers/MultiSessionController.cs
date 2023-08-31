@@ -35,7 +35,6 @@ namespace Risebird.Web.Controllers
                 var userClaims = User.Identity as ClaimsIdentity;
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
-                name = "Ruma";
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
                 var sessionId = HttpContext.Session.Id;
