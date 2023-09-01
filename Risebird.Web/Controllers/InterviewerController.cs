@@ -3837,6 +3837,23 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
+        #region Interviewer Video Confirmation
+        [HttpPost]
+        public async Task<JsonResult> UpdateVideoConfirmationStatus(int responsestatus)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+               var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
+                return Json("Successfully updated youir response.");
+            }
+            else
+            {
+                return Json("Fail to update the response,please try again.");
+            }
+        }
+        #endregion
     }
 }
 

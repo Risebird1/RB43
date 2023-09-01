@@ -1057,6 +1057,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.PageFrom = "Completed";
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
@@ -1108,6 +1109,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
+                         ViewBag.ProfileName = profileName;
                         if (actionstatus == RibbonActionType.InterviewCount)
                         {
                             ViewBag.PageHeader = "Unassigned Interviews";
@@ -1182,7 +1184,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Potential Risk By Client Interviwes";
                         }
-                      
+
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
@@ -1295,7 +1297,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Potential Risk By Client Interviwes";
                         }
-                      
+
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
@@ -1527,6 +1529,14 @@ namespace Risebird.Web.Controllers
                         ViewBag.isCodedResumePresent = false;
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
+                        if (model.VideoConfirmation == 0)
+                        {
+                            ViewBag.VideoConfirmationPopup = true;
+                        }
+                        else
+                        {
+                            ViewBag.VideoConfirmationPopup = false;
+                        }
                         //Boradcastmessage
                         return View(model);
                     }
@@ -1878,7 +1888,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         var model = await _dashboardService.GetBlackkListComapany();
-                      
+
                         return View(model);
                     }
                     else
@@ -1897,7 +1907,64 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> UndoBlackListCompany(string CompanyName)
+        {
+            try
+            {
 
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                BlackListCompanyVM model = new BlackListCompanyVM();
+                model.CompanyName = CompanyName;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = emailId;
+                var data = await _dashboardService.UndoBlackListCompanyService(model);
+                if (data == true)
+                {
+                    return Json("Undo blacklisted company marked Successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether undo blacklisted company.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ApprovedBlackListCompany(string CompanyName)
+        {
+            try
+            {
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                BlackListCompanyVM model = new BlackListCompanyVM();
+                model.CompanyName = CompanyName;
+                model.ModifyDate = DateTime.Now;
+                model.ModifyBy = emailId;
+                var data = await _dashboardService.UndoBlackListCompanyService(model);
+                if (data == true)
+                {
+                    return Json("Approved blacklisted company has been marked successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether approved blacklisted company.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
 
     }

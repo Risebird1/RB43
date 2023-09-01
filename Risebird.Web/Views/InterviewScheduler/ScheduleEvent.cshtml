@@ -27,7 +27,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                                                                                                color: #9b9393;*/
+                                                                                                                                                    color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -106,7 +106,7 @@
 </style>
 <input type="hidden" value="@ViewBag.id" id="txthiddenid" />
 <input type="hidden" value="@ViewBag.Start" id="txthiddenPageStatus" />
-<input type="hidden" value="6" id="txthiddenSlotdays" />
+<input type="hidden" value="@Model.TimeSlotDays" id="txthiddenSlotdays" />
 <div class="sidebar-mini">
     <div class="main-panel">
         <div id="divExpire" style="display:none">

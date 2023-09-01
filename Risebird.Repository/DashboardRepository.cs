@@ -1057,6 +1057,7 @@ namespace Risebird.Repository
                     {
                         dt = dataset.Tables[6];
                         _resultVM.FirstTimePopupDisplayed = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToBoolean(dt.Rows[0][0]) : false;
+                        _resultVM.VideoConfirmation = !string.IsNullOrEmpty(dt.Rows[0][1].ToString()) ? Convert.ToInt32(dt.Rows[0][1]) : 0;
                     }
                     return _resultVM;
                 }
@@ -1152,5 +1153,50 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<bool> UndoBlackListCompany(BlackListCompanyVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CompanyName", model.CompanyName);
+                dynamicParam.Add("@ModifyDate", model.ModifyDate);
+                dynamicParam.Add("@ModifyBy", model.ModifyBy);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_undoBlackListCompany", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApprovedBlackListCompany(BlackListCompanyVM model)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CompanyName", model.CompanyName);
+                dynamicParam.Add("@ModifyDate", model.ModifyDate);
+                dynamicParam.Add("@ModifyBy", model.ModifyBy);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_ApprovedBlacklistCompany", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

@@ -1131,7 +1131,7 @@
 
                         <!-- end col-md-12 -->
                     </div>
-
+                    @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
                     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
                     @*<div id="myModal" class="modal modal-bg">
@@ -1564,7 +1564,7 @@
                 <form method="post">
                     <input type="hidden" id="hdnBlackListCompany">
                     <label style="font-size:14px;">Comment</label>
-                    <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea>
+                    <textarea name="Comment" id="txtComment" class="form-control" style="height:80px;"></textarea>
                 </form>
             </div>
             <div class="modal-footer" style="display:block;text-align:right">
@@ -1575,7 +1575,7 @@
         </div>
     </div>
 </div>
-
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
 <script>
@@ -1590,8 +1590,7 @@
 
     }
     function SaveBlckListCompanyModal() {
-        var comment = $('#Comment').val().trim();
-
+        var comment = $('#txtComment').val().trim();
         var CompanyName = $('#hdnBlackListCompany').val();
         if (comment != '') {
             $.ajax({
