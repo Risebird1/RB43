@@ -41,11 +41,12 @@ case
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
 IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,    
-tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor    
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor,si.Uniqueid as SchedulerUniqueid  
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId
-left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id     
+left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id
+left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
 where ca.IRFId = @IRFId and ca.ClientHRAttemptContact = @emailId) Cnd      
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,    
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join    
@@ -66,11 +67,12 @@ case
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
 IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,    
-tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor    
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor,si.Uniqueid as SchedulerUniqueid
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId    
 left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id     
+left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
 where ca.IRFId = @IRFId) Cnd      
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,    
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join    
