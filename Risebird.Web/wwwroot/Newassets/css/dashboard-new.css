@@ -6598,11 +6598,21 @@ input[type="date"].form-control {
     background: red;
     color: #fff;
 }
-
+.added {
+    background: #b5f2a76b;
+    color: #35c032;
+}
+.new {
+    background: #3b92e652;
+    color: #3a5fd3;
+}
+.irrelevant {
+    background: #ffa5005e;
+    color: #d39e3a;
+}
 .noshowcandidate {
     background: #f89cbf24;
     color: #94207bbd;
-   
 }
 .candidate-field {
     width: 100%;
@@ -6650,7 +6660,7 @@ input[type="date"].form-control {
     z-index: 1000;
     width: 100%;
 }
-.fixeds {
+.fixedtop {
     position: fixed;
     top: 0;
     left: 0;
@@ -6758,6 +6768,9 @@ input[type="date"].form-control {
     background-repeat: no-repeat;
     background-position: 8px 9px;
     border: 0PX;
+}
+#myStatusListpopup .table-bordered td:hover, #myStatusListpopup .table-striped tbody tr:hover {
+    box-shadow: none;
 }
 
 /***** Media queries *****/

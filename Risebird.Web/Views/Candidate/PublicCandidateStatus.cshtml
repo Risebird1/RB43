@@ -567,6 +567,9 @@
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         @*<td>@item.ProfileSource</td>*@
                                                                         <td>
+
+                                                                            <!---client buttons-->
+                                                                            <div>
                                                                             @if (item.CurrentStatus != "Scheduled")
                                                                             {
                                                                                 @*<button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
@@ -604,12 +607,7 @@
                                                                                     allowClientAction = true;
                                                                                 }
                                                                             }
-                                                                            <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
-                                                                                    data-toggle="ajax-modal" data-target="#addComment"
-                                                                                    data-interviewdate="@item.interviewDate"
-                                                                                    data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
-                                                                                <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
-                                                                            </button>
+                                                                           
                                                                             @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
                                                                             {
                                                                                 <button class="btn btn-primary shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="QC Form">
@@ -629,6 +627,26 @@
                                                                         </span>
                                                                         </button>
                                                                         }*@
+                                                                            </div>
+                                                                            <!---interviewer buttons-->
+                                                                            <div class="mt-10">
+                                                                                <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
+                                                                                    data-toggle="ajax-modal" data-target="#addComment"
+                                                                                    data-interviewdate="@item.interviewDate"
+                                                                                    data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
+                                                                                <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
+                                                                            </button>
+                                                                                @if (string.IsNullOrWhiteSpace(item.CompanyName))
+                                                                                {
+                                                                                    <span>
+                                                                                        <button class="btn btn-secondary shadow btn-xs sharp me-1" aria-label="Suspicious Interviwer">
+                                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.InterviewId');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                        </button>
+                                                                                    </span>
+
+                                                                                }
+                                                                                
+                                                                            </div>
                                                                         </td>
                                                                         <td>
                                                                             @if (item.MailCount != 0)
@@ -734,6 +752,7 @@
 </div>
 
 @await Html.PartialAsync("~/Views/Interview/WhatsAppPopup.cshtml")
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 <script src="~/js/WhatsAppPopup.js"></script>
 
 <div id="myModal" class="modal modal-bg">
@@ -818,15 +837,15 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="fa fa-link"></span>
+                    <span class="fa fa-list"></span>
                 </div>
-                <h5 class="modal-title pull-left" id="filterModalLabel"> Status List &nbsp;<label id="txtIRFID"></label>&nbsp;(<label id="txtcandidatename"></label>) </h5>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Status List For &nbsp;<label style="color:green" id="txtcandidatename"></label>&nbsp;(<label id="txtIRFID"></label>) </h5>
             </div>
 
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyStatusListpopup()">
                 <span aria-hidden="true">×</span>
             </button>
-            <div class="modal-body">
+            <div class="modal-body" style="margin-bottom:0px;">
                 <div class="col-md-12">
                     <div class="scrollbox">
                         <div class="table-responsive">
@@ -845,11 +864,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 text-right clearfix">
-                    <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
-                </div>
+                
             </div>
+              <div class="modal-footer"><div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                </div></div>
         </div>
+      
     </div>
 </div>
 <div id="myRaitingPopup" class="modal modal-wrap modal-bg">
@@ -1347,16 +1368,25 @@
                 html += '    <td style="color:green;font-weight:500"> ' + data[i].statusValue + '</td>';
             }
             else if (data[i].statusValue == "New") {
-                html += '<td style="color: dodgerblue;font-weight: 500">' + data[i].statusValue + '</td>';
+                html += '<td><span class="current new">' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "Waiting For Response") {
                 html += '<td style="color: orange;font-weight: 500"> ' + data[i].statusValue + '</td>';
             }
             else if (data[i].statusValue == "Scheduled") {
-                html += '<td style="color: deepskyblue;font-weight: 500">' + data[i].statusValue + '</td>';
+                html += '<td><span class="current scheduled">' + data[i].statusValue + '</span></td>';
+            }
+             else if (data[i].statusValue == "Added") {
+                html += '<td><span class="current added">' + data[i].statusValue + '</span></td>';
+            }
+             else if (data[i].statusValue == "Cancelled") {
+                html += '<td><span class="current cancelled">' + data[i].statusValue + '</span></td>';
+            }
+            else if (data[i].statusValue == "No Show(Candidate)") {
+                html += '<td><span class="current noshowcandidate">' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "Irrelevant") {
-                html += '<td style="color:orange"> ' + data[i].statusValue + '</td>';
+                html += '<td><span class="current irrelevant"> ' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "Duplicate") {
                 html += '<td style=" color: hotpink;font-weight: 500">' + data[i].statusValue + '</td>';
@@ -1376,10 +1406,10 @@
             html += '<td><div>';
             if (data[i].comments != null && data[i].comments.Length > 18) {
 
-                html += '  <a href="#" data-tooltip="' + data[i].comments + '"><textarea style=" height: 50px;border: 0px; font-size: 14px;width: 100%;resize: none;">' + data[i].comments + '</textarea></a>';
+                html += '  <a href="#" data-tooltip="' + data[i].comments + '"><textarea style=" height: 50px; background:none; border:0px; font-size: 13px!important;width: 100%;resize: none;">' + data[i].comments + '</textarea></a>';
             }
             else {
-                html += ' <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">' + data[i].comments + '</textarea>';
+                html += ' <textarea style=" height: 50px;width: 100%;font-size: 13px!important;resize: none; background:none; border:0px;">' + data[i].comments + '</textarea>';
             }
             html += '</div></td>';
             html += '<td>';
@@ -1390,7 +1420,7 @@
                     html += '<span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
                     html += '</button></a>';
                     html += '<a target="_blank" href="/Interview/ClientReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true">';
-                    html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" >';
+                    html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" style="margin-left:5px;" >';
                     html += '<span title="Client Interview Report" class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class="bi bi-file-earmark-ruled" viewBox = "0 0 16 16" > <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /> </svg></span>';
                     html += '</button></a>';
                 }
@@ -1539,13 +1569,11 @@
 <script src="~/js/filtervalidation.js"></script>
 
 <script>
-    //var stickyOffset = $('.fixed-header').offset().top;
-
     $(window).scroll(function () {
         var sticky = $('.fixed-header'),
             scroll = $(window).scrollTop();
 
-        if (scroll >= 80) sticky.addClass('fixeds');
-        else sticky.removeClass('fixeds');
+        if (scroll >= 80) sticky.addClass('fixedtop');
+        else sticky.removeClass('fixedtop');
     });
 </script>
