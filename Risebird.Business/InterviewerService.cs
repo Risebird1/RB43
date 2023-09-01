@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
@@ -1447,6 +1448,18 @@ namespace Risebird.Business
             try
             {
                 return await _interviewerRepository.SaveInterviewerEmploymentVerification(_interviewer);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateVideoConfirmationStatus(int status,string Emailid)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateVideoConfirmationStatus(status, Emailid);
             }
             catch (SqlTypeException ex)
             {
