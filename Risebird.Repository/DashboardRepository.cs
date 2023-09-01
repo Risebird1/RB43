@@ -1197,5 +1197,30 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<QCFormVM>> GetRedflagsQcReportRepository(int Interviewid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Interviewid", Interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<QCFormVM>(con, "usp_GetRedFlagsQCReport", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (List<QCFormVM>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
