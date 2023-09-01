@@ -3112,6 +3112,26 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UpdateVideoConfirmationStatus(int status,string Emailid)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@Emailid", Emailid);
+                dynamicParam.Add("@status", status);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_UpdateVideoConfirmationStatus", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
     }
 

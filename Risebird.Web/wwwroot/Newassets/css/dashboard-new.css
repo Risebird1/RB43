@@ -6690,6 +6690,76 @@ input[type="date"].form-control {
     position:relative;
     top:10px;
 }
+.instruction ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+    .instruction ul li {
+        font-size: 13px;
+        padding: 5px 25px 8px 25px;
+        list-style: none;
+        background-image: url(../../img/green-tick.png);
+        background-repeat: no-repeat;
+        background-position: 3px 10px;
+        background-size: 2.5%;
+        color: #2a2222;
+    }
+.del-inst ul {
+    list-style: none;
+    padding:0px;
+}
+    .del-inst ul li {
+        padding: 0px 4px 10px 20px;
+        color: #2a2222;
+        font-size: 13px;
+        line-height: 25px;
+    }
+        .del-inst ul li::before {
+            content: "\2022";
+            color: red;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 22px;
+            position: relative;
+            left: -9px;
+            top: 4px;
+        }
+
+
+.yes-btn {
+    text-decoration: none;
+    border: 1px #11381136 solid;
+    padding: 8px 20px 5px 31px;
+    margin-bottom: 10px;
+    clear: both;
+    border-radius: 3px;
+    font-weight: 600;
+    color: #08551e;
+    background: url(../../img/available.png),#4ede4ecf;
+    font-size: 14px;
+    display: inline-block;
+    background-size: 11%;
+    background-repeat: no-repeat;
+    background-position: 10px 7px;
+}
+.no-btn {
+    background: url(../../img/notavailable.png), #e22d20;
+    padding: 10px 20px 10PX 30PX;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    clear: both;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+    display: inline-block;
+    line-height: 16px;
+    background-size: 9%;
+    background-repeat: no-repeat;
+    background-position: 8px 9px;
+    border: 0PX;
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
