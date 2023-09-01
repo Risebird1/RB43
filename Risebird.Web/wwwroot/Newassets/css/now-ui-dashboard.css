@@ -316,15 +316,19 @@
             box-shadow: none;
         }
 
+    .btn-primary.btn {
+        background-color: #8fb2e4 !important;
+        border-color: #8fb2e4!important;
+    }
 
-
-
-
-
-.btn-success {
-    background-color: #18ce0f;
-    color: #FFFFFF;
-}
+        .btn-primary.btn:hover, .btn-primary.btnactive {
+            background-color: #42a5f5!important;
+            border-color: #42a5f5!important;
+        }
+        .btn-success {
+            background-color: #18ce0f;
+            color: #FFFFFF;
+        }
 
     .btn-success:hover,
     .btn-success:focus,
@@ -11520,6 +11524,11 @@ table.dataTable thead .sorting_asc_disabled,
 table.dataTable thead .sorting_desc_disabled {
     cursor: pointer;
     position: relative;
+
+    font-size: 13px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+}
 }
 
     table.dataTable thead .sorting_asc_disabled:after,
@@ -11943,8 +11952,13 @@ table.dataTable > tfoot > tr > td {
     /* width: 150px;*/
     border-right: 0;
     border-bottom: 0;
+   
 }
-
+table.dataTable > tfoot > tr > th {
+    font-size: 13px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+}
 table.dataTable > thead > tr > th {
     border: none;
     padding: 5px;
