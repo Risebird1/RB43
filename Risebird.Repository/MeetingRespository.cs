@@ -5355,6 +5355,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", irfId);
+                dynamicParameters.Add("@uniqueId", uniqueId);
+                dynamicParameters.Add("@Status", status);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAvailbilityStatusForIRF", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public string SetInterviewerAvailability(int transid, int isavailable)
         {
             try

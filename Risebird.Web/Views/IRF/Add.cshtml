@@ -57,7 +57,7 @@
                                             <li id="li_selectability"><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a><span id="count_Selectability" class="skillcount">0</span></li>
                                             <li id="li_generalSkill"><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a><span id="count_SkillGeneral" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
-                                            <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
+                                            @*<li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>*@
                                             @*<li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>*@
                                             @*<li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>*@
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
@@ -794,7 +794,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-8">Interviewer</h3>
+                                        @*<h3 class="tab_drawer_heading" rel="tab-8">Interviewer</h3>
                                         <div class="tab-box" id="tab-8">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -823,7 +823,6 @@
                                                                             </td>
 
                                                                             <td class="cadName">
-                                                                                @*<a onclick="" data-tooltip="">No Resume</a>*@
                                                                                 <a href="" target="_blank" id="InterviewerCollection_0__ResumeLink" data-tooltip="">Resume</a>
 
                                                                             </td>
@@ -834,15 +833,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                }*@
+                                                                                
 
                                                                                 @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1",  @readonly = "readonly"/*, @disabled = "disabled"*/  })
 
@@ -886,14 +877,6 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                    }*@
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly"/*, @disabled = "disabled"*/ })
 
                                                                                 </td>
@@ -924,7 +907,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>*@
                                         @*<h3 class="tab_drawer_heading" rel="tab-9">QC</h3>
                                         <div class="tab-box" id="tab-9">
                                             <div class="tab-main-box">
@@ -1765,7 +1748,7 @@
         });
     }
 
-    function AssessmentGroupChanged() {
+    @*function AssessmentGroupChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
         var countryType = $("#JobCountry").val();
         var planType = $("#Heuristicsscore").val();
@@ -1773,15 +1756,7 @@
         var interviewerSkills;
         var interviewerResume;
         //var interviewerQCRate;
-        @*if (countryType == "1") {
-            interviewerQCRate = 350;
-        }
-        else if (countryType == "2") {
-            interviewerQCRate = 500;
-        }
-        else {
-            interviewerQCRate = 0;
-        }*@
+        
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
@@ -1791,15 +1766,7 @@
             success: function (data) {
 
                 if (data.length > 0) {
-                    @*$.ajax({
-                        type: "GET",
-                        async: false,
-                        url: "/IRF/GetInterviewerSkills",
-                        data: { 'id': data[0].value },
-                        success: function (result) {
-                            interviewerSkills = result;
-                        }
-                    });*@
+                    
 
                     $.ajax({
                         type: "GET",
@@ -1813,56 +1780,13 @@
                         }
                     });
 
-
-                    @*if(planType != null && planType != '' && countryType != null && countryType != '')
-                    {
-                        UpdateInterviewerRate(planType, countryType);
-                    }*@
-
-                    @*$.ajax({
-                        type: "GET",
-                        async: false,
-                        url: "/IRF/GetInterviewerRate",
-                        data: { 'userId': data[0].value, 'companyType': companyType, 'countryType': countryType },
-                        success: function (result) {
-                            interviewerRate = result;
-                        }
-                    });
-
-                    $.ajax({
-                        type: "GET",
-                        async: false,
-                        url: "/IRF/GetInterviewerRate",
-                        data: { 'userId': data[0].value, 'companyType': companyType, 'countryType': countryType },
-                        success: function (result) {
-                            interviewerRate = result;
-                        }
-                    });*@
-
-                    //$.ajax({
-                    //    type: "GET",
-                    //    async: false,
-                    //    url: "/IRF/GetInterviewerQCRate",
-                    //    data: { 'userId': data[0].value },
-                    //    success: function (result) {
-                    //        interviewerQCRate = result;
-                    //    }
-                    //});
                 }
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id + " option").remove();
                 }
 
-                @*var drpdownsEI = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
-                for (i = 0; i < drpdownsEI.length; i++) {
-                    $("#" + drpdownsEI[i].id + " option").remove();
-                }
-
-                var drpdownsQC = $('[id^="QualityController"][id$="UserId"]');
-                for (i = 0; i < drpdownsQC.length; i++) {
-                    $("#" + drpdownsQC[i].id + " option").remove();
-                }*@
+               
 
                 if (data.length > 0) {
 
@@ -1904,68 +1828,17 @@
                             }
                         }
                         //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
-                        @*BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate, interviewerResume);*@
+                        //BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate, interviewerResume);
                         BindSkillsAndRateAndResume(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate, interviewerResume);
                     }
-                    @*for (i = 0; i < drpdownsEI.length; i++) {
-                        //$("#" + drpdowns[i].id).append(option);
-
-
-                        $(data).each(function () {
-                            var option = $("<option />");
-
-                            //Set Text part.
-                            option.html(this.text);
-
-                            //Set Value part.
-                            option.val(this.value);
-
-                            //Add the Option element to DropDownList.
-
-                            $("#" + drpdownsEI[i].id).append(option);
-
-
-                            //drpdwnId.append(option);
-                        });
-                        //EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
-                        BindSkillsAndRate(drpdownsEI[i].id, interviewerSkills, 'EmergencyInterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
-
-                    }*@
-
-                    @*for (i = 0; i < drpdownsQC.length; i++) {
-                        //$("#" + drpdowns[i].id).append(option);
-
-
-                        $(data).each(function () {
-                            var option = $("<option />");
-
-                            //Set Text part.
-                            option.html(this.text);
-
-                            //Set Value part.
-                            option.val(this.value);
-
-                            //Add the Option element to DropDownList.
-
-                            $("#" + drpdownsQC[i].id).append(option);
-
-
-                            //drpdwnId.append(option);
-                        });
-                        //QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
-                        //BindSkills(drpdownsQC[i].id, interviewerSkills);
-                        BindSkillsAndRate(drpdownsQC[i].id, interviewerSkills, 'QualityController_' + i + '__PerSuccessRate', interviewerQCRate);
-
-
-                    }*@
-
+                    
                 }
 
 
             }
         });
 
-    }
+    }*@
 
     @*function UpdateInterviewerRate(planType = null, countryType = null)
     {
@@ -2710,7 +2583,7 @@
         }
     }
 
-    function InterviewerChanged(val, id) {
+    @*function InterviewerChanged(val, id) {
         var index = id.split('_')[1];
         var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
         if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
@@ -2720,18 +2593,7 @@
         var resumeElementid = 'InterviewerCollection_' + index + '__ResumeLink';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
 
-        @*var companyType = $("#CompanyType").val();
-        var countryType = $("#JobCountry").val();*@
-
-
-       @* $.ajax({
-            type: "GET",
-            url: "/IRF/GetInterviewerSkills",
-            data: { 'id': val },
-            success: function (data) {
-                $("#" + skillElementid).val(data);
-            }
-        });*@
+        
         $.ajax({
             type: "GET",
             async: false,
@@ -2752,28 +2614,13 @@
                 {
                     $("#" + resumeElementid).html("No Resume");
                 }
-                @*const resumeItem = document.getElementById(resumeElementid);
-                var aTag = document.createElement('a');
-                aTag.setAttribute('href',result.resumeLink);
-                aTag.setAttribute('id', resumeElementid);
-                aTag.innerText = "Resume";
-                resumeItem.parentNode.replaceChild(aTag, resumeItem);*@
-                
             }
         });
 
         $("#" + rateElementid).val(interviewerRate);
-        @*$.ajax({
-            type: "GET",
-            async: false,
-            url: "/IRF/GetInterviewerRate",
-            data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
-            success: function (result) {
-                $("#" + rateElementid).val(result);
-            }
-        });*@
+        
+    }*@
 
-    }
     function EmergencyInterviewerChanged(val, id) {
         var index = id.split('_')[1];
         var searchFor = '[id^="EmergencyInterviewerCollection"][id$="UserId"]';
@@ -3336,12 +3183,12 @@
                 }
                 document.getElementById("tab-7").style.display = "none";
             }
-            else if (activeTab.trim() == "Interviewer") {
+            @*else if (activeTab.trim() == "Interviewer") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-7").addClass("active");
                 document.getElementById("tab-7").style.display = "block";
                 document.getElementById("tab-8").style.display = "none";
-            }
+            }*@
             //else if (activeTab.trim() == "QC") {
             //    $(".tab-menu li a").removeClass("active");
             //    $("#rtab-8").addClass("active");
@@ -3383,8 +3230,10 @@
             //}
             else if (activeTab.trim() == "Coordinator") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-8").addClass("active");
-                document.getElementById("tab-8").style.display = "block";
+                @*$("#rtab-8").addClass("active");
+                document.getElementById("tab-8").style.display = "block";*@
+                $("#rtab-7").addClass("active");
+                document.getElementById("tab-7").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
 
             }
@@ -3652,12 +3501,14 @@
                 flag = checkClientDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                    $("#rtab-8").addClass("active");
-                    document.getElementById("tab-8").style.display = "block";
+                    @*$("#rtab-8").addClass("active");
+                    document.getElementById("tab-8").style.display = "block";*@
+                    $("#rtab-11").addClass("active");
+                    document.getElementById("tab-11").style.display = "block";
                     document.getElementById("tab-7").style.display = "none";
                 }
             }
-            else if (activeTab.trim() == "Interviewer") {
+            @*else if (activeTab.trim() == "Interviewer") {
                 flag = checkInterviewerDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -3666,7 +3517,7 @@
                     document.getElementById("tab-8").style.display = "none";
 
                 }
-            }
+            }*@
             //else if (activeTab.trim() == "QC") {
             //    flag = checkQcDetails();
             //    if (!flag) {

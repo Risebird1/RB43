@@ -56,10 +56,11 @@ namespace Risebird.Web.Controllers
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly IMCQService _mCQService;
         private readonly string codeapiendpoint;
-
+        private readonly IEncryptionHelper _encryptionHelper;
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper, IMCQService mCQService)
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
+            IMCQService mCQService, IEncryptionHelper encryptionHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -81,6 +82,7 @@ namespace Risebird.Web.Controllers
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
             _calendlyHelper = calendlyHelper;
             _mCQService = mCQService;
+            _encryptionHelper = encryptionHelper;
             codeapiendpoint = _configuration["CodeApiEndPoint"];
         }
 
@@ -6583,13 +6585,46 @@ namespace Risebird.Web.Controllers
         {
             if (await _meetingService.UpdateCheckIntervieweravailbilityStatus(status, uniqueid, Irfid))
             {
-                return Json("Successfully status updated");
+                return Json("Status updated successfully");
             }
             else
             {
-                return Json("Fail to Update Status, Please try again");
+                return Json("Failed to update status, Please try again");
             }
         }
+
+        [HttpGet]
+        public async Task<JsonResult> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string dec)
+        {
+            //check link expiry befire hitting db
+
+            try
+            {
+                var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
+                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 180)
+                {
+                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
+                    {
+                        return Json("Status updated successfully.");
+                    }
+                    else
+                    {
+                        return Json("Failed to update status, Please try again");
+                    }
+                }
+                else
+                {
+                    return Json("Link Expired.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to update status, Please try again");
+            }
+
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> StatsFlagForIRF(int IRFId)

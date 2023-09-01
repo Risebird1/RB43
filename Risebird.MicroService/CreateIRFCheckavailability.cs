@@ -18,17 +18,21 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly IEncryptionHelper _encryptionHelper;
 
-        public CreateIRFCheckavailability(IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
+
+        public CreateIRFCheckavailability(IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, 
+            INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, IEncryptionHelper encryptionHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
             _notificationHelper = notificationHelper;
             _whatsAppHelper = whatsAppHelper;
+            _encryptionHelper = encryptionHelper;
         }
 
         [FunctionName("CreateIRFCheckavailability")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -61,8 +65,9 @@ namespace Risebird.MicroService
                             {
                                 if (!string.IsNullOrEmpty(item.EmailId))
                                 {
-                                    string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id;
-                                    string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id;
+                                    var encryptedDate = _encryptionHelper.EncryptDateTime(DateTime.Now);
+                                    string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id + "&dec=" + encryptedDate;
+                                    string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irf.id + "&dec=" + encryptedDate;
                                     Mail _mail = new Mail
                                     {
                                         TO = item.EmailId,
@@ -77,7 +82,7 @@ namespace Risebird.MicroService
                                     _whatsAppVM.Interviewduration = item.Interviewduration;
                                     _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
                                     _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
-                                    await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
+                                    //await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
                                 }
                             }
                             catch (Exception ex1)
