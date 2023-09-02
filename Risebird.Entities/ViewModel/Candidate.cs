@@ -144,5 +144,6 @@ namespace Risebird.Entities.ViewModel
         public string ClientHRAttemptContactMobile { get; set; }
         public int CandidateResumeId {get; set;}// id from CandidateResume table
         public string AddedByEmailId { get; set;}// id from CandidateResume table
+        public string SchedulerUniqueid { get; set;}
     }
 }
