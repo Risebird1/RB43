@@ -1948,7 +1948,7 @@ namespace Risebird.Web.Controllers
                 model.CompanyName = CompanyName;
                 model.ModifyDate = DateTime.Now;
                 model.ModifyBy = emailId;
-                var data = await _dashboardService.UndoBlackListCompanyService(model);
+                var data = await _dashboardService.ApprovedBlackListCompanyService(model);
                 if (data == true)
                 {
                     return Json("Approved blacklisted company has been marked successfully");
@@ -1966,7 +1966,44 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetRedFlagsQCReport(int Interviewid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    List<string> _lstRedFlagDetail = new List<string>();
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+                    {
+                         List<QCFormVM> data = new List<QCFormVM>();
+                       // QCFormVM model = new QCFormVM();
+                       data = await _dashboardService.GetRedFlagsQCReportService(Interviewid);
+                      
 
+                        return PartialView("_GetRedFlagsQCReportPartial",data);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 
 }
