@@ -6531,11 +6531,13 @@ namespace Risebird.Web.Controllers
             return "";
         }
         [HttpGet]
-        public async Task<JsonResult> CheckIntervieweravailbility(int irfId, string IRFName)
+        public async Task<JsonResult> CheckIntervieweravailbility(int irfId, string IRFName, int assessmentGroupId)
         {
             try
             {
                 var model = await _irfService.GetAllIRFAssessmentInterviewerMembers(irfId);
+                //var model = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId);
+
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
                 if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)
                 {
@@ -6558,12 +6560,16 @@ namespace Risebird.Web.Controllers
                     {
                         if (!string.IsNullOrEmpty(item.EmailId))
                         {
-                            string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-                            string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                            //string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                            //string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+
+                            var encryptedDate = _encryptionHelper.EncryptDateTime(DateTime.Now);
+                            string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                            string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
                             Mail _mail = new Mail
                             {
                                 TO = item.EmailId,
-                                Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
+                                Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
                             };
                             var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.PerSuccessRate);
                         }
