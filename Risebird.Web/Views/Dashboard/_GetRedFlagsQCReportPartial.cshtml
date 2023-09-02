@@ -1,0 +1,87 @@
+﻿@model List<Risebird.Entities.ViewModel.QCFormVM>
+@foreach(var item in Model)
+{
+    @if (!item.IsCodingPresent)
+    {
+        <div>Whether hands-on coding is present</div>
+    }
+
+    @if (!item.IsVideoClearQuality)
+    {
+        <div> Whether candidate video is clearly visible</div>
+    }
+    @if (!item.IsInterviewerCommunicationClear)
+    {
+        <div>Clarity in Interviewer’s communication</div>
+    }
+    @if (!item.IsSufficientVideoDuration)
+    {
+        <div>Whether video duration is sufficient</div>
+    }
+    @if (!item.IsInterviewStructured)
+    {
+        <div>Is the interview properly structured</div>
+    }
+    @if (!item.IsScoringrubriccorrect)
+    {
+        <div>Whether scoring rubrics is filled correctly</div>
+    }
+    @if (!item.IsQuestionswithtime)
+    {
+        <div>Whether questions are filled with timeline</div>
+    }
+    @if (!item.IsCommentfilled)
+    {
+        <div>Whether appropriate/fitting comments are filled</div>
+    }
+    @if (!item.IsMeetingStatusfilled)
+    {
+        <div>Whether appropriate meeting and interview status are filled</div>
+    }
+    @if (!item.IsRelevancequestions)
+    {
+        <div>Relevance of the questions asked</div>
+    }
+    @if (item.IsDelayresuminginterview)
+    {
+        <div>Delay in resuming an interview</div>
+    }
+    @if (item.IsBackgroundnoise)
+    {
+        <div>Background Noise</div>
+    }
+    @if (item.IsPoorinterviewerinfrastructure)
+    {
+        <div>Poor interviewer infrastructure</div>
+    }
+    @if (item.IsPoorhandlingcandidatequery)
+    {
+        <div>Poor handling of candidate’s queries</div>
+    }
+    @if (item.IsPersonalquestions)
+    {
+        <div>Asking personal questions or making personal remarks</div>
+    }
+    @if (item.IsAugmenting)
+    {
+        <div>Getting into arguments</div>
+    }
+    @if (item.IsBiasedView)
+    {
+        <div>Biased View</div>
+    }
+    @if (!item.IsLettingcandidatespeak)
+    {
+        <div>Letting candidate speak</div>
+    }
+    @if (item.IsSuspiciousappfound)
+    {
+        <div>IsSuspiciousappfound</div>
+    }
+    @if (item.IsSuspiciousappfound)
+    {
+        <div>Lip-sync issue noticed</div>
+    }
+}
+
+
