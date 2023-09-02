@@ -662,6 +662,25 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public async Task<CandidateIRFData> CheckCandidateDetailsByEmail(string IRFId, string Emailid)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", IRFId);
+                dp.Add("@EmailId", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CandidateIRFData>(con, "usp_GetCandidateDetailsByEmail", dp,
+                            commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
