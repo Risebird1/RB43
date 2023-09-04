@@ -93,7 +93,7 @@
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-                    
+
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
@@ -117,9 +117,9 @@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
                             </button>
-                           @* <button style="width:250px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa-regular fa-person-circle-question" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("ProbableNoShowCandidates", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Probable No Show Candidates</font></span>
-                            </button>*@
+                            @* <button style="width:250px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="fa-regular fa-person-circle-question" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("ProbableNoShowCandidates", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Probable No Show Candidates</font></span>
+                        </button>*@
                         }
 
 
@@ -505,7 +505,7 @@
                                                         <th>Staffing Agency</th>
                                                         <th>Interview Duration</th>
                                                         <th>ID Verification</th>
-                                                        
+
                                                         <th>ReportId</th>
                                                         <th>Has Distinct Participants</th>
                                                         <th>Expected Joining Time</th>
@@ -535,7 +535,7 @@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
                                                         <th>Type</th>
-                                                       <th>JD Title</th>
+                                                        <th>JD Title</th>
 
                                                         <th>Meeting Link</th>
                                                         <th>Company Name</th>
@@ -733,17 +733,17 @@
                                                                             <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                         </button>
                                                                     </a>
-                                                                    @if(!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                                    @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                                     {
-                                                                       <span>
+                                                                        <span>
                                                                             <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
                                                                                 <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                       </button>
-                                                                        </span> 
-                                                                        
+                                                                            </button>
+                                                                        </span>
+
                                                                     }
                                                                 }
-                                                                @if (item.CompanyName != null && item.CompanyName!="")
+                                                                @if (item.CompanyName != null && item.CompanyName != "")
                                                                 {
                                                                     <a target="_blank" onclick="javascript:BlckListCompanyModalDetails('@item.CompanyName');">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Blacklist Company">
@@ -752,6 +752,13 @@
                                                                     </a>
                                                                 }
                                                             }
+                                                            <span>
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Palyment SLA" style=" position: relative; top: -3px;">
+                                                                    <span onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer')" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </span>
                                                             @*<span>
                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
                                                         <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
@@ -764,38 +771,31 @@
                                                         <td> @item.interviewDate </td>
 
                                                         <td>
-                                                           
-                                                         
-                                                        @if (item.IsOnline == 1)
-                                                        {
-                                                           
-                                                               <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
-                                                        }
-                                                        else
-                                                        {
-                                                           
-                                                              <span class="name-field">  @item.candidateName</span>
-                                                            
-                                                        }
-                                                       
-                                                       
-                                                       
+                                                            @if (item.IsOnline == 1)
+                                                            {
+                                                                <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="name-field">  @item.candidateName</span>
+                                                            }
 
-                                                        @if (item.zoomLink != null && item.zoomLink != "")
-                                                        {
-                                                            <span class="email-field"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="email-field" style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
-                                                        }
+                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            {
+                                                                <span class="email-field"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="email-field" style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                            }
                                                         </td>
                                                         <td style="padding:0px 7px;">
-                                                             <span class="call-area">
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
+                                                            <span class="call-area">
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
                                                                     <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                                                            }</span>
+                                                                }
+                                                            </span>
                                                             @item.MobileNumber
                                                         </td>
                                                         @*Hide Columns for Cancel Intervies*@
@@ -810,7 +810,7 @@
                                                                 <td>Interview</td>
                                                             }
 
-                                                           <td> @item.JDTiltle.Split("|")[0] </td>
+                                                            <td> @item.JDTiltle.Split("|")[0] </td>
 
 
                                                             @if (item.zoomLink != null && item.zoomLink != "")
@@ -863,7 +863,7 @@
                                                             }
                                                             else
                                                             {
-                                                               <td class="text-center">
+                                                                <td class="text-center">
                                                                     <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
                                                                 </td>
                                                             }
@@ -1600,7 +1600,6 @@
                 success: function (data) {
                     swal.fire(data);
                     closeBlackListCompanyModal();
-
                 }
             });
         }
@@ -2812,3 +2811,48 @@
         </div>
     </div>
 </div>
+<div id="PaymentSLAModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 18 18">
+                            <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Payment SLA </h5><h6 id="txtheaderPayment"></h6>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closePaymentSLAModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;" id="divPaymentSlamodel">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function PaymentSLADetails(interviewid, candidateEmail,interviewer) {
+        $.ajax({
+            url: '/Interview/GetPaymentSlaDetails',
+            data: { 'interviewid': interviewid,'interviewer':interviewer },
+            type: "GET",
+            success: function (data) {
+                openPaymentSLAModel();
+                $('#divPaymentSlamodel').html('');
+                $('#divPaymentSlamodel').html(data);
+                $("#txtheaderPayment").text('( ' + candidateEmail + ' )');
+            }
+        });
+    }
+    function closePaymentSLAModel() {
+        var modal = document.getElementById("PaymentSLAModel");
+        modal.style.display = "none";
+    }
+    function openPaymentSLAModel() {
+        var modal = document.getElementById("PaymentSLAModel");
+        modal.style.display = "block";
+    }
+</script>

@@ -1,0 +1,161 @@
+﻿@model Risebird.Entities.ViewModel.PaymentSLAVM
+
+<form action="/Interview/GetPaymentSlaDetails" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+    @Html.HiddenFor(m => m.Interviewid)
+    @Html.HiddenFor(m => m.Interviewer)
+    @Html.HiddenFor(m => m.Isedit)
+    @Html.HiddenFor(m => m.Type)
+    @Html.HiddenFor(m => m.uniqueid)
+    @Html.HiddenFor(m => m.IRFId)
+    <div class="canvas_div_pdf">
+        <div class="report-full-wrap">
+            <div class="card-wrap">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Inaccuratedecisionmaking, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.Inaccuratedecisionmaking, "False positive") False positive
+                                @Html.RadioButtonFor(model => model.Inaccuratedecisionmaking, "False negative ") False negative
+                                @Html.RadioButtonFor(model => model.Inaccuratedecisionmaking, "Lacking Sincerity") Lacking Sincerity
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TimeManagement, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.TimeManagement, "Late start") Late start
+                                @Html.RadioButtonFor(model => model.TimeManagement, "end before time") end before time
+                                @Html.RadioButtonFor(model => model.TimeManagement, "too fast/too slow") too fast/too slow
+                                @Html.RadioButtonFor(model => model.TimeManagement, "wasting time in irrelevant points") wasting time in irrelevant points
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.QuestionsRelevance, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.QuestionsRelevance, "irrelevant") irrelevant
+                                @Html.RadioButtonFor(model => model.QuestionsRelevance, "mismatch difficulty level") mismatch difficulty level
+                                @Html.RadioButtonFor(model => model.QuestionsRelevance, "google questions") theoretical / abstract / google questions- what is this/that ?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ScoreRubricIgnorance, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.ScoreRubricIgnorance, "Not from score rubtic") asking questions which are not linked to desired scoring rubric
+                                @Html.RadioButtonFor(model => model.ScoreRubricIgnorance, "filling score rubric without cognizance") filling score rubric without cognizance
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PoorFeedbackComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.PoorFeedbackComments, "Grammatical errors") Grammatical errors
+                                @Html.RadioButtonFor(model => model.PoorFeedbackComments, "Too short") Too short
+                                @Html.RadioButtonFor(model => model.PoorFeedbackComments, "Too generic") Too generic
+                                @Html.RadioButtonFor(model => model.PoorFeedbackComments, "Irrelevant") Irrelevant
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CandidateInteractionQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.CandidateInteractionQuality, "Personal Information") Personal Information
+                                @Html.RadioButtonFor(model => model.CandidateInteractionQuality, "Reading questions without interacting") Reading questions without interacting
+                                @Html.RadioButtonFor(model => model.CandidateInteractionQuality, "Personal remarks") Personal remarks
+                                @Html.RadioButtonFor(model => model.CandidateInteractionQuality, "Outside scope of interview") Outside scope of interview
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LimitedHandoncoding, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.LimitedHandoncoding, "Not Check candidate competency") Not checking actual competency of candidate
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.WrongStatusUpdates, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.WrongStatusUpdates, "Marking noshow candidate as completed") Marking noshow candidate as completed
+                                @Html.RadioButtonFor(model => model.WrongStatusUpdates, "Marking not qualified candidate as selected") Marking not qualified candidate as selected
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.WeakInfrastructure, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.WeakInfrastructure, "Internet") Internet
+                                @Html.RadioButtonFor(model => model.WeakInfrastructure, "Video/Audio") Video, Audio
+                                @Html.RadioButtonFor(model => model.WeakInfrastructure, "constraints") constraints
+                                @Html.RadioButtonFor(model => model.WeakInfrastructure, "BG Noise") BG Noise
+                                @Html.RadioButtonFor(model => model.WeakInfrastructure, "Firewalls blocking") Firewalls blocking
+                                @Html.RadioButtonFor(model => model.WeakInfrastructure, "Using Mobile phones") Using Mobile phones
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ProctoringIgnorance, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.ProctoringIgnorance, "Conducting interviews while candidate video is off")  Conducting interviews while candidate video is off
+                                @Html.RadioButtonFor(model => model.ProctoringIgnorance, "Ignoring suspicious candidate") Ignoring suspicious candidate
+                                @Html.RadioButtonFor(model => model.ProctoringIgnorance, "Ignoring use of suspicious apps or chea") Ignoring use of suspicious apps or chea
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.UnethicalPractices, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.UnethicalPractices, "Bribery") Bribery
+                                @Html.RadioButtonFor(model => model.UnethicalPractices, "Biases") Biases
+                                @Html.RadioButtonFor(model => model.UnethicalPractices, "Fake reporting") Fake reporting
+                                @Html.RadioButtonFor(model => model.UnethicalPractices, "Fake interviewing") Fake interviewing
+                                @Html.RadioButtonFor(model => model.UnethicalPractices, "Impersonation") Impersonation
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv pull-left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PoorCommunicationSkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            <div style="padding-left:15px">
+                                @Html.RadioButtonFor(model => model.PoorCommunicationSkills, "Using language other than English") Using language other than English
+                                @Html.RadioButtonFor(model => model.PoorCommunicationSkills, "Unable to articulate questions") Unable to articulate questions
+                                @Html.RadioButtonFor(model => model.PoorCommunicationSkills, "Confusing candidates") Confusing candidates
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer ">
+        <div class="row">
+            <div class="col-md-12 mc-button-area">
+                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>

@@ -6150,7 +6150,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Create QCForm
-        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid,string pageStatus)
+        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid, string pageStatus)
         {
             try
             {
@@ -7760,7 +7760,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-               
+
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 BlackListCompanyVM model = new BlackListCompanyVM();
@@ -7787,6 +7787,77 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        #region Payment SLA
+        [HttpGet]
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                    if (model == null)
+                    {
+                        model = new PaymentSLAVM();
+                        model.Isedit = false;
+                    }
+                    else
+                    {
+                        model.Isedit = true;
+                    }
+                    model.Interviewer = interviewer;
+                    return PartialView(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetPaymentSlaDetails(PaymentSLAVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    model.CreatedBy = emailId;
+                    //AddOrupdate Details
+                    if (await _meetingService.AddorUpdatePaymentSLADetails(model))
+                    {
+                        return RedirectToAction("Index", "Interview");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Interview");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        #endregion
     }
 }
