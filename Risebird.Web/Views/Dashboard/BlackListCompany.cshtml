@@ -129,7 +129,9 @@
                 data: { 'CompanyName': CompanyName},
                 type: "POST",
                 success: function (data) {
-                    swal.fire(data);
+                    swal.fire(data).then(function () {
+                        location.reload(true);
+                    });
                 }
             });
         }
