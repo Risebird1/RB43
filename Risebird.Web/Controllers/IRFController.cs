@@ -6541,46 +6541,54 @@ namespace Risebird.Web.Controllers
                 //var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
 
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
-                if (model !=null && model.Count() > 0 && (model.FirstOrDefault().AvailbilityHour >= 10800 || model.FirstOrDefault().AvailbilityHour == 0))
+                if (model !=null && model.Count() > 0)
                 {
-                    await _irfService.UpdateIntervieweravailbilityDetails(irfId);
-                    var skills = await _irfService.GetTechSkillswithWeightage(irfId);
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
-                    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
-                    foreach (var item in skills)
+                    if(model.FirstOrDefault().AvailbilityHour >= 10800 || model.FirstOrDefault().AvailbilityHour == 0)
                     {
-                        sb.Append("<tr><td style='border: 1px solid black'>");
-                        sb.Append(item.SkillName);
-                        sb.Append("</td>");
-                        sb.Append("<td style='border: 1px solid black'>");
-                        sb.Append(item.Weightage);
-                        sb.Append("</td></tr>");
-                    }
-                    sb.Append("</table>");
-                    foreach (var item in model)
-                    {
-                        if (!string.IsNullOrEmpty(item.EmailId))
+                        await _irfService.UpdateIntervieweravailbilityDetails(irfId);
+                        var skills = await _irfService.GetTechSkillswithWeightage(irfId);
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
+                        sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                        foreach (var item in skills)
                         {
-                            //string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-                            //string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-
-                            var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
-                            string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
-                            string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
-                            Mail _mail = new Mail
-                            {
-                                TO = item.EmailId,
-                                Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
-                            };
-                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.FlatRate);
+                            sb.Append("<tr><td style='border: 1px solid black'>");
+                            sb.Append(item.SkillName);
+                            sb.Append("</td>");
+                            sb.Append("<td style='border: 1px solid black'>");
+                            sb.Append(item.Weightage);
+                            sb.Append("</td></tr>");
                         }
+                        sb.Append("</table>");
+                        foreach (var item in model)
+                        {
+                            if (!string.IsNullOrEmpty(item.EmailId))
+                            {
+                                //string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                                //string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+
+                                var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
+                                string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                                string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                                Mail _mail = new Mail
+                                {
+                                    TO = item.EmailId,
+                                    Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
+                                };
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.FlatRate);
+                            }
+                        }
+                        return Json("Emails sent successfully.");
                     }
-                    return Json("Emails sent successfully.");
+                    else
+                    {
+                        return Json("Emails have already been sent. Please try notifying(email) at least 24 hours after the last successful notification attempt.");
+
+                    }
                 }
                 else
                 {
-                    return Json("Emails have already been sent. Please try notifying(email) at least 24 hours after the last successful notification attempt.");
+                    return Json("No globally interviewer available in the assessment group. Emails not sent.");
                 }
             }
             catch (Exception ex)
@@ -6609,21 +6617,30 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
-                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 180)
+                //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
+                //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 180)
+                //{
+                //    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
+                //    {
+                //        return Json("Status updated successfully.");
+                //    }
+                //    else
+                //    {
+                //        return Json("Failed to update status, Please try again");
+                //    }
+                //}
+                //else
+                //{
+                //    return Json("Link Expired.");
+                //}
+
+                if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
                 {
-                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
-                    {
-                        return Json("Status updated successfully.");
-                    }
-                    else
-                    {
-                        return Json("Failed to update status, Please try again");
-                    }
+                    return Json("Status updated successfully.");
                 }
                 else
                 {
-                    return Json("Link Expired.");
+                    return Json("Failed to update status, Please try again");
                 }
             }
             catch (Exception ex)
