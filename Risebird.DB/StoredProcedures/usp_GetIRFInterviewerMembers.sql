@@ -24,7 +24,7 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
   from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId      
   join UserList ul on ul.id = ti.UserId      
   join IRF on irf.id = ti.IRFId      
-  where irf.id=@IRFId and ti.IsActive=1 and ul.IsActive=1     
+  where irf.id=@IRFId and ti.IsActive=1 and ti.IsAvailable=1 and ul.IsActive=1     
   group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,ti.IsActive,ti.IsAvailable,IRF.SendIntervieweravailbilityOn,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,ti.PerSuccessRate,IRF.JDLink,IRF.JDTiltle,IRF.InterviewDuration          
       
  insert into @commonTable       

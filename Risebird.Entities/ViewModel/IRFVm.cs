@@ -230,6 +230,8 @@ namespace Risebird.Entities.ViewModel
         public int ClientInterviewDuration { get; set; }
         public bool? IsValidIRFFromTemplate { get; set; }
 
+        public int FlatRate { get; set; }
+
     }
     public class InterviewerIds
     {
@@ -353,7 +355,8 @@ namespace Risebird.Entities.ViewModel
         //public int Surcharge { get; set; }
         public bool IsNewSkillChannel { get; set; }
         public string LogoLink { get; set; }
-
+        public int Interviewduration { get; set; }
+        public int FlatRate { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {
