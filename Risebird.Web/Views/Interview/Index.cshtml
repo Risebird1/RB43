@@ -838,18 +838,19 @@
                                                             }
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
-                                                                @if (item.IsInterviewerOnline == 1)
+                                                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation ==1)
                                                                 {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
+                                                                    <td style="outline:2px solid Gold;">
+                                                                        @item.interviewer
                                                                     </td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>
+                                                                     <td>
                                                                         @item.interviewer
                                                                     </td>
                                                                 }
+                                                                
                                                             }
                                                             else
                                                             {

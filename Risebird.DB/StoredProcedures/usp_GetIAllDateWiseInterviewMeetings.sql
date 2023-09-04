@@ -39,7 +39,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId    
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,  
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,  
-  im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,  
+  im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner, itp.VideoConfirmation, 
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment    
   from  InterviewMeetings im                              
   inner join IRF on im.IRFId = IRF.IRFId                              
@@ -81,7 +81,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId    
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,  
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,  
-  im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,  
+  im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,  itp.VideoConfirmation, 
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment   
   from InterviewMeetings im                              
   inner join IRF on im.IRFId = IRF.IRFId                              
@@ -123,7 +123,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId    
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,  
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,  
-  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,  
+  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,  itp.VideoConfirmation, 
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment   
   from InterviewMeetings im                              
   inner join IRF on im.IRFId = IRF.IRFId            
@@ -165,7 +165,7 @@ else
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId     
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,  
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,  
-  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,  
+  im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,  itp.VideoConfirmation, 
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment    
   from InterviewMeetings im                              
   inner join IRF on im.IRFId = IRF.IRFId                              
