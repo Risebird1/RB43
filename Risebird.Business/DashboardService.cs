@@ -659,13 +659,25 @@ namespace Risebird.Business
         {
             try
             {
-                await _dashboardRespository.UndoBlackListCompany(model);
+                await _dashboardRespository.ApprovedBlackListCompany(model);
                 return true;
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<List<QCFormVM>> GetRedFlagsQCReportService(int Interviewid)
+        {
+            try
+            {
+                return await _dashboardRespository.GetRedflagsQcReportRepository(Interviewid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
