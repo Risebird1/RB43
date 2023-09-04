@@ -58,6 +58,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @HRBulkData AS [dbo].[TransHR_TableType] READONLY,
 --@FixedAmount int = null,
 @IsNewSkillChannel bit = null,
+@FlatRate int,
 @idIrf int output            
             
 AS            
@@ -101,6 +102,7 @@ Begin
 				   ,[IsMeetingAutoCancelled]
 				   ,[IsMeetingNotificationSend]
 				   ,[IsNewSkillChannel]
+				   ,[FlatRate]
 				   )
 				   --,[InterviewDuration]
 				   --,[IsFixedInterviewduration]
@@ -138,7 +140,8 @@ Begin
 				   @IsCandidateavailability,
 				   @IsMeetingAutoCancelled,
 				   @IsMeetingNotificationSend,
-				   @IsNewSkillChannel
+				   @IsNewSkillChannel,
+				   @FlatRate
 				   )
 				   --@InterviewDuration,
 				   --@IsFixedInterviewduration,
