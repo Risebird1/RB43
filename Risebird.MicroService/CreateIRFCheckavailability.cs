@@ -36,7 +36,7 @@ namespace Risebird.MicroService
         [FunctionName("CreateIRFCheckavailability")]
         public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"CreateIRFCheckavailability : C# Timer trigger function started executing  at: {DateTime.Now}");
             try
             {
                 var IRFList = await _irfService.GetAllNewCreatedIRFs();
@@ -151,6 +151,9 @@ namespace Risebird.MicroService
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+
+            log.LogInformation($"CreateIRFCheckavailability : C# Timer trigger function completed execution at: {DateTime.Now}");
+
         }
     }
 }
