@@ -203,6 +203,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AssessmentGroupInterviewers>> GetAssessmentGroupInterviewerMembersForSME(int Assessmentid);
         Task<bool> AddUpdateAssessmentGroupSMEInterviewer(IList<AssessmentGroupInterviewers> interviewers);
         Task<IEnumerable<IRF>> GetAllNewCreatedIRFs();
+        Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null);
         Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId);
         Task<IEnumerable<IRFClientReviewVM>> GetIRFClientReviews(int irfId);
         Task<CommonInterviewDetailsVM> GetIRFBillingOwnerById(int irfId);

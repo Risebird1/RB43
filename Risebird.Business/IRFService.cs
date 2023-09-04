@@ -31,18 +31,17 @@ namespace Risebird.Business
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly ICandidateRepository _candidateRepository;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
-        private readonly ISkillService _skillService;
+        //private readonly ISkillService _skillService;
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
-        private readonly IClientRepository _clientRepository;
+        //private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
             INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration,
             IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper,
             ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository,
-            IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService,
-            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository,
-            IClientRepository clientRepository, IUserRepository userRepository)
+            IInterviewSchedulerRepository interviewSchedulerRepository,
+            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IUserRepository userRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -55,9 +54,9 @@ namespace Risebird.Business
             _calendlyHelper = calendlyHelper;
             _candidateRepository = candidateRepository;
             _interviewSchedulerRepository = interviewSchedulerRepository;
-            _skillService = skillService;
+            //_skillService = skillService;
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
-            _clientRepository = clientRepository;
+            //_clientRepository = clientRepository;
             _userRepository = userRepository;
         }
 
@@ -67,13 +66,57 @@ namespace Risebird.Business
             try
             {
                 irfDetails.IRFId = irfDetails.IRFId.Trim();
-                irfDetails.CreatedOn = DateTime.UtcNow;
+                irfDetails.CreatedOn = DateTime.Now; // DateTime.UtcNow;
                 irfDetails.CreatedBy = loggedInUser;
                 //irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
+                    //if(!string.IsNullOrEmpty(irfDetails.AssessmentGroupId))
+                    //{
+                    //    //List<string> interviewers = new List<string>();
+                    //    var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irfDetails.AssessmentGroupId));
+
+                    //    //send notification to all interviewers of the assessment group to check for their availability and note down the time
+
+
+                    //    StringBuilder sb = new StringBuilder();
+                    //    sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
+                    //    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                    //    foreach (var item in irfDetails.SkillCollection)
+                    //    {
+                    //        sb.Append("<tr><td style='border: 1px solid black'>");
+                    //        sb.Append(item.SkillName);
+                    //        sb.Append("</td>");
+                    //        sb.Append("<td style='border: 1px solid black'>");
+                    //        sb.Append(item.Weightage);
+                    //        sb.Append("</td></tr>");
+                    //    }
+
+                    //    foreach (var item in interviewers)
+                    //    {
+                    //        var encryptedDate = _encryptionHelper.EncryptDateTime(DateTime.Now);
+                    //        if (!string.IsNullOrEmpty(item.EmailId))
+                    //        {
+
+                    //            string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                    //            string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                    //            Mail _mail = new Mail
+                    //            {
+                    //                TO = item.EmailId,
+                    //                Subject = "Risebird: Availbility check for Skill Channel " + irfDetails.IRFId + " Interviews"
+                    //            };
+
+                    //            var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), irfDetails.IRFId, irfDetails.JDLink, 0);
+                    //        }
+
+                    //    }
+                        
+
+                    //    //await _notificationHelper.SendEmailCheckingInterviewerAvailability(smeEmail, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
+
+                    //}
                     if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
                     {
                         //send notification to the sme here
@@ -3305,6 +3348,20 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.GetAllIRFAssessmentInterviewerMembers(irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null)
+        {
+            try
+            {
+                return await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId, irfId);
             }
 
             catch (Exception e)

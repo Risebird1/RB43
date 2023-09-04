@@ -8,7 +8,7 @@
 @{
     ViewData["Title"] = "Candidates Status";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
@@ -107,8 +107,8 @@
     }
 
     /*.mob_h {
-                                                display: none !important
-                                            }*/
+  display: none !important
+     }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -118,50 +118,80 @@
     }
 </style>
 
-<script>
-    var Header = "<a id='status_1'>Candidates Status</a>";
-    $('#txtpageHeader').empty().html(Header);
-</script>
+
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
 <div id="main-panel">
-    <div class="jumbotron">
-        <div class="pt30 videocon">
+    <div>
+        <div class="pt30 videocon" style="margin-top:40px;">
             <div class="col-md-12 nopad">
-                <div class="card-header bg-w clearfix">
+                <div class="card-header bg-w clearfix fixed-header" style="border-bottom: 4px solid #844fc1;">
                     <img style="visibility:hidden" src="" data-position="right" />
                     <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
-                    <div class="pull-left risetubeheader">
-                        <h4 class="card-title"></h4>
+                    <div class="pull-left clientlogoarea">
+                           @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
+            {
+                <img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+            }
+            else
+            {
+                <img src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />
+            }
 
-                        <div class="mobile-view"> <h4 class="card-title risetubeid">Journey</h4></div>
+                        <div class="mobile-view"> <h4 class="card-title risetubeid"></h4></div>
                     </div>
 
                     <div class="pull-right">
                         <div>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
+                            <div class="topheader-link-wrap">
+          
+                            <button type="button"  data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
+                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true"></i></span>
+                                <div class="d-lg-inline-flex pad7">
+                                    Skill Channel Stats
+                                </div>
+                            
                             </button>
                             @if (ViewBag.ClientRole != "Client Admin")
                             {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                                     <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
-                                </button>
+                                </button>*@
                                 @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
                             <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
                             </button>*@
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                               @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                     <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
-                                </button>
+                                </button>*@
                                 @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                             <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
                             </button>*@
                             }
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+
+
+                         @*   <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
+                            </button>*@
+
+                            <button type="button"  data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;">
+                                <span class="topheader-link"><i class="fa fa-users"></i></span>
+                                <div class="d-lg-inline-flex pad7">
+                                    Manage Interviews
+                                </div>
+
                             </button>
+
+                            </div>
+
+
+                        @if (ViewBag.ClientName != "FoundIt (Monster.com)")
+                        {
+                            <div class="note-filter" style="text-align: right;width:auto;float:left;padding:10px 15px;"> Note: To visualize data older and greater than 15 days, please apply filter</div>
+                        }
+
                             <span>
+
                                 <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -175,10 +205,7 @@
 
 
                     </div>
-                    @if(ViewBag.ClientName != "FoundIt (Monster.com)")
-                    {
-                        <div class="note-filter" style="text-align: right;"> Note: To visualize data older and greater than 15 days, please apply filter</div>
-                    }
+                   
                 </div>
             </div>
         </div>
@@ -324,34 +351,37 @@
 
                                                 <div class="col-sm-12 nopad">
 
-                                                    <div class="table-responsive scrollbar style-2" style="overflow-x:scroll" @*id="style-2"*@>
+                                                    <div class="table-responsive scrollbar style-2  mtop-h" style="overflow-x:scroll" @*id="style-2"*@>
                                                         <table id="candidateTable" class="table table-striped table-bordered dataTable journey" cellspacing="0" width="100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="text-left">Candidate</th>
+                                                                    <th class="text-left">Candidate Details</th>
                                                                     <th class="text-left">Interview Date</th>
-                                                                    <th id="status_4" class="text-left">JD Title</th>
-                                                                    <th id="status_8">Current Status</th>
-                                                                    <th>Client Hr</th>
-                                                                    <th>Staffing Agency</th>
-                                                                    <th title="Communication attempts count">Risebird Communications</th>
-                                                                    @*<th>Interviewer</th>*@
-                                                                    <th>Action</th>
                                                                     <th id="status_9">Report</th>
+                                                                    @*<th id="status_4" class="text-left">JD Title</th>*@
+                                                                 @*   <th id="status_8">Current Status</th>*@
+                                                                   @* <th>Client Hr</th>*@
+                                                                   @* <th>Staffing Agency</th>*@
+                                                                   <th>Action</th>
+                                                                    <th title="Communication attempts count">Communications</th>
+                                                                    @*<th>Interviewer</th>*@
+                                                                    
+                                                                   
                                                                 </tr>
                                                             </thead>
                                                             <tfoot>
                                                                 <tr>
-                                                                    <th class="text-left">Candidate</th>
+                                                                    <th class="text-left">Candidate Detail</th>
                                                                     <th class="text-left">Interview Date</th>
-                                                                    <th class="text-left">JD Title</th>
-                                                                    <th>Current Status</th>
-                                                                    <th>Client Hr</th>
-                                                                    <th>Staffing Agency</th>
-                                                                    <th title="Communication attempts count">Risebird Communications</th>
-                                                                    @*<th>Interviewer</th>*@
-                                                                    <th>Action</th>
                                                                     <th>Report</th>
+                                                                    @*<th class="text-left">JD Title</th>*@
+                                                               @*     <th>Current Status</th>*@
+                                                                   @* <th>Client Hr</th>*@
+                                                                   @* <th>Staffing Agency</th>*@
+                                                                    <th>Action</th>
+                                                                    <th title="Communication attempts count">Communications</th>
+                                                                   
+                                                                    
 
                                                                 </tr>
                                                             </tfoot>
@@ -366,56 +396,140 @@
                                                                 }*@
                                                                     <tr style="background-color:@backcolor">
                                                                         <td class="cadName text-left pl15">
+                                                                            <div class="candidate-field">
+                                                                                <span class="pull-left">
                                                                             @if (item.CandidateName != null && item.CandidateName != "")
                                                                             {
-                                                                                @if (item.CandidateName.Length > 20)
+                                                                                @if (item.CandidateName.Length > 15)
                                                                                 {
                                                                                     @if (item.reportcount > 1)
                                                                                     {
-                                                                                        <p style="font-size:11px" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ... <span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:18px;color:red"></span></p>
+                                                                                        <p class="name-field" title="@item.CandidateName"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName.Substring(0, 15) ... </p>
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <p style="font-size:11px" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ... </p>
+                                                                                        <p class="name-field" title="@item.CandidateName"> @item.CandidateName.Substring(0, 15) ... </p>
                                                                                     }
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     @if (item.reportcount > 1)
                                                                                     {
-                                                                                        <p style="font-size:11px"> @item.CandidateName <span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:18px;color:red"></span></p>
+                                                                                        <p class="name-field"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName </p>
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <p style="font-size:11px"> @item.CandidateName </p>
+                                                                                        <p class="name-field">@item.CandidateName </p>
                                                                                     }
                                                                                 }
                                                                             }
+                                                                            </span><span class="pull-left">
+
+
+                                                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                        {
+
+                                                                            @if (item.PrimarySkill.Length > 22)
+                                                                            {
+                                                                                <p class="cadEmail text-left">
+                                                                                    <a class="pskill" data-tooltip="@item.PrimarySkill">( @item.PrimarySkill.Substring(0, 22) ...)</a>
+                                                                                </p>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <p class="text-left">
+                                                                                    <a class="pskill">(@item.PrimarySkill)</a>
+                                                                                </p>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p></p>
+                                                                        }
+                                                                        </span>
+                                                                        </div>
+
+
+                                                                            <div class="candidate-field">
+                                                                                @if (item.CurrentStatus == "Selected")
+                                                                                {
+                                                                                    <p class="current selected">@item.CurrentStatus</p>
+                                                                                }
+
+                                                                                else if (item.CurrentStatus == "Rejected")
+                                                                                {
+                                                                                    <p class="current rejected">@item.CurrentStatus</p>
+                                                                                }
+                                                                                else if (item.CurrentStatus == "Scheduled")
+                                                                                {
+                                                                                    <p class="current scheduled">@item.CurrentStatus</p>
+                                                                                }
+                                                                                 else if (item.CurrentStatus == "Cancelled")
+                                                                                {
+                                                                                    <p class="current cancelled">@item.CurrentStatus</p>
+                                                                                }
+                                                                                else if (item.CurrentStatus == "No Show(Candidate)")
+                                                                                {
+                                                                                    <p class="current noshowcandidate">@item.CurrentStatus</p>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <p>@item.CurrentStatus</p>
+                                                                                }
+
+
+                                                                    </div>
+                                                                             <div class="candidate-field">
                                                                             @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
                                                                             {
-                                                                                @if (item.CandidateEmailId.Length > 20)
+                                                                                @if (item.CandidateEmailId.Length > 30)
                                                                                 {
-                                                                                    <p style="font-size:11px" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 19) ...</p>
+                                                                                    <p class="email-field" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 30) ...</p>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <p style="font-size:11px"> @item.CandidateEmailId </p>
+                                                                                    <p class="email-field">Email: @item.CandidateEmailId </p>
                                                                                 }
                                                                             }
-                                                                            <p style="font-size:11px" hidden> @item.CandidateEmailId </p>
+                                                                                <p class="email-field" hidden>Email: @item.CandidateEmailId </p>
+                                                                            </div>
+                                                                             <div class="candidate-field">
+                                                                            <p>Client Hr:@item.HREmail</p>
+                                                                            </div>
                                                                         </td>
                                                                         @if (item.interviewDate != DateTime.MinValue)
                                                                         {
-                                                                            <td class="cadEmail text-left pl15">
-                                                                                @item.interviewDate
+                                                                            <td class="cadEmail text-left">
+                                                                                <span class="int-datetime"> @item.interviewDate</span>
                                                                             </td>
                                                                         }
                                                                         else
                                                                         {
                                                                             <td></td>
                                                                         }
+                                                                        <td>
+                                                                            @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
+                                                                            {
+                                                                                @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
+                                                                                <a style="text-decoration:none;" target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
+                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                        </button>
+                                                                        </a>
+                                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
+                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
+                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                    </button>
+                                                                                </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <p>No Report</p>
+                                                                            }
+                                                                        </td>
 
-                                                                        @if (item.PrimarySkill != null && item.PrimarySkill != "")
+
+                                                       @*                 @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                                         {
 
                                                                             @if (item.PrimarySkill.Length > 15)
@@ -434,78 +548,52 @@
                                                                         else
                                                                         {
                                                                             <td></td>
-                                                                        }
-                                                                        <td>
+                                                                        }*@
+                                                                     @*   <td>
                                                                             @if (item.CurrentStatus == "Selected")
                                                                             {
-                                                                                <p class="select">@item.CurrentStatus</p>
+                                                                                <p class="selected">@item.CurrentStatus</p>
                                                                             }
 
                                                                             else if (item.CurrentStatus == "Rejected")
                                                                             {
-                                                                                <p class="reject">@item.CurrentStatus</p>
+                                                                                <p class="rejected">@item.CurrentStatus</p>
                                                                             }
                                                                             else
                                                                             {
                                                                                 <p>@item.CurrentStatus</p>
                                                                             }
-                                                                        </td>
-                                                                        <td>@item.HREmail</td>
+                                                                        </td>*@
+                                                                       @* <td>@item.HREmail</td>*@
                                                                         @*<td>@item.staffingAgency</td>*@
-                                                                        <td>@item.ProfileSource</td>
+                                                                        @*<td>@item.ProfileSource</td>*@
                                                                         <td>
-                                                                            @if (item.MailCount != 0)
-                                                                            {
-                                                                                <div class="row">
-                                                                                    <a href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
-                                                                                        Emails :  @item.MailCount
-                                                                                    </a>
-                                                                                </div>
-                                                                            }
-                                                                            @if (item.CallsCount != 0)
-                                                                            {
-                                                                                <div class="row">
-                                                                                    <a href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
-                                                                                        Voice Calls : @item.CallsCount
-                                                                                    </a>
-                                                                                </div>
-                                                                            }
 
-                                                                            @if (item.WhatsappCount != 0)
-                                                                            {
-                                                                                <div class="row">
-                                                                                    <a href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
-                                                                                        Whatsapp Messages : @item.WhatsappCount
-                                                                                    </a>
-                                                                                </div>
-                                                                            }
-
-                                                                        </td>
-                                                                        @*<td>@item.NickName</td>*@
-                                                                        <td>
+                                                                            <!---client buttons-->
+                                                                            <div>
                                                                             @if (item.CurrentStatus != "Scheduled")
                                                                             {
                                                                                 @*<button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                         </button>*@
-                                                                                <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
-                                                                                    <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                                <a target="_blank" class="btn btn-primary shadow btn-xs sharp me-1 item4 item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="cursor: pointer;">
+                                                                                    <span title="Schedule Meeting"><span class="fas fa-calendar"></span></span>
                                                                                 </a>
                                                                             }
                                                                             <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
-                                                                                <span class="btn-call" style="top: -7px; position: relative;cursor: pointer;" title="Send Invite"><span class="fa fa-send"></span></span>
+                                                                                <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send"></span></span>
                                                                             </span>
                                                                             @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
                                                                             {
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fa fa-close"></span></span></span>
+                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fas fa-close"></span></span></span>
                                                                             }
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
                                                                             }
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status" style="position:relative;top:4px;border:5px dashed cyan">
-                                                                                <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                            <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Candidate Status">
+                                                                                <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                             @*<button aria-label="Rate Interviewer" style="border:0px;background:none">
@@ -520,17 +608,12 @@
                                                                                     allowClientAction = true;
                                                                                 }
                                                                             }
-                                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Rate Interviewer" style="top:2px"
-                                                                                data-toggle="ajax-modal" data-target="#addComment"
-                                                                                data-interviewdate="@item.interviewDate"
-                                                                                data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
-                                                                                <span title="Rate Interviewer" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-star"></i></span>
-                                                                            </button>
+                                                                           
                                                                             @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
                                                                             {
-                                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
-                                                                                    <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.InterviewId, interviewer = item.Interviewer,type="ClientPublic",uniqueid=ViewBag.id })'" title="QC Form" class="mdc-fab__icon material-icons">
-                                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                                <button class="btn btn-primary shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="QC Form">
+                                                                                    <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.InterviewId, interviewer = item.Interviewer,type="ClientPublic",uniqueid=ViewBag.id })'" title="QC Form">
+                                                                                        <i class="far fa-comment-dots"></i>
                                                                                     </span>
                                                                                 </button>
                                                                             }
@@ -545,27 +628,65 @@
                                                                         </span>
                                                                         </button>
                                                                         }*@
+                                                                            </div>
+                                                                            <!---interviewer buttons-->
+                                                                            <div class="mt-10">
+                                                                                <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
+                                                                                    data-toggle="ajax-modal" data-target="#addComment"
+                                                                                    data-interviewdate="@item.interviewDate"
+                                                                                    data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
+                                                                                <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
+                                                                            </button>
+                                                                                @if (string.IsNullOrWhiteSpace(item.CompanyName))
+                                                                                {
+                                                                                    <span>
+                                                                                        <button class="btn btn-secondary shadow btn-xs sharp me-1" aria-label="Suspicious Interviwer">
+                                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.InterviewId');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                        </button>
+                                                                                    </span>
+
+                                                                                }
+                                                                                
+                                                                            </div>
                                                                         </td>
                                                                         <td>
-                                                                            @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
+                                                                            @if (item.MailCount != 0)
                                                                             {
-                                                                                @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
-                                                                               @* <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
-                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                                    </button>
-                                                                                </a>*@
-                                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
-                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                                    </button>
-                                                                                </a>
+                                                                                <div class="row">
+                                                                                    <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                                                                        <a class="icon-link" href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                       @item.MailCount
+                                                                                    </a></span>
+                                                                                </div>
                                                                             }
-                                                                            else
+                                                                            @if (item.CallsCount != 0)
                                                                             {
-                                                                                <p>No Report</p>
+                                                                                <div class="row">
+                                                                                    <span class="icon-field">
+                                                                                        <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
+                                                                                    </span>   <span class="icon-field">
+                                                                                        <a class="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                       @item.CallsCount
+                                                                                    </a></span>
+                                                                                </div>
                                                                             }
+
+                                                                            @if (item.WhatsappCount != 0)
+                                                                            {
+                                                                                <div class="row">
+                                                                                    <span class="icon-field">
+                                                                                        <img class="icon wp" src="~/img/whatsapp.png" />   Whatsapp Messages :
+                                                                                    </span>  <span class="icon-field">
+                                                                                        <a class="icon-link" href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                        @item.WhatsappCount
+                                                                                    </a></span>
+                                                                                </div>
+                                                                            }
+
                                                                         </td>
+                                                                        @*<td>@item.NickName</td>*@
+                                                                       
+                                                                      
                                                                     </tr>
                                                                 }
                                                             </tbody>
@@ -632,6 +753,7 @@
 </div>
 
 @await Html.PartialAsync("~/Views/Interview/WhatsAppPopup.cshtml")
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 <script src="~/js/WhatsAppPopup.js"></script>
 
 <div id="myModal" class="modal modal-bg">
@@ -716,15 +838,15 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="fa fa-link"></span>
+                    <span class="fa fa-list"></span>
                 </div>
-                <h5 class="modal-title pull-left" id="filterModalLabel"> Status List &nbsp;<label id="txtIRFID"></label>&nbsp;(<label id="txtcandidatename"></label>) </h5>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Status List For &nbsp;<label style="color:green" id="txtcandidatename"></label>&nbsp;(<label id="txtIRFID"></label>) </h5>
             </div>
 
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyStatusListpopup()">
                 <span aria-hidden="true">×</span>
             </button>
-            <div class="modal-body">
+            <div class="modal-body" style="margin-bottom:0px;">
                 <div class="col-md-12">
                     <div class="scrollbox">
                         <div class="table-responsive">
@@ -743,11 +865,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 text-right clearfix">
-                    <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
-                </div>
+                
             </div>
+              <div class="modal-footer"><div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                </div></div>
         </div>
+      
     </div>
 </div>
 <div id="myRaitingPopup" class="modal modal-wrap modal-bg">
@@ -1245,16 +1369,25 @@
                 html += '    <td style="color:green;font-weight:500"> ' + data[i].statusValue + '</td>';
             }
             else if (data[i].statusValue == "New") {
-                html += '<td style="color: dodgerblue;font-weight: 500">' + data[i].statusValue + '</td>';
+                html += '<td><span class="current new">' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "Waiting For Response") {
                 html += '<td style="color: orange;font-weight: 500"> ' + data[i].statusValue + '</td>';
             }
             else if (data[i].statusValue == "Scheduled") {
-                html += '<td style="color: deepskyblue;font-weight: 500">' + data[i].statusValue + '</td>';
+                html += '<td><span class="current scheduled">' + data[i].statusValue + '</span></td>';
+            }
+             else if (data[i].statusValue == "Added") {
+                html += '<td><span class="current added">' + data[i].statusValue + '</span></td>';
+            }
+             else if (data[i].statusValue == "Cancelled") {
+                html += '<td><span class="current cancelled">' + data[i].statusValue + '</span></td>';
+            }
+            else if (data[i].statusValue == "No Show(Candidate)") {
+                html += '<td><span class="current noshowcandidate">' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "Irrelevant") {
-                html += '<td style="color:orange"> ' + data[i].statusValue + '</td>';
+                html += '<td><span class="current irrelevant"> ' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "Duplicate") {
                 html += '<td style=" color: hotpink;font-weight: 500">' + data[i].statusValue + '</td>';
@@ -1274,10 +1407,10 @@
             html += '<td><div>';
             if (data[i].comments != null && data[i].comments.Length > 18) {
 
-                html += '  <a href="#" data-tooltip="' + data[i].comments + '"><textarea style=" height: 50px;border: 0px; font-size: 14px;width: 100%;resize: none;">' + data[i].comments + '</textarea></a>';
+                html += '  <a href="#" data-tooltip="' + data[i].comments + '"><textarea style=" height: 50px; background:none; border:0px; font-size: 13px!important;width: 100%;resize: none;">' + data[i].comments + '</textarea></a>';
             }
             else {
-                html += ' <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">' + data[i].comments + '</textarea>';
+                html += ' <textarea style=" height: 50px;width: 100%;font-size: 13px!important;resize: none; background:none; border:0px;">' + data[i].comments + '</textarea>';
             }
             html += '</div></td>';
             html += '<td>';
@@ -1288,7 +1421,7 @@
                     html += '<span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
                     html += '</button></a>';
                     html += '<a target="_blank" href="/Interview/ClientReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true">';
-                    html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" >';
+                    html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" style="margin-left:5px;" >';
                     html += '<span title="Client Interview Report" class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class="bi bi-file-earmark-ruled" viewBox = "0 0 16 16" > <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /> </svg></span>';
                     html += '</button></a>';
                 }
@@ -1435,3 +1568,13 @@
     })(jQuery);
 </script>
 <script src="~/js/filtervalidation.js"></script>
+
+<script>
+    $(window).scroll(function () {
+        var sticky = $('.fixed-header'),
+            scroll = $(window).scrollTop();
+
+        if (scroll >= 80) sticky.addClass('fixedtop');
+        else sticky.removeClass('fixedtop');
+    });
+</script>

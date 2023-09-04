@@ -169,6 +169,8 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
         Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
+
+        Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid);
         string SetInterviewerAvailability(int transid, int isavailable);
         Task<List<InterviewerRating>> FetchFeedbackDetails();
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);

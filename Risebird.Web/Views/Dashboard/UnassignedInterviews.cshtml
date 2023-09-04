@@ -251,6 +251,7 @@
                                                     {
                                                         <th>Who Joined</th>
                                                         <th>Meeting Link</th>
+                                                        
                                                     }
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
                                                     {
@@ -277,7 +278,7 @@
                                                     //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
@@ -292,11 +293,7 @@
                                                     {
                                                         <th>Client Name</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                    {
-                                                        <th>Client HR</th>
-                                                        <th>Client HR Contact</th>
-                                                    }
+                                                  
                                                     @if (ViewBag.actionstatus == "QCReport")
                                                     {
                                                         <th>Red Flags</th>
@@ -461,7 +458,7 @@
                                                     //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
@@ -475,11 +472,7 @@
                                                     {
                                                         <th>Client Name</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                    {
-                                                        <th>Client HR</th>
-                                                        <th>Client HR Contact</th>
-                                                    }
+                                                  
                                                     @if (ViewBag.actionstatus == "QCReport")
                                                     {
                                                         <th>Red Flags</th>
@@ -664,7 +657,10 @@
                                                                                 <p class="moretext_@item.Interviewid moretext">
                                                                                     @item.WhoJoined.Substring(30, @item.WhoJoined.Length - 30)
                                                                                 </p>
+                                                                                                                                                            <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
+
                                                                             </div>
+
                                                                         }
                                                                         else
                                                                         {
@@ -679,13 +675,12 @@
                                                                     {
                                                                         <div></div>
                                                                     }
-                                                                    <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 @if (!string.IsNullOrWhiteSpace(item.zoomLink))
                                                                 {
-                                                                    <a href=@item.zoomLink>Meeting link</a>
+                                                                    <a target="_blank" href=@item.zoomLink>Meeting link</a>
                                                                 }
                                                             </td>
                                                         }
@@ -695,7 +690,7 @@
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
-                                                            <td>@item.MobileNumber</td>
+                                                            <td>@item.MobileNumber </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "NeedClarity")
                                                         {
@@ -736,7 +731,7 @@
                                                         //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                             {
-                                                                @if (ViewBag.actionstatus != "NeedClarity")
+                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink")
                                                                 {
                                                                     @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                                     {
@@ -773,14 +768,20 @@
                                                         {
                                                             <td>@item.Name</td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
-                                                        {
-                                                            <td>@item.ClientHrContact</td>
-                                                            <td>@item.ClientMobileNumber</td>
-                                                        }
+                                                      
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
-                                                            <td>@item.Redflags</td>
+                                                            @if (item.Redflags > 0)
+                                                            {
+
+                                                                <td><a onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>0</td>
+                                                                
+                                                            }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
@@ -799,13 +800,20 @@
                                                             <td class="meeting-detail-icon">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                     <span onclick="javascript:FetchHistory('@item.ZoomMeetingId');" title="Meeting Details" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
                                                                             <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z" />
                                                                             <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z" />
                                                                             <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z" />
                                                                         </svg>
                                                                     </span>
                                                                 </button>
+
+                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members" style="position:relative;top:-3px;">
+                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
+                                                                            <i class="fas fa-users fa-xs" style="font-size: 13px;"></i>
+                                                                        </span>
+                                                                    </button>
+                                                              
                                                             </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount")
@@ -1160,12 +1168,22 @@
                                                             <td class="meeting-detail-icon">
                                                                 <span class="interview_4">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
-                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
+                                                                            <i class="fas fa-users fa-xs" style="font-size: 13px;"></i>
+                                                                        </span>
                                                                     </button>
                                                                 </span>
+
+                                                                @if (ViewBag.actionstatus == "InterviewCount")
+                                                                {
+
+                                                                    <div class="mdc-fab app-fab--absolute">
+                                                                        <span class="interviewresponsebtn" onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                    </div>
+                                                                }
                                                             </td>
                                                         }
-
+                                                     
 
                                                         @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))
                                                     {
@@ -1316,6 +1334,30 @@
         </div>
     </div>
 </div>
+
+<div id="RedFlagModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Red Flag</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="RedFlagPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="RedFlagTableBody">
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
@@ -1638,6 +1680,75 @@
     }
 </script>
 
-
+<script>
+        var closeRedFlag = document.getElementById("RedFlagPopUp");
+    closeRedFlag.onclick = function () {
+        var modal = document.getElementById("RedFlagModal");
+        modal.style.display = "none";
+    }
+    function GetRedFlagsModal(Interviewid) {
+       
+        if (Interviewid != '') {
+            $.ajax({
+                url: '/DashBoard/GetRedFlagsQCReport',
+                data: {'Interviewid': Interviewid },
+                success: function (data) {
+                    var modal = document.getElementById("RedFlagModal");
+                    modal.style.display = "block";
+                    $('#RedFlagTableBody').html('');
+                    $('#RedFlagTableBody').html(data);
+                }
+            });
+        }
+       
+    }
+</script>
+<script>
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting and reschedule?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reschedule!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interview/GenerateRescheuleLink',
+                        method: 'POST',
+                        data: {
+                            'CandidateEmailid': candidateEmailid,
+                            'interviewid': interviewid,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid
+                        },
+                        success: function (result) {
+                            location.href = result;
+                            //window.open(result, '_blank');
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error rescheduling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                //location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'reschedule cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
 <script src="~/js/twiliocallmaker.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
