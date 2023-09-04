@@ -3357,11 +3357,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId)
+        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null)
         {
             try
             {
-                return await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId);
+                return await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId, irfId);
             }
 
             catch (Exception e)

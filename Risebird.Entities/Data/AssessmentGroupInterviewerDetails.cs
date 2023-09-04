@@ -8,7 +8,7 @@ namespace Risebird.Entities.Data
 {
     public class AssessmentGroupInterviewerDetails 
     {
-        //public int IRFId { get; set; }
+        public int IRFId { get; set; }
 
         public string EmailId { get; set; }
         
@@ -18,6 +18,9 @@ namespace Risebird.Entities.Data
         public int Assessmentid { get; set; }
         
         //public int PerSuccessRate { get; set; }
+        public string JDLink { get; set; }
+        public int AvailbilityHour { get; set; }
+        public int FlatRate { get; set; }
         
         
     }

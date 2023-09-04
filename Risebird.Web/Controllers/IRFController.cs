@@ -6536,12 +6536,12 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = await _irfService.GetAllIRFAssessmentInterviewerMembers(irfId);
-                //var model = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId);
+                //var model = await _irfService.GetAllIRFAssessmentInterviewerMembers(irfId);
+                var model = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId, irfId);
                 //var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
 
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
-                if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)
+                if (model !=null && model.Count() > 0 && (model.FirstOrDefault().AvailbilityHour >= 10800 || model.FirstOrDefault().AvailbilityHour == 0))
                 {
                     await _irfService.UpdateIntervieweravailbilityDetails(irfId);
                     var skills = await _irfService.GetTechSkillswithWeightage(irfId);
@@ -6565,7 +6565,7 @@ namespace Risebird.Web.Controllers
                             //string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
                             //string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
 
-                            var encryptedDate = _encryptionHelper.EncryptDateTime(DateTime.Now);
+                            var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
                             string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
                             string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
                             Mail _mail = new Mail
@@ -6573,7 +6573,7 @@ namespace Risebird.Web.Controllers
                                 TO = item.EmailId,
                                 Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
                             };
-                            var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.PerSuccessRate);
+                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.FlatRate);
                         }
                     }
                     return Json("Emails sent successfully.");

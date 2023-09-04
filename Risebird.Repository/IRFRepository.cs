@@ -6964,7 +6964,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId)
+        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null)
         {
             try
             {
@@ -6972,7 +6972,8 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@assessmentGroupId", assessmentGroupId);
-                    //parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<AssessmentGroupInterviewerDetails>(con, "usp_GetAvailableAssessmentGroupInterviewerMembers", parameters,
                          commandType: CommandType.StoredProcedure);
                 }

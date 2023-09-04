@@ -136,7 +136,7 @@ namespace Risebird.Business.Interface
         Task<string> UpdateIRFRedFlags();
         Task<IEnumerable<InterviewDetailsVM>> GetSkillChannelStatsDetails(int irfid, string type);
 
-        Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId);
+        Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null);
 
 
     }
