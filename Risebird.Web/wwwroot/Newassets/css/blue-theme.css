@@ -50,7 +50,7 @@ body {
     }
 
 .client .table-bordered td {
-    border-right: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e65e!important;
 }
 
 .can-details a, .callatag {
@@ -385,7 +385,7 @@ textarea::-webkit-scrollbar {
 }
 
 #myStatusListpopup .table-bordered td {
-    border: 1px solid #dee2e6;
+    border: 1px solid #dee2e65e;
     BACKGROUND: #FFF;
     PADDING: 0PX 10PX;
 }
@@ -393,7 +393,7 @@ textarea::-webkit-scrollbar {
     #myStatusListpopup .table-bordered td textarea {
         margin: 5PX;
         background: #fff;
-        border: 1px solid #dee2e6;
+        border: 1px solid #dee2e65e;
     }
 
 .assessment h1 {
@@ -437,7 +437,7 @@ textarea::-webkit-scrollbar {
 }
 
 .table-bordered {
-    border: 1px solid #dee2e6 !important;
+    border: 1px solid #dee2e65e !important;
 }
 
 .video-card {
@@ -717,10 +717,10 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 #QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
-    border-right: 1px solid #dee2e6 !important;
-    border-left: 0px solid #dee2e6 !important;
-    border-top: 1px solid #dee2e6 !important;
-    border-top: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e65e !important;
+    border-left: 0px solid #dee2e65e !important;
+    border-top: 1px solid #dee2e65e !important;
+    border-top: 1px solid #dee2e65e !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {

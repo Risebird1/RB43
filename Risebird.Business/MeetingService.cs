@@ -3307,6 +3307,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid)
+        {
+            try
+            {
+                return await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public string SetInterviewerAvailability(int transid, int isavailable)
         {
             try

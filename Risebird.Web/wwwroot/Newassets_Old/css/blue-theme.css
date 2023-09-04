@@ -50,7 +50,7 @@ body {
     }
 
 .client .table-bordered td {
-    border-right: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e65e !important;
 }
 
 .can-details a, .callatag {
@@ -692,10 +692,10 @@ textarea::-webkit-scrollbar-thumb {
     color: #544d4d !important;
 }
 #QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
-    border-right: 1px solid #dee2e6 !important;
-    border-left: 0px solid #dee2e6 !important;
-    border-top: 1px solid #dee2e6 !important;
-    border-top: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e65e !important;
+    border-left: 0px solid #dee2e65e !important;
+    border-top: 1px solid #dee2e65e !important;
+    border-top: 1px solid #dee2e65e !important;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: #f1f1f1;

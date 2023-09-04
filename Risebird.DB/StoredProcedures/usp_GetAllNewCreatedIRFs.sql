@@ -11,6 +11,6 @@ GO
 Create PROCEDURE [dbo].[usp_GetAllNewCreatedIRFs]    
 AS    
 Begin        
-Select * from IRF where 30>DATEDIFF(Minute,Createdon,Getdate())     
+Select * from IRF where 15 > DATEDIFF(Minute,Createdon,Getdate())     
 End
 Go

@@ -187,7 +187,7 @@ builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
 builder.Services.AddScoped<IVmHelper, VmHelper>();
 builder.Services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
 builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
-
+builder.Services.AddScoped<IEncryptionHelper, EncryptionHelper>();
 
 
 var app = builder.Build();
