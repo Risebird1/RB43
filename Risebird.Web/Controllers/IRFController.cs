@@ -2139,6 +2139,7 @@ namespace Risebird.Web.Controllers
 
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
             var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
@@ -6537,6 +6538,7 @@ namespace Risebird.Web.Controllers
             {
                 var model = await _irfService.GetAllIRFAssessmentInterviewerMembers(irfId);
                 //var model = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId);
+                //var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
 
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
                 if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)

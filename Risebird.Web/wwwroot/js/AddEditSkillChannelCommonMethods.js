@@ -132,8 +132,8 @@ function ShowAmountIfChecked() {
     }
 }
 
-function UpdateInterviewerRate(planType = null, countryType = null, profile = null, companyType = null) {
-    if (profile != null && profile != "Admin") {
+function UpdateInterviewerRate(planType = null, countryType = null, profile = null, companyType = null, type = null) {
+if (profile != null && profile != "Admin" && type != 'add') {
         if (planType != null && companyType != null) {//means the drop down has been changed, hence we change the value , min, max for surcharge here
 
             //planType = $("#Heuristicsscore").val()
@@ -188,10 +188,19 @@ function UpdateInterviewerRate(planType = null, countryType = null, profile = nu
 
     }
     commonUpdateRate(planType, countryType, companyType);
-    var interviewersList = $('[id^="InterviewerCollection"][id$="PerSuccessRate"]');
-    for (i = 0; i < interviewersList.length; i++) {
-        $("#" + interviewersList[i].id).val(interviewerRate);
+    if(type !='add')
+    {
+        var interviewersList = $('[id^="InterviewerCollection"][id$="PerSuccessRate"]');
+        for (i = 0; i < interviewersList.length; i++) {
+            $("#" + interviewersList[i].id).val(interviewerRate);
+        }
     }
+    if(type == 'add')
+    {
+       document.getElementById('FlatRate').value = interviewerRate;
+
+    }
+    
     //if (planType != null && companyType != null) {
         
     //}

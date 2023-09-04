@@ -38,6 +38,7 @@
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @Html.HiddenFor(x => x.InterviewerId)
+                            @Html.HiddenFor(m => m.FlatRate)
 
                             <div>
 
@@ -144,12 +145,12 @@
                                                             </div>
                                                             @if(Model.Profile == "Admin")
                                                             {
-                                                                @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null, 'Admin')" })
+                                                                @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null, 'Admin', null, 'add')" })
 
                                                             }
                                                             else
                                                             {
-                                                                 @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null)" })
+                                                                 @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "form-control select-css", @onchange = "UpdateInterviewerRate(this.value, null, null, null, 'add')" })
 
                                                             }
 
@@ -174,7 +175,7 @@
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
+                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control"/*, @onchange = "AssessmentGroupChanged()" */})
                                                         @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
                                                     </div>
                                                 </div>
@@ -197,11 +198,11 @@
                                                             </div>
                                                             @if(Model.Profile == "Admin")
                                                             {
-                                                                @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, null, 'Admin', this.value)"})
+                                                                @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, null, 'Admin', this.value, 'add')"})
                                                             }
                                                             else
                                                             {
-                                                                @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, null, null, this.value)"})
+                                                                @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, null, null, this.value, 'add')"})
                                                             }
 
                                                             @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
@@ -222,12 +223,12 @@
                                                             }
                                                             @if(Model.Profile == "Admin")
                                                             {
-                                                                @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value, 'Admin')"/*"TechSkillChanged()"*/ })
+                                                                @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value, 'Admin', null, 'add')"/*"TechSkillChanged()"*/ })
 
                                                             }
                                                             else
                                                             {
-                                                                @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value)"/*"TechSkillChanged()"*/ })
+                                                                @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "UpdateInterviewerRate(null, this.value, null, null, 'add')"/*"TechSkillChanged()"*/ })
 
                                                             }
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
@@ -1838,58 +1839,6 @@
             }
         });
 
-    }*@
-
-    @*function UpdateInterviewerRate(planType = null, countryType = null)
-    {
-        if(planType != null){//means the drop down has been changed, hence we change the value , min, max for surcharge here
-            //planType = $("#Heuristicsscore").val()
-            
-            var surchargeElem = document.getElementById("Surcharge");
-
-            if(planType == "2")//Standard
-            {
-                surchargeElem.max = "100";
-                surchargeElem.min = "0";
-                surchargeElem.value = "0";
-            }
-            else if(planType == "4")//Pro
-            {
-                surchargeElem.max = "200";
-                surchargeElem.min = "101";
-                surchargeElem.value = "101";
-            }
-            else if(planType == "5")//Advanced
-            {
-                surchargeElem.max = "300";
-                surchargeElem.min = "201";
-                surchargeElem.value = "201";
-            }
-        }
-
-        if(countryType == null){
-            countryType = $("#JobCountry").val()
-        }
-        if(planType == null){
-            planType = $("#Heuristicsscore").val()
-        }
-        
-        if(planType != null && planType != '' && countryType != null && countryType != '')
-        {
-            $.ajax({
-                type: "GET",
-                async: false,
-                url: "/IRF/GetRenewedInterviewerRate",
-                data: { 'planType': planType, 'countryType': countryType },
-                success: function (result) {
-                    interviewerRate = result;
-                }
-            });
-        }
-        var interviewersList = $('[id^="InterviewerCollection"][id$="PerSuccessRate"]');
-        for (i = 0; i < interviewersList.length; i++) {
-            $("#" + interviewersList[i].id).val(interviewerRate);
-        }
     }*@
 
     function checkStartDate(val) {

@@ -314,7 +314,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
+                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, Isavailable, AvailabilityResponseDate from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and CTE.AvailabilityResponseDate is not null and CTE.Isavailable = 1 and ul.IsActive=1", dp);
                     return result.Distinct().ToList();
                 }
             }
@@ -1358,7 +1358,11 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsNewSkillChannel"].Value = true;//this is set true for all the skill channels created from May23 when changes to the financial model were instituted
-                    
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@FlatRate", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@FlatRate"].Value = irfDetails.FlatRate;
+
+
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
