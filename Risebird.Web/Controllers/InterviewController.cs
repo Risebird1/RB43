@@ -7837,13 +7837,14 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
                     model.CreatedBy = emailId;
-                    //AddOrupdate Details
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
+                        TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
                         return RedirectToAction("Index", "Interview");
                     }
                     else
                     {
+                        TempData["SuccessErrorMessageInterview"] = "Fail to update payment Sla, try again after some time.";
                         return RedirectToAction("Index", "Interview");
                     }
                 }
