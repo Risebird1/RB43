@@ -23,6 +23,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 using static iTextSharp.text.pdf.AcroFields;
 
@@ -7858,6 +7859,11 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public async Task<IActionResult> PaymentSlaDetails()
+        {
+            var model = await _meetingService.FetchPaymentSlaDetailsById(0);
+            return View(model);
         }
         #endregion
     }
