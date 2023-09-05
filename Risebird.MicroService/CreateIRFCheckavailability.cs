@@ -84,7 +84,7 @@ namespace Risebird.MicroService
                                 _whatsAppVM.Interviewduration = irf.Interviewduration.ToString();
                                 _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
                                 _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
-                                //await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
+                                await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
                             }
                         }
                         catch (Exception ex1)

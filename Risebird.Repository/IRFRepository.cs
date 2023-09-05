@@ -314,7 +314,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, Isavailable, AvailabilityResponseDate from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and CTE.AvailabilityResponseDate is not null and CTE.Isavailable = 1 and ul.IsActive=1", dp);
+                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, Isavailable, AvailabilityResponseDate from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and CTE.Isavailable = 1 and ul.IsActive=1", dp);
                     return result.Distinct().ToList();
                 }
             }

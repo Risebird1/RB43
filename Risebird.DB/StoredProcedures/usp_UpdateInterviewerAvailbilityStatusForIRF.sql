@@ -33,8 +33,8 @@ if(@Count=0)
 					Select @UserId=id from UserList where uniqueid=@uniqueid
 					Select @InterviewerId=id From InterviewerProfile where UserId=@UserId
 
-					Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable) 
-					values(@IRFId,@InterviewerId,@UserId,1,1)
+					Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate) 
+					values(@IRFId,@InterviewerId,@UserId,1,1, (select FlatRate from IRF where id=@IRFId))
 				end
 		END
 ELSE
