@@ -6789,6 +6789,9 @@ input[type="date"].form-control {
         width:100%;
         height:100%;
     }
+#meetingid {
+    max-width: 100% !important;
+}
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
