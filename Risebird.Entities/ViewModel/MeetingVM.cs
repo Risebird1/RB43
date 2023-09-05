@@ -316,9 +316,10 @@ namespace Risebird.Entities.ViewModel
         public string SuspiciousMobileNumber { get; set; }
         public int CandidateMasterId { get; set; }
         public string scheduleUniqueid { get; set; }
+        public int? VideoConfirmation { get; set; }
 
 
-	}
+    }
 
     public class VedioComments
     {

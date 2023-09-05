@@ -314,7 +314,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and ul.IsActive=1", dp);
+                    var result = await con.QueryAsync<Interviewer>(";With CTE AS(Select UserId, AssessmentGroupId, value,ResumeLink, NickName, Isavailable, AvailabilityResponseDate from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName, CTE.ResumeLink  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid and CTE.Isavailable = 1 and ul.IsActive=1", dp);
                     return result.Distinct().ToList();
                 }
             }
@@ -1358,7 +1358,11 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsNewSkillChannel"].Value = true;//this is set true for all the skill channels created from May23 when changes to the financial model were instituted
-                    
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@FlatRate", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@FlatRate"].Value = irfDetails.FlatRate;
+
+
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -6960,6 +6964,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@assessmentGroupId", assessmentGroupId);
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<AssessmentGroupInterviewerDetails>(con, "usp_GetAvailableAssessmentGroupInterviewerMembers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<IRFInterviewerMembers>> GetAllIRFAssessmentInterviewerMembers(int irfId)
         {
             try

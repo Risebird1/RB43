@@ -104,6 +104,8 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl);
         Task<string> SendSkillChannelFeedbackNotification(Mail model, string Name, DataTable dt, string JDTitle, string ReviewURL, string clientlogo = null);
         Task<string> SendAssignedNotificationToSME(string smeEmail, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner);
+        //Task<string> SendEmailCheckingInterviewerAvailability(List<string> interviewers, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner, string availabilityLink, string notAvailableLink, int irfId);
+        Task<string> SendEmailCheckingInterviewerAvailability(List<string> interviewers, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner, string availabilityLink, string notAvailableLink, int irfId, DateTime createdOn);
         Task<string> SendIRFCreatedFromTemplateNotificationToChannelOwner(string channelOwnerEmail, string skillChannelName, string templateName, string jdTitle, string client);
         Task<string> SendCandidateNeedClerityClientNotification(string message, string subject, string clienthr, string candidateemail);
         Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId);
