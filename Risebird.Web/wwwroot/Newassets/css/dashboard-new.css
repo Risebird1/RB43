@@ -6689,14 +6689,14 @@ input[type="date"].form-control {
 }
 .topheader-link-wrap {
     width: auto;
-    margin-right: 30px;
+    margin-right: 35px;
     color: #ffff;
     padding: 0px 10px;
     font-size: 12px;
     border: 0px;
     background: none;
     position: absolute;
-    top: -40px;
+    top: -39px;
     z-index: 100000000;
     right: 250px;
 }
@@ -6786,7 +6786,7 @@ input[type="date"].form-control {
 }
 .clientlogoarea {
     width: 100px;
-    height: 45px;
+    height: auto;
 }
     .clientlogoarea img{
         width:100%;

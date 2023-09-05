@@ -773,8 +773,7 @@
                                                         {
                                                             @if (item.Redflags > 0)
                                                             {
-
-                                                                <td><a onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a>
+                                                                 <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a>
                                                                 </td>
                                                             }
                                                             else
@@ -1177,8 +1176,8 @@
                                                                 @if (ViewBag.actionstatus == "InterviewCount")
                                                                 {
 
-                                                                    <div class="mdc-fab app-fab--absolute">
-                                                                        <span class="interviewresponsebtn" onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                    <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
+                                                                        <span  onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                                     </div>
                                                                 }
                                                             </td>
