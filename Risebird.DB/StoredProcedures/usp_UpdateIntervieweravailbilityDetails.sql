@@ -10,9 +10,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_UpdateIntervieweravailbilityDetails]        
-@IRFId int        
+@IRFId int,
+@timeNow datetime
 AS        
 Begin        
-Update IRF Set SendIntervieweravailbilityOn=Getdate() where id= @IRFId       
+Update IRF Set SendIntervieweravailbilityOn=@timeNow where id= @IRFId       
 End 
 Go
