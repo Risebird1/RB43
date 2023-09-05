@@ -3955,6 +3955,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails()
+        {
+            try
+            {
+                return await _meetingRespository.FetchPaymentSlaDetails();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
