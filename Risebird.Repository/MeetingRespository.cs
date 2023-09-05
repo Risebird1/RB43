@@ -6696,6 +6696,7 @@ namespace Risebird.Repository
                     parameters.Add("@Interviewid", model.Interviewid);
                     parameters.Add("@Emailid", model.CreatedBy);
                     parameters.Add("@PaymentDeduction", model.PaymentDeduction);
+                    parameters.Add("@isapproved", model.isapproved);
 
                     parameters.Add("@Inaccuratedecisionmaking", model.Inaccuratedecisionmaking);
                     parameters.Add("@TimeManagement", model.TimeManagement);

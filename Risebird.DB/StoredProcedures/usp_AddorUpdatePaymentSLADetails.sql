@@ -23,7 +23,8 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @WeakInfrastructure varchar(50),
 @ProctoringIgnorance varchar(50),
 @UnethicalPractices varchar(50),
-@PoorCommunicationSkills varchar(50)
+@PoorCommunicationSkills varchar(50),
+@isapproved bit
 AS
 BEGIN
 Declare @Userid int       
@@ -33,7 +34,7 @@ begin
 Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,TimeManagement=@TimeManagement,QuestionsRelevance=@QuestionsRelevance,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,
-UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,CreatedBy=@Emailid,CreatedOn=Getdate(),PaymentDeduction=@PaymentDeduction
+UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,CreatedBy=@Emailid,CreatedOn=Getdate(),PaymentDeduction=@PaymentDeduction,isapproved=@isapproved
 where Interviewid=@Interviewid
 end
 else
