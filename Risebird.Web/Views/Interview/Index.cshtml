@@ -836,10 +836,10 @@
                                                             }
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
-                                                                @if (item.IsInterviewerOnline == 1)
+                                                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
                                                                 {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
+                                                                    <td style="border:1px solid #ffd7004d!important;background:#f4e7a24f" title="Confirmed for video while taking interview">
+                                                                        @item.interviewer
                                                                     </td>
                                                                 }
                                                                 else
@@ -848,6 +848,7 @@
                                                                         @item.interviewer
                                                                     </td>
                                                                 }
+
                                                             }
                                                             else
                                                             {
