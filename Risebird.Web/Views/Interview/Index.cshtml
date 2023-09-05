@@ -59,18 +59,21 @@
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
 @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />*@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
 <script>
   function shrink() {
 
-    curr = document.getElementById('meetingid').width;  
-    curr = (curr== '100%'?'10%':'100%');
-        document.getElementById('meetingid').width = curr;
-        $('.action-btn').slideToggle("fast");
+    curr = document.getElementById('actionwrap').width;  
+    curr = (curr== 'auto'?'88%':'auto');
+        document.getElementById('actionwrap').width = curr;
+        $('.action-btn').toggle("fast");
+        $('.plus').toggleClass("minus");
 }
-
+  
  
     </script>
+   
 <div class="main-panel" id="main-panel">
 
     <div class="pt30">
@@ -610,12 +613,10 @@
                                                         }
                                                     }
                                                     <tr id=@item.imid style="background:@colorcode">
-                                                        <td id="meetingid" class="text-center">
+                                                        <td id="actionwrap" class="flex-w text-center">
 
-                                                            <a  href="#" onclick="shrink();">
-                                                                <span class="btn" style="background:red;">
-                                                                        <span class="tripledot"></span>
-                                                                    </span></a>
+                                                            <a  class="pull-left" href="#" onclick="shrink();">
+                                                                <div class="plus"></div></a>
                                                                     <div class="action-btn" style="display:none;">
                                                             @*For Hide All column in Cancel Intervies*@
                                                             @if (ViewBag.Type != CancelInterviews)
@@ -685,7 +686,7 @@
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                     {
-                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -3px; position: relative;cursor:pointer;margin-right:3px;" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -11px; position: relative;cursor:pointer;" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
                                                                     }
                                                                     @if (item.IsBiometricEnabled == true)
                                                                     {
@@ -702,7 +703,7 @@
                                                                 }
                                                                 @if (item.IsAadhaarVerificationRequired == true)
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data" style="margin: 0px 3px;">
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
                                                                         <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
                                                                             <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
                                                                         </span>
@@ -744,7 +745,7 @@
                                                         </button>
                                                         </span>*@
                                                                     <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
                                                                             <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                         </button>
                                                                     </a>
@@ -766,31 +767,7 @@
                                                                         </button>
                                                                     </a>
 
-
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
-                                                                            <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
-                                                                                <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                            </span>
-                                                                        </button>
-
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
-                                                                            <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
-                                                                                <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                            </span>
-                                                                        </button>
-
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
-                                                                            <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
-                                                                                <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                            </span>
-                                                                        </button>
-
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
-                                                                            <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
-                                                                                <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                            </span>
-                                                                        </button>
-
+                                                                    
                                                                 }
                                                             }
                                                             @*<span>
