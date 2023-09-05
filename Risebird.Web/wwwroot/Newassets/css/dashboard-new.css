@@ -6814,6 +6814,18 @@ input[type="date"].form-control {
     top: 2px;
     margin: 0px 5px;
 }
+#PaymentSLAModel.modal .form-group {
+    margin-bottom: 15px;
+}
+.custom-select select {
+    width: 95px;
+    font-size: 1.2rem;
+    padding: 10px 30px 10px 10px;
+    border: 1px silver solid;
+    background-color: #e9e8e840;
+    color: grey;
+    outline: none;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
