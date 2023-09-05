@@ -800,7 +800,14 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        employementdetails.message = "No employement records are found, so we don't process further.";
+                        if (model.message.Contains("Upstream"))
+                        {
+                            employementdetails.message = "Fail to verify,please check the details and try again.";
+                        }
+                        else
+                        {
+                            employementdetails.message = "No employement records are found, so we don't process further.";
+                        }
                     }
                 }
                 else
@@ -840,6 +847,13 @@ namespace Risebird.Web.Controllers
             var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
             convertedResponse.MobileNumber = mobiledata.mobile;
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
+            if (convertedResponse.error != null)
+            {
+                if (string.IsNullOrWhiteSpace(convertedResponse.message))
+                {
+                    convertedResponse.message = convertedResponse.error.message;
+                }
+            }
             dynamic datavalue = JObject.Parse(response.Content);
             List<string>? namesList = convertedResponse.uanNumbers?.ToList();
             foreach (var data in datavalue.Children())

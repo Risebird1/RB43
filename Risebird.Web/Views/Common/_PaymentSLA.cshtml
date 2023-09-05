@@ -1,0 +1,44 @@
+﻿<div id="PaymentSLAModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Payment SLA </h5><span class="candidatename-sla" id="txtheaderPayment"></span>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closePaymentSLAModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;" id="divPaymentSlamodel">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function PaymentSLADetails(interviewid, candidateEmail,interviewer,isapproved) {
+        $.ajax({
+            url: '/Interview/GetPaymentSlaDetails',
+            data: { 'interviewid': interviewid,'interviewer':interviewer,'isapproved':isapproved },
+            type: "GET",
+            success: function (data) {
+                openPaymentSLAModel();
+                $('#divPaymentSlamodel').html('');
+                $('#divPaymentSlamodel').html(data);
+                $("#txtheaderPayment").text('( ' + candidateEmail + ' )');
+            }
+        });
+    }
+    function closePaymentSLAModel() {
+        var modal = document.getElementById("PaymentSLAModel");
+        modal.style.display = "none";
+    }
+    function openPaymentSLAModel() {
+        var modal = document.getElementById("PaymentSLAModel");
+        modal.style.display = "block";
+    }
+</script>

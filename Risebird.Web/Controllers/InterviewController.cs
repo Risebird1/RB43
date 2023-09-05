@@ -7790,7 +7790,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved)
         {
             try
             {
@@ -7812,6 +7812,8 @@ namespace Risebird.Web.Controllers
                         model.Isedit = true;
                     }
                     model.Interviewer = interviewer;
+                    model.isapproved = isapproved;
+                    await SetPaymentSLADropDown(model);
                     return PartialView(model);
                 }
                 else
@@ -7875,6 +7877,22 @@ namespace Risebird.Web.Controllers
                 }
             }
             return RedirectToAction("SignOut", "Session");
+        }
+        public async Task SetPaymentSLADropDown(PaymentSLAVM model)
+        {
+            var _paymentSlab = new List<PaymentSlabsVM>();
+            _paymentSlab.Add(new PaymentSlabsVM { id = 0, Name = "0%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 10, Name = "10%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 20, Name = "20%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 30, Name = "30%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 40, Name = "40%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 50, Name = "50%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 60, Name = "60%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 70, Name = "70%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 80, Name = "80%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 90, Name = "90%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 100, Name = "100%" });
+            model.PaymentDeductionList = new SelectList(_paymentSlab, "id", "Name");
         }
         #endregion
     }
