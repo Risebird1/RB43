@@ -11,12 +11,15 @@ namespace Risebird.Entities.ViewModel
         public int Interviewid { get; set; }
         public int Userid { get; set; }
         public string Emailid { get; set; }
-        public string Profile { get; set; }
         public string Interviewer { get; set; }
+        public string CompanyName { get; set; }
+        public string MobileNumber { get; set; }
+        public string ChannelOwner { get; set; }
         public string candidateEmail { get; set; }
         public string CreatedBy { get; set; }
         public string IRFId { get; set; }
-        public string Client { get; set; }
+        public int irfIntId { get; set; }
+        public string InterviewerName { get; set; }
         public DateTime InterviewDate { get; set; }
         public int PaymentDeduction { get; set; }
         public bool Isedit { get; set; }

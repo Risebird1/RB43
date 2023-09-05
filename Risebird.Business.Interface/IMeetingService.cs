@@ -221,5 +221,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddBlackListCompanyService(BlackListCompanyVM model);
         Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
+        Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails();
     }
 }

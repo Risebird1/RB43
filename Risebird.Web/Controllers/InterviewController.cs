@@ -7862,8 +7862,19 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> PaymentSlaDetails()
         {
-            var model = await _meetingService.FetchPaymentSlaDetailsById(0);
-            return View(model);
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                {
+                    var model = await _meetingService.FetchPaymentSlaDetails();
+                    return View(model);
+                }
+            }
+            return RedirectToAction("SignOut", "Session");
         }
         #endregion
     }

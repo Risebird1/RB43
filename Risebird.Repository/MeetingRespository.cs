@@ -6725,5 +6725,25 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_GetPaymentSlacompliance", null, commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
