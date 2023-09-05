@@ -1176,8 +1176,8 @@
                                                                 @if (ViewBag.actionstatus == "InterviewCount")
                                                                 {
 
-                                                                    <div class="mdc-fab app-fab--absolute">
-                                                                        <span class="interviewresponsebtn" onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                    <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
+                                                                        <span  onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                                     </div>
                                                                 }
                                                             </td>
