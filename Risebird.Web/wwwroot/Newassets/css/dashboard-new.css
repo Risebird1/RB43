@@ -6783,7 +6783,7 @@ input[type="date"].form-control {
 }
 .clientlogoarea {
     width: 100px;
-    height: 45px;
+    height: auto;
 }
     .clientlogoarea img{
         width:100%;
