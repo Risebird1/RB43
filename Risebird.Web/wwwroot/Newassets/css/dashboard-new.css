@@ -6287,6 +6287,9 @@ input[type="date"].form-control {
 .reschedule {
     background: #fad402a6;
 }
+.payment {
+    background: #e0aa48;
+}
 .risk-client {
     background: #f79f09;
 }
