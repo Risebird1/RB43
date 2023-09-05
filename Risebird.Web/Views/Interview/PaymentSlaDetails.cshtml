@@ -113,10 +113,10 @@
                                                                     <td style="font-size:13px; color:brown">@item.CompanyName</td>
                                                              }
                                                          }
-                                                            else
-                                                            {
+                                                         else
+                                                         {
                                                                 <td></td>
-                                                            }
+                                                         }
                                                         <td class="text-center flex-w">
                                                             <span class="call-area">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -176,6 +176,8 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js"></script>
 <script>
     function RefreshSearch() {
         $('#meetingTable').DataTable().destroy();
