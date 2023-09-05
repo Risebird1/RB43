@@ -1200,7 +1200,7 @@
                                                                             <th width="10%" class="table_heading">Surcharge</th>
 
                                                                         }
-                                                                        <th width="10%" class="table_heading">Active</th>
+                                                                        <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
                                                                         <th width="10%" class="table_heading">Availability</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -1250,10 +1250,10 @@
                                                                             }
                                                                             
                                                                             <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive") @*, new { @checked = "checked" }*@
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
+                                                                                @Html.CheckBox("InterviewerCollection[0].IsAvailable")  @*, new { @checked = "checked" }*@
                                                                             </td>
 
 
