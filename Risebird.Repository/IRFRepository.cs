@@ -6646,6 +6646,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@IRFId", irfId);
+                    parameters.Add("@timeNow", DateTime.Now);
                     await SqlMapper.QueryAsync(con, "usp_UpdateIntervieweravailbilityDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
