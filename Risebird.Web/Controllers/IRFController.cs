@@ -6616,7 +6616,8 @@ namespace Risebird.Web.Controllers
             //check link expiry befire hitting db
 
             try
-            {
+           {
+                dec = dec.Replace(" ", "+");
                 var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
                 if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 180)
                 {
