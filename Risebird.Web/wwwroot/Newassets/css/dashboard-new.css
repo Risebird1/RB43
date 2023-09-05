@@ -6564,8 +6564,8 @@ input[type="date"].form-control {
 .icon-link {
     cursor: pointer;
     text-decoration: none;
-    font-weight: bold;
-    color: #5f7293;
+    font-weight: bolder;
+    font-size:15px;
 }
 .icon-field {
     width: auto;
@@ -6693,14 +6693,19 @@ input[type="date"].form-control {
     border: 0px;
     background: none;
     position: absolute;
-    top: -38px;
+    top: -40px;
     z-index: 100000000;
-    left: 0px;
+    right: 250px;
 }
-.user-mail{
-    position:relative;
-    top:10px;
-}
+    .topheader-link-wrap button{
+        background:none;
+        border:0px;
+        color:#fff;
+    }
+    .user-mail {
+        position: relative;
+        top: 10px;
+    }
 .instruction ul {
     margin: 0px;
     padding: 0px;
@@ -6773,10 +6778,20 @@ input[type="date"].form-control {
 #myStatusListpopup .table-bordered td:hover, #myStatusListpopup .table-striped tbody tr:hover {
     box-shadow: none;
 }
-
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+.mtop-h {
+    margin-top: 60px;
+}
+.clientlogoarea {
+    width: 100px;
+    height: 45px;
+}
+    .clientlogoarea img{
+        width:100%;
+        height:100%;
+    }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -8308,6 +8323,9 @@ input[type="date"].form-control {
         top: 0px !important;
         text-align: center !important;
     }
+    .fixed-header {
+        width: calc(100% - 30px);
+    }
 }
 
 
@@ -8317,7 +8335,13 @@ input[type="date"].form-control {
         font-size: 13px !important;
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
     }
-
+    .pad7 {
+        padding: 0px!important;
+    }
+    .note-filter {
+        font-size: 13px !important;
+        padding: 5px 0px !important;
+    }
     .logo-cm {
         position: relative;
         top: -1px !important;
@@ -8436,8 +8460,10 @@ input[type="date"].form-control {
     }
 
     .topheader-link-wrap {
-        width: 155px;
+        width: 248px;
         font-size: 10px;
+        margin: 0px !important;
+        padding: 0px !important;
     }
 
     .topheader-link {
