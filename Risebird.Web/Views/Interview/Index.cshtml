@@ -717,7 +717,7 @@
 
                                                                 <span class="interview_9">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                        <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
                                                                     </button>
                                                                 </span>
                                                                 @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
@@ -730,7 +730,7 @@
                                                         </span>*@
                                                                     <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            <div title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></div>
                                                                         </button>
                                                                     </a>
                                                                     @if (!string.IsNullOrWhiteSpace(item.CompanyName))
@@ -753,10 +753,10 @@
                                                                 }
                                                             }
                                                             <span>
-                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Palyment SLA" style=" position: relative; top: -3px;">
-                                                                    <span onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer')" title="Palyment SLA" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                    </span>
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Palyment SLA">
+                                                                    <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer')" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                                                                    </div>
                                                                 </button>
                                                             </span>
                                                             @*<span>
@@ -2818,12 +2818,11 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 18 18">
-                            <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
-                        </svg>
+                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Payment SLA </h5><h6 id="txtheaderPayment"></h6>
+                <h5 class="modal-title pull-left">Payment SLA </h5><span class="candidatename-sla" id="txtheaderPayment"></span>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closePaymentSLAModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
