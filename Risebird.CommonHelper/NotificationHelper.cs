@@ -2911,6 +2911,47 @@ namespace Risebird.CommonHelper
             }
         }
 
+        /// <summary>
+        /// Send email to all interviewers available on assessment group level checking their availability within 
+        /// the next 2 hours for interviews pertaining to a skill channel created now. The interviews will be shared over the week.
+        /// </summary>
+        /// <param name="smeEmail"></param>
+        /// <param name="skillChannelName"></param>
+        /// <param name="client"></param>
+        /// <param name="jdTitle"></param>
+        /// <param name="primarySkills"></param>
+        /// <param name="channelOwner"></param>
+        /// <returns></returns>
+        public async Task<string> SendEmailCheckingInterviewerAvailability(List<string> interviewers, string skillChannelName, string client, string jdTitle, string primarySkills, string channelOwner, string availabilityLink, string notAvailableLink, int irfId, DateTime createdOn)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Urgent: Requirement for additional Interviews have come up";
+                foreach (var interviewer in interviewers)
+                {
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(interviewer, null));
+                }
+
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(channelOwner, null));
+
+                object[] parameters = new object[] { skillChannelName, client, jdTitle, primarySkills, availabilityLink, notAvailableLink, createdOn.ToString() };
+                
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckInterviewerLocalAvailability.html");
+                
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
         public async Task<string> SendIRFCreatedFromTemplateNotificationToChannelOwner(string channelOwnerEmail, string skillChannelName, string templateName, string jdTitle, string client)
         {
             try

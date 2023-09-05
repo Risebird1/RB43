@@ -135,6 +135,9 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<SkillChannelSME>> GetEligibleSMEForSkillChannel(int agId, int? irfId);
         Task<string> UpdateIRFRedFlags();
         Task<IEnumerable<InterviewDetailsVM>> GetSkillChannelStatsDetails(int irfid, string type);
-        
+
+        Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null);
+
+
     }
 }

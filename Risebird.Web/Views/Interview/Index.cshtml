@@ -838,9 +838,9 @@
                                                             }
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
-                                                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation ==1)
+                                                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
                                                                 {
-                                                                    <td style="outline:2px dotted Gold;" title="Confirmed for video while taking interview">
+                                                                    <td style="border:1px solid #ffd7004d!important;background:#f4e7a24f" title="Confirmed for video while taking interview">
                                                                         @item.interviewer
                                                                     </td>
                                                                 }
@@ -850,7 +850,7 @@
                                                                         @item.interviewer
                                                                     </td>
                                                                 }
-                                                                
+
                                                             }
                                                             else
                                                             {
