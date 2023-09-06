@@ -6570,19 +6570,21 @@ namespace Risebird.Web.Controllers
                                 var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
                                 string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
                                 string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                                string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=3&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+
                                 Mail _mail = new Mail
                                 {
                                     TO = item.EmailId,
                                     Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
                                 };
-                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.FlatRate);
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), item.FlatRate, dropMyProfileButton, item.BasicSkill);
                             }
                         }
                         return Json("Emails sent successfully.");
                     }
                     else
                     {
-                        return Json("Emails have already been sent. Please try notifying(email) at least 24 hours after the last successful notification attempt.");
+                        return Json("Emails have already been sent. Please try notifying(email) at least 3 hours after the last successful notification attempt.");
 
                     }
                 }
