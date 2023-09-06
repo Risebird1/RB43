@@ -74,10 +74,9 @@
                                                 <div class="form-group">
                                                     <div class=" control-label pull-left desp-label" style="padding:15px;">Incentive</div>
                                                     <div class="custom-select pull-left" style="padding:10px;">
-                                                        @* @Html.DropDownListFor(model=>model.Payment,new SelectList(new int[]{10,15,20}))*@
                                                         @Html.DropDownListFor(model=>model.Payment,new List<SelectListItem>{
                                                         new SelectListItem{Value="10",Text="10"},
-                                                        new SelectListItem{Value="20",Text="20"},
+                                                        new SelectListItem{Value="20",Text="15"},
                                                         new SelectListItem{Value="30",Text="30"}
                                                         })
                                                     </div>
