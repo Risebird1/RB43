@@ -6220,6 +6220,7 @@ namespace Risebird.Web.Controllers
                         model.Emailid = emailId;
                         var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
+                       
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
                             //if (!model.Isedit)
