@@ -158,6 +158,16 @@
                                                                 @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @readonly = "readonly" } })
                                                                 @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
                                                             </div>
+//Here
+                                                             <div class="form-group">
+                                                                <div>Vidio Enable</div>
+                                                              
+                                                                 @Html.RadioButtonFor(model => model.VideoConfirmation,1) Yes
+
+                                                                @Html.RadioButtonFor(model => model.VideoConfirmation,0)No
+                                                                    
+                                                                
+                                                            </div>
 
                                                         }
                                                     }

@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -879,7 +880,20 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<string>(
                         con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
-                    return "Interview assigned Successfully.";
+
+         
+                    var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@EmailId", interviewerMail);
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    if (results.FirstOrDefault() == 1)
+                    {
+                        return "Interview assigned Successfully. Open your video during the entire length of interview and earn extra 10-20% on this interview. Please click - yes- in my profile section for records.";
+                    }
+                    else
+                    {
+                        return "Interview assigned Successfully.";
+                    }
                 }
             }
             catch (SqlException ex)

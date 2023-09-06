@@ -1068,6 +1068,7 @@ namespace Risebird.Repository
                 parameters.Add("@Isinstaavailable", interviewerProfile.Isinstaavailable);
                 parameters.Add("@CodedResumeLink", interviewerProfile.CodedResumeLink);
                 parameters.Add("@Isavailable", interviewerProfile.Isavailable);
+                parameters.Add("@VideoConfirmation", interviewerProfile.VideoConfirmation);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
