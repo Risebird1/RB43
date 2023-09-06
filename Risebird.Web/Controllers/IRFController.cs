@@ -1080,23 +1080,23 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<SelectList> GetInterviewers(string assessmentgroupid)
-        {
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<SelectList> GetInterviewers(string assessmentgroupid)
+        //{
 
-            var list = new List<SelectListItem>();
-            var interviewers = await _irfService.GetInterviewers(assessmentgroupid);
+        //    var list = new List<SelectListItem>();
+        //    var interviewers = await _irfService.GetInterviewers(assessmentgroupid);
 
-            if (interviewers != null && interviewers.Count() > 0)
-            {
-                return new SelectList(interviewers, "UserId", "EmailId");
-            }
-            else
-                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
-            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
-            return new SelectList(list, "Value", "Text");
-        }
+        //    if (interviewers != null && interviewers.Count() > 0)
+        //    {
+        //        return new SelectList(interviewers, "UserId", "EmailId");
+        //    }
+        //    else
+        //        list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+        //    //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+        //    return new SelectList(list, "Value", "Text");
+        //}
 
         [Authorize]
         [HttpGet]
@@ -2138,7 +2138,7 @@ namespace Risebird.Web.Controllers
             }
 
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);

@@ -290,11 +290,11 @@ namespace Risebird.Business
         /// </summary>
         /// <param name="assessmentgroupid"></param>
         /// <returns></returns>
-        public async Task<List<Interviewer>> GetInterviewersForIRF(string assessmentgroupid)
+        public async Task<List<Interviewer>> GetInterviewersForIRF(string assessmentgroupid, int? irfId = null)
         {
             try
             {
-                return await _irfRepository.GetIRFInterviewerSkills(assessmentgroupid);
+                return await _irfRepository.GetIRFInterviewerSkills(assessmentgroupid, irfId);
             }
             catch (Exception e)
             {
