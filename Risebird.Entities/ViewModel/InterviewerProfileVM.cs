@@ -230,5 +230,6 @@ namespace Risebird.Entities.ViewModel
         public int TotalMeetings { get; set; }
         public int TotalCompletedMeetings { get; set; }
         public DateTime? AvailabilityResponseDate { get; set; }
+        public int VideoConfirmation { get; set; }
     }
 }

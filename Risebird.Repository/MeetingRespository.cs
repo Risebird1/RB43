@@ -6678,5 +6678,89 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid)
+        {
+            try
+            {
+                var query = "Select ps.*,IRF.id as IRFId,im.candidateEmail,im.interviewer From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ps.Interviewid=@Interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var results = await con.QueryFirstOrDefaultAsync<PaymentSLAVM>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", model.Interviewid);
+                    parameters.Add("@Emailid", model.CreatedBy);
+                    parameters.Add("@PaymentDeduction", model.PaymentDeduction);
+                    parameters.Add("@isapproved", model.isapproved);
+
+                    parameters.Add("@Inaccuratedecisionmaking", model.Inaccuratedecisionmaking);
+                    parameters.Add("@TimeManagement", model.TimeManagement);
+                    parameters.Add("@QuestionsRelevance", model.QuestionsRelevance);
+                    parameters.Add("@ScoreRubricIgnorance", model.ScoreRubricIgnorance);
+                    parameters.Add("@PoorFeedbackComments", model.PoorFeedbackComments);
+                    parameters.Add("@CandidateInteractionQuality", model.CandidateInteractionQuality);
+                    parameters.Add("@LimitedHandoncoding", model.LimitedHandoncoding);
+                    parameters.Add("@WrongStatusUpdates", model.WrongStatusUpdates);
+                    parameters.Add("@WeakInfrastructure", model.WeakInfrastructure);
+                    parameters.Add("@ProctoringIgnorance", model.ProctoringIgnorance);
+                    parameters.Add("@UnethicalPractices", model.UnethicalPractices);
+                    parameters.Add("@PoorCommunicationSkills", model.PoorCommunicationSkills);
+
+                    var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_GetPaymentSlacompliance", null, commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
