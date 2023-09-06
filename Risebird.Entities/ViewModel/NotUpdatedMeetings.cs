@@ -25,6 +25,7 @@ namespace Risebird.Entities.ViewModel
         public int ProbableNoShowCount { get; set; }
         public int PotentialRiskByClient { get; set; }
         public int BlackListCompanyCount { get; set; }
+        public int PaymentSlacomplianceCount { get; set; }
 
     }
     public class MeetingDetailsForParticipant
