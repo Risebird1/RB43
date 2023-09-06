@@ -47,6 +47,47 @@
                             @Html.HiddenFor(m => m.uniqueid)
                             @Html.HiddenFor(m => m.IRFId)
                             <div class="canvas_div_pdf">
+
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Video Enable</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.VideoEnable, htmlAttributes: new { @class = "control-label pull-left desp-label",@style="padding:11px;" })
+
+                                                    <div class="pull-left" style="padding:15px">
+                                                        @Html.CheckBoxFor(model=>model.VideoEnable,new { @class = "custom-checkbox pull-left",@style="padding:15px;" })
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <div class=" control-label pull-left desp-label" style="padding:15px;">Incentive</div>
+                                                    <div class="custom-select pull-left" style="padding:10px;">
+                                                        @Html.DropDownListFor(model=>model.Payment,new List<SelectListItem>{
+                                                        new SelectListItem{Value="10",Text="10"},
+                                                        new SelectListItem{Value="15",Text="15"},
+                                                        new SelectListItem{Value="20",Text="20"}
+                                                        })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
                                 <div class="report-full-wrap">
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
