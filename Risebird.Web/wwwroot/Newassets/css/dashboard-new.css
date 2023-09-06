@@ -6287,6 +6287,9 @@ input[type="date"].form-control {
 .reschedule {
     background: #fad402a6;
 }
+.payment {
+    background: #e0aa48;
+}
 .risk-client {
     background: #f79f09;
 }
@@ -6789,6 +6792,31 @@ input[type="date"].form-control {
         width:100%;
         height:100%;
     }
+
+.candidatename-sla {
+    top: 10px;
+    position:relative;
+    margin-right: 45px;
+    float: right;
+    text-align: center;
+    display: inline-block;
+    font-size: 17px;
+    color: forestgreen;
+    font-weight: bold;
+}
+#PaymentSLAModel .modal-lg {
+    max-width: 800px !important;
+}
+#PaymentSLAModel input[type='radio'] {
+    width: 15px !important;
+    height: 15px !important;
+    position: relative;
+    top: 2px;
+    margin: 0px 5px;
+}
+#PaymentSLAModel.modal .form-group {
+    margin-bottom: 15px;
+}
 .custom-select select {
     width: 95px;
     font-size: 1.2rem;
@@ -6798,9 +6826,9 @@ input[type="date"].form-control {
     color: grey;
     outline: none;
 }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -8334,6 +8362,10 @@ input[type="date"].form-control {
     }
     .fixed-header {
         width: calc(100% - 30px);
+    }
+    .candidatename-sla{
+        float:none;
+        margin:0px;
     }
 }
 

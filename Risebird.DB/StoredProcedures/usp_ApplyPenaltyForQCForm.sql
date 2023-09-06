@@ -34,7 +34,7 @@ Select @IsnewCreated=IRF.IsNewSkillChannel from InterviewMeetings im join IRF on
 Select @RowCount=Count(*) From InterviewPoints where Interviewid=@interviewid and Userid=@Userid and Type='Interview'    
 if(@redflags=0 and @IsnewCreated=1)
 begin
-set @Points=50
+set @Points=0
 end
 else if(@redflags<=16)    
 begin    

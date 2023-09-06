@@ -380,7 +380,7 @@
                                                     <th class="interviewer_8">Coded Name</th>
                                                     <th>Available</th>
                                                     <th>Active</th>
-                                                    <th>Interest</th>
+                                                    <th>Video Interview</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
                                                 </tr>
                                             </thead>
@@ -397,7 +397,7 @@
                                                     <th>Coded Name</th>
                                                     <th>Available</th>
                                                     <th>Active</th>
-                                                    <th>Interest</th>
+                                                    <th>Video Interview</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
                                                 </tr>
                                             </tfoot>
@@ -529,12 +529,14 @@
                                                         {
                                                             <td>Inactive</td>
                                                         }
-                                                        @if (item.IsInterested)
+                                                        @if (item.VideoConfirmation==1)
                                                         {
-                                                            <td>Interested</td>
+                                                            <td>Yes</td>
                                                         }
-                                                        else
+                                                        else if(item.VideoConfirmation==2)
                                                         {
+                                                            <td>No</td>
+                                                        }else{
                                                             <td></td>
                                                         }
                                                         <td class="text-left action">
@@ -1345,8 +1347,11 @@
             else {
                 html += '   <td>Inactive</td>';
             }
-            if (data[i].isInterested) {
-                html += '    <td>Interested</td>';
+            if (data[i].videoConfirmation==1) {
+                html += '    <td>Yes</td>';
+            }
+            else if (data[i].videoConfirmation==2) {
+                html += '    <td>No</td>';
             }
             else {
                 html += '   <td></td>';
