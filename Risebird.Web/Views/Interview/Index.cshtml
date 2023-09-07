@@ -68,12 +68,11 @@
     curr = (curr== 'auto'?'88%':'auto');
         document.getElementById('actionwrap').width = curr;
         $('.action-btn').toggle("fast");
-        $('.plus').toggleClass("minus");
-}
-  
- 
-    </script>
-   
+        $('.the-arrow.-right').toggleClass("newarrow");
+       
+  }
+  </script>
+
 <div class="main-panel" id="main-panel">
 
     <div class="pt30">
@@ -530,6 +529,7 @@
                                                     {
                                                         <th>Client Hr Contact</th>
                                                         <th>Client </th>
+                                                         <th>Interviewer  </th>
                                                         <th>Billing Owner</th>
                                                         <th>Cancellation Source</th>
                                                     }
@@ -586,6 +586,7 @@
                                                     {
                                                         <th>Client Hr Contact</th>
                                                         <th>Client </th>
+                                                        <th>Interviewer  </th>
                                                         <th>Billing Owner</th>
                                                         <th>Cancellation Source</th>
                                                     }
@@ -614,9 +615,19 @@
                                                     }
                                                     <tr id=@item.imid style="background:@colorcode">
                                                         <td id="actionwrap" class="flex-w text-center">
-
-                                                            <a  class="pull-left" href="#" onclick="shrink();">
-                                                                <div class="plus"></div></a>
+                                                           
+                                                            <a class="animated-arrow" href="#" onclick="shrink();">
+                                                              
+                                                                        <span class="main">
+                                                                            <span class="text">
+                                                                                Click to view
+                                                                            </span>
+                                                                            <span class="the-arrow -right">
+                                                                                <span class="shaft"></span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </a>
+                                                    
                                                                     <div class="action-btn" style="display:none;">
                                                             @*For Hide All column in Cancel Intervies*@
                                                             @if (ViewBag.Type != CancelInterviews)
@@ -682,7 +693,7 @@
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                     {
-                                                                        <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                                        <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                     {
@@ -863,7 +874,7 @@
                                                             {
                                                                 @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
                                                                 {
-                                                                    <td style="border:1px solid #ffd7004d!important;background:#f4e7a24f" title="Confirmed for video while taking interview">
+                                                                    <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
                                                                         @item.interviewer
                                                                     </td>
                                                                 }
@@ -1133,8 +1144,9 @@
                                                         {
 
                                                             <td>@item.ClientHrContact</td>
+                                                            
                                                             <td>@item.Client</td>
-
+                                                            <td>@item.interviewer</td>
                                                             <td>@item.BillingOwner</td>
                                                             <td>@item.Cancellationsource</td>
 

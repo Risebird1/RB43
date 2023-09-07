@@ -6637,15 +6637,15 @@ input[type="date"].form-control {
         left: 4px;
     }
 .welcome {
-    line-height: 40px;
+    line-height: 22px;
     font-size: 17px;
     font-family: cursive;
     color:#fff;
-    background:none;
 }
-    .welcome span {
-        color: mediumspringgreen;
-    }
+
+.welcome span {
+    color: mediumspringgreen;
+}
 .btn-calling, .btn-calling:hover {
     background: #1ba51be0 !important;
     color: #fff;
@@ -6654,6 +6654,13 @@ input[type="date"].form-control {
 .btn-rating, .btn-rating:hover {
     background: #f6b445c7;
     border-color: #f6b445c7;
+}
+.btn-upload, .btn-upload:hover {
+    background: #b1ba4e;
+    border-color: #b1ba4e;
+}
+.btn-candlist, .btn-candlist:hover {
+    background: #eea4349e; border-color: #f0cc96;
 }
 .fixed-header {
     position: fixed;
@@ -6697,7 +6704,7 @@ input[type="date"].form-control {
     z-index: 100000000;
     right: 250px;
 }
-    .topheader-link-wrap button{
+    .topheader-link-wrap button, .topbar-item button{
         background:none;
         border:0px;
         color:#fff;
@@ -6789,6 +6796,8 @@ input[type="date"].form-control {
         width:100%;
         height:100%;
     }
+/***** action arrow *****/
+
 #actionwrap {
     max-width: 100% !important;
 
@@ -6796,28 +6805,9 @@ input[type="date"].form-control {
     #actionwrap .action-btn{
         overflow:visible!important;
     }
-.plus {
-    background-image: url(../../img/plus.png);
-    background-size: 90%;
-    background-repeat: no-repeat;
-    width: 20px;
-    height: 20px;
-    position: relative;
-    left: 25px;
-    top: 7px;
-}
 
-    .plus.minus {
-        background-image: url(../../img/minus.png);
-        background-size: 90%;
-        background-repeat: no-repeat;
-        width: 20px;
-        height: 20px;
-        position: relative;
-        top: 7px;
-    }
 .action-btn{
-    margin:0px 10px 0px 30px;
+    margin:0px 10px 0px 8px;
 }
 .action-btn .mdc-fab {
     box-shadow: none !important;
@@ -6827,6 +6817,116 @@ input[type="date"].form-control {
     border: 0px;
     box-shadow: none;
 }
+
+.animated-arrow {
+    display: inline-block;
+    color: #4c4c4c;
+    font-size: 1.25em;
+    font-style: italic;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.the-arrow {
+    width: 1px;
+    transition: all 0.2s;
+}
+
+.newarrow {
+    width: 15px !important;
+    transition: all 0.2s;
+}
+
+.the-arrow > .shaft {
+    background-color: #4c4c4c;
+    display: block;
+    height: 0px;
+    position: relative;
+    transition: all 0.2s;
+    transition-delay: 0;
+    will-change: transform;
+}
+
+.newarrow > .shaft {
+    background-color: #367f7b;
+    display: block;
+    height: 1px;
+    position: relative;
+    transition: all 0.2s;
+    transition-delay: 0;
+    will-change: transform;
+}
+
+
+.the-arrow > .shaft:before {
+    transform-origin: top right;
+}
+
+.the-arrow > .shaft:before, .the-arrow > .shaft:after {
+    background-color: #367f7b;
+    content: "";
+    display: block;
+    height: 1px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: all 0.2s;
+    transition-delay: 0;
+}
+
+.animated-arrow > .main {
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    background: none !important;
+    top: 10px;
+}
+
+    .animated-arrow > .main > .text {
+        margin: 0 15px 0 7px;
+        line-height: 1;
+        font-size: 13px;
+        background: linear-gradient(to right, #f32170, #ff6b08, #cf23cf, #eedd44);
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+    }
+
+    .animated-arrow > .main > .the-arrow {
+        position: relative;
+    }
+
+.the-arrow.-right {
+    top: 0px;
+    left: -4px;
+}
+
+.the-arrow {
+    width: 1px;
+    transition: all 0.2s;
+}
+
+    .the-arrow > .shaft:after {
+        transform-origin: bottom right;
+    }
+
+    .the-arrow.-right > .shaft:before, .newidth.-right > .shaft:before {
+        transform: rotate(40deg);
+    }
+
+    .the-arrow.-right > .shaft:before, .the-arrow.-right > .shaft:after, .newidth.-right > .shaft:before, .newidth.-right > .shaft:after {
+        width: 8px;
+        transition-delay: 0.3s;
+        transition: all 0.5s;
+    }
+
+
+    .the-arrow.-right > .shaft:after {
+        transform: rotate(-40deg);
+    }
+
+
+/***** action arrow *****/
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -9165,12 +9265,15 @@ label {
 
 .badge {
     font-size: 11px;
-    line-height: 20px;
+    line-height: 21px;
     font-weight: 500;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
-    padding: 0px 8px;
+    padding: 0px 2px;
+    width:22px;
+    height:22px;
+    text-align:center;
 }
 
 .label-primary,
