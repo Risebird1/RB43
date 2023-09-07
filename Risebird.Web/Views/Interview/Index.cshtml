@@ -59,11 +59,20 @@
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
 @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />*@
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
+<script>
+  function shrink() {
+
+    curr = document.getElementById('actionwrap').width;  
+    curr = (curr== 'auto'?'88%':'auto');
+        document.getElementById('actionwrap').width = curr;
+        $('.action-btn').toggle("fast");
+        $('.the-arrow.-right').toggleClass("newarrow");
+  }
+  </script>
 
 <div class="main-panel" id="main-panel">
-
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -518,6 +527,7 @@
                                                     {
                                                         <th>Client Hr Contact</th>
                                                         <th>Client </th>
+                                                         <th>Interviewer  </th>
                                                         <th>Billing Owner</th>
                                                         <th>Cancellation Source</th>
                                                     }
@@ -574,6 +584,7 @@
                                                     {
                                                         <th>Client Hr Contact</th>
                                                         <th>Client </th>
+                                                        <th>Interviewer  </th>
                                                         <th>Billing Owner</th>
                                                         <th>Cancellation Source</th>
                                                     }
@@ -601,7 +612,21 @@
                                                         }
                                                     }
                                                     <tr id=@item.imid style="background:@colorcode">
-                                                        <td class="text-center interview-action flex-w action">
+                                                        <td id="actionwrap" class="flex-w text-center">
+                                                           
+                                                            <a class="animated-arrow" href="#" onclick="shrink();">
+                                                              
+                                                                        <span class="main">
+                                                                            <span class="text">
+                                                                                Click to view
+                                                                            </span>
+                                                                            <span class="the-arrow -right">
+                                                                                <span class="shaft"></span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </a>
+                                                    
+                                                                    <div class="action-btn" style="display:none;">
                                                             @*For Hide All column in Cancel Intervies*@
                                                             @if (ViewBag.Type != CancelInterviews)
                                                             {
@@ -673,11 +698,11 @@
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                                     {
-                                                                        <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                                        <span class="call" id=@(item.imid + "_cancelInviteId" ) data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="cursor: pointer;position:relative;top:-4px;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
                                                                     }
                                                                     @if (item.MeetingStatusStatusDesc == "No Show(Candidate)" || item.MeetingStatusStatusDesc == "Dropped" || item.MeetingStatusStatusDesc == "No Show(Interviewer)" || item.MeetingStatusStatusDesc == "No Show" || item.confirmationStatus.Trim() == "Cancelled")
                                                                     {
-                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -3px; position: relative;cursor:pointer;margin-right:3px;" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.irfIntId,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -11px; position: relative;cursor:pointer;" title="Resend Invite"><span class="far fa-paper-plane"></span></span></span>
                                                                     }
                                                                     @if (item.IsBiometricEnabled == true)
                                                                     {
@@ -694,7 +719,7 @@
                                                                 }
                                                                 @if (item.IsAadhaarVerificationRequired == true)
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data" style="margin: 0px 3px;">
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Verified Data">
                                                                         <span title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" class="mdc-fab__icon material-icons">
                                                                             <img width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16" src="~/img/Aadhaar/verificationlogo.png" title="Candidate Verified Data" onclick="javascript:FetchInterviewAadhaarDetails('@item.candidateEmail');" />
                                                                         </span>
@@ -735,9 +760,9 @@
                                                         <span onclick="location.href = '@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                         </button>
                                                         </span>*@
-                                                                    <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                            <div title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></div>
+                                                                    <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                         </button>
                                                                     </a>
                                                                     @if (!string.IsNullOrWhiteSpace(item.CompanyName))
@@ -757,6 +782,8 @@
                                                                             <span title="Blacklist Company" class="mdc-fab__icon material-icons"><img class="icons-blacklist" src="~/img/blacklist.png" /></span>
                                                                         </button>
                                                                     </a>
+
+                                                                    
                                                                 }
                                                             }
                                                         @*<span>
@@ -766,6 +793,10 @@
                                                         </span>
                                                         </button>
                                                         </span>*@
+                                                            </div>
+
+                                                             
+                                                       
                                                         </td>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
@@ -840,7 +871,7 @@
                                                             {
                                                                 @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
                                                                 {
-                                                                    <td style="border:1px solid #ffd7004d!important;background:#f4e7a24f" title="Confirmed for video while taking interview">
+                                                                    <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
                                                                         @item.interviewer
                                                                     </td>
                                                                 }
@@ -1110,8 +1141,9 @@
                                                         {
 
                                                             <td>@item.ClientHrContact</td>
+                                                            
                                                             <td>@item.Client</td>
-
+                                                            <td>@item.interviewer</td>
                                                             <td>@item.BillingOwner</td>
                                                             <td>@item.Cancellationsource</td>
 
@@ -1579,6 +1611,7 @@
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
+
 <script src="~/js/Aadhaar.js"></script>
 <script>
     function closeBlackListCompanyModal() {
