@@ -70,7 +70,7 @@ namespace Risebird.MicroService
                                 var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
                                 string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + interviewer.uniqueid + "&Irfid=" + irf.id + "&dec=" + encryptedDate;
                                 string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + interviewer.uniqueid + "&Irfid=" + irf.id + "&dec=" + encryptedDate;
-                                string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=3&uniqueid=" + interviewer.uniqueid + "&Irfid=" + irf.id + "&dec=" + encryptedDate;
+                                string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=4&uniqueid=" + interviewer.uniqueid + "&Irfid=" + irf.id + "&dec=" + encryptedDate;
                                 Mail _mail = new Mail
                                 {
                                     TO = interviewer.EmailId,

@@ -59,5 +59,10 @@ Begin
 
 End
 
+if(@Status = 4) --here it means the interviewer has asked to drop his/her profile, therefore set 4 in InterviwerProfile
+Begin
+	update InterviewerProfile set Isavailable = @Status, AvailabilityResponseDate = @timeNow where UserId = (Select id from UserList where uniqueid=@uniqueid) 
+End
+	
 END
 Go
