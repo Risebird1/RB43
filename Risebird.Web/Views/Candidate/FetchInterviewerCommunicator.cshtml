@@ -99,7 +99,8 @@
                                                             <th style="text-align:left">Billing Owner</th>
                                                             <th style="text-align:left">JD-Skills</th>
                                                             <th>JD</th>
-                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                            <th class="text-left">Candidate Submission</th>
+                                                            <th class="disabled-sorting text-center">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
@@ -109,7 +110,8 @@
                                                             <th style="text-align:left">Billing Owner</th>
                                                             <th style="text-align:left">JD-Skills</th>
                                                             <th>JD</th>
-                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                            <th class="text-left">Candidate Submission</th>
+                                                            <th class="disabled-sorting text-center">Actions</th>
                                                         </tr>
 
                                                     </tfoot>
@@ -127,8 +129,8 @@
                                                                 <td>@item.IRFId</td>
                                                                 <td>
                                                                     <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
-                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Scheduling Link" title="Scheduling Link">
-                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Scheduling Link" title="Scheduling Link">
+                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');" ><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                                     </button>
 
                                                                 </td>
@@ -147,47 +149,55 @@
                                                                 {
                                                                     <td>No JD</td>
                                                                 }
-                                                                <td class="text-left">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Broadcast Email to the Interviewers of this channel">
-                                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
+                                                                        <span onclick="javascript:OpenuploadResumesModal('@item.id', '@item.IRFId');" title="Upload Resumes">
+                                                                            <span class="fas fa-upload"></span>
                                                                         </span>
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Audio Recording">
-                                                                        <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes">
-                                                                        <span onclick="javascript:OpenuploadResumesModal('@item.id', '@item.IRFId');" title="Upload Resumes" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up-fill" viewBox="0 0 16 16">
-                                                                                <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z" />
-                                                                            </svg>
-                                                                        </span>
-                                                                    </button>
+
                                                                     @if (!(bool)(ViewBag.IsClientLogin ?? false))
                                                                     {
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Candidate Resumes" title="Candidate Resumes">
-                                                                            <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                        <button class="btn btn-primary shadow btn-xs sharp me-1 " aria-label="Candidate Resumes" title="Candidate Resumes">
+                                                                            <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'">  <span class="fas fa-file"></span></span>
                                                                         </button>
                                                                     }
 
+                                                                    <button id="skill_10" class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidates List">
+                                                                        <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List">  <span class="fas fa-list"></span></span>
+                                                                    </button>
+
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
+                                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Audio Recording">
+                                                                        <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                   
+                                                                  
+
                                                                     @if (item.IsPaused)
                                                                     {
-                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute  " aria-label="Play">
-                                                                            <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                        <button id="skill_16" class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Play">
+                                                                            <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                                         </button>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
-                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                        <button id="skill_16" class="btn shadow btn-xs sharp me-1  trash-btn" aria-label="Pause">
+                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                         </button>
                                                                     }
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Interviewer Stats">
 
                                                                         <a href="@Url.Action("InterviewerStatsAndRatingsForClientByIRF", "Interviewer", new {irfId = item.id, irfName = item.IRFId, clientEmailId = ViewBag.emailid,usepl=true})" target="_blank">
-                                                                            <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                                            <span title="Interviewer Stats"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                         </a>
 
                                                                     </button>
@@ -761,6 +771,12 @@
             });
         }
     }
+    //Candidates
+    function Candidates(id, IRFid) {
+
+        var url = '/Candidate/GetCandidates?id=' + id + '&irfName=' + IRFid;
+        window.location.href = url;
+    };
 </script>
 
 

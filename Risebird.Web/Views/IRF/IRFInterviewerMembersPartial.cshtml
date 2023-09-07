@@ -57,7 +57,30 @@
                     {
                     <td style="color: #ff7bf5">@item.Type</td>
                     }*@
-                            <td title="@item.EmailId">@item.EmailId</td>
+                            @*<td title="@item.EmailId">@item.EmailId</td>*@
+
+                           @if (@item.EmailId != null && @item.EmailId != "")
+                            {
+                                @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
+                                {
+                                    <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
+                                        @item.EmailId
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @item.EmailId
+                                    </td>
+                                }
+
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+
+
                             <td class="text-center flex-w">
                                 <span class="call-area">
                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
