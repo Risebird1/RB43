@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 using static iTextSharp.text.pdf.AcroFields;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -6221,7 +6222,7 @@ namespace Risebird.Web.Controllers
                         model.Emailid = emailId;
                         var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
-                       
+
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
                             //if (!model.Isedit)
@@ -7813,7 +7814,7 @@ namespace Risebird.Web.Controllers
                         model.Isedit = true;
                     }
                     model.Interviewer = interviewer;
-                    model.isapproved = isapproved;
+                    model.isapprovedchecked = isapproved;
                     await SetPaymentSLADropDown(model);
                     return PartialView(model);
                 }
@@ -7863,7 +7864,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> PaymentSlaDetails()
+        public async Task<IActionResult> PaymentSlaDetails(string actionstatus)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -7873,7 +7874,12 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
-                    var model = await _meetingService.FetchPaymentSlaDetails();
+                    if (string.IsNullOrWhiteSpace(actionstatus))
+                    {
+                        actionstatus = "";
+                    }
+                    ViewBag.actionstatus = actionstatus;
+                    var model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
                     return View(model);
                 }
             }
@@ -7894,6 +7900,32 @@ namespace Risebird.Web.Controllers
             _paymentSlab.Add(new PaymentSlabsVM { id = 90, Name = "90%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 100, Name = "100%" });
             model.PaymentDeductionList = new SelectList(_paymentSlab, "id", "Name");
+        }
+        [HttpPost]
+        public async Task<JsonResult> PaymentSlaDetailsNotApproved(int interviewid)
+        {
+            try
+            {
+                var emailId = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                }
+                if (await _meetingService.PaymentSlaNotApproved(interviewid, emailId))
+                {
+                    return Json("Payment SLA not approved Successfully.");
+                }
+                else
+                {
+                    return Json("Fail to update payment Sla, try again after some time.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail to update payment Sla, try again after some time.");
+            }
         }
         #endregion
     }
