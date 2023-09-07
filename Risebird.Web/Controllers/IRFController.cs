@@ -1080,23 +1080,23 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<SelectList> GetInterviewers(string assessmentgroupid)
-        {
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<SelectList> GetInterviewers(string assessmentgroupid)
+        //{
 
-            var list = new List<SelectListItem>();
-            var interviewers = await _irfService.GetInterviewers(assessmentgroupid);
+        //    var list = new List<SelectListItem>();
+        //    var interviewers = await _irfService.GetInterviewers(assessmentgroupid);
 
-            if (interviewers != null && interviewers.Count() > 0)
-            {
-                return new SelectList(interviewers, "UserId", "EmailId");
-            }
-            else
-                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
-            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
-            return new SelectList(list, "Value", "Text");
-        }
+        //    if (interviewers != null && interviewers.Count() > 0)
+        //    {
+        //        return new SelectList(interviewers, "UserId", "EmailId");
+        //    }
+        //    else
+        //        list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
+        //    //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+        //    return new SelectList(list, "Value", "Text");
+        //}
 
         [Authorize]
         [HttpGet]
@@ -2138,7 +2138,7 @@ namespace Risebird.Web.Controllers
             }
 
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);
 
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
@@ -6570,19 +6570,21 @@ namespace Risebird.Web.Controllers
                                 var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
                                 string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
                                 string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+                                string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=4&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
+
                                 Mail _mail = new Mail
                                 {
                                     TO = item.EmailId,
                                     Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
                                 };
-                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName, item.JDLink, item.FlatRate);
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), item.FlatRate, dropMyProfileButton, item.BasicSkill);
                             }
                         }
                         return Json("Emails sent successfully.");
                     }
                     else
                     {
-                        return Json("Emails have already been sent. Please try notifying(email) at least 24 hours after the last successful notification attempt.");
+                        return Json("Emails have already been sent. Please try notifying(email) at least 3 hours after the last successful notification attempt.");
 
                     }
                 }

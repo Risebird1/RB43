@@ -57,7 +57,7 @@ namespace Risebird.Business.Interface
         Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
         Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         bool SaveCandidateStatus(int candidateId, int status);
-        Task<List<Interviewer>> GetInterviewersForIRF(string assessmentgroupid);
+        Task<List<Interviewer>> GetInterviewersForIRF(string assessmentgroupid, int? irfId = null);
         IEnumerable<Users> GetAllHRs();
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);
