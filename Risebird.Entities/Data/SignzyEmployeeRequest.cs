@@ -25,6 +25,7 @@ namespace Risebird.Entities.Data
         public string CandidateEmail { get; set; }
         public string MobileNumber { get; set; }
         public string message { get; set; }
+        public SignzyEmployeeResponseerror error { get; set; }
     }
     public class EmploymentSummary
     {
@@ -75,5 +76,9 @@ namespace Risebird.Entities.Data
         public DateTime DOB { get; set; }
         public string CompanyName { get; set; }
         public DateTime JoiningDate { get; set; }
+    }
+    public class SignzyEmployeeResponseerror
+    {
+        public string message { get; set; }
     }
 }

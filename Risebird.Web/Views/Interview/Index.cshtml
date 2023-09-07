@@ -93,7 +93,7 @@
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-                    
+
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
@@ -117,9 +117,9 @@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
                             </button>
-                           @* <button style="width:250px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa-regular fa-person-circle-question" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("ProbableNoShowCandidates", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Probable No Show Candidates</font></span>
-                            </button>*@
+                            @* <button style="width:250px" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="fa-regular fa-person-circle-question" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("ProbableNoShowCandidates", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Probable No Show Candidates</font></span>
+                        </button>*@
                         }
 
 
@@ -505,7 +505,7 @@
                                                         <th>Staffing Agency</th>
                                                         <th>Interview Duration</th>
                                                         <th>ID Verification</th>
-                                                        
+
                                                         <th>ReportId</th>
                                                         <th>Has Distinct Participants</th>
                                                         <th>Expected Joining Time</th>
@@ -535,7 +535,7 @@
                                                     @if (ViewBag.Type != CancelInterviews)
                                                     {
                                                         <th>Type</th>
-                                                       <th>JD Title</th>
+                                                        <th>JD Title</th>
 
                                                         <th>Meeting Link</th>
                                                         <th>Company Name</th>
@@ -607,6 +607,13 @@
                                                             {
                                                                 @if (ViewBag.Type != "RedoInterviews")
                                                                 {
+                                                                    <span>
+                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Palyment SLA">
+                                                                            <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false)" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                                <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                                                                            </div>
+                                                                        </button>
+                                                                    </span>
                                                                     <span class="interview_4">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                             <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
@@ -717,7 +724,7 @@
 
                                                                 <span class="interview_9">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                        <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
                                                                     </button>
                                                                 </span>
                                                                 @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
@@ -730,20 +737,20 @@
                                                         </span>*@
                                                                     <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            <div title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></div>
                                                                         </button>
                                                                     </a>
-                                                                    @if(!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                                    @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                                     {
-                                                                       <span>
+                                                                        <span>
                                                                             <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
                                                                                 <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
-                                                                       </button>
-                                                                        </span> 
-                                                                        
+                                                                            </button>
+                                                                        </span>
+
                                                                     }
                                                                 }
-                                                                @if (item.CompanyName != null && item.CompanyName!="")
+                                                                @if (item.CompanyName != null && item.CompanyName != "")
                                                                 {
                                                                     <a target="_blank" onclick="javascript:BlckListCompanyModalDetails('@item.CompanyName');">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Blacklist Company">
@@ -752,7 +759,7 @@
                                                                     </a>
                                                                 }
                                                             }
-                                                            @*<span>
+                                                        @*<span>
                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
                                                         <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
@@ -764,38 +771,31 @@
                                                         <td> @item.interviewDate </td>
 
                                                         <td>
-                                                           
-                                                         
-                                                        @if (item.IsOnline == 1)
-                                                        {
-                                                           
-                                                               <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
-                                                        }
-                                                        else
-                                                        {
-                                                           
-                                                              <span class="name-field">  @item.candidateName</span>
-                                                            
-                                                        }
-                                                       
-                                                       
-                                                       
+                                                            @if (item.IsOnline == 1)
+                                                            {
+                                                                <span class="name-field"> <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName </a> </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="name-field">  @item.candidateName</span>
+                                                            }
 
-                                                        @if (item.zoomLink != null && item.zoomLink != "")
-                                                        {
-                                                            <span class="email-field"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="email-field" style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
-                                                        }
+                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            {
+                                                                <span class="email-field"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="email-field" style="color:red"> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></span>
+                                                            }
                                                         </td>
                                                         <td style="padding:0px 7px;">
-                                                             <span class="call-area">
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
+                                                            <span class="call-area">
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
                                                                     <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                                                            }</span>
+                                                                }
+                                                            </span>
                                                             @item.MobileNumber
                                                         </td>
                                                         @*Hide Columns for Cancel Intervies*@
@@ -810,7 +810,7 @@
                                                                 <td>Interview</td>
                                                             }
 
-                                                           <td> @item.JDTiltle.Split("|")[0] </td>
+                                                            <td> @item.JDTiltle.Split("|")[0] </td>
 
 
                                                             @if (item.zoomLink != null && item.zoomLink != "")
@@ -864,7 +864,7 @@
                                                             }
                                                             else
                                                             {
-                                                               <td class="text-center">
+                                                                <td class="text-center">
                                                                     <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Interviewer Resume" href=@item.interviewerresumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
                                                                 </td>
                                                             }
@@ -1132,7 +1132,7 @@
 
                         <!-- end col-md-12 -->
                     </div>
-                    @*@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")*@
+                    @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
                     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
                     @*<div id="myModal" class="modal modal-bg">
@@ -1577,6 +1577,7 @@
     </div>
 </div>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 <script src="~/js/Aadhaar.js"></script>
 <script>
@@ -1601,7 +1602,6 @@
                 success: function (data) {
                     swal.fire(data);
                     closeBlackListCompanyModal();
-                    
                 }
             });
         }

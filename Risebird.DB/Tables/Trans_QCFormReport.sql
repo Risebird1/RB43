@@ -31,6 +31,8 @@ CREATE TABLE [dbo].[Trans_QCFormReport](
 	[ModifiedOn] [datetime] NULL,
 	[ModifiedBy] [int] NULL,
 	[InterviewerAction] [bit] NULL,
+	[VideoEnable] [bit] NULL,
+	[Payment] [int] NULL
  CONSTRAINT [PK_Trans_QCFormReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

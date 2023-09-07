@@ -3920,7 +3920,53 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public async Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.FetchPaymentSlaDetailsById(interviewid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model)
+        {
+            try
+            {
+                if (await _meetingRespository.AddorUpdatePaymentSLADetails(model))
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCDone;
+                    activityTrackerModel.Particulars = "Payment SLA for Interviewer: " + model.Interviewer + " For Interviewid :" + model.Interviewid;
+                    activityTrackerModel.PerformedBy = model.Emailid;
+                    activityTrackerModel.Summary = "Payment SLA";
+                    activityTrackerModel.ResourceUrl = "";
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails()
+        {
+            try
+            {
+                return await _meetingRespository.FetchPaymentSlaDetails();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
