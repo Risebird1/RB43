@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
@@ -18,6 +19,11 @@ namespace Risebird.Entities.ViewModel
         public bool Isedit { get; set; }
         public string Type { get; set; }
         public string uniqueid { get; set; }
+
+        public int Payment { get; set; }
+        [Display(Name = "Video Enable")]
+        public bool VideoEnable { get; set; }
+        public SelectList paymentList { get; set; }
 
         [Display(Name = "Report Blocked for Client")]
         public bool IsReportBlocked { get; set; }

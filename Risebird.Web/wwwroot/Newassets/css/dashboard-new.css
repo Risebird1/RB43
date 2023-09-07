@@ -6287,6 +6287,9 @@ input[type="date"].form-control {
 .reschedule {
     background: #fad402a6;
 }
+.payment {
+    background: #e0aa48;
+}
 .risk-client {
     background: #f79f09;
 }
@@ -8463,6 +8466,10 @@ input[type="date"].form-control {
     }
     .fixed-header {
         width: calc(100% - 30px);
+    }
+    .candidatename-sla{
+        float:none;
+        margin:0px;
     }
 }
 

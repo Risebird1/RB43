@@ -23,6 +23,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 using static iTextSharp.text.pdf.AcroFields;
 
@@ -6150,7 +6151,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Create QCForm
-        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid,string pageStatus)
+        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type, string uniqueid, string pageStatus)
         {
             try
             {
@@ -6220,6 +6221,7 @@ namespace Risebird.Web.Controllers
                         model.Emailid = emailId;
                         var redflag = CheckFlagCount(model);
                         model.Redflags = redflag;
+                       
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
                             //if (!model.Isedit)
@@ -7760,7 +7762,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-               
+
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 BlackListCompanyVM model = new BlackListCompanyVM();
@@ -7787,6 +7789,112 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        #region Payment SLA
+        [HttpGet]
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                    if (model == null)
+                    {
+                        model = new PaymentSLAVM();
+                        model.Isedit = false;
+                    }
+                    else
+                    {
+                        model.Isedit = true;
+                    }
+                    model.Interviewer = interviewer;
+                    model.isapproved = isapproved;
+                    await SetPaymentSLADropDown(model);
+                    return PartialView(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetPaymentSlaDetails(PaymentSLAVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    model.CreatedBy = emailId;
+                    if (await _meetingService.AddorUpdatePaymentSLADetails(model))
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
+                        return RedirectToAction("Index", "Interview");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Fail to update payment Sla, try again after some time.";
+                        return RedirectToAction("Index", "Interview");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> PaymentSlaDetails()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                {
+                    var model = await _meetingService.FetchPaymentSlaDetails();
+                    return View(model);
+                }
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+        public async Task SetPaymentSLADropDown(PaymentSLAVM model)
+        {
+            var _paymentSlab = new List<PaymentSlabsVM>();
+            _paymentSlab.Add(new PaymentSlabsVM { id = 0, Name = "0%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 10, Name = "10%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 20, Name = "20%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 30, Name = "30%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 40, Name = "40%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 50, Name = "50%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 60, Name = "60%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 70, Name = "70%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 80, Name = "80%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 90, Name = "90%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 100, Name = "100%" });
+            model.PaymentDeductionList = new SelectList(_paymentSlab, "id", "Name");
+        }
+        #endregion
     }
 }
