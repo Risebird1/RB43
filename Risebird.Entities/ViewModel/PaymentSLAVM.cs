@@ -23,9 +23,12 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerName { get; set; }
         public DateTime InterviewDate { get; set; }
         public bool Isedit { get; set; }
-        public bool isapproved { get; set; }
+        public int isapproved { get; set; }
+        public bool isapprovedchecked { get; set; }
         public string Type { get; set; }
         public string uniqueid { get; set; }
+        public bool QCStatus { get; set; }
+        public int Redflags { get; set; }
 
         [Display(Name = "Payment Deduction")]
         public int PaymentDeduction { get; set; }

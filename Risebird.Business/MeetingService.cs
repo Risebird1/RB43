@@ -3886,7 +3886,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid,stdate, endate, year, month);
+                var result = await _meetingRespository.FetchCompletedInterviewsByClientId(clientid, stdate, endate, year, month);
                 return result;
             }
             catch (Exception e)
@@ -3955,16 +3955,28 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails()
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus)
         {
             try
             {
-                return await _meetingRespository.FetchPaymentSlaDetails();
+                return await _meetingRespository.FetchPaymentSlaDetails(actionstatus);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<bool> PaymentSlaNotApproved(int interviewid,string emailid)
+        {
+            try
+            {
+                return await _meetingRespository.PaymentSlaNotApproved(interviewid, emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }
