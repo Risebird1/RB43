@@ -585,7 +585,7 @@
                                                                             </span>
                                                                             @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
                                                                             {
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fas fa-close"></span></span></span>
+                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fas fa-close"></span></span></span>
                                                                             }
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
