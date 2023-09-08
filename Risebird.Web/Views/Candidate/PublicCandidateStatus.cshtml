@@ -379,7 +379,7 @@
                                                                    @* <th>Client Hr</th>*@
                                                                    @* <th>Staffing Agency</th>*@
                                                                     <th>Action</th>
-                                                                    <th title="Communication attempts count">Communications</th>
+                                                                    <th title="Communication attempts count">Communication</th>
                                                                    
                                                                     
 
@@ -571,16 +571,26 @@
 
                                                                             <!---client buttons-->
                                                                             <div>
-                                                                            @if (item.CurrentStatus != "Scheduled")
+                                                                          @*  @if (item.CurrentStatus != "Scheduled")
                                                                             {
-                                                                                @*<button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                        </button>*@
+                                                                              
                                                                                 <a target="_blank" class="btn btn-primary shadow btn-xs sharp me-1 item4 item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="cursor: pointer;">
                                                                                     <span title="Schedule Meeting"><span class="fas fa-calendar"></span></span>
-                                                                                </a>
-                                                                            }
-                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                                    </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
+                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                                    </div>
+                                                                                }*@
+                                                                                @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
+                                                                                {
+                                                                                    <div class="btn btn-reschedule shadow btn-xs sharp me-1">
+                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                                    </div>
+                                                                                 }
+                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
                                                                                 <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send"></span></span>
                                                                             </span>
                                                                             @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
@@ -1577,4 +1587,51 @@
         if (scroll >= 80) sticky.addClass('fixedtop');
         else sticky.removeClass('fixedtop');
     });
+</script>
+<script>
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting and reschedule?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reschedule!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interview/GenerateRescheuleLink',
+                        method: 'POST',
+                        data: {
+                            'CandidateEmailid': candidateEmailid,
+                            'interviewid': interviewid,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid
+                        },
+                        success: function (result) {
+                            location.href = result;
+                            //window.open(result, '_blank');
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error rescheduling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                //location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'reschedule cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
 </script>

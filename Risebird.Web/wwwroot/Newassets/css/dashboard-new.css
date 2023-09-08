@@ -6658,6 +6658,10 @@ input[type="date"].form-control {
     background: #f6b445c7;
     border-color: #f6b445c7;
 }
+.btn-reschedule, .btn-reschedule:hover {
+    background: #76b39c;
+    border-color: #76b39c;
+}
 .btn-upload, .btn-upload:hover {
     background: #b1ba4e;
     border-color: #b1ba4e;
