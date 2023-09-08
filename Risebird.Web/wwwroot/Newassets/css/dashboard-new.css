@@ -6931,7 +6931,26 @@ input[type="date"].form-control {
     .the-arrow.-right > .shaft:after {
         transform: rotate(-40deg);
     }
+.candidatename-sla {
+    float: right;
+    color: green;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 13px 50px 0px 0px;
+}
 
+#PaymentSLAModel .modal-lg {
+    max-width: 800px !important;
+}
+
+#PaymentSLAModel input[type='radio'] {
+    border: 1px solid gray;
+    margin: 0px 10px 0px 10px;
+    position: relative;
+    top: 2px;
+    width: 15px;
+    height: 15px;
+}
 
 /***** action arrow *****/
 /***** Media queries *****/
