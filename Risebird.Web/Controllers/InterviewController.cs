@@ -7889,15 +7889,25 @@ namespace Risebird.Web.Controllers
         {
             var _paymentSlab = new List<PaymentSlabsVM>();
             _paymentSlab.Add(new PaymentSlabsVM { id = 0, Name = "0%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 5, Name = "5%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 10, Name = "10%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 15, Name = "15%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 20, Name = "20%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 25, Name = "25%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 30, Name = "30%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 35, Name = "35%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 40, Name = "40%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 45, Name = "45%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 50, Name = "50%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 55, Name = "55%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 60, Name = "60%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 65, Name = "65%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 70, Name = "70%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 75, Name = "75%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 80, Name = "80%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 85, Name = "85%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 90, Name = "90%" });
+            _paymentSlab.Add(new PaymentSlabsVM { id = 95, Name = "95%" });
             _paymentSlab.Add(new PaymentSlabsVM { id = 100, Name = "100%" });
             model.PaymentDeductionList = new SelectList(_paymentSlab, "id", "Name");
         }
