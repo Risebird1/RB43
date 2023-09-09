@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[PaymentSLADetails](
 	[CreatedBy] [varchar](150) NULL,
 	[CreatedOn] [datetime] NULL,
 	[PaymentDeduction] [int] NULL,
-	[IsApproved] [bit] NULL,
+	[IsApproved] [int] NULL,
 	[ModifiedBy] [varchar](150) NULL,
 	[ModifiedOn] [datetime] NULL,
  CONSTRAINT [PK_PaymentSLADetails] PRIMARY KEY CLUSTERED 

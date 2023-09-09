@@ -108,30 +108,30 @@
                 <div class="pull-left">
                 </div>
                 <div class="pull-right">
-                    @if (ViewBag.ClientDetails == "client")
+                    @if (ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
                     {
                         <div class="pull-left mt-20">
                             <div class="reportdropdown">
                                 <button class="reportdropbtn">Report Quality Issue</button>
                                 <div class="reportdropdown-content">
-                                    <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                    <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
                                         <text>Rate Interviewer</text>
                                     </button>
-                                    <button style="margin-left: 10px; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
+                                    <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
                                         <text> Audio Feedback </text>
                                     </button>
-                                    <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                    <button class="dropdown-btn" type="button">
                                         <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
                                     </button>
                                     @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                     {
-                                        <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                        <button class="dropdown-btn" type="button">
                                             <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
                                         </button>
                                     }
                                     @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                     {
-                                        <button class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                        <button class="dropdown-btn">
                                             <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
                                         </button>
                                     }
