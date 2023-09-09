@@ -1016,11 +1016,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type)
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId = null)
         {
             try
             {
-                var result = await _interviewerRepository.FetchAllInterviewerallUpcomingInterview(type);
+                var result = await _interviewerRepository.FetchAllInterviewerallUpcomingInterview(type, irfId);
                 return result;
             }
             catch (Exception e)

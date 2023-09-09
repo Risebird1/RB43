@@ -26,7 +26,7 @@ Begin
 
 
 		;With CTE AS(      
-		Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable = 1)     
+		Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable in (1,2,3) or ipr.Isavailable is null)--where ipr.Isavailable = 1, global availability check removed for a while   
 		Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, IsNull(DATEDIFF(SECOND, @lastSentOn, @timeNow), 0) as AvailbilityHour, @basicSkill as BasicSkill, @flatRate  as FlatRate      
 		From CTE join Userlist ul on CTE.Userid=ul.id       
 		where CTE.value = @assessmentGroupId and ul.IsActive=1 
@@ -38,7 +38,7 @@ End
 Else
 Begin
 	;With CTE AS(      
-	Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable = 1)     
+	Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable in (1,2,3) or ipr.Isavailable is null)--where ipr.Isavailable = 1, global availability check removed for a while     
 	Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName        
 	From CTE join Userlist ul on CTE.Userid=ul.id       
 	where CTE.value = @assessmentGroupId and ul.IsActive=1  
