@@ -587,7 +587,7 @@
                                                                                 @if (item.CurrentStatus == "Scheduled")
                                                                                 {
                                                                                     <div class="btn btn-reschedule shadow btn-xs sharp me-1">
-                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" style="color:#fff" aria-hidden="true"></i></span>
                                                                                     </div>
                                                                                  }
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
