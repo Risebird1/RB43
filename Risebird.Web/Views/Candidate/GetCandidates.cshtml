@@ -386,12 +386,13 @@
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                                            <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>                                                    
+                                                                            <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                                         </button>
-                                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
-                                                                            <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                        </a>
+
                                                                     }
+                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                                        <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                    </a>
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -838,90 +839,90 @@
             @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 
             @*<div id="candidateStatusModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
+            <!-- Modal content -->
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
 
 
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;color:#fff;"></span>
-                            </div>
-                            <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
+            <div class="filheader">
+            <div class="filavatar">
+            <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;color:#fff;"></span>
+            </div>
+            <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
+            </button>
 
 
-                        <div class="modal-body">
+            <div class="modal-body">
 
-                            <div class="col-md-12 col-sm-12 ">
-                                <div class="form-group">
+            <div class="col-md-12 col-sm-12 ">
+            <div class="form-group">
 
-                                    <label class="control-labeled">
-                                        Status
-                                    </label>
+            <label class="control-labeled">
+            Status
+            </label>
 
-                                    <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
-                                </div>
+            <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
+            </div>
 
-                                <div class="form-group">
-                                    <form>
-                                        <div class="file-upload-wrapper" data-text="Select your file">
-                                            <input name="file-upload-field" id="idAudioFile" type="file" class="file-upload-field" accept=".mp3, .wav, .m4a">
-                                        </div>
-                                    </form>
+            <div class="form-group">
+            <form>
+            <div class="file-upload-wrapper" data-text="Select your file">
+            <input name="file-upload-field" id="idAudioFile" type="file" class="file-upload-field" accept=".mp3, .wav, .m4a">
+            </div>
+            </form>
 
-                                </div>
-                                <div class="form-group">
+            </div>
+            <div class="form-group">
 
-                                    <label class="control-labeled w-full">
-                                        Comments
-                                    </label>
-                                    <input type="text" id="idComments" class="w-full" style="height:60px">
+            <label class="control-labeled w-full">
+            Comments
+            </label>
+            <input type="text" id="idComments" class="w-full" style="height:60px">
 
-                                </div>
+            </div>
 
-                            </div>
+            </div>
 
-                            <div class="form-group">
-                                <div>
-                                    <div class="col-md-12 col-sm-12">
-                                        <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
-                                    </div>
-                                </div>
+            <div class="form-group">
+            <div>
+            <div class="col-md-12 col-sm-12">
+            <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+            </div>
+            </div>
 
 
 
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            </div>
+            </div>
 
-                </div>
+            </div>
             </div>*@
 
             @*<div id="statusListModal" class="modal modal-bg">
-                <!-- Modal content -->
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
+            <!-- Modal content -->
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
 
 
-                        <div class="filheader">
-                            <div class="filavatar">
-                                <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
-                            </div>
-                            <h5 class="modal-title pull-left" id="statusListHeading"></h5>
-                        </div>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
-                        </button>
+            <div class="filheader">
+            <div class="filavatar">
+            <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
+            </div>
+            <h5 class="modal-title pull-left" id="statusListHeading"></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
+            </button>
 
-                        <div class="modal-body" id="statusListTableBody">
-                        </div>
-                    </div>
+            <div class="modal-body" id="statusListTableBody">
+            </div>
+            </div>
 
-                </div>
+            </div>
             </div>*@
 
 
