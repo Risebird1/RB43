@@ -3788,9 +3788,9 @@ namespace Risebird.Web.Controllers
         }
         #region Open Interview Notification: Public URL
         [HttpPost]
-        public async Task<JsonResult> SendOpenURLNotification()
+        public async Task<JsonResult> SendOpenURLNotification(int? irfId = null)
         {
-            var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified");
+            var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", irfId);
             foreach (var item in _AllInterviewerInterview)
             {
                 if (!string.IsNullOrEmpty(item.EmailId))

@@ -83,7 +83,7 @@
                         @if (ViewBag.actionstatus == "InterviewCount")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Click here to Send Open Interview Notification" onclick="SendOpenInterview()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;">Send Open Interview</font></span>
+                                <span data-toggle="tooltip" data-placement="top" title="Click here to Send Open Interview Notification" onclick="SendOpenInterview(null)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;">Send Open Interview</font></span>
                             </button>
                         }
                     </div>
@@ -1189,6 +1189,24 @@
                                                                     <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
                                                                         <span  onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                                     </div>
+
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
+                                                                        <span onclick="javascript:CheckIntervieweravailbility('@item.irfIntId', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up.">
+                                                                        <span onclick="javascript:SendOpenInterview('@item.irfIntId');" title="Send email communication all open interviews that are available to be taken up." class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
                                                                 }
                                                             </td>
                                                         }
@@ -1404,6 +1422,7 @@
 
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
+<script src="~/js/checkintervieweravailabilitybymail.js"></script>
 
 <script>
     function OpenRedoFormModel(interviewid) {
@@ -1696,7 +1715,7 @@
             }
         });
     }
-    function SendOpenInterview() {
+    function SendOpenInterview(irfId = null) {
         swal.fire({
             title: 'Are you sure you want to send open interview notification?',
             type: 'warning',
@@ -1709,6 +1728,7 @@
                     $.ajax({
                         url: '/Interviewer/SendOpenURLNotification',
                         type: 'POST',
+                        data: {'irfId' : irfId},
                         success: function (result) {
                             if (result == "Success") {
                                 swal.fire({
