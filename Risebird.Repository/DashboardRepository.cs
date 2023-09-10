@@ -1198,7 +1198,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<QCFormVM>> GetRedflagsQcReportRepository(int Interviewid)
+        public async Task<QCFormVM> GetRedflagsQcReportRepository(int Interviewid)
         {
             try
             {
@@ -1208,7 +1208,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<QCFormVM>(con, "usp_GetRedFlagsQCReport", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return (List<QCFormVM>)result;
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException e)

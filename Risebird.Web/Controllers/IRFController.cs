@@ -6543,7 +6543,7 @@ namespace Risebird.Web.Controllers
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
                 if (model !=null && model.Count() > 0)
                 {
-                    if(model.FirstOrDefault().AvailbilityHour >= 10800 || model.FirstOrDefault().AvailbilityHour == 0)
+                    if(model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
                     {
                         await _irfService.UpdateIntervieweravailbilityDetails(irfId);
                         var skills = await _irfService.GetTechSkillswithWeightage(irfId);
@@ -6584,7 +6584,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return Json("Emails have already been sent. Please try notifying(email) at least 3 hours after the last successful notification attempt.");
+                        return Json("Emails have already been sent for the Assessment Group Interviewers mapped to this skill channel. Please try notifying(email) at least 1 hour after the last successful notification attempt.");
 
                     }
                 }

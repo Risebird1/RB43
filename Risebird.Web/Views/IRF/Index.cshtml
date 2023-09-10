@@ -1469,6 +1469,9 @@
         });
     }
 </script>
+
+<script src="~/js/checkintervieweravailabilitybymail.js"></script>
+
 <script>
     var closeMember = document.getElementById("membersPopUp");
     closeMember.onclick = function () {
@@ -1508,7 +1511,7 @@
         window.location.href = "/IRF/NotScheduledCandidate?IRFId=" + IRFId;
     }
 
-    function CheckIntervieweravailbility(id, Name, assessmentGroupId) {
+    @*function CheckIntervieweravailbility(id, Name, assessmentGroupId) {
         swal.fire({
             title: 'Are you sure?',
             text: "Do you want to send the email to check the interviewer availability!",
@@ -1531,7 +1534,7 @@
             allowOutsideClick: false
         })
 
-    }
+    }*@
 </script>
 
 <script src="https://www.amcharts.com/lib/4/core.js"></script>

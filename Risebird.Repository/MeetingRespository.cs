@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 using static System.Data.CommandType;
@@ -6668,13 +6669,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ps.*,IRF.id as IRFId,im.candidateEmail,im.interviewer From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ps.Interviewid=@Interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var parameters = new DynamicParameters();
-                    var results = await con.QueryFirstOrDefaultAsync<PaymentSLAVM>(query, dynamicParameters);
+                    var results = await SqlMapper.QueryFirstOrDefaultAsync<PaymentSLAVM>(con, "usp_GetPaymentSlaDetailsById", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }
@@ -6697,8 +6697,16 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Interviewid", model.Interviewid);
                     parameters.Add("@Emailid", model.CreatedBy);
+                    parameters.Add("@CreatedOn", DateTime.Now);
                     parameters.Add("@PaymentDeduction", model.PaymentDeduction);
-                    parameters.Add("@isapproved", model.isapproved);
+                    if (model.isapprovedchecked)
+                    {
+                        parameters.Add("@isapproved", 1);
+                    }
+                    else
+                    {
+                        parameters.Add("@isapproved", 0);
+                    }
 
                     parameters.Add("@Inaccuratedecisionmaking", model.Inaccuratedecisionmaking);
                     parameters.Add("@TimeManagement", model.TimeManagement);
@@ -6728,13 +6736,15 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails()
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_GetPaymentSlacompliance", null, commandType: CommandType.StoredProcedure);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@actionstatus", actionstatus);
+                    var result = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_GetPaymentSlacompliance", parameters, commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
@@ -6747,6 +6757,31 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> PaymentSlaNotApproved(int interviewid,string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", interviewid);
+                    parameters.Add("@createdon", DateTime.Now);
+                    parameters.Add("@ModifiedBy", emailid);
+                    var result = await SqlMapper.QueryAsync(con, "usp_PaymentSlaNotApproved", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

@@ -8,9 +8,10 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_GetAllNewCreatedIRFs]    
+Create PROCEDURE [dbo].[usp_GetAllNewCreatedIRFs]   
+@timeNow datetime
 AS    
 Begin        
-Select * from IRF where 15 > DATEDIFF(Minute,Createdon,Getdate())     
+Select * from IRF where 15 > DATEDIFF(Minute, Createdon, @timeNow)     
 End
 Go

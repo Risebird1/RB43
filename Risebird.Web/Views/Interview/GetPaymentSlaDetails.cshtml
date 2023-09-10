@@ -7,7 +7,7 @@
     @Html.HiddenFor(m => m.Type)
     @Html.HiddenFor(m => m.uniqueid)
     @Html.HiddenFor(m => m.IRFId)
-    @Html.HiddenFor(m => m.isapproved)
+    @Html.HiddenFor(m => m.isapprovedchecked)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:10px 0px">
@@ -184,9 +184,18 @@
 
     <div class="row">
         <div class="col-md-12 mc-button-area" style="margin-bottom:10px;">
-            @if (Model.isapproved)
+            @if (Model.isapprovedchecked)
             {
-                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
+                @if (Model.QCStatus)
+                {
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="NotApproved(@Model.Interviewid)">Not Approved</button>
+                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
+                }
+                else
+                {
+                    <button type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded">Not Approved</button>
+                    <button type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
+                }
             }
             else
             {
@@ -194,5 +203,18 @@
             }
         </div>
     </div>
-
 </form>
+
+<script>
+    function NotApproved(interviewid){
+         $.ajax({
+            type: "POST",
+            url: "/Interview/PaymentSlaDetailsNotApproved",
+            data: { interviewid: interviewid },
+            success: function (data) {
+               swal.fire(data);
+               location.reload();
+            }
+        });
+    }
+</script>
