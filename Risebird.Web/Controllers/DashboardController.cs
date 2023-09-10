@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using OfficeOpenXml.Style;
 using Risebird.Business.Interface;
@@ -1109,7 +1110,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageHeader = "";
                         ViewBag.Actiontype = actiontype;
                         ViewBag.actionstatus = actionstatus;
-                         ViewBag.ProfileName = profileName;
+                        ViewBag.ProfileName = profileName;
                         if (actionstatus == RibbonActionType.InterviewCount)
                         {
                             ViewBag.PageHeader = "Unassigned Interviews";
@@ -1971,37 +1972,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    List<string> _lstRedFlagDetail = new List<string>();
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
-                    {
-                         List<QCFormVM> data = new List<QCFormVM>();
-                       // QCFormVM model = new QCFormVM();
-                       data = await _dashboardService.GetRedFlagsQCReportService(Interviewid);
-                      
-
-                        return PartialView("_GetRedFlagsQCReportPartial",data);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                var data = await _dashboardService.GetRedFlagsQCReportService(Interviewid);
+                return PartialView("_GetRedFlagsQCReportPartial", data);
             }
             catch (Exception ex)
             {
+                var data = new QCFormVM();
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("SignOut", "Session");
+                return PartialView("_GetRedFlagsQCReportPartial", data);
             }
         }
     }

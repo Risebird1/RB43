@@ -82,6 +82,7 @@ declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsFo
 
  declare @BlackListCompanyCount int=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)
 
+declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
 --(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
@@ -116,7 +117,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @RedoInterviewCount as RedoInterviewCount,
 @ProbableNoShowCount as ProbableNoShowCount,
 @PotentialRiskByClient as PotentialRiskByClient,
-@BlackListCompanyCount as BlackListCompanyCount
+@BlackListCompanyCount as BlackListCompanyCount,
+@PaymentSlacomplianceCount as PaymentSlacomplianceCount
 
 END        
 ELSE        
@@ -167,6 +169,7 @@ join InterviewComments ic on ic.Interviewid=im.id)
 
 set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)
 set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)
+set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
@@ -179,10 +182,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @RedoInterviewCount as RedoInterviewCount,
 @ProbableNoShowCount as ProbableNoShowCount,
 @PotentialRiskByClient as PotentialRiskByClient,
-@BlackListCompanyCount as BlackListCompanyCount
-
-
-
+@BlackListCompanyCount as BlackListCompanyCount,
+@PaymentSlacomplianceCount as PaymentSlacomplianceCount
 
 
 --select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
@@ -199,6 +200,4 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 --where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7) as QCPendingReportCount    
 END        
 End
-
-
 GO

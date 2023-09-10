@@ -317,6 +317,7 @@ namespace Risebird.Entities.ViewModel
         public int CandidateMasterId { get; set; }
         public string scheduleUniqueid { get; set; }
         public int? VideoConfirmation { get; set; }
+        public int AssessmentGroupId { get; set; }
 
 
     }
