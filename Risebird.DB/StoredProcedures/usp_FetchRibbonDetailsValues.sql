@@ -23,7 +23,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle, IRF.CalendlyLink,si.Uniqueid as scheduleUniqueid, im.id as imid from InterviewMeetings im 
+				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle, IRF.CalendlyLink,si.Uniqueid as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId 
 				join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId 
@@ -34,7 +34,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			end
 			else
 			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,IRF.CalendlyLink,si.Uniqueid as scheduleUniqueid, im.id as imid from InterviewMeetings im 
+				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,IRF.CalendlyLink,si.Uniqueid as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=  irf.RisebirdHr
 				left join ScheduleInterviewEvent si on si.skillchannel = irf.IRFID

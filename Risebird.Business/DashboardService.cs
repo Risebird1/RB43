@@ -668,7 +668,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<QCFormVM>> GetRedFlagsQCReportService(int Interviewid)
+        public async Task<QCFormVM> GetRedFlagsQCReportService(int Interviewid)
         {
             try
             {

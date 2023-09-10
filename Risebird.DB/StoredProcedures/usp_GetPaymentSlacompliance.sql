@@ -8,16 +8,31 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 Create PROCEDURE usp_GetPaymentSlacompliance
+@actionstatus varchar(20)
 AS
 BEGIN
-Select ps.*,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.interviewer,im.interviewDate,ul.EmailId as ChannelOwner,ip.CompanyName,uli.MobileNumber,RTRIM(LTRIM((ISNULL(uli.FirstName,'')+' '+ISNULL(uli.LastName,'')))) as InterviewerName
+if(@actionstatus='SLACompleted')
+begin
+Select ps.*,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.interviewer,im.interviewDate,ul.EmailId as ChannelOwner,ip.CompanyName,uli.MobileNumber,RTRIM(LTRIM((ISNULL(uli.FirstName,'')+' '+ISNULL(uli.LastName,'')))) as InterviewerName,tq.Redflags,Case when tq.id>0 then 1 else 0 end as QCStatus,ps.IsApproved
 From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id 
 left join IRF on IRF.IRFId=im.IRFId 
 left join UserList ul on ul.id=IRF.RisebirdHr
 left join UserList uli on uli.EmailId=im.interviewer
 left join InterviewerProfile ip on ip.UserId=uli.id
+left join Trans_QCFormReport tq on tq.interviewid=im.id
+where ISNull(ps.IsApproved,0)!=0
+end
+else
+begin
+Select ps.*,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.interviewer,im.interviewDate,ul.EmailId as ChannelOwner,ip.CompanyName,uli.MobileNumber,RTRIM(LTRIM((ISNULL(uli.FirstName,'')+' '+ISNULL(uli.LastName,'')))) as InterviewerName,tq.Redflags,Case when tq.id>0 then 1 else 0 end as QCStatus
+From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id 
+left join IRF on IRF.IRFId=im.IRFId 
+left join UserList ul on ul.id=IRF.RisebirdHr
+left join UserList uli on uli.EmailId=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
+left join Trans_QCFormReport tq on tq.interviewid=im.id
 where ISNull(ps.IsApproved,0)=0
+end
 END
 GO
