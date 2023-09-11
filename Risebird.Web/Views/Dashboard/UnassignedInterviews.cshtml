@@ -1219,11 +1219,11 @@
                                                                 @if (ViewBag.actionstatus == "InterviewCount")
                                                                 {
 
-                                                                    <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
+                                                                    <div class="mdc-fab app-fab--absolute" style="position:relative;">
                                                                         <span  onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                                     </div>
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
                                                                         <span onclick="javascript:CheckIntervieweravailbility('@item.irfIntId', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
                                                                                 <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
@@ -1232,12 +1232,9 @@
                                                                         </span>
                                                                     </button>
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up.">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up." style="position:relative;top:3px;">
                                                                         <span onclick="javascript:SendOpenInterview('@item.irfIntId');" title="Send email communication all open interviews that are available to be taken up." class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                                                                                <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                                                                                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                                                                            </svg>
+                                                                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M2 5.5V3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V19h18V7.3l-8 7.2-10-9zM0 10h5v2H0v-2zm0 5h8v2H0v-2z"></path> </g> </svg>
                                                                         </span>
                                                                     </button>
                                                                 }

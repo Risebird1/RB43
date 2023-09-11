@@ -309,9 +309,10 @@
                                                                                 <td class="text-left">
 
 
-                                                                                    <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="top:3px;position:relative;">
+                                                                                   <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="top:3px;position:relative;">
                                                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                     </button>
+                                                                                     
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;cursor:pointer" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
