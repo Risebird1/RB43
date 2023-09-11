@@ -37,7 +37,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 
 <div class="main-panel" id="main-panel">
-    <div class="jumbotron">
+    <div class="jumbotrons">
         <div class="pt30">
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
@@ -215,7 +215,7 @@
                                                                             <th id='start'>Interview Date</th>
                                                                             <th>Status</th>
                                                                             <th style="border-left: 0px !important;">JD Title</th>
-                                                                            <th>Candidate Detail</th>
+                                                                            <th>Candidate Detailsss</th>
                                                                             <th>Resume</th>
                                                                             <th>Client HR</th>
                                                                             @if (ViewBag.profile != "Client")
@@ -267,6 +267,15 @@
                                                                                     {
                                                                                         <div class="mtop-5">@item.candidateName</div>
                                                                                     }
+                                                                                    <div>
+                                                                                    <span class="call-area">
+                                                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                        {
+                                                                                            <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" height="17" /></span>
+                                                                                        }
+                                                                                    </span>
+                                                                                        @item.MobileNumber
+                                                                                    </div>
                                                                                     @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                                     {
                                                                                         @if (item.candidateEmail.Length > 10)
@@ -280,6 +289,7 @@
 
                                                                                     }
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
+                                                                                  
                                                                                 </td>
                                                                                 @if (!string.IsNullOrEmpty(item.resumeLink))
                                                                                 {
@@ -309,22 +319,21 @@
                                                                                 <td class="text-left">
 
 
-                                                                                   <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="top:3px;position:relative;">
+                                                                                 @*  <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="top:3px;position:relative;">
                                                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                     </button>
+*@
+@*
+*@
+                                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                                                        <span title="ReSchedule Meeting" class="mdc-fab__icon material-icons"><i class="fas fa-calendar-alt" aria-hidden="true" style="font-size:16px;"></i></span>
+                                                                                    </a>
+
                                                                                      
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;cursor:pointer" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
-                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                    {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
-                                                                                            <span class="btn-call" style="top: -7px;
-        position: relative;
-        cursor: pointer
-" title="Click here to call the candidate."><span class="fa fa-phone-alt"></span></span>
-                                                                                        </span>
-                                                                                    }
+                                                                         
                                                                                     @*<button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                         <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                                                     </button>*@
@@ -412,6 +421,15 @@
                                                                                     {
                                                                                         <div class="mtop-5">@item.candidateName</div>
                                                                                     }
+                                                                                    <div>
+                                                                                    <span class="call-area">
+                                                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                        {
+                                                                                            <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" height="17" /></span>
+                                                                                        }
+                                                                                    </span>
+                                                                                    @item.MobileNumber
+                                                                                    </div>
                                                                                     @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                                     {
                                                                                         @if (item.candidateEmail.Length > 10)
@@ -425,6 +443,7 @@
 
                                                                                     }
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
+                                                                                  
                                                                                 </td>
                                                                                 @if (!string.IsNullOrEmpty(item.resumeLink))
                                                                                 {
@@ -455,22 +474,19 @@
 
                                                                                     @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                                     {
-                                                                                        <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="position:relative;top:3px;">
+                                                                                      @*  <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="position:relative;top:3px;">
                                                                                             <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                                        </button>
+                                                                                        </button>*@
+
+                                                                                
+                                                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                                                            <span title="ReSchedule Meeting" class="mdc-fab__icon material-icons"><i class="fas fa-calendar-alt" aria-hidden="true" style="font-size:16px;"></i></span>
+                                                                                        </a>
                                                                                     }
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;cursor:pointer" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
-                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                    {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
-                                                                                            <span class="btn-call" style="        top: -7px;
-        position: relative;
-        cursor: pointer
-" title="Click here to call the candidate."><span class="fa fa-phone-alt"></span></span>
-                                                                                        </span>
-                                                                                    }
+                                                                                  
                                                                                     <button style="position:relative;top:3px;" class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                         <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons">
                                                                                             <img style="height:16px!important;max-height:16px!important;" src="~/Newassets/img/addlist.png" />
@@ -821,3 +837,50 @@
 <loading></loading>
 
 
+<script>
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this meeting and reschedule?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reschedule!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interview/GenerateRescheuleLink',
+                        method: 'POST',
+                        data: {
+                            'CandidateEmailid': candidateEmailid,
+                            'interviewid': interviewid,
+                            'uniqueid': uniqueid,
+                            'Irfid': irfid
+                        },
+                        success: function (result) {
+                            location.href = result;
+                            //window.open(result, '_blank');
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error rescheduling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                //location.reload(true);
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'reschedule cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
