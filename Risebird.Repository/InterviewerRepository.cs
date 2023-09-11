@@ -2206,7 +2206,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type)
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId  = null)
         {
             try
             {
@@ -2215,6 +2215,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@type", type);
+                    parameters.Add("@irfId", irfId);
                     var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
                            commandType: CommandType.StoredProcedure);
                     return (List<CommonInterviewDetailsVM>)results;

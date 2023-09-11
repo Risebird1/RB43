@@ -52,6 +52,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<BlackListCompanyVM>> GeBlackListCompany();
         Task<bool> UndoBlackListCompany(BlackListCompanyVM model);
         Task<bool> ApprovedBlackListCompany(BlackListCompanyVM model);
-        Task<List<QCFormVM>> GetRedflagsQcReportRepository(int Interviewid);
+        Task<QCFormVM> GetRedflagsQcReportRepository(int Interviewid);
     }
 }

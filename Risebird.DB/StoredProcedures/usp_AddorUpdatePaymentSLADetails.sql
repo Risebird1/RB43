@@ -11,6 +11,7 @@ GO
 Create Procedure usp_AddorUpdatePaymentSLADetails
 @Interviewid int,
 @Emailid varchar(150),
+@CreatedOn datetime,
 @PaymentDeduction int,
 @Inaccuratedecisionmaking varchar(50),
 @TimeManagement varchar(50),
@@ -24,7 +25,7 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @ProctoringIgnorance varchar(50),
 @UnethicalPractices varchar(50),
 @PoorCommunicationSkills varchar(50),
-@isapproved bit
+@isapproved int
 AS
 BEGIN
 Declare @Userid int       
@@ -34,7 +35,7 @@ begin
 Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,TimeManagement=@TimeManagement,QuestionsRelevance=@QuestionsRelevance,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,
-UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,CreatedBy=@Emailid,CreatedOn=Getdate(),PaymentDeduction=@PaymentDeduction,isapproved=@isapproved
+UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved
 where Interviewid=@Interviewid
 end
 else
@@ -42,7 +43,7 @@ begin
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,
 LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction) 
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,Getdate(),@PaymentDeduction) 
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction) 
 end
 END
 GO

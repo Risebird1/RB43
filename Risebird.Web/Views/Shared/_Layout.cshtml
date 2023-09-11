@@ -276,9 +276,32 @@
                                         }
                                         @if (profileName == "Client")
                                         {
-                                            <span style="cursor:pointer;" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Skill Channel Stats</font></span>
-                                            <span style="cursor:pointer;" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> New Interview Request</font></span>
+@*                                         <span style="cursor:pointer;" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Skill Channel Stats</font></span>
+*@
+                                       <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
+                                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true"></i></span>
+                                                <div class="d-lg-inline-flex pad7">
+                                                    Skill Channel Stats
+                                                </div>
+
+                                            </button>
+                                            
+                                            
+                                            
+                                            @* <span style="cursor:pointer;" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> New Interview Request</font></span>
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Manage Interviews</font></span>
+                                             *@
+
+                                            <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
+                                                <span class="topheader-link"><i class="fa fa-users"></i></span>
+                                                <div class="d-lg-inline-flex pad7">
+                                                    Manage Interviews
+                                                </div>
+
+                                            </button>
+
+
+
 
 
 
@@ -366,9 +389,17 @@
                                         {
                                             var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
                                             var email = emailid.Trim('"');
-                                            <span>
-                                                @email
-                                            </span>
+                                            @if (!string.IsNullOrWhiteSpace(@email))
+                                            {
+                                                @if (@email.Length > 29)
+                                                {
+                                                    <span style="font-size:13px;" title="@email"> @email.Substring(0,27) ....</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="font-size:13px;">  @email</span>
+                                                }
+                                            }
                                         }
                                         else
                                         {
@@ -472,9 +503,17 @@
                                         {
                                             var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
                                             var email = emailid.Trim('"');
-                                            <span>
-                                                @email
-                                            </span>
+                                            @if (!string.IsNullOrWhiteSpace(@email))
+                                            {
+                                                @if (@email.Length > 29)
+                                                {
+                                                    <span style="font-size:13px;" title="@email"> @email.Substring(0,27) ....</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="font-size:13px;">  @email</span>
+                                                }
+                                            }
                                         }
                                         else
                                         {
