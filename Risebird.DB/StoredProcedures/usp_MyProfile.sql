@@ -24,7 +24,8 @@ Create PROCEDURE [dbo].[usp_MyProfile]
 @InterviewerProfileId int,    
 @Isinstaavailable bit,  
 @CodedResumeLink varchar(max),
-@Isavailable int
+@Isavailable int,
+@VideoConfirmation int
       
 AS      
       
@@ -50,7 +51,8 @@ Begin
    [ResumeLink] = @ResumeLink,    
    [Isinstaavailable]=@Isinstaavailable,  
    [CodedResumeLink]=@CodedResumeLink,
-   [Isavailable]=@Isavailable
+   [Isavailable]=@Isavailable,
+   [VideoConfirmation]=@VideoConfirmation 
       
  where id = @InterviewerProfileId;      
        

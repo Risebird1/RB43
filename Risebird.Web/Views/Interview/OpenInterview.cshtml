@@ -293,9 +293,9 @@
             var msg = '@ViewBag.Message';
             if (msg.includes("Success")) {
                 var codedname = $("#hidcodedname").val();
-                //swal.fire("Successful", '@ViewBag.Message', "success");
-                //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success");
-                swal.fire("For your privacy concerns", "Please join meeting using browser in private or incognito mode only with your coded name : " + codedname, "success");
+                swal.fire("Successful", '@ViewBag.Message', "success");
+                //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success"); 
+                //swal.fire("For your privacy concerns", "Please join meeting using browser in private or incognito mode only with your coded name : " + codedname, "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
