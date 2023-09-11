@@ -121,6 +121,15 @@
                                                                 @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control  text-box single-line", @maxlength = "10", @minlength = "10" })
                                                                 @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                                             </div>
+                                                            <div class="form-group">
+                                                                <div>Do you want to enable your Video while taking interview?</div>
+                                                              
+                                                                 @Html.RadioButtonFor(model => model.VideoConfirmation,1) Yes
+
+                                                                @Html.RadioButtonFor(model => model.VideoConfirmation,2)No
+                                                                    
+                                                                
+                                                            </div>
                                                         }
 
                                                         else
@@ -159,15 +168,7 @@
                                                                 @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
                                                             </div>
 //Here
-                                                             <div class="form-group">
-                                                                <div>Vidio Enable</div>
-                                                              
-                                                                 @Html.RadioButtonFor(model => model.VideoConfirmation,1) Yes
-
-                                                                @Html.RadioButtonFor(model => model.VideoConfirmation,2)No
-                                                                    
-                                                                
-                                                            </div>
+                                                             
 
                                                         }
                                                     }
