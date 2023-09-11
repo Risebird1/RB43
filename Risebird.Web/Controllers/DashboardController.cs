@@ -1302,6 +1302,10 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "Potential Risk By Client Interviwes";
                         }
+                        else if (actionstatus == RibbonActionType.InterviewerChurn)
+                        {
+                            ViewBag.PageHeader = "Interviewer Churn Data";
+                        }
 
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
