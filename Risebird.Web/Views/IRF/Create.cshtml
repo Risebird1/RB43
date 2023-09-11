@@ -948,7 +948,6 @@
             url: "/IRF/GenerateSkillChannelName",
             data: { 'assessmentGroupName': assessmentGroupName, 'clientCompanyName': clientCompanyName },
             success: function (data) {
-                debugger;
                 if (data != null && data != '') {
                     document.getElementById('IRFId').value = data;
                 }
