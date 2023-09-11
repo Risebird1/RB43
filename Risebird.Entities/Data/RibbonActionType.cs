@@ -20,5 +20,6 @@
         public static readonly string CancelledInterview = "CancelledInterviewCount";
         public static readonly string RedoInterview = "RedoInterviewCount";
         public static readonly string PotentialRiskByClient = "PotentialRiskByClient";
+        public static readonly string InterviewerChurn = "InterviewerChurn";
     }
 }
