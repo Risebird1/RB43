@@ -264,5 +264,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
+        Task<bool> AgreeToPaymentSLAConditions(string emailid);
     }
 }
