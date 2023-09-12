@@ -237,6 +237,9 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ScheduleEvent(string id, string type, int returnvaluetype, int interviewid)
         {
             var model = new ScheculeInterview();
+            model.Checkbox1 = true;
+            model.Checkbox2 = true;
+            model.Checkbox4 = true;
             var result = await _interviewSchedulerservice.FetchDetailsByUniqueId(id);
             ViewBag.id = id;
             bool isPaused = false;
@@ -1191,6 +1194,9 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> CandidateScheduleEvent(string id, string CandidateEmail)
         {
             var model = new ScheculeInterview();
+            model.Checkbox1 = true;
+            model.Checkbox2 = true;
+            model.Checkbox4 = true;
             var result = await _interviewSchedulerservice.FetchDetailsByUniqueId(id);
             ViewBag.id = id;
             bool isPaused = false;
