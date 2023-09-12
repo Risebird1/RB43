@@ -466,6 +466,53 @@
         </div>
     </div>
 </div>
+<div id="PaymentSLADetailsModel" class="modal modal-bg" style="z-index:6">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <img style="width: 32px;position: relative;top: 7px;" src="~/img/video-confirm.png" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Payment SLA </h5>
+            </div>
+            <div class="modal-body" style="color:black">
+                <h3>
+                    <strong>
+                        Dear Interviewer,
+                    </strong>
+                </h3>
+                <p>
+                    while many of you are delivering professional interview feedback reports, some 20--30% of our reports are delivered by unprofessional interviewers in non acceptable format to customers. This results in customers holding payments and also dropping out from the platform- which eventually damages the good work of the remaining 80% of professional interviewers and also the brand of Risebird. Just think , will you accept unfinished products - if not, how do you accept customers to accept bad feedback reports? 
+                </p>
+                <p>If you deliver quality reports, we will pay an additional reward of 10-20% per interview. </p>
+                <p>But if report quality is poor, our quality control team and customers can cut your payment (5%-100%) on below quality parameters and severe non compliance  can result in temporary or permanent inactivation of your profile from Risebird platform. All deduction requests will be carefully vetted by us before it impacts your payment or inactivation. Please read it carefully and provide your acceptance before taking further interviews on Risebird platform.</p>
+                <div class="instruction">
+                <ul>
+                    <li><strong>Attention is not on candidates and on interview dynamics-</strong> Doing other concurrent tasks, not listening alertly, responding after delay</li>
+                    <li><strong>Plagiarism - </strong>Using questions from the internet or from A.I. (chatgpt) as it is, we do plagiarism check and expect 80% original questions from your work experience or intelligent modification of questions</li>
+                    <li><strong>Inaccurate/ Arbitrary decision making -</strong> False positive (average, below average selection), False negative (rejection of good candidate) , Lacking Sincerity</li>
+                    <li><strong>Time Management -</strong> Late start , end before time, too fast/too slow, wasting time on irrelevant points</li>
+                    <li><strong>Questions Relevance -</strong> Irrelevant, mismatch difficulty level, theoretical / abstract / google questions- what is this/that, not adding questions in report</li>
+                    <li><strong>Score Rubric Ignorance-</strong> asking questions which are not linked to desired scoring rubric, filling score rubric without cognizance</li>
+                    <li><strong>Poor Feedback Comments -</strong> Grammatical errors, Spelling mistakes, Wrong sentence formation, Repetition, of short without any clear explanation for selection or for rejection , too generic, Irrelevant points, commenting on areas which are not evaluated , Providing score instead of comments</li>
+                    <li><strong>Candidate Interaction Quality -</strong> Personal Information, Reading questions without interacting, Personal remarks, Outside scope of interview, Bias, Impatience, Disrespect</li>
+                    <li><strong>Limited Hands on coding / Practical scenarios-</strong> not checking actual competency of candidate</li>
+                    <li><strong>Wrong Status Updates -</strong> Marking no show candidate as Completed, Marking interviewer noshow as Drop-reject, Marking not qualified candidate as selected</li>
+                    <li><strong>Poor Infrastructure -</strong> Internet , Video, Audio, constraints , BG Noise, Firewalls blocking, Using Mobile phones</li>
+                    <li><strong>Proctoring Ignorance-</strong> Conducting interviews while candidate video is off, Ignoring suspicious candidate , Ignoring use of suspicious apps or cheating by candidate</li>
+                    <li><strong>Unethical Practices-</strong>Bribery, Biases, Fake reporting, Fake interviewing, Impersonation,Fake selections, Fake rejections</li>
+                    <li><strong>Poor Communication Skills-</strong> Using language other than English, Unable to articulate questions, Confusing candidates, Speaking too fast, too slow</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="model-footer text-center">
+                <input type="checkbox" id="chk_interviewernotifcation" onchange="ConfirmAgreePaymentSLADetails()" />I agree to above payment SLA terms.
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -563,6 +610,14 @@
         });
     </script>
 }
+@if (!ViewBag.PaymentSLAConfirmation)
+{
+    <script>
+        $(document).ready(function () {
+            openPaymentSLADetailsModel();
+        });
+    </script>
+}
 <script>
     //$(document).ready(function () {
     //    $.ajax({
@@ -648,4 +703,23 @@
         });
     }
   
+</script>
+<script>
+    function closePaymentSLADetailsModel() {
+        var model = document.getElementById("PaymentSLADetailsModel");
+        model.style.display = "none";
+    }
+    function openPaymentSLADetailsModel() {
+        var model = document.getElementById("PaymentSLADetailsModel");
+        model.style.display = "block";
+    }
+    function ConfirmAgreePaymentSLADetails() {
+        $.ajax({
+            url: '/Interview/AgreeToPaymentSLAConditions',
+            type: 'POST',
+            success: function (data) {
+                closePaymentSLADetailsModel();
+            }
+        });
+    }
 </script>

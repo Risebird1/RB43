@@ -3978,6 +3978,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> AgreeToPaymentSLAConditions(string emailid)
+        {
+            try
+            {
+                return await _meetingRespository.AgreeToPaymentSLAConditions(emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
