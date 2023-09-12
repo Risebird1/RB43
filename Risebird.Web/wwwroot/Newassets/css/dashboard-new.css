@@ -6700,22 +6700,27 @@ input[type="date"].form-control {
 }
 .topheader-link-wrap {
     width: auto;
-    margin-right: 35px;
+    float:left;
+    margin-right: 0px;
     color: #ffff;
     padding: 0px 10px;
     font-size: 12px;
     border: 0px;
     background: none;
-    position: absolute;
-    top: -39px;
+/*    position: absolute;
+    top: -39px;*/
     z-index: 100000000;
-    right: 250px;
+/*    right: 250px;*/
 }
     .topheader-link-wrap button, .topbar-item button{
         background:none;
         border:0px;
         color:#fff;
     }
+
+a.filter:hover + div.note-filter {
+    display: block;
+}
     .user-mail {
         position: relative;
         top: 10px;
@@ -6796,12 +6801,12 @@ input[type="date"].form-control {
     margin-top: 60px;
 }
 .clientlogoarea {
-    width: 100px;
-    height: auto;
+    width: 80px;
+
 }
     .clientlogoarea img{
         width:100%;
-        height:100%;
+        height:50%;
     }
 /***** action arrow *****/
 
