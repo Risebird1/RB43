@@ -6685,6 +6685,12 @@ input[type="date"].form-control {
     border: 0px !important;
     border-bottom:0px!important;
 }
+.topheader-header{
+position:absolute;
+top:63px;
+z-index:1;
+right:315px;
+}
 .topheader-link {
     width: 32px;
     height: 32px;
@@ -6703,7 +6709,7 @@ input[type="date"].form-control {
     float:left;
     margin-right: 0px;
     color: #ffff;
-    padding: 0px 10px;
+    padding: 0px;
     font-size: 12px;
     border: 0px;
     background: none;
@@ -6712,13 +6718,13 @@ input[type="date"].form-control {
     z-index: 100000000;
 /*    right: 250px;*/
 }
-    .topheader-link-wrap button, .topbar-item button{
-        background:none;
-        border:0px;
-        color:#fff;
+    .topheader-link-wrap button, .topbar-item button {
+        background: none;
+        border: 0px;
+        color: #817c7c;
+        font-weight: 600
     }
-
-a.filter:hover + div.note-filter {
+.filter:hover + .note-filter {
     display: block;
 }
     .user-mail {
@@ -6799,6 +6805,9 @@ a.filter:hover + div.note-filter {
 }
 .mtop-h {
     margin-top: 60px;
+}
+.mh-top{
+    margin-top:25px;
 }
 .clientlogoarea {
     width: 80px;

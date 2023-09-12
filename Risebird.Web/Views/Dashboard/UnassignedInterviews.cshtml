@@ -323,7 +323,7 @@
                                                     }
                                                     @if (ViewBag.actionstatus == "InterviewCount")
                                                     {
-
+                                                         <th>Candidate Response</th>
                                                         <th>JD Title</th>
                                                     }
 
@@ -501,7 +501,7 @@
                                                         <th>Comment</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "InterviewCount")
-                                                    {
+                                                    {<th>Candidate Response</th>
 
                                                         <th>JD Title</th>
                                                     }
@@ -838,7 +838,29 @@
                                                         }
                                                         @if (ViewBag.actionstatus == "InterviewCount")
                                                         {
-
+                                                            @if (item.IsCandidateResponsed)
+                                                            {
+                                                                @if (item.CandidateResponse == 1)
+                                                                {
+                                                                    <td>Responded (Yes)</td>
+                                                                }
+                                                                else if (item.CandidateResponse == 3)
+                                                                {
+                                                                    <td title="Candidate Request to Reschedule">Responded (Reschedule)</td>
+                                                                }
+                                                                else if (item.CandidateResponse == 4)
+                                                                {
+                                                                    <td>Responded (Need More Clarity)</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>Responded (No)</td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Response</td>
+                                                            }
                                                             <td>@item.JDTiltle</td>
                                                         }
                                                         @if (ViewBag.actionstatus == "SuspeciousInterviewerCount")
