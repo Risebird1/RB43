@@ -1538,6 +1538,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.isCodedResumePresent = false;
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
+                        ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
