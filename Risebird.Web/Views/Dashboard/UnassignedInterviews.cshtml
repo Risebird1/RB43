@@ -3,6 +3,7 @@
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
+@using Risebird.Entities.Data;
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Enum
 @using Risebird.CommonHelper
@@ -226,7 +227,7 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
 
                                                         <th>IRF ID</th>
@@ -237,7 +238,7 @@
                                                         <th>Skill Channel ID</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Interview Date</th>
                                                     }
@@ -253,7 +254,7 @@
                                                         <th>Meeting Link</th>
                                                         
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
@@ -261,11 +262,11 @@
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -273,7 +274,7 @@
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                     //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
@@ -289,7 +290,7 @@
 
                                                         }
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -299,7 +300,7 @@
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
@@ -396,6 +397,20 @@
                                                            Action
                                                        </th>
                                                     }
+                                                    @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
+                                                    {
+                                                        <th>Interviewer Name</th>
+                                                        <th>Interviewer Email</th>
+                                                        <th>Resume</th>
+                                                        <th>Is Employed</th>
+                                                        <th>Company Name</th>
+                                                        <th>Employment Comment</th>
+                                                        <th>Current Status</th>
+                                                        <th>Availibility Response Date</th>
+                                                        @*<th>Mobile</th>*@
+                                                        <th>Action</th>
+
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -408,7 +423,7 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
 
                                                         <th>IRF ID</th>
@@ -419,7 +434,7 @@
                                                         <th>Skill Channel ID</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Interview Date</th>
                                                     }
@@ -433,7 +448,7 @@
                                                         <th>Who Joined</th>
                                                         <th>Meeting Link</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
@@ -441,11 +456,11 @@
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Candidate Email</th>
                                                     }
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -454,7 +469,7 @@
                                                         <th>Interviewer Contact</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                     //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
@@ -469,7 +484,7 @@
                                                             }
                                                         }
                                                     }
-                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Client Name</th>
                                                     }
@@ -480,7 +495,7 @@
                                                     }
 
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
@@ -575,6 +590,24 @@
                                                             Action
                                                         </th>
                                                     }
+
+                                                    @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
+                                                    {
+                                                        <th>Interviewer Name</th>
+                                                        <th>Interviewer Email</th>
+                                                        <th>Resume</th>
+                                                        <th>Is Employed</th>
+                                                        <th>Company Name</th>
+                                                        <th>Employment Comment</th>
+                                                        <th>Current Status</th>
+                                                        <th>Availibility Response Date</th>
+                                                        @*<th>Mobile</th>*@
+                                                        <th>Action</th>
+
+                                                    }
+
+
+
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -635,7 +668,7 @@
                                                                 </button>
                                                             </td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
                                                         }
@@ -643,7 +676,7 @@
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td> @item.interviewDate </td>
                                                         }
@@ -693,7 +726,7 @@
                                                                 }
                                                             </td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td>@item.candidateName</td>
                                                         }
@@ -712,11 +745,11 @@
                                                                 </td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         }
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
@@ -735,7 +768,7 @@
                                                             <td>@item.InterviewerMobileNumber</td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                        @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                         //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
@@ -773,7 +806,7 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td>@item.Name</td>
                                                         }
@@ -792,7 +825,7 @@
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount")
+                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                             {
@@ -1237,7 +1270,84 @@
                                                                     </span>
                                                                 </button>
                                                        </td>
+
+
+                                                        
+
                                                     }
+
+                                                    @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
+                                                    {
+                                                            <td>@item.InterviewerName</td>
+                                                            <td>@item.InterviewerEmailId</td>
+                                                            @if (item.InterviewerResume != null && item.InterviewerResume != "")
+                                                            {
+                                                                <td>
+
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.InterviewerResume.Replace(" ","%20")>Resume</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }   
+                                                            
+                                                            @if(item.IsEmployed)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                        @if(!string.IsNullOrEmpty(item.CompanyName))
+                                                        {
+                                                             <td>@item.CompanyName</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                                
+                                                        @if(!string.IsNullOrEmpty(item.EmploymentComment))
+                                                        {
+                                                            <td>@item.EmploymentComment</td>
+
+                                                        }
+                                                        else
+                                                        {
+                                                             <td></td>       
+                                                        }
+                                                        @if(item.Isavailable == 3)
+                                                        {
+                                                            <td>Need Clarity</td>
+                                                        }
+                                                        else if(item.Isavailable == 4)
+                                                        {
+                                                            <td>Drop my profile</td>
+                                                        }
+                                                        @if(item.AvailabilityResponseDate !=null)
+                                                        {
+                                                            <td>@item.AvailabilityResponseDate</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
+                                                        {
+                                                            <td>
+                                                                <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
+                                                                    <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                </button>
+                                                            </td>
+                                                        }   
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                    }
+
                                                     </tr>
                                                 }
                                             </tbody>
@@ -1270,7 +1380,7 @@
 
 
 <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
-    /
+    
     <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
         <div class="modal-content">
             <div class="filheader">
@@ -1544,7 +1654,6 @@
     }
 
     $(document).ready(function () {
-
         applyDataTable();
 
     });
