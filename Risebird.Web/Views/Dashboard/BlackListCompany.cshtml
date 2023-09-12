@@ -95,7 +95,22 @@
                                                                 </span>
                                                             }
                                                         </td>
-                                                        <td>@item.CompanyName</td>
+                                                       @* <td>@item.CompanyName</td>*@
+                                                        @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                        {
+                                                            @if (item.CompanyName.Length > 30)
+                                                            {
+                                                                <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="font-size:13px; color:brown">@item.CompanyName</td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         <td>@item.Comment</td>
                                                         <td>@item.CreatedDate</td>
                                                         <td>@item.CreatedBy</td>
@@ -183,3 +198,21 @@
         });
     }
     </script>
+
+
+<script>
+
+
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
