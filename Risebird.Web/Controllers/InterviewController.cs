@@ -7995,6 +7995,17 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to update payment Sla, try again after some time.");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> AgreeToPaymentSLAConditions()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                await _meetingService.AgreeToPaymentSLAConditions(emailId);
+            }
+            return Json("Success");
+        }
         #endregion
     }
 }
