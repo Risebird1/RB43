@@ -95,6 +95,14 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, GETDATE())<7
 		end
 	end
+	else If(@actionstatus ='InterviewerChurn')
+	begin
+		select distinct ipr.Id, ipr.UserId, ul.EmailId as InterviewerEmailId, ul.MobileNumber as InterviewerMobileNumber, 
+		(ul.FirstName +' '+ ul.LastName) as InterviewerName, ul.WhatsappNumber as InterviewerWhatsappNumber, ipr.ResumeLink as InterviewerResume, 
+		ipr.EmploymentComment, ipr.CompanyName, ipr.Isavailable, ipr.AvailabilityResponseDate, ipr.IsEmployed from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId
+		where ipr.Isavailable in (3,4) order by ipr.AvailabilityResponseDate desc--and ul.IsActive = 1
+
+	end
 	else If(@actionstatus ='ZoomLink')
 	begin
 		if (@actiontype = 0)
