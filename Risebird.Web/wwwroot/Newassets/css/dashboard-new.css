@@ -6811,12 +6811,13 @@ right:315px;
     margin-top:25px;
 }
 .clientlogoarea {
-    width: 80px;
-
+    width: auto;
+    height: 38px;
+    margin: 0px 10px;
 }
-    .clientlogoarea img{
-        width:100%;
-        height:50%;
+    .clientlogoarea img {
+        width: 100%;
+        height: 100%;
     }
 /***** action arrow *****/
 
