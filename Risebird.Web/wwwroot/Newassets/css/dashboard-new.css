@@ -5578,6 +5578,7 @@ button .btn {
 .dashboardcode-bsmultiselect .badge {
     border: 0px;
     color: #888 !important;
+    width:auto;
 }
 
 .dashboardcode-bsmultiselect .dropdown-menu .form-control {
