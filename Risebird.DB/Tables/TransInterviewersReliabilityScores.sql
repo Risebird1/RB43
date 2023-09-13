@@ -5,11 +5,13 @@ BEGIN
 
 CREATE TABLE [dbo].[TransInterviewersReliabilityScores](
 			[Id] [int] IDENTITY(1,1) NOT NULL,		
-			[IdInterviewer] [int] NOT NULL,		
-			[IdInterviewMeeting] [int] NOT NULL,
-            [CreatedinterviewDate] [DateTime] NULL,	
-			CONSTRAINT [FK_InterviewRL_Interviewer] FOREIGN KEY (IdInterviewer) REFERENCES InterviewerProfile(id),
-			CONSTRAINT [FK_InterviewRL_InterviewMeeting] FOREIGN KEY (IdInterviewMeeting) REFERENCES interviewmeetings(id),
+			[InterviewerId] [int] NOT NULL,		
+			[InterviewMeetingId] [int]  NULL,
+			[ReliabilityScoreTypeId] [int] NOT NULL,
+			[Point] [int] NOT NULL,
+            [CreatedDate] [DateTime] NULL,	
+			CONSTRAINT [FK_InterviewRL_Interviewer] FOREIGN KEY (InterviewerId) REFERENCES InterviewerProfile(id),
+			CONSTRAINT [FK_InterviewRL_ReliabilityScoreType] FOREIGN KEY (ReliabilityScoreTypeId) REFERENCES ReliabilityScoreTypes(id),
  CONSTRAINT [PK_TransInterviewersReliabilityScores] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
