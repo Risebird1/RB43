@@ -1191,7 +1191,14 @@ namespace Risebird.Web.Controllers
                         }
 
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        if(actionstatus == RibbonActionType.InterviewCount)
+                        {
+                            modelList = modelList.OrderBy(x => x.IRFId).ToList();
+                        }
+                        else
+                        {
+                            modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        }
                         return View(modelList);
                     }
                     else
@@ -1381,7 +1388,15 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
                             return x;
                         }).ToList();
-                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        if (actionstatus == RibbonActionType.InterviewCount)
+                        {
+                            modelList = modelList.OrderBy(x => x.IRFId).ToList();
+                        }
+                        else
+                        {
+                            modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        }
+                        //modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
                     }
                     else
