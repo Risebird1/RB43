@@ -8519,6 +8519,12 @@ right:315px;
         font-size: 13px !important;
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
     }
+    .sharp.btn-xs {
+        width: 2.1rem;
+        height: 2.1rem;
+        min-width: 2.1rem;
+        min-height: 2.1rem;
+    }
     .pad7 {
         padding: 0px!important;
     }
