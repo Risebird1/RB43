@@ -680,5 +680,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId)
+        {
+            try
+            {
+                await _dashboardRespository.UndoSuspiciousInterviewer(InterviewerProfileId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

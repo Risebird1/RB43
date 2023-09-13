@@ -1982,6 +1982,33 @@ namespace Risebird.Web.Controllers
                 return PartialView("_GetRedFlagsQCReportPartial", data);
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> UndoSuspiciousInterviewer(int UserId)
+        {
+            try
+            {
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+               // int interviewerProfileid = InterviewerProfileId;
+                var data = await _dashboardService.UndoSuspiciousInterviewerService(UserId);
+                if (data == true)
+                {
+                    return Json("Undo suspicious interviewer marked Successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether undo suspicious interviewer.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }

@@ -241,6 +241,7 @@ namespace Risebird.Entities.ViewModel
         public string ProfileType { get; set; }
         public string CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
+        public string InterviewerEmailId { get; set; }
         public string NickName { get; set; }
         public string Name { get; set; }
         public string CompanyType { get; set; }

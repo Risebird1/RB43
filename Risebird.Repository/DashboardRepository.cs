@@ -1223,5 +1223,25 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> UndoSuspiciousInterviewer(int InterviewerProfileId)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@InterviewerProfileId", InterviewerProfileId);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_undoSuspiciousInterviewer", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
