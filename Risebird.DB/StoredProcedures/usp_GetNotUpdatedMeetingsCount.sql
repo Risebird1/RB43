@@ -82,6 +82,9 @@ declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsFo
 
  declare @BlackListCompanyCount int=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)
 
+
+ declare @interviewerChurnCount int=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))
+
 declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
@@ -118,7 +121,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @ProbableNoShowCount as ProbableNoShowCount,
 @PotentialRiskByClient as PotentialRiskByClient,
 @BlackListCompanyCount as BlackListCompanyCount,
-@PaymentSlacomplianceCount as PaymentSlacomplianceCount
+@PaymentSlacomplianceCount as PaymentSlacomplianceCount,
+@interviewerChurnCount as InterviewerChurnCount
 
 END        
 ELSE        
@@ -171,6 +175,10 @@ set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport
 set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)
 set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)
 
+
+ set @interviewerChurnCount=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))
+
+
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,
@@ -183,7 +191,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @ProbableNoShowCount as ProbableNoShowCount,
 @PotentialRiskByClient as PotentialRiskByClient,
 @BlackListCompanyCount as BlackListCompanyCount,
-@PaymentSlacomplianceCount as PaymentSlacomplianceCount
+@PaymentSlacomplianceCount as PaymentSlacomplianceCount,
+@interviewerChurnCount as InterviewerChurnCount
 
 
 --select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  

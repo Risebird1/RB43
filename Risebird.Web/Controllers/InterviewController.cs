@@ -7816,6 +7816,7 @@ namespace Risebird.Web.Controllers
                     model.Interviewer = interviewer;
                     model.isapprovedchecked = isapproved;
                     await SetPaymentSLADropDown(model);
+                    await SetInitialValue(model);
                     return PartialView(model);
                 }
                 else
@@ -7911,6 +7912,57 @@ namespace Risebird.Web.Controllers
             _paymentSlab.Add(new PaymentSlabsVM { id = 100, Name = "100%" });
             model.PaymentDeductionList = new SelectList(_paymentSlab, "id", "Name");
         }
+        public async Task SetInitialValue(PaymentSLAVM model)
+        {
+            if (string.IsNullOrEmpty(model.Inaccuratedecisionmaking))
+            {
+                model.Inaccuratedecisionmaking = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.TimeManagement))
+            {
+                model.TimeManagement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.QuestionsRelevance))
+            {
+                model.QuestionsRelevance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.ScoreRubricIgnorance))
+            {
+                model.ScoreRubricIgnorance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.PoorFeedbackComments))
+            {
+                model.PoorFeedbackComments = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.CandidateInteractionQuality))
+            {
+                model.CandidateInteractionQuality = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LimitedHandoncoding))
+            {
+                model.LimitedHandoncoding = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.WrongStatusUpdates))
+            {
+                model.WrongStatusUpdates = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.WeakInfrastructure))
+            {
+                model.WeakInfrastructure = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.ProctoringIgnorance))
+            {
+                model.ProctoringIgnorance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.UnethicalPractices))
+            {
+                model.UnethicalPractices = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.PoorCommunicationSkills))
+            {
+                model.PoorCommunicationSkills = string.Empty;
+            }
+        }
         [HttpPost]
         public async Task<JsonResult> PaymentSlaDetailsNotApproved(int interviewid)
         {
@@ -7936,6 +7988,17 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Fail to update payment Sla, try again after some time.");
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> AgreeToPaymentSLAConditions()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                await _meetingService.AgreeToPaymentSLAConditions(emailId);
+            }
+            return Json("Success");
         }
         #endregion
     }

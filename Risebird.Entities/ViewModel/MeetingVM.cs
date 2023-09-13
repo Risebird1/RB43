@@ -319,6 +319,14 @@ namespace Risebird.Entities.ViewModel
         public string scheduleUniqueid { get; set; }
         public int? VideoConfirmation { get; set; }
         public int AssessmentGroupId { get; set; }
+        public string InterviewerEmailId { get; set; }
+        public string InterviewerName { get; set; }
+        public string InterviewerWhatsappNumber { get; set; }
+        public string InterviewerResume { get; set; }
+        public int Isavailable { get; set; }
+        public DateTime? AvailabilityResponseDate { get; set; }
+        //public string EmploymentComment { get; set; }
+        //public string CompanyName { get; set; }
 
 
     }
