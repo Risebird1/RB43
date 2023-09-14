@@ -338,11 +338,12 @@
 
                                                         <th>Name</th>
                                                         <th>Email</th>
-                                                        <th>Interview Addedon</th>
+                                                        <th>Interviewer Addedon</th>
                                                         <th>Created By</th>
                                                         <th>Resume</th>
                                                         <th>Comment</th>
                                                         <th>Suspicious Added By</th>
+                                                        <th>Suspicious AddedOn</th>
                                                         <th>Mobile</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "CancelledInterviewCount")
@@ -536,11 +537,12 @@
 
                                                         <th>Name</th>
                                                         <th>Email</th>
-                                                        <th>Interview Addedon</th>
+                                                        <th>Interviewer Addedon</th>
                                                         <th>Created By</th>
                                                         <th>Resume</th>
                                                         <th>Comment</th>
                                                         <th>Suspicious Added By</th>
+                                                        <th>Suspicious AddedOn</th>
                                                         <th>Mobile</th>
                                                     }
 
@@ -929,6 +931,7 @@
                                                             <td>@item.SuspiciousName</td>
                                                             <td>@item.SuspiciousEmail</td>
                                                             <td>@item.InterviewAddedOn</td>
+                                                            
                                                             <td>@item.CreatedBy</td>
 
                                                             @if (item.ResumeLink != null && item.ResumeLink != "")
@@ -946,6 +949,7 @@
 
                                                             <td><span class="white-space">@item.SuspiciousComment</span></td>
                                                             <td>@item.SuspiciousAddedBy</td>
+                                                            <td>@item.SuspiciousAddOn</td>
                                                             <td>@item.SuspiciousMobileNumber</td>
                                                         }
 

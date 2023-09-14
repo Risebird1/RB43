@@ -8,6 +8,8 @@ CREATE TABLE [dbo].[SuspiciousInterviewer](
 	[Createddate] [datetime] NULL,
 	[CreatedBy] [varchar](50) NULL,
 	[SuspiciousStatus] [bit] NULL,
+	[ModifyBy] [varchar](100) NULL,
+	[ModifyDate] [datetime] NULL,
  CONSTRAINT [PK_InterviewSuspicious] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
