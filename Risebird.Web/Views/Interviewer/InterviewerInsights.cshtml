@@ -1,0 +1,91 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
+
+<div id="tableID" class="second" style="overflow-x:scroll;">
+    <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <td>Emailid</td>
+                <td>Company</td>
+                <td>Employee</td>
+                <td>Mobile</td>
+                <td>Last Login</td>
+                <td>Video Confirmation</td>
+                <td>Available</td>
+                <td>Reliability Score</td>
+                <td>Interviews</td>
+                <td>Completed</td>
+                <td>Selected</td>
+                <td>Rejected</td>
+                <td>Dropped</td>
+                <td>NoShow</td>
+                <td>NoShow Candidate</td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                <tr>
+                    <td>@Model.Emailid</td>
+                    @if (!string.IsNullOrWhiteSpace(Model.CompanyName))
+                    {
+                        <td>@Model.CompanyName</td>
+                    }
+                    else
+                    {
+                        <td>@Model.EmploymentComment</td>
+                    }
+                    @if (Model.IsEmployed)
+                    {
+                        <td>Working</td>
+                    }
+                    else
+                    {
+                        <td>Not Working</td>
+                    }
+                    <td>@Model.MobileNumber</td>
+                    <td>@Model.LastLogin</td>
+                    @if (Model.VideoConfirmation == 1)
+                    {
+                        <td>Yes</td>
+                    }
+                    else if (Model.VideoConfirmation == 2)
+                    {
+                        <td>No</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    @if (Model.Isavailable == 1)
+                    {
+                        <td>Yes</td>
+                    }
+                    else if (Model.Isavailable == 2)
+                    {
+                        <td>Not Available</td>
+                    }
+                    else if (Model.Isavailable == 3)
+                    {
+                        <td>Need more clarity</td>
+                    }
+                    else if (Model.Isavailable == 4)
+                    {
+                        <td>Drop my profile</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td>@Model.ReliabilityScore</td>
+                    <td>@Model.TotalInterviews</td>
+                    <td>@Model.CompletedInterviews</td>
+                    <td>@Model.SelectedInterviews</td>
+                    <td>@Model.RejectedInterviews</td>
+                    <td>@Model.DroppedInterviews</td>
+                    <td>@Model.NoShowInterviews</td>
+                    <td>@Model.NoShowCandidateInterviews</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
