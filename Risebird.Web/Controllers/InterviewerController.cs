@@ -3768,7 +3768,7 @@ namespace Risebird.Web.Controllers
                 model.Comment = Comment;
                 model.Createddate = DateTime.Now;
                 model.CreatedBy = emailId;
-                model.SuspiciousStatus = false;
+                model.SuspiciousStatus = true;
                 var data = await _interviewerService.AddSuspiciousTypeService(model);
                 if (data == true)
                 {

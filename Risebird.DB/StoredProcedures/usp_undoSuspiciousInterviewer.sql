@@ -13,7 +13,7 @@ Create Procedure usp_undoSuspiciousInterviewer
 @InterviewerProfileId int
 AS
 BEGIN
-update SuspiciousInterviewer set SuspiciousStatus=1 where UserId=@InterviewerProfileId
+update SuspiciousInterviewer set SuspiciousStatus=0 where UserId=@InterviewerProfileId
 END
     
 
