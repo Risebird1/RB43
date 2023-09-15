@@ -5,16 +5,15 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span>
-                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
-
+                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lightbulb" viewBox="0 0 16 16"> <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" fill="white"></path> </svg>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Insights </h5><span class="candidatename-sla" id="txtheaderInsights"></span>
+                <h5 class="modal-title pull-left">Insights </h5><p style="float:right"><span style="position:relative;top:14px;font-size:13px;padding:5px;font-weight:bold">Last Login:</span><span class="candidatename-sla" id="hidlastlogin" style="position:relative;top:1px;font-size:14px;"></span></p><span class="candidatename-sla" id="txtheaderInsights" style="margin-right:25px;"></span>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeInterviewerInsightsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
-            <div class="modal-body" style="padding: 2px 16px;" id="divInsightsmodel">
+            <div class="modal-body" id="divInsightsmodel">
             </div>
         </div>
     </div>
@@ -30,6 +29,7 @@
                 $('#divInsightsmodel').html('');
                 $('#divInsightsmodel').html(data);
                 $("#txtheaderInsights").text('( ' + interviewer + ' )');
+                $('#hidlastlogin').text($('#LastLogin').val());
             }
         });
     }
@@ -41,4 +41,5 @@
         var modal = document.getElementById("InterviewerInsightsModel");
         modal.style.display = "block";
     }
+ 
 </script>

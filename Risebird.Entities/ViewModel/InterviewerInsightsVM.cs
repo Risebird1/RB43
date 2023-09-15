@@ -13,6 +13,7 @@ namespace Risebird.Entities.ViewModel
         public string CompanyName { get; set; }
         public bool IsEmployed { get; set; }
         public string MobileNumber { get; set; }
+        public string interviewerName { get; set; }
         public DateTime? LastLogin { get; set; }
         public int VideoConfirmation { get; set; }
         public int Isavailable { get; set; }

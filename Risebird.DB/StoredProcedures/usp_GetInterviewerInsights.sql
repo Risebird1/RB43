@@ -42,11 +42,11 @@ and MeetingStatus=3
 
 Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,
 @TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,
-@NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews
+@NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,ul.interviewer
 from InterviewerProfile ip join UserList ul on ul.id=ip.Userid 
 left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id
 where ul.EmailId=@Emailid
-Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment
+Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,ul.interviewer
 
 END
 Go
