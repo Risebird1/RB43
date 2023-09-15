@@ -3860,6 +3860,7 @@ namespace Risebird.Web.Controllers
         {
             interviewer = "interview2@risebird.io";
             var result = await _interviewerService.GetInterviewerInsights(interviewer);
+            result.MobileNumber = "";
             return PartialView(result);
         }  
         #endregion
