@@ -252,7 +252,7 @@
                                                     {
                                                         <th>Who Joined</th>
                                                         <th>Meeting Link</th>
-                                                        
+
                                                     }
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
@@ -294,7 +294,7 @@
                                                     {
                                                         <th>Client Name</th>
                                                     }
-                                                  
+
                                                     @if (ViewBag.actionstatus == "QCReport")
                                                     {
                                                         <th>Red Flags</th>
@@ -324,7 +324,7 @@
                                                     }
                                                     @if (ViewBag.actionstatus == "InterviewCount")
                                                     {
-                                                         <th>Candidate Response</th>
+                                                        <th>Candidate Response</th>
                                                         <th>JD Title</th>
                                                     }
 
@@ -393,9 +393,9 @@
 
                                                     @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport"))
                                                     {
-                                                       <th>
-                                                           Action
-                                                       </th>
+                                                        <th>
+                                                            Action
+                                                        </th>
                                                     }
                                                     @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
                                                     {
@@ -488,7 +488,7 @@
                                                     {
                                                         <th>Client Name</th>
                                                     }
-                                                  
+
                                                     @if (ViewBag.actionstatus == "QCReport")
                                                     {
                                                         <th>Red Flags</th>
@@ -516,7 +516,8 @@
                                                         <th>Comment</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "InterviewCount")
-                                                    {<th>Candidate Response</th>
+                                                    {
+                                                        <th>Candidate Response</th>
 
                                                         <th>JD Title</th>
                                                     }
@@ -639,7 +640,7 @@
                                                                         <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                     </button>
                                                                 </a>
-                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top: -3px;">
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top: -3px;">
                                                                     <span onclick="OpenRedoFormModel('@item.imid')" title="ReDo Reject Interview" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
@@ -699,7 +700,7 @@
                                                                                 <p class="moretext_@item.Interviewid moretext">
                                                                                     @item.WhoJoined.Substring(30, @item.WhoJoined.Length - 30)
                                                                                 </p>
-                                                                                                                                                            <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
+                                                                                <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
 
                                                                             </div>
 
@@ -810,18 +811,19 @@
                                                         {
                                                             <td>@item.Name</td>
                                                         }
-                                                      
+
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             @if (item.Redflags > 0)
                                                             {
-                                                                 <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a>
+                                                                <td class="text-center">
+                                                                    <a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a>
                                                                 </td>
                                                             }
                                                             else
                                                             {
                                                                 <td>0</td>
-                                                                
+
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
@@ -849,12 +851,12 @@
                                                                     </span>
                                                                 </button>
 
-                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members" style="position:relative;top:-3px;">
-                                                                        <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
-                                                                            <i class="fas fa-users fa-xs" style="font-size: 13px;"></i>
-                                                                        </span>
-                                                                    </button>
-                                                              
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Interviewing Members" style="position:relative;top:-3px;">
+                                                                    <span onclick="javascript:getIRFMembers('@item.irfIntId');" title="Interviewing Members" class="mdc-fab__icon material-icons">
+                                                                        <i class="fas fa-users fa-xs" style="font-size: 13px;"></i>
+                                                                    </span>
+                                                                </button>
+
                                                             </td>
                                                         }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount")
@@ -1242,7 +1244,7 @@
                                                                 {
 
                                                                     <div class="mdc-fab app-fab--absolute" style="position:relative;">
-                                                                        <span  onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                                     </div>
 
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
@@ -1256,32 +1258,32 @@
 
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up." style="position:relative;top:3px;">
                                                                         <span onclick="javascript:SendOpenInterview('@item.irfIntId');" title="Send email communication all open interviews that are available to be taken up." class="mdc-fab__icon material-icons">
-                                                                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M2 5.5V3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V19h18V7.3l-8 7.2-10-9zM0 10h5v2H0v-2zm0 5h8v2H0v-2z"></path> </g> </svg>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M2 5.5V3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V19h18V7.3l-8 7.2-10-9zM0 10h5v2H0v-2zm0 5h8v2H0v-2z"></path> </g> </svg>
                                                                         </span>
                                                                     </button>
                                                                 }
                                                             </td>
                                                         }
-                                                     
+
 
                                                         @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))
-                                                    {
-                                                       <td>
-                                                       
+                                                        {
+                                                            <td>
+
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
                                                                     <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })'" title="QC Form" class="mdc-fab__icon material-icons">
                                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
                                                                     </span>
                                                                 </button>
-                                                       
+
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
-                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                        </button>
-                                                                    </a>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
+                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                    </button>
+                                                                </a>
 
 
- <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top: -3px;">
+                                                                <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Reject Interview" style=" position: relative; top: -3px;">
                                                                     <span onclick="OpenRedoFormModel('@item.imid')" title="ReDo Reject Interview" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
@@ -1289,15 +1291,15 @@
                                                                         </svg>
                                                                     </span>
                                                                 </button>
-                                                       </td>
+                                                            </td>
 
 
-                                                        
 
-                                                    }
 
-                                                    @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
-                                                    {
+                                                        }
+
+                                                        @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
+                                                        {
                                                             <td>@item.InterviewerName</td>
                                                             <td>@item.InterviewerEmailId</td>
                                                             @if (item.InterviewerResume != null && item.InterviewerResume != "")
@@ -1310,9 +1312,9 @@
                                                             else
                                                             {
                                                                 <td>No Resume</td>
-                                                            }   
-                                                            
-                                                            @if(item.IsEmployed)
+                                                            }
+
+                                                            @if (item.IsEmployed)
                                                             {
                                                                 <td>Yes</td>
                                                             }
@@ -1320,53 +1322,53 @@
                                                             {
                                                                 <td>No</td>
                                                             }
-                                                        @if(!string.IsNullOrEmpty(item.CompanyName))
-                                                        {
-                                                             <td>@item.CompanyName</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                                
-                                                        @if(!string.IsNullOrEmpty(item.EmploymentComment))
-                                                        {
-                                                            <td>@item.EmploymentComment</td>
+                                                            @if (!string.IsNullOrEmpty(item.CompanyName))
+                                                            {
+                                                                <td>@item.CompanyName</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
 
+                                                            @if (!string.IsNullOrEmpty(item.EmploymentComment))
+                                                            {
+                                                                <td>@item.EmploymentComment</td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if (item.Isavailable == 3)
+                                                            {
+                                                                <td>Need Clarity</td>
+                                                            }
+                                                            else if (item.Isavailable == 4)
+                                                            {
+                                                                <td>Drop my profile</td>
+                                                            }
+                                                            @if (item.AvailabilityResponseDate != null)
+                                                            {
+                                                                <td>@item.AvailabilityResponseDate</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
+                                                            {
+                                                                <td>
+                                                                    <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
+                                                                        <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                    </button>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
                                                         }
-                                                        else
-                                                        {
-                                                             <td></td>       
-                                                        }
-                                                        @if(item.Isavailable == 3)
-                                                        {
-                                                            <td>Need Clarity</td>
-                                                        }
-                                                        else if(item.Isavailable == 4)
-                                                        {
-                                                            <td>Drop my profile</td>
-                                                        }
-                                                        @if(item.AvailabilityResponseDate !=null)
-                                                        {
-                                                            <td>@item.AvailabilityResponseDate</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
-                                                        {
-                                                            <td>
-                                                                <button class="callcandidatebtn mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
-                                                                    <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.InterviewerEmailId',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                </button>
-                                                            </td>
-                                                        }   
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                    }
 
                                                     </tr>
                                                 }
@@ -1400,7 +1402,7 @@
 
 
 <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
-    
+
     <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
         <div class="modal-content">
             <div class="filheader">
@@ -1856,7 +1858,7 @@
                     $.ajax({
                         url: '/Interviewer/SendOpenURLNotification',
                         type: 'POST',
-                        data: {'irfId' : irfId},
+                        data: { 'irfId': irfId },
                         success: function (result) {
                             if (result == "Success") {
                                 swal.fire({
@@ -1892,17 +1894,17 @@
 </script>
 
 <script>
-        var closeRedFlag = document.getElementById("RedFlagPopUp");
+    var closeRedFlag = document.getElementById("RedFlagPopUp");
     closeRedFlag.onclick = function () {
         var modal = document.getElementById("RedFlagModal");
         modal.style.display = "none";
     }
     function GetRedFlagsModal(Interviewid) {
-       
+
         if (Interviewid != '') {
             $.ajax({
                 url: '/DashBoard/GetRedFlagsQCReport',
-                data: {'Interviewid': Interviewid },
+                data: { 'Interviewid': Interviewid },
                 success: function (data) {
                     var modal = document.getElementById("RedFlagModal");
                     modal.style.display = "block";
@@ -1911,7 +1913,7 @@
                 }
             });
         }
-       
+
     }
 </script>
 <script>
