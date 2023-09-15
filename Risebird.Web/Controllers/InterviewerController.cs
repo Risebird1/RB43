@@ -3858,9 +3858,7 @@ namespace Risebird.Web.Controllers
         #region Interviewer Insights
         public async Task<IActionResult> InterviewerInsights(string interviewer)
         {
-            interviewer = "interview2@risebird.io";
             var result = await _interviewerService.GetInterviewerInsights(interviewer);
-           
             return PartialView(result);
         }  
         #endregion
