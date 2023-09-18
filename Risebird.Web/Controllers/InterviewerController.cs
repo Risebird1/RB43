@@ -20,6 +20,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -627,7 +628,7 @@ namespace Risebird.Web.Controllers
                                 select new { ID = (int)s, Name = s.GetDescription() };
             model.EducationModeList = new SelectList(EducationMode, "ID", "Name");
 
-            var Degree = from Degree s in Enum.GetValues(typeof(Degree))
+            var Degree = from Entities.Enum.Degree s in Enum.GetValues(typeof(Entities.Enum.Degree))
                          select new { ID = (int)s, Name = s.GetDescription() };
             model.DegreeList = new SelectList(Degree, "ID", "Name");
 
@@ -3844,7 +3845,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-               var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
+                var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
                 return Json("Successfully updated youir response.");
             }
             else
@@ -3852,6 +3853,13 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to update the response,please try again.");
             }
         }
+        #endregion
+        #region Interviewer Insights
+        public async Task<IActionResult> InterviewerInsights(string interviewer)
+        {
+            var result = await _interviewerService.GetInterviewerInsights(interviewer);
+            return PartialView(result);
+        }  
         #endregion
     }
 }

@@ -162,7 +162,9 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 table.dataTable thead .sorting:after {
     color: transparent
 }
-
+.client table.dataTable thead .sorting:after {
+    color: #87808042;
+}
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%) !important;
 }
