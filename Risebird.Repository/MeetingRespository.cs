@@ -6820,5 +6820,30 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewerId", model.InterviewerId);
+                dynamicParameters.Add("@InterviewMeetingId", model.InterviewMeetingId);
+                dynamicParameters.Add("@ReliabilityScoreTypeId", model.ReliabilityScoreTypeId);
+                dynamicParameters.Add("@Point", model.Point);
+                dynamicParameters.Add("@CreateDate",DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_TransInterviewersReliabilityScores", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
