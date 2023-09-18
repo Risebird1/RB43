@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class InterviewerInsightsVM
+    {
+        public int Userid { get; set; }
+        public string Emailid { get; set; }
+        public string CompanyName { get; set; }
+        public bool IsEmployed { get; set; }
+        public string MobileNumber { get; set; }
+        public string interviewerName { get; set; }
+        public DateTime? LastLogin { get; set; }
+        public int VideoConfirmation { get; set; }
+        public int Isavailable { get; set; }
+        public string EmploymentComment { get; set; }
+        public long ReliabilityScore { get; set; }
+        public int TotalInterviews { get; set; }
+        public int CompletedInterviews { get; set; }
+        public int SelectedInterviews { get; set; }
+        public int RejectedInterviews { get; set; }
+        public int NoShowInterviews { get; set; }
+        public int NoShowCandidateInterviews { get; set; }
+        public int DroppedInterviews { get; set; }
+    }
+}
