@@ -546,7 +546,8 @@ namespace Risebird.Web.Controllers
                             model._IRFDetails = await _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
                             jdDetails.JDLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + candidateUniqueId + "&Irfid=" + model._IRFDetails.inIRFid;
                         }
-                        string accountEmail = "hire@risebird.io";
+                        //string accountEmail = "hire@risebird.io";
+                        string accountEmail = "";
                         //Send Mail Notification
                         Mail _mail = new Mail
                         {
