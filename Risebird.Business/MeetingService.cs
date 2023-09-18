@@ -3995,8 +3995,8 @@ namespace Risebird.Business
         {
             try
             {
-                await _meetingRespository.AddTransInterviewersReliabilityScores(model);
-                return true;
+             return  await _meetingRespository.AddTransInterviewersReliabilityScores(model);
+                
             }
             catch (Exception e)
             {

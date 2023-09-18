@@ -6776,6 +6776,14 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 model.ModifiedBy = emailId;
                 var result = await _meetingService.SaveRedoInterviewDetails(model);
+
+                if (result)
+                {
+                    var data =new TransInterviewersReliabilityScoresVm();
+                    data.InterviewMeetingId = model.interviewid;
+                    data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.RedoInterviewInitiated;
+                    await _meetingService.AddTransInterviewersReliabilityScoresService(data);
+                }
                 if (profileName == "Client")
                 {
                     AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(model.interviewid);
