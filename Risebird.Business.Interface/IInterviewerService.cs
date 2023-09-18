@@ -86,5 +86,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddSuspiciousTypeService(SuspiciousInterviewerVM model);
         Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer);
         Task<bool> UpdateVideoConfirmationStatus(int status,string Emailid);
+        Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid);
     }
 }

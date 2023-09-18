@@ -784,13 +784,6 @@
                                                                     
                                                                 }
                                                             }
-                                                        @*<span>
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interviewer Insights" style=" position: relative; top: -3px;">
-                                                        <span onclick="InterviewerInsightsDetails('@item.interviewer')" title="Interviewer Insights" class="mdc-fab__icon material-icons">
-                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                        </span>
-                                                        </button>
-                                                        </span>*@
                                                             </div>
 
                                                              
@@ -870,20 +863,28 @@
                                                                 @if (@item.VideoConfirmation.HasValue && @item.VideoConfirmation == 1)
                                                                 {
                                                                     <td style="border:1px solid #ffd700bf!important;background:#f4e7a22b" title="Confirmed for video while taking interview">
+                                                                       <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
                                                                         @item.interviewer
+                                                                        </d>
                                                                     </td>
                                                                 }
                                                                 else
                                                                 {
                                                                     <td>
+                                                                        <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
                                                                         @item.interviewer
+                                                                        </d>
                                                                     </td>
                                                                 }
 
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                                <td>
+                                                                    <d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">
+                                                                        not
+                                                                        </d>
+                                                                </td>
                                                             }
                                                             @if (@item.encodedresumeLink != null && @item.encodedresumeLink != "")
                                                             {
@@ -1608,6 +1609,7 @@
 </div>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
 
 <script src="~/js/Aadhaar.js"></script>
@@ -2798,49 +2800,4 @@
 <script src="~/js/ModalFormServerValidation.js"></script>
 <script src="~/js/filtervalidation.js"></script>
 @*<script src="~/js/CallTwilio.js"></script>*@
-<script>
-    function InterviewerInsightsDetails(interviewer) {
-        $("#txtinterviewerInsites").text(interviewer);
-        openInterviewerInsightsModel();
-    }
-    function closeInterviewerInsightsModel() {
-        var modal = document.getElementById("InterviewerInsightsPopup");
-        modal.style.display = "none";
-    }
-    function openInterviewerInsightsModel() {
-        var modal = document.getElementById("InterviewerInsightsPopup");
-        modal.style.display = "block";
-    }
-</script>
-<div id="InterviewerInsightsPopup" class="modal modal-bg" style="z-index:3">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 18 18">
-                            <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
-                        </svg>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Interviewer Details </h5>
-                <h5 id="txtinterviewerInsites"></h5>
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span onclick="closeInterviewerInsightsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body" style="padding: 2px 16px;">
-                <div class="row" style="padding:10px">
-                    <table>
-                        <tr>
-                            <th>Interviewer</th>
-                            <td>Total Interviews</td>
-                            <td>Total Penalties</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    

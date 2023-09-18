@@ -49,7 +49,7 @@ ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType
  afip.InterviewerCount as InterviewerCount, agrf.IRFCount as IrfCount 
 from AssessmentGroup ag 
 join #temp_AssessmentIRFCount as agrf on ag.id=agrf.AssessmentGroupId
-join #temp_AssessmentInterviewerCount as afip on ag.id= afip.AssessmentGroupId
+left join #temp_AssessmentInterviewerCount as afip on ag.id= afip.AssessmentGroupId
 left join AssessmentGroupCategory agc on agc.id=ag.Categoryid 
 group by ag.id,AssessmentGroup,PrimarySkills,
 ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate,afip.InterviewerCount,agrf.IRFCount

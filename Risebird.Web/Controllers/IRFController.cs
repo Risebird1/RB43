@@ -57,10 +57,11 @@ namespace Risebird.Web.Controllers
         private readonly IMCQService _mCQService;
         private readonly string codeapiendpoint;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly IWhatsAppHelper _whatsAppHelper;
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
-            IMCQService mCQService, IEncryptionHelper encryptionHelper)
+            IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -83,6 +84,7 @@ namespace Risebird.Web.Controllers
             _calendlyHelper = calendlyHelper;
             _mCQService = mCQService;
             _encryptionHelper = encryptionHelper;
+            _whatsAppHelper = whatsAppHelper;
             codeapiendpoint = _configuration["CodeApiEndPoint"];
         }
 
@@ -6578,6 +6580,17 @@ namespace Risebird.Web.Controllers
                                     Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
                                 };
                                 var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), item.FlatRate, dropMyProfileButton, item.BasicSkill);
+
+                                WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                _whatsAppVM.Emailid = item.EmailId;
+                                _whatsAppVM.PrimarySkill = item.BasicSkill;
+                                //_whatsAppVM.MessageValue = "";
+                                _whatsAppVM.PerSuccessRate = item.FlatRate.ToString();//interviewer.PerSuccessRate.ToString();
+                                //_whatsAppVM.Interviewduration = "";
+                                //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
+                                _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
+                                _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
+                                await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
                             }
                         }
                         return Json("Emails sent successfully.");
