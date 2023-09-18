@@ -3100,7 +3100,6 @@ namespace Risebird.Repository
                 dynamicParam.Add("@Comment", model.Comment);
                 dynamicParam.Add("@CreatedDate", model.Createddate);
                 dynamicParam.Add("@CreatedBy", model.CreatedBy);
-                dynamicParam.Add("@SuspiciousStatus", model.SuspiciousStatus);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_InsertInterviewerSuspicious", dynamicParam,

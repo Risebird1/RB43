@@ -313,6 +313,7 @@ namespace Risebird.Entities.ViewModel
         public string ResumeLink { get; set; }
         public string SuspiciousComment { get; set; }
         public string SuspiciousAddedBy { get; set; }
+        public DateTime? SuspiciousAddOn { get; set; }
         public string SuspiciousMobileNumber { get; set; }
         public int CandidateMasterId { get; set; }
         public string scheduleUniqueid { get; set; }
