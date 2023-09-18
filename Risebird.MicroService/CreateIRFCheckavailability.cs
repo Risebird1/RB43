@@ -74,16 +74,17 @@ namespace Risebird.MicroService
                                 Mail _mail = new Mail
                                 {
                                     TO = interviewer.EmailId,
-                                    Subject = "Risebird: Availbility check for Skill Channel " + irf.IRFId + " Interviews"
+                                    Subject = "Risebird: Availability check for Skill Channel " + irf.IRFId + " Interviews"
                                 };
                                 var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.FlatRate, dropMyProfileButton, irf.PrimarySkillInvite);//item.PerSuccessRate
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = interviewer.EmailId;
-                                _whatsAppVM.PrimarySkill = irf.JDTiltle;
-                                _whatsAppVM.MessageValue = irf.IRFId;
+                                _whatsAppVM.PrimarySkill = irf.PrimarySkillInvite;//irf.JDTiltle;
+                                //_whatsAppVM.MessageValue = irf.IRFId;
                                 _whatsAppVM.PerSuccessRate = irf.FlatRate.ToString();//interviewer.PerSuccessRate.ToString();
-                                _whatsAppVM.Interviewduration = irf.Interviewduration.ToString();
-                                _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
+                                //_whatsAppVM.Interviewduration = irf.Interviewduration.ToString();
+                                //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=", "");
+                                _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
                                 _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
                                 await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
                             }

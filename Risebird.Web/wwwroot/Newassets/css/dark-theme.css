@@ -229,7 +229,9 @@ hr {
 table.dataTable thead .sorting:after {
     color: transparent;
 }
-
+.client table.dataTable thead .sorting:after {
+    color: #87808042;
+}
 .relatedvideo .video-card {
     border: 1px #1f1e1e solid;
     background-color: #161616 !important;

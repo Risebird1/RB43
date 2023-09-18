@@ -102,6 +102,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null);
         Task<bool> AddSuspiciousType(SuspiciousInterviewerVM model);
         Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer);
-        Task<bool> UpdateVideoConfirmationStatus(int status,string Emailid);
+        Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid);
+        Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid);
     }
 }
