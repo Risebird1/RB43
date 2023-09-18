@@ -2206,7 +2206,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId  = null)
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview(string type, int? irfId = null)
         {
             try
             {
@@ -3097,10 +3097,9 @@ namespace Risebird.Repository
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@Email", model.EmailId);
-                dynamicParam.Add("@Comment",model.Comment);
+                dynamicParam.Add("@Comment", model.Comment);
                 dynamicParam.Add("@CreatedDate", model.Createddate);
                 dynamicParam.Add("@CreatedBy", model.CreatedBy);
-                dynamicParam.Add("@SuspiciousStatus", model.SuspiciousStatus);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_InsertInterviewerSuspicious", dynamicParam,
@@ -3114,7 +3113,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<bool> UpdateVideoConfirmationStatus(int status,string Emailid)
+        public async Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid)
         {
             try
             {
@@ -3132,6 +3131,25 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@Emailid", Emailid);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerInsightsVM>(conChange, "usp_GetInterviewerInsights", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

@@ -19,6 +19,6 @@ CreatedBy,
 ModifyDate,
 ModifyBy,
 IsBlackList,
-CompanyName
+CompanyName,id
 from BlackListedCompany where IsBlackList=1
  end
