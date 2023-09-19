@@ -6634,7 +6634,7 @@ namespace Risebird.Web.Controllers
            {
                 dec = dec.Replace(" ", "+");
                 var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
-                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 180)
+                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
                 {
                     if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
                     {

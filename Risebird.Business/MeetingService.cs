@@ -3990,6 +3990,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> AddTransInterviewersReliabilityScoresService(TransInterviewersReliabilityScoresVm model)
+        {
+            try
+            {
+             return  await _meetingRespository.AddTransInterviewersReliabilityScores(model);
+                
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 
