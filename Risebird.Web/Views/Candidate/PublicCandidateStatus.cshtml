@@ -93,6 +93,31 @@
     .mb10 {
         margin-bottom: 10px
     }
+  
+    .topheader-header [data-tooltip]:before {
+        background: #92938b !important;
+        color: #fff !important;
+        box-shadow: none;
+        top: 42px;
+        width: 455px;
+        height: 27px;
+        clear: both;
+        text-transform: initial;
+        position: absolute;
+        z-index: 100;
+        border: none !important;
+        font-size: 11px;
+        ;
+    }
+
+    .topheader-header [data-tooltip]:after {
+        border-top: 8px solid #92938b !important;
+        border-right: 7px solid transparent !important;
+        border-left: 7px solid transparent !important;
+        top: 35px;
+        transform: rotate(180deg);
+
+    }
 </style>
 
 <style>
@@ -188,20 +213,23 @@
                       
                        <span class="filter">
 
-                                <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
+                                <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
 
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <span class="mdc-button__label"><span class="fa fa-filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <span class="mdc-button__ripple"></span>
                                 </span>
                                 </span>
 
                            
-                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom"  data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
 
 
                         </div>
 
-
+                    @*    @if (ViewBag.ClientName != "FoundIt (Monster.com)")
+                        {
+                            <div class="note-filter" style="text-align: right;"> Note: To visualize data older and greater than 15 days, please apply filter</div>
+                        }*@
                     </div>
                    
                 </div>
@@ -340,7 +368,7 @@
 
                                     </div>
 
-                                    <div class="candidate-timeline">
+                                    <div class="candidate-timeline public-url">
 
                                         <div id="tableID" class="second">
                                             <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">

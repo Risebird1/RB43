@@ -8,13 +8,32 @@ CREATE TABLE [dbo].[SuspiciousInterviewer](
 	[Createddate] [datetime] NULL,
 	[CreatedBy] [varchar](50) NULL,
 	[SuspiciousStatus] [bit] NULL,
+	[ModifyBy] [varchar](100) NULL,
+	[ModifyDate] [datetime] NULL,
  CONSTRAINT [PK_InterviewSuspicious] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifyBy')
+      AND Object_ID = Object_ID(N'SuspiciousInterviewer'))
+BEGIN
+    ALTER TABLE SuspiciousInterviewer
+    Add ModifyBy varchar(100)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifyDate')
+      AND Object_ID = Object_ID(N'SuspiciousInterviewer'))
+BEGIN
+    ALTER TABLE SuspiciousInterviewer
+    Add ModifyDate datetime
+END
 GO
 
 

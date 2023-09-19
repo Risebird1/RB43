@@ -274,7 +274,9 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 table.dataTable thead .sorting:after {
     color: transparent
 }
-
+.client table.dataTable thead .sorting:after {
+    color: #87808042;
+}
 .upload-label {
     background: #e2e2e2;
 }

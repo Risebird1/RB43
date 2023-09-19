@@ -1467,5 +1467,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid)
+        {
+            try
+            {
+                return await _interviewerRepository.GetInterviewerInsights(Emailid);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

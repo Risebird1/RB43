@@ -261,7 +261,9 @@ table.journey {
 table.dataTable thead .sorting:after {
     color: transparent;
 }
-
+.client table.dataTable thead .sorting:after { 
+    color: #87808042;
+}
 .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
     background: #53a5f5;
     color: #fff;

@@ -4722,6 +4722,7 @@ Created using IcoMoon - icomoon.io
     text-transform: uppercase;
     background: transparent;
     outline: none;
+    text-decoration:none;
 }
 
 .pagination > li {
