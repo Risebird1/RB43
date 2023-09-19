@@ -10,9 +10,9 @@
         <span class="pull-left" style="margin-right:10px;"><strong>Contact:</strong></span>
         @if (Model.MobileNumber != null && Model.MobileNumber != string.Empty)
         {
-
             <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@Model.interviewerName','@Model.MobileNumber','@Model.Emailid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-        }@Model.MobileNumber
+        }
+        @Model.MobileNumber
     </p>
     </div>
 <div class="col-md-4 pull-left">
