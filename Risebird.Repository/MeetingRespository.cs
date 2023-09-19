@@ -882,7 +882,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<string>(
                         con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
 
-         
+
                     var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@EmailId", interviewerMail);
@@ -4158,7 +4158,9 @@ namespace Risebird.Repository
                                          Surcharge = c.Surcharge,
                                          CandidateRatingAmount = c.CandidateRatingAmount,
                                          ClientRatingAmount = c.ClientRatingAmount,
-                                         QCPoints = c.QCPoints
+                                         QCPoints = c.QCPoints,
+                                         PaymentSLA = c.PaymentSLA,
+                                         VideoReward = c.VideoReward
                                      }).ToList();
                     return resultset.ToList();
                 }
@@ -6772,7 +6774,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> PaymentSlaNotApproved(int interviewid,string emailid)
+        public async Task<bool> PaymentSlaNotApproved(int interviewid, string emailid)
         {
             try
             {
