@@ -1,10 +1,10 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
 <div class="col-md-4 pull-left">
     <p class="clearfix">
-       <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
+        <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
         <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
-    
-    
+
+
     </p>
     <p>
         <span class="pull-left" style="margin-right:10px;"><strong>Contact:</strong></span>
@@ -14,7 +14,7 @@
         }
         @Model.MobileNumber
     </p>
-    </div>
+</div>
 <div class="col-md-4 pull-left">
     <p class="clearfix">
         <span class="pull-left" style="margin-right:10px;"><strong>Company:</strong></span>
@@ -26,22 +26,22 @@
         {
             <span class="pull-left">@Model.EmploymentComment</span>
         }
-        </p>
+    </p>
 
     <p class="clearfix">
         <span class="pull-left" style="margin-right:10px;"><strong>Employee:</strong></span>
-       
-            @if (Model.IsEmployed)
-            {
+
+        @if (Model.IsEmployed)
+        {
             <span class="pull-left">Working</span>
-            }
-            else
-            {
+        }
+        else
+        {
             <span class="pull-left">Not Working</span>
-            }
-       
-        </p>
-       
+        }
+
+    </p>
+
 </div>
 
 
@@ -99,44 +99,44 @@
     </p>
 </div>
 <div class="col-md-12 pull-left">
-<div id="tableID" class="second">
-    <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-            
-                <th>Reliability Score</th>
-                <th>Interviews</th>
-                <th>Completed</th>
-                <th>Selected</th>
-                <th>Rejected</th>
-                <th>Dropped</th>
-                <th>NoShow</th>
-                <th>NoShow Candidate</th>
-                @*<th>Payment SLA</th>
-                <th>Penalty</th>
-                <th>Candidate Rating</th>
-                <th>Customer  Rating</th>
-                <th>Redo requests</th>*@
-            </tr>
-        </thead>
-           <tbody>
-                @Html.HiddenFor(model=>model.LastLogin)
-            @if (Model != null)
-            {
+    <div id="tableID" class="second">
+        <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+            <thead>
                 <tr>
-                    <td class="text-center"> <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews*100/Model.TotalInterviews))</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews*100/Model.CompletedInterviews))</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews*100/Model.CompletedInterviews))</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews*100/Model.CompletedInterviews))</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews*100/Model.TotalInterviews))</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews*100/Model.TotalInterviews))</span></td>
+
+                    <th>Reliability Score</th>
+                    <th>Interviews</th>
+                    <th>Completed</th>
+                    <th>Selected</th>
+                    <th>Rejected</th>
+                    <th>Dropped</th>
+                    <th>NoShow</th>
+                    <th>NoShow Candidate</th>
+                    @*<th>Payment SLA</th>
+                    <th>Penalty</th>
+                    <th>Candidate Rating</th>
+                    <th>Customer  Rating</th>
+                    <th>Redo requests</th>*@
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @Html.HiddenFor(model=>model.LastLogin)
+                @if (Model != null)
+                {
+                    <tr>
+                        <td class="text-center"> <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews))</span></td>
+                    </tr>
+                }
             </tbody>
-    </table>
-</div>
+        </table>
+    </div>
 </div>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
