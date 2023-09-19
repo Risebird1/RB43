@@ -6225,6 +6225,10 @@ namespace Risebird.Web.Controllers
 
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
+                            if (!model.VideoEnable)
+                            {
+                                model.Payment = 0;
+                            }
                             //if (!model.Isedit)
                             //{
                             //    if (redflag > 0)
@@ -6234,7 +6238,7 @@ namespace Risebird.Web.Controllers
                             //}
                             //else
                             //{
-                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag, model.Payment);
                             //}
                             var _clienthr = await _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
                             int rating = 0;

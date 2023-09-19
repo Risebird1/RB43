@@ -5722,7 +5722,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags)
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward)
         {
             try
             {
@@ -5732,6 +5732,7 @@ namespace Risebird.Repository
                     parameters.Add("@interviewid", interviewid);
                     parameters.Add("@interviewer", interviewer);
                     parameters.Add("@redflags", redflags);
+                    parameters.Add("@VideoReward", VideoReward);
 
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_ApplyPenaltyForQCForm", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
