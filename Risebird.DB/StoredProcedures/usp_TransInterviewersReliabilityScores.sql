@@ -12,13 +12,24 @@ GO
 Create Procedure usp_TransInterviewersReliabilityScores
 @InterviewMeetingId int,
 @ReliabilityScoreTypeId int,
-@CreateDate datetime
+@CreateDate datetime,
+@InterviewerEmail varchar(100)
 as
 begin
+declare @Point int
+if(@InterviewMeetingId>0)
+begin
 declare @InterviewerId int
-declare @Point int=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=@ReliabilityScoreTypeId)
+=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=@ReliabilityScoreTypeId)
 set @InterviewerId=(select ip.Id from InterviewerProfile ip join UserList ul on ip.UserId=ul.Id join InterviewMeetings im on ul.EmailId=im.interviewer where Im.id= @InterviewMeetingId)
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,@ReliabilityScoreTypeId,@Point,@CreateDate)
+end
+else
+begin
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=@ReliabilityScoreTypeId)
+set @InterviewerId=(select ip.Id from InterviewerProfile ip join UserList ul on ip.UserId=ul.Id join InterviewMeetings im on ul.EmailId=im.interviewer where Im.interviewer=@InterviewerEmail)
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,null,@ReliabilityScoreTypeId,@Point,@CreateDate)
+end
 end
 GO
 

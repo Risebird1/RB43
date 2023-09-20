@@ -6259,7 +6259,13 @@ namespace Risebird.Web.Controllers
                             var result = await _meetingService.SaveRatingDetails(_model);
                             var data = new TransInterviewersReliabilityScoresVm();
                             data.InterviewMeetingId =model.Interviewid;
-                            data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerRedFlagByQCTeam;
+                            if (model.Redflags != 0 || model.Redflags != null)
+                            {
+                                data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerRedFlagByQCTeam;
+                            }
+                            else {
+                                data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.NoRedFlagsByQCTeam;
+                            }
                             await _meetingService.AddTransInterviewersReliabilityScoresService(data);
                             TempData["SuccessErrorMessageQCForm"] = "QC Form successfully saved.";
                         }
@@ -7861,6 +7867,10 @@ namespace Risebird.Web.Controllers
                     model.CreatedBy = emailId;
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
+                        var result = new TransInterviewersReliabilityScoresVm();
+                        result.InterviewMeetingId = model.Interviewid;
+                        result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
+                        await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                         TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
                         return RedirectToAction("Index", "Interview");
                     }
