@@ -4358,6 +4358,19 @@ namespace Risebird.Web.Controllers
                             }
 
                             await _clientService.AddUpdateClientCommentsForReport(model);
+                            var data = new TransInterviewersReliabilityScoresVm();
+                            if (model.Rating <=4)
+                            {
+                                data.InterviewMeetingId = model.InterviewId;
+                                data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.CustomerRating4OrLess;
+                                await _meetingService.AddTransInterviewersReliabilityScoresService(data);
+                            }
+                           else if (model.Rating==5)
+                            {
+                                data.InterviewMeetingId = model.InterviewId;
+                                data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.CustomerRating5;
+                                await _meetingService.AddTransInterviewersReliabilityScoresService(data);
+                            }
                         }
                         return PartialView("GetClientCommentsForReport", model);
                     }
