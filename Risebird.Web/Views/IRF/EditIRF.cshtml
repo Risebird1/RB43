@@ -2897,7 +2897,19 @@
 </script>
 <script>
     $(document).ready(function () {
+        debugger;
         UpdateInterviewerRateVariable();
+        var firstinterviewerRateElement = document.getElementById('InterviewerCollection_0__PerSuccessRate');
+        if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value != "" || firstinterviewerRateElement.value != 0))
+        {
+            if(firstinterviewerRateElement.readOnly == true)
+            {
+                firstinterviewerRateElement.readOnly = false;
+            }
+            firstinterviewerRateElement.value = interviewerRate;
+            firstinterviewerRateElement.readOnly = true;
+        }
+
         var countryType = $("#JobCountry").val();
         @*var interviewerQCRate;
         if (countryType == "1") {
