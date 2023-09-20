@@ -198,13 +198,15 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 6].Value = "Late Report Penalty";
                         Sheet.Cells[1, 7].Value = "Variable Pay";
                         Sheet.Cells[1, 8].Value = "QC Amt";
-                        Sheet.Cells[1, 9].Value = "Amount";
-                        Sheet.Cells[1, 10].Value = "Video Link";
-                        Sheet.Cells[1, 11].Value = "Video Duration";
-                        Sheet.Cells[1, 12].Value = "Date";
-                        Sheet.Cells[1, 13].Value = "Status";
-                        Sheet.Cells[1, 14].Value = "Location";
-                        Sheet.Cells[1, 15].Value = "Meeting Status";
+                        Sheet.Cells[1, 9].Value = "Payment SLA";
+                        Sheet.Cells[1, 10].Value = "Video Rewards";
+                        Sheet.Cells[1, 11].Value = "Amount";
+                        Sheet.Cells[1, 12].Value = "Video Link";
+                        Sheet.Cells[1, 13].Value = "Video Duration";
+                        Sheet.Cells[1, 14].Value = "Date";
+                        Sheet.Cells[1, 15].Value = "Status";
+                        Sheet.Cells[1, 16].Value = "Location";
+                        Sheet.Cells[1, 17].Value = "Meeting Status";
 
                         int i = 2;
                         if (model.Count() > 0)
@@ -220,27 +222,29 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 6].Value = item.Penaltyamount;
                                 Sheet.Cells[i, 7].Value = item.CandidateRatingAmount + item.ClientRatingAmount;
                                 Sheet.Cells[i, 8].Value = item.QCPoints;
-                                Sheet.Cells[i, 9].Value = item.Points;
-                                Sheet.Cells[i, 10].Value = item.Date;
-                                Sheet.Cells[i, 11].Value = item.Status;
+                                Sheet.Cells[i, 9].Value = item.PaymentSLA;
+                                Sheet.Cells[i, 10].Value = item.VideoReward;
+                                Sheet.Cells[i, 11].Value = item.Points;
+                                Sheet.Cells[i, 14].Value = item.Date;
+                                Sheet.Cells[i, 15].Value = item.Status;
                                 if (string.IsNullOrEmpty(item.PreferredLocation))
                                 {
-                                    Sheet.Cells[i, 14].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 16].Value = item.PreferredLocation;
                                 }
                                 else if (int.TryParse(item.PreferredLocation, out _location))
                                 {
                                     if (_location == 1)
                                     {
-                                        Sheet.Cells[i, 14].Value = "India";
+                                        Sheet.Cells[i, 16].Value = "India";
                                     }
                                     else
                                     {
-                                        Sheet.Cells[i, 14].Value = "OutSide India";
+                                        Sheet.Cells[i, 16].Value = "OutSide India";
                                     }
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 14].Value = item.PreferredLocation;
+                                    Sheet.Cells[i, 16].Value = item.PreferredLocation;
                                 }
                                 if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                                 {
@@ -249,42 +253,42 @@ namespace Risebird.Web.Controllers
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 15].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                    Sheet.Cells[i, 17].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                 }
                                 if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5)
                                 {
-                                    Sheet.Cells[i, 10].Value = "No Video";
-                                    Sheet.Cells[i, 11].Value = "NA";
+                                    Sheet.Cells[i, 12].Value = "No Video";
+                                    Sheet.Cells[i, 13].Value = "NA";
                                 }
                                 else if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
-                                    Sheet.Cells[i, 10].Value = "No Video";
-                                    Sheet.Cells[i, 11].Value = "NA";
+                                    Sheet.Cells[i, 12].Value = "No Video";
+                                    Sheet.Cells[i, 13].Value = "NA";
                                 }
                                 else if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
                                     try
                                     {
-                                        Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                        Sheet.Cells[i, 10].Value = "Video";
-                                        Sheet.Cells[i, 10].Style.Font.UnderLine = true;
-                                        Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                        Sheet.Cells[i, 12].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 12].Value = "Video";
+                                        Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                                         if (item.Date >= verificationdate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                                         {
                                             item.VideoDuration = item.VideoDuration - 5;
                                         }
-                                        Sheet.Cells[i, 11].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
+                                        Sheet.Cells[i, 13].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                     }
                                     catch (Exception)
                                     {
-                                        Sheet.Cells[i, 10].Value = "No Video";
-                                        Sheet.Cells[i, 11].Value = "NA";
+                                        Sheet.Cells[i, 12].Value = "No Video";
+                                        Sheet.Cells[i, 13].Value = "NA";
                                     }
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 10].Value = "No Video";
-                                    Sheet.Cells[i, 11].Value = "NA";
+                                    Sheet.Cells[i, 12].Value = "No Video";
+                                    Sheet.Cells[i, 13].Value = "NA";
                                 }
                                 i++;
                             }
@@ -885,10 +889,12 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 19].Value = "Candidate Rating Amount";
                         Sheet.Cells[1, 20].Value = "Client Rating Amount";
                         Sheet.Cells[1, 21].Value = "QC Amount";
-                        Sheet.Cells[1, 22].Value = "Amount";
-                        Sheet.Cells[1, 23].Value = "Channel Owner";
-                        Sheet.Cells[1, 24].Value = "Emergency";
-                        Sheet.Cells[1, 25].Value = "Min Video Duration";
+                        Sheet.Cells[1, 22].Value = "Payment SLA";
+                        Sheet.Cells[1, 23].Value = "Video Reward";
+                        Sheet.Cells[1, 24].Value = "Amount";
+                        Sheet.Cells[1, 25].Value = "Channel Owner";
+                        Sheet.Cells[1, 26].Value = "Emergency";
+                        Sheet.Cells[1, 27].Value = "Min Video Duration";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -968,25 +974,27 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 19].Value = item.CandidateRatingAmount;
                                     Sheet.Cells[i, 20].Value = item.ClientRatingAmount;
                                     Sheet.Cells[i, 21].Value = item.QCPoints;
-                                    Sheet.Cells[i, 22].Value = item.Points;
+                                    Sheet.Cells[i, 22].Value = item.PaymentSLA;
+                                    Sheet.Cells[i, 23].Value = item.VideoReward;
+                                    Sheet.Cells[i, 24].Value = item.Points;
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
-                                    Sheet.Cells[i, 23].Value = item.ChannelOwner;
-                                    Sheet.Cells[i, 24].Value = item.IsEmergency == true ? "Y" : "N";
-                                    Sheet.Cells[i, 25].Value = (item.MaxVideoDuration.HasValue && item.MaxVideoDuration.Value > 0) ? item.MaxVideoDuration.Value.ToString() : string.Empty;
+                                    Sheet.Cells[i, 25].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 26].Value = item.IsEmergency == true ? "Y" : "N";
+                                    Sheet.Cells[i, 27].Value = (item.MaxVideoDuration.HasValue && item.MaxVideoDuration.Value > 0) ? item.MaxVideoDuration.Value.ToString() : string.Empty;
                                     i++;
                                 }
-                                Sheet.Cells[i, 21].Value = "Sub Total";
-                                Sheet.Cells[i, 22].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum());
+                                Sheet.Cells[i, 23].Value = "Sub Total";
+                                Sheet.Cells[i, 24].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum());
                                 i++;
-                                Sheet.Cells[i, 21].Value = "10% TDS";
-                                Sheet.Cells[i, 22].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 23].Value = "10% TDS";
+                                Sheet.Cells[i, 24].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
-                                Sheet.Cells[i, 21].Value = "Total";
-                                Sheet.Cells[i, 22].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                Sheet.Cells[i, 23].Value = "Total";
+                                Sheet.Cells[i, 24].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -1081,10 +1089,12 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 19].Value = "Candidate Rating Amount";
                         Sheet.Cells[1, 20].Value = "Client Rating Amount";
                         Sheet.Cells[1, 21].Value = "QC Amount";
-                        Sheet.Cells[1, 22].Value = "Amount";
-                        Sheet.Cells[1, 23].Value = "Channel Owner";
-                        Sheet.Cells[1, 24].Value = "Emergency";
-                        Sheet.Cells[1, 25].Value = "Min Video Duration";
+                        Sheet.Cells[1, 22].Value = "Payment SLA";
+                        Sheet.Cells[1, 23].Value = "Video Reward";
+                        Sheet.Cells[1, 24].Value = "Amount";
+                        Sheet.Cells[1, 25].Value = "Channel Owner";
+                        Sheet.Cells[1, 26].Value = "Emergency";
+                        Sheet.Cells[1, 27].Value = "Min Video Duration";
                         int i = 2;
                         if (model.Result.Count() > 0)
                         {
@@ -1166,25 +1176,27 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 19].Value = item.CandidateRatingAmount;
                                     Sheet.Cells[i, 20].Value = item.ClientRatingAmount;
                                     Sheet.Cells[i, 21].Value = item.QCPoints;
-                                    Sheet.Cells[i, 22].Value = item.Points;
+                                    Sheet.Cells[i, 22].Value = item.PaymentSLA;
+                                    Sheet.Cells[i, 23].Value = item.VideoReward;
+                                    Sheet.Cells[i, 24].Value = item.Points;
                                     if (item.Points == 0)
                                     {
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         Sheet.Cells["A" + i.ToString() + ":Z" + i.ToString()].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Red);
                                     }
-                                    Sheet.Cells[i, 23].Value = item.ChannelOwner;
-                                    Sheet.Cells[i, 24].Value = item.IsEmergency == true ? "Y" : "N";
-                                    Sheet.Cells[i, 25].Value = (item.MaxVideoDuration.HasValue && item.MaxVideoDuration.Value > 0) ? item.MaxVideoDuration.Value.ToString() : string.Empty;
+                                    Sheet.Cells[i, 25].Value = item.ChannelOwner;
+                                    Sheet.Cells[i, 26].Value = item.IsEmergency == true ? "Y" : "N";
+                                    Sheet.Cells[i, 27].Value = (item.MaxVideoDuration.HasValue && item.MaxVideoDuration.Value > 0) ? item.MaxVideoDuration.Value.ToString() : string.Empty;
                                     i++;
                                 }
-                                Sheet.Cells[i, 21].Value = "Sub Total";
-                                Sheet.Cells[i, 22].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum());
+                                Sheet.Cells[i, 23].Value = "Sub Total";
+                                Sheet.Cells[i, 24].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum());
                                 i++;
-                                Sheet.Cells[i, 21].Value = "10% TDS";
-                                Sheet.Cells[i, 22].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 23].Value = "10% TDS";
+                                Sheet.Cells[i, 24].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
                                 i++;
-                                Sheet.Cells[i, 21].Value = "Total";
-                                Sheet.Cells[i, 22].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                Sheet.Cells[i, 23].Value = "Total";
+                                Sheet.Cells[i, 24].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
                                 i = i + 2;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

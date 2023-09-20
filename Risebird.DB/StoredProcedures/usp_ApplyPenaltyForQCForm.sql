@@ -8,12 +8,11 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-  
-
 Create Procedure usp_ApplyPenaltyForQCForm    
 @interviewid int,    
 @interviewer varchar(150),    
-@redflags int    
+@redflags int,
+@VideoReward int
 As    
 BEGIN    
 Declare @Userid int,    
@@ -54,15 +53,12 @@ end
 end    
 if(@RowCount>0)    
 begin    
-Update InterviewPoints set QCPoints=@Points where Interviewid=@interviewid and Userid=@Userid and Type='Interview'    
+Update InterviewPoints set QCPoints=@Points,VideoReward=@VideoReward where Interviewid=@interviewid and Userid=@Userid and Type='Interview'    
 end    
 else    
 begin    
-Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,QCPoints) values    
-(@interviewid,@Userid,0,'Interview',@CandidateEmail,'Pending',Getdate(),0,0,@Points)    
+Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,QCPoints,VideoReward) values    
+(@interviewid,@Userid,0,'Interview',@CandidateEmail,'Pending',Getdate(),0,0,@Points,@VideoReward)    
 end    
-END
-
-
-  
+END 
 GO
