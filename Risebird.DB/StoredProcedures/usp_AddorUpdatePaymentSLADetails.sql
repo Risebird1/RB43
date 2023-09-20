@@ -45,5 +45,11 @@ LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,Un
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,
 @LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction) 
 end
+If(@isapproved=1)
+begin
+Declare @InterviewerUserid int
+Select @InterviewerUserid=ul.id from UserList ul join InterviewMeetings im on im.interviewer=ul.EmailId where im.id=@Interviewid
+Update InterviewPoints set PaymentSLA=@PaymentDeduction where Interviewid=@Interviewid and Userid=@InterviewerUserid and Type='Interview'    
+end
 END
 GO

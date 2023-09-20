@@ -658,6 +658,8 @@
         html += '   <th>CandidateRatingAmount</th>';
         html += '   <th>ClientRatingAmount</th>';
         html += '   <th>QCPoints</th>';
+        html += '   <th>PaymentSLA</th>';
+        html += '   <th>VideoRewards</th>';
         html += '   <th>Amnt</th>';
         html += '   <th>Video Duration<span class="durtime">(in mins)</span></th>';
         html += '   <th>Min Video Duration<span class="durtime">(in mins)</span></th>';
@@ -683,6 +685,8 @@
             html += '                               <td>' + data[i].candidateRatingAmount + '</td>';
             html += '                               <td>' + data[i].clientRatingAmount + '</td>';
             html += '                               <td>' + data[i].qcPoints + '</td>';
+            html += '                               <td>' + data[i].paymentSLA + '</td>';
+            html += '                               <td>' + data[i].videoReward + '</td>';
             html += '                               <td>' + data[i].points + '</td>';
 
             if (data[i].videoDuration == null) {

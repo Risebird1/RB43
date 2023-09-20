@@ -3431,11 +3431,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags)
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward)
         {
             try
             {
-                return await _meetingRespository.ApplyPenaltyQCForm(interviewid, interviewer, redflags);
+                return await _meetingRespository.ApplyPenaltyQCForm(interviewid, interviewer, redflags, VideoReward);
             }
             catch (Exception ex)
             {
