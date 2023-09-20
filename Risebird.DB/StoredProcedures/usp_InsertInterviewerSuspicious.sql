@@ -20,7 +20,7 @@ Begin
  DECLARE @UserId int=(select id from UserList where EmailId=@Email)
  If EXISTS(select * from SuspiciousInterviewer where UserId=@UserId)
 begin
-update SuspiciousInterviewer set Comment=@Comment,ModifyBy=@CreatedBy,ModifyDate=@CreatedDate where UserId=@UserId
+update SuspiciousInterviewer set Comment=@Comment,ModifyBy=@CreatedBy,ModifyDate=@CreatedDate,SuspiciousStatus=1 where UserId=@UserId
 end
 else
 begin

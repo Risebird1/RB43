@@ -1,20 +1,20 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
 <div class="col-md-4 pull-left">
     <p class="clearfix">
-       <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
+        <span class="pull-left" style="margin-right:10px;"><strong>Name:</strong></span>
         <span class="pull-left" style="margin-right:10px;">@Model.interviewerName</span>
-    
-    
+
+
     </p>
     <p>
         <span class="pull-left" style="margin-right:10px;"><strong>Contact:</strong></span>
         @if (Model.MobileNumber != null && Model.MobileNumber != string.Empty)
         {
-
             <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@Model.interviewerName','@Model.MobileNumber','@Model.Emailid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-        }@Model.MobileNumber
+        }
+        @Model.MobileNumber
     </p>
-    </div>
+</div>
 <div class="col-md-4 pull-left">
     <p class="clearfix">
         <span class="pull-left" style="margin-right:10px;"><strong>Company:</strong></span>
@@ -26,22 +26,22 @@
         {
             <span class="pull-left">@Model.EmploymentComment</span>
         }
-        </p>
+    </p>
 
     <p class="clearfix">
         <span class="pull-left" style="margin-right:10px;"><strong>Employee:</strong></span>
-       
-            @if (Model.IsEmployed)
-            {
+
+        @if (Model.IsEmployed)
+        {
             <span class="pull-left">Working</span>
-            }
-            else
-            {
+        }
+        else
+        {
             <span class="pull-left">Not Working</span>
-            }
-       
-        </p>
-       
+        }
+
+    </p>
+
 </div>
 
 
@@ -85,122 +85,58 @@
             <span></span>
         }
     </p>
+    <p class="clearfix">
+        <span class="pull-left" style="margin-right:10px;"><strong>Suspicious:</strong></span>
+
+        @if (Model.IsSuspicious)
+        {
+            <span class="text-center pull-left"><span class="avail">Yes</span></span>
+        }
+        else
+        {
+            <span class="text-center pull-left"><span class="noavail">No</span></span>
+        }
+    </p>
 </div>
 <div class="col-md-12 pull-left">
-<div id="tableID" class="second">
-@*    <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
-        <thead>
-            <tr>              
-                <th>Company</th>
-                <th>Employee</th>
-                <th>Mobile</th>
-                <th>Video Confirmation</th>
-                <th>Available</th>
-              
-            </tr>
-        </thead>
-        <tbody>
-           @Html.HiddenFor(model=>model.LastLogin)
-            @if (Model != null)
-            {
+    <div id="tableID" class="second">
+        <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+            <thead>
                 <tr>
-                   
-                    @if (!string.IsNullOrWhiteSpace(Model.CompanyName))
-                    {
-                        <td>@Model.CompanyName</td>
-                    }
-                    else
-                    {
-                        <td>@Model.EmploymentComment</td>
-                    }
-                    @if (Model.IsEmployed)
-                    {
-                        <td>Working</td>
-                    }
-                    else
-                    {
-                        <td>Not Working</td>
-                    }
-                    <td>
-                        @if (Model.MobileNumber != null && Model.MobileNumber != string.Empty)
-                        {
 
-                            <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@Model.interviewerName','@Model.MobileNumber','@Model.Emailid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                        }@Model.MobileNumber
-                    </td>
-                    
-                    @if (Model.VideoConfirmation == 1)
-                    {
-                        <td class="text-center"><span class="avail">Yes</span></td>
-                    }
-                    else if (Model.VideoConfirmation == 2)
-                    {
-                        <td class="text-center"><span class="noavail">No</span></td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                    @if (Model.Isavailable == 1)
-                    {
-                        <td class="text-center"><span class="avail">Yes</span></td>
-                    }
-                    else if (Model.Isavailable == 2)
-                    {
-                        <td class="text-center"><span class="noavail">Not Available</span></td>
-                    }
-                    else if (Model.Isavailable == 3)
-                    {
-                        <td class="text-center"><span class="clarity">Need more clarity</span></td>
-                    }
-                    else if (Model.Isavailable == 4)
-                    {
-                        <td class="text-center"><span class="drop">Drop my profile</span></td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                   
+                    <th>Reliability Score</th>
+                    <th>Interviews</th>
+                    <th>Completed</th>
+                    <th>Selected</th>
+                    <th>Rejected</th>
+                    <th>Dropped</th>
+                    <th>NoShow</th>
+                    <th>NoShow Candidate</th>
+                    @*<th>Payment SLA</th>
+                    <th>Penalty</th>
+                    <th>Candidate Rating</th>
+                    <th>Customer  Rating</th>
+                    <th>Redo requests</th>*@
                 </tr>
-            
-            }
-        </tbody>
-    </table>
-*@
-    <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
-       
-        <thead>
-            <tr>
-            
-                <th>Reliability Score</th>
-                <th>Interviews</th>
-                <th>Completed</th>
-                <th>Selected</th>
-                <th>Rejected</th>
-                <th>Dropped</th>
-                <th>NoShow</th>
-                <th>NoShow Candidate</th>
-            </tr>
-        </thead>
-           <tbody>
+            </thead>
+            <tbody>
                 @Html.HiddenFor(model=>model.LastLogin)
-            @if (Model != null)
-            {
-                <tr>
-                    <td class="text-center"> <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews</span></td>
-                </tr>
-            }
+                @if (Model != null)
+                {
+                    <tr>
+                        <td class="text-center"> <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews))</span></td>
+                    </tr>
+                }
             </tbody>
-    </table>
-</div>
+        </table>
+    </div>
 </div>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 

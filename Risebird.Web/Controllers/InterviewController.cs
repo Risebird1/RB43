@@ -6225,6 +6225,10 @@ namespace Risebird.Web.Controllers
 
                         if (await _meetingService.AddorUpdateQCFormReport(model))
                         {
+                            if (!model.VideoEnable)
+                            {
+                                model.Payment = 0;
+                            }
                             //if (!model.Isedit)
                             //{
                             //    if (redflag > 0)
@@ -6234,7 +6238,7 @@ namespace Risebird.Web.Controllers
                             //}
                             //else
                             //{
-                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag, model.Payment);
                             //}
                             var _clienthr = await _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
                             int rating = 0;
@@ -6776,6 +6780,14 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 model.ModifiedBy = emailId;
                 var result = await _meetingService.SaveRedoInterviewDetails(model);
+
+                if (result)
+                {
+                    var data =new TransInterviewersReliabilityScoresVm();
+                    data.InterviewMeetingId = model.interviewid;
+                    data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.RedoInterviewInitiated;
+                    await _meetingService.AddTransInterviewersReliabilityScoresService(data);
+                }
                 if (profileName == "Client")
                 {
                     AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(model.interviewid);

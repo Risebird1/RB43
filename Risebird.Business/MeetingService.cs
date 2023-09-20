@@ -3432,11 +3432,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags)
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward)
         {
             try
             {
-                return await _meetingRespository.ApplyPenaltyQCForm(interviewid, interviewer, redflags);
+                return await _meetingRespository.ApplyPenaltyQCForm(interviewid, interviewer, redflags, VideoReward);
             }
             catch (Exception ex)
             {
@@ -3988,6 +3988,19 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> AddTransInterviewersReliabilityScoresService(TransInterviewersReliabilityScoresVm model)
+        {
+            try
+            {
+             return  await _meetingRespository.AddTransInterviewersReliabilityScores(model);
+                
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

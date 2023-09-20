@@ -882,7 +882,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<string>(
                         con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
 
-         
+
                     var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@EmailId", interviewerMail);
@@ -4158,7 +4158,9 @@ namespace Risebird.Repository
                                          Surcharge = c.Surcharge,
                                          CandidateRatingAmount = c.CandidateRatingAmount,
                                          ClientRatingAmount = c.ClientRatingAmount,
-                                         QCPoints = c.QCPoints
+                                         QCPoints = c.QCPoints,
+                                         PaymentSLA = c.PaymentSLA,
+                                         VideoReward = c.VideoReward
                                      }).ToList();
                     return resultset.ToList();
                 }
@@ -5720,7 +5722,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags)
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward)
         {
             try
             {
@@ -5730,6 +5732,7 @@ namespace Risebird.Repository
                     parameters.Add("@interviewid", interviewid);
                     parameters.Add("@interviewer", interviewer);
                     parameters.Add("@redflags", redflags);
+                    parameters.Add("@VideoReward", VideoReward);
 
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_ApplyPenaltyForQCForm", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
@@ -6772,7 +6775,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> PaymentSlaNotApproved(int interviewid,string emailid)
+        public async Task<bool> PaymentSlaNotApproved(int interviewid, string emailid)
         {
             try
             {
@@ -6815,6 +6818,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters(); 
+                dynamicParameters.Add("@InterviewMeetingId", model.InterviewMeetingId);
+                dynamicParameters.Add("@ReliabilityScoreTypeId", model.ReliabilityScoreTypeId);
+                dynamicParameters.Add("@CreateDate",DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_TransInterviewersReliabilityScores", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
