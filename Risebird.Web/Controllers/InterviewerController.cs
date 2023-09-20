@@ -3772,6 +3772,11 @@ namespace Risebird.Web.Controllers
                 var data = await _interviewerService.AddSuspiciousTypeService(model);
                 if (data == true)
                 {
+                    var result = new TransInterviewersReliabilityScoresVm();
+                    result.InterviewMeetingId = 0;
+                    result.InterviewerEmail = Email;
+                    result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.SuspiciousInterviewer;
+                    await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                     return Json("Suspicious Interviewer marked Successfully");
                 }
                 else

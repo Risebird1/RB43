@@ -6257,6 +6257,10 @@ namespace Risebird.Web.Controllers
                             _model.Interviewid = model.Interviewid;
                             _model.ClientAction = "";
                             var result = await _meetingService.SaveRatingDetails(_model);
+                            var data = new TransInterviewersReliabilityScoresVm();
+                            data.InterviewMeetingId =model.Interviewid;
+                            data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerRedFlagByQCTeam;
+                            await _meetingService.AddTransInterviewersReliabilityScoresService(data);
                             TempData["SuccessErrorMessageQCForm"] = "QC Form successfully saved.";
                         }
                         else
