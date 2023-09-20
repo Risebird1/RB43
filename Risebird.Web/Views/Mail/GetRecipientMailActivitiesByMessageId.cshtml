@@ -43,15 +43,18 @@
                 }
             </div>
 
-
+            
         
             <div class="modal-body" id="recipientActivity_modal_body" style="max-height:400px; overflow:auto">
-
-
+                <div class="loader text-center">
+                    <img src="~/Newassets/img/lazyload.gif" />
+                </div>
+                       
                 @if (Model != null && Model.Count() > 0)
                 {
                     <div class="scrollers" style="overflow-y:auto">
-                        <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+
+                        <table id="emailTable" class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                             <thead>
                                 <tr>
                                     <th>Mail Subject</th>
@@ -65,13 +68,16 @@
                                 </tr>
                             </thead>
                             <tbody>
+                             
                                 @{
                                     int rowSpan = Model.Count();
                                     int maxCount = rowSpan - 1;
                                     for (int i = 0; i <= maxCount; i++)
                                     {
                                         var jsonObj = JsonConvert.SerializeObject(Model[i].MailBody);
+                                      
                                                 <tr>
+                                          
                                                     @if (i == 0)
                                                     {
                                                         <td rowspan="@rowSpan" title="@Html.Raw(Model[i].MailSubject)">@Model[i].MailSubject</td>
@@ -117,9 +123,10 @@
             @if (isNestedPopUp)
             {
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-target="#modalCommunicationDetails" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
-
+                    <button class="btn btn-primary"  data-bs-target="#modalCommunicationDetails" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
+                   
                 </div>
+               
             }
             
         </div>

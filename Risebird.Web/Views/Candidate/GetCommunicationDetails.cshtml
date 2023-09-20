@@ -195,12 +195,17 @@
 </div>
 <script>
     $(document).ready(function () {
-        
+     
         var recipientActivity_placeholderElement = $('#modal_recipientActivity_placeholder');
-
+        
 
         $('button[data-eventfire="ajax-modal-recipientActivity"]').click(function (event) {//data-toggle
+            if ($('#modalRecipientActivity').length > 0){
+                $('#modalRecipientActivity').empty();
+            }
             OpenPopUp(event, recipientActivity_placeholderElement);
+               
+
 
         });
 

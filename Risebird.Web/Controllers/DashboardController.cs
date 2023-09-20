@@ -1191,12 +1191,8 @@ namespace Risebird.Web.Controllers
                         }
 
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-                        if(actionstatus == RibbonActionType.InterviewCount)
-                        {
-                            modelList = modelList.OrderBy(x => x.IRFId).ToList();
-                        }
-                        else
-                        {
+                        if(actionstatus == RibbonActionType.InterviewCount) { 
+                      
                             modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         }
                         return View(modelList);
