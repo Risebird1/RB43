@@ -2928,6 +2928,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (await _meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
+                            var result = new TransInterviewersReliabilityScoresVm();
+                            result.InterviewMeetingId = id;
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.UnassignmentInterviewPenalty;
+                            await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment has been done Successfully!";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
                         }
@@ -3205,6 +3209,13 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
+                            if (model.MeetingStatus == 5)
+                            {
+                                var result = new TransInterviewersReliabilityScoresVm();
+                                result.InterviewMeetingId = model.InterviewId;
+                                result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.InterviewerNoShow;
+                                await _meetingService.AddTransInterviewersReliabilityScoresService(result);
+                            }
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 //Send mail to client for report
