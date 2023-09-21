@@ -43,7 +43,7 @@ namespace Risebird.MicroService
                 foreach (var irf in IRFList)
                 {
                     //var model = await _irfService.GetIRFInterviewerMembers(irf.id);
-                    var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
+                    var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId), irf.id);
                     var skills = await _irfService.GetTechSkillswithWeightage(irf.id);
 
                     foreach (var interviewer in interviewers)

@@ -27,27 +27,34 @@
 @*<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>*@
 
 <!-- Modal -->
-<div class="modal fade" style="height:1000px" id="modalRecipientActivity" tabindex="-1" role="dialog" aria-labelledby="modalRecipientLabel" aria-hidden="true">
+<div class="modal fade" style="height:1000px" id="modalRecipientActivity">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalRecipientLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
-                
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fas fa-info-circle" style="font-size:23px;line-height:46px; color:#fff"></span>
+                </div>
+                <h5 class="modal-title" id="modalRecipientLabel" style="text-align:left;position:relative;left:11px;">Activity Details for '@ViewBag.RecipientEmail'</h5>
                 @if (!isNestedPopUp)
                 {
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
                         <span aria-hidden="true">×</span>
                     </button>
                 }
-                
             </div>
+
+            
+        
             <div class="modal-body" id="recipientActivity_modal_body" style="max-height:400px; overflow:auto">
-
-
+                <div class="loader text-center">
+                    <img src="~/Newassets/img/lazyload.gif" />
+                </div>
+                       
                 @if (Model != null && Model.Count() > 0)
                 {
                     <div class="scrollers" style="overflow-y:auto">
-                        <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
+
+                        <table id="emailTable" class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                             <thead>
                                 <tr>
                                     <th>Mail Subject</th>
@@ -61,13 +68,16 @@
                                 </tr>
                             </thead>
                             <tbody>
+                             
                                 @{
                                     int rowSpan = Model.Count();
                                     int maxCount = rowSpan - 1;
                                     for (int i = 0; i <= maxCount; i++)
                                     {
                                         var jsonObj = JsonConvert.SerializeObject(Model[i].MailBody);
+                                      
                                                 <tr>
+                                          
                                                     @if (i == 0)
                                                     {
                                                         <td rowspan="@rowSpan" title="@Html.Raw(Model[i].MailSubject)">@Model[i].MailSubject</td>
@@ -113,9 +123,10 @@
             @if (isNestedPopUp)
             {
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-target="#modalCommunicationDetails" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
-
+                    <button class="btn btn-primary"  data-bs-target="#modalCommunicationDetails" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
+                   
                 </div>
+               
             }
             
         </div>

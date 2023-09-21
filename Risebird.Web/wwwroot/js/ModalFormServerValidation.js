@@ -78,7 +78,9 @@ $(document).ready(function () {
 
 
     $('button[data-toggle="ajax-modal-recipientActivity"]').click(function (event) {
-        OpenPopUp(event, recipientActivity_placeholderElement);
+
+     OpenPopUp(event, recipientActivity_placeholderElement);
+    
 
     });
 
@@ -87,6 +89,7 @@ $(document).ready(function () {
 
     $('a[data-toggle="ajax-modal-CommunicationDetails"]').click(function (event) {
         OpenPopUp(event, candidateCommunicationDetails_placeholderElement);
+   
     });
 
     //var sme_placeholderElement = $('#modal_SME_placeholder');
@@ -221,3 +224,6 @@ function OpenPopUp(event, placeholderElement, setRating = false) {
         placeholderElement.find('.modal').modal('show');
     });
 }
+
+
+
