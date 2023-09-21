@@ -2897,18 +2897,22 @@
 </script>
 <script>
     $(document).ready(function () {
-        debugger;
+        var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
         UpdateInterviewerRateVariable();
-        var firstinterviewerRateElement = document.getElementById('InterviewerCollection_0__PerSuccessRate');
-        if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value != "" || firstinterviewerRateElement.value != 0))
+        if(isNewSkillChannel)
         {
-            if(firstinterviewerRateElement.readOnly == true)
+            var firstinterviewerRateElement = document.getElementById('InterviewerCollection_0__PerSuccessRate');
+            if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value != "" || firstinterviewerRateElement.value != 0))
             {
-                firstinterviewerRateElement.readOnly = false;
+                if(firstinterviewerRateElement.readOnly == true)
+                {
+                    firstinterviewerRateElement.readOnly = false;
+                }
+                firstinterviewerRateElement.value = interviewerRate;
+                firstinterviewerRateElement.readOnly = true;
             }
-            firstinterviewerRateElement.value = interviewerRate;
-            firstinterviewerRateElement.readOnly = true;
         }
+        
 
         var countryType = $("#JobCountry").val();
         @*var interviewerQCRate;
