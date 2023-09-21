@@ -6962,7 +6962,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllNewCreatedIRFs", null,
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllNewCreatedIRFs", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
