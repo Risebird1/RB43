@@ -104,7 +104,7 @@
             <thead>
                 <tr>
 
-                  
+
                     <th class="text-center">Interviews</th>
                     <th class="text-center">Completed</th>
                     <th class="text-center">Selected</th>
@@ -112,8 +112,8 @@
                     <th class="text-center">Dropped</th>
                     <th class="text-center">NoShow</th>
                     <th>NoShow Candidate</th>
-                    </tr>
-                   
+                </tr>
+
             </thead>
             <tbody>
                 @Html.HiddenFor(model=>model.LastLogin)
@@ -127,28 +127,28 @@
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span></td>
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span></td>
-                       </tr>
-                        <thead>
+                    </tr>
+                <thead>
 
                     <tr>
                         <th class="text-center">Reliability Score</th>
                         <th class="text-center">Payment SLA</th>
-                        <th class="text-center">Penalty</th>
+                        <th class="text-center">Penalty Count</th>
                         <th class="text-center">Candidate Rating</th>
                         <th class="text-center">Customer  Rating</th>
                         <th class="text-center">Redo requests</th>
-                        <th></th>
+                        <th class="text-center">Red Flaged Interviews</th>
                     </tr>
-                      </thead>
-                       <tr>
-                     <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
-                    </tr>
+                </thead>
+                <tr>
+                    <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CandidateRating</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CustomerRating</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span></td>
+                </tr>
                 }
             </tbody>
         </table>
