@@ -20,7 +20,7 @@
         <span class="pull-left" style="margin-right:10px;"><strong>Company:</strong></span>
         @if (!string.IsNullOrWhiteSpace(Model.CompanyName))
         {
-            <span class="pull-left">@Model.CompanyName</span>
+            <span class="pull-left" style="color:brown;font-size:12px;">@Model.CompanyName</span>
         }
         else
         {
@@ -104,34 +104,50 @@
             <thead>
                 <tr>
 
-                    <th>Reliability Score</th>
-                    <th>Interviews</th>
-                    <th>Completed</th>
-                    <th>Selected</th>
-                    <th>Rejected</th>
-                    <th>Dropped</th>
-                    <th>NoShow</th>
+                  
+                    <th class="text-center">Interviews</th>
+                    <th class="text-center">Completed</th>
+                    <th class="text-center">Selected</th>
+                    <th class="text-center">Rejected</th>
+                    <th class="text-center">Dropped</th>
+                    <th class="text-center">NoShow</th>
                     <th>NoShow Candidate</th>
-                    @*<th>Payment SLA</th>
-                    <th>Penalty</th>
-                    <th>Candidate Rating</th>
-                    <th>Customer  Rating</th>
-                    <th>Redo requests</th>*@
-                </tr>
+                    </tr>
+                   
             </thead>
             <tbody>
                 @Html.HiddenFor(model=>model.LastLogin)
                 @if (Model != null)
                 {
                     <tr>
-                        <td class="text-center"> <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews))</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews))</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews))</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews))</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews))</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews))</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                       </tr>
+                        <thead>
+
+                    <tr>
+                        <th class="text-center">Reliability Score</th>
+                        <th class="text-center">Payment SLA</th>
+                        <th class="text-center">Penalty</th>
+                        <th class="text-center">Candidate Rating</th>
+                        <th class="text-center">Customer  Rating</th>
+                        <th class="text-center">Redo requests</th>
+                        <th></th>
+                    </tr>
+                      </thead>
+                       <tr>
+                     <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">0</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
                     </tr>
                 }
             </tbody>

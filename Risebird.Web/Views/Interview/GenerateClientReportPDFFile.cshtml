@@ -166,14 +166,14 @@
             <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
                 <div class="pull-left">
                     <div class="navbar-wrapper w-full">
-                        <div id="txtpageHeader" class="navbar-brand" style=" line-height:50px!important;">
-                            <img style="position:relative;top:0px;width: 30%;" src="data:image/png;base64,@ViewBag.Risebirdlogo" />
+                        <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:30px; top:7px;">
+                            <img  src="data:image/png;base64,@ViewBag.Risebirdlogo" />
                         </div>
                     </div>
 
                 </div>
-                <div class="pull-right" style="text-align:right!important">
-                    <img style="position:relative;top:0px;width: 30%;" src="data:image/png;base64,@ViewBag.ClientLogo" />
+                <div class="pull-right" style="text-align:right!important;">
+                    <img style="position:absolute;top:5px;right:30px;height:35px" src="data:image/png;base64,@ViewBag.ClientLogo" />
                 </div>
             </nav>
             <div class="col-md-12">
@@ -247,14 +247,14 @@
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
-                                                        <div class="skillBackground skill-round-xlarge skill-small">
+                                                        <div class="skillBackground skill-round-xlarge skill-small" style="font-size:9px;">
                                                             @if (TechSkill_Score == 0)
                                                             {
                                                                 <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
                                                             }
                                                             else
                                                             {
-                                                                <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                                <div class="skill-center skill-round-xlarge skill-teal" style="font-size:9px;width:@TechSkill_Score%">@TechSkill_Score %</div>
 
                                                             }
                                                         </div>
@@ -274,10 +274,10 @@
                                         {
                                             <div>
                                                 <div class="int-heading">Interviewer Comment</div>
-                                                <hr />
+                                                <hr style="margin-bottom:5px;"/>
                                                 @if (Model.InterviewerComment != null)
                                                 {
-                                                    <p>@Model.InterviewerComment</p>
+                                                    <p style="font-size:14px;">@Model.InterviewerComment</p>
                                                 }
                                                 else
                                                 {
@@ -307,7 +307,7 @@
 
                                             <div>
                                                 <div class="question-heading">Questions Discussed</div>
-                                                <hr />
+                                                <hr style="margin-bottom:5px;" />
                                                 <div class="question">
                                                     @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
                                                     {
@@ -317,7 +317,7 @@
                                                                 var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                 @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                                 {
-                                                                    <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                    <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                                 }
                                                                 else
                                                                 {
