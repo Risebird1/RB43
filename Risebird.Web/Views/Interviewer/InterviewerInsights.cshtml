@@ -122,14 +122,41 @@
                     <tr>
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews)%)</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        @if ((Model.SelectedInterviews * 100 / Model.CompletedInterviews) >= 50)
+                        {
+                            <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        }
+                        else
+                        {
+                            <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        }
+                        @if ((Model.RejectedInterviews * 100 / Model.CompletedInterviews) >= 80)
+                        {
+                            <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        }
+                        else
+                        {
+                            <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedInterviews (@(Model.RejectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
+                        }
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.DroppedInterviews (@(Model.DroppedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span></td>
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        @if ((Model.NoShowInterviews * 100 / Model.TotalInterviews) > 5)
+                        {
+                            <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        }
+                        else
+                        {
+                            <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowInterviews (@(Model.NoShowInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        }
+                        @if ((Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews) > 40)
+                        {
+                            <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        }
+                        else
+                        {
+                            <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.NoShowCandidateInterviews (@(Model.NoShowCandidateInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        }
                     </tr>
                 <thead>
-
                     <tr>
                         <th class="text-center">Reliability Score</th>
                         <th class="text-center">Payment SLA</th>
@@ -146,8 +173,35 @@
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CandidateRating</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CustomerRating</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        @if (Model.Redorequests > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        }
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span></td>
+                </tr>
+                <thead>
+                    <tr>
+                        <th class="text-center">Late Join</th>
+                        <th class="text-center">Late CandidateNoshow</th>
+                        <th class="text-center">Unassigned Interviews</th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateCandidateNoShow</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.UnassignInterviews</span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
+                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
                 </tr>
                 }
             </tbody>

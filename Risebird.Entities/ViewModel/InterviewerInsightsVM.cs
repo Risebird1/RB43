@@ -33,5 +33,8 @@ namespace Risebird.Entities.ViewModel
         public decimal CustomerRating { get; set; }
         public int Redorequests{ get; set; }
         public int RedFlags{ get; set; }
+        public int JoinLateMeeting{ get; set; }
+        public int JoinLateCandidateNoShow { get; set; }
+        public int UnassignInterviews { get; set; }
     }
 }
