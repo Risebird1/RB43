@@ -394,6 +394,8 @@ namespace Risebird.Entities.ViewModel
         public int CandidateRatingAmount { get; set; }
         public int ClientRatingAmount { get; set; }
         public int QCPoints { get; set; }
+        public int PaymentSLA { get; set; }
+        public int VideoReward { get; set; }
     }
     public class SchedulingLinkVM
     {

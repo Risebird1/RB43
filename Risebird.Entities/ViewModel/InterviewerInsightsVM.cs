@@ -26,5 +26,6 @@ namespace Risebird.Entities.ViewModel
         public int NoShowInterviews { get; set; }
         public int NoShowCandidateInterviews { get; set; }
         public int DroppedInterviews { get; set; }
+        public bool IsSuspicious { get; set; }
     }
 }
