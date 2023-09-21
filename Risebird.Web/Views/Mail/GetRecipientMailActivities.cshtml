@@ -12,15 +12,20 @@
 @*<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>*@
 
 <!-- Modal -->
-<div class="modal fade" style="height:1000px" id="modalRecipientActivity" tabindex="-1" role="dialog" aria-labelledby="addCommentLabel" aria-hidden="true">
+<div class="modal fade" style="height:1000px" id="modalRecipientActivity">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCommentLabel">Activity Details for '@ViewBag.RecipientEmail'</h5>
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fas fa-info-circle" style="font-size:23px;line-height:46px; color:#fff"></span>
+                </div>
+                <h5 class="modal-title" id="addCommentLabel" style="text-align:left;position:relative;left:11px;">Activity Details for '@ViewBag.RecipientEmail'</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
+
+         
             <div class="modal-body" id="recipientActivity_modal_body" style="max-height:400px; overflow:auto">
 
                 
