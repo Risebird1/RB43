@@ -216,9 +216,6 @@ function moreless(id) {
 function OpenPopUp(event, placeholderElement, setRating = false) {
     //var url = $(this).data('url');
     var url = event.delegateTarget.dataset.url;
-    if (placeholderElement == '#modal_candidateCommunicationDetails_placeholder') {
-        $('#modal_recipientActivity_placeholder').empty();
-    }
     $.get(url).done(function (data) {
         placeholderElement.html(data);
         if (setRating == true) {
