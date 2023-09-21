@@ -79,7 +79,7 @@ $(document).ready(function () {
 
     $('button[data-toggle="ajax-modal-recipientActivity"]').click(function (event) {
 
-     OpenPopUps(event, recipientActivity_placeholderElement);
+     OpenPopUp(event, recipientActivity_placeholderElement);
     
 
     });
@@ -88,7 +88,7 @@ $(document).ready(function () {
 
 
     $('a[data-toggle="ajax-modal-CommunicationDetails"]').click(function (event) {
-        OpenPopUps(event, candidateCommunicationDetails_placeholderElement);
+        OpenPopUp(event, candidateCommunicationDetails_placeholderElement);
    
     });
 
