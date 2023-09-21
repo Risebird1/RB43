@@ -7867,7 +7867,13 @@ namespace Risebird.Web.Controllers
                     model.CreatedBy = emailId;
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
-                       
+                        if(model.isapprovedchecked)
+                        {
+                            var result = new TransInterviewersReliabilityScoresVm();
+                            result.InterviewMeetingId = model.Interviewid;
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
+                            await _meetingService.AddTransInterviewersReliabilityScoresService(result);
+                        }
                         TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
                         return RedirectToAction("Index", "Interview");
                     }
