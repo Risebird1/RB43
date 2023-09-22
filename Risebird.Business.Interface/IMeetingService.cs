@@ -180,7 +180,7 @@ namespace Risebird.Business.Interface
         Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
-        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags);
+        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward);
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);

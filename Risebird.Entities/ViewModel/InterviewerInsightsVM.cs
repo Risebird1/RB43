@@ -26,5 +26,12 @@ namespace Risebird.Entities.ViewModel
         public int NoShowInterviews { get; set; }
         public int NoShowCandidateInterviews { get; set; }
         public int DroppedInterviews { get; set; }
+        public bool IsSuspicious { get; set; }
+        public int PaymentSLA { get; set; }
+        public int Penalty { get; set; }
+        public decimal CandidateRating { get; set; }
+        public decimal CustomerRating { get; set; }
+        public int Redorequests{ get; set; }
+        public int RedFlags{ get; set; }
     }
 }

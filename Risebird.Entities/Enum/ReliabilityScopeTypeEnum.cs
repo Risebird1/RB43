@@ -9,7 +9,7 @@ namespace Risebird.Entities.Enum
         [Description("Customer rating - 4 or less")]
         CustomerRating4OrLess=2,
         [Description("Customer Rating - 5")]
-        CustomerRating5O =3,
+        CustomerRating5 =3,
         [Description("Video Confirmation - No")]
         VideoConfirmationNo =4,
         [Description("Video Confirmation - Yes")]

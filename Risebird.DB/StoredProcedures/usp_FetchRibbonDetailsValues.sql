@@ -241,7 +241,6 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ul.EmailId=@emailID 
 		end
 	end
-
 	else If(@actionstatus ='ReScheduleCount')
 	begin
 		if (@actiontype = 0)
@@ -289,9 +288,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID
 		end
 	end
-
-
-	If(@actionstatus ='PotentialRiskInterviewCount')
+	else If(@actionstatus ='PotentialRiskInterviewCount')
 	begin
 		if (@actiontype = 0)
 		begin
@@ -348,9 +345,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID
 		end
 	end
-
-
-	If(@actionstatus ='SuspeciousInterviewerCount')
+	else If(@actionstatus ='SuspeciousInterviewerCount')
 	begin
 		if (@actiontype = 0)
 		begin
@@ -384,10 +379,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
 				end
 	end
-
-
-
-	If(@actionstatus ='CancelledInterviewCount')
+	else If(@actionstatus ='CancelledInterviewCount')
 	begin
 		if (@actiontype = 0)
 		begin
@@ -419,10 +411,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			where confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID and im.RedoInterview=0
 		end
 	end
-
-
-
-	If(@actionstatus ='RedoInterviewCount')
+    else If(@actionstatus ='RedoInterviewCount')
 	begin
 		if (@actiontype = 0)
 		begin
@@ -567,8 +556,7 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 			where ulc.EmailId=@emailID and im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 		end
 	end
-
-	If(@actionstatus ='PotentialRiskByClient')
+	else If(@actionstatus ='PotentialRiskByClient')
 	begin
 		if (@actiontype = 0)
 		begin
