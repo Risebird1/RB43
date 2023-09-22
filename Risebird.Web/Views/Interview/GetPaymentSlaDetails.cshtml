@@ -531,23 +531,37 @@
             </div>
             <div id="collapseSix" class="accordion-body collapse">
                 <div class="accordion-inner">
+                                        <ul class="ks-cboxtags">
+                                          
                                         @Html.HiddenFor(m=>m.CandidateInteractionQuality)
-                                        @if (Model.CandidateInteractionQuality.Split(",").Contains("wasting"))
-                                        {
-                                            <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" /> <d>wasting</d>
-                                        }
-                                        else
-                                        {
-                                            <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" /> <d>wasting</d>
-                                        }
+                                            <li>
+                                               
+                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("wasting"))
+                                                {
+                                                    <input type="checkbox" id="checkboxOne" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" />
+
+                                                    <label for="checkboxOne">wasting</label>
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" id="checkboxOne" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" />
+
+                                                    <label for="checkboxOne">wasting</label>
+                                                }
+                                            </li>
+                                            <li>
+                                       
                                         @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal Information"))
                                         {
-                                            <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <d>Personal Information</d>
+                                                    <input type="checkbox" id="checkboxTwo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" />
+
+                                                    <label for="checkboxTwo">Personal Information</label>
                                         }
                                         else
                                         {
-                                            <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <d>Personal Information</d>
+                                                    <input type="checkbox" id="checkboxTwo" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <d>Personal Information</d>
                                         }
+                                            </li>
                                         @if (Model.CandidateInteractionQuality.Split(",").Contains("Reading questions without interacting"))
                                         {
                                             <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <d>Reading questions without interacting</d>
@@ -596,6 +610,7 @@
                                         {
                                             <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" /> <d>Disrespect</d>
                                         }
+                                        </ul>
                 </div>
             </div>
         </div>
