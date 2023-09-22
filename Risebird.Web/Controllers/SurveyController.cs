@@ -841,11 +841,22 @@ namespace Risebird.Web.Controllers
                 return View(result);
             }
             catch (Exception ex)
-            {
+            { 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
                 var result = new List<LogData>();
                 return View(result);
             }
         }
+
+        [HttpGet]
+        public ActionResult CandidateFeedbackForm()
+        {
+         var model = new PaymentSLAVM();
+
+
+            return View(model);
+
+        }
     }
+
 }
