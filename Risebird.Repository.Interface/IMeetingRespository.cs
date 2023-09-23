@@ -266,5 +266,6 @@ namespace Risebird.Repository.Interface
         Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
         Task<bool> AgreeToPaymentSLAConditions(string emailid);
         Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model);
+        Task<bool> AddTransReliabilityScoresSelectAndReject(int InterviewMeetingId);
     }
 }
