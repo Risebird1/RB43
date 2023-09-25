@@ -849,13 +849,65 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult CandidateFeedbackForm()
+        public async Task<IActionResult> CandidateFeedbackForm()
         {
          var model = new PaymentSLAVM();
-
+            await SetInitialValue(model);
 
             return View(model);
 
+        }
+
+        public async Task SetInitialValue(PaymentSLAVM model)
+        {
+            if (string.IsNullOrEmpty(model.Inaccuratedecisionmaking))
+            {
+                model.Inaccuratedecisionmaking = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.TimeManagement))
+            {
+                model.TimeManagement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.QuestionsRelevance))
+            {
+                model.QuestionsRelevance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.ScoreRubricIgnorance))
+            {
+                model.ScoreRubricIgnorance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.PoorFeedbackComments))
+            {
+                model.PoorFeedbackComments = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.CandidateInteractionQuality))
+            {
+                model.CandidateInteractionQuality = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LimitedHandoncoding))
+            {
+                model.LimitedHandoncoding = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.WrongStatusUpdates))
+            {
+                model.WrongStatusUpdates = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.WeakInfrastructure))
+            {
+                model.WeakInfrastructure = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.ProctoringIgnorance))
+            {
+                model.ProctoringIgnorance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.UnethicalPractices))
+            {
+                model.UnethicalPractices = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.PoorCommunicationSkills))
+            {
+                model.PoorCommunicationSkills = string.Empty;
+            }
         }
     }
 

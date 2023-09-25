@@ -30,19 +30,21 @@
                                              @Html.HiddenFor(m=> m.Inaccuratedecisionmaking)
                                         @if (Model.Inaccuratedecisionmaking.Split(",").Contains("False positive"))
                                         {
-                                            <input type="checkbox" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <d>False positive</d>
+                                                <input type="checkbox" id="checkboxOne" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <label for="checkboxOne">False positive</label>
                                         }
                                         else
                                         {
-                                            <input type="checkbox" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <d>False positive</d>
+                                                <input type="checkbox" id="checkboxOne" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <label for="checkboxOne">False positive</label>
                                         }
                                         @if (Model.Inaccuratedecisionmaking.Split(",").Contains("False negative"))
                                         {
-                                            <input type="checkbox" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" /> <d>False negative</d>
+                                                <input type="checkbox" id="checkboxTwo" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" />
+
+                                                <label for="checkboxTwo">False negative</label>
                                         }
                                         else
                                         {
-                                            <input type="checkbox" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" /> <d>False negative</d>
+                                                <input type="checkbox" id="checkboxTwo" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" /> <d>False negative</d>
                                         }
                                         @if (Model.Inaccuratedecisionmaking.Split(",").Contains("Lacking Sincerity"))
                                         {
