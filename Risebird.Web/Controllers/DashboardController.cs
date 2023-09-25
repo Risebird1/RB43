@@ -1409,6 +1409,46 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        /// <summary>
+        /// List of all unassigned interviews clubbed together by Skill Channel, with action to send mail notification
+        /// </summary>
+        /// <param name="actiontype"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SendOpenInterviewsNotification(int actiontype)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        var modelList = new List<MeetingVM>();
+                        modelList = await _dashboardService.FetchRibbonDetailsValues(RibbonActionType.InterviewCount, emailid, actiontype, profileName);
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("UnassignedInterviews");
+            }
+
+        }
 
         [Authorize]
         [HttpGet]
