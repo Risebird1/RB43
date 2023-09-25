@@ -109,7 +109,7 @@
                     <th class="text-center">Rejected</th>
                     <th class="text-center">Dropped</th>
                     <th class="text-center">NoShow</th>
-                    <th>NoShow Candidate</th>
+                    <th class="text-center">NoShow Candidate</th>
                 </tr>
 
             </thead>
@@ -179,24 +179,52 @@
                         {
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
                         }
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span></td>
+                        @if ((Model.RedFlags*100/Model.CompletedInterviews) > 10)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span></td>
+                        }
                 </tr>
                 <thead>
                     <tr>
                         <th class="text-center">Late Join</th>
                         <th class="text-center">Late CandidateNoshow</th>
                         <th class="text-center">Unassigned Interviews</th>
-                        <th class="text-center"></th>
+                        <th class="text-center">Suspicious</th>
                         <th class="text-center"></th>
                         <th class="text-center"></th>
                         <th class="text-center"></th>
                     </tr>
                 </thead>
                 <tr>
-                    <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span></td>
+                        @if ((Model.JoinLateMeeting*100/Model.TotalInterviews) > 2)
+                        {
+                        <td class="text-center"> <span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span></td>
+                        }
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateCandidateNoShow</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.UnassignInterviews</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
+                        @if ((Model.UnassignInterviews * 100 / Model.TotalInterviews) > 5)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.UnassignInterviews</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.UnassignInterviews</span></td>
+                        }
+                        @if (Model.SuspiciousCount > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
+                        }
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>

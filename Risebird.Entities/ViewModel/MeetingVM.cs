@@ -327,7 +327,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AvailabilityResponseDate { get; set; }
         //public string EmploymentComment { get; set; }
         //public string CompanyName { get; set; }
-
+        public int RedMarker { get; set; }
 
     }
 
