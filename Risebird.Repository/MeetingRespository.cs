@@ -6832,6 +6832,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@InterviewMeetingId", model.InterviewMeetingId);
                 dynamicParameters.Add("@ReliabilityScoreTypeId", model.ReliabilityScoreTypeId);
                 dynamicParameters.Add("@CreateDate",DateTime.Now);
+                dynamicParameters.Add("@InterviewerEmail",model.InterviewerEmail);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_TransInterviewersReliabilityScores", dynamicParameters,
