@@ -25,6 +25,7 @@ set @InterviewerStatus=(Select InterviewStatus from Interviewmeetings im join In
 and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8))
 
 set @InterviewerId=(select ip.Id from InterviewerProfile ip join UserList ul on ip.UserId=ul.Id join InterviewMeetings im on ul.EmailId=im.interviewer where Im.id= @InterviewMeetingId)
+
 if(@InterviewerStatus=2 or @InterviewerStatus=4)
 begin
 declare @SelectedInterviewsLength int
@@ -58,6 +59,43 @@ begin
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=19)
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,19,@Point,@CreateDate)
 end
+end
+set @InterviewerStatus= (select MeetingStatus from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Interviewer)
+if(@InterviewerStatus=5 or @InterviewerStatus=9)
+begin
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=13)
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,13,@Point,@CreateDate)
+end
+--Less than 5 or more than 5 Questions added in the Report
+declare @InterviewCount int
+set @InterviewCount=(select Count(qd.InterviewId) from QuestionsDiscussed qd join InterviewMeetings im on qd.InterviewId=im.id where im.interviewer=@Interviewer)
+if(@InterviewCount<5)
+begin
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=16)
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,16,@Point,@CreateDate)
+end
+if(@InterviewCount>5)
+begin
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=17)
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,17,@Point,@CreateDate)
+end
+--Selection Rate
+declare @SelectionInterviewRate int
+set @SelectionInterviewRate=(select Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Interviewer 
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4))
+declare @SelectionRate20Percentage int
+set @SelectionRate20Percentage=(@SelectionInterviewRate*(20/100))
+declare @SelectionRate40Percentage int
+set @SelectionRate40Percentage=(@SelectionInterviewRate*(40/100))
+if(@SelectionRate20Percentage<20 or @SelectionRate40Percentage>40)
+begin
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=14)
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,14,@Point,@CreateDate)
+end
+if(@SelectionRate20Percentage>20 and @SelectionRate40Percentage<40)
+begin
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=15)
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,15,@Point,@CreateDate)
 end
 End
 
