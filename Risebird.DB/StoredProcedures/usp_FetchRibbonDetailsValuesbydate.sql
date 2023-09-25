@@ -43,34 +43,40 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
   end  
  end  
  else If(@actionstatus ='MeetingStatus')  
- begin  
-  if (@actiontype = 0)  
-  begin  
-   if (@Profile = 'SeniorHR' or @Profile = 'HR')  
-   begin  
-    select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-    join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid   
-    left join InterviewComments ic on ic.InterviewId= im.id   
-    where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and ulsh.Emailid= @Emailid
-   end  
-   else  
-   begin  
-    select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-    left join InterviewComments ic on ic.InterviewId= im.id   
-    where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) 
-   end  
-  end  
-  else  
-  begin  
-   select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-   left join InterviewComments ic on ic.InterviewId= im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId   
-   where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and ul.EmailId=@emailID
-   union   
-   select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-   left join InterviewComments ic on ic.InterviewId= im.id join Userlist ul on ul.id=irf.RisebirdHr   
-   where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and ul.Emailid =@emailID
-  end  
- end  
+begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				left join InterviewComments ic on ic.InterviewId= im.id 
+				left join UserList uli on uli.EmailId=im.interviewer
+				left join UserList ulc on ulc.id=IRF.RisebirdHr
+				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid and interviewdate<@currentdate
+			end
+			else
+			begin
+				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				left join InterviewComments ic on ic.InterviewId= im.id 
+				left join UserList uli on uli.EmailId=im.interviewer
+				left join UserList ulc on ulc.id=IRF.RisebirdHr
+				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and interviewdate<@currentdate
+			end
+		end
+		else
+		begin
+			select distinct im.*,irf.*,cl.*,ic.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			left join InterviewComments ic on ic.InterviewId= im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			left join UserList uli on uli.EmailId=im.interviewer left join UserList ulc on ulc.id=IRF.RisebirdHr
+			where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.EmailId=@emailID and interviewdate<@currentdate
+			union 
+			select distinct im.*,irf.*,cl.*,ic.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			left join InterviewComments ic on ic.InterviewId= im.id join Userlist ul on ul.id=irf.RisebirdHr 
+			left join UserList uli on uli.EmailId=im.interviewer left join UserList ulc on ulc.id=IRF.RisebirdHr
+			where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.Emailid =@emailID and interviewdate<@currentdate
+		end
+	end
  else If(@actionstatus ='UnAssignedCoordianter')  
  begin  
   if (@Profile = 'SeniorHR' or @Profile = 'HR')  
