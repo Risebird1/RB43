@@ -489,7 +489,8 @@
 
                                                         <th>Meeting Link</th>
                                                         <th>Company Name</th>
-                                                        <th>Interviewer</th>
+                                                        <th>Red Markers</th>
+                                                        <th>Interveiwer</th>
                                                         <th>Interviewer Resume Link</th>
                                                         <th>Confirmation Status</th>
                                                         <th>Cancellation source</th>
@@ -549,6 +550,7 @@
 
                                                         <th>Meeting Link</th>
                                                         <th>Company Name</th>
+                                                        <th>Red Markers</th>
                                                         <th>Interviewer</th>
                                                         <th>Interviewer Resume Link</th>
                                                         <th>Confirmation Status</th>
@@ -859,6 +861,14 @@
                                                             else
                                                             {
                                                                 <td></td>
+                                                            }
+                                                            @if (@item.interviewer != null || @item.interviewer != "")
+                                                            {
+                                                               <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:red">@item.RedMarker</td>
                                                             }
                                                             @if (@item.interviewer != null || @item.interviewer != "")
                                                             {
