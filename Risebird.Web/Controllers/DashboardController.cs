@@ -1426,7 +1426,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
                         var modelList = new List<MeetingVM>();
                         modelList = await _dashboardService.FetchRibbonDetailsValues(RibbonActionType.InterviewCount, emailid, actiontype, profileName);

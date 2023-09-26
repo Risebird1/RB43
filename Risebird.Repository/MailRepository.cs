@@ -135,6 +135,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int irfId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                //parameters.Add("@recipientEmail", recipientEmail);
+                //parameters.Add("@startDate", startDate);
+                //parameters.Add("@endDate", endDate);
+                //parameters.Add("@timeNow", DateTime.Now);
+                //parameters.Add("@messageId", messageId);
+                parameters.Add("@irfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetInterviewerMailActivityForAvailabilityByIRFId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }

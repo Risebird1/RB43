@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.TransInterviewersReliabilityScoresVm>
+
+<div class="col-md-12 pull-left">
+    <div id="tableID" class="second">
+        <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width:70%">Type</th>
+                    <th class="text-center">Points</th>
+                    <th class="text-center">Total Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ReliabilityScoreType</td>
+                        <td>@item.Point</td>
+                        <td>@item.TotalCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
