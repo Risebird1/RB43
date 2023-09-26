@@ -1479,5 +1479,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid)
+        {
+            try
+            {
+                return await _interviewerRepository.GetReliabilityScoreDetails(Emailid);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
