@@ -76,7 +76,7 @@ namespace Risebird.MicroService
                                     TO = interviewer.EmailId,
                                     Subject = "Risebird: Availability check for Skill Channel " + irf.IRFId + " Interviews"
                                 };
-                                var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.FlatRate, dropMyProfileButton, irf.PrimarySkillInvite);//item.PerSuccessRate
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton, nobutton, sb.ToString(), irf.FlatRate, dropMyProfileButton, irf.PrimarySkillInvite, irf.id);//item.PerSuccessRate
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = interviewer.EmailId;
                                 _whatsAppVM.PrimarySkill = irf.PrimarySkillInvite;//irf.JDTiltle;

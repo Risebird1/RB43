@@ -20,5 +20,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime SentOn { get; set; }
         public string MobileNumber { get; set; }
         public string RecipientName { get; set; }
+        public string CompanyName { get; set; }
+        public string ResumeLink { get; set; }
+        public int? VideoConfirmation { get; set; }
     }
 }

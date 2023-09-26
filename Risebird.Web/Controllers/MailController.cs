@@ -349,7 +349,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SupportAdmin")
                     {
                         var model = (await _mailService.GetInterviewerMailActivityForAvailabilityByIRFId(irfId))?.ToList();
                         ViewBag.IrfName = irfName;
