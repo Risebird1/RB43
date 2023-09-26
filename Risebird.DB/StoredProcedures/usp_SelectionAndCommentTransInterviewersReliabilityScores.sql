@@ -94,7 +94,16 @@ else if((@SelectedInterview*100/@CompletedInterviews)>=20 and (@SelectedIntervie
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=15)  
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,15,@Point,@CreateDate)  
-end  
+end 
+
+declare @LoginTimeCount int
+set @LoginTimeCount=(select top 1 DateDIFF(MINUTE,im.interviewDate,imjt.Joinedon)  from InterviewMeetingsJoinTime imjt join
+InterviewMeetings im   on imjt.interviewid= im.id where im.id=@InterviewMeetingId order by imjt.Joinedon desc)
+if(@LoginTimeCount>5)
+begin 
+set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=6)  
+Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,6,@Point,@CreateDate)  
+end 
 End
 
 

@@ -526,6 +526,18 @@ namespace Risebird.Web.Controllers
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
                     {
+                        var result = new TransInterviewersReliabilityScoresVm();
+                        result.InterviewMeetingId = 0;
+                        result.InterviewerEmail = userProfile.EmailId;
+                        if (userProfile.VideoConfirmation == 1)
+                        {
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationYes;
+                        }
+                        else if (userProfile.VideoConfirmation == 2)
+                        {
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationNo;
+                        }
+                        await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                         if (!string.IsNullOrEmpty(userProfile.ImageURL))
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
