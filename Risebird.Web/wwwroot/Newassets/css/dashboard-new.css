@@ -6967,7 +6967,7 @@ right:315px;
 }
 
 #PaymentSLAModel .modal-lg {
-    max-width: 800px !important;
+    max-width: 850px !important;
 }
 
 #PaymentSLAModel input[type='radio'] {
@@ -6983,6 +6983,16 @@ right:315px;
     max-width:850px !important;
 }
 /***** action arrow *****/
+
+.accordion-group .accordion-body {
+    padding: 0px!important;
+}
+.label-name {
+    color: grey!important;
+    font-family: system-ui!important;
+    font-size: 14px!important;
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
