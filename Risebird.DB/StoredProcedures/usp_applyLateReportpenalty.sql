@@ -36,7 +36,7 @@ join Userlist ul on ul.EmailId=im.interviewer
 left join UserList ulc on ulc.EmailId=im.candidateEmail  
 left join CandidatesMaster cm on cm.UserId=ulc.id               
 left join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=irf.id               
-where interviewDate>dateadd(minute,-1110,GetDate()) and interviewDate<dateadd(minute,-1170,GetDate()) and im.confirmationStatus=1 and ic.MeetingStatus=2 and IsNull(ca.IsProctor,0)=0              
+where interviewDate<dateadd(minute,-1110,GetDate()) and interviewDate>dateadd(minute,-1170,GetDate()) and im.confirmationStatus=1 and ic.MeetingStatus=2 and IsNull(ca.IsProctor,0)=0              
 
 
 Update ip set ip.PenaltyAmount=tp.Penalty   
