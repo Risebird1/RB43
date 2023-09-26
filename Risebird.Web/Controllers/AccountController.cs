@@ -25,8 +25,8 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private IInterviewerService _interviewerService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
-
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService, IFileMimeTypeHelper fileMimeTypeHelper)
+        private readonly IMeetingService _meetingService;
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService, IFileMimeTypeHelper fileMimeTypeHelper, IMeetingService meetingService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -35,6 +35,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _interviewerService = interviewerService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _meetingService = meetingService;
         }
 
         [Authorize]
