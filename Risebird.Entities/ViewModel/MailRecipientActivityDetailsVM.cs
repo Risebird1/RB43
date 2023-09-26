@@ -18,5 +18,7 @@ namespace Risebird.Entities.ViewModel
         public string latestEvent { get; set; }
         public DateTime ActivityDate { get; set; }
         public DateTime SentOn { get; set; }
+        public string MobileNumber { get; set; }
+        public string RecipientName { get; set; }
     }
 }

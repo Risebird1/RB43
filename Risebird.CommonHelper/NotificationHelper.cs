@@ -2204,7 +2204,7 @@ namespace Risebird.CommonHelper
 
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
