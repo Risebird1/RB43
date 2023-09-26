@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[usp_GetEmailRecipientActivities]    ******/
+/****** Object:  StoredProcedure [dbo].[usp_GetRecipientMailActivitiesByMessageId]    ******/
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetRecipientMailActivitiesByMessageId'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetRecipientMailActivitiesByMessageId
@@ -11,27 +11,27 @@ SET QUOTED_IDENTIFIER ON
 GO
 
   
-CREATE PROCEDURE [dbo].[usp_GetRecipientMailActivitiesByMessageId]    
-@recipientEmail varchar(100),  
-@startDate datetime = null,
-@endDate datetime = null,
-@timeNow datetime,
-@messageId varchar(50)
-AS    
-Begin   
-  
-  select sge.email, sge.[event] as eventType, sge.[timestamp], sge.CreatedAt, sge.[url],
-  smd.InterviewId, smd.IRFId, smd.MailBody, smd.MailSubject, smd.SentBy, irf.IRFId as SkillChannelName,
-  im.interviewDate, sge.Split_Message_Id, smd.SentBy
-  from SendgridEventData sge 
-  join SentMailDetails smd on smd.sg_message_id = sge.Split_Message_Id
-  left join IRF on IRF.id = smd.IRFId
-  left join InterviewMeetings im on im.id = smd.InterviewId 
-  where sge.email = @recipientEmail and sge.Split_Message_Id = @messageId
-  and ((@startDate is null and @endDate is null and cast(sge.CreatedAt as date) >= cast(DATEADD(DAY, -30, @timeNow) as date)) or
-  (@startDate is not null and cast(sge.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(sge.CreatedAt as date) <= cast(@endDate as date)))
-  order by sge.CreatedAt desc
- 
+CREATE PROCEDURE [dbo].[usp_GetRecipientMailActivitiesByMessageId]      
+@recipientEmail varchar(100),    
+@startDate datetime = null,  
+@endDate datetime = null,  
+@timeNow datetime,  
+@messageId varchar(50)  
+AS      
+Begin     
+    
+  select sge.email, sge.[event] as eventType, sge.[timestamp], sge.CreatedAt, sge.[url],  
+  smd.InterviewId, smd.IRFId, smd.MailBody, smd.MailSubject, smd.SentBy, irf.IRFId as SkillChannelName,  
+  im.interviewDate, sge.Split_Message_Id, smd.SentBy  
+  from SendgridEventData sge   
+  join SentMailDetails smd on smd.sg_message_id = sge.Split_Message_Id  
+  left join IRF on IRF.id = smd.IRFId  
+  left join InterviewMeetings im on im.id = smd.InterviewId   
+  where sge.email = @recipientEmail and sge.Split_Message_Id = @messageId  
+  and ((@startDate is null and @endDate is null and cast(sge.CreatedAt as date) >= cast(DATEADD(DAY, -30, @timeNow) as date)) or  
+  (@startDate is not null and cast(sge.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(sge.CreatedAt as date) <= cast(@endDate as date)))  
+  order by sge.CreatedAt desc  
+   
 End  
   
 GO

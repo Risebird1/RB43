@@ -3214,13 +3214,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
-                            if (model.MeetingStatus == 5)
-                            {
-                                var result = new TransInterviewersReliabilityScoresVm();
-                                result.InterviewMeetingId = model.InterviewId;
-                                result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.InterviewerNoShow;
-                                await _meetingService.AddTransInterviewersReliabilityScoresService(result);
-                            }
+                            await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 //Send mail to client for report

@@ -6579,7 +6579,7 @@ namespace Risebird.Web.Controllers
                                     TO = item.EmailId,
                                     Subject = "Risebird: Availability check for Skill Channel " + IRFName + " Interviews"
                                 };
-                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), item.FlatRate, dropMyProfileButton, item.BasicSkill);
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), item.FlatRate, dropMyProfileButton, item.BasicSkill, irfId);
 
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = item.EmailId;
