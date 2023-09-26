@@ -2185,7 +2185,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill)
+        public async Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill, int? irfId = null)
         {
             try
             {
@@ -2204,7 +2204,7 @@ namespace Risebird.CommonHelper
 
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
