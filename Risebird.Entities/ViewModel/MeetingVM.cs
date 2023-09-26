@@ -19,6 +19,8 @@ namespace Risebird.Entities.ViewModel
         }
         public List<MeetingVM> SubVideo_List { get; set; }
         public int imid { get; set; }
+        public int id { get; set; }
+
 
         [Display(Name = "Skill Channel ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
@@ -327,7 +329,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AvailabilityResponseDate { get; set; }
         //public string EmploymentComment { get; set; }
         //public string CompanyName { get; set; }
-
+        public int RedMarker { get; set; }
 
     }
 
