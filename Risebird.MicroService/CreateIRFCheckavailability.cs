@@ -42,6 +42,9 @@ namespace Risebird.MicroService
                 var IRFList = await _irfService.GetAllNewCreatedIRFs();
                 foreach (var irf in IRFList)
                 {
+                    int i = 1;
+                    log.LogInformation($"CreateIRFCheckavailability : C# Timer trigger function in {i} loop at: {DateTime.Now}");
+
                     //var model = await _irfService.GetIRFInterviewerMembers(irf.id);
                     var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId), irf.id);
                     var skills = await _irfService.GetTechSkillswithWeightage(irf.id);
@@ -96,6 +99,9 @@ namespace Risebird.MicroService
                     }
                     await _irfService.UpdateIntervieweravailbilityDetails(irf.id);
 
+                    log.LogInformation($"CreateIRFCheckavailability : C# Timer trigger function exited {i} loop at: {DateTime.Now}");
+
+                    i++;
                     
                 }
             }
