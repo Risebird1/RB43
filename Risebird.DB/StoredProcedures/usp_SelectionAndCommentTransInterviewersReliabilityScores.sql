@@ -80,19 +80,21 @@ set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveSco
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,17,@Point,@CreateDate)
 end
 --Selection Rate
-declare @SelectionInterviewRate int
-set @SelectionInterviewRate=(select Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Interviewer 
+declare @CompletedInterviews int
+ set @CompletedInterviews=(Select Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Interviewer 
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8))
+declare @QuestionCount int
+set @QuestionCount=(select Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Interviewer 
 and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4))
-declare @SelectionRate20Percentage int
-set @SelectionRate20Percentage=(@SelectionInterviewRate*(20/100))
-declare @SelectionRate40Percentage int
-set @SelectionRate40Percentage=(@SelectionInterviewRate*(40/100))
-if(@SelectionRate20Percentage<20 or @SelectionRate40Percentage>40)
+declare @SelectionRatePercentage int
+set @SelectionRatePercentage=(@CompletedInterviews*(@QuestionCount/100))
+
+if(@SelectionRatePercentage<=20 or @SelectionRatePercentage>=40)
 begin
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=14)
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,14,@Point,@CreateDate)
 end
-if(@SelectionRate20Percentage>20 and @SelectionRate40Percentage<40)
+if(@SelectionRatePercentage>=20 and @SelectionRatePercentage<=40)
 begin
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=15)
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,15,@Point,@CreateDate)
