@@ -3863,8 +3863,12 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> InterviewerInsights(string interviewer)
         {
             var result = await _interviewerService.GetInterviewerInsights(interviewer);
+            if (result == null)
+            {
+                result = new InterviewerInsightsVM();
+            }
             return PartialView(result);
-        }  
+        }
         #endregion
     }
 }
