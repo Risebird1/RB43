@@ -6992,7 +6992,43 @@ right:315px;
     font-family: system-ui!important;
     font-size: 14px!important;
 }
-
+.submit-wrapper {
+    width: 100%;
+    text-align: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center
+}
+.submit-feedback {
+    width: 220px;
+    padding: 10px;
+    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    margin: 0px 0px 0px 0px;
+    border:0px;
+}
+.feebdackcontainer .label-name {
+    color: #000000ad!important;
+}
+.feedbackcontainer .accordion-toggle:after {
+    display: none;
+}
+.feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+    font-size:14px;
+    font-weight:600;
+}
+.redobtn {
+    background: #e32f2fe3;
+    color: #fff;
+    border: 0px;
+    padding: 6px 5px;
+    font-size: 14px;
+    border-radius: 3px;
+    position: relative;
+    top: -5px;
+    left: 7px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

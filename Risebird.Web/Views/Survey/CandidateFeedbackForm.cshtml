@@ -2,7 +2,7 @@
 
 @model Risebird.Entities.ViewModel.PaymentSLAVM
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <!DOCTYPE html>
 <html>
@@ -10,8 +10,12 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
+ 
+
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Survey - Risebird</title>
     <style>
         .rating {
@@ -68,6 +72,10 @@
     grid-template-columns: 1fr 1fr;
     padding-block: 5vh;
     gap: 0.57rem;
+    width:685px;
+    margin:0px auto;
+    position:relative;
+    padding:0px;
         }
      .feedbackcontainer .avatar {
     grid-column: span 2;
@@ -83,34 +91,27 @@
     margin-block-start: 0.75rem;
     margin-block-end: 2rem;
    color: #878181;
+    padding-top: 15px;
 }
 .divider{
-     width: 60%;
+     width: 100%;
     text-align: center;
     grid-column: span 2;
     display: flex;
 }
+
+     
     </style>
 
 </head>
 <body>
-    <p class="text-center"><img src="~/images/risebird.png" /></p>
+   
     <div class="container">
-    @*    <div class="col-md-12">
-            <h3 style="color:forestgreen;">
-                Risebird Video Interviews Event Feedback Survey-Candidates
-            </h3>
-
-            <h5>
-                Thank you for attending Risebird Video Interviews event. Your feedback will help us to improve.
-            </h5>
-            <br />
-       </div>*@ 
        <div class="col-md-12">
            <div class="feedbackcontainer">
-                <p class="avatar"></p>
+               
                 <div class="username">
-    <h3>Usman Kabir</h3>
+                    <h3 style="font-size:18px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
     </div>
      <div class="rating">
                     <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
@@ -139,463 +140,574 @@
                     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
 
-            <div class="card-wrap" style="margin:10px 0px">
-                <div class="accordion" id="accordion2">
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12">
+            <div  style="margin:10px 0px">
+                            <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;  margin:10px 0px 50px 0px;">
+                    <div class="">
+                        <div class="w-auto">
                                         <div class="form-group">
                                             <div class="accordion-group">
                                                 <div class="accordion-heading">
-                                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseSix">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#interaction'>
                                                         @Html.LabelFor(model => model.CandidateInteractionQuality, htmlAttributes: new { @class = "label-name" })
 
                                                     </a>
                                                 </div>
-                                                <div id="collapseSix" class="accordion-body collapse">
-                                                    <div class="accordion-inner">
-                                                        <ul class="ks-cboxtags">
-
-                                                            @Html.HiddenFor(m=>m.CandidateInteractionQuality)
-                                                            <li>
-
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("wasting"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyOne" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" />
-
-                                                                    <label for="checkboxTwentyOne">wasting</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyOne" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" />
-
-                                                                    <label for="checkboxTwentyOne">wasting</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal Information"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyTwo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" />
-
-                                                                    <label for="checkboxTwentyTwo">Personal Information</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyTwo" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <label for="checkboxTwentyTwo">Personal Information</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Reading questions without interacting"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyThree" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <label for="checkboxTwentyThree">Reading questions without interacting</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyThree" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <label for="checkboxTwentyThree">Reading questions without interacting</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal remarks"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyFour" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <label for="checkboxTwentyFour">Personal remarks</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyFour" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <label for="checkboxTwentyFour">Personal remarks</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Outside scope of interview"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyFive" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <label for="checkboxTwentyFive">Outside scope of interview</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyFive" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <label for="checkboxTwentyFive">Outside scope of interview</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Bias"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentySix" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <label for="checkboxTwentySix">Bias</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentySix" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <label for="checkboxTwentySix">Bias</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Impatience"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentySeven" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" />
-
-                                                                    <label for="checkboxTwentySeven">Impatience</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentySeven" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" /> <label for="checkboxTwentySeven">Impatience</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.CandidateInteractionQuality.Split(",").Contains("Disrespect"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyEight" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" /> <label for="checkboxTwentyEight">Disrespect</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyEight" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" />
-
-                                                                    <label for="checkboxTwentyEight">Disrespect</label>
-                                                                }
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
+                                              
                                             </div>
 
 
                                         </div>
 
                         </div>
-                        <div class="col-md-12 col-sm-12">
+                                    <div class="w-auto">
                                         <div class="form-group">
                                             <div class="accordion-group">
                                                 <div class="accordion-heading">
-                                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseSeven">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#coding'>
                                                         @Html.LabelFor(model => model.LimitedHandoncoding, htmlAttributes: new { @class = "label-name" })
 
                                                     </a>
                                                 </div>
-                                                <div id="collapseSeven" class="accordion-body collapse">
-                                                    <div class="accordion-inner">
-                                                        @Html.HiddenFor(m=>m.LimitedHandoncoding)
-                                                        <ul class="ks-cboxtags">
-                                                            <li>
-                                                                @if (Model.LimitedHandoncoding.Split(",").Contains("wasting"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" checked onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
-
-                                                                    <label for="checkboxTwentyNine">Not Check candidate competency</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
-
-                                                                    <label for="checkboxTwentyNine">Not Check candidate competency</label>
-                                                                }
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
+                                               
+                                               
                                             </div>
                                            
                                         </div>
                         </div>
-                        <div class="col-md-12 col-sm-12">
+                                    <div class="w-auto">
                                         <div class="form-group">
                                             <div class="accordion-group">
                                                 <div class="accordion-heading">
-                                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseNine">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#infrastructure'>
                                                         @Html.LabelFor(model => model.WeakInfrastructure, htmlAttributes: new { @class = "label-name" })
 
                                                     </a>
                                                 </div>
-                                                <div id="collapseNine" class="accordion-body collapse">
-                                                    <div class="accordion-inner">
-                                                        @Html.HiddenFor(m=>m.WeakInfrastructure)
-                                                        <ul class="ks-cboxtags">
-                                                            <li>
-                                                                @if (Model.WeakInfrastructure.Split(",").Contains("Internet"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyTwo" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" />
-
-                                                                    <label for="checkboxThirtyTwo">Internet</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyTwo" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" />
-
-                                                                    <label for="checkboxThirtyTwo">Internet</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.WeakInfrastructure.Split(",").Contains("Video/Audio"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyThree" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" />
-
-                                                                    <label for="checkboxThirtyThree">Video, Audio</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyThree" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" />
-
-                                                                    <label for="checkboxThirtyThree">Video, Audio</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.WeakInfrastructure.Split(",").Contains("constraints"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyFour" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" />
-
-                                                                    <label for="checkboxThirtyFour">constraints</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyFour" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" />
-
-                                                                    <label for="checkboxThirtyFour">constraints</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.WeakInfrastructure.Split(",").Contains("BG Noise"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyFive" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" /> <label for="checkboxThirtyFive">BG Noise</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtyFive" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" />
-
-                                                                    <label for="checkboxThirtyFive">BG Noise</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.WeakInfrastructure.Split(",").Contains("Firewalls blocking"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtySix" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" />
-
-                                                                    <label for="checkboxThirtySix">Firewalls blocking</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtySix" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" />
-
-                                                                    <label for="checkboxThirtySix">Firewalls blocking</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.WeakInfrastructure.Split(",").Contains("Using Mobile phones"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtySeven" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Using Mobile phones" />
-
-                                                                    <label for="checkboxThirtySeven">Using Mobile phones</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxThirtySeven" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Using Mobile phones" />
-
-                                                                    <label for="checkboxThirtySeven">Using Mobile phones</label>
-                                                                }
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                   
-                                                </div>
+                                               
                                             </div>
 
                                           
                                         </div>
                         </div>
-                                    <div class="col-md-12">
+                                    <div class="w-auto">
                                         <div class="form-group">
 
                                             <div class="accordion-group">
                                                 <div class="accordion-heading">
-                                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#time'>
                                                         @Html.LabelFor(model => model.TimeManagement, htmlAttributes: new { @class = "label-name" })
                                                     </a>
                                                 </div>
-                                                <div id="collapseTwo" class="accordion-body collapse">
-                                                    <div class="accordion-inner">
-                                                        <ul class="ks-cboxtags">
-                                                            @Html.HiddenFor(m=> m.TimeManagement)
-                                                            <li>
-                                                                @*<input type="checkbox" id="checkboxOne" value="Rainbow Dash"><label for="checkboxOne">Rainbow Dash</label>*@
-                                                                @if (Model.TimeManagement.Split(",").Contains("Late start"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFour" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="Late start" />
-
-                                                                    <label for="checkboxFour">Late start</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFour" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="Late start" />  <label for="checkboxFour">Late start</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.TimeManagement.Split(",").Contains("end before time"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFive" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <label for="checkboxFive">end before time</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFive" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <label for="checkboxFive">end before time</label>
-                                                                }
-
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.TimeManagement.Split(",").Contains("too fast/too slow"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxSix" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <label for="checkboxSix">too fast/too slow</label>
-
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxSix" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <label for="checkboxSix">too fast/too slow</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.TimeManagement.Split(",").Contains("wasting time in irrelevant points"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxSeven" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="wasting time in irrelevant points" /> <label for="checkboxSeven">wasting time in irrelevant points</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxSeven" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="wasting time in irrelevant points" /> <label for="checkboxSeven">wasting time in irrelevant points</label>
-                                                                }
-                                                            </li>
-
-                                                        </ul>
-
-                                                    </div>
-
-                                                </div>
+                                                
                                             </div>
 
 
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="w-auto">
                                         <div class="form-group">
                                             <div class="accordion-group">
                                                 <div class="accordion-heading">
-                                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseEleven">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"  data-target="#unethical">
                                                         @Html.LabelFor(model => model.UnethicalPractices, htmlAttributes: new { @class = "label-name" })
                                                     </a>
                                                 </div>
-                                                <div id="collapseEleven" class="accordion-body collapse">
-                                                    <div class="accordion-inner">
-                                                        @Html.HiddenFor(m=>m.UnethicalPractices)
-                                                        <ul class="ks-cboxtags">
-                                                            <li>
-                                                                @if (Model.UnethicalPractices.Split(",").Contains("Bribery"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyTwo" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <label for="checkboxFortyTwo">Bribery</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyTwo" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <label for="checkboxFortyTwo">Bribery</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.UnethicalPractices.Split(",").Contains("Biases"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyThree" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <label for="checkboxFortyThree">Biases</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyThree" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <label for="checkboxFortyThree">Biases</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.UnethicalPractices.Split(",").Contains("Fake reporting"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyFour" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" /> <label for="checkboxFortyFour">Fake reporting</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyFour" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" />
-
-                                                                    <label for="checkboxFortyFour">Fake reporting</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.UnethicalPractices.Split(",").Contains("Fake interviewing"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyFive" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <label for="checkboxFortyFive">Fake interviewing</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyFive" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <label for="checkboxFortyFive">Fake interviewing</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.UnethicalPractices.Split(",").Contains("Impersonation"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortySix" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Impersonation" /> <label for="checkboxFortySix">Impersonation</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortySix" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Impersonation" />
-
-                                                                    <label for="checkboxFortySix">Impersonation</label>
-
-                                                                }
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                   </div>
 
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="w-auto">
                                         <div class="form-group">
                                             <div class="accordion-group">
                                                 <div class="accordion-heading">
-                                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwelve">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target="#communication">
                                                         @Html.LabelFor(model => model.PoorCommunicationSkills, htmlAttributes: new { @class = "label-name" })
 
                                                     </a>
                                                 </div>
-                                                <div id="collapseTwelve" class="accordion-body collapse">
-                                                    <div class="accordion-inner">
-                                                        @Html.HiddenFor(m=>m.PoorCommunicationSkills)
-                                                        <ul class="ks-cboxtags">
-                                                            <li>
-                                                                @if (Model.PoorCommunicationSkills.Split(",").Contains("Using language other than English"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortySeven" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" /> <label for="checkboxFortySeven">Using language other than English</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortySeven" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" />
 
-                                                                    <label for="checkboxFortySeven">Using language other than English</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.PoorCommunicationSkills.Split(",").Contains("Unable to articulate questions"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyEight" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <label for="checkboxFortyEight">Unable to articulate questions</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyEight" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <label for="checkboxFortyEight">Unable to articulate questions</label>
-                                                                }
-                                                            </li>
-                                                            <li>
-                                                                @if (Model.PoorCommunicationSkills.Split(",").Contains("Confusing candidates"))
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyNine" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Confusing candidates" /> <label for="checkboxFortyNine">Confusing candidates</label>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input type="checkbox" id="checkboxFortyNine" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Confusing candidates" />
+                                             
 
-                                                                    <label for="checkboxFortyNine">Confusing candidates</label>
-                                                                }
-                                                            </li>
-                                                        </ul>
-                                                    </div>
+
+
+                                             
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class='page' id='interaction'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Candidate Interaction Quality
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    <ul class="ks-cboxtags">
+
+                                                        @Html.HiddenFor(m=>m.CandidateInteractionQuality)
+                                                        <li>
+
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("wasting"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyOne" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" />
+
+                                                                <label for="checkboxTwentyOne">wasting</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyOne" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" />
+
+                                                                <label for="checkboxTwentyOne">wasting</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal Information"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyTwo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" />
+
+                                                                <label for="checkboxTwentyTwo">Personal Information</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyTwo" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <label for="checkboxTwentyTwo">Personal Information</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Reading questions without interacting"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyThree" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <label for="checkboxTwentyThree">Reading questions without interacting</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyThree" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <label for="checkboxTwentyThree">Reading questions without interacting</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal remarks"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyFour" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <label for="checkboxTwentyFour">Personal remarks</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyFour" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <label for="checkboxTwentyFour">Personal remarks</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Outside scope of interview"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyFive" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <label for="checkboxTwentyFive">Outside scope of interview</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyFive" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <label for="checkboxTwentyFive">Outside scope of interview</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Bias"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentySix" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <label for="checkboxTwentySix">Bias</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentySix" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <label for="checkboxTwentySix">Bias</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Impatience"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentySeven" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" />
+
+                                                                <label for="checkboxTwentySeven">Impatience</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentySeven" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" /> <label for="checkboxTwentySeven">Impatience</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.CandidateInteractionQuality.Split(",").Contains("Disrespect"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyEight" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" /> <label for="checkboxTwentyEight">Disrespect</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyEight" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" />
+
+                                                                <label for="checkboxTwentyEight">Disrespect</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='page' id='coding'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Limited Handon Coding / Practical Scenario
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.LimitedHandoncoding)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+                                                            @if (Model.LimitedHandoncoding.Split(",").Contains("wasting"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" checked onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
+
+                                                                <label for="checkboxTwentyNine">Not Check candidate competency</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
+
+                                                                <label for="checkboxTwentyNine">Not Check candidate competency</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='page' id='infrastructure'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Weak Infrastructure
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.WeakInfrastructure)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+                                                            @if (Model.WeakInfrastructure.Split(",").Contains("Internet"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyTwo" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" />
+
+                                                                <label for="checkboxThirtyTwo">Internet</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyTwo" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" />
+
+                                                                <label for="checkboxThirtyTwo">Internet</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.WeakInfrastructure.Split(",").Contains("Video/Audio"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyThree" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" />
+
+                                                                <label for="checkboxThirtyThree">Video, Audio</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyThree" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" />
+
+                                                                <label for="checkboxThirtyThree">Video, Audio</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.WeakInfrastructure.Split(",").Contains("constraints"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyFour" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" />
+
+                                                                <label for="checkboxThirtyFour">constraints</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyFour" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" />
+
+                                                                <label for="checkboxThirtyFour">constraints</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.WeakInfrastructure.Split(",").Contains("BG Noise"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyFive" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" /> <label for="checkboxThirtyFive">BG Noise</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyFive" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" />
+
+                                                                <label for="checkboxThirtyFive">BG Noise</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.WeakInfrastructure.Split(",").Contains("Firewalls blocking"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtySix" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" />
+
+                                                                <label for="checkboxThirtySix">Firewalls blocking</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtySix" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" />
+
+                                                                <label for="checkboxThirtySix">Firewalls blocking</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.WeakInfrastructure.Split(",").Contains("Using Mobile phones"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtySeven" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Using Mobile phones" />
+
+                                                                <label for="checkboxThirtySeven">Using Mobile phones</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtySeven" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Using Mobile phones" />
+
+                                                                <label for="checkboxThirtySeven">Using Mobile phones</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='page' id='time'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Time Management
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    <ul class="ks-cboxtags">
+                                                        @Html.HiddenFor(m=> m.TimeManagement)
+                                                        <li>
+                                                            @*<input type="checkbox" id="checkboxOne" value="Rainbow Dash"><label for="checkboxOne">Rainbow Dash</label>*@
+                                                            @if (Model.TimeManagement.Split(",").Contains("Late start"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFour" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="Late start" />
+
+                                                                <label for="checkboxFour">Late start</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFour" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="Late start" />  <label for="checkboxFour">Late start</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.TimeManagement.Split(",").Contains("end before time"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFive" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <label for="checkboxFive">end before time</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFive" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <label for="checkboxFive">end before time</label>
+                                                            }
+
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.TimeManagement.Split(",").Contains("too fast/too slow"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxSix" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <label for="checkboxSix">too fast/too slow</label>
+
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxSix" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <label for="checkboxSix">too fast/too slow</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.TimeManagement.Split(",").Contains("wasting time in irrelevant points"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxSeven" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="wasting time in irrelevant points" /> <label for="checkboxSeven">wasting time in irrelevant points</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxSeven" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="wasting time in irrelevant points" /> <label for="checkboxSeven">wasting time in irrelevant points</label>
+                                                            }
+                                                        </li>
+
+                                                    </ul>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class='page' id='unethical'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Unethetical Practices
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.UnethicalPractices)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+                                                            @if (Model.UnethicalPractices.Split(",").Contains("Bribery"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyTwo" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <label for="checkboxFortyTwo">Bribery</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyTwo" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <label for="checkboxFortyTwo">Bribery</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.UnethicalPractices.Split(",").Contains("Biases"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyThree" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <label for="checkboxFortyThree">Biases</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyThree" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <label for="checkboxFortyThree">Biases</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.UnethicalPractices.Split(",").Contains("Fake reporting"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyFour" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" /> <label for="checkboxFortyFour">Fake reporting</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyFour" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" />
+
+                                                                <label for="checkboxFortyFour">Fake reporting</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.UnethicalPractices.Split(",").Contains("Fake interviewing"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyFive" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <label for="checkboxFortyFive">Fake interviewing</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyFive" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <label for="checkboxFortyFive">Fake interviewing</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.UnethicalPractices.Split(",").Contains("Impersonation"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortySix" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Impersonation" /> <label for="checkboxFortySix">Impersonation</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortySix" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Impersonation" />
+
+                                                                <label for="checkboxFortySix">Impersonation</label>
+
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='page' id='communication'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Poor Communication Skills
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.PoorCommunicationSkills)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+                                                            @if (Model.PoorCommunicationSkills.Split(",").Contains("Using language other than English"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortySeven" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" /> <label for="checkboxFortySeven">Using language other than English</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortySeven" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" />
+
+                                                                <label for="checkboxFortySeven">Using language other than English</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.PoorCommunicationSkills.Split(",").Contains("Unable to articulate questions"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyEight" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <label for="checkboxFortyEight">Unable to articulate questions</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyEight" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <label for="checkboxFortyEight">Unable to articulate questions</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.PoorCommunicationSkills.Split(",").Contains("Confusing candidates"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyNine" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Confusing candidates" /> <label for="checkboxFortyNine">Confusing candidates</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyNine" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Confusing candidates" />
+
+                                                                <label for="checkboxFortyNine">Confusing candidates</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
+
                         </div>
                         </div>
+                            <hr class="divider" style="border-color: #c8c4c447;height: auto;position:relative;top:-36px;" />
+                            <h4 style="clear:both;position:relative;top:-36px;clear:both;">
+                                <b>Too bad interviewer?</b>&nbsp;Please raise a interview redo request <button type="button" class="redobtn">
+                                    Redo Interview
+
+                                </button>
+                            </h4>
+                            <div class="submit-wrapper">
+                                <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="formsubmit()" />
+                            </div>
+                        
+                        
+                      
+                            
+
+                          
+                            </div>
+
+
+
                         </div>
                         </div>
           
@@ -604,7 +716,7 @@
   </div>
            </div>
        </div>
-    </div>
+
 
 </body>
 </html>
@@ -630,18 +742,7 @@
     }
 </script>
 
-<style>
-    .accordion-toggle:after {
-        font-family: 'FontAwesome';
-        content: "\f077";
-        float: right;
-        color: grey;
-    }
 
-    .accordion-toggle.collapsed:after {
-        content: "\f078";
-    }
-</style>
 <script>
     /**
       * EFECTO PARA FLECHAS EN ACORDEON
@@ -728,16 +829,89 @@
                 opacity: 0;
             }
 
-    .label-name {
-        color: grey !important;
-        font-family: system-ui !important;
-        font-size: 14px !important;
-        font-weight: 600;
+
+ .feedbackcontainer .accordion-heading a {
+        width:auto;
+        background-color: transparent;
+        color: #000;
+        border: 1.5px solid #000;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 5px 10px;
+        margin:0px 8px 0px 0px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration:none;
+        transition: color 0.3s, background-color 0.8s;
+    }
+  
+    .page {
+        position: absolute;
+        inset: auto;
+        top:-10px;
+        margin-bottom:20px;
+        left:-9px;
+        overflow-y: auto;
+        transform: scale(0);
+        transition: transform 0.3s;
+        background-color: #eff2f5;
+        color: #1d1e22;
+        width:100%;
+        z-index:100;
+        
+    }
+
+    .page--active {
+        transform: scale(1);
+    }
+
+    .page__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 5vw;
+        background-color: #fff;
+        font-weight: bold;
+        box-shadow: 0px 5px 5px 0px #e5e5e5;
+    }
+    .page__title{
+        font-size:15px;
+    }
+    .page__close {
+        display: flex;
+        cursor: pointer;
+    }
+
+    .page__body {
+        padding: 1rem 2vw;
+        overflow-y: auto;
+    }
+    .w-auto{
+        width:auto;
+        float:left;
+    }
+
+    .feedbackcontainer ul.ks-cboxtags li label {
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 14px;
     }
 </style>
 
 
+<script>
+    $(".accordion-heading a").on("click", function () {
+        $($(this).data("target")).addClass("page--active");
+    });
 
+    $(".page__close").on("click", function () {
+        $(".page").removeClass("page--active");
+
+    });
+
+</script>
 
 
 
