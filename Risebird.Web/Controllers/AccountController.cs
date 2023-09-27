@@ -25,8 +25,8 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private IInterviewerService _interviewerService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
-
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService, IFileMimeTypeHelper fileMimeTypeHelper)
+        private readonly IMeetingService _meetingService;
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService, IFileMimeTypeHelper fileMimeTypeHelper, IMeetingService meetingService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -35,6 +35,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _interviewerService = interviewerService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _meetingService = meetingService;
         }
 
         [Authorize]
@@ -526,6 +527,18 @@ namespace Risebird.Web.Controllers
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
                     {
+                        var result = new TransInterviewersReliabilityScoresVm();
+                        result.InterviewMeetingId = 0;
+                        result.InterviewerEmail = userProfile.EmailId;
+                        if (userProfile.VideoConfirmation == 1)
+                        {
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationYes;
+                        }
+                        else if (userProfile.VideoConfirmation == 2)
+                        {
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationNo;
+                        }
+                        await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                         if (!string.IsNullOrEmpty(userProfile.ImageURL))
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);

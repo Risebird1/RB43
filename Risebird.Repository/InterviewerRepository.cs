@@ -3152,6 +3152,25 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@Emailid", Emailid);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<TransInterviewersReliabilityScoresVm>(conChange, "usp_GetReliabilityScoreDetails", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 

@@ -14,5 +14,7 @@ namespace Risebird.Entities.ViewModel
         public int Point { get; set; }
         public DateTime? CreateDate { get; set; }
         public string InterviewerEmail { get; set; }
+        public string ReliabilityScoreType { get; set; }
+        public int TotalCount { get; set; }
     }
 }
