@@ -70,5 +70,18 @@ namespace Risebird.Business
             }
             return null;
         }
+
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int irfId)
+        {
+            try
+            {
+                return await _mailRepository.GetInterviewerMailActivityForAvailabilityByIRFId(irfId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -83,18 +83,6 @@
             <span></span>
         }
     </p>
-    <p class="clearfix">
-        <span class="pull-left" style="margin-right:10px;"><strong>Suspicious:</strong></span>
-
-        @if (Model.IsSuspicious)
-        {
-            <span class="text-center pull-left"><span class="avail">Yes</span></span>
-        }
-        else
-        {
-            <span class="text-center pull-left"><span class="noavail">No</span></span>
-        }
-    </p>
 </div>
 <div class="col-md-12 pull-left">
     <div id="tableID" class="second">
@@ -119,7 +107,19 @@
                 {
                     <tr>
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.TotalInterviews</span></td>
+                        @{
+                            if (Model.TotalInterviews == 0)
+                            {
+                                Model.TotalInterviews = 1;
+                            }
+                        }
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CompletedInterviews (@(Model.CompletedInterviews * 100 / Model.TotalInterviews)%)</span></td>
+                        @{
+                            if (Model.CompletedInterviews == 0)
+                            {
+                                Model.CompletedInterviews = 1;
+                            }
+                        }
                         @if ((Model.SelectedInterviews * 100 / Model.CompletedInterviews) >= 50)
                         {
                             <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedInterviews (@(Model.SelectedInterviews * 100 / Model.CompletedInterviews)%)</span></td>
@@ -166,7 +166,7 @@
                     </tr>
                 </thead>
                 <tr>
-                    <td class="text-center"> <span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.ReliabilityScore</span></td>
+                    <td class="text-center"> <span onclick="ReliabilityScoreDetails('@Model.Emailid')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.ReliabilityScore</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CandidateRating</span></td>
@@ -179,7 +179,7 @@
                         {
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
                         }
-                        @if ((Model.RedFlags*100/Model.CompletedInterviews) > 10)
+                        @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10)
                         {
                         <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RedFlags</span></td>
                         }
@@ -200,7 +200,7 @@
                     </tr>
                 </thead>
                 <tr>
-                        @if ((Model.JoinLateMeeting*100/Model.TotalInterviews) > 2)
+                        @if ((Model.JoinLateMeeting * 100 / Model.TotalInterviews) > 2)
                         {
                         <td class="text-center"> <span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.JoinLateMeeting</span></td>
                         }

@@ -104,5 +104,6 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer);
         Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid);
         Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid);
+        Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid);
     }
 }
