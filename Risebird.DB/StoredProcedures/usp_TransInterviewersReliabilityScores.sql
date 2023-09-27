@@ -22,7 +22,14 @@ begin
 declare @InterviewerId int
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=@ReliabilityScoreTypeId)
 set @InterviewerId=(select ip.Id from InterviewerProfile ip join UserList ul on ip.UserId=ul.Id join InterviewMeetings im on ul.EmailId=im.interviewer where Im.id= @InterviewMeetingId)
+If Exists(Select * from TransInterviewersReliabilityScores where InterviewerId=@InterviewerId AND InterviewMeetingId=@InterviewMeetingId AND ReliabilityScoreTypeId=@ReliabilityScoreTypeId)
+Begin
+Update TransInterviewersReliabilityScores set InterviewMeetingId=@InterviewMeetingId,ReliabilityScoreTypeId=@ReliabilityScoreTypeId,Point=@Point,CreatedDate=@CreateDate where InterviewerId=@InterviewerId
+End
+Else
+Begin
 Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,@ReliabilityScoreTypeId,@Point,@CreateDate)
+end
 end
 else
 begin

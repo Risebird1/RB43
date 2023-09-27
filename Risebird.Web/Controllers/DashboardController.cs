@@ -23,6 +23,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using static iTextSharp.text.pdf.AcroFields;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1588,14 +1589,20 @@ namespace Risebird.Web.Controllers
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
+                        var result = new TransInterviewersReliabilityScoresVm();
+                        result.InterviewMeetingId = 0;
+                        result.InterviewerEmail =emailid;
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationYes;
                         }
                         else
                         {
                             ViewBag.VideoConfirmationPopup = false;
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationNo;
                         }
+                        await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                         //Boradcastmessage
                         return View(model);
                     }

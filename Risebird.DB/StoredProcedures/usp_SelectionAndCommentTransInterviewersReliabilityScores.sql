@@ -35,12 +35,14 @@ begin
 if(@interviewCommentLength<500)  
 begin   
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=20)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 if(@interviewCommentLength>500)  
 begin   
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=21)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,21,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,21,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 end  
 else if(@InterviewerStatus=3 or @InterviewerStatus=1)  
@@ -48,12 +50,14 @@ begin
 if(@interviewCommentLength<250)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=18)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,18,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,18,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 if(@interviewCommentLength>250)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=19)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,19,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,19,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 end  
 
@@ -61,7 +65,8 @@ set @MeetingStatus= (select MeetingStatus from InterviewComments ic  where inter
 if(@MeetingStatus=5 or @MeetingStatus=9)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=13)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,13,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,13,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 
 --Less than 5 or more than 5 Questions added in the Report  
@@ -70,12 +75,14 @@ set @QuestionCount=(select Count(id) from QuestionsDiscussed where interviewid=@
 if(@QuestionCount<5)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=16)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,16,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,16,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 if(@QuestionCount>5)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=17)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,17,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,17,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 --Selection Rate  
 declare @CompletedInterviews int  
@@ -88,21 +95,24 @@ and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) a
 if((@SelectedInterview*100/@CompletedInterviews)<20 or (@SelectedInterview*100/@CompletedInterviews)>40)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=14)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,14,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,14,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end  
 else if((@SelectedInterview*100/@CompletedInterviews)>=20 and (@SelectedInterview*100/@CompletedInterviews)<=40)  
 begin  
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=15)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,15,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,15,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end 
 
 declare @LoginTimeCount int
 set @LoginTimeCount=(select top 1 DateDIFF(MINUTE,im.interviewDate,imjt.Joinedon)  from InterviewMeetingsJoinTime imjt join
 InterviewMeetings im   on imjt.interviewid= im.id where im.id=@InterviewMeetingId order by imjt.Joinedon desc)
-if(@LoginTimeCount>5)
+if(@LoginTimeCount>=5)
 begin 
 set @Point=(Select case when PositiveScore>0 OR PositiveScore<0 then PositiveScore when NegativeScore>0 OR NegativeScore<0 then NegativeScore end as Point from ReliabilityScoreTypes where id=6)  
-Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,6,@Point,@CreateDate)  
+--Insert into TransInterviewersReliabilityScores(InterviewerId,InterviewMeetingId,ReliabilityScoreTypeId,Point,CreatedDate) values(@InterviewerId,@InterviewMeetingId,6,@Point,@CreateDate)  
+exec [dbo].[usp_TransInterviewersReliabilityScores] @InterviewerId,@InterviewMeetingId,20,@Point,@CreateDate
 end 
 End
 
